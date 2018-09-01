@@ -313,7 +313,6 @@ extern char **environ;
 #define mbchar(w, s, n, q) (((s) += (ast_mbrchar)((wchar_t *)(w), (char *)(s), (n), (q))), (*(w)))
 #define mbconv(s, w, q) (*ast._ast_wcrtomb)((s), (w), (mbstate_t *)(q))
 
-#define mbtinit(q) (mbwide() ? (mbinit(q), 0) : 0)
 #define mbtsize(s, n, q) (mbwide() ? mbsize((s), (n), (q)) : (!!*(s)))
 #define mbtchar(w, s, n, q) (mbwide() ? mbchar((w), (s), (n), (q)) : (*(unsigned char *)(s++)))
 #define mbtconv(s, w, q) (mbwide() ? mbconv((s), (w), (q)) : ((*(s) = (w)), 1))

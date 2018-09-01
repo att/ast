@@ -954,7 +954,7 @@ static_fn Celt_t *regcomp_col(Cenv_t *env, Celt_t *ce, int ic, unsigned char *bp
             }
             if (cc > 0) {
                 cc = -1;
-                mbtinit(&q);
+                mbinit(&q);
                 k += mbtconv((char *)k, c, &q);
             } else
                 for (e = k + bw; k < e; *k++ = *s++)
@@ -964,7 +964,7 @@ static_fn Celt_t *regcomp_col(Cenv_t *env, Celt_t *ce, int ic, unsigned char *bp
         mbxfrm(ce->beg, key, COLL_KEY_MAX);
         if (ep) {
             k = key;
-            mbtinit(&env->q);
+            mbinit(&env->q);
             c = mbtchar(&w, k, MB_LEN_MAX, &env->q);
             if (iswupper(c))
                 bt = COLL_range_uc;
@@ -988,7 +988,7 @@ static_fn Celt_t *regcomp_col(Cenv_t *env, Celt_t *ce, int ic, unsigned char *bp
             } else if (ew < COLL_KEY_MAX) {
                 s = (char *)ep;
                 if (ic) {
-                    mbtinit(&env->q);
+                    mbinit(&env->q);
                     c = mbtchar(&w, s, MB_LEN_MAX, &env->q);
                     if (iswupper(c)) {
                         c = towlower(c);
@@ -1000,7 +1000,7 @@ static_fn Celt_t *regcomp_col(Cenv_t *env, Celt_t *ce, int ic, unsigned char *bp
                 }
                 if (cc > 0) {
                     cc = -1;
-                    mbtinit(&q);
+                    mbinit(&q);
                     k += mbtconv((char *)k, c, &q);
                 } else
                     for (e = k + ew; k < e; *k++ = *s++)
@@ -1322,7 +1322,7 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                                 }
                                 if (env->token.len > 1 || (w >= 0 && w < T_META)) {
                                     c = w;
-                                    mbtinit(&q);
+                                    mbinit(&q);
                                     w = mbtconv(mbc, c, &q);
                                     pp = (unsigned char *)mbc;
                                     env->cursor += env->token.len;
@@ -1400,7 +1400,7 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                             if (ic) {
                                 if (iswupper(wc)) {
                                     wc = towlower(wc);
-                                    mbtinit(&q);
+                                    mbinit(&q);
                                     rw = mbtconv((char *)pp, wc, &q);
                                     c = 'u';
                                 } else if (iswlower(wc))
@@ -1450,7 +1450,7 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                                     wc = towupper(wc);
                                     c = 'U';
                                 }
-                                mbtinit(&q);
+                                mbinit(&q);
                                 rw = mbtconv((char *)pp, wc, &q);
                                 i = 0;
                             }
@@ -2293,7 +2293,7 @@ static_fn Rex_t *regcomp_seq(Cenv_t *env) {
                 c = (c == C_ESC) ? env->token.lex : mbtchar(&w, p, MB_LEN_MAX, &env->q);
                 if (env->flags & REG_ICASE) c = towupper(c);
                 if ((&buf[sizeof(buf)] - s) < MB_CUR_MAX) break;
-                mbtinit(&q);
+                mbinit(&q);
                 if ((n = mbtconv((char *)s, c, &q)) < 0)
                     *s++ = c;
                 else if (n)

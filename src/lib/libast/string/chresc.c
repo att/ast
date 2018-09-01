@@ -52,7 +52,7 @@ int chrexp(const char *s, char **p, int *m, int flags) {
     bool w;
 
     u = w = 0;
-    mbtinit(&q);
+    mbinit(&q);
     for (;;) {
         b = s;
         switch (c = mbtchar(&d, s, MB_LEN_MAX, &q)) {

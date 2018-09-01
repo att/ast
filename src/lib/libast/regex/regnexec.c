@@ -619,7 +619,7 @@ static_fn int collic(Celt_t *ce, char *key, char *nxt, int c, int x) {
             c = towlower(c);
         else
             return 0;
-        mbtinit(&q);
+        mbinit(&q);
         x = mbtconv(key, c, &q);
         key[x] = 0;
         return collelt(ce, key, c, 0);

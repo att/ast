@@ -115,7 +115,7 @@
 /* deal with multi-byte character and string conversions */
 
 #define SFMBCPY(to, fr) (*(Mbstate_t *)(to) = *(fr))
-#define SFMBCLR(mb) mbtinit(((Mbstate_t *)(mb)))
+#define SFMBCLR(mb) mbinit(((Mbstate_t *)(mb)))
 #define SFMBSET(lhs, v) (lhs = (v))
 #define SFMBLEN(s, mb) mbtsize((s), MB_LEN_MAX, (mb))
 #define SFMBDCL(ms) Mbstate_t ms;

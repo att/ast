@@ -81,7 +81,7 @@ char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int fla
         doublequote = 1;
     f = b;
     escaped = spaced = !!(flags & FMT_ALWAYS);
-    mbtinit(&q);
+    mbinit(&q);
     while (s < e) {
         if ((m = mbtsize(s, MB_LEN_MAX, &q)) > 1 && (s + m) <= e) {
             c = mbchar(&w, s, MB_LEN_MAX, &q);
