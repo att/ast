@@ -236,7 +236,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
     int setflag = 0, action = 0, trace = (int)sh_isoption(shp, SH_XTRACE);
     Namval_t *np = NULL;
     const char *sp;
-    char *keylist = 0;
+    char *keylist = NULL;
     int verbose, f, unsetnp = 0;
     Optdisc_t disc;
 
@@ -441,25 +441,28 @@ int sh_argopts(int argc, char *argv[], void *context) {
             if (argc > 0) {
                 strsort(argv, argc, sortfn);
             } else if (np && (arp = nv_arrayptr(np)) && (args = nv_aivec(np, &bits))) {
-                struct Sort *sp;
                 char *cp;
                 int i, c, keys = 0;
-                size_t nodesize;
+
                 if (keylist) {
                     for (cp = keylist; (c = *cp); cp++) {
                         if (c == ',') keys++;
                     }
                     keys++;
                 } else {
-                    keylist = Empty;
+                    keylist = "";
                 }
                 arp->nelem = nv_aipack(arp);
                 cp = nv_name(np);
                 c = strlen(cp);
-                nodesize = sizeof(struct Node) + (keys - 1) * sizeof(Namval_t *);
-                sp = (struct Sort *)malloc(sizeof(struct Sort) + strlen(keylist) +
-                                           (sizeof(char *) + 1) * keys +
-                                           (arp->nelem + 1) * (nodesize + sizeof(void *)) + c + 3);
+                // This used to multiply by `(keys - 1)` but `keys` can be zero which means the
+                // nodesize can be less than `sizeof(struct Node)` which is obviously wrong.
+                // Whether multiplying by `keys` is correct is unclear.
+                // See issue #824.
+                size_t nodesize = sizeof(struct Node) + keys * sizeof(Namval_t *);
+                struct Sort *sp =
+                    malloc(sizeof(struct Sort) + strlen(keylist) + (sizeof(char *) + 1) * keys +
+                           (arp->nelem + 1) * (nodesize + sizeof(void *)) + c + 3);
                 sp->shp = shp;
                 sp->np = np;
                 if (!(sp->root = shp->last_root)) sp->root = shp->var_tree;
@@ -476,7 +479,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
                 strcpy(sp->keys[0], keylist);
                 cp = (char *)sp->nodes;
                 for (c = 0; c < arp->nelem; c++) {
-                    if (keylist != Empty && *keylist != ':') {
+                    if (*keylist && *keylist != ':') {
                         ((struct Node *)cp)->index = strtol(args[c].np->nvname, NULL, 10);
                         ((struct Node *)cp)->bits = bits[c];
                     } else {
