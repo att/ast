@@ -158,9 +158,7 @@
 /*
  * multibyte macros
  */
-#define mbcoll() (1)
 #define mbwide() (MB_CUR_MAX > 1)
-
 #define mbwidth(w) (ast.mb_width ? (*ast.mb_width)(w) : 1)
 #define mbxfrm(t, f, n) strxfrm((char *)(t), (char *)(f), n)
 #define mbalpha(w) (ast.mb_alpha ? (*ast.mb_alpha)(w) : isalpha((w)&0xff))

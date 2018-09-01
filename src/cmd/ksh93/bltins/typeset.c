@@ -1397,7 +1397,7 @@ static_fn void print_scan(Sfio_t *file, int flag, Dt_t *root, bool omit_attrs, s
     namec = nv_scan(root, nullscan, (void *)tp, tp->scanmask, flag & ~NV_IARRAY);
     argv = tp->argnam = (char **)stkalloc(tp->sh->stk, (namec + 1) * sizeof(char *));
     namec = nv_scan(root, pushname, (void *)tp, tp->scanmask, flag & ~NV_IARRAY);
-    if (mbcoll()) strsort(argv, namec, strcoll);
+    strsort(argv, namec, strcoll);
     if (namec == 0 && tp->sh->namespace && nv_dict(tp->sh->namespace) == root) {
         sfnputc(file, '\t', tp->indent);
         sfwrite(file, ":\n", 2);

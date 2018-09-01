@@ -1241,7 +1241,7 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
         last = c;
     }
 
-    if (complicated && mbcoll()) {
+    if (complicated) {
         Dt_t *dt;
         Cchr_t *cc;
         Cchr_t *tc;
@@ -1528,30 +1528,25 @@ error:
 }
 
 static_fn Rex_t *regcomp_ccl(Cenv_t *env, int type) {
-    int i;
     Rex_t *e;
     Celt_t *ce;
     regclass_t f;
 
-    if (!(f = classfun(type))) {
+    f = classfun(type);
+    if (!f) {
         env->error = REG_BADESC;
-        return 0;
+        return NULL;
     }
-    if (!mbcoll()) {
-        if (!(e = regcomp_node(env, REX_CLASS, 1, 1, sizeof(Set_t)))) return 0;
-        for (i = 0; i <= UCHAR_MAX; i++)
-            if ((*f)(i)) setadd(e->re.charclass, i);
-        if (env->explicit >= 0) setclr(e->re.charclass, env->explicit);
-    } else {
-        if (!(e = regcomp_node(env, REX_COLL_CLASS, 1, 1, 2 * sizeof(Celt_t)))) return 0;
-        ce = (Celt_t *)e->re.data;
-        e->re.collate.invert = 0;
-        e->re.collate.elements = ce;
-        ce->fun = f;
-        ce->typ = COLL_call;
-        ce++;
-        ce->typ = COLL_end;
-    }
+
+    e = regcomp_node(env, REX_COLL_CLASS, 1, 1, 2 * sizeof(Celt_t));
+    if (!e) return NULL;
+    ce = (Celt_t *)e->re.data;
+    e->re.collate.invert = 0;
+    e->re.collate.elements = ce;
+    ce->fun = f;
+    ce->typ = COLL_call;
+    ce++;
+    ce->typ = COLL_end;
     return e;
 }
 
