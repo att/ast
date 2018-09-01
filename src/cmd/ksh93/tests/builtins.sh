@@ -75,12 +75,6 @@ then
     log_error "print -- not working correctly"
 fi
 
-print -f "hello%nbar\n" size > /dev/null
-if ((    size != 5 ))
-then
-    log_error "%n format of printf not working"
-fi
-
 print -n -u2 2>&1-
 [[ -w /dev/fd/1 ]] || log_error "2<&1- with built-ins has side effects"
 x=$0
@@ -175,18 +169,6 @@ ${SHELL} -c 'kill -1 -$$' 2> /dev/null
 [[ $(kill -l $?) == HUP ]] || log_error 'kill -n1 -pid not working'
 ${SHELL} -c 'kill -s HUP -$$' 2> /dev/null
 [[ $(kill -l $?) == HUP ]] || log_error 'kill -HUP -pid not working'
-n=123
-typeset -A base
-base[o]=8#
-base[x]=16#
-base[X]=16#
-for i in d i o u x X
-do
-    if (( $(( ${base[$i]}$(printf "%$i" $n) )) != n  ))
-    then
-        log_error "printf %$i not working"
-    fi
-done
 
 if [[ $( trap 'print done' EXIT) != done ]]
 then
@@ -209,51 +191,6 @@ then
     log_error 'whence -v test after builtin -d incorrect'
 fi
 
-typeset -Z3 percent=$(printf '%o\n' "'%'")
-forrmat=\\${percent}s
-if   [[ $(printf "$forrmat") != %s ]]
-then
-    log_error "printf $forrmat not working"
-fi
-
-if (( $(printf 'x\0y' | wc -c) != 3 ))
-then
-    log_error 'printf \0 not working'
-fi
-
-if [[ $(printf "%bx%s\n" 'f\to\cbar') != $'f\to' ]]
-then
-    log_error 'printf %bx%s\n  not working'
-fi
-
-alpha=abcdefghijklmnop
-if [[ $(printf "%10.*s\n" 5 $alpha) != '     abcde' ]]
-then
-    log_error 'printf %10.%s\n  not working'
-fi
-
-float x2=.0000625
-if [[ $(printf "%10.5E\n" x2) != 6.25000E-05 ]]
-then
-    log_error 'printf "%10.5E" not normalizing correctly'
-fi
-
-x2=.000000001
-if [[ $(printf "%g\n" x2 2>/dev/null) != 1e-09 ]]
-then
-    log_error 'printf "%g" not working correctly'
-fi
-
-if [[ $(printf +3 2>/dev/null) !=   +3 ]]
-then
-    log_error 'printf is not processing formats beginning with + correctly'
-fi
-
-if printf "%d %d\n" 123bad 78 >/dev/null 2>/dev/null
-then
-    log_error "printf not exiting non-zero with conversion errors"
-fi
-
 if [[ $(trap --version 2> /dev/null;print done) != done ]]
 then
     log_error 'trap builtin terminating after --version'
@@ -274,70 +211,6 @@ if [[ $(getopts  $'[+?X\ffoobar\fX]' v --man 2>&1) != *'Xhello world'X* ]]
 then
     log_error '\f...\f not working in getopts usage strings'
 fi
-
-if [[ $(printf '%H\n' $'<>"& \'\tabc') != '&lt;&gt;&quot;&amp;&nbsp;&apos;&#9;abc' ]]
-then
-    log_error 'printf %H not working'
-fi
-
-if [[ $(printf '%(html)q\n' $'<>"& \'\tabc') != '&lt;&gt;&quot;&amp;&nbsp;&apos;&#9;abc' ]]
-then
-    log_error 'printf %(html)q not working'
-fi
-
-if [[ $( printf 'foo://ab_c%(url)q\n' $'<>"& \'\tabc') != 'foo://ab_c%3C%3E%22%26%20%27%09abc' ]]
-then
-    log_error 'printf %(url)q not working'
-fi
-
-if [[ $(printf '%R %R %R %R\n' 'a.b' '*.c' '^'  '!(*.*)') != '^a\.b$ \.c$ ^\^$ ^(.*\..*)!$' ]]
-then
-    log_error 'printf %T not working'
-fi
-
-if [[ $(printf '%(ere)q %(ere)q %(ere)q %(ere)q\n' 'a.b' '*.c' '^'  '!(*.*)') != '^a\.b$ \.c$ ^\^$ ^(.*\..*)!$' ]]
-then
-    log_error 'printf %(ere)q not working'
-fi
-
-if [[ $(printf '%..:c\n' abc) != a:b:c ]]
-then
-    log_error "printf '%..:c' not working"
-fi
-
-if [[ $(printf '%..*c\n' : abc) != a:b:c ]]
-then
-    log_error "printf '%..*c' not working"
-fi
-
-if [[ $(printf '%..:s\n' abc def ) != abc:def ]]
-then
-    log_error "printf '%..:s' not working"
-fi
-
-if [[ $(printf '%..*s\n' : abc def) != abc:def ]]
-then
-    log_error "printf '%..*s' not working"
-fi
-
-[[ $(printf '%q\n') == '' ]] || log_error 'printf "%q" with missing arguments'
-
-# This test is can fail if the load on the machine causes the printf and date commands to run on
-# opposite sides of the time rolling from one second to the next. We've seen it fail twice in a row
-# so try three times. Also, the TZ may be GMT or UTC for the builtin printf and external date
-# command and they won't necessarily agree. So normalize both to UTC.
-for i in 1 2 3
-do
-   actual=$(printf '%T\n' now | sed -e 's/GMT/UTC/')
-   expect=$(date | sed -e 's/GMT/UTC/')
-   if [[ "$actual" == "$expect" ]]
-   then 
-      break
-   else
-      log_warning 'printf "%T" now wrong output' "$expect" "$actual"
-   fi
-done
-[[ "$actual" == "$expect" ]] || log_error 'printf "%T" now wrong output' "$expect" "$actual"
 
 set -f
 set -- *
@@ -376,45 +249,6 @@ $SHELL -c 'OPTIND=-1000000; getopts a opt -a' 2> /dev/null
 [[ $? == 1 ]] || log_error 'getopts with negative OPTIND not working'
 getopts 'n#num' opt  -n 3
 [[ $OPTARG == 3 ]] || log_error 'getopts with numerical arguments failed'
-if [[ $($SHELL -c $'printf \'%2$s %1$s\n\' world hello') != 'hello world' ]]
-then
-    log_error 'printf %2$s %1$s not working'
-fi
-
-val=$(( 'C' ))
-set -- \
-    "'C"    $val    0    \
-    "'C'"    $val    0    \
-    '"C'    $val    0    \
-    '"C"'    $val    0    \
-    "'CX"    $val    1    \
-    "'CX'"    $val    1    \
-    "'C'X"    $val    1    \
-    '"CX'    $val    1    \
-    '"CX"'    $val    1    \
-    '"C"X'    $val    1
-while (( $# >= 3 ))
-do
-    arg=$1 expect=$2 code=$3
-    shift 3
-    for fmt in '%d' '%g'
-    do
-        actual=$(printf "$fmt" "$arg" 2>/dev/null)
-        err=$(printf "$fmt" "$arg" 2>&1 >/dev/null)
-        printf "$fmt" "$arg" >/dev/null 2>&1
-        ret=$?
-        [[ $actual == $expect ]] || log_error "printf $fmt $arg failed" "$expect" "$actual"
-        if (( $code ))
-        then
-            [[ $err ]] || log_error "printf $fmt $arg failed, error message expected"
-        else
-            [[ $err ]] &&
-               log_error "$err: printf $fmt $arg failed, error message not expected" "" "$err"
-        fi
-
-        (( $ret == $code )) || log_error "printf $fmt $arg failed -- wrong status" "$code" "$ret"
-    done
-done
 
 ((n=0))
 ((n++)); ARGC[$n]=1 ARGV[$n]=""
@@ -574,9 +408,6 @@ done
 [[ $($SHELL -c 'y=3; unset 123 y;print $?$y') == 1 ]] 2> /dev/null ||  log_error 'y is not getting unset with unset 123 y'
 [[ $($SHELL -c 'trap foo TERM; (trap;(trap) )') == 'trap -- foo TERM' ]] || log_error 'traps not getting reset when subshell is last process'
 
-n=$(printf "%b" 'a\0b\0c' | wc -c)
-(( n == 5 )) || log_error '\0 not working with %b format with printf'
-
 t=$(ulimit -t)
 [[ $($SHELL -c 'ulimit -v 15000 2>/dev/null; ulimit -t') == "$t" ]] || log_error 'ulimit -v changes ulimit -t'
 
@@ -588,8 +419,6 @@ builtin cat
 out=$TEST_DIR/seq.out
 seq 11 >$out
 cmp -s <(print -- "$($bincat<( $bincat $out ) )") <(print -- "$(cat <( cat $out ) )") || log_error "builtin cat differs from $bincat"
-
-[[ $($SHELL -c '{ printf %R "["; print ok;}' 2> /dev/null) == ok ]] || log_error $'\'printf %R "["\' causes shell to abort'
 
 v=$( $SHELL -c $'
     trap \'print "usr1"\' USR1

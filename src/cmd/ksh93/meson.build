@@ -81,9 +81,9 @@ all_tests = [
     ['comvario'], ['coprocess', 50], ['cubetype'], ['directoryfd'], ['enum'],
     ['exit'], ['expand'], ['functions'], ['glob'], ['grep'], ['heredoc'], ['ifs'],
     ['io'], ['leaks'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
-    ['modifiers'], ['options'], ['path'], ['pointtype'], ['quoting'], ['quoting2'],
-    ['read'], ['readcsv'], ['recttype'], ['restricted'], ['return'], ['select'],
-    ['sh_match'], ['sigchld', 100], ['signal'], ['statics'],
+    ['modifiers'], ['options'], ['path'], ['pointtype'], ['printf'], ['quoting'],
+    ['quoting2'], ['read'], ['readcsv'], ['recttype'], ['restricted'], ['return'],
+    ['select'], ['sh_match'], ['sigchld', 100], ['signal'], ['statics'],
     ['subshell', 100], ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
     ['variables'], ['vartree1'], ['vartree2'], ['wchar'],
     # The following are tests that must be run serially after all other tests that might be run in
@@ -101,7 +101,7 @@ serial_tests = ['special-dev-paths']
 # This is a list of tests to be skipped because they are known to be broken when
 # compiled by `shcomp`.
 # TODO: Fix these tests.
-shcomp_tests_to_skip = ['io', 'namespace', 'treemove']
+shcomp_tests_to_skip = ['io', 'namespace', 'treemove', 'printf']
 
 # The test cases are executed in parallel by default
 foreach testspec : all_tests
