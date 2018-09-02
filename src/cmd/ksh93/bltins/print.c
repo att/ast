@@ -755,12 +755,10 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                 break;
             }
             case 'n': {
-                Namval_t *np;
-                np = nv_open(argp, shp->var_tree, NV_VARNAME | NV_NOASSIGN | NV_NOARRAY);
+                Namval_t *np = nv_open(argp, shp->var_tree, NV_VARNAME | NV_NOASSIGN | NV_NOARRAY);
                 _nv_unset(np, 0);
                 nv_onattr(np, NV_INTEGER);
                 np->nvalue.lp = calloc(1, sizeof(int32_t));
-                if (np) *np->nvalue.lp = 0;
                 nv_setsize(np, 10);
                 if (sizeof(int) == sizeof(int32_t)) {
                     value->ip = (int *)np->nvalue.lp;
