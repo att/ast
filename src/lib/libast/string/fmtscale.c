@@ -77,7 +77,7 @@ char *fmtscale(Sfulong_t n, int k) {
     *s = 0;
     if (n > 0 && n < 10) {
         char *decimal = nl_langinfo(RADIXCHAR);
-        sfsprintf(buf, z, "%I*u%c%d%s", sizeof(n), n, decimal, r, suf);
+        sfsprintf(buf, z, "%I*u%s%d%s", sizeof(n), n, decimal, r, suf);
     } else {
         if (r >= 5) n++;
         sfsprintf(buf, z, "%I*u%s", sizeof(n), n, suf);
