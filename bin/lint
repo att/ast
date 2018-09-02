@@ -45,14 +45,14 @@ done
 
 if [[ ${all} == yes && "${#}" -ne 0 ]]
 then
-   echo "Unexpected arguments: '${1}'" >&2
-   exit 1
+    echo "Unexpected arguments: '${1}'" >&2
+    exit 1
 fi
 
 # Figure out which files to lint.
 if [[ ${all} == yes ]]
 then
-   files=( $(find src/cmd -name "*.c") )
+    files=( $(find src/cmd -name "*.c") )
 elif [[ "${#}" -ne 0 ]]
 then
     for next_file in "$@"
@@ -115,7 +115,7 @@ fi
 # We also need this value for cppcheck to find some system headers again, on platforms like macOS,
 # where the system headers aren't found at /usr/include.
 readonly system_hdrs="$(clang -H -E ../etc/hdrs.c 2>&1 | head -1 |
-   sed -e 's/^\. //' -e 's/\/[^/]*$//')"
+    sed -e 's/^\. //' -e 's/\/[^/]*$//')"
 
 # On macOS the system headers used by `clang` may not be rooted at /usr/include.
 lint_args=( -I. -I"${system_hdrs}" )
@@ -151,13 +151,17 @@ then
                 -Xiwyu --mapping_file="${mapping_file}" \
                 --std=c99 -Wno-expansion-to-defined -Wno-nullability-completeness \
                 "${lint_args[@]}" $(../scripts/extract_flags "${project_file}" "${c_file}") \
-                "${c_file}" 2>&1 | sed -e 's,^(\.\./,(,' -e 's,^\.\./,,'
+                "${c_file}" 2>&1 | sed \
+                    -e 's,^(\.\./,(,' -e 's,^\.\./,,' \
+                    -e '/^(.* has correct #includes/d'
         else # hope for the best
             # shellcheck disable=SC2046
             include-what-you-use -Xiwyu --transitive_includes_only \
                 --std=c99 -Wno-expansion-to-defined -Wno-nullability-completeness \
                 "${lint_args[@]}" $(../scripts/extract_flags "${project_file}" "${c_file}") \
-                "${c_file}" 2>&1 | sed -e 's,^(\.\./,(,' -e 's,^\.\./,,'
+                "${c_file}" 2>&1 | sed \
+                    -e 's,^(\.\./,(,' -e 's,^\.\./,,' \
+                    -e '/^(.* has correct #includes/d'
         fi
     done
 fi
