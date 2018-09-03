@@ -336,7 +336,10 @@ bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
             assert(p);
             av[0] = strdup(p);
         }
-        if (!nv_clone(tp, nq, flags | NV_NOFREE)) return (false);
+        if (!nv_clone(tp, nq, flags | NV_NOFREE)) {
+            if (av[0]) free(av[0]);
+            return false;
+        }
         ap->flags |= ARRAY_SCAN;
         if (!rdonly) nv_offattr(nq, NV_RDONLY);
         if (!nv_isattr(tp, NV_BINARY)) {
@@ -347,9 +350,9 @@ bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
             sh_eval(shp, sh_sfeval(av), 0);
             shp->prefix = prefix;
             ap->flags |= ARRAY_SCAN;
-            free(av[0]);
             if (xtrace) sh_onoption(shp, SH_XTRACE);
         }
+        if (av[0]) free(av[0]);
         return true;
     }
     return false;
