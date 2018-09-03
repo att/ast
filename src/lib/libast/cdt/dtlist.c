@@ -365,7 +365,3 @@ Dtmethod_t *Dtlist = &_Dtlist;
 Dtmethod_t *Dtdeque = &_Dtdeque;
 Dtmethod_t *Dtstack = &_Dtstack;
 Dtmethod_t *Dtqueue = &_Dtqueue;
-
-#ifdef NoF
-NoF(dtlist)
-#endif

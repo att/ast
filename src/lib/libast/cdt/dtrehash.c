@@ -742,7 +742,3 @@ static Dtmethod_t _Dtrhbag = {
     .searchf = dthashtrie, .type = DT_RHBAG, .eventf = dtrehash_event, .name = "Dtrhbag"};
 Dtmethod_t *Dtrhset = &_Dtrhset;
 Dtmethod_t *Dtrhbag = &_Dtrhbag;
-
-#ifdef NoF
-NoF(dthashtrie)
-#endif

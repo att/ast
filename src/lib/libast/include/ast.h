@@ -186,19 +186,9 @@
     ((p) ? (t *)realloc((char *)(p), sizeof(t) * (n) + (x)) : (t *)malloc(sizeof(t) * (n) + (x)))
 #define pointerof(x) (void *)((uintptr_t)(x))
 #define roundof(x, y) (((x) + ((y)-1)) & ~((y)-1))
-#define ssizeof(x) ((int)sizeof(x))
 
 #define streq(a, b) (*(a) == *(b) && !strcmp(a, b))
 #define strneq(a, b, n) (*(a) == *(b) && !strncmp(a, b, n))
-#define strsignal(s) fmtsignal(s)
-
-#if !defined(NoF)
-#define NoF(x) \
-    void _DATA_##x() {}
-#if !defined(_DATA_)
-#define _DATA_
-#endif
-#endif
 
 typedef int (*Ast_confdisc_f)(const char *, const char *, const char *);
 typedef int (*Strcmp_context_f)(const char *, const char *, void *);

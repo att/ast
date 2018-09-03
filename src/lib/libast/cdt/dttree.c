@@ -676,7 +676,3 @@ static Dtmethod_t _Dtobag = {
     .searchf = dttree, .type = DT_OBAG, .eventf = dttree_event, .name = "Dtobag"};
 Dtmethod_t *Dtoset = &_Dtoset;
 Dtmethod_t *Dtobag = &_Dtobag;
-
-#ifdef NoF
-NoF(dttree)
-#endif

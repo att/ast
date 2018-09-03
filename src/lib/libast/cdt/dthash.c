@@ -480,7 +480,3 @@ static Dtmethod_t _Dtbag = {
     .searchf = dthashchain, .type = DT_BAG, .eventf = dthash_event, .name = "Dtbag"};
 Dtmethod_t *Dtset = &_Dtset;
 Dtmethod_t *Dtbag = &_Dtbag;
-
-#ifdef NoF
-NoF(dthashchain)
-#endif
