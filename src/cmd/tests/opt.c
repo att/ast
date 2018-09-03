@@ -45,22 +45,22 @@ static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     Info_t *ip;
 
     for (ip = info; ip; ip = ip->next)
-        if (streq(s, ip->name)) return sfprintf(sp, "%s", ip->value);
+        if (!strcmp(s, ip->name)) return sfprintf(sp, "%s", ip->value);
     if (*s == ':') return sfprintf(sp, "%s", *(s + 1) == 'n' ? "" : (s + 2));
-    if (streq(s, "options"))
+    if (!strcmp(s, "options"))
         return sfprintf(sp,
                         "[Z:zoom?Do it as fast as possible.]\fmore#1\f\fmore#2\f[B:boom?Dump into "
                         "\afile\a.]:[file]");
-    if (streq(s, "zero")) return sfprintf(sp, "[+yabba?dabba][+doo?aroni]");
-    if (streq(s, "more#1")) return sfprintf(sp, "[C:cram?Cram as much as possible.]\fmore#3\f");
-    if (streq(s, "more#2")) return sfprintf(sp, "\fmore#4\f[D:dump?Dump as much as possible.]");
-    if (streq(s, "more#3")) return sfprintf(sp, "[K:kill?kill all processes.]");
-    if (streq(s, "more#4"))
+    if (!strcmp(s, "zero")) return sfprintf(sp, "[+yabba?dabba][+doo?aroni]");
+    if (!strcmp(s, "more#1")) return sfprintf(sp, "[C:cram?Cram as much as possible.]\fmore#3\f");
+    if (!strcmp(s, "more#2")) return sfprintf(sp, "\fmore#4\f[D:dump?Dump as much as possible.]");
+    if (!strcmp(s, "more#3")) return sfprintf(sp, "[K:kill?kill all processes.]");
+    if (!strcmp(s, "more#4"))
         return sfprintf(sp, "[F:fudge?Fudge the statistics to satisfy everyone.]");
-    if (streq(s, "more#5"))
+    if (!strcmp(s, "more#5"))
         return sfprintf(
             sp, "\bred\b, \borange\b, \byellow\b, \bgreen\b, \bblue\b, \bindigo\b, \bviolet\b");
-    if (streq(s, "more#6")) return sfprintf(sp, "\bred\b");
+    if (!strcmp(s, "more#6")) return sfprintf(sp, "\bred\b");
     return sfprintf(sp, "<* %s info ok *>", s);
 }
 
@@ -96,13 +96,13 @@ int main(int argc, char **argv) {
             ip->value = s;
             ip->next = info;
             info = ip;
-        } else if (streq(command, "-")) {
+        } else if (!strcmp(command, "-")) {
             argv++;
             str = 1;
-        } else if (streq(command, "-+")) {
+        } else if (!strcmp(command, "-+")) {
             argv++;
             error_info.translate = translate;
-        } else if (streq(command, "+") && *(argv + 2)) {
+        } else if (!strcmp(command, "+") && *(argv + 2)) {
             ext += 2;
             argv += 2;
             if (!extra) extra = argv;

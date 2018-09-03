@@ -73,7 +73,7 @@
         if (!state.data) astconf_synthesize(NULL, NULL, NULL); \
     } while (0)
 #define STANDARD(v) \
-    (streq(v, "standard") || streq(v, "strict") || streq(v, "posix") || streq(v, "xopen"))
+    (!strcmp(v, "standard") || !strcmp(v, "strict") || !strcmp(v, "posix") || !strcmp(v, "xopen"))
 
 #define MAXVAL 256
 
@@ -446,7 +446,7 @@ static_fn void astconf_initialize(Feature_t *fp, const char *path, const char *c
             ok = 1;
             break;
         case OP_universe:
-            ok = streq(_UNIV_DEFAULT, DEFAULT(OP_universe));
+            ok = !strcmp(_UNIV_DEFAULT, DEFAULT(OP_universe));
             /*FALLTHROUGH...*/
         default:
             p = getenv("PATH");
@@ -555,7 +555,7 @@ static_fn char *astconf_format(Feature_t *fp, const char *path, const char *valu
 
         case OP_conformance:
             if (value && STANDARD(value)) value = fp->std;
-            state.std = streq(fp->value, fp->std);
+            state.std = !strcmp(fp->value, fp->std);
 #if DEBUG_astconf
             error(-6, "state.std=%d %s [%s] std=%s ast=%s value=%s", state.std, fp->name, value,
                   fp->std, fp->ast, fp->value);
@@ -601,7 +601,7 @@ static_fn char *astconf_format(Feature_t *fp, const char *path, const char *valu
 #ifdef UNIV_MAX
             n = 0;
             if (value) {
-                while (n < univ_max && !streq(value, univ_name[n])) n++;
+                while (n < univ_max && !!strcmp(value, univ_name[n])) n++;
                 if (n >= univ_max) {
                     if (conferror)
                         (*conferror)(&state, &state, 2, "%s: %s: universe value too large",
@@ -618,7 +618,7 @@ static_fn char *astconf_format(Feature_t *fp, const char *path, const char *valu
             if (n <= 0 || n >= univ_max) n = 1;
             strcpy(fp->value, univ_name[n - 1]);
 #else
-            if (value && streq(path, "=")) {
+            if (value && !strcmp(path, "=")) {
                 if (state.synthesizing) {
                     if (!(fp->flags & CONF_ALLOC)) fp->value = 0;
                     n = strlen(value);
@@ -644,7 +644,7 @@ static_fn char *astconf_format(Feature_t *fp, const char *path, const char *valu
                 astconf_synthesize(fp, path, value);
             break;
     }
-    if (streq(path, "=")) fp->flags |= CONF_GLOBAL;
+    if (!strcmp(path, "=")) fp->flags |= CONF_GLOBAL;
     return fp->value;
 }
 
@@ -658,9 +658,9 @@ static_fn char *astconf_feature(Feature_t *fp, const char *name, const char *pat
                      unsigned int flags, Error_f conferror) {
     int n;
 
-    if (value && (streq(value, "-") || streq(value, "0"))) value = "";
+    if (value && (!strcmp(value, "-") || !strcmp(value, "0"))) value = "";
     if (!fp)
-        for (fp = state.features; fp && !streq(fp->name, name); fp = fp->next) {
+        for (fp = state.features; fp && !!strcmp(fp->name, name); fp = fp->next) {
             ;  // empty loop
         }
 #if DEBUG_astconf
@@ -688,7 +688,7 @@ static_fn char *astconf_feature(Feature_t *fp, const char *name, const char *pat
                 (*conferror)(&state, &state, 2, "%s: cannot set readonly symbol", fp->name);
             return 0;
         }
-        if (state.notify && !streq(fp->value, value) && !(*state.notify)(name, path, value))
+        if (state.notify && !!strcmp(fp->value, value) && !(*state.notify)(name, path, value))
             return 0;
     } else
         state.recent = fp;
@@ -766,10 +766,10 @@ again:
                     (look->section < 0 || look->section == mid->section) &&
                     (look->call < 0 || look->call == mid->call))
                     goto found;
-            } while (mid-- > lo && streq(mid->name, look->name));
+            } while (mid-- > lo && !strcmp(mid->name, look->name));
             mid = hi;
             hi = lo + conf_elements - 1;
-            while (++mid < hi && streq(mid->name, look->name)) {
+            while (++mid < hi && !strcmp(mid->name, look->name)) {
                 if ((look->standard < 0 || look->standard == mid->standard) &&
                     (look->section < 0 || look->section == mid->section) &&
                     (look->call < 0 || look->call == mid->call))
@@ -947,7 +947,7 @@ static_fn char *astconf_print(Sfio_t *sp, Lookup_t *look, const char *name, cons
         case 0:
             call = 0;
             if (p->standard == CONF_AST) {
-                if (streq(p->name, "RELEASE") &&
+                if (!strcmp(p->name, "RELEASE") &&
                     (i = open("/proc/version", O_RDONLY | O_CLOEXEC)) >= 0) {
                     n = read(i, buf, sizeof(buf) - 1);
                     close(i);
@@ -967,7 +967,7 @@ static_fn char *astconf_print(Sfio_t *sp, Lookup_t *look, const char *name, cons
             }
         predef:
             if (look->standard == CONF_AST) {
-                if (streq(p->name, "VERSION")) {
+                if (!strcmp(p->name, "VERSION")) {
                     v = ast.version;
                     break;
                 }
@@ -1129,7 +1129,7 @@ static_fn char *astconf_print(Sfio_t *sp, Lookup_t *look, const char *name, cons
 bad:
     if (!(listflags & ~(ASTCONF_error | ASTCONF_system)))
         for (fp = state.features; fp; fp = fp->next) {
-            if (streq(name, fp->name)) return astconf_format(fp, path, NULL, listflags, conferror);
+            if (!strcmp(name, fp->name)) return astconf_format(fp, path, NULL, listflags, conferror);
         }
     return (listflags & ASTCONF_error) ? NULL : "";
 }
@@ -1174,7 +1174,7 @@ static_fn Sfio_t *nativeconf(Proc_t **pp, const char *operand) {
  * settable return values are in permanent store
  * non-settable return values copied to a tmp fmtbuf() buffer
  *
- *	if (streq(astgetconf("PATH_RESOLVE", NULL, NULL, 0, 0), "logical"))
+ *	if (!strcmp(astgetconf("PATH_RESOLVE", NULL, NULL, 0, 0), "logical"))
  *		our_way();
  *
  *	universe = astgetconf("UNIVERSE", NULL, "att", 0, 0);
@@ -1214,7 +1214,7 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
     }
     INITIALIZE();
     if (!path) path = root;
-    if (state.recent && streq(name, state.recent->name) &&
+    if (state.recent && !strcmp(name, state.recent->name) &&
         (s = astconf_format(state.recent, path, value, flags, conferror)))
         return s;
     if (astconf_lookup(&look, name, flags)) {
@@ -1227,7 +1227,7 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
         return astconf_print(NULL, &look, name, path, flags, conferror);
     }
     if ((n = strlen(name)) > 3 && n < (ALT + 3)) {
-        if (streq(name + n - 3, "DEV")) {
+        if (!strcmp(name + n - 3, "DEV")) {
             tmp = sfstropen();
             if (tmp) {
                 sfprintf(tmp, "/dev/");
@@ -1241,7 +1241,7 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
                 }
                 sfclose(tmp);
             }
-        } else if (streq(name + n - 3, "DIR")) {
+        } else if (!strcmp(name + n - 3, "DIR")) {
             Lookup_t altlook;
             char altname[ALT];
 

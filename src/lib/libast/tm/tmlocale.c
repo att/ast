@@ -49,7 +49,7 @@ static uint32_t tmlocale_serial = UINT_MAX;
 #if 0 && __CYGWIN__
 static_fn int standardized(Lc_info_t *li, char **b) {
     if ((li->lc->language->flags & LC_default) ||
-        streq(li->lc->language->code, "en")) {
+        !strcmp(li->lc->language->code, "en")) {
         b[TM_TIME] = "%H:%M:%S";
         b[TM_DATE] = "%m/%d/%y";
         b[TM_DEFAULT] = "%a %b %e %T %Z %Y";

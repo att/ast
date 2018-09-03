@@ -41,14 +41,6 @@
 #include "sfio.h"
 #include "tm.h"
 
-#ifndef elementsof
-#define elementsof(x) (sizeof(x) / sizeof(x[0]))
-#endif
-
-#ifndef streq
-#define streq(a, b) (*(a) == *(b) && !strcmp(a, b))
-#endif
-
 static struct {
     int errors;
     int lineno;
@@ -260,9 +252,9 @@ int main(int argc, char **argv) {
                     *(p - 1) = 0;
                 checkfield:
                     s = field[i - 1];
-                    if (streq(s, "NIL"))
+                    if (!strcmp(s, "NIL"))
                         field[i - 1] = 0;
-                    else if (streq(s, "NULL"))
+                    else if (!strcmp(s, "NULL"))
                         *s = 0;
                     while (*p == '\t') p++;
                     if (!*p) break;
@@ -286,9 +278,9 @@ int main(int argc, char **argv) {
         ans = field[2];
         if (!ans) bad("NIL answer", NULL, NULL);
         if (str) {
-            if (streq(str, "SET")) {
+            if (!strcmp(str, "SET")) {
                 if (!fmt) bad("NIL SET variable", NULL, NULL);
-                if (streq(fmt, "NOW")) {
+                if (!strcmp(fmt, "NOW")) {
                     t_now = tmdate(ans, &e, &t_now);
                     if (*e) bad("invalid NOW", ans, NULL);
                     sfprintf(sfstdout, "NOTE	base date is %s\n", fmttime(NULL, t_now));
@@ -296,7 +288,7 @@ int main(int argc, char **argv) {
                     bad("unknown SET variable", fmt, NULL);
                 continue;
             }
-            if (streq(str, "FMT")) {
+            if (!strcmp(str, "FMT")) {
                 str = 0;
                 if (!fmt) {
                     bad("NIL format", NULL, NULL);

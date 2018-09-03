@@ -461,7 +461,7 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
     cp = *argv;
     if (cp) argv++;
     do {
-        if (!cp || streq(cp, "-")) {
+        if (!cp || !strcmp(cp, "-")) {
             fp = sfstdin;
             if (flags & D_FLAG) sfopen(fp, NULL, mode);
         } else if (!(fp = sfopen(NULL, cp, mode))) {

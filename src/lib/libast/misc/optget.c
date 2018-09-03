@@ -668,7 +668,7 @@ static_fn char *optget_expand(char *s, char *e, char **p, Sfio_t *ip, char *id) 
     n = sfstrtell(ip);
     if (!c) s--;
     if (*b == '?') {
-        if (!*++b || streq(b, "NAME")) {
+        if (!*++b || !strcmp(b, "NAME")) {
             if (!(b = id)) b = "command";
             sfstrseek(ip, 0, SEEK_SET);
             sfputr(ip, b, -1);
@@ -864,7 +864,7 @@ static_fn int optget_init(char *s, Optpass_t *p) {
     }
     if (!p->catalog) {
         if (opt_info.disc && opt_info.disc->catalog &&
-            (!p->id || !streq(opt_info.disc->catalog, p->id)))
+            (!p->id || !!strcmp(opt_info.disc->catalog, p->id)))
             p->catalog = opt_info.disc->catalog;
         else
             p->catalog = ID;
@@ -2016,7 +2016,7 @@ again:
         case STYLE_usage:
         case STYLE_keys:
             for (q = o; q < e; q++)
-                if (!(q->flags & OPT_ignore) && !streq(q->catalog, o->catalog)) o = q;
+                if (!(q->flags & OPT_ignore) && !!strcmp(q->catalog, o->catalog)) o = q;
             /*FALLTHROUGH*/
         case STYLE_posix:
             sfputc(mp, '\f');

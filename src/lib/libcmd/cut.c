@@ -609,7 +609,7 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
     cp = *argv;
     if (cp) argv++;
     do {
-        if (!cp || streq(cp, "-"))
+        if (!cp || !strcmp(cp, "-"))
             fp = sfstdin;
         else if (!(fp = sfopen(NULL, cp, "r"))) {
             error(ERROR_system(0), "%s: cannot open", cp);

@@ -44,7 +44,7 @@ int fts_flags(void) {
     char *s;
 
     s = astconf("PATH_RESOLVE", 0, 0);
-    if (streq(s, "logical")) return FTS_LOGICAL;
-    if (streq(s, "physical")) return FTS_PHYSICAL | FTS_SEEDOT;
+    if (!strcmp(s, "logical")) return FTS_LOGICAL;
+    if (!strcmp(s, "physical")) return FTS_PHYSICAL | FTS_SEEDOT;
     return FTS_COMFOLLOW | FTS_PHYSICAL | FTS_SEEDOT;
 }

@@ -399,7 +399,7 @@ skip:
     for (;;) {
         if (complete) {
             if (!(dirname = (*gp->gl_nextdir)(gp, dirname))) break;
-            prefix = streq(dirname, ".") ? (char *)0 : dirname;
+            prefix = !strcmp(dirname, ".") ? (char *)0 : dirname;
         }
         if (((!starstar && !gp->gl_starstar) ||
              (*gp->gl_type)(gp, dirname, GLOB_STARSTAR) == GLOB_DIR) &&

@@ -327,9 +327,9 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
                 for (;;) {
                     t = strchr(s, ',');
                     if (t) *t = 0;
-                    if (streq(s, CO_OPT_ACK)) {
+                    if (!strcmp(s, CO_OPT_ACK)) {
                         co->mode |= CO_MODE_ACK;
-                    } else if (streq(s, CO_OPT_INDIRECT)) {
+                    } else if (!strcmp(s, CO_OPT_INDIRECT)) {
                         co->mode |= CO_MODE_INDIRECT;
                     }
                     s = t;
@@ -392,7 +392,7 @@ nope:
     i = errno;
     s = sh[1];
     if (!s ||
-        ((s = (t = strrchr(s, '/')) ? (t + 1) : s) && !strmatch(s, "?(k)sh") && !streq(s, CO_ID))) {
+        ((s = (t = strrchr(s, '/')) ? (t + 1) : s) && !strmatch(s, "?(k)sh") && strcmp(s, CO_ID) != 0)) {
         error(2, "export %s={ksh,sh,%s}", CO_ENV_SHELL, CO_ID);
     }
     coclose(co);

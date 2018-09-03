@@ -361,7 +361,7 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
         cp->nlspath = nlspath;
         if (cp->cat != NOCAT) catclose(cp->cat);
         if ((cp->cat = find(cp->locale, cp->name)) == NOCAT)
-            cp->debug = streq(cp->locale, "debug");
+            cp->debug = !strcmp(cp->locale, "debug");
         else
             cp->debug = 0;
 #if DEBUG_trace
@@ -382,7 +382,7 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
 
         r = catgets(cp->cat, mp->set, mp->seq, msg);
         if (r != (char *)msg) {
-            if (streq(r, (char *)msg))
+            if (!strcmp(r, (char *)msg))
                 r = (char *)msg;
             else if (strcmp(fmtfmt(r), fmtfmt(msg))) {
                 sfprintf(sfstderr,
@@ -394,7 +394,7 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
     }
 
 done:
-    if (r == (char *)msg && ((!cp && streq(loc, "debug")) || (cp && cp->debug))) {
+    if (r == (char *)msg && ((!cp && !strcmp(loc, "debug")) || (cp && cp->debug))) {
         p = tempget(state.tmp);
         sfprintf(state.tmp, "(%s,%s,%s,%s)", loc, cmd, cat, r);
         r = tempuse(state.tmp, p);

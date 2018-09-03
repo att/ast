@@ -53,7 +53,7 @@ Dllnames_t *dllnames(const char *id, const char *name, Dllnames_t *names) {
     size_t n;
 
     n = strlen(id);
-    if (strneq(name, id, n) && (streq(name + n, "_s") || streq(name + n, "_t"))) return 0;
+    if (strneq(name, id, n) && (!strcmp(name + n, "_s") || !strcmp(name + n, "_t"))) return 0;
     if (!names) {
         s = fmtbuf(sizeof(Dllnames_t *) + sizeof(names) - 1);
         n = (s - (char *)0) % sizeof(names);
@@ -118,7 +118,7 @@ void *dll_lib(Dllnames_t *names, unsigned long version, Dllerror_f dllerrorf, vo
     //
 
     for (lib = loaded; lib; lib = lib->next) {
-        if (streq(names->base, lib->base)) {
+        if (!strcmp(names->base, lib->base)) {
             libf = lib->libf;
             goto init;
         }
@@ -131,7 +131,7 @@ void *dll_lib(Dllnames_t *names, unsigned long version, Dllerror_f dllerrorf, vo
                     names->data + sizeof(names->data) - names->path);
 
     if (!dll &&
-        (streq(names->name, names->base) ||
+        (!strcmp(names->name, names->base) ||
          !(dll = dllplugin(names->id, names->base, NULL, version, NULL, RTLD_LAZY, names->path,
                            names->data + sizeof(names->data) - names->path)))) {
         if (dllerrorf) {

@@ -125,7 +125,7 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
     cp = *argv;
     if (cp) argv++;
     do {
-        if (!cp || streq(cp, "-")) {
+        if (!cp || !strcmp(cp, "-")) {
             cp = "/dev/stdin";
             fp = sfstdin;
             sfset(fp, SF_SHARE, 1);

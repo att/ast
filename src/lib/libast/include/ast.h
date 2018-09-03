@@ -187,7 +187,6 @@
 #define pointerof(x) (void *)((uintptr_t)(x))
 #define roundof(x, y) (((x) + ((y)-1)) & ~((y)-1))
 
-#define streq(a, b) (*(a) == *(b) && !strcmp(a, b))
 #define strneq(a, b, n) (*(a) == *(b) && !strncmp(a, b, n))
 
 typedef int (*Ast_confdisc_f)(const char *, const char *, const char *);

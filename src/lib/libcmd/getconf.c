@@ -233,12 +233,12 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
     name = *argv;
     if (!name) {
         path = 0;
-    } else if (streq(name, empty)) {
+    } else if (!strcmp(name, empty)) {
         name = NULL;
         path = *++argv;
         if (path) {
             argv++;
-            if (streq(path, empty)) {
+            if (!strcmp(path, empty)) {
                 path = 0;
             } else {
                 path = dev;
@@ -255,11 +255,11 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
                 path = dev;
                 value = 0;
             } else {
-                if (streq(path, empty)) {
+                if (!strcmp(path, empty)) {
                     path = dev;
                     flags = 0;
                 }
-                if ((value = *++argv) && (streq(value, empty))) {
+                if ((value = *++argv) && !strcmp(value, empty)) {
                     value = 0;
                     flags = 0;
                 }

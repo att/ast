@@ -220,7 +220,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
                 continue;
             case ':':
                 s = "/usr/bin/uname";
-                if (!streq(argv[0], s) && (!eaccess(s, X_OK) || !eaccess(s += 4, X_OK))) {
+                if (strcmp(argv[0], s) != 0 && (!eaccess(s, X_OK) || !eaccess(s += 4, X_OK))) {
                     argv[0] = s;
                     return sh_run(context, argc, argv);
                 }

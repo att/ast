@@ -532,7 +532,7 @@ static int inetopen(const char *path, int flags, Inetintr_f onintr, void *handle
     t = strchr(s, '/');
     if (t) {
         *t++ = 0;
-        if (streq(s, "local")) s = strdup("localhost");
+        if (!strcmp(s, "local")) s = strdup("localhost");
         fd = getaddrinfo(s, t, &hint, &addr);
     } else {
         fd = -1;

@@ -132,33 +132,33 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
     if (pfx && pfx[0] == '/' && pfx[1]) {
         pfx++;
         if (dir && !*dir) dir = 0;
-        if (streq(pfx, "check")) {
+        if (!strcmp(pfx, "check")) {
             tmp.nocheck = !dir;
             return (char *)pfx;
-        } else if (streq(pfx, "cycle")) {
+        } else if (!strcmp(pfx, "cycle")) {
             if (!dir) {
                 tmp.manual = 1;
                 if (tmp.dir && !*tmp.dir++) tmp.dir = tmp.vec;
             } else
-                tmp.manual = streq(dir, "manual");
+                tmp.manual = !strcmp(dir, "manual");
             return (char *)pfx;
-        } else if (streq(pfx, "prefix")) {
+        } else if (!strcmp(pfx, "prefix")) {
             if (tmp.pfx) free(tmp.pfx);
             tmp.pfx = dir ? strdup(dir) : (char *)0;
             return (char *)pfx;
-        } else if (streq(pfx, "private")) {
+        } else if (!strcmp(pfx, "private")) {
             tmp.mode = S_IRUSR | S_IWUSR;
             return (char *)pfx;
-        } else if (streq(pfx, "public")) {
+        } else if (!strcmp(pfx, "public")) {
             tmp.mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
             return (char *)pfx;
-        } else if (streq(pfx, "seed")) {
+        } else if (!strcmp(pfx, "seed")) {
             tmp.key =
                 (tmp.seed = (tmp.rng = dir ? (uintmax_t)strtoul(dir, NULL, 0) : (uintmax_t)1) != 0)
                     ? (uintmax_t)0x63c63cd9L
                     : 0;
             return (char *)pfx;
-        } else if (streq(pfx, TMP_ENV)) {
+        } else if (!strcmp(pfx, TMP_ENV)) {
             if (tmp.vec) {
                 free(tmp.vec);
                 tmp.vec = 0;
@@ -166,7 +166,7 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
             if (tmp.tmpdir) free(tmp.tmpdir);
             tmp.tmpdir = dir ? strdup(dir) : (char *)0;
             return (char *)pfx;
-        } else if (streq(pfx, TMP_PATH_ENV)) {
+        } else if (!strcmp(pfx, TMP_PATH_ENV)) {
             if (tmp.vec) {
                 free(tmp.vec);
                 tmp.vec = 0;

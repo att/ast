@@ -72,7 +72,7 @@ char *fmtgid(int gid) {
     if (gr) {
         name = gr->gr_name;
 #if __CYGWIN__
-        if (streq(name, "Administrators")) name = "sys";
+        if (!strcmp(name, "Administrators")) name = "sys";
 #endif
     } else if (gid == 0)
         name = "sys";

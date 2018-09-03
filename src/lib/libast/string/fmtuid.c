@@ -72,7 +72,7 @@ char *fmtuid(int uid) {
     if (pw) {
         name = pw->pw_name;
 #if __CYGWIN__
-        if (streq(name, "Administrator")) name = "root";
+        if (!strcmp(name, "Administrator")) name = "root";
 #endif
     } else if (uid == 0) {
         name = "root";

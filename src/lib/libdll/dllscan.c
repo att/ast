@@ -146,12 +146,12 @@ Dllinfo_t *dllinfo(void) {
                 }
             }
         }
-        if (!info.sibling[0] || streq(info.sibling[0], bin)) info.sibling[0] = bin;
-        if (!streq(info.sibling[0], lib)) info.sibling[1] = lib;
+        if (!info.sibling[0] || !strcmp(info.sibling[0], bin)) info.sibling[0] = bin;
+        if (!!strcmp(info.sibling[0], lib)) info.sibling[1] = lib;
         if (!info.env) info.env = "LD_LIBRARY_PATH";
         info.prefix = astconf("LIBPREFIX", NULL, NULL);
         info.suffix = astconf("LIBSUFFIX", NULL, NULL);
-        if (streq(info.suffix, ".dll")) {
+        if (!strcmp(info.suffix, ".dll")) {
             info.flags |= DLL_INFO_PREVER;
         } else {
             info.flags |= DLL_INFO_DOTVER;
@@ -224,7 +224,7 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
         scan->lib = (char **)(scan + 1);
         s = *scan->lib = (char *)(scan->lib + 2);
         sfsprintf(s, i, "lib/%s", lib);
-        if (!version && streq(info->suffix, ".dylib")) version = "0.0";
+        if (!version && !strcmp(info->suffix, ".dylib")) version = "0.0";
     }
     if (!name || !*name || (*name == '-' && !*(name + 1))) {
         name = (const char *)"?*";
@@ -242,7 +242,7 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
         j = strlen(info->prefix);
         if (!j || (i > j && strneq(name, info->prefix, j))) {
             k = strlen(info->suffix);
-            if (i > k && streq(name + i - k, info->suffix)) {
+            if (i > k && !strcmp(name + i - k, info->suffix)) {
                 i -= j + k;
                 t = calloc(1, i + 1);
                 if (!t) goto bad;

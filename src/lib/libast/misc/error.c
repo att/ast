@@ -280,7 +280,7 @@ void error_break(void) {
         sfprintf(error_state.tty, "error breakpoint: ");
         s = sfgetr(error_state.tty, '\n', 1);
         if (s) {
-            if (streq(s, "q") || streq(s, "quit")) exit(0);
+            if (!strcmp(s, "q") || !strcmp(s, "quit")) exit(0);
             stropt(s, options, sizeof(*options), error_setopt, NULL);
         }
     }

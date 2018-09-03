@@ -183,7 +183,7 @@ regclass_t regclass(const char *s, char **e) {
     if (!(cp = zp)) {
         if (!(cp = xp)) return 0;
         cp->size = 0;
-        if (!streq(cp->name, s)) {
+        if (strcmp(cp->name, s) != 0) {
             free((void *)cp->name);
             cp->name = 0;
         }

@@ -244,7 +244,7 @@ Cojob_t *coexec(Coshell_t *co, const char *action, int flags, const char *out, c
         } else if ((flags & CO_SERIALIZE) && (cj->out = pathtemp(NULL, 64, NULL, "coo", NULL)))
             sfprintf(sp, " >%s", cj->out);
         if (err) {
-            if (out && streq(out, err)) {
+            if (out && !strcmp(out, err)) {
                 sfprintf(sp, " 2>&1");
             } else if (*err == '/') {
                 sfprintf(sp, " 2%s%s", red, err);
@@ -290,7 +290,7 @@ Cojob_t *coexec(Coshell_t *co, const char *action, int flags, const char *out, c
             sfprintf(sp, " >%s", cj->out);
         }
         if (err) {
-            if (out && streq(out, err)) {
+            if (out && !strcmp(out, err)) {
                 sfprintf(sp, " 2>&1");
             } else if (*err == '/') {
                 sfprintf(sp, " 2%s%s", red, err);

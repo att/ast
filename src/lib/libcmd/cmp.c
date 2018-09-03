@@ -297,14 +297,14 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
     }
     n = 2;
 
-    if (streq(file1, "-")) {
+    if (!strcmp(file1, "-")) {
         f1 = sfstdin;
     } else if (!(f1 = sfopen(NULL, file1, "r"))) {
         if (!(flags & CMP_SILENT)) error(ERROR_system(0), "%s: cannot open", file1);
         goto done;
     }
 
-    if (streq(file2, "-")) {
+    if (!strcmp(file2, "-")) {
         f2 = sfstdin;
     } else if (!(f2 = sfopen(NULL, file2, "r"))) {
         if (!(flags & CMP_SILENT)) error(ERROR_system(0), "%s: cannot open", file2);
