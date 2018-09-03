@@ -800,27 +800,6 @@ then
     rmdir "$pwd/f1"
 fi
 
-$SHELL 2> /dev/null <<- \!!! || log_error 'alarm during read causes core dump'
-    function input_feed
-    {
-        typeset i
-        for ((i=0; i<3 ; i++))
-        do
-            print hello,world
-            sleep .3
-        done
-    }
-    alarm -r alarm_handler +.1
-    function alarm_handler.alarm
-    {
-        print "goodbye world" | read arg1 arg2
-    }
-
-    input_feed | while IFS=',' read arg1 arg2
-    do
-    :
-    done
-!!!
 # test for eval bug when called from . script in a startup file.
 print $'eval : foo\nprint ok' > $TEST_DIR/evalbug
 print ". $TEST_DIR/evalbug" >$TEST_DIR/envfile
