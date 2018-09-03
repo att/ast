@@ -350,14 +350,15 @@ extern volatile bool vmbusy_flag;
 extern void *ast_malloc(size_t size);
 extern void *ast_calloc(size_t count, size_t size);
 extern void *ast_realloc(void *ptr, size_t size);
-extern void *ast_valloc(size_t size);
 extern void ast_free(void *ptr);
 
 #define malloc(s) ast_malloc(s)
 #define calloc(c, s) ast_calloc(c, s)
 #define realloc(p, s) ast_realloc(p, s)
-#define valloc(s) ast_valloc(s)
 #define free(p) ast_free(p)
+// This is not used and is not expected to be used so make sure if it is used
+// it causes a problem.
+#define valloc(s) valloc_has_no_ast_wrapper(s)
 #endif
 
 // Some systems (e.g., macOS, OpenBSD) don't implement `eaccess()`. But all

@@ -45,14 +45,6 @@ void *ast_realloc(void *ptr, size_t size) {
     return p;
 }
 
-void *ast_valloc(size_t size) {
-    vmbusy_flag = true;
-    void *p = valloc(size);
-    vmbusy_flag = false;
-    assert(p);
-    return p;
-}
-
 void ast_free(void *ptr) {
     vmbusy_flag = true;
     free(ptr);
