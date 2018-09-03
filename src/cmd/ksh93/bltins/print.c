@@ -871,6 +871,10 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                             pp->err = 1;
                             d = longmax;
                         }
+                        // A conversion overlow could occur but won't unless someone is deliberately
+                        // trying to do so. That should not cause a security problem in this context
+                        // but theoretically could do so.
+                        // cppcheck-suppress floatConversionOverflow
                         value->ll = (Sflong_t)d;
                         if (lastchar == *pp->nextarg) {
                             value->ll = *argp;
