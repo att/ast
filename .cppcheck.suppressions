@@ -12,3 +12,11 @@ unmatchedSuppression
 // src/cmd/ksh93/sh/io.c. Those warnings are all false positives. Suppressing
 // them with inline warnings is too hideous to allow so globally suppress them.
 resourceLeak
+// For the moment we ignore warnings about using non-reentrant functions when
+// a reentrant thread-safe variant exists. Since ksh is single-threaded this
+// isn't a problem although it could be is a third-party plugin created
+// threads that used any of these functions.
+getpwuidCalled
+ttynameCalled
+getloginCalled
+getpwnamCalled
