@@ -312,7 +312,7 @@
 #define _ast_LL 1  // LL numeric suffix supported
 #define _ast_int8_t long
 #define _ast_intmax_t _ast_int8_t
-#define _ast_intmax_long 1
+#mesondefine _ast_intmax_long
 #define _ast_intswap 7
 #define _ast_fltmax_t long double
 
