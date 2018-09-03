@@ -66,7 +66,8 @@ typedef struct regsubop_s {
 #endif
 
 // The cast is because some calls pass a `Mbstate_t*` which embeds a `mbstate_t` at its start.
-#define MBSIZE(e, p) (((e)->i = mbrlen((char *)p, MB_LEN_MAX, (mbstate_t *)&(e)->q)) > 0 ? (e)->i : 1)
+#define MBSIZE(e, p) \
+    (((e)->i = mbrlen((char *)p, MB_LEN_MAX, (mbstate_t *)&(e)->q)) > 0 ? (e)->i : 1)
 
 #undef RE_DUP_MAX                    /* posix puts this in limits.h!	*/
 #define RE_DUP_MAX (INT_MAX / 2 - 1) /* 2*RE_DUP_MAX won't overflow	*/

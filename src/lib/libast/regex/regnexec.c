@@ -312,7 +312,8 @@ static_fn int pospush(Env_t *env, Rex_t *rex, unsigned char *p, int be) {
  * returns 1 if new is better, -1 if old, else 0.
  */
 
-static_fn int regnexec_better(Env_t *env, Pos_t *os, Pos_t *ns, Pos_t *oend, Pos_t *nend, int level) {
+static_fn int regnexec_better(Env_t *env, Pos_t *os, Pos_t *ns, Pos_t *oend, Pos_t *nend,
+                              int level) {
     Pos_t *oe;
     Pos_t *ne;
     int k;
@@ -382,7 +383,8 @@ static_fn void regnexec_showmatch(regmatch_t *p) {
     sfputc(sfstdout, ')');
 }
 
-static_fn int _regnexec_better(Env_t *env, Pos_t *os, Pos_t *ns, Pos_t *oend, Pos_t *nend, int level) {
+static_fn int _regnexec_better(Env_t *env, Pos_t *os, Pos_t *ns, Pos_t *oend, Pos_t *nend,
+                               int level) {
     int i;
 
     DEBUG_CODE(0x0040, {
@@ -401,7 +403,8 @@ static_fn int _regnexec_better(Env_t *env, Pos_t *os, Pos_t *ns, Pos_t *oend, Po
 
 #endif
 
-#define follow(e, r, c, s) ((r)->next ? regnexec_parse(e, (r)->next, c, s) : (c) ? regnexec_parse(e, c, 0, s) : BEST)
+#define follow(e, r, c, s) \
+    ((r)->next ? regnexec_parse(e, (r)->next, c, s) : (c) ? regnexec_parse(e, c, 0, s) : BEST)
 
 static_fn int regnexec_parse(Env_t *, Rex_t *, Rex_t *, unsigned char *);
 
@@ -638,7 +641,7 @@ static_fn int collic(Celt_t *ce, char *key, char *nxt, int c, int x) {
 }
 
 static_fn int collmatch(Env_t *env, Rex_t *rex, unsigned char *s, unsigned char *e,
-                     unsigned char **p) {
+                        unsigned char **p) {
     unsigned char *t;
     wchar_t c;
     int z;
@@ -696,7 +699,7 @@ static_fn int collmatch(Env_t *env, Rex_t *rex, unsigned char *s, unsigned char 
 }
 
 static_fn unsigned char *nestmatch(unsigned char *s, unsigned char *e, const unsigned short *type,
-                                int co) {
+                                   int co) {
     int c;
     int cc;
     unsigned int n;
@@ -969,9 +972,10 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                     } else {
                         if (n < i) return GOOD;
                     }
-                    if (n == i && regnexec_better(env, (Pos_t *)env->bestpos->vec, (Pos_t *)env->pos->vec,
-                                         (Pos_t *)env->bestpos->vec + env->bestpos->cur,
-                                         (Pos_t *)env->pos->vec + env->pos->cur, 0) <= 0)
+                    if (n == i &&
+                        regnexec_better(env, (Pos_t *)env->bestpos->vec, (Pos_t *)env->pos->vec,
+                                        (Pos_t *)env->bestpos->vec + env->bestpos->cur,
+                                        (Pos_t *)env->pos->vec + env->pos->cur, 0) <= 0)
                         return GOOD;
                 }
                 env->best[0].rm_eo = n;
@@ -1217,7 +1221,8 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                 catcher.serial = rex->serial;
                 catcher.re.group_catch.cont = rex->re.cond_catch.cont;
                 catcher.next = rex->next;
-                return regnexec_parse(env, rex->re.cond_catch.next[1], &catcher, rex->re.cond_catch.beg);
+                return regnexec_parse(env, rex->re.cond_catch.next[1], &catcher,
+                                      rex->re.cond_catch.beg);
             case REX_CAT:
                 return follow(env, rex, rex->re.group_catch.cont, s);
             case REX_GROUP_CUT:
@@ -1746,7 +1751,8 @@ int regnexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch
                         else
                             index -= e->re.bm.back;
                         while (index <= x) {
-                            if ((i = regnexec_parse(env, e->next, &env->done, buf + index)) != NONE) {
+                            if ((i = regnexec_parse(env, e->next, &env->done, buf + index)) !=
+                                NONE) {
                                 if (env->stack) env->best[0].rm_so = index;
                                 n = env->nsub;
                                 goto hit;

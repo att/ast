@@ -367,7 +367,8 @@ void errorv(const char *id, int level, va_list ap) {
                 sfprintf(stkstd, "       ");
             else
                 sfprintf(stkstd, "%s: ", ERROR_translate(NULL, NULL, ast.id, "Usage"));
-            if (file || (opt_info.argv && (file = opt_info.argv[0]))) error_print(stkstd, file, " ");
+            if (file || (opt_info.argv && (file = opt_info.argv[0])))
+                error_print(stkstd, file, " ");
         } else {
             if (level && !(flags & ERROR_NOID)) {
                 if (error_info.context && level > 0)

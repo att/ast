@@ -2050,9 +2050,8 @@ static_fn ssize_t slowread(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *handl
     while (1) {
         if (io_prompt(shp, iop, shp->nextprompt) < 0 && errno == EIO) return (0);
         if (shp->timeout) {
-            timeout = sh_timeradd(
-                sh_isstate(shp, SH_GRACE) ? 1000L * TGRACE : 1000L * shp->timeout, 0, time_grace,
-                shp);
+            timeout = sh_timeradd(sh_isstate(shp, SH_GRACE) ? 1000L * TGRACE : 1000L * shp->timeout,
+                                  0, time_grace, shp);
         }
         rsize = (*readf)(shgd->ed_context, sffileno(iop), (char *)buff, size, reedit);
         if (timeout) {
@@ -2061,7 +2060,8 @@ static_fn ssize_t slowread(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *handl
         }
 
         if (!(rsize && *(char *)buff != '\n' && shp->nextprompt == 1 &&
-            sh_isoption(shp, SH_HISTEXPAND))) break;
+              sh_isoption(shp, SH_HISTEXPAND)))
+            break;
 
         ((char *)buff)[rsize] = '\0';
         if (xp) {

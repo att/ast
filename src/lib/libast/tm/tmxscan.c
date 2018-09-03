@@ -144,7 +144,8 @@ static_fn Time_t tmx_gen(Tm_t *tm, Set_t *set) {
  * the format scan workhorse
  */
 
-static_fn Time_t tmx_scan(const char *s, char **e, const char *format, char **f, Time_t t, long flags) {
+static_fn Time_t tmx_scan(const char *s, char **e, const char *format, char **f, Time_t t,
+                          long flags) {
     int d;
     int n;
     char *p;

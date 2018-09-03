@@ -391,8 +391,8 @@ bad:
 nope:
     i = errno;
     s = sh[1];
-    if (!s ||
-        ((s = (t = strrchr(s, '/')) ? (t + 1) : s) && !strmatch(s, "?(k)sh") && strcmp(s, CO_ID) != 0)) {
+    if (!s || ((s = (t = strrchr(s, '/')) ? (t + 1) : s) && !strmatch(s, "?(k)sh") &&
+               strcmp(s, CO_ID) != 0)) {
         error(2, "export %s={ksh,sh,%s}", CO_ENV_SHELL, CO_ID);
     }
     coclose(co);

@@ -2057,7 +2057,7 @@ static_fn void env_init(Shell_t *shp) {
     return;
 }
 
-    // Function versions of these.
+// Function versions of these.
 
 #define DISABLE  // proto workaround
 

@@ -64,7 +64,8 @@ static_fn char **initconformance(void) {
                 if ((c = (m - t)) == 6 && !strncmp(t, "linux", 5)) {
                     sfputr(sp, "gnu", 0);
                     j++;
-                } else if ((c > 3 && !strncmp(t, "bsd", 3)) || (c == 7 && !strncmp(t, "debian", 7))) {
+                } else if ((c > 3 && !strncmp(t, "bsd", 3)) ||
+                           (c == 7 && !strncmp(t, "debian", 7))) {
                     sfputr(sp, "bsd", 0);
                     j++;
                 }

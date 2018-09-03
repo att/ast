@@ -171,8 +171,8 @@ typedef struct Cenv_s {
 static_fn Rex_t *regcomp_node(Cenv_t *env, int type, int lo, int hi, size_t extra) {
     Rex_t *e;
 
-    DEBUG_CODE(0x0800, sfprintf(sfstdout, "%s:%d regcomp_node(%d,%d,%d,%u)\n", file, line, type, lo, hi,
-                                sizeof(Rex_t) + extra));
+    DEBUG_CODE(0x0800, sfprintf(sfstdout, "%s:%d regcomp_node(%d,%d,%d,%u)\n", file, line, type, lo,
+                                hi, sizeof(Rex_t) + extra));
     e = (Rex_t *)alloc(env->disc, 0, sizeof(Rex_t) + extra);
     if (e) {
         memset(e, 0, sizeof(Rex_t) + extra);
@@ -255,8 +255,10 @@ static_fn void regcomp_mark(Rex_t *e, int set) {
                 case REX_ALT:
                 case REX_CONJ:
                 case REX_GROUP_COND:
-                    if (e->re.group.expr.binary.left) regcomp_mark(e->re.group.expr.binary.left, set);
-                    if (e->re.group.expr.binary.right) regcomp_mark(e->re.group.expr.binary.right, set);
+                    if (e->re.group.expr.binary.left)
+                        regcomp_mark(e->re.group.expr.binary.left, set);
+                    if (e->re.group.expr.binary.right)
+                        regcomp_mark(e->re.group.expr.binary.right, set);
                     break;
                 case REX_GROUP:
                 case REX_GROUP_AHEAD:
@@ -391,7 +393,8 @@ static_fn int regcomp_stats(Cenv_t *env, Rex_t *e) {
                 env->stats.m = 0;
                 n = env->stats.n;
                 env->stats.n = 0;
-                if (e->re.group.expr.binary.right && regcomp_stats(env, e->re.group.expr.binary.right))
+                if (e->re.group.expr.binary.right &&
+                    regcomp_stats(env, e->re.group.expr.binary.right))
                     return 1;
                 if (env->stats.m > m)
                     env->stats.m = m;
@@ -486,13 +489,16 @@ static_fn int regcomp_stats(Cenv_t *env, Rex_t *e) {
                 x = env->stats.x;
                 y = env->stats.y;
                 if (e->re.group.size > 0 && ++env->stats.b <= 0) return 1;
-                if (e->re.group.expr.binary.left && regcomp_stats(env, e->re.group.expr.binary.left))
+                if (e->re.group.expr.binary.left &&
+                    regcomp_stats(env, e->re.group.expr.binary.left))
                     return 1;
                 q = e->re.group.expr.binary.right;
                 if (q) {
-                    if (q->re.group.expr.binary.left && regcomp_stats(env, q->re.group.expr.binary.left))
+                    if (q->re.group.expr.binary.left &&
+                        regcomp_stats(env, q->re.group.expr.binary.left))
                         return 1;
-                    if (q->re.group.expr.binary.right && regcomp_stats(env, q->re.group.expr.binary.right))
+                    if (q->re.group.expr.binary.right &&
+                        regcomp_stats(env, q->re.group.expr.binary.right))
                         return 1;
                 }
                 env->stats.m = m;
@@ -913,7 +919,7 @@ static_fn int regcomp_token(Cenv_t *env) {
 }
 
 static_fn Celt_t *regcomp_col(Cenv_t *env, Celt_t *ce, int ic, unsigned char *bp, int bw, int bc,
-                   unsigned char *ep, int ew, int ec) {
+                              unsigned char *ep, int ew, int ec) {
     char *s;
     unsigned char *k;
     unsigned char *e;
@@ -1681,7 +1687,8 @@ static_fn int regcomp_insert(Cenv_t *env, Rex_t *f, Rex_t *g) {
         default:
             return 1;
     }
-    if (!(t = g->re.trie.root[*s]) && !(t = g->re.trie.root[*s] = regcomp_trienode(env, *s))) return 1;
+    if (!(t = g->re.trie.root[*s]) && !(t = g->re.trie.root[*s] = regcomp_trienode(env, *s)))
+        return 1;
     for (len = 1;;) {
         if (t->c == *s) {
             if (++s >= e) break;
@@ -1710,7 +1717,8 @@ static_fn Rex_t *regcomp_trie(Cenv_t *env, Rex_t *e, Rex_t *f) {
 
     if (e->next || f->next || !regcomp_isstring(e) || e->flags != f->flags) return 0;
     if (regcomp_isstring(f)) {
-        if (!(g = regcomp_node(env, REX_TRIE, 0, 0, (UCHAR_MAX + 1) * sizeof(Trie_node_t *)))) return 0;
+        if (!(g = regcomp_node(env, REX_TRIE, 0, 0, (UCHAR_MAX + 1) * sizeof(Trie_node_t *))))
+            return 0;
         g->re.trie.min = INT_MAX;
         if (regcomp_insert(env, f, g)) goto nospace;
         drop(env->disc, f);
@@ -2339,7 +2347,8 @@ static_fn Rex_t *regcomp_seq(Cenv_t *env) {
                                n);
                         f->re.string.size = n;
                     }
-                    if (!(f = regcomp_rep(env, f, 0, 0)) || !(f = regcomp_cat(env, f, regcomp_seq(env)))) {
+                    if (!(f = regcomp_rep(env, f, 0, 0)) ||
+                        !(f = regcomp_cat(env, f, regcomp_seq(env)))) {
                         drop(env->disc, e);
                         return 0;
                     }
@@ -2526,7 +2535,8 @@ static_fn Rex_t *regcomp_con(Cenv_t *env) {
     Rex_t *f;
     Rex_t *g;
 
-    if (!(e = regcomp_seq(env)) || !(env->flags & REG_AUGMENTED) || regcomp_token(env) != T_AND) return e;
+    if (!(e = regcomp_seq(env)) || !(env->flags & REG_AUGMENTED) || regcomp_token(env) != T_AND)
+        return e;
     eat(env);
     if (!(f = regcomp_con(env))) {
         drop(env->disc, e);
@@ -2616,7 +2626,7 @@ static_fn void bmstr(Cenv_t *env, Rex_t *a, unsigned char *v, int n, Bm_mask_t b
  */
 
 static_fn int bmtrie(Cenv_t *env, Rex_t *a, unsigned char *v, Trie_node_t *x, int n, int m,
-                  Bm_mask_t b) {
+                     Bm_mask_t b) {
     do {
         v[m] = x->c;
         if (m >= (n - 1)) {
@@ -2689,8 +2699,8 @@ static_fn int regcomp_special(Cenv_t *env, regex_t *p) {
             }
             if (!(q = (size_t *)alloc(env->disc, 0, (n + 1) * sizeof(size_t)))) return 1;
             if (!(a = regcomp_node(env, REX_BM, 0, 0,
-                           n * (sizeof(Bm_mask_t *) + (UCHAR_MAX + 1) * sizeof(Bm_mask_t)) +
-                               (UCHAR_MAX + n + 2) * sizeof(size_t)))) {
+                                   n * (sizeof(Bm_mask_t *) + (UCHAR_MAX + 1) * sizeof(Bm_mask_t)) +
+                                       (UCHAR_MAX + n + 2) * sizeof(size_t)))) {
                 alloc(env->disc, q, 0);
                 return 1;
             }

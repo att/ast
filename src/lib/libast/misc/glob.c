@@ -197,7 +197,7 @@ static_fn void glob_trim(char *sp, char *p1, int *n1, char *p2, int *n2) {
 }
 
 static_fn void glob_addmatch(glob_t *gp, const char *dir, const char *pat, const char *rescan,
-                     char *endslash, int meta) {
+                             char *endslash, int meta) {
     globlist_t *ap;
     int offset;
     int type;

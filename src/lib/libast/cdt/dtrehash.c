@@ -202,7 +202,8 @@ static_fn void *dtrehash_clear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap) {
 
         dtrehash_delete(dt, HLNKP(tbl, p), DT_DELETE);
 
-        if ((t = asogetptr(tbl->list + p)) && HTABLE(t)) dtrehash_clear(dt, (Htbl_t *)t, lev + 1, zap);
+        if ((t = asogetptr(tbl->list + p)) && HTABLE(t))
+            dtrehash_clear(dt, (Htbl_t *)t, lev + 1, zap);
 
         if (lev == 0) HCLSOPEN(dt, p, DT_DELETE, share);
     }
@@ -218,8 +219,8 @@ static_fn void *dtrehash_clear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap) {
 }
 
 /* this constitutes the core of dtfirst() and dtlast() */
-static_fn void *dtrehash_first(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
-                    int type) {
+static_fn void *dtrehash_first(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos,
+                               uint hsh, int type) {
     ssize_t tblz;
     void *obj;
     Dtlink_t *t, *p;
@@ -259,8 +260,8 @@ static_fn void *dtrehash_first(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev,
 }
 
 /* this constitutes the core of dtnext() and dtprev() */
-static_fn void *dtrehash_next(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
-                   int type) {
+static_fn void *dtrehash_next(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos,
+                              uint hsh, int type) {
     Dtlink_t *t;
     void *obj;
 
@@ -282,8 +283,8 @@ static_fn void *dtrehash_next(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, 
 }
 
 /* construct a flat list of objects */
-static_fn void *dtrehash_flatten(Dt_t *dt, Dtlink_t **list, Dtlink_t *last, Htbl_t *tbl, ssize_t lev,
-                      int zap) {
+static_fn void *dtrehash_flatten(Dt_t *dt, Dtlink_t **list, Dtlink_t *last, Htbl_t *tbl,
+                                 ssize_t lev, int zap) {
     ssize_t tblz, p;
     Dtlink_t *t, **lnkp;
     Hash_t *hash = (Hash_t *)dt->data;
