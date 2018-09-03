@@ -5,7 +5,7 @@ libast_files += [
     'misc/optctx.c',
     'misc/optget.c', 'misc/procclose.c', 'misc/procfree.c',
     'misc/procopen.c', 'misc/procrun.c',
-    'misc/sigcrit.c', 'misc/sigdata.c',
+    'misc/sigcrit.c',
     'misc/stack.c', 'misc/state.c',
     'misc/stk.c', 'misc/translate.c', 'misc/univdata.c',
     'misc/fts.c', 'misc/vmbusy.c'

@@ -54,7 +54,6 @@ char*      fmtmatch(const char* \fIre\fP);
 char*      fmtmode(int \fImode\fP, int \fIexternal\fP);
 char*      fmtperm(int \fIperm\fP);
 char*      fmtre(const char* \fIpattern\fP);
-char*      fmtsignal(int \fIsig\fP);
 char*      fmttime(const char* \fIformat\fP, time_t \fItm\fP);
 char*      fmtuid(int \fIuid\fP);
 .EE
@@ -176,17 +175,6 @@ pattern
 .IR pattern .
 0 is returned for invalid
 .IR pattern .
-.PP
-.L fmtsignal
-returns the signal name, sans
-.LR SIG ,
-for the signal number 
-.IR sig .
-If
-.I "sig < 0"
-then the description text for
-.I \-sig
-is returned.
 .PP
 .L fmttime
 returns the results of

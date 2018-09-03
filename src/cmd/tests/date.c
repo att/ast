@@ -103,7 +103,7 @@ static void report(char *comment, char *str, char *pat, char *rem, int flags) {
     }
     if (flags & TM_PEDANTIC) sfprintf(sfstdout, " PEDANTIC");
     if (state.sig) {
-        sfprintf(sfstdout, " %s", fmtsignal(state.sig));
+        sfprintf(sfstdout, " %s", strsignal(state.sig));
         state.sig = 0;
     }
     if (rem && *rem) {

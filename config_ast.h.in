@@ -186,7 +186,6 @@
 #mesondefine _lib_statvfs
 #mesondefine _lib_statvfs64
 #mesondefine _lib_strlcat
-#mesondefine _lib_strsignal
 #mesondefine _lib_sync
 #mesondefine _lib_syncfs
 #mesondefine _lib_sysinfo
