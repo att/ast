@@ -112,7 +112,6 @@ const struct shtable3 shtab_builtins[] = {
     {"pwd", NV_BLTIN, bltin(pwd)},
     {"read", NV_BLTIN | BLT_ENV, bltin(read)},
     {"sleep", NV_BLTIN, bltin(sleep)},
-    {"alarm", NV_BLTIN, bltin(alarm)},
     {"ulimit", NV_BLTIN | BLT_ENV, bltin(ulimit)},
     {"umask", NV_BLTIN | BLT_ENV, bltin(umask)},
     {"wait", NV_BLTIN | BLT_ENV | BLT_EXIT, bltin(wait)},
@@ -314,7 +313,6 @@ const char sh_optcont[] = "[-1c?\n@(#)$Id: continue (AT&T Research) 1999-04-07 $
                           "\n"
                           "[+SEE ALSO?\bbreak\b(1)]";
 
-const char sh_optalarm[] = "r [varname seconds]";
 const char sh_optalias[] =
     "[-1c?\n@(#)$Id: alias (AT&T Research) 1999-07-07 $\n]" USAGE_LICENSE
     "[+NAME?alias - define or display aliases]"
@@ -1813,8 +1811,6 @@ const char sh_optwhence[] =
     "}"
     "[+SEE ALSO?\bcommand\b(1)]";
 
-const char e_alrm1[] = "alarm -r %s +%.3g\n";
-const char e_alrm2[] = "alarm %s %.3f\n";
 const char e_baddisc[] = "%s: invalid discipline function";
 const char e_nospace[] = "out of memory";
 const char e_nofork[] = "cannot fork";

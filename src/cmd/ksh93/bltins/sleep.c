@@ -146,7 +146,6 @@ int b_sleep(int argc, char *argv[], Shbltin_t *context) {
             sh_sigcheck(shp);
             if (tloc < (now = time(NULL))) break;
             d = (double)(tloc - now);
-            if (shp->sigflag[SIGALRM] & SH_SIGTRAP) sh_timetraps(shp);
         }
     }
     return 0;

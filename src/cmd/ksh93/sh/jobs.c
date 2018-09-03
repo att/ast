@@ -1491,7 +1491,6 @@ bool job_wait(pid_t pid) {
         nochild = job_reap(job.savesig);
         if (job.waitsafe) continue;
         if (nochild) break;
-        if (shp->sigflag[SIGALRM] & SH_SIGTRAP) sh_timetraps(shp);
         if ((intr && (shp->trapnote & (SH_SIGSET | SH_SIGTRAP))) || (pid == 1 && !intr)) break;
     }
     if (intr && (shp->trapnote & (SH_SIGSET | SH_SIGTRAP))) shp->exitval = 1;
