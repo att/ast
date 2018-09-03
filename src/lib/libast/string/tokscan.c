@@ -87,7 +87,7 @@ static_fn char *lextok(char *s, int c, char **p, int *n) {
                 *s++ = 0;
                 goto end;
             }
-        } else if (strneq(b, "null)", 5)) {
+        } else if (!strncmp(b, "null)", 5)) {
             s = b + 5;
             b = 0;
             goto end;

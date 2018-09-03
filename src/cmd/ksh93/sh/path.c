@@ -1056,7 +1056,7 @@ pid_t path_spawn(Shell_t *shp, const char *opath, char **argv, char **envp, Path
         r = 1;
         xp = envp + 1;
         while ((s = *xp++)) {
-            if (strneq(s, v, n) && s[n] == '=') {
+            if (!strncmp(s, v, n) && s[n] == '=') {
                 xval = *--xp;
                 *xp = v;
                 r = 0;

@@ -61,10 +61,10 @@ static_fn char **initconformance(void) {
                 }
                 sfputc(sp, 0);
                 j++;
-                if ((c = (m - t)) == 6 && strneq(t, "linux", 5)) {
+                if ((c = (m - t)) == 6 && !strncmp(t, "linux", 5)) {
                     sfputr(sp, "gnu", 0);
                     j++;
-                } else if ((c > 3 && strneq(t, "bsd", 3)) || (c == 7 && strneq(t, "debian", 7))) {
+                } else if ((c > 3 && !strncmp(t, "bsd", 3)) || (c == 7 && !strncmp(t, "debian", 7))) {
                     sfputr(sp, "bsd", 0);
                     j++;
                 }
@@ -127,7 +127,7 @@ char *conformance(const char *s, size_t n) {
         q = p;
         while (*q) {
             m = *q++;
-            if (strneq(t, m, s - t)) return m;
+            if (!strncmp(t, m, s - t)) return m;
         }
         if (s < e) s++;
     } while (s < e);

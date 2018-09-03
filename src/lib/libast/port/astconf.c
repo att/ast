@@ -301,7 +301,7 @@ static_fn char *astconf_synthesize(Feature_t *fp, const char *path, const char *
     for (;;) {
         while (isspace(*d)) d++;
         if (!*d) break;
-        if (strneq(d, s, n) && isspace(d[n])) {
+        if (!strncmp(d, s, n) && isspace(d[n])) {
             if (!value) {
                 for (d += n + 1; *d && !isspace(*d); d++) {
                     ;  // empty loop
@@ -328,7 +328,7 @@ static_fn char *astconf_synthesize(Feature_t *fp, const char *path, const char *
             n = s - v;
             if ((!path ||
                  (*path == *p && strlen(path) == (v - p - 1) && !strncmp(path, p, v - p - 1))) &&
-                strneq(v, value, n))
+                !strncmp(v, value, n))
                 goto ok;
             for (; isspace(*s); s++) {
                 ;  // empty loop
@@ -498,11 +498,11 @@ static_fn void astconf_initialize(Feature_t *fp, const char *path, const char *c
                                     }
                                 }
                                 if (fp->op == OP_universe) {
-                                    if (strneq(p, "xpg", 3)) {
+                                    if (!strncmp(p, "xpg", 3)) {
                                         ok = 1;
                                         break;
                                     }
-                                    if (strneq(p, "bsd", 3) || strneq(p, "ucb", 3)) {
+                                    if (!strncmp(p, "bsd", 3) || !strncmp(p, "ucb", 3)) {
                                         ok = 0;
                                         break;
                                     }
@@ -717,7 +717,7 @@ static_fn int astconf_lookup(Lookup_t *look, const char *name, unsigned int flag
     while (*name == '_') name++;
 again:
     for (p = prefix; p < &prefix[prefix_elements]; p++)
-        if (strneq(name, p->name, p->length) &&
+        if (!strncmp(name, p->name, p->length) &&
             ((c = name[p->length] == '_' || name[p->length] == '(' || name[p->length] == '#') ||
              (v = isdigit(name[p->length]) && name[p->length + 1] == '_'))) {
             if (p->call < 0) {

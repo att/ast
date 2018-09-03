@@ -176,7 +176,7 @@ char *coinitialize(Coshell_t *co, int flags) {
                         t = strsubmatch(e, s, 1);
                         if (t && (*t == '=' || (!*t && (t = strchr(e, '='))))) {
                             m = (int)(t - e);
-                            if (!strneq(e, "PATH=", 5) && !strneq(e, "_=", 2)) {
+                            if (strncmp(e, "PATH=", 5) != 0 && strncmp(e, "_=", 2) != 0) {
                                 for (n = 0; co_export[n]; n++) {
                                     xs = co_export[n];
                                     es = e;

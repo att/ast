@@ -187,8 +187,6 @@
 #define pointerof(x) (void *)((uintptr_t)(x))
 #define roundof(x, y) (((x) + ((y)-1)) & ~((y)-1))
 
-#define strneq(a, b, n) (*(a) == *(b) && !strncmp(a, b, n))
-
 typedef int (*Ast_confdisc_f)(const char *, const char *, const char *);
 typedef int (*Strcmp_context_f)(const char *, const char *, void *);
 typedef int (*Strcmp_f)(const char *, const char *);

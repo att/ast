@@ -240,7 +240,7 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
     if (name) {
         i = strlen(name);
         j = strlen(info->prefix);
-        if (!j || (i > j && strneq(name, info->prefix, j))) {
+        if (!j || (i > j && !strncmp(name, info->prefix, j))) {
             k = strlen(info->suffix);
             if (i > k && !strcmp(name + i - k, info->suffix)) {
                 i -= j + k;

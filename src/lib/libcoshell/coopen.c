@@ -137,11 +137,11 @@ static int setopt(void *handle, const void *p, int n, const char *v) {
                             v++;
                             if (*v == '-') v++;
                         }
-                        if (strneq(v, "command=", 8)) {
+                        if (!strncmp(v, "command=", 8)) {
                             cs->path = s + 8;
-                        } else if (strneq(v, "state=", 6)) {
+                        } else if (!strncmp(v, "state=", 6)) {
                             cs->db = s + 6;
-                        } else if (strneq(v, "db=", 3)) {
+                        } else if (!strncmp(v, "db=", 3)) {
                             cs->db = s + 3;
                         } else if (a < &cs->argv[elementsof(cs->argv) - 2] && *v && *v != ':') {
                             *a++ = s;

@@ -816,9 +816,9 @@ static_fn int optget_init(char *s, Optpass_t *p) {
                 if (*s++ == '[') {
                     if (*s++ != '-') {
                         l = 0;
-                        if ((strneq(s - 1, "+NAME?", 6) && (s += 5)) ||
-                            (strneq(s - 1, "+LIBRARY?", 9) && (s += 8) && (l = 1)) ||
-                            (strneq(s - 1, "+PLUGIN?", 8) && (s += 7) && (l = 1))) {
+                        if ((!strncmp(s - 1, "+NAME?", 6) && (s += 5)) ||
+                            (!strncmp(s - 1, "+LIBRARY?", 9) && (s += 8) && (l = 1)) ||
+                            (!strncmp(s - 1, "+PLUGIN?", 8) && (s += 7) && (l = 1))) {
                             for (; *s == '\a' || *s == '\b' || *s == '\v' || *s == ' '; s++)
                                 ;
                             if (*s == '\f') {
@@ -846,7 +846,7 @@ static_fn int optget_init(char *s, Optpass_t *p) {
                         break;
                     }
                     if (*s == '-') s++;
-                    if (strneq(s, "catalog?", 8)) p->catalog = s += 8;
+                    if (!strncmp(s, "catalog?", 8)) p->catalog = s += 8;
                 }
             }
     }
@@ -858,7 +858,7 @@ static_fn int optget_init(char *s, Optpass_t *p) {
     s = p->catalog;
     if (s) {
         p->catalog = ((t = strchr(s, ']')) &&
-                      (!p->id || (t - s) != strlen(p->id) || !strneq(s, p->id, t - s)))
+                      (!p->id || (t - s) != strlen(p->id) || !!strncmp(s, p->id, t - s)))
                          ? optget_save(s, t - s, 0, 0, 0, 0)
                          : (char *)0;
     }
@@ -1647,7 +1647,7 @@ again:
                                             vl = m - 1;
                                         } else
                                             for (j = 0; j < elementsof(attrs); j++)
-                                                if (strneq(t, attrs[j].name, m)) {
+                                                if (!strncmp(t, attrs[j].name, m)) {
                                                     a |= attrs[j].flag;
                                                     break;
                                                 }
@@ -2572,7 +2572,7 @@ again:
                                 vl = m - 1;
                             } else
                                 for (j = 0; j < elementsof(attrs); j++)
-                                    if (strneq(t, attrs[j].name, m)) {
+                                    if (!strncmp(t, attrs[j].name, m)) {
                                         a |= attrs[j].flag;
                                         break;
                                     }
@@ -3071,7 +3071,7 @@ again:
                 }
                 head = *p != ' ' && *p != '\t';
                 if (style == STYLE_html &&
-                    (*p != '<' || (!strneq(p, "<BR>", 4) && !strneq(p, "<P>", 3)))) {
+                    (*p != '<' || (!!strncmp(p, "<BR>", 4) && !!strncmp(p, "<P>", 3)))) {
                     y = p;
                     while (*p == '\t') p++;
                     if (*p == '\n') continue;
@@ -3166,9 +3166,9 @@ again:
                     if (style == STYLE_nroff && !co) continue;
                 } else if (style == STYLE_html) {
                     if (c == '<') {
-                        if (strneq(p, "NOBR>", 5))
+                        if (!strncmp(p, "NOBR>", 5))
                             n++;
-                        else if (n && strneq(p, "/NOBR>", 6) && !--n) {
+                        else if (n && !strncmp(p, "/NOBR>", 6) && !--n) {
                             for (y = p += 6;
                                  (c = *p) && c != ' ' && c != '\t' && c != '\n' && c != '<'; p++)
                                 if (c == '[')
