@@ -9,6 +9,8 @@ feature_data.set10('_more_void_int', ptr_size > int_size)
 # long is larger than int
 feature_data.set10('_more_long_int', long_size > int_size)
 
+feature_data.set10('_ast_intmax_long', long_size == sizeof(long long))
+
 # wchar_t is at least as large as an int
 feature_data.set10('_wchar_t_is_int', wchar_t_size >= int_size)
 
