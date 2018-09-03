@@ -107,13 +107,7 @@ struct Namval {
     Dtlink_t nvlink;  // space for cdt links
     char *nvname;     // pointer to name of the node
 #if _ast_sizeof_pointer >= 8
-#if _ast_intswap > 0
     unsigned short nvflag;  // attributes
-    unsigned short pad1;
-#else
-    unsigned short pad1;
-    unsigned short nvflag;  // attributes
-#endif
     uint32_t nvsize;  // size or base
 #else
     unsigned short nvflag;  // attributes

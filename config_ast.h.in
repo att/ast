@@ -309,11 +309,9 @@
 // be correct for other platforms.
 //
 // TODO: Convert these to proper feature tests.
-#define _ast_LL 1  // LL numeric suffix supported
 #define _ast_int8_t long
 #define _ast_intmax_t _ast_int8_t
 #mesondefine _ast_intmax_long
-#define _ast_intswap 7
 #define _ast_fltmax_t long double
 
 #if DEBUG_BUILD
