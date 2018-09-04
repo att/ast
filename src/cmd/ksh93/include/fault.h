@@ -62,7 +62,6 @@ typedef void (*SH_SIGTYPE)(int, void (*)(int));
 #define SH_SIGIGNORE 040        // default is ingore signal
 #define SH_SIGINTERACTIVE 0100  // handle interactive specially
 #define SH_SIGTSTP 0200         // tstp signal received
-#define SH_SIGALRM 0200         // timer alarm received
 #define SH_SIGTERM SH_SIGOFF    // term signal received
 #define SH_SIGRUNTIME 0400      // runtime value
 

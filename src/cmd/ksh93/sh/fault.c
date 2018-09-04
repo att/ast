@@ -387,7 +387,6 @@ void sh_chktrap(Shell_t *shp) {
         }
     }
     if (!shp->sigflag) return;
-    if (shp->sigflag[SIGALRM] & SH_SIGALRM) sh_timetraps(shp);
     while (--sig >= 0) {
         if (sig == cursig) continue;
         if ((shp->sigflag[sig] & SH_SIGTRAP) || (shp->siginfo && shp->siginfo[sig])) {

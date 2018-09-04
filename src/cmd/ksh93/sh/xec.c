@@ -2621,10 +2621,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             while ((pid = *procsub++)) job_wait(pid);
             shp->exitval = exitval;
         }
-        if (shp->trapnote & SH_SIGALRM) {
-            shp->trapnote &= ~SH_SIGALRM;
-            sh_timetraps(shp);
-        }
         if (shp->trapnote || (shp->exitval && sh_isstate(shp, SH_ERREXIT) && t && echeck)) {
             sh_chktrap(shp);
         }

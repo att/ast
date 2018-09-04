@@ -87,7 +87,6 @@ extern int b_umask(int, char *[], Shbltin_t *);
 extern int b_wait(int, char *[], Shbltin_t *);
 extern int b_whence(int, char *[], Shbltin_t *);
 
-extern int b_alarm(int, char *[], Shbltin_t *);
 extern int b_print(int, char *[], Shbltin_t *);
 extern int b_printf(int, char *[], Shbltin_t *);
 extern int b_pwd(int, char *[], Shbltin_t *);
@@ -96,8 +95,6 @@ extern int b_test(int, char *[], Shbltin_t *);
 extern int B_echo(int, char *[], Shbltin_t *);
 extern int b_complete(int, char *[], Shbltin_t *);
 
-extern const char e_alrm1[];
-extern const char e_alrm2[];
 extern const char e_badfun[];
 extern const char e_baddisc[];
 extern const char e_nofork[];
@@ -124,7 +121,6 @@ extern const char e_defined[];
 
 // For option parsing.
 extern const char sh_set[];
-extern const char sh_optalarm[];
 extern const char sh_optalias[];
 extern const char sh_optbreak[];
 extern const char sh_optbuiltin[];

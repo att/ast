@@ -1,5 +1,5 @@
 ksh93_files += [
-    'bltins/alarm.c', 'bltins/cd_pwd.c', 'bltins/cflow.c', 'bltins/enum.c',
+    'bltins/cd_pwd.c', 'bltins/cflow.c', 'bltins/enum.c',
     'bltins/getopts.c', 'bltins/hist.c', 'bltins/math.c', 'bltins/misc.c',
     'bltins/print.c', 'bltins/read.c',
     'bltins/sleep.c', 'bltins/test.c', 'bltins/trap.c',
@@ -7,7 +7,7 @@ ksh93_files += [
 ]
 
 shcomp_files += [
-    'bltins/alarm.c', 'bltins/cd_pwd.c', 'bltins/cflow.c', 'bltins/enum.c',
+    'bltins/cd_pwd.c', 'bltins/cflow.c', 'bltins/enum.c',
     'bltins/getopts.c', 'bltins/hist.c', 'bltins/misc.c',
     'bltins/print.c', 'bltins/read.c',
     'bltins/sleep.c', 'bltins/test.c', 'bltins/trap.c', 'bltins/typeset.c',
