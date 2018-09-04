@@ -428,9 +428,11 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
     char inquote = 0;
     struct checkpt buff;
     Edit_t *ep = (struct edit *)shp->gd->ed_context;
+    Namval_t *nq = NULL;
 
-    Namval_t *nq = 0;
-    if (!(iop = shp->sftable[fd]) && !(iop = sh_iostream(shp, fd, fd))) return (1);
+    if (!(iop = shp->sftable[fd]) && !(iop = sh_iostream(shp, fd, fd))) return 1;
+
+    memset(&buff, 0, sizeof(buff));
     sh_stats(STAT_READS);
     if (names && (name = *names)) {
         Namval_t *mp;
@@ -894,6 +896,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
     }
 
 done:
+
     if (timeout || (shp->fdstatus[fd] & (IOTTY | IONOSEEK))) sh_popcontext(shp, &buff);
     if (was_write) sfset(iop, SF_WRITE, 1);
     if (!was_share) sfset(iop, SF_SHARE, 0);
