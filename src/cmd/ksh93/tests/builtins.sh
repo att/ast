@@ -629,6 +629,25 @@ then
     rmdir "$pwd/f1"
 fi
 
+OLDPWDSYMLINK="$TEST_DIR/oldpwdsymlink"
+ln -s "$OLDPWD" "$TEST_DIR/oldpwdsymlink"
+
+# Enter physical path to skip resolving multiple symlinks while testing
+cd $(pwd -P)
+cd "$OLDPWDSYMLINK"
+
+actual="$(pwd)"
+expected="$TEST_DIR/oldpwdsymlink"
+[[ "$actual" = "$expected" ]] || log_error "pwd should print logical path" "$expected" "$actual"
+
+actual="$(pwd -L)"
+expected="$TEST_DIR/oldpwdsymlink"
+[[ "$actual" = "$expected"  ]] || log_error "pwd -L should print logical path" "$expected" "$actual"
+
+actual="$(pwd -P)"
+expected="$OLDPWD"
+[[ "$actual" = "$expected"  ]] || log_error "pwd -P should print physical path." "$expected" "$actual"
+
 # test for eval bug when called from . script in a startup file.
 print $'eval : foo\nprint ok' > $TEST_DIR/evalbug
 print ". $TEST_DIR/evalbug" >$TEST_DIR/envfile
