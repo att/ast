@@ -1584,7 +1584,8 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
         }
     } else {
         char *tofree = NULL;
-        int offset, append;
+        int offset = 0;
+        int append;
 #if _lib_pathnative
         char buff[PATH_MAX];
 #endif  // _lib_pathnative
@@ -1750,6 +1751,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
             // Restore original string.
             if (savep) ja_restore();
         }
+
         if (flags & NV_APPEND) stkseek(shp->stk, offset);
         if (tofree && tofree != Empty && tofree != EmptyStr) free(tofree);
     }
@@ -1802,11 +1804,13 @@ static_fn void rightjust(char *str, int size, int fill) {
 
 static_fn int ja_size(char *str, int size, int type) {
     char *cp = str;
-    int c, n = size;
-    int outsize;
+    int n = size;
+    int oldn = 0;
+    int c = 0;
     char *oldcp = cp;
-    int oldn;
+    int outsize;
     wchar_t w;
+
     while (*cp) {
         oldn = n;
         w = mb1char(cp);
