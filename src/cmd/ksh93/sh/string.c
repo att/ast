@@ -660,27 +660,29 @@ char *sh_checkid(char *str, char *last) {
     unsigned char *v = cp;
     int c;
 
-    if (c = mb1char(cp), isaletter(c)) {
-        while (c = mb1char(cp), isaname(c)) {
-            ;  // empty loop
-        }
+    c = mb1char(cp);
+    if (isaletter(c)) {
+        c = mb1char(cp);
+        while (isaname(c)) c = mb1char(cp);
     }
-    if (c == ']' && (!last || ((char *)cp == last))) {
-        // Eliminate [ and ]
-        while (v < cp) {
-            v[-1] = *v;
+
+    if (c != ']') return last;
+    if (last && (char *)cp != last) return last;
+
+    // Eliminate [ and ]
+    while (v < cp) {
+        v[-1] = *v;
+        v++;
+    }
+    if (last) {
+        last -= 2;
+    } else {
+        while (*v) {
+            v[-2] = *v;
             v++;
         }
-        if (last) {
-            last -= 2;
-        } else {
-            while (*v) {
-                v[-2] = *v;
-                v++;
-            }
-            v[-2] = 0;
-            last = (char *)v;
-        }
+        v[-2] = 0;
+        last = (char *)v;
     }
     return last;
 }
