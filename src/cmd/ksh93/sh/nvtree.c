@@ -729,7 +729,8 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
     if (!special && fp && !nv_isarray(np)) {
         Namfun_t *xp;
         if (!wp->out) {
-            fp = nv_stack(np, fp);
+            // TODO: Is this correct? Why would `nv_stack()` be called twice like this?
+            (void)nv_stack(np, fp);
             fp = nv_stack(np, NULL);
             if (fp) free(fp);
             np->nvfun = 0;
@@ -1187,7 +1188,7 @@ static_fn void put_tree(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
     if (ap) nleft = array_elem(ap);
     if (nleft == 0) {
         // TODO: Is this correct? Why would `nv_stack()` be called twice like this?
-        fp = nv_stack(np, fp);
+        (void)nv_stack(np, fp);
         fp = nv_stack(np, NULL);
         if (fp) free(fp);
     }
