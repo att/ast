@@ -599,7 +599,6 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                     int fsize = str - (char *)(*ptr);
                     const struct mathtab *tp;
                     Namval_t *nq;
-                    c = **ptr;
                     lvalue->fun = 0;
                     sfprintf(shp->stk, ".sh.math.%.*s%c", fsize, *ptr, 0);
                     stkseek(shp->stk, off);
