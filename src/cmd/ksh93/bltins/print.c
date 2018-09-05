@@ -894,7 +894,6 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
             case 'E':
             case 'F':
             case 'G': {
-                d = sh_strnum(shp, *pp->nextarg, &lastchar, 0);
                 switch (*argp) {
                     case '\'':
                     case '"': {
