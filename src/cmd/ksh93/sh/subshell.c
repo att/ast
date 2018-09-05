@@ -456,7 +456,6 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     long savecurenv = shp->curenv;
     int savejobpgid = job.curpgid;
     int *saveexitval = job.exitval;
-    int16_t subshell;
     char **savsig;
     Sfio_t *iop = 0;
     struct checkpt buff;
@@ -481,9 +480,8 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     if (shp->curenv <= 0) shp->curenv = subenv = 1;
     savst = shp->st;
     sh_pushcontext(shp, &buff, SH_JMPSUB);
-    subshell = shp->subshell + 1;
-    SH_SUBSHELLNOD->nvalue.i16 = subshell;
-    shp->subshell = subshell;
+    shp->subshell++;
+    SH_SUBSHELLNOD->nvalue.i16 = shp->subshell;
     sp->prev = subshell_data;
     sp->shp = shp;
     sp->sig = 0;
@@ -746,7 +744,6 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     shp->coshell = sp->coshell;
 #endif  // SHOPT_COSHELL
     if (shp->subshell) SH_SUBSHELLNOD->nvalue.i16 = --shp->subshell;
-    subshell = shp->subshell;
     subshell_data = sp->prev;
     if (!argsav || argsav->dolrefcnt == argcnt) sh_argfree(shp, argsav, 0);
     if (shp->topfd != buff.topfd) sh_iorestore(shp, buff.topfd | IOSUBSHELL, jmpval);
