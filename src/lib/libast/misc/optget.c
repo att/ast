@@ -1540,7 +1540,9 @@ again:
         s = optget_skip(t = s + 1, '?', 0, 0, 1, level, 0, version);
         if (c == '-' && (*t == '?' || isdigit(*t) || (*s == '?' && *(s + 1) == '\n'))) {
             if ((c = *s) != '?') return optget_skip(s, 0, 0, 0, 1, level, 1, version);
-            w = C("version");
+            // The odd `+ 1` is to work around issue #836. The problem is `optget_label()` reads the
+            // char before the start of the string. Which works most of the time but isn't valid.
+            w = C(" version") + 1;
             par = optget_item(sp, w, about, level, style, ip, version, id, ID, hflags);
             for (;;) {
                 while (isspace(*(s + 1))) s++;
@@ -2416,7 +2418,10 @@ again:
                         if (*(p + 1) == '?' ||
                             (*(s = optget_skip(p + 1, ':', '?', 0, 1, 0, 0, version)) == '?' &&
                              isspace(*(s + 1)))) {
-                            s = C("version");
+                            // The odd `+ 1` is to work around issue #836. The problem is
+                            // `optget_label()` reads the char before the start of the string.
+                            // Which works most of the time but isn't valid.
+                            s = C(" version") + 1;
                         } else {
                             s = p + 1;
                         }

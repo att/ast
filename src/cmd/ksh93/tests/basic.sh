@@ -18,6 +18,16 @@
 #                                                                      #
 ########################################################################
 
+# ==========
+# Can we get the version string. It would be nice to compare this to the actual version used during
+# the build but that's more work than it is worth.
+# Regression for issue #836.
+#
+# TODO: Remove the stderr redirection when issue #837 is fixed.
+actual=$($SHELL --version 2>&1)
+expect='version'
+[[ "$actual" == *${expect}* ]] || log_error "failed to get version string" "*${expect}*" "$actual"
+
 # test basic file operations like redirection, pipes, file expansion
 set -- \
     go+r    0000    \
