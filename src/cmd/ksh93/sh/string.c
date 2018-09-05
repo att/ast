@@ -687,6 +687,4 @@ char *sh_checkid(char *str, char *last) {
     return last;
 }
 
-#if _AST_VERSION <= 20000317L
 char *fmtident(const char *string) { return (char *)string; }
-#endif

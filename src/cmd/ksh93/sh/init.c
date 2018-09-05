@@ -1323,18 +1323,9 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
         char *cp = nv_getval(L_ARGNOD);
         char buff[PATH_MAX + 1];
         shp->gd->shpath = 0;
-#if _AST_VERSION >= 20090202L
         if ((n = pathprog(NULL, buff, sizeof(buff))) > 0 && n <= sizeof(buff)) {
             shp->gd->shpath = strdup(buff);
-        }
-#else
-        sfprintf(shp->strbuf, "/proc/%d/exe", getpid());
-        if ((n = readlink(sfstruse(shp->strbuf), buff, sizeof(buff) - 1)) > 0) {
-            buff[n] = 0;
-            shp->gd->shpath = strdup(buff);
-        }
-#endif
-        else if ((cp && (sh_type(cp) & SH_TYPE_SH)) || (argc > 0 && strchr(cp = *argv, '/'))) {
+        } else if ((cp && (sh_type(cp) & SH_TYPE_SH)) || (argc > 0 && strchr(cp = *argv, '/'))) {
             if (*cp == '/') {
                 shp->gd->shpath = strdup(cp);
             } else if ((cp = nv_getval(PWDNOD))) {

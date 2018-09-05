@@ -1652,7 +1652,6 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
             append = 0;
             if (sp == up->cp && !(flags & NV_APPEND)) return;
             dot = strlen(sp);
-#if (_AST_VERSION >= 20030127L)
             if (nv_isattr(np, NV_BINARY)) {
                 int oldsize = (flags & NV_APPEND) ? nv_size(np) : 0;
                 if (flags & NV_RAW) {
@@ -1680,9 +1679,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                     memset((void *)&cp[dot], 0, size - dot);
                 }
                 return;
-            } else
-#endif  // (_AST_VERSION >= 20030127L)
-            {
+            } else {
                 if (size == 0 && nv_isattr(np, NV_HOST) != NV_HOST &&
                     nv_isattr(np, NV_LJUST | NV_RJUST | NV_ZFILL)) {
                     size = dot;
@@ -2423,7 +2420,6 @@ char *nv_getval(Namval_t *np) {
         return fmtbase(ll, numeric, numeric && numeric != 10);
     }
 done:
-#if (_AST_VERSION >= 20030127L)
     // If NV_RAW flag is on, return pointer to binary data otherwise, base64 encode the data and
     // return this string.
     if (up->cp && nv_isattr(np, NV_BINARY) && !nv_isattr(np, NV_RAW)) {
@@ -2433,7 +2429,6 @@ done:
         base64encode(up->cp, size, NULL, cp, insize, (void **)&ep);
         return cp;
     }
-#endif  // (_AST_VERSION >= 20030127L)
 
     // See issue #690. The original version of this block of code did an invalid `up->cp[numeric]`.
     // That is invalid because it assumes the string pointed to by `up->cp` is at least `numeric`

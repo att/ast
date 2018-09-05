@@ -940,11 +940,9 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     Stk_t *stkp;
     char *errmsg;
     void *library = NULL;
-#ifdef SH_PLUGIN_VERSION
     unsigned long ver;
     int list = 0;
     char path[PATH_MAX];
-#endif  // SH_PLUGIN_VERSION
     UNUSED(argc);
 
     memset(&tdata, 0, sizeof(tdata));
@@ -971,9 +969,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'l': {
-#ifdef SH_PLUGIN_VERSION
                 list = 1;
-#endif  // SH_PLUGIN_VERSION
                 break;
             }
             case 'p': {
@@ -1008,24 +1004,12 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     }
 
     if (arg) {
-#ifdef SH_PLUGIN_VERSION
         if (!(library = dllplugin(SH_ID, arg, NULL, SH_PLUGIN_VERSION, &ver, RTLD_LAZY, path,
                                   sizeof(path)))) {
             errormsg(SH_DICT, ERROR_exit(0), "%s: %s", arg, dllerror(0));
             return 1;
         }
         if (list) sfprintf(sfstdout, "%s %08lu %s\n", arg, ver, path);
-#else  // SH_PLUGIN_VERSION
-#if (_AST_VERSION >= 20040404)
-        if (!(library = dllplug(SH_ID, arg, NULL, RTLD_LAZY, NULL, 0)))
-#else   // _AST_VERSION >= 20040404
-        if (!(library = dllfind(arg, NULL, RTLD_LAZY, NULL, 0)))
-#endif  // _AST_VERSION >= 20040404
-        {
-            errormsg(SH_DICT, ERROR_exit(0), "%s: %s", arg, dlerror());
-            return 1;
-        }
-#endif  // SH_PLUGIN_VERSION
         sh_addlib(tdata.sh, library, arg, NULL);
     } else {
         if (*argv == 0 && disable != builtin_delete) {

@@ -28,11 +28,6 @@
 
 #include <pthread.h>
 
-#ifndef AST_PLUGIN_VERSION
-#define AST_PLUGIN_VERSION(v) (v)
-#endif
-#define CDT_PLUGIN_VERSION AST_PLUGIN_VERSION(20111111L)
-
 #include "ast_std.h"
 
 /* commonly used integers */
@@ -227,13 +222,6 @@ extern Dtmethod_t *Dtqueue;
 extern Dtmethod_t *Dtdeque;
 extern Dtmethod_t *Dtrhset;
 extern Dtmethod_t *Dtrhbag;
-
-// dtplugin() for proprietary and non-standard method plugins -- requires -ldll
-#define dtplugin(name) ((Dtmethod_t *)dllmeth("cdt", name, CDT_PLUGIN_VERSION))
-
-#if 0
-#define Dtrhbag dtplugin("rehash:Dtrhbag")
-#endif
 
 extern Dt_t *dtopen(Dtdisc_t *, Dtmethod_t *);
 extern int dtclose(Dt_t *);

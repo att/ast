@@ -25,10 +25,7 @@
 #ifndef _SHCMD_H
 #define _SHCMD_H 1
 
-#ifndef AST_PLUGIN_VERSION
-#define AST_PLUGIN_VERSION(v) (v)
-#endif
-#define SH_PLUGIN_VERSION AST_PLUGIN_VERSION(20111111L)
+#define SH_PLUGIN_VERSION 20111111L
 
 #define SHLIB(m) \
     unsigned long plugin_version(void) { return SH_PLUGIN_VERSION; }

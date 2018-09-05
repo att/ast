@@ -1,8 +1,4 @@
 /* : : generated from api by iffe version 2013-11-14 : : */
-#define _AST_VERSION AST_VERSION /* pre-20100601 compatibility */
-
-#define AST_VERSION 20131127
-
 #undef cmdopen
 #define cmdopen cmdopen_20120411
 

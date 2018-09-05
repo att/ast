@@ -310,9 +310,6 @@ extern char **environ;
 
 /* generic plugin version support */
 
-#undef AST_PLUGIN_VERSION
-#define AST_PLUGIN_VERSION(v) ((v) > AST_VERSION ? (v) : AST_VERSION)
-
 extern unsigned long plugin_version(void);
 
 /* This is a workaround for issue discussed in https://github.com/att/ast/pull/107 */
