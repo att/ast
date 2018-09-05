@@ -1,0 +1,71 @@
+# Interactive tests for jobs, bg, fg and related builtins
+set pid [spawn $ksh]
+expect_prompt
+
+# ======
+# Ctrl-Z should stop current process
+log_test_entry
+send "cat\r"
+sleep 0.5
+send [ctrl Z]
+expect -re ".*Stopped.*cat\r\n" {
+    puts "Ctrl-z stops cat processs"
+}
+expect_prompt
+
+# ======
+# Test if jobs builtin lists stopped process
+log_test_entry
+send "jobs\r"
+expect -re ".*Stopped.*cat\r\n" {
+    puts "jobs lists stopped cat process"
+}
+expect_prompt
+
+# ======
+# bg should put last stopped process in background
+log_test_entry
+send "bg\r"
+expect -re ".*cat&\r\n"
+expect_prompt
+
+send "jobs\r"
+expect -re ".*Stopped.*SIGTTIN.*cat\r\n" {
+    puts "bg brings last stopped process to background"
+}
+expect_prompt
+
+# ======
+# fg should put last stopped process in foreground
+log_test_entry
+send "fg\r"
+send "hello world\r\n"
+send [ctrl D]
+expect -re "\r\nhello world\r\n" {
+    puts "fg brings last stopped process to foreground"
+}
+expect_prompt
+
+# ======
+# There should be a warning if shell attempts exit with stopped processes
+log_test_entry
+send "cat\r"
+sleep 0.5
+send [ctrl Z]
+expect -re ".*Stopped.*cat\r\n"
+expect_prompt
+
+# Try to exit shell
+send [ctrl D]
+expect -re ".*You have stopped jobs\r\n" {
+    puts "Warning before exit for stopped jobs works"
+}
+expect_prompt
+
+# This should actually exit the shell
+send [ctrl D]
+catch {expect default exp_continue} output
+log_debug "EOF output: $output"
+
+catch {wait}
+exit 0

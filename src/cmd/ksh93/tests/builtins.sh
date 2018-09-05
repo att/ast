@@ -163,12 +163,6 @@ actual=$(echo $($SHELL -c 'trap "print TERM" TERM; trap "print USR1" USR1; trap 
 [[ $($SHELL -c 'trap "print ok" SIGTERM; kill -s SIGTERM $$' 2> /dev/null) == ok ]] || log_error 'SIGTERM not recognized'
 [[ $($SHELL -c 'trap "print ok" sigterm; kill -s sigterm $$' 2> /dev/null) == ok ]] || log_error 'SIGTERM not recognized'
 [[ $($SHELL -c '( trap "" TERM);kill $$;print bad' == bad) ]] 2> /dev/null && log_error 'trap ignored in subshell causes it to be ignored by parent'
-${SHELL} -c 'kill -1 -$$' 2> /dev/null
-[[ $(kill -l $?) == HUP ]] || log_error 'kill -1 -pid not working'
-${SHELL} -c 'kill -1 -$$' 2> /dev/null
-[[ $(kill -l $?) == HUP ]] || log_error 'kill -n1 -pid not working'
-${SHELL} -c 'kill -s HUP -$$' 2> /dev/null
-[[ $(kill -l $?) == HUP ]] || log_error 'kill -HUP -pid not working'
 
 if [[ $( trap 'print done' EXIT) != done ]]
 then
@@ -219,18 +213,6 @@ then
     log_error 'set -f not working'
 fi
 
-unset pid1 pid2
-false &
-pid1=$!
-pid2=$(
-    wait $pid1
-    (( $? == 127 )) || log_error "job known to subshell"
-    print $!
-)
-wait $pid1
-(( $? == 1 )) || log_error "wait not saving exit value"
-wait $pid2
-(( $? == 127 )) || log_error "subshell job known to parent"
 env=
 v=$(getconf LIBPATH 2> /dev/null)
 for v in ${v//,/ }
@@ -498,14 +480,6 @@ $SHELL +E -i <<- \! && log_error 'interactive shell should not exit 0 after fals
     exit
 !
 
-if kill -L > /dev/null 2>&1
-then
-    [[ $(kill -l HUP) == "$(kill -L HUP)" ]] || log_error 'kill -l and kill -L are not the same when given a signal name'
-    [[ $(kill -l 9) == "$(kill -L 9)" ]] || log_error 'kill -l and kill -L are not the same when given a signal number'
-    [[ $(kill -L) == *'9) KILL'* ]] || log_error 'kill -L output does not contain 9) KILL'
-fi
-
-
 unset ENV
 v=$($SHELL 2> /dev/null +o rc -ic $'getopts a:bc: opt --man\nprint $?')
 [[ $v == 2* ]] || log_error 'getopts --man does not exit 2 for interactive shells'
@@ -554,24 +528,6 @@ actual=$(
 )
 [[ $actual == "$expect" ]] ||
    log_error 'assignments to "command special_built-in" leaving side effects' "$expect" "$actual"
-
-{ $SHELL -c 'kill %' ;} 2> /dev/null
-[[ $? == 1 ]] || log_error "'kill %' has wrong exit status"
-
-wait
-unset i
-integer i
-for (( i=0 ; i < 256 ; i++ ))
-do
-    sleep 2 &
-done
-
-while ! wait
-do
-    true
-done
-
-[[ $(jobs -l) ]] && log_error 'jobs -l should not have any output'
 
 # tests with cd
 pwd=$PWD

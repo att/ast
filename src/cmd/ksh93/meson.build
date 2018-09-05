@@ -79,7 +79,7 @@ all_tests = [
     ['basic', 90], ['bracket'], ['builtins'], ['case'], ['comvar'],
     ['comvario'], ['coprocess', 50], ['cubetype'], ['directoryfd'], ['enum'],
     ['exit'], ['expand'], ['functions'], ['glob'], ['grep'], ['heredoc'], ['ifs'],
-    ['io'], ['leaks'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
+    ['io'], ['jobs'], ['leaks'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
     ['modifiers'], ['options'], ['path'], ['pointtype'], ['printf'], ['quoting'],
     ['quoting2'], ['read'], ['readcsv'], ['recttype'], ['restricted'], ['return'],
     ['select'], ['sh_match'], ['sigchld', 100], ['signal'], ['statics'],
@@ -89,7 +89,7 @@ all_tests = [
     # parallel.
     ['special-dev-paths'],
     # These are interactive tests to be run via the `expect` utility.
-    ['read.exp'], ['emacs.exp'], ['vi.exp'],
+    ['emacs.exp'], ['jobs.exp'], ['read.exp'], ['vi.exp'],
 ]
 
 # This is a list of the tests that must be run in isolation; i.e., not in parallel with other tests.
@@ -101,6 +101,7 @@ serial_tests = ['special-dev-paths']
 # compiled by `shcomp`.
 # TODO: Fix these tests.
 shcomp_tests_to_skip = ['io', 'namespace', 'treemove', 'printf']
+macos_tests_to_skip = ['jobs.exp' ]
 
 # The test cases are executed in parallel by default
 foreach testspec : all_tests
@@ -115,9 +116,13 @@ foreach testspec : all_tests
 
     # Run the test without compiling the script (which is how most people use ksh).
     lang_var = 'LANG=en_US.UTF-8'
-    test(testname, ksh93_exe, timeout: timeout, is_parallel: parallel,
+
+    # Skip some tests on macOS
+    if build_machine.system() != 'darwin' or not macos_tests_to_skip.contains(testname)
+        test(testname, ksh93_exe, timeout: timeout, is_parallel: parallel,
             args: [test_driver, testname],
             env: [shell_var, lang_var, ld_library_path, libsample_path])
+    endif
 
     # Shcomp tests are only applicable to the non-interactive tests.
     if not testname.endswith('.exp')
