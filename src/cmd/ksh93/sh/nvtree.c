@@ -64,6 +64,8 @@ static_fn void put_tree(Namval_t *, const void *, int, Namfun_t *);
 static_fn char *walk_tree(Namval_t *, Namval_t *, int);
 
 static_fn int read_tree(Namval_t *np, Sfio_t *in, int n, Namfun_t *dp) {
+    if (n >= 0) return -1;
+
     Shell_t *shp = sh_ptr(np);
     Sfio_t *sp, *iop;
     char *cp;
@@ -72,7 +74,6 @@ static_fn int read_tree(Namval_t *np, Sfio_t *in, int n, Namfun_t *dp) {
     Shread_t fun;
 
     fun = *(void **)(dp + 1);
-    if (n >= 0) return -1;
     if (fun) {
         iop = sftmp(SF_BUFSIZE * sizeof(char *));
         sfputr(iop, nv_name(np), '=');
@@ -87,7 +88,7 @@ static_fn int read_tree(Namval_t *np, Sfio_t *in, int n, Namfun_t *dp) {
     sfungetc(iop, c);
     sfprintf(shp->strbuf, "%s=%c", nv_name(np), 0);
     cp = sfstruse(shp->strbuf);
-    sp = sfopen((Sfio_t *)0, cp, "s");
+    sp = sfopen(NULL, cp, "s");
     sfstack(iop, sp);
 done:
     c = sh_eval(shp, iop, SH_READEVAL);
