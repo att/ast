@@ -36,7 +36,6 @@
 #include "defs.h"
 
 #include "ast.h"
-#include "ast_api.h"
 #include "error.h"
 #include "fault.h"
 #include "lexstates.h"
