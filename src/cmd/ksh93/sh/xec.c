@@ -2402,7 +2402,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             }
 #endif  // SHOPT_COSHELL
             if (t->tre.tretyp == TNSPACE) {
-                Dt_t *root;
                 Namval_t *oldnspace = NULL;
                 int offset = stktell(stkp);
                 int flag = NV_NOASSIGN | NV_NOARRAY | NV_VARNAME;
@@ -2416,10 +2415,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     np = nv_open(xp, shp->var_tree, flag);
                     if (sp) *sp++ = '.';
                 }
-                if (nv_istable(np)) {
-                    root = nv_dict(np);
-                } else {
-                    root = dtopen(&_Nvdisc, Dtoset);
+                if (!nv_istable(np)) {
+                    Dt_t *root = dtopen(&_Nvdisc, Dtoset);
                     dtuserdata(root, shp, 1);
                     nv_mount(np, (char *)0, root);
                     np->nvalue.cp = Empty;
@@ -2780,7 +2777,6 @@ pid_t _sh_fork(Shell_t *shp, pid_t parent, int flags, int *jobid) {
         if (!postid && job.curjobid && (flags & FPOU)) postid = job.curpgid;
         if (!postid && (flags & (FAMP | FINT)) == (FAMP | FINT)) postid = 1;
         myjob = job_post(shp, parent, postid);
-        if (postid == 1) postid = 0;
         if (job.waitall && (flags & FPOU)) {
             if (!job.curjobid) job.curjobid = myjob;
             if (job.exitval) job.exitval++;
