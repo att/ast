@@ -949,6 +949,15 @@ expect -re ".*\rKSH PROMPT:\[0-9\]+: $" { }
 send "\r"
 expect_prompt
 
+# Regression tests
+# https://github.com/att/ast/issues/682
+# run_test.sh sets a temporary $HOME directory while running this test
+send "mkdir ~/local\r"
+expect_prompt
+send "cd ~/loca\t"
+expect -re ".*/local/$" { }
+clear_prompt
+
 # ==========
 # Exit shell with ctrl-d
 log_test_entry
