@@ -158,7 +158,7 @@ function run_interactive {
     else
         # The final `.*` is because there may be a [ctrl-M] present (@#%! windows line endings).
         typeset line=$(sed -ne 's/^.*(file .*\.exp" line \([0-9]*\)).*$/\1/p' interactive.tmp.log)
-        failure_lines+=($line)
+        failure_lines+=(${line:-0})
 
         if [[ $final_iteration -eq 0 ]]
         then
