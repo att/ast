@@ -72,10 +72,6 @@
 #include "stak.h"
 #include "terminal.h"
 
-#define ESH_NFIRST
-#define ESH_KAPPEND
-#define ESH_BETTER
-
 #undef putchar
 #define putchar(ed, c) ed_putchar(ed, c)
 #define beep() ed_ringbell()
@@ -195,7 +191,6 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
         kstack[0] = '\0';
     }
     drawbuff = out;
-#ifdef ESH_NFIRST
     if (location.hist_command == -5) {  // to be initialized
         kstack[0] = '\0';               // also clear kstack...
         location.hist_command = hline;
@@ -206,7 +201,6 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
         location.hist_line = 0;
     }
     ep->in_mult = hloff;  // save pos in last command
-#endif                    // ESH_NFIRST
     i = sigsetjmp(env, 0);
     if (i != 0) {
         if (ep->ed->e_multiline) {
@@ -225,20 +219,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
     draw(ep, reedit ? REFRESH : FIRST);
     adjust = -1;
     backslash = 0;
-    if (ep->CntrlO) {
-#ifdef ESH_NFIRST
-        ed_ungetchar(ep->ed, cntl('N'));
-#else   // ESH_NFIRST
-        location = hist_locate(shgd->hist_ptr, location.hist_command, location.hist_line, 1);
-        if (location.hist_command < histlines) {
-            hline = location.hist_command;
-            hloff = location.hist_line;
-            hist_copy((char *)kstack, MAXLINE, hline, hloff);
-            ed_internal((char *)kstack, kstack);
-            ed_ungetchar(ep->ed, cntl('Y'));
-        }
-#endif  // ESH_NFIRST
-    }
+    if (ep->CntrlO) ed_ungetchar(ep->ed, cntl('N'));
     ep->CntrlO = 0;
     while ((c = ed_getchar(ep->ed, 0)) != (-1)) {
         if (backslash) {
@@ -261,11 +242,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
         } else if ((c == usreof) && (eol == 0)) {
             c = EOFCHAR;
         }
-#ifdef ESH_KAPPEND
-        if (--killing <= 0) {  // reset killing flag
-            killing = 0;
-        }
-#endif
+        if (--killing <= 0) killing = 0;  // reset killing flag
         oadjust = count = adjust;
         if (count < 0) count = 1;
         adjust = -1;
@@ -350,7 +327,6 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
             case '\b':    // backspace, ^h
             case ERASECHAR: {
                 if (count > i) count = i;
-#ifdef ESH_KAPPEND
                 kptr = &kstack[count];  // move old contents here
                 if (killing)            // prepend to killbuf
                 {
@@ -365,22 +341,12 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 i -= count;
                 eol -= count;
                 genncpy(kstack, out + i, cur - i);
-#else
-                while ((count--) && (i > 0)) {
-                    i--;
-                    eol--;
-                }
-                genncpy(kstack, out + i, cur - i);
-                kstack[cur - i] = 0;
-#endif  // ESH_KAPPEND
                 gencpy(out + i, out + cur);
                 ep->mark = i;
                 goto update;
             }
             case cntl('W'): {
-#ifdef ESH_KAPPEND
                 ++killing;  // keep killing flag
-#endif
                 if (ep->mark > eol) ep->mark = eol;
                 if (ep->mark == i) continue;
                 if (ep->mark > i) {
@@ -394,16 +360,12 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
             }
             case cntl('D'): {
                 ep->mark = i;
-#ifdef ESH_KAPPEND
                 if (killing) {
                     kptr = &kstack[genlen(kstack)];  // append here
                 } else {
                     kptr = kstack;
                 }
                 killing = 2;  // we are now killing
-#else
-                kptr = kstack;
-#endif  // ESH_KAPPEND
                 while ((count--) && (eol > 0) && (i < eol)) {
                     *kptr++ = out[i];
                     eol--;
@@ -489,9 +451,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
             // FALLTHRU
             case cntl('K'): {
                 if (oadjust >= 0) {
-#ifdef ESH_KAPPEND
                     killing = 2;  // set killing signal
-#endif                            // ESH_KAPPEND
                     ep->mark = count;
                     ed_ungetchar(ep->ed, cntl('W'));
                     continue;
@@ -499,16 +459,12 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 i = cur;
                 eol = i;
                 ep->mark = i;
-#ifdef ESH_KAPPEND
                 if (killing) {  // append to kill buffer
                     gencpy(&kstack[genlen(kstack)], &out[i]);
                 } else {
                     gencpy(kstack, &out[i]);
                 }
                 killing = 2;  // set killing signal
-#else
-                gencpy(kstack, &out[i]);
-#endif  // ESH_KAPPEND
                 out[i] = 0;
                 draw(ep, UPDATE);
                 if (c == KILLCHAR) {
@@ -561,17 +517,9 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     hline -= count - hloff;
                     hloff = 0;
                 }
-#ifdef ESH_NFIRST
-                if (hline <= hismin)
-#else   // ESH_NFIRST
-                if (hline < hismin)
-#endif  // ESH_NFIRST
-                {
+                if (hline <= hismin) {
                     hline = hismin + 1;
                     beep();
-#ifndef ESH_NFIRST
-                    continue;
-#endif
                 }
                 goto common;
             }
@@ -594,27 +542,19 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     draw(ep, REFRESH);
                     continue;
                 }
-#ifdef ESH_NFIRST
                 hline = location.hist_command;  // start at saved position
                 hloff = location.hist_line;
-#endif  // ESH_NFIRST
                 location = hist_locate(shgd->hist_ptr, hline, hloff, count);
                 if (location.hist_command > histlines) {
                     beep();
-#ifdef ESH_NFIRST
                     location.hist_command = histlines;
                     location.hist_line = ep->in_mult;
-#else   // ESH_NFIRST
-                    continue;
-#endif  // ESH_NFIRST
                 }
                 hline = location.hist_command;
                 hloff = location.hist_line;
             common:
-#ifdef ESH_NFIRST
                 location.hist_command = hline;  // save current position
                 location.hist_line = hloff;
-#endif
                 cur = 0;
                 draw(ep, UPDATE);
                 hist_copy((char *)out, MAXLINE, hline, hloff);
@@ -690,9 +630,7 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
     }
     if (digit) {
         ed_ungetchar(ep->ed, i);
-#ifdef ESH_KAPPEND
         ++killing;  // don't modify killing signal
-#endif              // ESH_KAPPEND
         return (value);
     }
     value = count;
@@ -706,18 +644,14 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
             ep->mark = cur;
             return -1;
         }
-#ifdef ESH_KAPPEND
         case '+': {  // M-+ = append next kill
             killing = 2;
             return -1;  // no argument for next command
-#endif
         }
         case 'p': {  // M-p == ^W^Y (copy stack == kill & yank)
             ed_ungetchar(ep->ed, cntl('Y'));
             ed_ungetchar(ep->ed, cntl('W'));
-#ifdef ESH_KAPPEND
             killing = 0;  // start fresh
-#endif
             return -1;
         }
         case 'l':  // M-l == lower-case
@@ -751,9 +685,7 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
             } else {
                 if (i - cur) {
                     ed_ungetchar(ep->ed, cntl('D'));
-#ifdef ESH_KAPPEND
                     ++killing;  // keep killing signal
-#endif
                     return i - cur;
                 }
                 beep();
@@ -774,15 +706,12 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
                 goto update;
             } else {
                 ed_ungetchar(ep->ed, usrerase);
-#ifdef ESH_KAPPEND
                 ++killing;
-#endif
                 return cur - i;
             }
         }
         case '>': {
             ed_ungetchar(ep->ed, cntl('N'));
-#ifdef ESH_NFIRST
             if (ep->in_mult) {
                 location.hist_command = histlines;
                 location.hist_line = ep->in_mult - 1;
@@ -790,21 +719,13 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
                 location.hist_command = histlines - 1;
                 location.hist_line = 0;
             }
-#else   // ESH_NFIRST
-        hline = histlines - 1;
-        hloff = 0;
-#endif  // ESH_NFIRST
             return 0;
         }
         case '<': {
             ed_ungetchar(ep->ed, cntl('P'));
             hloff = 0;
-#ifdef ESH_NFIRST
             hline = hismin + 1;
             return 0;
-#else   // ESH_NFIRST
-        return hline - hismin;
-#endif  // ESH_NFIRST
         }
         case '#': {
             ed_ungetchar(ep->ed, '\n');
@@ -968,12 +889,7 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
         }
         // FALLTHRU
         default: {  // look for user defined macro definitions
-            if (ed_macro(ep->ed, i))
-#ifdef ESH_BETTER
-                return count; /* pass argument to macro */
-#else                         // ESH_BETTER
-            return -1;
-#endif                        // ESH_BETTER
+            if (ed_macro(ep->ed, i)) return count;  // pass argument to macro
             beep();
             return -1;
         }
@@ -997,7 +913,6 @@ static void xcommands(Emacs_t *ep, int count) {
             draw(ep, UPDATE);
             return;
         }
-#ifdef ESH_BETTER
         case cntl('E'): {  // invoke emacs on current command
             if (ed_fulledit(ep->ed) == -1) {
                 beep();
@@ -1051,7 +966,6 @@ static void xcommands(Emacs_t *ep, int count) {
                 return;
         }
 #endif  // debugging code
-#endif  // ESH_BETTER
         default: {
             beep();
             return;
@@ -1060,9 +974,6 @@ static void xcommands(Emacs_t *ep, int count) {
 }
 
 static void search(Emacs_t *ep, genchar *out, int direction) {
-#ifndef ESH_NFIRST
-    Histloc_t location;
-#endif
     int i, sl;
     genchar str_buff[LBUF];
     genchar *string = drawbuff;
@@ -1125,24 +1036,15 @@ static void search(Emacs_t *ep, genchar *out, int direction) {
     i = location.hist_command;
     if (i > 0) {
         hline = i;
-#ifdef ESH_NFIRST
         hloff = location.hist_line = 0;  // display first line of multi line command
-#else                                    // ESH_NFIRST
-        hloff = location.hist_line;
-#endif                                   // ESH_NFIRST
         hist_copy((char *)out, MAXLINE, hline, hloff);
         ed_internal((char *)out, out);
         return;
     }
     if (i < 0) {
         beep();
-#ifdef ESH_NFIRST
         location.hist_command = hline;
         location.hist_line = hloff;
-#else   // ESH_NFIRST
-        hloff = 0;
-        hline = histlines;
-#endif  // ESH_NFIRST
     }
 restore:
     genncpy(string, str_buff, sizeof(str_buff) / sizeof(*str_buff));
