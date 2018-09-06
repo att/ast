@@ -754,7 +754,7 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
         if (lexp->token == 0) {
             struct comnod *ac;
             char *cp, **argv, **argv0;
-            int c;
+            int c = 0;
             t->funct.functargs = ac = (struct comnod *)simple(lexp, SH_NOIO | SH_FUNDEF, NULL);
             if (ac->comset || (ac->comtyp & COMSCAN)) {
                 errormsg(SH_DICT, ERROR_exit(3), e_lexsyntax4, lexp->sh->inlineno);
@@ -869,24 +869,26 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
 }
 
 static_fn bool check_array(Lex_t *lexp) {
-    int c;
+    if (lexp->token != 0) return false;
 
-    if (lexp->token == 0 && strcmp(lexp->arg->argval, "typeset") == 0) {
-        while ((c = fcgetc()) == ' ' || c == '\t') {
-            ;  // empty loop
-        }
-        if (c == '-') {
-            if (fcgetc() == 'a') {
-                lexp->assignok = SH_ASSIGN;
-                lexp->noreserv = 1;
-                sh_lex(lexp);
-                return true;
-            } else {
-                fcseek(-2);
-            }
+    assert(lexp->arg);
+    if (strcmp(lexp->arg->argval, "typeset") != 0) return false;
+
+    int c;
+    while ((c = fcgetc()) == ' ' || c == '\t') {
+        ;  // empty loop
+    }
+    if (c == '-') {
+        if (fcgetc() == 'a') {
+            lexp->assignok = SH_ASSIGN;
+            lexp->noreserv = 1;
+            sh_lex(lexp);
+            return true;
         } else {
-            fcseek(-1);
+            fcseek(-2);
         }
+    } else {
+        fcseek(-1);
     }
     return false;
 }
