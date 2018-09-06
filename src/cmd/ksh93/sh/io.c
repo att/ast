@@ -2489,7 +2489,7 @@ skip:
             sfprintf(outfile, "%*d) %s", ndigits, j + 1, *arg);
             j += nrow;
             if (j >= argn) break;
-            sfnputc(outfile, ' ', fldsize - strlen(*arg));
+            sfnputc(outfile, ' ', fldsize - strlen(*arg ? *arg : ""));
         }
         sfputc(outfile, '\n');
     }
