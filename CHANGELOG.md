@@ -36,6 +36,7 @@ None at this time.
 - Support for the build time SHOPT_ACCTFILE symbol and code has been removed
   (issue #210).
 - Versioning scheme has been changed to use semantic version numbers (issue #335).
+- Undocumented and broken `alarm` builtin has been removed (issue #646).
 
 ## Notable fixes and improvements
 
