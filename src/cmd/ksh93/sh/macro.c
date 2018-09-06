@@ -566,7 +566,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                         sfwrite(stkp, first, c);
                     }
                 }
-                first = fcseek(c + 1);
+                (void)fcseek(c + 1);
                 c = mp->pattern;
                 if (n == S_GRAVE) {
                     comsubst(mp, (Shnode_t *)0, 0);
@@ -634,7 +634,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                     continue;
                 }
                 c += (n != S_EOF);
-                first = fcseek(c);
+                (void)fcseek(c);
                 if (tilde >= 0) tilde_expand2(shp, tilde);
                 goto done;
             }
@@ -682,7 +682,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                             __builtin_unreachable();
                         }
                     }
-                    first = fcseek(c);
+                    (void)fcseek(c);
                     mp->pattern = 4;
                     mp->arith = 0;
                     mp->subcopy = 0;
@@ -1762,10 +1762,8 @@ retry2:
             } else if (dolg >= 0) {
                 if (++dolg >= dolmax) break;
                 if (mp->shp->cur_line) {
-                    if (!(v = getdolarg(mp->shp, dolg, &vsize))) {
-                        dolmax = dolg;
-                        break;
-                    }
+                    v = getdolarg(mp->shp, dolg, &vsize);
+                    if (!v) break;
                 } else {
                     v = mp->shp->st.dolv[dolg];
                 }
@@ -1935,14 +1933,6 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
             mp->shp->st.staklist = saveslp;
             fcrestore(&save);
             return;
-        } else if (type == 2 && t && (t->tre.tretyp & COMMSK) == TCOM && t->com.comarg) {
-            str = NULL;
-            if (!(t->com.comtyp & COMSCAN)) {
-                struct dolnod *ap = (struct dolnod *)t->com.comarg;
-                str = ap->dolval[ap->dolbot];
-            } else if (t->com.comarg->argflag & ARG_RAW) {
-                str = t->com.comarg->argval;
-            }
         }
     } else {
         while ((c = fcgetc()) != '`' && c) {
