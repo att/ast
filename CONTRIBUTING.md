@@ -32,9 +32,9 @@ which do not install bash by default.
 
 ## Versioning
 
-This is TBD. For the moment we're using the last version assigned to the
-code, `93v-`, since we have not made any enhancements to the code. It is
-highly likely we'll switch to [semantic versioning](https://semver.org/).
+We have switched to [semantic versioning](https://semver.org/)(issue #335).
+To maintain backward compatibility we will use year as major version number,
+so the scheme looks like yyyy.minor.patch. For e.g. 2017.0.0.
 
 ## Include What You Use
 
