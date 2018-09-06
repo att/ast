@@ -1452,7 +1452,7 @@ static_fn int comsub(Lex_t *lp, int endtok) {
             }
             count++;
             lp->lexd.paren = 0;
-            c = fcgetc();
+            fcgetc();  // it's not obvious why we're throwing away this char
         }
         while (1) {
             // Look for case and esac.
