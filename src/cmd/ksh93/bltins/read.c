@@ -549,7 +549,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
         up = cur = var;
         if ((sfset(iop, SF_SHARE, 1) & SF_SHARE) && sffileno(iop) != 0) was_share = 1;
         if (size == 0) {
-            cp = sfreserve(iop, 0, 0);
+            (void)sfreserve(iop, 0, 0);
             c = 0;
         } else {
             ssize_t m;
@@ -812,11 +812,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                                     use_stak = 1;
                                 }
                                 cp = (unsigned char *)sfgetr(iop, delim, 0);
-                                if (cp) {
-                                    c = sfvalue(iop);
-                                } else if ((cp = (unsigned char *)sfgetr(iop, delim, -1))) {
-                                    c = sfvalue(iop) + 1;
-                                }
+                                if (!cp) cp = (unsigned char *)sfgetr(iop, delim, -1);
                                 val = (char *)cp;
                             }
                             continue;
