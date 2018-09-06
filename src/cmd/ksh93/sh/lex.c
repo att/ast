@@ -534,7 +534,7 @@ int sh_lex(Lex_t *lp) {
                     } else if (c == '<' && n == '>') {
                         lp->digits = 0;
                         c = IORDWRSYM;
-                        n = fcgetc();
+                        (void)fcgetc();
                         n = fcgetc();  // yes, we call fcgetc() twice (no idea why)
                         if (n == ';') {
                             lp->token = c = IORDWRSYMT;
@@ -1038,9 +1038,8 @@ int sh_lex(Lex_t *lp) {
                         if (lp->lexd.warn) {
                             errormsg(SH_DICT, ERROR_warn(0), e_lexnested, shp->inlineno);
                         }
-                        if (!(state = lp->lexd.first)) {
-                            state = fcfirst();
-                        } else {
+                        state = lp->lexd.first;
+                        if (state) {
                             n = state - fcseek(0);
                             fcseek(n);
                         }
