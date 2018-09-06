@@ -31,15 +31,10 @@
 
 // Use Bltin() for builtins that do not accept long options; e.g., `--flag`.
 
-#if KSHELL
 #include "builtins.h"
 #include "jobs.h"
 #define bltin(x) (b_##x)
 #define Bltin(x) (B_##x)
-#else  // KSHELL
-#define bltin(x) 0
-#define Bltin(x) 0
-#endif  // KSHELL
 
 // In the last beta release that came out from AT&T, all the builtins for standard commands
 // were enabled by default. It was a backward incompatible change from the last stable

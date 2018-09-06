@@ -34,16 +34,9 @@
 #include <string.h>
 #include <sys/types.h>
 
-#if KSHELL
-#include "defs.h"
-#else
-#include "shell.h"
-#define nv_getval(np) ((np)->nvalue)
-Shell_t sh = {1};
-#endif  // KSHELL
-
 #include "argnod.h"
 #include "ast.h"
+#include "defs.h"
 #include "error.h"
 #include "fault.h"
 #include "fcin.h"
@@ -170,14 +163,12 @@ static_fn void lex_advance(Sfio_t *iop, const char *buff, int size, void *contex
     Sfio_t *log = shp->funlog;
     Stk_t *stkp = shp->stk;
 
-#if KSHELL
     // Write to history file and to stderr if necessary.
     if (iop && !sfstacked(iop)) {
         if (sh_isstate(shp, SH_HISTORY) && shp->gd->hist_ptr) log = shp->gd->hist_ptr->histfp;
         sfwrite(log, (void *)buff, size);
         if (sh_isstate(shp, SH_VERBOSE)) sfwrite(sfstderr, buff, size);
     }
-#endif
     if (lp->lexd.nocopy) return;
     if (lp->lexd.dolparen && lp->lexd.docword && lp->lexd.docend) {
         int n = size - (lp->lexd.docend - (char *)buff);
@@ -1401,12 +1392,10 @@ breakloop:
             // Check for aliases.
             Namval_t *np;
             if (!lp->lex.incase && !assignment && fcpeek(0) != LPAREN &&
-                (np = nv_search(state, shp->alias_tree, HASH_SCOPE)) && !nv_isattr(np, NV_NOEXPAND)
-#if KSHELL
-                && (lp->aliasok != 2 || nv_isattr(np, BLT_DCL)) &&
-                (!sh_isstate(lp->sh, SH_NOALIAS) || nv_isattr(np, NV_NOFREE))
-#endif  // KSHELL
-                && (state = nv_getval(np))) {
+                (np = nv_search(state, shp->alias_tree, HASH_SCOPE)) &&
+                !nv_isattr(np, NV_NOEXPAND) && (lp->aliasok != 2 || nv_isattr(np, BLT_DCL)) &&
+                (!sh_isstate(lp->sh, SH_NOALIAS) || nv_isattr(np, NV_NOFREE)) &&
+                (state = nv_getval(np))) {
                 setupalias(lp, state, np);
                 nv_onattr(np, NV_NOEXPAND);
                 lp->lex.reservok = 1;
@@ -1894,11 +1883,7 @@ __attribute__((noreturn)) void sh_syntax(Lex_t *lp) {
     }
     shp->inlineno = lp->inlineno;
     shp->st.firstline = lp->firstline;
-#if KSHELL
     if (!sh_isstate(shp, SH_INTERACTIVE) && !sh_isstate(shp, SH_PROFILE)) {
-#else
-    if (shp->inlineno != 1) {
-#endif
         errormsg(SH_DICT, ERROR_exit(SYNBAD), e_lexsyntax1, lp->lastline, tokstr, cp);
         __builtin_unreachable();
     } else {

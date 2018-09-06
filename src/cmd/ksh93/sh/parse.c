@@ -24,7 +24,7 @@
 // Rewritten by David Korn
 // AT&T Labs
 //
-//  This is the parser for a shell language
+//  This is the parser for the Korn shell language.
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
@@ -36,11 +36,7 @@
 #include <string.h>
 #include <sys/types.h>
 
-#if KSHELL
-#include "defs.h"
-#else
-#include "shell.h"
-#endif
+#include "defs.h"  // this has to be the first project include
 
 #include "argnod.h"
 #include "ast.h"
@@ -85,13 +81,6 @@ static_fn Shnode_t *test_primary(Lex_t *);
 
 #define sh_getlineno(lp) (lp->lastline)
 #define CNTL(x) ((x)&037)
-
-#if !KSHELL
-static struct stdata {
-    struct slnod *staklist;
-    int cmdline;
-} st;
-#endif
 
 static int opt_get;
 static int loop_level;
@@ -368,9 +357,7 @@ void *sh_parse(Shell_t *shp, Sfio_t *iop, int flag) {
     if ((flag & SH_NL) && (shp->inlineno = error_info.line + shp->st.firstline) == 0) {
         shp->inlineno = 1;
     }
-#if KSHELL
     shp->nextprompt = 2;
-#endif
     t = sh_cmd(lexp, (flag & SH_EOF) ? EOFSYM : '\n', SH_SEMI | SH_EMPTY | (flag & SH_NL));
     fcclose();
     fcrestore(&sav_input);

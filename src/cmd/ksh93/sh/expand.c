@@ -29,34 +29,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if KSHELL
-#include "defs.h"
-#include "variables.h"
-#else
-#include <setjmp.h>
-#endif  // KSHELL
-
 #include "argnod.h"
 #include "ast.h"
 #include "ast_assert.h"
 #include "cdt.h"
+#include "defs.h"
 #include "fault.h"
 #include "glob.h"
 #include "name.h"
 #include "path.h"
 #include "sfio.h"
 #include "stk.h"
+#include "variables.h"
 
-#if KSHELL
 #define argbegin argnxt.cp
 static const char *sufstr;
 static int suflen;
 static_fn int scantree(Shell_t *, Dt_t *, const char *, struct argnod **);
-#else
-#define sh_sigcheck(sig) (0)
-#define sh_access access
-#define suflen 0
-#endif  // KSHELL
 
 //
 // This routine builds a list of files that match a given pathname.
@@ -109,13 +98,11 @@ int path_expand(Shell_t *shp, const char *pattern, struct argnod **arghead) {
     if (sh_isoption(shp, SH_NOCASEGLOB)) flags |= GLOB_ICASE;
 #endif
     if (sh_isstate(shp, SH_COMPLETE)) {
-#if KSHELL
         extra += scantree(shp, shp->alias_tree, pattern, arghead);
         extra += scantree(shp, shp->fun_tree, pattern, arghead);
 #if GLOB_VERSION >= 20010916L
         gp->gl_nextdir = nextdir;
 #endif
-#endif  // KSHELL
         flags |= GLOB_COMPLETE;
         flags &= ~GLOB_NOCHECK;
     }
@@ -184,8 +171,6 @@ int path_expand(Shell_t *shp, const char *pattern, struct argnod **arghead) {
     return gp->gl_pathc + extra;
 }
 
-#if KSHELL
-
 //
 // Scan tree and add each name that matches the given pattern.
 //
@@ -222,8 +207,6 @@ int path_complete(Shell_t *shp, const char *name, const char *suffix, struct arg
     suflen = (int)strlen(suffix);
     return path_expand(shp, name, arghead);
 }
-
-#endif
 
 static_fn int checkfmt(Sfio_t *sp, void *vp, Sffmt_t *fp) {
     UNUSED(sp);

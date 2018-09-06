@@ -59,8 +59,6 @@
 //
 // The remainder of this file is only used when compiled with shell.
 //
-#if KSHELL
-
 #ifndef ARG_RAW
 struct ionod;
 #endif  // !ARG_RAW
@@ -125,6 +123,5 @@ extern const char e_bash_profile[];
 extern const char e_stdprompt[];
 extern const char e_supprompt[];
 extern const char e_ambiguous[];
-#endif  // KSHELL
 
 #endif  // _IO_H

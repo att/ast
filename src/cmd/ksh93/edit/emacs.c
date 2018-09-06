@@ -62,13 +62,8 @@
 #include <string.h>
 #include <wchar.h>
 
-#if KSHELL
-#include "defs.h"
-#else
-#include <ctype.h>
-#endif  // KSHELL
-
 #include "ast.h"
+#include "defs.h"
 #include "edit.h"
 #include "fault.h"
 #include "history.h"
@@ -841,7 +836,6 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
             draw(ep, UPDATE);
             return -1;
         }
-#if KSHELL
         case '\n':
         case '\t': {
             if (!ep->ed->hlist) {
@@ -978,16 +972,8 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
 #ifdef ESH_BETTER
                 return count; /* pass argument to macro */
 #else                         // ESH_BETTER
-                return -1;
+            return -1;
 #endif                        // ESH_BETTER
-#else                         // KSHELL
-    update:
-        cur = i;
-        draw(ep, UPDATE);
-        return -1;
-
-    default:
-#endif                        // KSHELL
             beep();
             return -1;
         }
@@ -1011,7 +997,6 @@ static void xcommands(Emacs_t *ep, int count) {
             draw(ep, UPDATE);
             return;
         }
-#if KSHELL
 #ifdef ESH_BETTER
         case cntl('E'): {  // invoke emacs on current command
             if (ed_fulledit(ep->ed) == -1) {
@@ -1067,7 +1052,6 @@ static void xcommands(Emacs_t *ep, int count) {
         }
 #endif  // debugging code
 #endif  // ESH_BETTER
-#endif  // KSHELL
         default: {
             beep();
             return;

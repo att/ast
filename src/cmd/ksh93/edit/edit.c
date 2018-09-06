@@ -40,11 +40,8 @@
 #include <utime.h>
 #include <wchar.h>
 
-#if KSHELL
-#include "defs.h"
-#endif
-
 #include "ast.h"
+#include "defs.h"
 #include "edit.h"
 #include "fault.h"
 #include "history.h"
@@ -54,14 +51,7 @@
 #include "shellapi.h"
 #include "stk.h"
 #include "terminal.h"
-
-#if KSHELL
 #include "variables.h"
-#else  // KSHELL
-#include <ctype.h>
-extern char ed_errbuf[];
-char e_version[] = "\n@(#)$Id: Editlib version 1993-12-28 r $\0\n";
-#endif  // KSHELL
 
 static char CURSOR_UP[20] = {ESC, '[', 'A', 0};
 static char KILL_LINE[20] = {ESC, '[', 'J', 0};
@@ -79,11 +69,7 @@ static char *savelex;
 #define ECHOMODE 3
 #define SYSERR -1
 
-#if KSHELL
 static int keytrap(Edit_t *, char *, int, int, int);
-#else   // KSHELL
-Edit_t editb;
-#endif  // KSHELL
 
 #ifndef _POSIX_DISABLE
 #define _POSIX_DISABLE 0
@@ -352,14 +338,10 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
     ep->hlist = 0;
     ep->nhlist = 0;
     ep->hoff = 0;
-#if KSHELL
     ep->e_stkptr = stkptr(shp->stk, 0);
     ep->e_stkoff = stktell(shp->stk);
     if (!(last = shp->prompt)) last = "";
     shp->prompt = 0;
-#else   // KSHELL
-    last = ep->e_prbuff;
-#endif  // KSHELL
     if (shp->gd->hist_ptr) {
         History_t *hp = shp->gd->hist_ptr;
         ep->e_hismax = hist_max(hp);
@@ -649,10 +631,8 @@ static int putstack(Edit_t *ep, char string[], int nbyte, int type) {
 #ifndef CBREAK
             if (c == '\0') {  // user break key
                 ep->e_lookahead = 0;
-#if KSHELL
                 kill(getpid(), SIGINT);
                 siglongjmp(ep->e_env, UINTR);
-#endif  // KSHELL
             }
 #endif  // CBREAK
         } else {
@@ -1074,7 +1054,6 @@ static int compare(const char *a, const char *b, int n) {
 }
 #endif  // future
 
-#if KSHELL
 //
 // Execute keyboard trap on given buffer <inbuff> of given size <isize>.
 // <mode> < 0 for vi insert mode.
@@ -1113,7 +1092,6 @@ static int keytrap(Edit_t *ep, char *inbuff, int insize, int bufsize, int mode) 
     nv_unset(ED_TXTNOD);
     return insize;
 }
-#endif  // KSHELL
 
 static int ed_sortdata(const char *s1, const char *s2) {
     Histmatch_t *m1 = (Histmatch_t *)s1;

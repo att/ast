@@ -81,24 +81,12 @@
 
 #define hist_ind(hp, c) ((int)((c) & (hp)->histmask))
 
-#if KSHELL
 #include "defs.h"
-
 #include "io.h"
 #include "path.h"
 #include "variables.h"
-#endif  // KSHELL
 
 #include "history.h"
-
-#if !KSHELL
-#define path_relative(s, x) (s, x)
-#define nv_getval(s) getenv(#s)
-#define e_unknown "unknown"
-#define sh_translate(x) (x)
-char login_sh = 0;
-char hist_fname[] = "/.history";
-#endif  // KSHELL
 
 #ifndef O_BINARY
 #define O_BINARY 0
@@ -213,11 +201,8 @@ retry:
         fd = -1;
     }
     if (fd < 0) {
-#if KSHELL
         // Don't allow root a history_file in /tmp.
-        if (shgd->userid)
-#endif  // KSHELL
-        {
+        if (shgd->userid) {
             if (!(fname = pathtmp(NULL, 0, 0, NULL))) return 0;
             fd = open(fname, O_BINARY | O_APPEND | O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | O_CLOEXEC);
         }
@@ -290,9 +275,7 @@ retry:
         hp = hist_trim(hp, (int)hp->histind - maxlines);
     }
     sfdisc(hp->histfp, &hp->histdisc);
-#if KSHELL
     (HISTCUR)->nvalue.lp = (&hp->histind);
-#endif  // KSHELL
     sh_timeradd(1000L * (HIST_RECENT - 30), 1, hist_touch, (void *)hp->histname);
 
     char buff[SF_BUFSIZE];
@@ -808,10 +791,8 @@ Histloc_t hist_find(History_t *hp, char *string, int index1, int flag, int direc
             location.hist_command = index1;
             return location;
         }
-#if KSHELL
         // Allow a search to be aborted.
         if (((Shell_t *)hp->histshell)->trapnote & SH_SIGSET) break;
-#endif  // KSHELL
     }
     return location;
 }

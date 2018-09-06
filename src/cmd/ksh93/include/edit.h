@@ -103,15 +103,11 @@ typedef struct edit {
     char *e_tty;
     int e_curchar;
     int e_cursize;
-    int *e_globals;     // global variables
-    genchar *e_window;  // display window  image
-    char e_inmacro;     // processing macro expansion
-#if KSHELL
-    char e_vi_insert[2];  // for sh_keytrap
-    int32_t e_col;        // for sh_keytrap
-#else
-    char e_prbuff[PRSIZE];  // prompt buffer
-#endif                         // KSHELL
+    int *e_globals;            // global variables
+    genchar *e_window;         // display window  image
+    char e_inmacro;            // processing macro expansion
+    char e_vi_insert[2];       // for sh_keytrap
+    int32_t e_col;             // for sh_keytrap
     struct termios e_savetty;  // saved terminal state
     int e_savefd;              // file descriptor for saved terminal state
     char e_macro[4];           // macro buffer
@@ -203,23 +199,6 @@ static inline int cntl(int c) {
 }
 #endif  // ASCII?
 
-#if !KSHELL
-#define STRIP 0377
-#define GMACS 1
-#define EMACS 2
-#define VIRAW 4
-#define EDITVI 8
-#define NOHIST 16
-#define EDITMASK 15
-#define is_option(m) (opt_flag & (m))
-extern char opt_flag;
-#ifdef SYSCALL
-#define read(fd, buff, n) syscall(3, fd, buff, n)
-#else
-#define read(fd, buff, n) rEAd(fd, buff, n)
-#endif  // SYSCALL
-#endif  // KSHELL
-
 extern void ed_crlf(Edit_t *);
 extern void ed_putchar(Edit_t *, int);
 extern void ed_ringbell(void);
@@ -235,12 +214,10 @@ extern int ed_emacsread(void *, int, char *, int, int);
 extern Edpos_t ed_curpos(Edit_t *, genchar *, int, int, Edpos_t);
 extern int ed_setcursor(Edit_t *, genchar *, int, int, int);
 extern char **ed_pcomplete(struct Complete *, const char *, const char *, int);
-#if KSHELL
 extern int ed_macro(Edit_t *, int);
 extern int ed_expand(Edit_t *, char[], int *, int *, int, int);
 extern int ed_fulledit(Edit_t *);
 extern void *ed_open(Shell_t *);
-#endif  // KSHELL
 extern int ed_internal(const char *, genchar *);
 extern int ed_external(const genchar *, char *);
 extern void ed_gencpy(genchar *, const genchar *);
@@ -251,9 +228,6 @@ extern int ed_histgen(Edit_t *, const char *);
 extern void ed_histlist(Edit_t *, int);
 
 extern const char e_runvi[];
-#if !KSHELL
-extern const char e_version[];
-#endif  // KSHELL
 
 // Flags.
 #define HIST_EVENT 0x1        // event designator seen

@@ -1957,7 +1957,6 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
         mp->shp->inlineno = c;
         type = 1;
     }
-#if KSHELL
     if (t) {
         fcsave(&save);
         if (t->tre.tretyp == TCOM && !t->com.comarg && !t->com.comset) {
@@ -2001,9 +2000,6 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
     mp->shp->st.staklist = saveslp;
     if (was_history) sh_onstate(mp->shp, SH_HISTORY);
     if (was_verbose) sh_onstate(mp->shp, SH_VERBOSE);
-#else
-    sp = sfpopen(NULL, str, "r");
-#endif
     *mp = savemac;
     np = sh_scoped(mp->shp, IFSNOD);
     nv_putval(np, mp->ifsp, NV_RDONLY);

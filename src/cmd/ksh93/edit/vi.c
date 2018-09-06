@@ -673,12 +673,10 @@ static_fn int cntlmode(Vi_t *vp) {
                 }
                 break;
             }
-#if KSHELL
             case 'v': {
                 if (vp->repeat_set == 0) goto vcommand;
             }
-#endif                   // KSHELL
-                         // FALLTHRU
+            // FALLTHRU
             case 'G': {  // goto command repeat
                 if (vp->repeat_set == 0) vp->repeat = histmin + 1;
                 if (vp->repeat <= histmin || vp->repeat > histmax) {
@@ -690,11 +688,9 @@ static_fn int cntlmode(Vi_t *vp) {
                     cur_virt = INVALID;
                     goto newhist;
                 }
-#if KSHELL
             vcommand:
                 if (ed_fulledit(vp->ed) == GOOD) return (BIGVI);
                 goto ringbell;
-#endif /* KSHELL */
             }
             // FALLTHRU
             case '#': {  // insert(delete) # to (no)comment command
@@ -1793,7 +1789,6 @@ static_fn int textmod(Vi_t *vp, int c, int mode) {
 
 addin:
     switch (c) {  // input commands
-#if KSHELL
         case '\t': {
             if (vp->ed->e_tabcount != 1) return (BAD);
             c = '=';
@@ -1852,7 +1847,6 @@ addin:
             ed_ringbell();
             return BAD;
         }
-#endif               // KSHELL
         case '_': {  // append last argument of prev command
             save_v(vp);
             {
