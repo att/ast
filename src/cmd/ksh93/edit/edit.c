@@ -686,60 +686,60 @@ int ed_getchar(Edit_t *ep, int mode) {
     if (!ep->e_lookahead) {
         ed_flush(ep);
         ep->e_inmacro = 0;
-        // The while is necessary for reads of partial multbyte chars.
         *ep->e_vi_insert = (mode == -2);
-        if ((n = ed_read(ep, ep->e_fd, readin, -LOOKAHEAD, 0)) > 0) n = putstack(ep, readin, n, 1);
+        n = ed_read(ep, ep->e_fd, readin, -LOOKAHEAD, 0);
+        if (n > 0) n = putstack(ep, readin, n, 1);
         *ep->e_vi_insert = 0;
+        if (!ep->e_lookahead) siglongjmp(ep->e_env, (n == 0 ? UEOF : UINTR));
     }
-    if (ep->e_lookahead) {
-        // Check for possible key mapping.
-        if ((c = ep->e_lbuf[--ep->e_lookahead]) < 0) {
-            if (mode <= 0 && -c == ep->e_intr) {
-                killpg(getpgrp(), SIGINT);
-                siglongjmp(ep->e_env, UINTR);
-            }
-            if (mode <= 0 && ep->sh->st.trap[SH_KEYTRAP]) {
-                ep->e_keytrap = 1;
-                n = 1;
-                if ((readin[0] = -c) == ESC) {
-                    while (1) {
-                        if (!ep->e_lookahead) {
-                            if ((c = sfpkrd(ep->e_fd, readin + n, 1, '\r', (mode ? 400L : -1L),
-                                            0)) > 0) {
-                                putstack(ep, readin + n, c, 1);
-                            }
-                        }
-                        if (!ep->e_lookahead) break;
-                        if ((c = ep->e_lbuf[--ep->e_lookahead]) >= 0) {
-                            ep->e_lookahead++;
-                            break;
-                        }
-                        c = -c;
-                        readin[n++] = c;
-                        if (c >= '0' && c <= '9' && n > 2) continue;
-                        if (n > 2 || (c != '[' && c != 'O')) break;
-                    }
-                }
-                n = keytrap(ep, readin, n, LOOKAHEAD - n, mode);
-                if (n) {
-                    putstack(ep, readin, n, 0);
-                    c = ep->e_lbuf[--ep->e_lookahead];
-                } else {
-                    c = ed_getchar(ep, mode);
-                }
-                ep->e_keytrap = 0;
-            } else {
-                c = -c;
-            }
+
+    // Check for possible key mapping.
+    if ((c = ep->e_lbuf[--ep->e_lookahead]) < 0) {
+        if (mode <= 0 && -c == ep->e_intr) {
+            killpg(getpgrp(), SIGINT);
+            siglongjmp(ep->e_env, UINTR);
         }
-        // Map '\r' to '\n'.
-        if (c == '\r' && mode != 2) c = '\n';
-        if (ep->e_tabcount &&
-            !(c == '\t' || c == ESC || c == '\\' || c == '=' || c == cntl('L') || isdigit(c)))
-            ep->e_tabcount = 0;
-    } else {
-        siglongjmp(ep->e_env, (n == 0 ? UEOF : UINTR));
+        if (mode <= 0 && ep->sh->st.trap[SH_KEYTRAP]) {
+            ep->e_keytrap = 1;
+            n = 1;
+            if ((readin[0] = -c) == ESC) {
+                while (1) {
+                    if (!ep->e_lookahead) {
+                        if ((c = sfpkrd(ep->e_fd, readin + n, 1, '\r', (mode ? 400L : -1L),
+                                        0)) > 0) {
+                            putstack(ep, readin + n, c, 1);
+                        }
+                    }
+                    if (!ep->e_lookahead) break;
+                    if ((c = ep->e_lbuf[--ep->e_lookahead]) >= 0) {
+                        ep->e_lookahead++;
+                        break;
+                    }
+                    c = -c;
+                    readin[n++] = c;
+                    if (c >= '0' && c <= '9' && n > 2) continue;
+                    if (n > 2 || (c != '[' && c != 'O')) break;
+                }
+            }
+            n = keytrap(ep, readin, n, LOOKAHEAD - n, mode);
+            if (n) {
+                putstack(ep, readin, n, 0);
+                c = ep->e_lbuf[--ep->e_lookahead];
+            } else {
+                c = ed_getchar(ep, mode);
+            }
+            ep->e_keytrap = 0;
+        } else {
+            c = -c;
+        }
     }
+    // Map '\r' to '\n'.
+    if (c == '\r' && mode != 2) c = '\n';
+    if (ep->e_tabcount &&
+        !(c == '\t' || c == ESC || c == '\\' || c == '=' || c == cntl('L') || isdigit(c))) {
+        ep->e_tabcount = 0;
+    }
+
     return c;
 }
 
@@ -1058,7 +1058,7 @@ static int compare(const char *a, const char *b, int n) {
 // Execute keyboard trap on given buffer <inbuff> of given size <isize>.
 // <mode> < 0 for vi insert mode.
 //
-static int keytrap(Edit_t *ep, char *inbuff, int insize, int bufsize, int mode) {
+static_fn int keytrap(Edit_t *ep, char *inbuff, int insize, int bufsize, int mode) {
     char *cp;
     int savexit;
     Shell_t *shp = ep->sh;
