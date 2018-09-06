@@ -37,6 +37,7 @@
 #include "defs.h"
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "builtins.h"
 #include "cdt.h"
 #include "edit.h"
@@ -406,13 +407,14 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                 long timeout) {
     ssize_t c;
     unsigned char *cp;
-    Namval_t *np;
     char *name, *val;
     Sfio_t *iop;
     Namfun_t *nfp;
     char *ifs;
     unsigned char *cpmax;
     unsigned char *del;
+    Namval_t *np = NULL;
+    Namval_t *nq = NULL;
     char was_escape = 0;
     char use_stak = 0;
     volatile char was_write = 0;
@@ -420,7 +422,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
     volatile int keytrap;
     int rel, wrd;
     long array_index = 0;
-    void *timeslot = 0;
+    void *timeslot = NULL;
     int delim = '\n';
     int jmpval = 0;
     int binary;
@@ -428,14 +430,13 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
     char inquote = 0;
     struct checkpt buff;
     Edit_t *ep = (struct edit *)shp->gd->ed_context;
-    Namval_t *nq = NULL;
 
     if (!(iop = shp->sftable[fd]) && !(iop = sh_iostream(shp, fd, fd))) return 1;
 
     memset(&buff, 0, sizeof(buff));
     sh_stats(STAT_READS);
     if (names && (name = *names)) {
-        Namval_t *mp;
+        Namval_t *mp = NULL;
         val = strchr(name, '?');
         if (val) *val = 0;
         if (flags & C_FLAG) oflags |= NV_ARRAY;
@@ -850,6 +851,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
             }
             vp[1] = 0;
         }
+        assert(np);
         if (nv_isattr(np, NV_RDONLY)) {
             errormsg(SH_DICT, ERROR_warn(0), e_readonly, nv_name(np));
             jmpval = 1;
