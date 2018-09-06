@@ -410,9 +410,9 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
     char *name, *val;
     Sfio_t *iop;
     Namfun_t *nfp;
-    char *ifs;
     unsigned char *cpmax;
     unsigned char *del;
+    char *ifs = NULL;
     Namval_t *np = NULL;
     Namval_t *nq = NULL;
     char was_escape = 0;
