@@ -1282,7 +1282,6 @@ void ed_histlist(Edit_t *ep, int n) {
             }
             ep->nhlist = i;
         }
-        last = i - 1;
         while (i-- > 0) ed_putstring(ep, CURSOR_UP);
     }
     ed_flush(ep);
