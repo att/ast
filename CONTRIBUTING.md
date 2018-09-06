@@ -377,7 +377,7 @@ To install the hook, put it in .git/hooks/pre-push and make it executable.
 
 ### Coverity Scan
 
-TBD
+Coverity scans are run everyday on `master` branch. Latest results can be viewed [here](https://scan.coverity.com/projects/ksh).
 
 ## Installing the Required Tools
 
