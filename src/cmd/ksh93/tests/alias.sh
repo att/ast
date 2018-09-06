@@ -120,3 +120,19 @@ for i in compound float integer nameref
 do
     [[ $i=$(whence $i) == "$(alias $i)" ]] || log_error "whence $i not matching $(alias $i)"
 done
+
+# TODO: alias -t and -x are obsolete options. Shall we add test case for them ?
+# =======
+# Ensure we have at least one alias to test alias -p
+alias foo=bar
+alias -p | grep -qv "^alias" && log_error "alias -p does not prepend every line with 'alias'"
+
+# =======
+# This should remove foo alias
+unalias foo
+alias | grep -q "^foo" && log_error "unalias does not remove aliases"
+
+# =======
+# This should remove all aliases
+unalias -a
+[[ $(alias) == "" ]] || log_error "unalias -a does not remove all aliases"
