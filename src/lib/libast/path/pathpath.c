@@ -60,7 +60,7 @@ char *pathpath_20100601(const char *p, const char *a, int mode, char *path, size
     }
     if (!p) {
         if (cmd) free(cmd);
-        cmd = a ? strdup(a) : (char *)0;
+        cmd = a ? strdup(a) : NULL;
         return 0;
     }
     if (strlen(p) < size) {

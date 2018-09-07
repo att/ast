@@ -34,7 +34,7 @@ tmain() {
     for (i = 0; i < 10000; ++i)
         if (sfputr(sfstdout, s, -1) < 0) terror("Writing data");
 
-    if (!(f = sfopen((Sfio_t *)0, tstfile("sf", 1), "w"))) terror("Opening output file ");
+    if (!(f = sfopen(NULL, tstfile("sf", 1), "w"))) terror("Opening output file ");
 
     sfseek(sfstdout, (Sfoff_t)0, 0);
     if ((n = sfmove(sfstdout, f, (Sfoff_t)SF_UNBOUND, '\n')) != i)

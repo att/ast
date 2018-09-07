@@ -960,7 +960,7 @@ int ed_internal(const char *src, genchar *dest) {
     int c;
     wchar_t *dp = (wchar_t *)dest;
 
-    if (dest == (genchar *)roundof(cp - (unsigned char *)0, sizeof(genchar))) {
+    if (dest == (genchar *)roundof((void *)cp - NULL, sizeof(genchar))) {
         genchar buffer[MAXLINE];
         c = ed_internal(src, buffer);
         ed_gencpy((genchar *)dp, buffer);
@@ -1010,8 +1010,8 @@ int ed_external(const genchar *src, char *dest) {
 // Copy <sp> to <dp>.
 //
 void ed_gencpy(genchar *dp, const genchar *sp) {
-    dp = (genchar *)roundof((char *)dp - (char *)0, sizeof(genchar));
-    sp = (const genchar *)roundof((char *)sp - (char *)0, sizeof(genchar));
+    dp = (genchar *)roundof((void *)dp - NULL, sizeof(genchar));
+    sp = (const genchar *)roundof((void *)sp - NULL, sizeof(genchar));
     while ((*dp++ = *sp++)) {
         ;  // empty loop
     }
@@ -1021,8 +1021,8 @@ void ed_gencpy(genchar *dp, const genchar *sp) {
 // Copy at most <n> items from <sp> to <dp>.
 //
 void ed_genncpy(genchar *dp, const genchar *sp, int n) {
-    dp = (genchar *)roundof((char *)dp - (char *)0, sizeof(genchar));
-    sp = (const genchar *)roundof((char *)sp - (char *)0, sizeof(genchar));
+    dp = (genchar *)roundof((void *)dp - NULL, sizeof(genchar));
+    sp = (const genchar *)roundof((void *)sp - NULL, sizeof(genchar));
     while (n-- > 0 && (*dp++ = *sp++)) {
         ;  // empty loop
     }
@@ -1176,7 +1176,7 @@ int ed_histgen(Edit_t *ep, const char *pattern) {
         if (!(cp = sfgetr(hp->histfp, 0, 0))) continue;
         if (*cp == '#') continue;
         if (strmatch(cp, pattern)) {
-            l = ed_histlencopy(cp, (char *)0);
+            l = ed_histlencopy(cp, NULL);
             mp = (Histmatch_t *)stkalloc(ep->sh->stk, sizeof(Histmatch_t) + l);
             mp->next = mplast;
             mplast = mp;

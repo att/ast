@@ -182,7 +182,7 @@ static_fn struct blocked *block_info(Namval_t *np, struct blocked *pp) {
     int isub = 0;
 
     if (nv_isarray(np) && (isub = nv_aindex(np)) < 0)
-        sub = nv_associative(np, (const char *)0, NV_ACURRENT);
+        sub = nv_associative(np, NULL, NV_ACURRENT);
     for (bp = blist; bp; bp = bp->next) {
         if (bp->np == np && bp->sub == sub && bp->isub == isub) return bp;
     }
@@ -378,7 +378,7 @@ static_fn char *lookup(Namval_t *np, int type, Sfdouble_t *dp, Namfun_t *handle)
 }
 
 static_fn char *lookups(Namval_t *np, Namfun_t *handle) {
-    return lookup(np, LOOKUPS, (Sfdouble_t *)0, handle);
+    return lookup(np, LOOKUPS, NULL, handle);
 }
 
 static_fn Sfdouble_t lookupn(Namval_t *np, Namfun_t *handle) {
@@ -449,7 +449,7 @@ char *nv_setdisc(Namval_t *np, const void *event, Namval_t *action, Namfun_t *fp
         memset(dp, 0, sizeof(*dp));
         dp->dsize = sizeof(struct vardisc);
         dp->putval = assign;
-        if (nv_isarray(np) && !nv_arrayptr(np)) nv_putsub(np, (char *)0, 1, 0);
+        if (nv_isarray(np) && !nv_arrayptr(np)) nv_putsub(np, NULL, 1, 0);
         nv_stack(np, (Namfun_t *)vp);
     }
     if (action == np) {
@@ -467,7 +467,7 @@ char *nv_setdisc(Namval_t *np, const void *event, Namval_t *action, Namfun_t *fp
         struct blocked *bp;
         action = vp->disc[type];
         vp->disc[type] = 0;
-        if (!(bp = block_info(np, (struct blocked *)0)) || !isblocked(bp, UNASSIGN)) {
+        if (!(bp = block_info(np, NULL)) || !isblocked(bp, UNASSIGN)) {
             chktfree(np, vp);
         }
     }
@@ -690,7 +690,7 @@ bool nv_unsetnotify(Namval_t *np, char **addr) {
     for (fp = np->nvfun; fp; fp = fp->next) {
         if (fp->disc->putval == put_notify && ((struct notify *)fp)->ptr == addr) {
             nv_stack(np, fp);
-            nv_stack(np, (Namfun_t *)0);
+            nv_stack(np, NULL);
             if (!(fp->nofree & 1)) free(fp);
             return true;
         }
@@ -876,7 +876,7 @@ static_fn Sfdouble_t clone_getn(Namval_t *np, Namfun_t *handle) {
 static_fn void clone_putv(Namval_t *np, const void *val, int flags, Namfun_t *handle) {
     UNUSED(handle);
     Shell_t *shp = sh_ptr(np);
-    Namfun_t *dp = nv_stack(np, (Namfun_t *)0);
+    Namfun_t *dp = nv_stack(np, NULL);
     Namval_t *mp = np->nvalue.np;
     if (!shp->subshell) free(dp);
     if (val) nv_clone(mp, np, NV_NOFREE);
@@ -954,7 +954,7 @@ Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last)
         if (*sp == '=') return 0;
         if (*sp == '[') {
             while (*sp == '[') {
-                sp = nv_endsubscript((Namval_t *)0, (char *)sp, 0, (void *)shp);
+                sp = nv_endsubscript(NULL, (char *)sp, 0, (void *)shp);
                 if (sp[-1] != ']') return 0;
             }
             if (*sp == 0) break;
@@ -1191,7 +1191,7 @@ static_fn char *get_table(Namval_t *np, Namfun_t *fp) {
     if (out) {
         sfseek(out, (Sfoff_t)0, SEEK_SET);
     } else {
-        out = sfnew((Sfio_t *)0, (char *)0, -1, -1, SF_WRITE | SF_STRING);
+        out = sfnew(NULL, NULL, -1, -1, SF_WRITE | SF_STRING);
     }
     for (np = (Namval_t *)dtfirst(root); np; np = (Namval_t *)dtnext(root, np)) {
         if (!nv_isnull(np) || np->nvfun || nv_isattr(np, ~NV_NOFREE)) {
@@ -1253,7 +1253,7 @@ Namval_t *nv_mount(Namval_t *np, const char *name, Dt_t *dict) {
     } else {
         pp = nv_lastdict(np->nvshell);
     }
-    if (!(tp = newof((struct table *)0, struct table, 1, 0))) return 0;
+    if (!(tp = newof(NULL, struct table, 1, 0))) return 0;
     if (name) {
         Namfun_t *fp = pp->nvfun;
         mp = (*fp->disc->createf)(pp, name, 0, fp);

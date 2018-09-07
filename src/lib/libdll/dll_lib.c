@@ -56,7 +56,7 @@ Dllnames_t *dllnames(const char *id, const char *name, Dllnames_t *names) {
     if (!strncmp(name, id, n) && (!strcmp(name + n, "_s") || !strcmp(name + n, "_t"))) return 0;
     if (!names) {
         s = fmtbuf(sizeof(Dllnames_t *) + sizeof(names) - 1);
-        n = (s - (char *)0) % sizeof(names);
+        n = (size_t)s % sizeof(names);
         if (n) s += sizeof(names) - n;
         names = (Dllnames_t *)s;
     }

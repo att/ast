@@ -36,7 +36,7 @@ tmain() {
     str = "0123456789";
     alpha = "abcdefghijklmnop";
 
-    if (!(f = sfopen((Sfio_t *)0, alpha, "s"))) terror("Opening stream");
+    if (!(f = sfopen(NULL, alpha, "s"))) terror("Opening stream");
 
     for (n = 9; n >= 0; --n)
         if (sfungetc(f, n + '0') != n + '0') terror("Ungetc");

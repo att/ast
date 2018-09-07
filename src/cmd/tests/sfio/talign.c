@@ -34,7 +34,7 @@ ssize_t readf(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     return n;
 }
 
-Sfdisc_t Disc = {readf, (Sfwrite_f)0, (Sfseek_f)0, (Sfexcept_f)0, (Sfdisc_t *)0};
+Sfdisc_t Disc = {readf, (Sfwrite_f)0, (Sfseek_f)0, (Sfexcept_f)0, NULL};
 
 tmain() {
     UNUSED(argc);

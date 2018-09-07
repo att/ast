@@ -33,7 +33,7 @@ ssize_t readbuf(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     return sfrd(f, buf, n, disc);
 }
 
-Sfdisc_t Disc = {readbuf, (Sfwrite_f)0, (Sfseek_f)0, (Sfexcept_f)0, (Sfdisc_t *)0};
+Sfdisc_t Disc = {readbuf, (Sfwrite_f)0, (Sfseek_f)0, (Sfexcept_f)0, NULL};
 
 tmain() {
     UNUSED(argc);
@@ -47,7 +47,7 @@ tmain() {
 
     s = "123456789\n";
     n = strlen(s);
-    if (!(f = sfopen((Sfio_t *)0, tstfile("sf", 0), "w"))) terror("Opening file to write");
+    if (!(f = sfopen(NULL, tstfile("sf", 0), "w"))) terror("Opening file to write");
     for (i = 0; i < 1000; ++i)
         if (sfwrite(f, s, n) != n) terror("Writing data");
 
@@ -92,7 +92,7 @@ tmain() {
     if (sfseek(f, (Sfoff_t)10, SEEK_CUR | SF_PUBLIC) != (Sfoff_t)20) terror("sfseek failed");
     sfseek(f, (Sfoff_t)0, SEEK_SET);
 
-    if (!(sf = sfnew((Sfio_t *)0, little, sizeof(little), sffileno(f), SF_READ)))
+    if (!(sf = sfnew(NULL, little, sizeof(little), sffileno(f), SF_READ)))
         terror("sfnew failed");
     if (sfread(f, buf, 10) != 10) terror("sfread failed2");
     if (sftell(f) != 10) terror("sftell failed2");

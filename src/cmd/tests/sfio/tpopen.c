@@ -37,7 +37,7 @@ tmain() {
         return 0;
     }
 
-    if (!(f = sfpopen((Sfio_t *)0, sfprints("%s -p > %s", argv[0], tstfile("sf", 0)), "w")))
+    if (!(f = sfpopen(NULL, sfprints("%s -p > %s", argv[0], tstfile("sf", 0)), "w")))
         terror("Opening for write");
     if (sfwrite(f, os, strlen(os)) != (ssize_t)strlen(os)) terror("Writing");
 
@@ -48,7 +48,7 @@ tmain() {
 
     sfclose(f);
 
-    if (!(f = sfpopen((Sfio_t *)0, sfprints("%s -p < %s", argv[0], tstfile("sf", 0)), "r")))
+    if (!(f = sfpopen(NULL, sfprints("%s -p < %s", argv[0], tstfile("sf", 0)), "r")))
         terror("Opening for read");
     sleep(1);
 

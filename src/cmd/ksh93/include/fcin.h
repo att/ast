@@ -51,7 +51,7 @@ typedef struct _fcin {
 #define fclast() ((char *)_Fcin.fclast)
 #define fcleft() (_Fcin.fclast - _Fcin.fcptr)
 #define fcsopen(s)                                 \
-    (_Fcin._fcfile = (Sfio_t *)0, _Fcin.fclen = 1, \
+    (_Fcin._fcfile = NULL, _Fcin.fclen = 1, \
      _Fcin.fcbuff = _Fcin.fcptr = (unsigned char *)(s))
 #define fctell() (_Fcin.fcoff + (_Fcin.fcptr - _Fcin.fcbuff))
 #define fcsave(x) (*(x) = _Fcin)

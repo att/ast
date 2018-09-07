@@ -54,7 +54,7 @@ static_fn double getnow(void) {
     now = tp.tv_sec + 1.e-6 * tp.tv_usec;
 
 #else
-    now = (double)time((time_t *)0);
+    now = (double)time(NULL);
 #endif  // timeofday
     return now + .001;
 }

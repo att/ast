@@ -862,7 +862,7 @@ static_fn int optget_init(char *s, Optpass_t *p) {
         p->catalog = ((t = strchr(s, ']')) &&
                       (!p->id || (t - s) != strlen(p->id) || !!strncmp(s, p->id, t - s)))
                          ? optget_save(s, t - s, 0, 0, 0, 0)
-                         : (char *)0;
+                         : NULL;
     }
     if (!p->catalog) {
         if (opt_info.disc && opt_info.disc->catalog &&
@@ -3209,7 +3209,8 @@ again:
                                 sfputr(mp, "&#0093;", -1);
                             else
                                 sfputc(mp, c);
-                        c = *sfstrseek(mp, -1, SEEK_CUR);
+                        char *cp = sfstrseek(mp, -1, SEEK_CUR);
+                        c = *cp;
                         if (p > y + 1) {
                             tp = 0;
                             co += p - y - 1;
@@ -3270,7 +3271,8 @@ again:
                     } while (c < 'a' || c > 'z');
                 } else if (co++ >= rm && !n) {
                     if (tp) {
-                        if (*sfstrseek(mp, tp, SEEK_SET) != ' ') sfstrseek(mp, 1, SEEK_CUR);
+                        char *cp = sfstrseek(mp, tp, SEEK_SET);
+                        if (*cp != ' ') (void)sfstrseek(mp, 1, SEEK_CUR);
                         tp = 0;
                         p = pp;
                         n = 0;

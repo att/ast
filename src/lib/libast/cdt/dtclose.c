@@ -55,13 +55,13 @@ int dtclose(Dt_t *dt) {
     if (ev == 0) /* release all allocated data */
     {
         (void)(*(dt->meth->searchf))(dt, NULL, DT_CLEAR);
-        (void)(*dt->meth->eventf)(dt, DT_CLOSE, (void *)0);
+        (void)(*dt->meth->eventf)(dt, DT_CLOSE, NULL);
         assert(!dt->data);
     }
     if (!(type & DT_INDATA)) (void)free(dt);
 
     if (disc && disc->eventf) /* announce end of closing activities */
-        (void)(*disc->eventf)(&pdt, DT_ENDCLOSE, (void *)0, disc);
+        (void)(*disc->eventf)(&pdt, DT_ENDCLOSE, NULL, disc);
 
     return 0;
 }

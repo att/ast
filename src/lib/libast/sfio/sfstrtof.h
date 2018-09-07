@@ -137,12 +137,12 @@ typedef int (*S2F_get_f)(void *, int);
 
 #if S2F_size
 #define GET(p) (((p) < (z)) ? (*p++) : (back = 0))
-#define PUT(p) (end ? (*end = (char *)p - back) : (char *)0)
+#define PUT(p) (end ? (*end = (char *)p - back) : NULL)
 #define REV(p, t, b) (p = t, back = b)
 #define SET(p, t, b) (t = p, b = back)
 #else
 #define GET(p) (*p++)
-#define PUT(p) (end ? (*end = (char *)p - 1) : (char *)0)
+#define PUT(p) (end ? (*end = (char *)p - 1) : NULL)
 #define REV(p, t, b) (p = t)
 #define SET(p, t, b) (t = p)
 #endif

@@ -171,7 +171,7 @@ char *strsubmatch(const char *s, const char *p, int flags) {
 
     return strngrpmatch(s, strlen(s), p, match, 1, (flags ? STR_MAXIMAL : 0) | STR_LEFT)
                ? (char *)s + match[1]
-               : (char *)0;
+               : NULL;
 }
 
 #undef strgrpmatch

@@ -139,7 +139,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     argc -= opt_info.index;
     dir = argv[0];
     if (error_info.errors > 0 || argc > 2) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     }
     shp->pwd = path_pwd(shp);
     oldpwd = (char *)shp->pwd;
@@ -176,7 +176,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     {
         cdpath = (Pathcomp_t *)shp->cdpathlist;
         if (!cdpath && (dp = sh_scoped(shp, CDPNOD)->nvalue.cp)) {
-            cdpath = path_addpath(shp, (Pathcomp_t *)0, dp, PATH_CDPATH);
+            cdpath = path_addpath(shp, NULL, dp, PATH_CDPATH);
             if (cdpath) {
                 shp->cdpathlist = (void *)cdpath;
                 cdpath->shp = shp;
@@ -307,7 +307,7 @@ success:
     nv_putval(pwdnod, dir, NV_RDONLY);
     nv_onattr(pwdnod, NV_NOFREE | NV_EXPORT);
     shp->pwd = pwdnod->nvalue.cp;
-    nv_scan(shp->track_tree, invalidate, (void *)0, NV_TAGGED, NV_TAGGED);
+    nv_scan(shp->track_tree, invalidate, NULL, NV_TAGGED, NV_TAGGED);
     path_newdir(shp, shp->pathlist);
     path_newdir(shp, shp->cdpathlist);
     if (oldpwd && (oldpwd != e_dot)) free(oldpwd);
@@ -346,7 +346,7 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
         }
     }
 
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     if (ffd != -1) {
         cp = fgetcwd(ffd, 0, 0);
         if (!cp) errormsg(SH_DICT, ERROR_system(1), e_pwd);

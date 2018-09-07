@@ -299,7 +299,7 @@ static_fn char *path_lib(Shell_t *shp, Pathcomp_t *pp, char *path) {
         pcomp.len = 0;
         if (last) pcomp.len = last - path;
         memcpy((void *)save, (void *)stkptr(shp->stk, PATH_OFFSET + pcomp.len), sizeof(save));
-        if (path_chkpaths(shp, (Pathcomp_t *)0, (Pathcomp_t *)0, &pcomp, PATH_OFFSET)) {
+        if (path_chkpaths(shp, NULL, NULL, &pcomp, PATH_OFFSET)) {
             return (stkfreeze(shp->stk, 1));
         }
         memcpy((void *)stkptr(shp->stk, PATH_OFFSET + pcomp.len), (void *)save, sizeof(save));
@@ -392,7 +392,7 @@ Pathcomp_t *path_nextcomp(Shell_t *shp, Pathcomp_t *pp, const char *name, Pathco
 
 static_fn Pathcomp_t *defpath_init(Shell_t *shp) {
     if (!std_path && !(std_path = astconf("PATH", NULL, NULL))) std_path = e_defpath;
-    Pathcomp_t *pp = (void *)path_addpath(shp, (Pathcomp_t *)0, (std_path), PATH_PATH);
+    Pathcomp_t *pp = (void *)path_addpath(shp, NULL, (std_path), PATH_PATH);
     return pp;
 }
 
@@ -734,7 +734,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                     cp = stkptr(shp->stk, m);
                 }
                 if (!strcmp(cp, LIBCMD) &&
-                    (addr = (Shbltin_f)dlllook((void *)0, stkptr(shp->stk, n))) &&
+                    (addr = (Shbltin_f)dlllook(NULL, stkptr(shp->stk, n))) &&
                     (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NULL)) &&
                     nv_isattr(np, NV_BLTINOPT)) {
                 found:
@@ -1091,7 +1091,7 @@ retry:
                 do {
                     pid = fork();
                     if (pid > 0) return pid;
-                } while (_sh_fork(shp, pid, 0, (int *)0) < 0);
+                } while (_sh_fork(shp, pid, 0, NULL) < 0);
 #ifdef SPAWN_cwd
                 if (shp->vex) {
                     spawnvex_apply(shp->vex, 0, 0);
@@ -1278,7 +1278,7 @@ static_fn Pathcomp_t *path_addcomp(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *
     for (pp = first, oldpp = 0; pp; oldpp = pp, pp = pp->next) {
         ;  // empty loop
     }
-    pp = newof((Pathcomp_t *)0, Pathcomp_t, 1, len + 1);
+    pp = newof(NULL, Pathcomp_t, 1, len + 1);
     pp->shp = shp;
     pp->refcount = 1;
     memcpy((char *)(pp + 1), name, len + 1);
@@ -1487,7 +1487,7 @@ void path_newdir(Shell_t *shp, Pathcomp_t *first) {
             stkseek(shp->stk, offset);
             next = pp->next;
             pp->next = 0;
-            path_chkpaths(shp, first, (Pathcomp_t *)0, pp, offset);
+            path_chkpaths(shp, first, NULL, pp, offset);
             if (pp->next) pp = pp->next;
             pp->next = next;
         }

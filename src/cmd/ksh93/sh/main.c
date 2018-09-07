@@ -136,7 +136,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     srand(shp->gd->pid & 0x7fff);
     if (nv_isnull(PS4NOD)) nv_putval(PS4NOD, e_traceprompt, NV_RDONLY);
     path_pwd(shp);
-    iop = (Sfio_t *)0;
+    iop = NULL;
     sh_onoption(shp, SH_BRACEEXPAND);
     if ((beenhere++) == 0) {
         sh_onstate(shp, SH_PROFILE);
@@ -195,7 +195,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
 #endif
                 {
                     name = sh_mactry(shp, nv_getval(ENVNOD));
-                    if (name) name = *name ? strdup(name) : (char *)0;
+                    if (name) name = *name ? strdup(name) : NULL;
                     if (!name || !strmatch(name, "?(.)/./*")) sh_source(shp, iop, e_sysrc);
                     if (name) {
                         sh_source(shp, iop, name);

@@ -842,7 +842,7 @@ int job_walk(Shell_t *shp, Sfio_t *file, int (*fun)(struct process *, int), int 
     job_lock();
     pw = job.pwlist;
 
-    job_waitsafe(SIGCHLD, (siginfo_t *)0, (void *)0);
+    job_waitsafe(SIGCHLD, NULL, NULL);
 
     if (jobs == NULL) {
         // Do all jobs.

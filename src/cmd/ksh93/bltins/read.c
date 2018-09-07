@@ -331,7 +331,7 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
         }
     }
     argv += opt_info.index;
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     if (method) {
         for (mindex = 0; methods[mindex].name; mindex++) {
             if (strcmp(method, methods[mindex].name) == 0) break;

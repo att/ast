@@ -29,8 +29,8 @@ tmain() {
     Sfio_t *op;
     int n;
 
-    if (!(ip = sfopen((Sfio_t *)0, "/dev/null", "r"))) terror("/dev/null read open");
-    if (!(op = sfopen((Sfio_t *)0, tstfile("sf", 0), "w"))) terror("Write open");
+    if (!(ip = sfopen(NULL, "/dev/null", "r"))) terror("/dev/null read open");
+    if (!(op = sfopen(NULL, tstfile("sf", 0), "w"))) terror("Write open");
 
     n = (int)sfmove(ip, op, SF_UNBOUND, -1);
 

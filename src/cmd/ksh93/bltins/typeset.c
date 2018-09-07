@@ -709,7 +709,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                         nv_onattr(np, NV_ARRAY | (comvar ? NV_NOFREE : 0));
                     } else {
                         if (ap && comvar) ap->flags |= ARRAY_TREE;
-                        nv_putsub(np, (char *)0, 0, 0);
+                        nv_putsub(np, NULL, 0, 0);
                     }
                 } else if (nvflags & NV_ARRAY) {
                     if (comvar) {

@@ -455,7 +455,7 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                     } else {
                         if (t) {
                             now = tmxgettime();
-                            p = warped(t, now) ? (char *)0 : (char *)format;
+                            p = warped(t, now) ? NULL : (char *)format;
                         } else
                             p = (char *)format;
                         i = 0;

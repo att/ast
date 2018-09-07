@@ -33,7 +33,7 @@ tmain() {
         return 0;
     }
 
-    if (!(f = sfopen((Sfio_t *)0, tstfile("sf", 0), "w"))) terror("Opening to write");
+    if (!(f = sfopen(NULL, tstfile("sf", 0), "w"))) terror("Opening to write");
     if (sfputc(f, 'a') != 'a') terror("sfputc");
     if (sfgetc(f) >= 0) terror("sfgetc");
 

@@ -66,7 +66,7 @@ ssize_t newline(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
     return sfwr(f, buf, i, disc);
 }
 
-Mydisc_t Mydisc = {{(Sfread_f)0, newline, (Sfseek_f)0, event, (Sfdisc_t *)0}, 0};
+Mydisc_t Mydisc = {{(Sfread_f)0, newline, (Sfseek_f)0, event, NULL}, 0};
 
 tmain() {
     UNUSED(argc);

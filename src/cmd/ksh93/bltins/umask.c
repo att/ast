@@ -72,7 +72,7 @@ int b_umask(int argc, char *argv[], Shbltin_t *context) {
             }
         }
     }
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     argv += opt_info.index;
     mask = *argv;
     if (mask) {

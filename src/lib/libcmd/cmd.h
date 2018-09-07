@@ -45,7 +45,7 @@ extern int b_stty(int argc, char **argv, Shbltin_t *context);
 
 #ifdef CMD_STANDALONE
 
-#define CMD_CONTEXT(c) ((Shbltin_t *)0)
+#define CMD_CONTEXT(c) (NULL)
 
 #if CMD_DYNAMIC
 

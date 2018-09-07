@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
     shp->shcomp = 1;
     argv += opt_info.index;
     argc -= opt_info.index;
-    if (error_info.errors || argc > 2) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors || argc > 2) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     cp = *argv;
     if (cp) {
         argv++;
@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
     cp = *argv;
     if (cp) {
         struct stat statb;
-        if (!(out = sfopen((Sfio_t *)0, cp, "w"))) {
+        if (!(out = sfopen(NULL, cp, "w"))) {
             errormsg(SH_DICT, ERROR_system(1), "%s: cannot create", cp);
         }
         if (fstat(sffileno(out), &statb) >= 0) {
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
     shp->inlineno = 1;
     sh_onoption(shp, SH_BRACEEXPAND);
     while (1) {
-        stakset((char *)0, 0);
+        stakset(NULL, 0);
         t = (Shnode_t *)sh_parse(shp, in, 0);
         if (t) {
             if ((t->tre.tretyp & (COMMSK | COMSCAN)) == TCOM && t->com.comnamp &&

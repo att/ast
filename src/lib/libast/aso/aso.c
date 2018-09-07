@@ -666,7 +666,7 @@ uint8_t asocas8(uint8_t volatile *p, int o, int n) {
     int i;
 
     s = (int)(integralof(p) & (sizeof(u.i) - 1));
-    a = (U16_8_t *)((char *)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
+    a = (U16_8_t *)(NULL + (integralof(p) & ~(sizeof(u.i) - 1)));
     for (;;) {
         u.i = a->i;
         u.c[s] = o;
@@ -688,7 +688,7 @@ uint8_t asocas8(uint8_t volatile *p, int o, int n) {
     int i;
 
     s = (int)(integralof(p) & (sizeof(u.i) - 1));
-    a = (U32_8_t *)((char *)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
+    a = (U32_8_t *)(NULL + (integralof(p) & ~(sizeof(u.i) - 1)));
     for (;;) {
         u.i = a->i;
         u.c[s] = o;
@@ -710,7 +710,7 @@ uint8_t asocas8(uint8_t volatile *p, int o, int n) {
     int i;
 
     s = (int)(integralof(p) & (sizeof(u.i) - 1));
-    a = (U64_8_t *)((char *)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
+    a = (U64_8_t *)(NULL + (integralof(p) & ~(sizeof(u.i) - 1)));
     for (;;) {
         u.i = a->i;
         u.c[s] = o;
@@ -748,7 +748,7 @@ uint16_t asocas16(uint16_t volatile *p, int o, int n) {
     int i;
 
     s = (int)(integralof(p) & (sizeof(u.i) - 1));
-    a = (U32_8_t *)((char *)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
+    a = (U32_8_t *)(NULL + (integralof(p) & ~(sizeof(u.i) - 1)));
     for (;;) {
         u.i = a->i;
         u.c[s] = o;
@@ -770,7 +770,7 @@ uint16_t asocas16(uint16_t volatile *p, int o, int n) {
     int i;
 
     s = (int)(integralof(p) & (sizeof(u.i) - 1));
-    a = (U64_8_t *)((char *)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
+    a = (U64_8_t *)(NULL + (integralof(p) & ~(sizeof(u.i) - 1)));
     for (;;) {
         u.i = a->i;
         u.c[s] = o;
@@ -808,7 +808,7 @@ uint32_t asocas32(uint32_t volatile *p, uint32_t o, uint32_t n) {
     int i;
 
     s = (int)(integralof(p) & (sizeof(u.i) - 1));
-    a = (U64_8_t *)((char *)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
+    a = (U64_8_t *)(NULL + (integralof(p) & ~(sizeof(u.i) - 1)));
     for (;;) {
         u.i = a->i;
         u.c[s] = o;

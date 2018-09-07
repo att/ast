@@ -777,10 +777,10 @@ static_fn int sh_coexec(Shell_t *shp, const Shnode_t *t, int filt) {
     } else {
         t = t->fork.forktre;
     }
-    nv_scan(shp->fun_tree, print_fun, (void *)0, 0, 0);
+    nv_scan(shp->fun_tree, print_fun, NULL, 0, 0);
     if (1) {
         Dt_t *top = shp->var_tree;
-        sh_scope(shp, (struct argnod *)0, 0);
+        sh_scope(shp, NULL, 0);
         shp->inpool = dtopen(&_Nvdisc, Dtset);
         sh_exec(shp, t, filt == 1 || filt == 2 ? SH_NOFORK : 0);
         if (shp->poolfiles) {
@@ -1049,7 +1049,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             __builtin_unreachable();
                         }
                         if (!shp->st.var_local) {
-                            sh_scope(shp, (struct argnod *)0, 0);
+                            sh_scope(shp, NULL, 0);
                             shp->st.var_local = shp->var_tree;
                         }
                     }
@@ -1134,7 +1134,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 }
                 trap = shp->st.trap[SH_DEBUGTRAP];
                 if (trap) {
-                    int n = sh_debug(shp, trap, (char *)0, (char *)0, com, ARG_RAW);
+                    int n = sh_debug(shp, trap, NULL, NULL, com, ARG_RAW);
                     if (n == 255 && shp->fn_depth + shp->dot_depth) {
                         np = SYSRETURN;
                         argn = 1;
@@ -1744,7 +1744,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
 #if 0
                             sh_vexsave(shp,0,shp->inpipe[0],0,0);
 #else
-                sh_iosave(shp, 0, shp->topfd, (char *)0);
+                sh_iosave(shp, 0, shp->topfd, NULL);
                 sh_iorenumber(shp, shp->inpipe[0], 0);
 #endif
                 // if read end of pipe is a simple command treat as non-sharable to improve
@@ -2076,7 +2076,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     save_prompt = shp->nextprompt;
                     shp->nextprompt = 3;
                     shp->timeout = 0;
-                    shp->exitval = sh_readline(shp, &nullptr, (void *)0, 0, 1, (size_t)0,
+                    shp->exitval = sh_readline(shp, &nullptr, NULL, 0, 1, (size_t)0,
                                                 1000 * shp->st.tmout);
                     shp->nextprompt = save_prompt;
                     if (shp->exitval || sfeof(sfstdin) || sferror(sfstdin)) {
@@ -2112,7 +2112,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 }
                 nv_putval(np, cp, 0);
                 if (nameref) {
-                    nv_setref(np, (Dt_t *)0, NV_VARNAME);
+                    nv_setref(np, NULL, NV_VARNAME);
                     nv_onattr(np, NV_TABLE);
                 }
                 trap = shp->st.trap[SH_DEBUGTRAP];
@@ -2122,7 +2122,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     av[2] = "in";
                     av[3] = cp;
                     av[4] = 0;
-                    sh_debug(shp, trap, (char *)0, (char *)0, av, 0);
+                    sh_debug(shp, trap, NULL, NULL, av, 0);
                 }
 #if SHOPT_COSHELL
                 if (shp->inpool) {
@@ -2240,7 +2240,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             arg[3] = 0;
             trap = shp->st.trap[SH_DEBUGTRAP];
             if (trap) {
-                sh_debug(shp, trap, (char *)0, (char *)0, arg, ARG_ARITH);
+                sh_debug(shp, trap, NULL, NULL, arg, ARG_ARITH);
             }
             if (sh_isoption(shp, SH_XTRACE)) {
                 sh_trace(shp, NULL, 0);
@@ -2282,7 +2282,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 av[1] = r;
                 av[2] = "in";
                 av[3] = 0;
-                sh_debug(shp, trap, (char *)0, (char *)0, av, 0);
+                sh_debug(shp, trap, NULL, NULL, av, 0);
             }
             while (t) {
                 struct argnod *rex = (struct argnod *)t->reg.regptr;
@@ -2418,7 +2418,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 if (!nv_istable(np)) {
                     Dt_t *root = dtopen(&_Nvdisc, Dtoset);
                     dtuserdata(root, shp, 1);
-                    nv_mount(np, (char *)0, root);
+                    nv_mount(np, NULL, root);
                     np->nvalue.cp = Empty;
                     dtview(root, shp->var_base);
                 }
@@ -2581,7 +2581,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         argv[2] = left;
                         argv[3] = "]]";
                         argv[4] = 0;
-                        sh_debug(shp, trap, (char *)0, (char *)0, argv, 0);
+                        sh_debug(shp, trap, NULL, NULL, argv, 0);
                     }
                     n = test_unop(shp, n, left);
                 } else if (type & TBINARY) {
@@ -2596,7 +2596,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         argv[3] = right;
                         argv[4] = "]]";
                         argv[5] = 0;
-                        sh_debug(shp, trap, (char *)0, (char *)0, argv, pattern);
+                        sh_debug(shp, trap, NULL, NULL, argv, pattern);
                     }
                     n = test_binop(shp, n, left, right);
                     if (traceon) {
@@ -2858,7 +2858,7 @@ pid_t sh_fork(Shell_t *shp, int flags, int *jobid) {
         spawnvex_apply(shp->vexp, 0, SPAWN_RESET);
     }
 #endif  // SPAWN_cwd
-    sigprocmask(SIG_SETMASK, &oset, (sigset_t *)0);
+    sigprocmask(SIG_SETMASK, &oset, NULL);
     job_fork(parent);
     return parent;
 }
@@ -3027,7 +3027,7 @@ int sh_fun_20120720(Shell_t *shp, Namval_t *np, Namval_t *nq, char *argv[]) {
         sh_popcontext(shp, buffp);
         if (jmpval > SH_JMPCMD) siglongjmp(*shp->jmplist, jmpval);
     } else {
-        sh_funct(shp, np, n, argv, (struct argnod *)0, sh_isstate(shp, SH_ERREXIT));
+        sh_funct(shp, np, n, argv, NULL, sh_isstate(shp, SH_ERREXIT));
     }
     if (nq) unset_instance(nq, &node, &nr, mode);
     fcrestore(&save);

@@ -133,7 +133,7 @@ static_fn char *nextdot(const char *str, void *context) {
     for (cp = (char *)str; *cp; cp++) {
         c = *cp;
         if (c == '[') {
-            cp = nv_endsubscript((Namval_t *)0, (char *)cp, 0, context);
+            cp = nv_endsubscript(NULL, (char *)cp, 0, context);
             return *cp == '.' ? cp : 0;
         }
         if (c == '.') return cp;
@@ -249,7 +249,7 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
                 dp->table = np;
                 dp->otable = shp->last_table;
                 dp->fun = nfp;
-                dp->hp = (*dp->nextnode)(np, (Dt_t *)0, nfp);
+                dp->hp = (*dp->nextnode)(np, NULL, nfp);
             } else {
                 dp->nextnode = 0;
             }
@@ -291,7 +291,7 @@ char *nv_dirnext(void *dir) {
 			char *sptr;
 #endif
             ap = nv_arrayptr(np);
-            if (ap) nv_putsub(np, (char *)0, 0, ARRAY_UNDEF);
+            if (ap) nv_putsub(np, NULL, 0, ARRAY_UNDEF);
             dp->hp = nextnode(dp);
             if (nv_isnull(np) && !nv_isarray(np) && !nv_isattr(np, NV_INTEGER)) continue;
             last_table = shp->last_table;
@@ -306,10 +306,10 @@ char *nv_dirnext(void *dir) {
             if (!dp->table) dot = -1;
             if (dot >= 0) {
                 xdot = nv_aindex(dp->table);
-                nv_putsub(dp->table, (char *)0, dot, flags);
+                nv_putsub(dp->table, NULL, dot, flags);
             }
             cp = nv_name(np);
-            if (dot >= 0) nv_putsub(dp->table, (char *)0, xdot, xdot < dot ? 0 : flags);
+            if (dot >= 0) nv_putsub(dp->table, NULL, xdot, xdot < dot ? 0 : flags);
 
 #if 0
 			if(dp->table && dp->otable && !nv_isattr(dp->table,NV_MINIMAL))
@@ -318,7 +318,7 @@ char *nv_dirnext(void *dir) {
             if (dp->nextnode && !dp->hp && (nq = (Namval_t *)dp->table)) {
                 Namarr_t *aq = nv_arrayptr(nq);
                 if (aq && (aq->flags & ARRAY_SCAN) && nv_nextsub(nq)) {
-                    dp->hp = (*dp->nextnode)(np, (Dt_t *)0, dp->fun);
+                    dp->hp = (*dp->nextnode)(np, NULL, dp->fun);
                 }
             }
             shp->last_table = last_table;
@@ -359,7 +359,7 @@ char *nv_dirnext(void *dir) {
                         dp->otable = dp->table;
                         dp->table = np;
                         dp->fun = nfp;
-                        dp->hp = (*dp->nextnode)(np, (Dt_t *)0, nfp);
+                        dp->hp = (*dp->nextnode)(np, NULL, nfp);
                     } else {
                         dp->nextnode = 0;
                     }
@@ -933,7 +933,7 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
                 if (wp->indent > 0) sfputc(outfile, '\n');
             } else if (outfile && *cp == '[' && cp[-1] != '.') {
                 // Skip multi-dimensional arrays.
-                if (*nv_endsubscript((Namval_t *)0, cp, 0, (void *)shp) == '[') continue;
+                if (*nv_endsubscript(NULL, cp, 0, (void *)shp) == '[') continue;
                 if (wp->indent > 0) sfnputc(outfile, '\t', wp->indent);
                 if (cp[-1] == '.') cp--;
                 sfputr(outfile, cp, '=');
@@ -1108,7 +1108,7 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
     if (flags & 1) {
         outfile = 0;
     } else if (!(outfile = out)) {
-        outfile = out = sfnew((Sfio_t *)0, (char *)0, -1, -1, SF_WRITE | SF_STRING);
+        outfile = out = sfnew(NULL, NULL, -1, -1, SF_WRITE | SF_STRING);
     } else if (flags & NV_TABLE) {
         off = sftell(outfile);
     } else {
@@ -1146,14 +1146,14 @@ char *nv_getvtree(Namval_t *np, Namfun_t *fp) {
         }
     }
     if (nv_isattr(np, NV_BINARY) && !nv_isattr(np, NV_RAW)) return (nv_getv(np, fp));
-    if (nv_isattr(np, NV_ARRAY) && !nv_type(np) && nv_arraychild(np, (Namval_t *)0, 0) == np) {
+    if (nv_isattr(np, NV_ARRAY) && !nv_type(np) && nv_arraychild(np, NULL, 0) == np) {
         return nv_getv(np, fp);
     }
     flags = nv_isattr(np, NV_EXPORT | NV_TAGGED);
     if (flags) nv_offattr(np, NV_EXPORT | NV_TAGGED);
     flags |= nv_isattr(np, NV_TABLE);
     if (flags) nv_offattr(np, NV_TABLE);
-    return walk_tree(np, (Namval_t *)0, flags);
+    return walk_tree(np, NULL, flags);
 }
 
 //

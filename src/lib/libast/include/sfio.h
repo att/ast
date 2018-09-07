@@ -176,8 +176,8 @@ struct _sffmt_s {
 #define SF_EVENT 100  // start of user-defined events
 
 /* for stack and disciplines */
-#define SF_POPSTACK ((Sfio_t *)0)  /* pop the stream stack		*/
-#define SF_POPDISC ((Sfdisc_t *)0) /* pop the discipline stack	*/
+#define SF_POPSTACK (NULL)  /* pop the stream stack		*/
+#define SF_POPDISC (NULL) /* pop the discipline stack	*/
 
 /* for the notify function and discipline exception */
 #define SF_NEW 0         /* new stream				*/
@@ -343,7 +343,7 @@ extern ssize_t sfmaxr(ssize_t, int);
 #define __sf_eof(f) (_SF_(f)->_flags & SF_EOF)
 #define __sf_error(f) (_SF_(f)->_flags & SF_ERROR)
 #define __sf_clrerr(f) (_SF_(f)->_flags &= ~(SF_ERROR | SF_EOF))
-#define __sf_stacked(f) (_SF_(f)->_push != (Sfio_t *)0)
+#define __sf_stacked(f) (_SF_(f)->_push != NULL)
 #define __sf_value(f) (_SF_(f)->_val)
 #define __sf_slen() (_Sfi)
 #define __sf_maxr(n, s) ((s) ? ((_Sfi = _Sfmaxr), (_Sfmaxr = (n)), _Sfi) : _Sfmaxr)
@@ -377,27 +377,27 @@ extern ssize_t sfmaxr(ssize_t, int);
 
 #define sfstrseek(f, p, m)                                                                       \
     ((m) == SEEK_SET                                                                             \
-         ? (((p) < 0 || (p) > (f)->_size) ? (char *)0 : (char *)((f)->_next = (f)->_data + (p))) \
+         ? (((p) < 0 || (p) > (f)->_size) ? NULL : (char *)((f)->_next = (f)->_data + (p))) \
          : (m) == SEEK_CUR                                                                       \
                ? ((f)->_next += (p),                                                             \
                   (((f)->_next < (f)->_data || (f)->_next > (f)->_data + (f)->_size)             \
-                       ? ((f)->_next -= (p), (char *)0)                                          \
+                       ? ((f)->_next -= (p), NULL)                                          \
                        : (char *)(f)->_next))                                                    \
                : (m) == SEEK_END ? (((p) > 0 || (f)->_size < -(p))                               \
-                                        ? (char *)0                                              \
+                                        ? NULL                                              \
                                         : (char *)((f)->_next = (f)->_data + (f)->_size + (p)))  \
-                                 : (char *)0)
+                                 : NULL)
 
 #define sfstrsize(f) ((f)->_size)
 #define sfstrtell(f) ((f)->_next - (f)->_data)
 #define sfstrpend(f) ((f)->_size - sfstrtell())
 #define sfstrbase(f) ((char *)(f)->_data)
 
-#define sfstruse(f) (sfputc((f), 0) < 0 ? (char *)0 : (char *)((f)->_next = (f)->_data))
+#define sfstruse(f) (sfputc((f), 0) < 0 ? NULL : (char *)((f)->_next = (f)->_data))
 
 #define sfstrrsrv(f, n)                                                     \
     (sfreserve((f), (n), SF_WRITE | SF_LOCKR), sfwrite((f), (f)->_next, 0), \
-     ((f)->_next + (n) <= (f)->_data + (f)->_size ? (char *)(f)->_next : (char *)0))
+     ((f)->_next + (n) <= (f)->_data + (f)->_size ? (char *)(f)->_next : NULL))
 
 #define sfstrbuf(f, b, n, m)                                        \
     (sfsetbuf((f), (b), (n)), ((f)->_flags |= (m) ? SF_MALLOC : 0), \

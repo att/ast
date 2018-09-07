@@ -84,7 +84,7 @@ void *_dll_next(int flags, _DLL_RLD_SYM_TYPE *here) {
     vp = (char *)_rld_new_interface(_RLD_FIRST_PATHNAME);
     if (vp) {
         do {
-            lp = dllopen(strcmp(vp, "MAIN") ? vp : (char *)0, flags);
+            lp = dllopen(strcmp(vp, "MAIN") ? vp : NULL, flags);
             if (lp) {
                 if (found) {
                     b = e = 0;

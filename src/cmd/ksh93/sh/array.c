@@ -670,7 +670,7 @@ static_fn struct index_array *array_grow(Namval_t *np, struct index_array *arp, 
                 for (fp = np->nvfun; fp && !fp->disc->readf; fp = fp->next) {
                     ;  // empty loop
                 }
-                if (fp && fp->disc && fp->disc->readf) (*fp->disc->readf)(mp, (Sfio_t *)0, 0, fp);
+                if (fp && fp->disc && fp->disc->readf) (*fp->disc->readf)(mp, NULL, 0, fp);
                 i++;
             }
         } else if ((ap->val[0].cp = np->nvalue.cp)) {
@@ -826,7 +826,7 @@ Namval_t *nv_arraychild(Namval_t *np, Namval_t *nq, int c) {
         nv_putsub(np, NULL, 0, ARRAY_FILL);
         ap = nv_arrayptr(np);
     }
-    if (!(up = array_getup(np, ap, 0))) return ((Namval_t *)0);
+    if (!(up = array_getup(np, ap, 0))) return NULL;
     np->nvalue.cp = up->cp;
     if ((tp = nv_type(np)) || c) {
         ap->flags |= ARRAY_NOCLONE;
@@ -1203,12 +1203,12 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
         case NV_AFREE: {
             ap->pos = 0;
             if (ap->header.scope) {
-                ap->header.table = dtview(ap->header.table, (Dt_t *)0);
+                ap->header.table = dtview(ap->header.table, NULL);
                 dtclose(ap->header.scope);
                 ap->header.scope = 0;
             } else {
                 if (ap->header.nelem == 0 && (ap->cur = nv_search("0", ap->header.table, 0))) {
-                    nv_associative(np, (char *)0, NV_ADELETE);
+                    nv_associative(np, NULL, NV_ADELETE);
                 }
                 dtclose(ap->header.table);
                 ap->header.table = 0;

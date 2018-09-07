@@ -536,7 +536,7 @@ void sh_done(void *ptr, int sig) {
         sh_offstate(shp, SH_ERREXIT);
         sh_chktrap(shp);
     }
-    if (shp->var_tree) nv_scan(shp->var_tree, array_notify, (void *)0, NV_ARRAY, NV_ARRAY);
+    if (shp->var_tree) nv_scan(shp->var_tree, array_notify, NULL, NV_ARRAY, NV_ARRAY);
     sh_freeup(shp);
     if (mbwide() || sh_isoption(shp, SH_EMACS) || sh_isoption(shp, SH_VI) ||
         sh_isoption(shp, SH_GMACS))
@@ -547,7 +547,6 @@ void sh_done(void *ptr, int sig) {
         job_walk(shp, sfstderr, job_terminate, SIGHUP, NULL);
 #endif  // JOBS
     job_close(shp);
-    if (shp->var_tree && nv_search("VMTRACE", shp->var_tree, 0)) strmatch((char *)0, (char *)0);
     sfsync((Sfio_t *)sfstdin);
     sfsync((Sfio_t *)shp->outpool);
     sfsync((Sfio_t *)sfstdout);

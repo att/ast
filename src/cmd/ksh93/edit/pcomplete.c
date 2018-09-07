@@ -266,11 +266,11 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
                 }
                 case 'x': {
                     sfsync(sfstdout);
-                    saveout = sfswap(sfstdout, (Sfio_t *)0);
+                    saveout = sfswap(sfstdout, NULL);
                     sfswap(tmp, sfstdout);
                     sh_trap(shp, str, 0);
                     sfsync(sfstdout);
-                    tmp = sfswap(sfstdout, (Sfio_t *)0);
+                    tmp = sfswap(sfstdout, NULL);
                     sfswap(saveout, sfstdout);
                     break;
                 }
@@ -370,7 +370,7 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
             sh_trap(shp, str, 0);
             stkseek(shp->stk, 0);
             if ((ap = nv_arrayptr(np)) && ap->nelem > 0) {
-                nv_putsub(np, (char *)0, 0, ARRAY_SCAN);
+                nv_putsub(np, NULL, 0, ARRAY_SCAN);
                 do {
                     cp = nv_getval(np);
                     sfputr(tmp, cp, '\n');

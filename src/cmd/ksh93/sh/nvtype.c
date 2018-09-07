@@ -423,7 +423,7 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
                     __builtin_unreachable();
                 }
                 if (nv_isref(nq)) nq = nv_refnode(nq);
-                if ((size = nv_datasize(nr, (size_t *)0)) && size == nv_datasize(nq, (size_t *)0)) {
+                if ((size = nv_datasize(nr, NULL)) && size == nv_datasize(nq, NULL)) {
                     if (nv_isattr(nr, NV_INT16 | NV_DOUBLE) == NV_INT16) {
                         if (nv_isattr(nq, NV_INT16P) == NV_INT16P) {
                             *nq->nvalue.i16p = nr->nvalue.i16;
@@ -576,7 +576,7 @@ static_fn Namval_t *next_type(Namval_t *np, Dt_t *root, Namfun_t *fp) {
 
     if (!root) {
         if ((ap = nv_arrayptr(np)) && ap->nelem && (ap->flags & ARRAY_UNDEF)) {
-            nv_putsub(np, (char *)0, 0, ARRAY_SCAN);
+            nv_putsub(np, NULL, 0, ARRAY_SCAN);
         }
         dp->current = 0;
     } else if (++dp->current >= dp->numnodes) {
@@ -641,7 +641,7 @@ static_fn int typeinfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
         if (np->nvenv) sfprintf(out, "[+?\b%s\b is a %s.]\n", tp->nvname, np->nvenv);
         cp = (char *)out->_next;
         sfprintf(out, "[+?\b%s\b is a %n ", tp->nvname, &i);
-        nv_attribute(np, out, (char *)0, 1);
+        nv_attribute(np, out, NULL, 1);
         if (cp[i + 1] == 'i') cp[i - 1] = 'n';
         fp->type = tp;
         nv_onattr(np, NV_RDONLY);
@@ -661,7 +661,7 @@ static_fn int typeinfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
         return 0;
     }
     help = &dp->names[dp->ndisc];
-    sp = sfnew((Sfio_t *)0, buffer, sizeof(buffer), -1, SF_STRING | SF_WRITE);
+    sp = sfnew(NULL, buffer, sizeof(buffer), -1, SF_STRING | SF_WRITE);
     sfprintf(out, "[+?\b%s\b defines the following fields:]{\n", np->nvname);
     for (i = 0; i < dp->numnodes; i++) {
         nq = nv_namptr(dp->nodes, i);
@@ -676,7 +676,7 @@ static_fn int typeinfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
             }
         } else {
             sfseek(sp, (Sfoff_t)0, SEEK_SET);
-            nv_attribute(nq, sp, (char *)0, 1);
+            nv_attribute(nq, sp, NULL, 1);
             cp = 0;
             if (!nv_isattr(nq, NV_REF)) cp = sh_fmtq(nv_getval(nq));
             sfputc(sp, 0);
@@ -774,7 +774,7 @@ found:
 }
 
 void nv_addtype(Namval_t *np, const char *optstr, Optdisc_t *op, size_t optsz) {
-    Namdecl_t *cp = newof((Namdecl_t *)0, Namdecl_t, 1, optsz);
+    Namdecl_t *cp = newof(NULL, Namdecl_t, 1, optsz);
     Optdisc_t *dp = (Optdisc_t *)(cp + 1);
     Shell_t *shp = sh_ptr(np);
     Namval_t *mp, *bp;
@@ -849,7 +849,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
     for (nnodes = 1, i = 1; i < numnodes; i++) {
         np = nodes[i];
         if (is_afunction(np)) {
-            if (!std_disc(np, (Namtype_t *)0)) {
+            if (!std_disc(np, NULL)) {
                 size += strlen(np->nvname + m) + 1;
                 if (strncmp(np->nvname, NV_CLASS, sizeof(NV_CLASS) - 1) == 0)
                     size -= sizeof(NV_CLASS);
@@ -998,7 +998,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                 if (!nv_isattr(nr, NV_REF) && !nv_hasdisc(nr, &type_disc)) {
                     if (nr->nvsize) {
                         memcpy((char *)nq->nvalue.cp, nr->nvalue.cp,
-                               size = nv_datasize(nr, (size_t *)0));
+                               size = nv_datasize(nr, NULL));
                     } else {
                         nq->nvalue.cp = nr->nvalue.cp;
                         nv_onattr(nq, NV_NOFREE);
@@ -1540,7 +1540,7 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
             sfprintf(out, "%.*s", strlen(cp) - 1, cp);
         }
         _nv_unset(L_ARGNOD, NV_RDONLY);
-        for (sp = 0; (sp = nv_setdisc(tp, (char *)0, (Namval_t *)sp, (Namfun_t *)tp));) {
+        for (sp = 0; (sp = nv_setdisc(tp, NULL, (Namval_t *)sp, (Namfun_t *)tp));) {
             mp = (Namval_t *)nv_setdisc(tp, sp, tp, (Namfun_t *)tp);
             if (!mp || mp == tp) continue;
             cp = strrchr(mp->nvname, '.');

@@ -222,7 +222,7 @@ static_fn void check_typedef(Lex_t *lp, struct comnod *tp) {
     }
     if (cp) {
         Namval_t *mp = (Namval_t *)tp->comnamp, *bp;
-        bp = sh_addbuiltin(lp->sh, cp, b_typeset, (void *)0);
+        bp = sh_addbuiltin(lp->sh, cp, b_typeset, NULL);
         nv_onattr(bp, nv_isattr(mp, NV_PUBLIC));
     }
 }
@@ -1482,9 +1482,9 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
         if (!(flag & SH_NOIO)) {
             if (io) {
                 while (io->ionxt) io = io->ionxt;
-                io->ionxt = inout(lexp, (struct ionod *)0, 0);
+                io->ionxt = inout(lexp, NULL, 0);
             } else {
-                t->comio = io = inout(lexp, (struct ionod *)0, 0);
+                t->comio = io = inout(lexp, NULL, 0);
             }
         }
     }
@@ -1794,7 +1794,7 @@ static_fn Shnode_t *test_and(Lex_t *lp) {
 // Convert =~ into == ~(E).
 //
 static_fn void ere_match(void) {
-    Sfio_t *base, *iop = sfopen((Sfio_t *)0, " ~(E)", "s");
+    Sfio_t *base, *iop = sfopen(NULL, " ~(E)", "s");
     int c;
 
     while ((c = fcgetc()) == ' ' || c == '\t') {

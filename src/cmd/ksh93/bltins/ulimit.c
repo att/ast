@@ -137,7 +137,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
     // Only one option at a time for setting.
     label = (hit & (hit - 1));
     if (error_info.errors || (limit && label) || argc > opt_info.index + 1) {
-        errormsg(SH_DICT, ERROR_usage(2), optusage((char *)0));
+        errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
     }
     if (mode == 0) mode = (HARD | SOFT);
     for (tp = shtab_limits; tp->option && hit; tp++, hit >>= 1) {

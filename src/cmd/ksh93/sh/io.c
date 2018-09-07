@@ -812,7 +812,7 @@ static_fn int pat_line(const regex_t *rp, const char *buff, size_t n) {
         for (sp = cp; n-- > 0 && *cp++ != '\n';) {
             ;  // empty loop
         }
-        if (regnexec(rp, sp, cp - sp, 0, (regmatch_t *)0, 0) == 0) return (sp - buff);
+        if (regnexec(rp, sp, cp - sp, 0, NULL, 0) == 0) return (sp - buff);
     }
     return cp - buff;
 }
@@ -833,7 +833,7 @@ static_fn int io_patseek(Shell_t *shp, regex_t *rp, Sfio_t *sp, int flags) {
         m = n = sfvalue(sp);
         while (n > 0 && cp[n - 1] != '\n') n--;
         if (n) m = n;
-        r = regrexec(rp, cp, m, 0, (regmatch_t *)0, 0, '\n', (void *)&match, pat_seek);
+        r = regrexec(rp, cp, m, 0, NULL, 0, '\n', (void *)&match, pat_seek);
         if (r < 0) {
             m = match - cp;
         } else if (r == 2) {
@@ -1052,7 +1052,7 @@ static_fn int iovex_rename(void *context, uintmax_t origfd, uintmax_t fd2) {
     Shell_t *shp = *(Shell_t **)context;
     char *fname = (char *)((char *)context + sizeof(void *));
 
-    io_usename(shp, fname, (int *)0, origfd, shp->exitval ? 2 : 1);
+    io_usename(shp, fname, NULL, origfd, shp->exitval ? 2 : 1);
     free(context);
     if (shp->sftable[origfd]) iovex_stream((void *)shp, origfd, fd2);
     return 0;
@@ -1298,7 +1298,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
 #endif
                     {
                         if (flag == 0) {
-                            sh_iosave(shp, toclose, indx, (char *)0); /* save file descriptor */
+                            sh_iosave(shp, toclose, indx, NULL); /* save file descriptor */
                         }
                         sh_close(toclose);
                     }
@@ -1376,7 +1376,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                 } else {
                     av += 3;
                 }
-                sh_debug(shp, trace, (char *)0, (char *)0, av, ARG_NOGLOB);
+                sh_debug(shp, trace, NULL, NULL, av, ARG_NOGLOB);
             }
             if (iof & IOLSEEK) {
                 sp = shp->sftable[fn];
@@ -1875,7 +1875,7 @@ void sh_iorestore(Shell_t *shp, int last, int jmpval) {
         if (filemap[fd].tname == Empty && shp->exitval == 0) {
             ftruncate(origfd, lseek(origfd, 0, SEEK_CUR));
         } else if (filemap[fd].tname) {
-            io_usename(shp, filemap[fd].tname, (int *)0, origfd, shp->exitval ? 2 : 1);
+            io_usename(shp, filemap[fd].tname, NULL, origfd, shp->exitval ? 2 : 1);
         }
         sh_close(origfd);
         if ((savefd = filemap[fd].save_fd) >= 0) {
@@ -2677,7 +2677,7 @@ Sfio_t *sh_fd2sfio(int fd) { return (sh_fd2sfio_20120720(sh_getinterp(), fd)); }
 Sfio_t *sh_pathopen(Shell_t *shp, const char *cp) {
     int n;
 #ifdef PATH_BFPATH
-    if ((n = path_open(shp, cp, path_get(shp, cp))) < 0) n = path_open(shp, cp, (Pathcomp_t *)0);
+    if ((n = path_open(shp, cp, path_get(shp, cp))) < 0) n = path_open(shp, cp, NULL);
 #else
     if ((n = path_open(shp, cp, path_get(cp))) < 0) n = path_open(shp, cp, "");
 #endif

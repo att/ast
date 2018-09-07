@@ -103,7 +103,7 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
     }
     if (argc == 0) return flags ? 0 : opt_info.index;
     argv += opt_info.index;
-    if (error_info.errors || !*argv) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors || !*argv) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     return whence(shp, argv, flags);
 }
 
@@ -155,7 +155,7 @@ int b_whence(int argc, char *argv[], Shbltin_t *context) {
         }
     }
     argv += opt_info.index;
-    if (error_info.errors || !*argv) errormsg(SH_DICT, ERROR_usage(2), optusage((char *)0));
+    if (error_info.errors || !*argv) errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
     if (flags & T_FLAG) flags &= ~V_FLAG;
     return whence(shp, argv, flags);
 }

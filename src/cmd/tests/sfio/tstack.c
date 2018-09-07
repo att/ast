@@ -91,8 +91,8 @@ tmain() {
     s3 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     s4 = "!@#$%^&*()_-+={}[]~`':;?/><,|";
 
-    if (!(f1 = sfopen((Sfio_t *)0, s1, "s")) || !(f2 = sfopen((Sfio_t *)0, s2, "s")) ||
-        !(f3 = sfopen((Sfio_t *)0, s3, "s")))
+    if (!(f1 = sfopen(NULL, s1, "s")) || !(f2 = sfopen(NULL, s2, "s")) ||
+        !(f3 = sfopen(NULL, s3, "s")))
         terror("Opening strings");
 
     sfdisc(sfstdin, &Disc);
@@ -132,8 +132,8 @@ tmain() {
     if (strcmp(ss, str) != 0) terror("Expect=%s Got=%s", str, ss);
 #endif
 
-    if (!(f1 = sfopen((Sfio_t *)0, s1, "s")) || !(f2 = sfopen((Sfio_t *)0, s2, "s")) ||
-        !(f3 = sfopen((Sfio_t *)0, s3, "s")))
+    if (!(f1 = sfopen(NULL, s1, "s")) || !(f2 = sfopen(NULL, s2, "s")) ||
+        !(f3 = sfopen(NULL, s3, "s")))
         terror("Opening strings2");
     sfseek(f, (Sfoff_t)0, 0);
 

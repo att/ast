@@ -294,7 +294,7 @@ static_fn void put_restricted(Namval_t *np, const void *val, int flags, Namfun_t
         __builtin_unreachable();
     }
     if (np == PATHNOD || (path_scoped = (strcmp(name, PATHNOD->nvname) == 0))) {
-        nv_scan(shp->track_tree, rehash, (void *)0, NV_TAGGED, NV_TAGGED);
+        nv_scan(shp->track_tree, rehash, NULL, NV_TAGGED, NV_TAGGED);
         if (path_scoped && !val) val = PATHNOD->nvalue.cp;
     }
     if (val && !(flags & NV_RDONLY) && np->nvalue.cp && strcmp(val, np->nvalue.cp) == 0) return;
@@ -749,9 +749,9 @@ static_fn void match2d(Shell_t *shp, struct match *mp) {
             *np->nvname = '0' + i;
         }
         np->nvshell = shp;
-        nv_putsub(np, (char *)0, 1, 0);
-        nv_putsub(np, (char *)0, 0, 0);
-        nv_putsub(SH_MATCHNOD, (char *)0, i, 0);
+        nv_putsub(np, NULL, 1, 0);
+        nv_putsub(np, NULL, 0, 0);
+        nv_putsub(SH_MATCHNOD, NULL, i, 0);
         nv_arraychild(SH_MATCHNOD, np, 0);
         np = nv_namptr(np + 1, 0);
     }
@@ -776,13 +776,13 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
         if (mp->index == 0) match2d(shp, mp);
         for (i = 0; i < mp->nmatch; i++) {
             nv_disc(np, &mp->hdr, NV_LAST);
-            nv_putsub(np, (char *)0, mp->index, 0);
+            nv_putsub(np, NULL, mp->index, 0);
             for (x = mp->index; x >= 0; x--) {
                 n = i + x * mp->nmatch;
                 if (mp->match[2 * n + 1] > mp->match[2 * n]) nv_putsub(np, Empty, x, ARRAY_ADD);
             }
             if ((ap = nv_arrayptr(np)) && array_elem(ap) == 0) {
-                nv_putsub(SH_MATCHNOD, (char *)0, i, 0);
+                nv_putsub(SH_MATCHNOD, NULL, i, 0);
                 _nv_unset(SH_MATCHNOD, NV_RDONLY);
             }
             np = nv_namptr(np + 1, 0);
@@ -1277,7 +1277,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     shp->lex_context = (void *)sh_lexopen(0, shp, 1);
     shp->strbuf = sfstropen();
     shp->stk = stkstd;
-    sfsetbuf(shp->strbuf, (char *)0, 64);
+    sfsetbuf(shp->strbuf, NULL, 64);
     sh_onstate(shp, SH_INIT);
 #if ERROR_VERSION >= 20000102L
     error_info.catalog = e_dict;
@@ -1543,7 +1543,7 @@ int sh_reinit_20120720(Shell_t *shp, char *argv[]) {
     *SHLVL->nvalue.ip += 1;
     nv_offattr(SHLVL, NV_IMPORT);
     shp->st.filename = strdup(shp->lastarg);
-    nv_delete((Namval_t *)0, (Dt_t *)0, 0);
+    nv_delete(NULL, NULL, 0);
     job.exitval = 0;
     shp->inpipe = shp->outpipe = 0;
     job_clear(shp);
@@ -1873,7 +1873,7 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     nv_putval(RANDNOD, (char *)&d, NV_DOUBLE);
     nv_stack(LINENO, &ip->LINENO_init);
     SH_MATCHNOD->nvfun = &ip->SH_MATCH_init.hdr;
-    nv_putsub(SH_MATCHNOD, (char *)0, 10, 0);
+    nv_putsub(SH_MATCHNOD, NULL, 10, 0);
     nv_stack(SH_MATHNOD, &ip->SH_MATH_init);
     nv_stack(SH_VERSIONNOD, &ip->SH_VERSION_init);
     nv_stack(OPTIONS, &ip->OPTIONS_init);

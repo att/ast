@@ -294,7 +294,7 @@ retry:
         if (fd >= 0) {
             (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
             hp->tty = strdup(ttyname(2));
-            hp->auditfp = sfnew((Sfio_t *)0, NULL, -1, fd, SF_WRITE);
+            hp->auditfp = sfnew(NULL, NULL, -1, fd, SF_WRITE);
         }
     }
 
@@ -330,7 +330,7 @@ static int hist_check(int fd) {
 //
 static int hist_clean(int fd) {
     struct stat statb;
-    return fstat(fd, &statb) >= 0 && (time((time_t *)0) - statb.st_mtime) >= HIST_RECENT;
+    return fstat(fd, &statb) >= 0 && (time(NULL) - statb.st_mtime) >= HIST_RECENT;
 }
 
 //
@@ -665,7 +665,7 @@ static int hist_write(Sfio_t *iop, const void *buff, int insize, Sfdisc_t *handl
     *bufptr++ = 0;
     size = bufptr - (char *)buff;
     if (hp->auditfp) {
-        time_t t = time((time_t *)0);
+        time_t t = time(NULL);
         sfprintf(hp->auditfp, "%u;%u;%s;%*s%c",
                  sh_isoption(shp, SH_PRIVILEGED) ? shgd->euserid : shgd->userid, t, hp->tty, size,
                  buff, 0);

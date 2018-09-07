@@ -472,7 +472,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
             sub = cp;
         }
     } else if (nosub > 0) {
-        nv_putsub(np, (char *)0, nosub - 1, 0);
+        nv_putsub(np, NULL, nosub - 1, 0);
     }
     return np;
 }
@@ -572,7 +572,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
         case LOOKUP: {
             int c = *str;
             char *xp = str;
-            lvalue->value = (char *)0;
+            lvalue->value = NULL;
             if (c == '.') str++;
             c = mb1char(str);
             if (isaletter(c)) {
@@ -592,7 +592,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                     c = *++str;
                     if (c != '[') continue;
                     str = nv_endsubscript(NULL, cp = str, NV_SUBQUOTE, shp) - 1;
-                    if (sh_checkid(cp + 1, (char *)0)) str -= 2;
+                    if (sh_checkid(cp + 1, NULL)) str -= 2;
                 }
                 if (c == '(') {
                     int off = stktell(shp->stk);

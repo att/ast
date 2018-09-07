@@ -306,7 +306,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
 
     argv += opt_info.index;
     if (error_info.errors || (argc < 0 && !(format = *argv++))) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     }
     if (vflag && format) {
         errormsg(SH_DICT, ERROR_usage(2), "-%c and -f are mutually exclusive", vflag);
@@ -383,7 +383,7 @@ printv:
     } else {
         // Echo style print.
         if (nflag && !argv[0]) {
-            sfsync((Sfio_t *)0);
+            sfsync(NULL);
         } else if (sh_echolist(shp, outfile, rflag, argv) && !nflag) {
             sfputc(outfile, '\n');
         }

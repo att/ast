@@ -341,7 +341,7 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
                 continue;
             }
             case S_GRAVE: {
-                comsubst(mp, (Shnode_t *)0, 0);
+                comsubst(mp, NULL, 0);
                 break;
             }
             case S_DOL: {
@@ -363,7 +363,7 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
                             c = fcget();
                             fcseek(-1);
                             if (sh_lexstates[ST_NORM][c] == S_BREAK) {
-                                comsubst(mp, (Shnode_t *)0, 2);
+                                comsubst(mp, NULL, 2);
                                 break;
                             }
                             sh_lexskip(lp, RBRACE, 1, ST_BRACE);
@@ -383,7 +383,7 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
                         break;
                     }
                     case S_PAR: {
-                        comsubst(mp, (Shnode_t *)0, 3);
+                        comsubst(mp, NULL, 3);
                         break;
                     }
                     case S_EOF: {
@@ -569,7 +569,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                 (void)fcseek(c + 1);
                 c = mp->pattern;
                 if (n == S_GRAVE) {
-                    comsubst(mp, (Shnode_t *)0, 0);
+                    comsubst(mp, NULL, 0);
                 } else if ((n = *cp) == '"' && !mp->quote) {
                     int off = stktell(stkp);
                     char *dp;
@@ -1013,7 +1013,7 @@ bool sh_macfun(Shell_t *shp, const char *name, int offset) {
 static_fn int namecount(Mac_t *mp, const char *prefix) {
     int count = 0;
 
-    mp->nvwalk = nv_diropen((Namval_t *)0, prefix, mp->shp);
+    mp->nvwalk = nv_diropen(NULL, prefix, mp->shp);
     while (nv_dirnext(mp->nvwalk)) count++;
     nv_dirclose(mp->nvwalk);
     return count;
@@ -1023,7 +1023,7 @@ static_fn char *nextname(Mac_t *mp, const char *prefix, int len) {
     char *cp;
 
     if (len == 0) {
-        mp->nvwalk = nv_diropen((Namval_t *)0, prefix, mp->shp);
+        mp->nvwalk = nv_diropen(NULL, prefix, mp->shp);
         return (char *)mp->nvwalk;
     }
     if (!(cp = nv_dirnext(mp->nvwalk))) nv_dirclose(mp->nvwalk);
@@ -1122,7 +1122,7 @@ retry1:
         }
         case S_PAR: {
             if (type) goto nosub;
-            comsubst(mp, (Shnode_t *)0, 3);
+            comsubst(mp, NULL, 3);
             return true;
         }
         case S_DIG: {
@@ -1361,7 +1361,7 @@ retry1:
                 } else if (mp->shp->cur_line && np == REPLYNOD) {
                     v = mp->shp->cur_line;
                 } else if (type == M_TREE) {
-                    v = nv_getvtree(np, (Namfun_t *)0);
+                    v = nv_getvtree(np, NULL);
                 } else {
                     if (type && fcpeek(0) == '+') {
                         if (ap) {
@@ -1460,7 +1460,7 @@ retry1:
                 c = charlen(v, vsize);
             } else if (dolg > 0) {
                 if (mp->shp->cur_line) {
-                    getdolarg(mp->shp, MAX_ARGN, (int *)0);
+                    getdolarg(mp->shp, MAX_ARGN, NULL);
                     c = mp->shp->offsets[0];
                 } else {
                     c = mp->shp->st.dolc;
@@ -1863,7 +1863,7 @@ retry2:
 nosub:
     if (type == M_BRACE && sh_lexstates[ST_NORM][c] == S_BREAK) {
         fcseek(-1);
-        comsubst(mp, (Shnode_t *)0, 2);
+        comsubst(mp, NULL, 2);
         return true;
     }
     if (type) mac_error(np);
@@ -2371,7 +2371,7 @@ static_fn void tilde_expand2(Shell_t *shp, int offset) {
     sfset(iop, SF_READ, 0);
     sfstdout = iop;
     if (np) {
-        sh_fun(shp, np, (Namval_t *)0, av);
+        sh_fun(shp, np, NULL, av);
     } else {
         sh_btilde(2, av, &shp->bltindata);
     }
@@ -2511,7 +2511,7 @@ static_fn char *special(Shell_t *shp, int c) {
         }
         case '#': {
             if (shp->cur_line) {
-                getdolarg(shp, MAX_ARGN, (int *)0);
+                getdolarg(shp, MAX_ARGN, NULL);
                 return ltos(shp->offsets[0]);
             }
             return ltos(shp->st.dolc);

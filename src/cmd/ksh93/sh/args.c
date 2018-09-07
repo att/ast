@@ -970,7 +970,7 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
     if (monitor) sh_onstate(shp, SH_MONITOR);
 #if has_dev_fd
     sh_close(pv[1 - fd]);
-    sh_iosave(shp, -pv[fd], shp->topfd, (char *)0);
+    sh_iosave(shp, -pv[fd], shp->topfd, NULL);
 #else
     free(shp->fifo);
     shp->fifo = 0;

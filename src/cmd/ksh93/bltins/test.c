@@ -639,7 +639,7 @@ skip:
             int n;
             if (maxgroups == 0) {
                 // First time.
-                if ((maxgroups = getgroups(0, (gid_t *)0)) <= 0) {
+                if ((maxgroups = getgroups(0, NULL)) <= 0) {
                     // Pre-POSIX system.
                     maxgroups = shgd->lim.ngroups_max;
                 }

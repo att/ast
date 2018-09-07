@@ -71,7 +71,7 @@ typedef char *(*_stk_overflow_)(int);
 static_fn int stkexcept(Sfio_t *, int, void *, Sfdisc_t *);
 static_fn Sfdisc_t stkdisc = {.exceptf = stkexcept};
 
-Sfio_t _Stak_data = SFNEW((char *)0, 0, -1, SF_STATIC | SF_WRITE | SF_STRING, &stkdisc, 0);
+Sfio_t _Stak_data = SFNEW(NULL, 0, -1, SF_STATIC | SF_WRITE | SF_STRING, &stkdisc, 0);
 
 struct frame {
     char *prev;     /* address of previous frame */
@@ -154,7 +154,7 @@ static_fn int stkexcept(Sfio_t *stream, int type, void *val, Sfdisc_t *dp) {
             if (--sp->stkref <= 0) {
                 increment(delete);
                 if (stream == stkstd)
-                    stkset(stream, (char *)0, 0);
+                    stkset(stream, NULL, 0);
                 else {
                     while (1) {
                         fp = (struct frame *)cp;
@@ -204,7 +204,7 @@ Sfio_t *stkopen(int flags) {
     struct frame *fp;
     Sfdisc_t *dp;
     char *cp;
-    if (!(stream = newof((char *)0, Sfio_t, 1, sizeof(*dp) + sizeof(*sp)))) return (0);
+    if (!(stream = newof(NULL, Sfio_t, 1, sizeof(*dp) + sizeof(*sp)))) return (0);
     increment(create);
     count(addsize, sizeof(*stream) + sizeof(*dp) + sizeof(*sp));
     dp = (Sfdisc_t *)(stream + 1);
@@ -224,7 +224,7 @@ Sfio_t *stkopen(int flags) {
 #endif /* USE_REALLOC */
         bsize = roundof(bsize, STK_FSIZE);
     bsize -= sizeof(struct frame);
-    if (!(fp = newof((char *)0, struct frame, 1, bsize))) {
+    if (!(fp = newof(NULL, struct frame, 1, bsize))) {
         free(stream);
         return (0);
     }
@@ -236,7 +236,7 @@ Sfio_t *stkopen(int flags) {
     fp->aliases = 0;
     fp->end = sp->stkend = cp + bsize;
     if (!sfnew(stream, cp, bsize, -1, SF_STRING | SF_WRITE | SF_STATIC | SF_EOF))
-        return ((Sfio_t *)0);
+        return NULL;
     sfdisc(stream, dp);
     return (stream);
 }
@@ -252,7 +252,7 @@ Sfio_t *stkinstall(Sfio_t *stream, _stk_overflow_ oflow) {
     if (!init) {
         stkinit(1);
         if (oflow) stkcur->stkoverflow = oflow;
-        return ((Sfio_t *)0);
+        return NULL;
     }
     increment(install);
     old = stkcur ? stk2stream(stkcur) : 0;

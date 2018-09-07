@@ -2696,7 +2696,7 @@ mkgen(Node *t, Node *v)
 		return;
 	case TProg:
 		if(v==0){
-			v=new(NProg, dupnode(t), (Node *)0, (Node *)0);
+			v=new(NProg, dupnode(t), NULL, NULL);
 			gen(v, 1);
 			freenode(v);
 			return;
@@ -3111,9 +3111,9 @@ doconst(Node *n)
 		gen(n, 1);
 		freenode(n);
 		execute();
-		return new(NNum, (Node *)0, (Node *)0, (Node *)topofstack());
+		return new(NNum, NULL, NULL, (Node *)topofstack());
 	case TUnit:
-		return new(NUnit, (Node *)0, (Node *)0, (Node *)0);
+		return new(NUnit, NULL, NULL, NULL);
 	case TArray:
 		if(t->r->o.t==TChar){
 			Store *s;
@@ -3124,7 +3124,7 @@ doconst(Node *n)
 			s=(Store *)topofstack();
 			c=emalloc(s->len+1);
 			strncpy(c, (char *)s->data, (int)s->len);
-			return newc(NString, (Node *)0, (Node *)0, c);
+			return newc(NString, NULL, NULL, c);
 		}
 		return n;
 	}
@@ -3299,7 +3299,7 @@ declare(Node *n, int stclass, int dotypchk, int docomp)
 			 * Make it a mk
 			 */
 			if(n->o.n->t!=NMk)
-				n->o.n=new(NMk, (Node *)0, n->o.n, (Node *)0);
+				n->o.n=new(NMk, NULL, n->o.n, NULL);
 			/*
 			 * Default type for mk
 			 */
@@ -3373,7 +3373,7 @@ op1(Node *n)
 	Node *m;
 	if(n->t==NDeclsc){
 		m=op1(n->l);
-		return newi(NDeclsc, m, (Node *)0, n->o.i);
+		return newi(NDeclsc, m, NULL, n->o.i);
 	}
 	if(n->r==0){
 		if(n->o.n && (n->o.n->t==NProg || (n->o.n->t==NMk && n->o.n->l)))
@@ -3381,11 +3381,11 @@ op1(Node *n)
 		else			
 			lerror(n, "can't deduce type for rec decl");
 	}else if(n->r->o.t==TType){
-		m=newi(NType, (Node *)0, (Node *)0, n->r->l->o.t);
-		m=new(NDecl, dupnode(n->l), m, (Node *)0);
+		m=newi(NType, NULL, NULL, n->r->l->o.t);
+		m=new(NDecl, dupnode(n->l), m, NULL);
 		return m;
 	}
-	m=new(NMk, dupnode(n->r), (Node *)0, (Node *)0);
+	m=new(NMk, dupnode(n->r), NULL, NULL);
 	m=new(NDecl, dupnode(n->l), dupnode(n->r), m);
 	return m;
 }
@@ -3397,7 +3397,7 @@ op2(Node *n)
 	char s[Namesize+2];
 	if(n->t==NDeclsc){
 		m=op2(n->l);
-		return newi(NDeclsc, m, (Node *)0, n->o.i);
+		return newi(NDeclsc, m, NULL, n->o.i);
 	}
 	if(n->l->t==NList)
 		error("no identifier lists in rec's, please");
@@ -3418,7 +3418,7 @@ op3(Node *n)
 		error("no lists in rec's, please");
 	strcpy(s+1, n->l->o.s->name);
 	s[0]='*';
-	m=new(NSmash, idnode(lookup(s+1, ID)), idnode(lookup(s, ID)), (Node *)0);
+	m=new(NSmash, idnode(lookup(s+1, ID)), idnode(lookup(s, ID)), NULL);
 	return m;
 }
 
@@ -3426,7 +3426,7 @@ Node *
 rewr(Node *n, Node *(*f)())
 {
 	if(n->t==NList)
-		return new(NList, rewr(n->l, f), rewr(n->r, f), (Node *)0);
+		return new(NList, rewr(n->l, f), rewr(n->r, f), NULL);
 	return (*f)(n);
 }
 
@@ -3439,7 +3439,7 @@ recrewrite(Node *n)
 	freenode(n->l);
 	n->t=NList;
 	n->r=n3;
-	n->l=new(NList, n1, n2, (Node *)0);
+	n->l=new(NList, n1, n2, NULL);
 	ndump(n);
 }
 
@@ -3494,17 +3494,17 @@ addformal(Node *n)
 {
 	Node *nf;
 	if(!alreadyformal(n, begf)){
-		nf=new(NFormal, dupnode(n), dupnode(n->o.s->val->type), (Node *)0);
+		nf=new(NFormal, dupnode(n), dupnode(n->o.s->val->type), NULL);
 		if(begf)
-			begf=new(NList, begf, nf, (Node *)0);
+			begf=new(NList, begf, nf, NULL);
 		else
 			begf=nf;
 		nf=dupnode(n);
 		if(bega)
-			bega=new(NExprlist, bega, nf, (Node *)0);
+			bega=new(NExprlist, bega, nf, NULL);
 		else
 			bega=nf;
-	}		
+	}
 }
 
 alreadyformal(Node *n, Node *f)

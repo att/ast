@@ -101,7 +101,7 @@ int b_exec(int argc, char *argv[], Shbltin_t *context) {
     }
 
     argv += opt_info.index;
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     if (*argv) B_login(0, argv, (Shbltin_t *)&logdata);
     return 0;
 }
@@ -182,7 +182,7 @@ int b_let(int argc, char *argv[], Shbltin_t *context) {
     }
 
     argv += opt_info.index;
-    if (error_info.errors || !*argv) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors || !*argv) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     while ((arg = *argv++)) r = !sh_arith(shp, arg);
     return r;
 }
@@ -205,7 +205,7 @@ int b_eval(int argc, char *argv[], Shbltin_t *context) {
         }
     }
 
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     argv += opt_info.index;
     if (*argv && **argv) {
         sh_offstate(shp, SH_MONITOR);
@@ -249,7 +249,7 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
 
     argv += opt_info.index;
     script = *argv;
-    if (error_info.errors || !script) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors || !script) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     if (shp->dot_depth + 1 > DOTMAX) {
         errormsg(SH_DICT, ERROR_exit(1), e_toodeep, script);
         __builtin_unreachable();
@@ -370,7 +370,7 @@ int b_shift(int n, char *argv[], Shbltin_t *context) {
         }
     }
 
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     argv += opt_info.index;
     n = ((arg = *argv) ? (int)sh_arith(shp, arg) : 1);
     if (n < 0 || shp->st.dolc < n) {
@@ -401,7 +401,7 @@ int b_wait(int n, char *argv[], Shbltin_t *context) {
         }
     }
 
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     argv += opt_info.index;
     job_bwait(argv);
     return shp->exitval;
@@ -433,7 +433,7 @@ int b_bg(int n, char *argv[], Shbltin_t *context) {
             }
         }
     }
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     argv += opt_info.index;
     if (!sh_isoption(shp, SH_MONITOR) || !job.jobcontrol) {
         if (sh_isstate(shp, SH_INTERACTIVE)) {
@@ -482,7 +482,7 @@ int b_jobs(int n, char *argv[], Shbltin_t *context) {
     }
 
     argv += opt_info.index;
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     if (*argv == 0) argv = (char **)0;
     if (job_walk(shp, sfstdout, job_list, flag, argv)) {
         errormsg(SH_DICT, ERROR_exit(1), e_no_job);

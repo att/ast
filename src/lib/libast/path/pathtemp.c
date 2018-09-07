@@ -144,7 +144,7 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
             return (char *)pfx;
         } else if (!strcmp(pfx, "prefix")) {
             if (tmp.pfx) free(tmp.pfx);
-            tmp.pfx = dir ? strdup(dir) : (char *)0;
+            tmp.pfx = dir ? strdup(dir) : NULL;
             return (char *)pfx;
         } else if (!strcmp(pfx, "private")) {
             tmp.mode = S_IRUSR | S_IWUSR;
@@ -164,7 +164,7 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
                 tmp.vec = 0;
             }
             if (tmp.tmpdir) free(tmp.tmpdir);
-            tmp.tmpdir = dir ? strdup(dir) : (char *)0;
+            tmp.tmpdir = dir ? strdup(dir) : NULL;
             return (char *)pfx;
         } else if (!strcmp(pfx, TMP_PATH_ENV)) {
             if (tmp.vec) {
@@ -172,7 +172,7 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
                 tmp.vec = 0;
             }
             if (tmp.tmppath) free(tmp.tmppath);
-            tmp.tmppath = dir ? strdup(dir) : (char *)0;
+            tmp.tmppath = dir ? strdup(dir) : NULL;
             return (char *)pfx;
         }
         return 0;

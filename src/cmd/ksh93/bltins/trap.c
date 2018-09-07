@@ -82,7 +82,7 @@ int b_trap(int argc, char *argv[], Shbltin_t *context) {
         }
     }
     argv += opt_info.index;
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     if (pflag && aflag) errormsg(SH_DICT, ERROR_usage(2), "-a and -p are mutually exclusive");
     if (lflag) {
         sh_siglist(shp, sfstdout, -1);
@@ -257,7 +257,7 @@ endopts:
     if (*argv && strcmp(*argv, "--") == 0 && strcmp(*(argv - 1), "--") != 0) argv++;
     if (error_info.errors || flag == (L_FLAG | S_FLAG) || (!(*argv) && !(flag & L_FLAG))) {
         shp->sigval = 0;
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     }
     // Just in case we send a kill -9 $$.
     sfsync(sfstderr);

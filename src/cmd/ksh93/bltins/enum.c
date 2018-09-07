@@ -309,7 +309,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context)
         error(ERROR_USAGE | 2, "%s", optusage(NULL));
         return 1;
     }
-    if (!*argv) sh_outenum(shp, sfstdout, (Namval_t *)0);
+    if (!*argv) sh_outenum(shp, sfstdout, NULL);
     while ((cp = *argv++)) {
         np = nv_open(cp, shp->var_tree, NV_VARNAME | NV_NOADD);
         if (!np || !(ap = nv_arrayptr(np)) || ap->fun || (sz = ap->nelem) < 2) {
@@ -327,7 +327,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context)
         i = 0;
         nv_onattr(tp, NV_UINT16);
         nv_putval(tp, (char *)&i, NV_INTEGER);
-        nv_putsub(np, (char *)0, 0L, ARRAY_SCAN);
+        nv_putsub(np, NULL, 0L, ARRAY_SCAN);
         do {
             sz += strlen(nv_getval(np));
         } while (nv_nextsub(np));
@@ -341,7 +341,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context)
         ep->iflag = iflag;
         ep->nelem = n;
         cp = (char *)&ep->values[n + 1];
-        nv_putsub(np, (char *)0, 0L, ARRAY_SCAN);
+        nv_putsub(np, NULL, 0L, ARRAY_SCAN);
         ep->values[n] = 0;
         i = 0;
         do {
@@ -371,7 +371,7 @@ void lib_init(int flag, void *context) {
     Shell_t *shp = ((Shbltin_t *)context)->shp;
     Namval_t *mp, *bp;
     if (flag) return;
-    bp = sh_addbuiltin(shp, "Enum", enum_create, (void *)0);
+    bp = sh_addbuiltin(shp, "Enum", enum_create, NULL);
     mp = nv_search("typeset", shp->bltin_tree, 0);
     nv_onattr(bp, nv_isattr(mp, NV_PUBLIC));
 }

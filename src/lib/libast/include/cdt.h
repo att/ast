@@ -111,7 +111,7 @@ struct _dtdisc_s {
 #ifdef offsetof
 #define DTOFFSET(struct_s, member) offsetof(struct_s, member)
 #else
-#define DTOFFSET(struct_s, member) ((int)(&((struct_s *)0)->member))
+#define DTOFFSET(struct_s, member) ((int)(&(NULL)->member))
 #endif
 
 /* the dictionary structure itself */

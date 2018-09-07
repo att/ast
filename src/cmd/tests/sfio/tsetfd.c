@@ -31,7 +31,7 @@ tmain() {
     int fd;
     off_t sk;
 
-    if (!(f = sfopen((Sfio_t *)0, tstfile("sf", 0), "w+"))) terror("Opening file");
+    if (!(f = sfopen(NULL, tstfile("sf", 0), "w+"))) terror("Opening file");
     fd = sffileno(f);
 
     if (sfsetfd(f, -1) != -1 || sffileno(f) != -1) terror("setfd1");

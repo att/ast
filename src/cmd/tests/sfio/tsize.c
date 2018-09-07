@@ -107,7 +107,7 @@ tmain() {
 
     /* test to see if a string stream extends ok during writes */
     s = malloc(5);
-    f = sfnew((Sfio_t *)0, (void *)s, 5, -1, SF_STRING | SF_READ | SF_WRITE | SF_MALLOC);
+    f = sfnew(NULL, (void *)s, 5, -1, SF_STRING | SF_READ | SF_WRITE | SF_MALLOC);
     if (!f) terror("Can't create string stream");
     if (sfwrite(f, "01", 2) != 2) terror("Bad write to string stream");
     if (sfwrite(f, "2345678", 7) != 7) terror("Bad write to string stream2");

@@ -86,7 +86,7 @@ Dt_t *dtopen(Dtdisc_t *disc, Dtmethod_t *meth) {
     dt->user = &dt->data->user; /* space allocated for application usage */
 
     if (disc->eventf) /* signal opening is done */
-        (void)(*disc->eventf)(dt, DT_ENDOPEN, (void *)0, disc);
+        (void)(*disc->eventf)(dt, DT_ENDOPEN, NULL, disc);
 
     return dt;
 }

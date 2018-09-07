@@ -112,7 +112,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
         }
     }
 
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     argv += (opt_info.index - 1);
     // TODO: What is the usefulness of this flag ? Shall this be removed in future ?
     if (pflag) {

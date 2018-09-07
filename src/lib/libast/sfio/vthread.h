@@ -176,7 +176,7 @@ typedef int _vtattr_t;
 #define VTONCE_INITDATA \
     { 0 }
 
-#define vtopen(vt, flgs) ((Vthread_t *)0)
+#define vtopen(vt, flgs) (NULL)
 #define vtclose(vt) (-1)
 #define vtkill(vt) (-1)
 #define vtwait(vt) (-1)
@@ -185,14 +185,14 @@ typedef int _vtattr_t;
 #define vtset(vt, t, v) (-1)
 #define vtonce(on, fu) (-1)
 
-#define vtmtxopen(mtx, flgs) ((Vtmutex_t *)0)
+#define vtmtxopen(mtx, flgs) (NULL)
 #define vtmtxclose(mtx) (-1)
 #define vtmtxlock(mtx) (-1)
 #define vtmtxtrylock(mtx) (-1)
 #define vtmtxunlock(mtx) (-1)
 #define vtmtxclrlock(mtx) (-1)
 
-#define vtstatus(vt) ((void *)0)
+#define vtstatus(vt) (NULL)
 #define vterror(vt) (0)
 #define vtmtxerror(mtx) (0)
 #define vtonceerror(once) (0)

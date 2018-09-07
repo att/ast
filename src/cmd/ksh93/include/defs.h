@@ -367,7 +367,7 @@ extern const Shtable_t shtab_stats[];
 #define sh_stats(x) (shgd->stats[(x)]++)
 extern const Shtable_t shtab_siginfo[];
 
-#define timeofday(p) gettimeofday(p, (struct timezone *)0)
+#define timeofday(p) gettimeofday(p, NULL)
 
 // sigqueue() is not available on macOS.
 #if !_lib_sigqueue
