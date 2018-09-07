@@ -286,7 +286,7 @@ static_fn int eval_e3(struct test *tp) {
     char *binop;
 
     arg = nxtarg(tp, 0);
-    if (arg && c_eq(arg, '!')) return (!eval_e3(tp));
+    if (c_eq(arg, '!')) return !eval_e3(tp);
     if (c_eq(arg, '(')) {
         op = eval_expr(tp, 1);
         cp = nxtarg(tp, 0);
@@ -474,7 +474,9 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
 }
 
 int test_binop(Shell_t *shp, int op, const char *left, const char *right) {
-    double lnum, rnum;
+    double lnum = 0.0;
+    double rnum;
+
     if (op & TEST_ARITH) {
         if (*left == '0') {
             while (*left == '0') left++;
