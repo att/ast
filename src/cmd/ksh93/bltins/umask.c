@@ -27,6 +27,7 @@
 
 #include <ctype.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 // WARNING: Normally every ksh source module should normally begin with:
 //   #include "defs.h"
