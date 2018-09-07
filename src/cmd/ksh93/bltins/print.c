@@ -724,11 +724,7 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
             case 'E':
             case 'F':
             case 'G': {
-                if (SFFMT_LDOUBLE) {
-                    value->ld = 0.;
-                } else {
-                    value->d = 0.;
-                }
+                value->ld = 0.;
                 break;
             }
             case 'n': {
@@ -766,13 +762,12 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                 nv_onattr(np, NV_INTEGER);
                 np->nvalue.lp = calloc(1, sizeof(int32_t));
                 nv_setsize(np, 10);
-                if (sizeof(int) == sizeof(int32_t)) {
-                    value->ip = (int *)np->nvalue.lp;
-                } else {
-                    int32_t sl = 1;
-                    value->ip =
-                        (int *)(((char *)np->nvalue.lp) + (*((char *)&sl) ? 0 : sizeof(int)));
-                }
+#if _ast_sizeof_int == _ast_sizeof_int32_t
+                value->ip = (int *)np->nvalue.lp;
+#else
+                int32_t sl = 1;
+                value->ip = (int *)(((char *)np->nvalue.lp) + (*((char *)&sl) ? 0 : sizeof(int)));
+#endif
                 nv_close(np);
                 break;
             }
@@ -915,13 +910,8 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                         break;
                     }
                 }
-                if (SFFMT_LDOUBLE) {
-                    value->ld = d;
-                    fe->size = sizeof(value->ld);
-                } else {
-                    value->d = d;
-                    fe->size = sizeof(value->d);
-                }
+                value->ld = d;
+                fe->size = sizeof(value->ld);
                 break;
             }
             case 'Q': {

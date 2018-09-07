@@ -174,6 +174,7 @@ int_size = cc.sizeof('int')
 long_size = cc.sizeof('long')
 size_t_size = cc.sizeof('size_t')
 off_t_size = cc.sizeof('off_t')
+int32_t_size = cc.sizeof('int32_t', prefix: '#include <sys/types.h>')
 wchar_t_size = cc.sizeof('wchar_t', prefix: '#include <wchar.h>')
 
 feature_data = configuration_data()
@@ -224,6 +225,7 @@ feature_data.set10('const_const_fts_open', osname == 'freebsd' or osname == 'cyg
 
 
 feature_data.set('_ast_sizeof_int', int_size)
+feature_data.set('_ast_sizeof_int32_t', int32_t_size)
 feature_data.set('_ast_sizeof_long', long_size)
 feature_data.set('_ast_sizeof_size_t', size_t_size)
 feature_data.set('_ast_sizeof_off_t', off_t_size)
