@@ -576,7 +576,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
             if (c == '.') str++;
             c = mb1char(str);
             if (isaletter(c)) {
-                Namval_t *np = 0;
+                Namval_t *np = NULL;
                 int dot = 0;
                 while (1) {
                     while (xp = str, c = mb1char(str), isaname(c)) {
@@ -670,7 +670,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                         nv_onattr(np, NV_NOFREE | NV_LDOUBLE | NV_RDONLY);
                     } else {
                         const struct Mathconst *mp = 0;
-                        np = 0;
+                        np = NULL;
                         if (strchr("ELPS12", **ptr)) {
                             for (mp = Mtable; *mp->name; mp++) {
                                 if (strcmp(mp->name, *ptr) == 0) break;
@@ -689,7 +689,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                             np = nv_open(*ptr, root, NV_NOREF | NV_NOASSIGN | NV_VARNAME | dot);
                         }
                         if (!np || Varsubscript) {
-                            np = 0;
+                            np = NULL;
                             lvalue->value = (char *)*ptr;
                             lvalue->flag = str - lvalue->value;
                         }
@@ -703,7 +703,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                 }
                 *str = c;
                 if (lvalue->isfloat == TYPE_LD) break;
-                if (!np && lvalue->value) break;
+                if (!np) break;  // this used to also test `&& lvalue->value` but that's redundant
                 lvalue->value = (char *)np;
                 // Bind subscript later.
                 if (nv_isattr(np, NV_DOUBLE) == NV_DOUBLE) lvalue->isfloat = 1;
