@@ -120,12 +120,16 @@ int b_wc(int argc, char **argv, Shbltin_t *context) {
                 break;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
         }
         break;
     }
     argv += opt_info.index;
-    if (error_info.errors) error(ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        error(ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     if (mode & WC_MBYTE) {
         if (mode & WC_CHARS) error(2, "-c and -C are mutually exclusive");
         if (!mbwide()) mode &= ~WC_MBYTE;

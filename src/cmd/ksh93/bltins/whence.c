@@ -97,13 +97,16 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
             case '?': {
                 if (argc == 0) return (0);
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
             }
         }
     }
     if (argc == 0) return flags ? 0 : opt_info.index;
     argv += opt_info.index;
-    if (error_info.errors || !*argv) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors || !*argv) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
     return whence(shp, argv, flags);
 }
 
@@ -150,12 +153,15 @@ int b_whence(int argc, char *argv[], Shbltin_t *context) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
             }
         }
     }
     argv += opt_info.index;
-    if (error_info.errors || !*argv) errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
+    if (error_info.errors || !*argv) {
+        errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
+        __builtin_unreachable();
+    }
     if (flags & T_FLAG) flags &= ~V_FLAG;
     return whence(shp, argv, flags);
 }

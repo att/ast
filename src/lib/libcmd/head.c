@@ -112,7 +112,7 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
                 continue;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
-                continue;
+                __builtin_unreachable();
             case ':':
                 error(2, "%s", opt_info.arg);
                 continue;
@@ -121,7 +121,10 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
     }
     argv += opt_info.index;
     argc -= opt_info.index;
-    if (error_info.errors) error(ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        error(ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
     cp = *argv;
     if (cp) argv++;
     do {

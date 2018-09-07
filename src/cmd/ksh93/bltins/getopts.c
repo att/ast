@@ -94,14 +94,17 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
             }
         }
     }
 
     argv += opt_info.index;
     argc -= opt_info.index;
-    if (error_info.errors || argc < 2) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors || argc < 2) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
     error_info.context->flags |= ERROR_SILENT;
     error_info.id = options;
     options = argv[0];
@@ -134,7 +137,10 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
                 ? (opt_info.num = LONG_MIN, flag = optget(argv, options))
                 : 0) {
         case '?': {
-            if (mode == 0) errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
+            if (mode == 0) {
+                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
+                __builtin_unreachable();
+            }
             opt_info.option[1] = '?';
         }
         // FALLTHRU
@@ -167,6 +173,7 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
                 opt_info.index = flag;
                 if (!mode && strchr(options, ' ')) {
                     errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+                    __builtin_unreachable();
                 }
             }
             opt_info.arg = 0;

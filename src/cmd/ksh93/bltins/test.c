@@ -211,6 +211,7 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
                     av[2] = 0;
                     optget(av, sh_opttest);
                     errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
+                    __builtin_unreachable();
                 }
                 break;
             }

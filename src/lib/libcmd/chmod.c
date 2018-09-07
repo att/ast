@@ -225,13 +225,14 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 continue;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
         }
         break;
     }
     argv += opt_info.index;
     if (error_info.errors || !*argv || (!amode && !*(argv + 1))) {
         error(ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
     }
     if (chlink) {
         flags &= ~FTS_COMFOLLOW;

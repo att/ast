@@ -95,12 +95,15 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
                 break;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
         }
         break;
     }
     argv += opt_info.index;
-    if (error_info.errors || *argv) error(ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors || *argv) {
+        error(ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
     if (fsync_fd == -1 && syncfs_fd == -1) do_sync = do_sfsync = 1;
     if (do_sfsync && sfsync(NULL) < 0) error(ERROR_system(0), "sfsync(0) failed");
     if (fsync_fd >= 0 && fsync(fsync_fd) < 0) error(ERROR_system(0), "fsync(%d) failed", fsync_fd);

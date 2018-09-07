@@ -302,7 +302,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
             }
         }
     }
@@ -310,9 +310,11 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
     argv += opt_info.index;
     if (error_info.errors || (argc < 0 && !(format = *argv++))) {
         errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
     }
     if (vflag && format) {
         errormsg(SH_DICT, ERROR_usage(2), "-%c and -f are mutually exclusive", vflag);
+        __builtin_unreachable();
     }
 
 skip:

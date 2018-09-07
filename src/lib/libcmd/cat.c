@@ -421,7 +421,7 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
                 break;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
         }
         if (!n) break;
         if (opt_info.num)
@@ -430,7 +430,11 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
             flags &= ~n;
     }
     argv += opt_info.index;
-    if (error_info.errors) error(ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        error(ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     memset(states, 0, sizeof(states));
     if (flags & V_FLAG) {
         memset(states, T_CONTROL, 32);

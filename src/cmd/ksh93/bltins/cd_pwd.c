@@ -130,7 +130,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
             }
         }
     }
@@ -140,6 +140,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     dir = argv[0];
     if (error_info.errors > 0 || argc > 2) {
         errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
     }
     shp->pwd = path_pwd(shp);
     oldpwd = (char *)shp->pwd;
@@ -343,12 +344,16 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
             }
         }
     }
 
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     if (ffd != -1) {
         cp = fgetcwd(ffd, 0, 0);
         if (!cp) {

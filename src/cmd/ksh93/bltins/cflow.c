@@ -63,7 +63,11 @@ int b_return(int n, char *argv[], Shbltin_t *context) {
     }
 
 done:
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     pp->mode = (**argv == 'e' ? SH_JMPEXIT : SH_JMPFUN);
     argv += opt_info.index;
     n = (((arg = *argv) ? (int)strtol(arg, (char **)0, 10) : shp->oldexit));
@@ -100,7 +104,11 @@ int b_break(int n, char *argv[], Shbltin_t *context) {
         }
     }
 
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     argv += opt_info.index;
     n = 1;
     arg = *argv;

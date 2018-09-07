@@ -225,7 +225,7 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
                 break;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
         }
         break;
     }
@@ -245,7 +245,10 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
             }
         }
     }
-    if (error_info.errors || (!name && *argv)) error(ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors || (!name && *argv)) {
+        error(ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
     if (!name) {
         astconflist(sfstdout, path, flags, pattern);
     } else {

@@ -69,11 +69,15 @@ int b_umask(int argc, char *argv[], Shbltin_t *context) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
             }
         }
     }
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     argv += opt_info.index;
     mask = *argv;
     if (mask) {

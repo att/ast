@@ -130,7 +130,11 @@ int b_readonly(int argc, char *argv[], Shbltin_t *context) {
             }
         }
     }
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
+    if (error_info.errors) {
+        errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
+        __builtin_unreachable();
+    }
+
     argv += (opt_info.index - 1);
     if (*command == 'r') {
         flag = (NV_ASSIGN | NV_RDONLY | NV_VARNAME);
@@ -183,7 +187,11 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
                 }
             }
         }
-        if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        if (error_info.errors) {
+            errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+            __builtin_unreachable();
+        }
+
         argv += (opt_info.index - 1);
         if (flag & NV_TAGGED) {
             // Hacks to handle hash -r | --.
@@ -433,7 +441,11 @@ endargs:
         sflag = false;
         flag |= NV_STATICF;
     }
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     if (sizeof(char *) < 8 && tdata.argnum > SHRT_MAX) {
         errormsg(SH_DICT, ERROR_exit(2), "option argument cannot be greater than %d", SHRT_MAX);
         __builtin_unreachable();
@@ -982,12 +994,16 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
             }
         }
     }
     argv += opt_info.index;
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     if (arg || *argv) {
         if (sh_isoption(tdata.sh, SH_RESTRICTED)) {
             errormsg(SH_DICT, ERROR_exit(1), e_restricted, argv[-opt_info.index]);
@@ -1161,6 +1177,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
     argv += opt_info.index;
     if (error_info.errors || (*argv == 0 && !all)) {
         errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
     }
     if (!troot) return (1);
     r = 0;

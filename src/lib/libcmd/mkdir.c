@@ -97,12 +97,16 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
                 break;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
         }
         break;
     }
     argv += opt_info.index;
-    if (error_info.errors || !*argv) error(ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors || !*argv) {
+        error(ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     mask = umask(0);
     if (mflag || pflag) {
         dmode = DIRMODE & ~mask;

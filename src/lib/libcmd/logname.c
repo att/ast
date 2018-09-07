@@ -62,11 +62,14 @@ int b_logname(int argc, char **argv, Shbltin_t *context) {
                 continue;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
-                continue;
+                __builtin_unreachable();
         }
         break;
     }
-    if (error_info.errors) error(ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        error(ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
     logname = getlogin();
     if (!logname) logname = fmtuid(getuid());
     sfputr(sfstdout, logname, '\n');

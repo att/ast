@@ -115,7 +115,7 @@ int b_basename(int argc, char **argv, Shbltin_t *context) {
                 break;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
         }
         break;
     }
@@ -123,6 +123,7 @@ int b_basename(int argc, char **argv, Shbltin_t *context) {
     argc -= opt_info.index;
     if (error_info.errors || argc < 1 || (!all && argc > 2)) {
         error(ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
     }
     if (!all) {
         namebase(sfstdout, argv[0], argv[1]);

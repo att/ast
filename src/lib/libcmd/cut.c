@@ -593,15 +593,19 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
                 break;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
         }
         break;
     }
     argv += opt_info.index;
-    if (error_info.errors) error(ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        error(ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
     if (!cp) {
         error(2, "b, c or f option must be specified");
         error(ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
     }
     if (!*cp) error(3, "non-empty b, c or f option must be specified");
     if ((mode & (C_FIELDS | C_SUPRESS)) == C_SUPRESS) error(3, "s option requires f option");

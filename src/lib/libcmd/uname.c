@@ -228,13 +228,14 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
                 break;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
         }
         break;
     }
     argv += opt_info.index;
     if (error_info.errors || (*argv && (flags || sethost)) || (sethost && flags)) {
         error(ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
     }
     if (sethost) {
         if (sethostname(sethost, strlen(sethost) + 1)) {
@@ -266,7 +267,10 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         s = buf;
         if (!flags) flags = OPT_system;
         memset(&ut, 0, sizeof(ut));
-        if (uname(&ut) < 0) error(ERROR_usage(2), "information unavailable");
+        if (uname(&ut) < 0) {
+            error(ERROR_usage(2), "information unavailable");
+            __builtin_unreachable();
+        }
         output(OPT_system, ut.sysname, "sysname");
         if (flags & OPT_nodename) {
             if (sizeof(ut.nodename) > 9 || gethostname(s, sizeof(buf))) s = ut.nodename;

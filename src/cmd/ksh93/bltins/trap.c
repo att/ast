@@ -82,8 +82,14 @@ int b_trap(int argc, char *argv[], Shbltin_t *context) {
         }
     }
     argv += opt_info.index;
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-    if (pflag && aflag) errormsg(SH_DICT, ERROR_usage(2), "-a and -p are mutually exclusive");
+    if (error_info.errors) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+    if (pflag && aflag) {
+        errormsg(SH_DICT, ERROR_usage(2), "-a and -p are mutually exclusive");
+        __builtin_unreachable();
+    }
     if (lflag) {
         sh_siglist(shp, sfstdout, -1);
         return 0;
@@ -248,7 +254,7 @@ int b_kill(int argc, char *argv[], Shbltin_t *context) {
             case '?': {
                 shp->sigval = 0;
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
             }
         }
     }
@@ -258,6 +264,7 @@ endopts:
     if (error_info.errors || flag == (L_FLAG | S_FLAG) || (!(*argv) && !(flag & L_FLAG))) {
         shp->sigval = 0;
         errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
     }
     // Just in case we send a kill -9 $$.
     sfsync(sfstderr);

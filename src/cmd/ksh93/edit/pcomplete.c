@@ -684,7 +684,7 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                return -1;
+                __builtin_unreachable();
             }
         }
     }

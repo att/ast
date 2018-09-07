@@ -419,7 +419,10 @@ int sh_argopts(int argc, char *argv[], void *context) {
             if (setflag == 0) on_option(&shp->offoptions, o);
         }
     }
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
     // Check for '-' or '+' argument.
     sp = argv[opt_info.index];
     if (sp && sp[1] == 0 && (*sp == '+' || *sp == '-') && strcmp(argv[opt_info.index - 1], "--")) {
@@ -545,6 +548,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
         if (!(shp->comdiv = *argv++)) {
             errormsg(SH_DICT, 2, e_cneedsarg);
             errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
+            __builtin_unreachable();
         }
         argc--;
     }
@@ -552,7 +556,10 @@ int sh_argopts(int argc, char *argv[], void *context) {
     // sh_applyopts(), so that the code can be reused from b_shopt(), too.
     sh_applyopts(shp, newflags);
     if (ap->kiafile) {
-        if (!argv[0]) errormsg(SH_DICT, ERROR_usage(2), "-R requires scriptname");
+        if (!argv[0]) {
+            errormsg(SH_DICT, ERROR_usage(2), "-R requires scriptname");
+            __builtin_unreachable();
+        }
         if (!(lp->kiafile = sfopen(NULL, ap->kiafile, "w+"))) {
             errormsg(SH_DICT, ERROR_system(3), e_create, ap->kiafile);
             __builtin_unreachable();

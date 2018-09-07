@@ -286,14 +286,14 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
                 break;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
         }
         break;
     }
     argv += opt_info.index;
     if (error_info.errors || !(file1 = *argv++) || !(file2 = *argv++)) {
         error(ERROR_usage(2), "%s", optusage(NULL));
-        abort();  // not reached - used to shup up lint tools about file2 not being initialized
+        __builtin_unreachable();
     }
     n = 2;
 

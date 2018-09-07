@@ -241,7 +241,11 @@ int b_shopt(int argc, char *argv[], Shbltin_t *extra) {
         }
     }
 
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     argc -= opt_info.index;
     if (argc == 0) {
         // No args, -s => mask=current options, -u mask=~(current options) else mask=all bits.

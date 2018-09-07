@@ -121,7 +121,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
             }
         }
     }
@@ -138,6 +138,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
     label = (hit & (hit - 1));
     if (error_info.errors || (limit && label) || argc > opt_info.index + 1) {
         errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
+        __builtin_unreachable();
     }
     if (mode == 0) mode = (HARD | SOFT);
     for (tp = shtab_limits; tp->option && hit; tp++, hit >>= 1) {

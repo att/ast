@@ -104,14 +104,18 @@ int main(int argc, char *argv[]) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                break;
+                __builtin_unreachable();
             }
         }
     }
     shp->shcomp = 1;
     argv += opt_info.index;
     argc -= opt_info.index;
-    if (error_info.errors || argc > 2) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors || argc > 2) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     cp = *argv;
     if (cp) {
         argv++;
