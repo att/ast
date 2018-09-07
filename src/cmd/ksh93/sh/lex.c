@@ -362,6 +362,7 @@ int sh_lex(Lex_t *lp) {
                         errno = ENOEXEC;
                         error_info.id = shp->readscript;
                         errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, cp);
+                        __builtin_unreachable();
                     } else {
                         lp->token = -1;
                         sh_syntax(lp);

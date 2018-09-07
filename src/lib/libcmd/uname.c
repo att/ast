@@ -239,6 +239,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
     if (sethost) {
         if (sethostname(sethost, strlen(sethost) + 1)) {
             error(ERROR_system(1), "%s: cannot set host name", sethost);
+            __builtin_unreachable();
         }
     } else if (list) {
         astconflist(

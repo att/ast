@@ -154,22 +154,34 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
                 if ((i = strtol(limit, &last, 0)) != INFINITY && !*last) {
                     i *= unit;
                 } else if ((i = strton(limit, &last, NULL, 0)) == INFINITY || *last) {
-                    if ((i = sh_strnum(shp, limit, &last, 2)) == INFINITY || *last)
+                    if ((i = sh_strnum(shp, limit, &last, 2)) == INFINITY || *last) {
                         errormsg(SH_DICT, ERROR_system(1), e_number, limit);
+                        __builtin_unreachable();
+                    }
                     i *= unit;
                 }
             }
             if (nosupport) {
                 errormsg(SH_DICT, ERROR_system(1), e_readonly, tp->name);
+                __builtin_unreachable();
             } else {
-                if (getrlimit(n, &rlp) < 0) errormsg(SH_DICT, ERROR_system(1), e_number, limit);
+                if (getrlimit(n, &rlp) < 0) {
+                    errormsg(SH_DICT, ERROR_system(1), e_number, limit);
+                    __builtin_unreachable();
+                }
                 if (mode & HARD) rlp.rlim_max = i;
                 if (mode & SOFT) rlp.rlim_cur = i;
-                if (setrlimit(n, &rlp) < 0) errormsg(SH_DICT, ERROR_system(1), e_overlimit, limit);
+                if (setrlimit(n, &rlp) < 0) {
+                    errormsg(SH_DICT, ERROR_system(1), e_overlimit, limit);
+                    __builtin_unreachable();
+                }
             }
         } else {
             if (!nosupport) {
-                if (getrlimit(n, &rlp) < 0) errormsg(SH_DICT, ERROR_system(1), e_number, limit);
+                if (getrlimit(n, &rlp) < 0) {
+                    errormsg(SH_DICT, ERROR_system(1), e_number, limit);
+                    __builtin_unreachable();
+                }
                 if (mode & HARD) i = rlp.rlim_max;
                 if (mode & SOFT) i = rlp.rlim_cur;
             }

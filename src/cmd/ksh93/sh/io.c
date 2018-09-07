@@ -270,7 +270,9 @@ static_fn int outexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
             }
             default: {
                 if (!active) {
+#if 0
                     int mode = ((struct checkpt *)shp->jmplist)->mode;
+#endif
                     int save = errno;
                     active = 1;
                     ((struct checkpt *)shp->jmplist)->mode = 0;
@@ -278,9 +280,16 @@ static_fn int outexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
                     sfpool(iop, NULL, SF_WRITE);
                     errno = save;
                     errormsg(SH_DICT, ERROR_system(1), e_badwrite, sffileno(iop));
+                    __builtin_unreachable();
+                    // See issue #846 for why these are commented out.
+                    // TODO: Figure out if the preceding should be `ERROR_system(0)` so that it
+                    // returns control so these statements are executed or if these should just
+                    // be removed.
+#if 0
                     active = 0;
                     ((struct checkpt *)shp->jmplist)->mode = mode;
                     sh_exit(shp, 1);
+#endif
                 }
                 return -1;
             }
@@ -383,6 +392,7 @@ static_fn void io_preserve(Shell_t *shp, Sfio_t *sp, int f2) {
         shp->toomany = 1;
         ((struct checkpt *)shp->jmplist)->mode = SH_JMPERREXIT;
         errormsg(SH_DICT, ERROR_system(1), e_toomany);
+        __builtin_unreachable();
     }
     if (f2 >= shp->gd->lim.open_max) {
         if (!sh_iovalidfd(shp, f2)) abort();
@@ -432,6 +442,7 @@ int sh_iorenumber(Shell_t *shp, int f1, int f2) {
             shp->fdstatus[f2] = (shp->fdstatus[f1] & ~IOCLEX);
             if ((f2 = sh_fcntl(f1, F_DUPFD, f2)) < 0) {
                 errormsg(SH_DICT, ERROR_system(1), e_file + 4);
+                __builtin_unreachable();
             } else if (f2 <= 2) {
                 sh_iostream(shp, f2, f2);
             }
@@ -677,8 +688,9 @@ ok:
 int sh_chkopen(const char *name) {
     int fd = sh_open(name, O_RDONLY | O_CLOEXEC, 0);
 
-    if (fd < 0) errormsg(SH_DICT, ERROR_system(1), e_open, name);
-    return fd;
+    if (fd >= 0) return fd;
+    errormsg(SH_DICT, ERROR_system(1), e_open, name);
+    __builtin_unreachable();
 }
 
 //
@@ -707,6 +719,7 @@ int sh_pipe(int pv[]) {
 
     if (pipe(fd) < 0 || (pv[0] = fd[0]) < 0 || (pv[1] = fd[1]) < 0) {
         errormsg(SH_DICT, ERROR_system(1), e_pipe);
+        __builtin_unreachable();
     }
     if (!sh_iovalidfd(shp, fd[0])) abort();
     if (!sh_iovalidfd(shp, fd[1])) abort();
@@ -738,6 +751,7 @@ int sh_rpipe(int pv[]) {
 
     if (pipe2(fd, O_CLOEXEC) < 0 || (pv[0] = fd[0]) < 0 || (pv[1] = fd[1]) < 0) {
         errormsg(SH_DICT, ERROR_system(1), e_pipe);
+        __builtin_unreachable();
     }
     shp->fdstatus[pv[0]] = IONOSEEK | IOREAD | IOCLEX;
     shp->fdstatus[pv[1]] = IONOSEEK | IOWRITE | IOCLEX;
@@ -755,7 +769,10 @@ int sh_coaccept(Shell_t *shp, int *pv, int out) {
     if (fd > 2) (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
     sh_close(pv[0]);
     pv[0] = -1;
-    if (fd < 0) errormsg(SH_DICT, ERROR_system(1), e_pipe);
+    if (fd < 0) {
+        errormsg(SH_DICT, ERROR_system(1), e_pipe);
+        __builtin_unreachable();
+    }
     if ((pv[out] = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10)) >= 10) {
         sh_close(fd);
     } else {
@@ -779,6 +796,7 @@ int sh_copipe(Shell_t *shp, int *pv, int out) {
     pv[out] = socket(AF_INET, SOCK_STREAM, 0);
     if (pv[out] < 0) {
         errormsg(SH_DICT, ERROR_system(1), e_pipe);
+        __builtin_unreachable();
     }
     (void)fcntl(pv[out], F_SETFD, FD_CLOEXEC);
     do {
@@ -791,6 +809,7 @@ int sh_copipe(Shell_t *shp, int *pv, int out) {
     if (r < 0 || listen(pv[out], 5) < 0) {
         sh_close(pv[out]);
         errormsg(SH_DICT, ERROR_system(1), e_pipe);
+        __builtin_unreachable();
     }
     shp->fdstatus[pv[out]] |= IOCLEX;
     pv[1 - out] = -1;
@@ -1160,6 +1179,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
         }
         if (fn >= shp->gd->lim.open_max && !sh_iovalidfd(shp, fn)) {
             errormsg(SH_DICT, ERROR_system(1), e_file + 4);
+            __builtin_unreachable();
         }
         if (iof & IOLSEEK) {
             io_op[2] = '#';
@@ -1338,6 +1358,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                             if (S_ISREG(sb.st_mode)) {
                                 errno = EEXIST;
                                 errormsg(SH_DICT, ERROR_system(1), e_exists, fname);
+                                __builtin_unreachable();
                             }
                         } else {
                             o_mode |= O_EXCL;
@@ -1350,6 +1371,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     if (fd < 0) {
                         errormsg(SH_DICT, ERROR_system(1), ((o_mode & O_CREAT) ? e_create : e_open),
                                  tname ? tname : fname);
+                        __builtin_unreachable();
                     }
                     if (perm > 0) {
                         fchmod(fd, perm);
@@ -1581,25 +1603,26 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
 
 fail:
     errormsg(SH_DICT, ERROR_system(1), message, fname);
-    // NOTREACHED
-    abort();
+    __builtin_unreachable();
 }
 
 //
 // Create a tmp file for the here-document.
 //
 static_fn int io_heredoc(Shell_t *shp, struct ionod *iop, const char *name, int traceon) {
-    Sfio_t *infile = 0, *outfile, *tmp;
+    Sfio_t *infile = NULL;
+    Sfio_t *outfile, *tmp;
     int fd;
     Sfoff_t off;
 
     if (!(iop->iofile & IOSTRG) && (!shp->heredocs || iop->iosize == 0)) {
-        return (sh_open(e_devnull, O_RDONLY));
+        return sh_open(e_devnull, O_RDONLY);
     }
     // Create an unnamed temporary file.
     outfile = sftmp((traceon & IOHERESTRING) ? PIPE_BUF : 0);
     if (!outfile) {
         errormsg(SH_DICT, ERROR_system(1), e_tmpcreate);
+        __builtin_unreachable();
     }
     traceon &= ~IOHERESTRING;
     if (iop->iofile & IOSTRG) {
@@ -1727,6 +1750,7 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
             shp->toomany = 1;
             ((struct checkpt *)shp->jmplist)->mode = SH_JMPERREXIT;
             errormsg(SH_DICT, ERROR_system(1), e_toomany);
+            __builtin_unreachable();
         }
         if (savefd < 0 && (sp = shp->sftable[origfd]) && (sfset(sp, 0, 0) & SF_STRING)) {
             const char *devnull = "/dev/null";
@@ -2681,7 +2705,10 @@ Sfio_t *sh_pathopen(Shell_t *shp, const char *cp) {
 #else
     if ((n = path_open(shp, cp, path_get(cp))) < 0) n = path_open(shp, cp, "");
 #endif
-    if (n < 0) errormsg(SH_DICT, ERROR_system(1), e_open, cp);
+    if (n < 0) {
+        errormsg(SH_DICT, ERROR_system(1), e_open, cp);
+        __builtin_unreachable();
+    }
     return sh_iostream(shp, n, n);
 }
 

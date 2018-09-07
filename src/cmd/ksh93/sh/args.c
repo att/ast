@@ -555,8 +555,12 @@ int sh_argopts(int argc, char *argv[], void *context) {
         if (!argv[0]) errormsg(SH_DICT, ERROR_usage(2), "-R requires scriptname");
         if (!(lp->kiafile = sfopen(NULL, ap->kiafile, "w+"))) {
             errormsg(SH_DICT, ERROR_system(3), e_create, ap->kiafile);
+            __builtin_unreachable();
         }
-        if (!(lp->kiatmp = sftmp(2 * SF_BUFSIZE))) errormsg(SH_DICT, ERROR_system(3), e_tmpcreate);
+        if (!(lp->kiatmp = sftmp(2 * SF_BUFSIZE))) {
+            errormsg(SH_DICT, ERROR_system(3), e_tmpcreate);
+            __builtin_unreachable();
+        }
         sfputr(lp->kiafile, ";vdb;CIAO/ksh", '\n');
         lp->kiabegin = sftell(lp->kiafile);
         lp->entity_tree = dtopen(&_Nvdisc, Dtbag);

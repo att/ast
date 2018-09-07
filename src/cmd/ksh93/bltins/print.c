@@ -220,7 +220,10 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
             }
             case 's': {
                 // Print to history file.
-                if (!sh_histinit((void *)shp)) errormsg(SH_DICT, ERROR_system(1), e_history);
+                if (!sh_histinit((void *)shp)) {
+                    errormsg(SH_DICT, ERROR_system(1), e_history);
+                    __builtin_unreachable();
+                }
                 outfile = shp->gd->hist_ptr->histfp;
                 fd = sffileno(outfile);
                 sh_onstate(shp, SH_HISTORY);
@@ -336,6 +339,7 @@ skip2:
         // Don't print error message for stdout for compatibility.
         if (fd == 1) return 1;
         errormsg(SH_DICT, ERROR_system(1), msg);
+        __builtin_unreachable();
     }
 
     if (!sflag && !(outfile = shp->sftable[fd])) {

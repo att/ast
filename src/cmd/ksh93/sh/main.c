@@ -245,7 +245,10 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                     int type;
 #endif
                     fdin = (int)strtol(name + 8, (char **)0, 10);
-                    if (fstat(fdin, &statb) < 0) errormsg(SH_DICT, ERROR_system(1), e_open, name);
+                    if (fstat(fdin, &statb) < 0) {
+                        errormsg(SH_DICT, ERROR_system(1), e_open, name);
+                        __builtin_unreachable();
+                    }
 #if !__CYGWIN__
                     //
                     // Try to undo effect of solaris 2.5+ change for argv for setuid scripts.
@@ -294,6 +297,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                         error_info.id = av[0];
                         if (sp || errno != ENOENT) {
                             errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_open, name);
+                            __builtin_unreachable();
                         }
                         // Try sh -c 'name "$@"'.
                         sh_onoption(shp, SH_CFLAG);

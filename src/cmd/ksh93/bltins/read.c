@@ -338,13 +338,17 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
         }
         if (!methods[mindex].name) {
             errormsg(SH_DICT, ERROR_system(1), "%s method not supported", method);
+            __builtin_unreachable();
         }
     }
 
     if (!((r = shp->fdstatus[fd]) & IOREAD) || !(r & (IOSEEK | IONOSEEK))) {
         r = sh_iocheckfd(shp, fd, fd);
     }
-    if (fd < 0 || !(r & IOREAD)) errormsg(SH_DICT, ERROR_system(1), e_file + 4);
+    if (fd < 0 || !(r & IOREAD)) {
+        errormsg(SH_DICT, ERROR_system(1), e_file + 4);
+        __builtin_unreachable();
+    }
     // Look for prompt.
     if (!name && *argv && (name = strchr(*argv, '?'))) name++;
     if (name && (r & IOTTY)) {

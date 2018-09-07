@@ -273,6 +273,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     if (rval < 0) {
         if (saverrno) errno = saverrno;
         errormsg(SH_DICT, ERROR_system(1), "%s:", dir);
+        __builtin_unreachable();
     }
 success:
     if (dir == sh_scoped(shp, opwdnod)->nvalue.cp || argc == 2) {
@@ -284,6 +285,7 @@ success:
         if (!dp) {
             dir = stakptr(PATH_OFFSET);
             errormsg(SH_DICT, ERROR_system(1), "%s:", dir);
+            __builtin_unreachable();
         }
         stakseek(dir - stakptr(0));
     }
@@ -349,7 +351,10 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
     if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     if (ffd != -1) {
         cp = fgetcwd(ffd, 0, 0);
-        if (!cp) errormsg(SH_DICT, ERROR_system(1), e_pwd);
+        if (!cp) {
+            errormsg(SH_DICT, ERROR_system(1), e_pwd);
+            __builtin_unreachable();
+        }
         sfputr(sfstdout, cp, '\n');
         free(cp);
         return 0;
@@ -362,7 +367,11 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
         cp = path_pwd(shp);
     }
 
-    if (*cp != '/') errormsg(SH_DICT, ERROR_system(1), e_pwd);
+    if (*cp != '/') {
+        errormsg(SH_DICT, ERROR_system(1), e_pwd);
+        __builtin_unreachable();
+    }
+
     sfputr(sfstdout, cp, '\n');
     return 0;
 }

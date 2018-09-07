@@ -124,6 +124,7 @@ int main(int argc, char *argv[]) {
         struct stat statb;
         if (!(out = sfopen(NULL, cp, "w"))) {
             errormsg(SH_DICT, ERROR_system(1), "%s: cannot create", cp);
+            __builtin_unreachable();
         }
         if (fstat(sffileno(out), &statb) >= 0) {
             chmod(cp, (statb.st_mode & ~S_IFMT) | S_IXUSR | S_IXGRP | S_IXOTH);
@@ -156,7 +157,10 @@ int main(int argc, char *argv[]) {
         } else if (sfeof(in)) {
             break;
         }
-        if (sferror(in)) errormsg(SH_DICT, ERROR_system(1), "I/O error");
+        if (sferror(in)) {
+            errormsg(SH_DICT, ERROR_system(1), "I/O error");
+            __builtin_unreachable();
+        }
         if (t && ((t->tre.tretyp & COMMSK) == TCOM) && (np = t->com.comnamp) &&
             (cp = nv_name(np))) {
             if (strcmp(cp, "exit") == 0) break;

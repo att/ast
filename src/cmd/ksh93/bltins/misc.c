@@ -276,6 +276,7 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
             fd = path_open(shp, script, path_get(shp, script));
             if (fd < 0) {
                 errormsg(SH_DICT, ERROR_system(1), e_open, script);
+                __builtin_unreachable();
             }
             filename = path_fullname(shp, stkptr(shp->stk, PATH_OFFSET));
         }

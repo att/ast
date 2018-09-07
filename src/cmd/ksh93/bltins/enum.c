@@ -333,7 +333,10 @@ int b_enum(int argc, char **argv, Shbltin_t *context)
         } while (nv_nextsub(np));
         sz += n * sizeof(char *);
         ep = newof(0, struct Enum, 1, sz);
-        if (!ep) error(ERROR_system(1), "out of space");
+        if (!ep) {
+            error(ERROR_system(1), "out of space");
+            __builtin_unreachable();
+        }
         mp = nv_namptr(ep->node, 0);
         mp->nvshell = shp;
         nv_setsize(mp, 10);

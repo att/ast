@@ -132,6 +132,7 @@ void sh_subtmpfile(Shell_t *shp) {
             while (close(1) < 0 && errno == EINTR) errno = err;
         } else if (errno != EBADF) {
             errormsg(SH_DICT, ERROR_system(1), e_toomany);
+            __builtin_unreachable();
         }
         // Popping a discipline forces a /tmp file create.
         if (shp->comsub != 1) sfdisc(sfstdout, SF_POPDISC);
@@ -149,7 +150,10 @@ void sh_subtmpfile(Shell_t *shp) {
                 write(fds[1], sfsetbuf(sfstdout, (void *)sfstdout, 0), (size_t)off);
             }
             sfclose(sfstdout);
-            if ((sh_fcntl(fds[1], F_DUPFD, 1)) != 1) errormsg(SH_DICT, ERROR_system(1), e_file + 4);
+            if ((sh_fcntl(fds[1], F_DUPFD, 1)) != 1) {
+                errormsg(SH_DICT, ERROR_system(1), e_file + 4);
+                __builtin_unreachable();
+            }
             sh_close(fds[1]);
         } else {
             shp->fdstatus[fd] = IOREAD | IOWRITE;
@@ -521,7 +525,10 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         sp->shpwdfd = ((shp->pwdfd >= 0)) ? sh_fcntl(shp->pwdfd, F_DUPFD_CLOEXEC, 10) : -1;
 #ifdef O_SEARCH
         // If shell starts in a directory that it does not have access to, this will cause error.
-        // if (sp->shpwdfd < 0) errormsg(SH_DICT, ERROR_system(1), "Can't obtain directory fd.");
+        // if (sp->shpwdfd < 0) {
+        //     errormsg(SH_DICT, ERROR_system(1), "Can't obtain directory fd.");
+        //     __builtin_unreachable();
+        // }
 #endif
         sp->pwd = (shp->pwd ? strdup(shp->pwd) : 0);
         sp->mask = shp->mask;
@@ -574,6 +581,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
             if (!(iop = sftmp(IOBSIZE))) {
                 sfswap(sp->saveout, sfstdout);
                 errormsg(SH_DICT, ERROR_system(1), e_tmpcreate);
+                __builtin_unreachable();
             }
             sfswap(iop, sfstdout);
             sfset(sfstdout, SF_READ, 0);
@@ -638,6 +646,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
                     shp->toomany = 1;
                     ((struct checkpt *)shp->jmplist)->mode = SH_JMPERREXIT;
                     errormsg(SH_DICT, ERROR_system(1), e_toomany);
+                    __builtin_unreachable();
                 }
                 if (fd >= shp->gd->lim.open_max) {
                     if (!sh_iovalidfd(shp, fd)) abort();
@@ -779,6 +788,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         ((struct checkpt *)shp->jmplist)->mode = SH_JMPERREXIT;
         shp->toomany = 1;
         errormsg(SH_DICT, ERROR_system(1), e_redirect);
+        __builtin_unreachable();
     }
     if (shp->ignsig) kill(getpid(), shp->ignsig);
     if (jmpval == SH_JMPSUB && shp->lastsig) kill(getpid(), shp->lastsig);

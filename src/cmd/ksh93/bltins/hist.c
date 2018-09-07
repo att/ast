@@ -65,7 +65,10 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     Histloc_t location;
     UNUSED(argc);
 
-    if (!sh_histinit((void *)shp)) errormsg(SH_DICT, ERROR_system(1), e_histopen);
+    if (!sh_histinit((void *)shp)) {
+        errormsg(SH_DICT, ERROR_system(1), e_histopen);
+        __builtin_unreachable();
+    }
     hp = shp->gd->hist_ptr;
     while ((flag = optget(argv, sh_opthist))) {
         switch (flag) {
@@ -204,6 +207,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
         fdo = open(fname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | O_CLOEXEC);
         if (fdo < 0) {
             errormsg(SH_DICT, ERROR_system(1), e_create, fname);
+            __builtin_unreachable();
         }
         outfile = sfnew(NULL, shp->outbuff, IOBSIZE, fdo, SF_WRITE);
         arg = "\n";

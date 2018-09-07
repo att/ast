@@ -71,7 +71,10 @@ static_fn double setalarm(double t) {
     }
     tnew.it_interval.tv_sec = 0;
     tnew.it_interval.tv_usec = 0;
-    if (setitimer(ITIMER_REAL, &tnew, &told) < 0) errormsg(SH_DICT, ERROR_system(1), e_alarm);
+    if (setitimer(ITIMER_REAL, &tnew, &told) < 0) {
+        errormsg(SH_DICT, ERROR_system(1), e_alarm);
+        __builtin_unreachable();
+    }
     t = told.it_value.tv_sec + 1.e-6 * told.it_value.tv_usec;
     return t;
 }

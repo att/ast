@@ -766,7 +766,10 @@ static_fn int sh_coexec(Shell_t *shp, const Shnode_t *t, int filt) {
         lineno = t->fork.forkline;
     }
     if (filt) {
-        if (gethostname(host, sizeof(host)) < 0) errormsg(SH_DICT, ERROR_system(1), e_pipe);
+        if (gethostname(host, sizeof(host)) < 0) {
+            errormsg(SH_DICT, ERROR_system(1), e_pipe);
+            __builtin_unreachable();
+        }
         if (shp->inpipe[2] >= 20000) {
             sfprintf(sfstdout, "command exec < /dev/tcp/%s/%d || print -u2 'cannot create pipe'\n",
                      host, shp->inpipe[2]);
@@ -2741,6 +2744,7 @@ pid_t _sh_fork(Shell_t *shp, pid_t parent, int flags, int *jobid) {
         if (forkcnt > 1000L * SH_FORKLIM) {
             forkcnt = 1000L;
             errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_nofork);
+            __builtin_unreachable();
         }
         timeout = (void *)sh_timeradd(forkcnt, 0, timed_out, NULL);
         nochild = job_wait((pid_t)1);
@@ -3214,8 +3218,12 @@ static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jo
             switch (errno = shp->path_err) {
                 case ENOENT: {
                     errormsg(SH_DICT, ERROR_system(ERROR_NOENT), e_found + 4);
+                    __builtin_unreachable();
                 }
-                default: { errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec + 4); }
+                default: {
+                    errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec + 4);
+                    __builtin_unreachable();
+                }
             }
         }
     } else {

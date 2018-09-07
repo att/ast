@@ -911,6 +911,7 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
                 (shp->path_err != EISDIR)) {
                 // An executable command was found, but failed to execute it
                 errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, arg0);
+                __builtin_unreachable();
             } else if (shp->path_err == EACCES) {
                 // A command was found but it was not executable.
                 // POSIX specifies that shell should continue to search for command in PATH
@@ -925,9 +926,11 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
     if (not_executable) {
         // This will return with status 126.
         errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, arg0);
+        __builtin_unreachable();
     } else {
         // This will return with status 127.
         errormsg(SH_DICT, ERROR_exit(ERROR_NOENT), e_found, arg0);
+        __builtin_unreachable();
     }
 }
 
@@ -1137,7 +1140,10 @@ retry:
             }
         }
         // FALLTHRU
-        default: { errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, path); }
+        default: {
+            errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, path);
+            __builtin_unreachable();
+        }
     }
 
     return 0;
@@ -1227,7 +1233,10 @@ static_fn void exscript(Shell_t *shp, char *path, char *argv[], char *const *env
 fail:
     // The following code is just for compatibility.
     n = open(path, O_RDONLY | O_CLOEXEC, 0);
-    if (n == -1) errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, path);
+    if (n == -1) {
+        errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, path);
+        __builtin_unreachable();
+    }
     if (savet) *argv++ = savet;
 
 openok:

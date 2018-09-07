@@ -603,6 +603,7 @@ int sh_access(const char *name, int mode) {
                     // Restoring real user id failed, exit.
                     error(ERROR_system(1), "setreuid(%d, %d) failed", shp->gd->userid,
                           shp->gd->euserid);
+                    __builtin_unreachable();
                 }
             }
             if (shp->gd->groupid != shp->gd->egroupid) {
@@ -610,6 +611,7 @@ int sh_access(const char *name, int mode) {
                     // Restoring real group id failed, exit.
                     error(ERROR_system(1), "setregid(%d, %d) failed", shp->gd->groupid,
                           shp->gd->egroupid);
+                    __builtin_unreachable();
                 }
             }
             return mode;
@@ -618,6 +620,7 @@ int sh_access(const char *name, int mode) {
                 // Restoring real group id failed, exit.
                 error(ERROR_system(1), "setregid(%d, %d) failed", shp->gd->groupid,
                       shp->gd->egroupid);
+                __builtin_unreachable();
             }
         }
     }
