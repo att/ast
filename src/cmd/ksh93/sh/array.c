@@ -725,6 +725,7 @@ bool nv_atypeindex(Namval_t *np, const char *tname) {
 }
 
 Namarr_t *nv_arrayptr(Namval_t *np) {
+    assert(np);
     if (nv_isattr(np, NV_ARRAY)) return (Namarr_t *)nv_hasdisc(np, &array_disc);
     return NULL;
 }
