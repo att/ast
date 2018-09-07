@@ -475,7 +475,7 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
 
 int test_binop(Shell_t *shp, int op, const char *left, const char *right) {
     double lnum = 0.0;
-    double rnum;
+    double rnum = 0.0;
 
     if (op & TEST_ARITH) {
         if (*left == '0') {
