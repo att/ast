@@ -290,8 +290,7 @@ extern char **environ;
 
 #include "ast_api.h"
 
-#define mbsinit(q) (*(q) = ast._ast_mbstate_init.mb_state)
-#define mbinit(q) (*(q) = ast._ast_mbstate_init)
+#define mbinit(q) (void)memset(q, 0, sizeof(*q))
 #define mberrno(q) ((q)->mb_errno)
 #define mbchar(w, s, n, q) (((s) += (ast_mbrchar)((wchar_t *)(w), (char *)(s), (n), (q))), (*(w)))
 #define mbconv(s, w, q) (*ast._ast_wcrtomb)((s), (w), (mbstate_t *)(q))
