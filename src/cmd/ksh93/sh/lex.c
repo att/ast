@@ -36,6 +36,7 @@
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "defs.h"
 #include "error.h"
 #include "fault.h"
@@ -117,6 +118,7 @@ static const Sfdisc_t alias_disc = {NULL, NULL, NULL, alias_exceptf, NULL};
 
 static_fn void pushlevel(Lex_t *lp, int c, int s) {
     if (lp->lexd.level >= lp->lexd.lex_max) stack_grow(lp);
+    assert(lp->lexd.lex_match);
     lp->lexd.lex_match[lp->lexd.level++] = lp->lexd.lastc;
     lp->lexd.lastc = (s << CHAR_BIT) | c;
 }
@@ -164,7 +166,7 @@ static_fn void lex_advance(Sfio_t *iop, const char *buff, int size, void *contex
     Stk_t *stkp = shp->stk;
 
     // Write to history file and to stderr if necessary.
-    if (iop && !sfstacked(iop)) {
+    if (!sfstacked(iop)) {
         if (sh_isstate(shp, SH_HISTORY) && shp->gd->hist_ptr) log = shp->gd->hist_ptr->histfp;
         sfwrite(log, (void *)buff, size);
         if (sh_isstate(shp, SH_VERBOSE)) sfwrite(sfstderr, buff, size);
