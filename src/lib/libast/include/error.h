@@ -39,7 +39,7 @@
 #define ERROR_debug(n) (-(n))
 #define ERROR_exit(n) ((n) + ERROR_ERROR)
 #define ERROR_system(n) (((n) + ERROR_ERROR) | ERROR_SYSTEM)
-#define ERROR_usage(n) ((((n) ? 2 : 0) + ERROR_ERROR) | ERROR_USAGE)
+#define ERROR_usage(n) (((n) + ERROR_ERROR) | ERROR_USAGE)
 #define ERROR_warn(n) (ERROR_WARNING)
 
 #ifndef ERROR_catalog
