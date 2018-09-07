@@ -688,6 +688,7 @@ $SHELL -xc '$(LD_LIBRARY_PATH=$LD_LIBRARY_PATH exec $SHELL -c :)' > /dev/null 2>
 
 $SHELL 2> /dev/null -c $'for i;\ndo :;done' || log_error 'for i ; <newline> not vaid'
 
+# RHBZ#1117316
 set +o pipefail
 foo=`false | true`
 [[ $? -eq 0 ]] || log_error "Incorrect exit status from command substitution"

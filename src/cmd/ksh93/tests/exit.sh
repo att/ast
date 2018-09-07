@@ -76,11 +76,3 @@ fi
 cd ~- || log_error "cd back failed"
 
 $SHELL -c 'builtin -f cmd getconf; getconf --"?-version"; exit 0' >/dev/null 2>&1 || log_error 'ksh plugin exit failed -- was ksh built with CCFLAGS+=$(CC.EXPORT.DYNAMIC)?'
-
-log_info 'TODO: RHBZ#1117316 - Fix and enable this test case.'
-# foo=`ls *foo 2> /dev/null | wc -l`
-# status=$?
-# if [[ $status -ne 0 ]]
-# then
-#     log_error "Wrong return code from a pipe in command"
-# fi
