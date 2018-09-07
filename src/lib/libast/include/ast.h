@@ -288,8 +288,6 @@ extern size_t ast_mbrchar(wchar_t *, const char *, size_t, Mbstate_t *);
  */
 extern char **environ;
 
-#include "ast_debug.h"
-
 #include "ast_api.h"
 
 #define mbsinit(q) (*(q) = ast._ast_mbstate_init.mb_state)
