@@ -194,27 +194,26 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
     }
 
     argv += (opt_info.index - 1);
-    if (flag & NV_TAGGED) {
-        // Hacks to handle hash -r | --.
-        if (argv[1] && argv[1][0] == '-') {
-            if (argv[1][1] == 'r' && argv[1][2] == 0) {
-                Namval_t *np = nv_search((char *)PATHNOD, tdata.sh->var_tree, HASH_BUCKET);
-                nv_putval(np, nv_getval(np), NV_RDONLY);
+    if (!(flag & NV_TAGGED)) return setall(argv, flag, troot, &tdata);
+
+    // Hacks to handle hash -r | --.
+    if (argv[1] && argv[1][0] == '-') {
+        if (argv[1][1] == 'r' && argv[1][2] == 0) {
+            Namval_t *np = nv_search((char *)PATHNOD, tdata.sh->var_tree, HASH_BUCKET);
+            nv_putval(np, nv_getval(np), NV_RDONLY);
+            argv++;
+            if (!argv[1]) return 0;
+        }
+        if (argv[1][0] == '-') {
+            if (argv[1][1] == '-' && argv[1][2] == 0) {
                 argv++;
-                if (!argv[1]) return 0;
-            }
-            if (argv[1][0] == '-') {
-                if (argv[1][1] == '-' && argv[1][2] == 0) {
-                    argv++;
-                } else {
-                    errormsg(SH_DICT, ERROR_exit(1), e_option, argv[1]);
-                    __builtin_unreachable();
-                }
+            } else {
+                errormsg(SH_DICT, ERROR_exit(1), e_option, argv[1]);
+                __builtin_unreachable();
             }
         }
-        troot = tdata.sh->track_tree;
     }
-
+    troot = tdata.sh->track_tree;
     return setall(argv, flag, troot, &tdata);
 }
 
