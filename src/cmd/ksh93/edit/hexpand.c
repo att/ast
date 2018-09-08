@@ -576,42 +576,40 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
         }
 
         // Flush temporary buffer to stack.
-        if (tmp) {
-            sfseek(tmp, 0, SEEK_SET);
+        if (!tmp) continue;
+        sfseek(tmp, 0, SEEK_SET);
+        if (flag & HIST_QUOTE) sfputc(shp->stk, '\'');
 
-            if (flag & HIST_QUOTE) sfputc(shp->stk, '\'');
+        while ((c = sfgetc(tmp)) > 0) {
+            if (isspace(c)) {
+                flag = flag & ~HIST_NEWLINE;
 
-            while ((c = sfgetc(tmp)) > 0) {
-                if (isspace(c)) {
-                    flag = flag & ~HIST_NEWLINE;
+                // Squash white space to either a blank or a newline.
+                do {
+                    flag |= (c == '\n' ? HIST_NEWLINE : 0);
+                } while ((c = sfgetc(tmp)) > 0 && isspace(c));
 
-                    // Squash white space to either a blank or a newline.
-                    do {
-                        flag |= (c == '\n' ? HIST_NEWLINE : 0);
-                    } while ((c = sfgetc(tmp)) > 0 && isspace(c));
+                sfungetc(tmp, c);
 
-                    sfungetc(tmp, c);
+                c = (flag & HIST_NEWLINE) ? '\n' : ' ';
 
-                    c = (flag & HIST_NEWLINE) ? '\n' : ' ';
-
-                    if (flag & HIST_QUOTE_BR) {
-                        sfputc(shp->stk, '\'');
-                        sfputc(shp->stk, c);
-                        sfputc(shp->stk, '\'');
-                    } else {
-                        sfputc(shp->stk, c);
-                    }
-                } else if ((c == '\'') && (flag & HIST_QUOTE)) {
+                if (flag & HIST_QUOTE_BR) {
                     sfputc(shp->stk, '\'');
-                    sfputc(shp->stk, '\\');
                     sfputc(shp->stk, c);
                     sfputc(shp->stk, '\'');
                 } else {
                     sfputc(shp->stk, c);
                 }
+            } else if ((c == '\'') && (flag & HIST_QUOTE)) {
+                sfputc(shp->stk, '\'');
+                sfputc(shp->stk, '\\');
+                sfputc(shp->stk, c);
+                sfputc(shp->stk, '\'');
+            } else {
+                sfputc(shp->stk, c);
             }
-            if (flag & HIST_QUOTE) sfputc(shp->stk, '\'');
         }
+        if (flag & HIST_QUOTE) sfputc(shp->stk, '\'');
     }
 
     sfputc(shp->stk, '\0');
