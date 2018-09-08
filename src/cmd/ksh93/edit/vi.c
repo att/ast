@@ -258,26 +258,25 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
             // Change \r to \n, check for control characters, delete appropriate ^Vs,
             // and estimate last physical column.
             if (virtual[i] == '\r') virtual[i] = '\n';
-            if (!echoctl) {
-                int c = virtual[i];
-                if (c <= usrerase) {
-                    // User typed escaped erase or kill char.
-                    cntl_char = 1;
-                    if (is_print(c)) kill_erase++;
-                } else if (!is_print(c)) {
-                    cntl_char = 1;
-                    if (c == usrlnext) {
-                        if (i == last_virt) {
-                            // Eol/eof was escaped so replace ^V with it.
-                            virtual[i] = term_char;
-                            break;
-                        }
-
-                        // Delete ^V.
-                        gencpy((&virtual[i]), (&virtual[i + 1]));
-                        --cur_virt;
-                        --last_virt;
+            if (echoctl) continue;
+            int c = virtual[i];
+            if (c <= usrerase) {
+                // User typed escaped erase or kill char.
+                cntl_char = 1;
+                if (is_print(c)) kill_erase++;
+            } else if (!is_print(c)) {
+                cntl_char = 1;
+                if (c == usrlnext) {
+                    if (i == last_virt) {
+                        // Eol/eof was escaped so replace ^V with it.
+                        virtual[i] = term_char;
+                        break;
                     }
+
+                    // Delete ^V.
+                    gencpy((&virtual[i]), (&virtual[i + 1]));
+                    --cur_virt;
+                    --last_virt;
                 }
             }
         }
@@ -786,29 +785,29 @@ static_fn void cdelete(Vi_t *vp, int nchars, int mode) {
         ed_ringbell();
         return;
     }
-    if (nchars > 0) {
-        cp = virtual + cur_virt;
-        vp->o_v_char = cp[0];
-        if ((cur_virt-- + nchars) > last_virt) {
-            // Set nchars to number actually deleted.
-            nchars = last_virt - cur_virt;
-        }
 
-        // Save characters to be deleted.
-        if (mode != 'c') {
-            i = cp[nchars];
-            cp[nchars] = 0;
-            gencpy(yankbuf, cp);
-            cp[nchars] = i;
-        }
+    if (nchars <= 0) return;
 
-        // Now delete these characters.
-        if (mode != 'y') {
-            gencpy(cp, cp + nchars);
-            last_virt -= nchars;
-        }
+    cp = virtual + cur_virt;
+    vp->o_v_char = cp[0];
+    if ((cur_virt-- + nchars) > last_virt) {
+        // Set nchars to number actually deleted.
+        nchars = last_virt - cur_virt;
     }
-    return;
+
+    // Save characters to be deleted.
+    if (mode != 'c') {
+        i = cp[nchars];
+        cp[nchars] = 0;
+        gencpy(yankbuf, cp);
+        cp[nchars] = i;
+    }
+
+    // Now delete these characters.
+    if (mode != 'y') {
+        gencpy(cp, cp + nchars);
+        last_virt -= nchars;
+    }
 }
 
 //
@@ -2040,23 +2039,22 @@ addin:
             goto deleol;
         }
         case '~': {  // invert case and advance
-            if (cur_virt != INVALID) {
-                save_v(vp);
-                i = INVALID;
-                while (trepeat-- > 0 && i != cur_virt) {
-                    i = cur_virt;
-                    c = virtual[cur_virt];
-                    if ((c & ~STRIP) == 0) {
-                        if (isupper(c))
-                            c = tolower(c);
-                        else if (islower(c))
-                            c = toupper(c);
-                    }
-                    replace(vp, c, 1);
+            if (cur_virt == INVALID) return BAD;
+
+            save_v(vp);
+            i = INVALID;
+            while (trepeat-- > 0 && i != cur_virt) {
+                i = cur_virt;
+                c = virtual[cur_virt];
+                if ((c & ~STRIP) == 0) {
+                    if (isupper(c))
+                        c = tolower(c);
+                    else if (islower(c))
+                        c = toupper(c);
                 }
-                return GOOD;
+                replace(vp, c, 1);
             }
-            return BAD;
+            return GOOD;
         }
         default: { return BAD; }
     }
