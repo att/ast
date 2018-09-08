@@ -370,44 +370,44 @@ int sh_lex(Lex_t *lp) {
                 }
                 // End-of-file.
                 if (mode == ST_BEGIN) return (lp->token = EOFSYM);
-                if (mode > ST_NORM && lp->lexd.level > 0) {
-                    switch (c = endchar(lp)) {
-                        case '$': {
-                            if (mode == ST_LIT) {
-                                c = '\'';
-                                break;
-                            }
-                            mode = oldmode(lp);
-                            poplevel(lp);
-                            continue;
-                        }
-                        case RBRACT: {
-                            c = LBRACT;
+                if (mode <= ST_NORM) goto breakloop;
+                if (lp->lexd.level <= 0) goto breakloop;
+                switch (c = endchar(lp)) {
+                    case '$': {
+                        if (mode == ST_LIT) {
+                            c = '\'';
                             break;
                         }
-                        case 1:  // for ((...))
-                        case RPAREN: {
-                            c = LPAREN;
-                            break;
-                        }
-                        default: {
-                            c = LBRACE;
-                            break;
-                        }
-                        case '"':
-                        case '`':
-                        case '\'': {
-                            lp->lexd.balance = c;
-                            break;
-                        }
+                        mode = oldmode(lp);
+                        poplevel(lp);
+                        continue;
                     }
-                    if (sp && !(sfset(sp, 0, 0) & SF_STRING)) {
-                        lp->lasttok = c;
-                        lp->token = EOFSYM;
-                        sh_syntax(lp);
+                    case RBRACT: {
+                        c = LBRACT;
+                        break;
                     }
-                    lp->lexd.balance = c;
+                    case 1:  // for ((...))
+                    case RPAREN: {
+                        c = LPAREN;
+                        break;
+                    }
+                    default: {
+                        c = LBRACE;
+                        break;
+                    }
+                    case '"':
+                    case '`':
+                    case '\'': {
+                        lp->lexd.balance = c;
+                        break;
+                    }
                 }
+                if (sp && !(sfset(sp, 0, 0) & SF_STRING)) {
+                    lp->lasttok = c;
+                    lp->token = EOFSYM;
+                    sh_syntax(lp);
+                }
+                lp->lexd.balance = c;
                 goto breakloop;
             }
             case S_COM: {
@@ -1986,38 +1986,38 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
             }
             case S_QUOTE: {
                 if (mode < 0 && !bracket) break;
-                if (!inlit) {
-                    if (mode <= 0) dp--;
-                    inquote = inquote ^ 1;
-                    if (ep) {
-                        char *msg;
-                        if (mode == 2) {
-                            sfprintf(sfstdout, "%.*s\n", dp - ep, ep);
-                            ep = 0;
-                            break;
-                        }
-                        *--dp = 0;
+                if (inlit) break;
+
+                if (mode <= 0) dp--;
+                inquote = inquote ^ 1;
+                if (ep) {
+                    char *msg;
+                    if (mode == 2) {
+                        sfprintf(sfstdout, "%.*s\n", dp - ep, ep);
+                        ep = 0;
+                        break;
+                    }
+                    *--dp = 0;
 #if ERROR_VERSION >= 20000317L
-                        msg = ERROR_translate(0, error_info.id, 0, ep);
+                    msg = ERROR_translate(0, error_info.id, 0, ep);
 #else
 #if ERROR_VERSION >= 20000101L
-                        msg = ERROR_translate(error_info.id, ep);
+                    msg = ERROR_translate(error_info.id, ep);
 #else
-                        msg = ERROR_translate(ep, 2);
+                    msg = ERROR_translate(ep, 2);
 #endif
 #endif
-                        n = strlen(msg);
-                        dp = ep + n;
-                        if (sp - dp <= 1) {
-                            sp = stack_shift(stkp, sp, dp);
-                            dp = sp - 1;
-                            ep = dp - n;
-                        }
-                        memmove(ep, msg, n);
-                        *dp++ = '"';
+                    n = strlen(msg);
+                    dp = ep + n;
+                    if (sp - dp <= 1) {
+                        sp = stack_shift(stkp, sp, dp);
+                        dp = sp - 1;
+                        ep = dp - n;
                     }
-                    ep = 0;
+                    memmove(ep, msg, n);
+                    *dp++ = '"';
                 }
+                ep = 0;
                 break;
             }
             case S_DOL: {  // check for $'...'  and $"..."
@@ -2027,21 +2027,21 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
                     break;
                 }
                 if (inquote & 1) break;
-                if (*sp == '\'' || *sp == '"') {
-                    if (*sp == '"') {
-                        inquote |= 1;
+                if (*sp != '\'' && *sp != '"') break;
+
+                if (*sp == '"') {
+                    inquote |= 1;
+                } else {
+                    inlit = 1;
+                }
+                sp++;
+                if ((mode == 0 || (mode < 0 && bracket)) || (inquote & 1)) {
+                    if (mode == 2) {
+                        ep = dp++;
+                    } else if (mode == 1) {
+                        (ep = dp)[-1] = '"';
                     } else {
-                        inlit = 1;
-                    }
-                    sp++;
-                    if ((mode == 0 || (mode < 0 && bracket)) || (inquote & 1)) {
-                        if (mode == 2) {
-                            ep = dp++;
-                        } else if (mode == 1) {
-                            (ep = dp)[-1] = '"';
-                        } else {
-                            ep = --dp;
-                        }
+                        ep = --dp;
                     }
                 }
                 break;
