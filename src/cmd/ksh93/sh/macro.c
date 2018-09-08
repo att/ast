@@ -921,35 +921,37 @@ static_fn char *getdolarg(Shell_t *shp, int n, int *size) {
 //
 static_fn char *prefix(Shell_t *shp, char *id) {
     Namval_t *np;
-    char *sub = 0, *cp = strchr(id, '.');
+    char *sub = NULL;
+    char *cp = strchr(id, '.');
 
-    if (cp) {
-        *cp = 0;
-        np = nv_search(id, shp->var_tree, 0);
-        *cp = '.';
-        if (isastchar(cp[1])) cp[1] = 0;
-        if (np && nv_isref(np)) {
-            size_t n;
-            char *sp;
-            shp->argaddr = 0;
-            while (nv_isref(np) && np->nvalue.cp) {
-                sub = nv_refsub(np);
-                np = nv_refnode(np);
-                if (sub) nv_putsub(np, sub, 0, 0L);
-            }
-            id = (char *)malloc(strlen(cp) + 1 + (n = strlen(sp = nv_name(np))) +
-                                (sub ? strlen(sub) + 3 : 1));
-            memcpy(id, sp, n);
-            if (sub) {
-                id[n++] = '[';
-                strcpy(&id[n], sub);
-                n += strlen(sub) + 1;
-                id[n - 1] = ']';
-            }
-            strcpy(&id[n], cp);
-            return id;
+    if (!cp) return strdup(id);
+
+    *cp = 0;
+    np = nv_search(id, shp->var_tree, 0);
+    *cp = '.';
+    if (isastchar(cp[1])) cp[1] = 0;
+    if (np && nv_isref(np)) {
+        size_t n;
+        char *sp;
+        shp->argaddr = 0;
+        while (nv_isref(np) && np->nvalue.cp) {
+            sub = nv_refsub(np);
+            np = nv_refnode(np);
+            if (sub) nv_putsub(np, sub, 0, 0L);
         }
+        id = (char *)malloc(strlen(cp) + 1 + (n = strlen(sp = nv_name(np))) +
+                            (sub ? strlen(sub) + 3 : 1));
+        memcpy(id, sp, n);
+        if (sub) {
+            id[n++] = '[';
+            strcpy(&id[n], sub);
+            n += strlen(sub) + 1;
+            id[n - 1] = ']';
+        }
+        strcpy(&id[n], cp);
+        return id;
     }
+
     return strdup(id);
 }
 
