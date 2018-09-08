@@ -794,23 +794,25 @@ Namarr_t *nv_setarray(Namval_t *np, void *(*fun)(Namval_t *, const char *, int))
         nv_offattr(np, NV_NOFREE);
     }
     if (!(fp = nv_isvtree(np))) value = nv_getval(np);
-    if (fun && !ap && (ap = (Namarr_t *)((*fun)(np, NULL, NV_AINIT)))) {
-        // Check for preexisting initialization and save.
-        ap->flags = flags;
-        ap->fun = fun;
-        nv_onattr(np, NV_ARRAY);
-        if (fp || (value && value != Empty)) {
-            nv_putsub(np, "0", 0, ARRAY_ADD);
-            if (value) {
-                nv_putval(np, value, 0);
-            } else {
-                Namval_t *mp = (Namval_t *)((*fun)(np, NULL, NV_ACURRENT));
-                array_copytree(np, mp);
-            }
+    if (!fun) return NULL;
+    if (ap) return NULL;
+    ap = (Namarr_t *)((*fun)(np, NULL, NV_AINIT));
+    if (!ap) return NULL;
+
+    // Check for preexisting initialization and save.
+    ap->flags = flags;
+    ap->fun = fun;
+    nv_onattr(np, NV_ARRAY);
+    if (fp || (value && value != Empty)) {
+        nv_putsub(np, "0", 0, ARRAY_ADD);
+        if (value) {
+            nv_putval(np, value, 0);
+        } else {
+            Namval_t *mp = (Namval_t *)((*fun)(np, NULL, NV_ACURRENT));
+            array_copytree(np, mp);
         }
-        return ap;
     }
-    return NULL;
+    return ap;
 }
 
 //
