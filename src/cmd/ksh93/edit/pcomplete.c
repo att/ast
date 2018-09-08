@@ -257,39 +257,39 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
 
     while (Actions[c = i++]) {
         if ((1L << c) > comp->action) break;
-        if (comp->action & (1L << c)) {
-            str = (char *)Action_eval[c];
-            switch (*str++) {
-                case 'k': {
-                    keywords(tmp);
-                    break;
-                }
-                case 'x': {
-                    sfsync(sfstdout);
-                    saveout = sfswap(sfstdout, NULL);
-                    sfswap(tmp, sfstdout);
-                    sh_trap(shp, str, 0);
-                    sfsync(sfstdout);
-                    tmp = sfswap(sfstdout, NULL);
-                    sfswap(saveout, sfstdout);
-                    break;
-                }
-                case 'y': {
-                    stkseek(shp->stk, 0);
-                    sfprintf(shp->stk, "{ %s ;} >&%d\n", str, sffileno(tmp));
-                    sfputc(shp->stk, 0);
-                    sh_trap(shp, stkptr(shp->stk, 0), 0);
-                    sfseek(tmp, (Sfoff_t)0, SEEK_END);
-                    sfsync(tmp);
-                    stkseek(shp->stk, 0);
-                    break;
-                }
-                case 'p': {
-                    sfputr(tmp, str, '\n');
-                    break;
-                }
-                default: { break; }
+        if (!(comp->action & (1L << c))) continue;
+
+        str = (char *)Action_eval[c];
+        switch (*str++) {
+            case 'k': {
+                keywords(tmp);
+                break;
             }
+            case 'x': {
+                sfsync(sfstdout);
+                saveout = sfswap(sfstdout, NULL);
+                sfswap(tmp, sfstdout);
+                sh_trap(shp, str, 0);
+                sfsync(sfstdout);
+                tmp = sfswap(sfstdout, NULL);
+                sfswap(saveout, sfstdout);
+                break;
+            }
+            case 'y': {
+                stkseek(shp->stk, 0);
+                sfprintf(shp->stk, "{ %s ;} >&%d\n", str, sffileno(tmp));
+                sfputc(shp->stk, 0);
+                sh_trap(shp, stkptr(shp->stk, 0), 0);
+                sfseek(tmp, (Sfoff_t)0, SEEK_END);
+                sfsync(tmp);
+                stkseek(shp->stk, 0);
+                break;
+            }
+            case 'p': {
+                sfputr(tmp, str, '\n');
+                break;
+            }
+            default: { break; }
         }
     }
     if (comp->wordlist || comp->globpat) {
@@ -485,37 +485,37 @@ static bool delete_and_add(const char *name, struct Complete *comp) {
         ((Edit_t *)(shgd->ed_context))->compdict = compdict = dtopen(&_Compdisc, Dtoset);
     }
     if (!comp && old) return false;
-    if (comp) {
-        int size = comp->name ? strlen(comp->name) + 1 : 0;
-        int n = size, p = 0, s = 0, f = 0, w = 0, g = 0, c = 0, fn = 0;
-        char *cp;
-        if (comp->prefix) size += (p = strlen(comp->prefix) + 1);
-        if (comp->suffix) size += (s = strlen(comp->suffix) + 1);
-        if (comp->filter) size += (f = strlen(comp->filter) + 1);
-        if (comp->wordlist) size += (w = strlen(comp->wordlist) + 1);
-        if (comp->globpat) size += (g = strlen(comp->globpat) + 1);
-        if (comp->command) size += (c = strlen(comp->command) + 1);
-        if (comp->fname) size += (fn = strlen(comp->fname) + 1);
-        old = malloc(sizeof(struct Complete) + size);
-        *old = *comp;
-        cp = (char *)(old + 1);
-        old->name = cp;
-        memcpy(old->name, comp->name, n);
-        cp += n;
-        if (p) memcpy(old->prefix = cp, comp->prefix, p);
-        cp += p;
-        if (s) memcpy(old->suffix = cp, comp->suffix, s);
-        cp += s;
-        if (f) memcpy(old->filter = cp, comp->filter, f);
-        cp += f;
-        if (w) memcpy(old->wordlist = cp, comp->wordlist, w);
-        cp += w;
-        if (g) memcpy(old->globpat = cp, comp->globpat, g);
-        cp += g;
-        if (c) memcpy(old->command = cp, comp->command, c);
-        if (fn) memcpy(old->fname = cp, comp->fname, fn);
-        dtinsert(compdict, old);
-    }
+    if (!comp) return true;
+
+    int size = comp->name ? strlen(comp->name) + 1 : 0;
+    int n = size, p = 0, s = 0, f = 0, w = 0, g = 0, c = 0, fn = 0;
+    char *cp;
+    if (comp->prefix) size += (p = strlen(comp->prefix) + 1);
+    if (comp->suffix) size += (s = strlen(comp->suffix) + 1);
+    if (comp->filter) size += (f = strlen(comp->filter) + 1);
+    if (comp->wordlist) size += (w = strlen(comp->wordlist) + 1);
+    if (comp->globpat) size += (g = strlen(comp->globpat) + 1);
+    if (comp->command) size += (c = strlen(comp->command) + 1);
+    if (comp->fname) size += (fn = strlen(comp->fname) + 1);
+    old = malloc(sizeof(struct Complete) + size);
+    *old = *comp;
+    cp = (char *)(old + 1);
+    old->name = cp;
+    memcpy(old->name, comp->name, n);
+    cp += n;
+    if (p) memcpy(old->prefix = cp, comp->prefix, p);
+    cp += p;
+    if (s) memcpy(old->suffix = cp, comp->suffix, s);
+    cp += s;
+    if (f) memcpy(old->filter = cp, comp->filter, f);
+    cp += f;
+    if (w) memcpy(old->wordlist = cp, comp->wordlist, w);
+    cp += w;
+    if (g) memcpy(old->globpat = cp, comp->globpat, g);
+    cp += g;
+    if (c) memcpy(old->command = cp, comp->command, c);
+    if (fn) memcpy(old->fname = cp, comp->fname, fn);
+    dtinsert(compdict, old);
     return true;
 }
 
