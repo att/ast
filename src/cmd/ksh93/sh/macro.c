@@ -703,21 +703,22 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
             }
             // FALLTHRU
             case S_PAT: {
-                if (mp->pattern && !(mp->quote || mp->lit)) {
-                    mp->patfound = mp->pattern;
-                    if ((n = cp[-1]) == LPAREN) {
-                        paren++;
-                        if ((cp - first) > 1 && cp[-2] == '~') {
-                            char *p = cp;
-                            while ((c = mb1char(p)) && c != RPAREN) {
-                                if (c == 'A' || c == 'E' || c == 'K' || c == 'P' || c == 'X') {
-                                    ere = 1;
-                                    break;
-                                }
+                if (!mp->pattern || mp->quote || mp->lit) goto pattern;
+
+                mp->patfound = mp->pattern;
+                if ((n = cp[-1]) == LPAREN) {
+                    paren++;
+                    if ((cp - first) > 1 && cp[-2] == '~') {
+                        char *p = cp;
+                        while ((c = mb1char(p)) && c != RPAREN) {
+                            if (c == 'A' || c == 'E' || c == 'K' || c == 'P' || c == 'X') {
+                                ere = 1;
+                                break;
                             }
                         }
-                    } else if (n == RPAREN)
-                        --paren;
+                    }
+                } else if (n == RPAREN) {
+                    --paren;
                 }
                 goto pattern;
             }
