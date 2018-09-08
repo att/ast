@@ -269,29 +269,27 @@ static_fn int outexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
                 break;
             }
             default: {
-                if (!active) {
+                if (active) return -1;
 #if 0
-                    int mode = ((struct checkpt *)shp->jmplist)->mode;
+                int mode = ((struct checkpt *)shp->jmplist)->mode;
 #endif
-                    int save = errno;
-                    active = 1;
-                    ((struct checkpt *)shp->jmplist)->mode = 0;
-                    sfpurge(iop);
-                    sfpool(iop, NULL, SF_WRITE);
-                    errno = save;
-                    errormsg(SH_DICT, ERROR_system(1), e_badwrite, sffileno(iop));
-                    __builtin_unreachable();
-                    // See issue #846 for why these are commented out.
-                    // TODO: Figure out if the preceding should be `ERROR_system(0)` so that it
-                    // returns control so these statements are executed or if these should just
-                    // be removed.
+                int save = errno;
+                active = 1;
+                ((struct checkpt *)shp->jmplist)->mode = 0;
+                sfpurge(iop);
+                sfpool(iop, NULL, SF_WRITE);
+                errno = save;
+                errormsg(SH_DICT, ERROR_system(1), e_badwrite, sffileno(iop));
+                __builtin_unreachable();
+                // See issue #846 for why these are commented out.
+                // TODO: Figure out if the preceding should be `ERROR_system(0)` so that it
+                // returns control so these statements are executed or if these should just
+                // be removed.
 #if 0
-                    active = 0;
-                    ((struct checkpt *)shp->jmplist)->mode = mode;
-                    sh_exit(shp, 1);
+                active = 0;
+                ((struct checkpt *)shp->jmplist)->mode = mode;
+                sh_exit(shp, 1);
 #endif
-                }
-                return -1;
             }
         }
     }
