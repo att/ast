@@ -323,50 +323,52 @@ char *nv_dirnext(void *dir) {
                 }
             }
             shp->last_table = last_table;
-            if (!dp->len || strncmp(cp, dp->data, dp->len) == 0) {
-                if ((nfp = nextdisc(np)) && (nfp->disc->getval || nfp->disc->getnum) &&
-                    nv_isvtree(np) && strcmp(cp, dp->data)) {
-                    nfp = 0;
-                }
-                if (nfp || nv_istable(np)) {
-                    Dt_t *root;
-                    size_t len;
-                    if (nv_istable(np)) {
-                        root = nv_dict(np);
-                    } else {
-                        root = (Dt_t *)np;
-                    }
-                    // Check for recursive walk.
-                    for (save = dp; save; save = save->prev) {
-                        if (save->root == root) break;
-                    }
-                    if (save) return cp;
-                    len = strlen(cp);
-                    save = calloc(1, sizeof(struct nvdir) + len + 1);
-                    if (!save) return 0;
-                    *save = *dp;
-                    dp->prev = save;
-                    dp->root = root;
-                    dp->len = len - 1;
-                    dp->data = (char *)(save + 1);
-                    memcpy(dp->data, cp, len + 1);
-                    if (nfp && np->nvfun) {
-#if 0
-				                Namarr_t *ap = nv_arrayptr(np);
-				                if(ap && (ap->flags&ARRAY_UNDEF))
-				                        nv_putsub(np,(char*)0,0,ARRAY_SCAN);
-#endif
-                        dp->nextnode = nfp->disc->nextf;
-                        dp->otable = dp->table;
-                        dp->table = np;
-                        dp->fun = nfp;
-                        dp->hp = (*dp->nextnode)(np, NULL, nfp);
-                    } else {
-                        dp->nextnode = 0;
-                    }
-                }
-                return cp;
+
+            if (dp->len && strncmp(cp, dp->data, dp->len) != 0) continue;
+
+            if ((nfp = nextdisc(np)) && (nfp->disc->getval || nfp->disc->getnum) &&
+                nv_isvtree(np) && strcmp(cp, dp->data)) {
+                nfp = 0;
             }
+
+            if (!nfp && !nv_istable(np)) return cp;
+
+            Dt_t *root;
+            size_t len;
+            if (nv_istable(np)) {
+                root = nv_dict(np);
+            } else {
+                root = (Dt_t *)np;
+            }
+            // Check for recursive walk.
+            for (save = dp; save; save = save->prev) {
+                if (save->root == root) break;
+            }
+            if (save) return cp;
+            len = strlen(cp);
+            save = calloc(1, sizeof(struct nvdir) + len + 1);
+            if (!save) return 0;
+            *save = *dp;
+            dp->prev = save;
+            dp->root = root;
+            dp->len = len - 1;
+            dp->data = (char *)(save + 1);
+            memcpy(dp->data, cp, len + 1);
+            if (nfp && np->nvfun) {
+#if 0
+                Namarr_t *ap = nv_arrayptr(np);
+                if(ap && (ap->flags&ARRAY_UNDEF))
+                        nv_putsub(np,(char*)0,0,ARRAY_SCAN);
+#endif
+                dp->nextnode = nfp->disc->nextf;
+                dp->otable = dp->table;
+                dp->table = np;
+                dp->fun = nfp;
+                dp->hp = (*dp->nextnode)(np, NULL, nfp);
+            } else {
+                dp->nextnode = 0;
+            }
+            return cp;
         }
         if (!(save = dp->prev)) break;
         *dp = *save;
@@ -516,28 +518,30 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
                 }
                 if (val == (NV_REF | NV_TAGGED)) attr &= ~(NV_REF | NV_TAGGED);
             }
-            if (val == NV_INTEGER && nv_isattr(np, NV_INTEGER)) {
-                int size = 10;
-                if (nv_isattr(np, NV_DOUBLE | NV_EXPNOTE) == (NV_DOUBLE | NV_EXPNOTE)) {
-                    size = DBL_DIG;
-                    if (nv_isattr(np, NV_LONG)) {
-                        size = LDBL_DIG;
-                    } else if (nv_isattr(np, NV_SHORT)) {
-                        size = FLT_DIG;
-                    }
-                    size -= 2;
+
+            if (val != NV_INTEGER) continue;
+            if (!nv_isattr(np, NV_INTEGER)) continue;
+
+            int size = 10;
+            if (nv_isattr(np, NV_DOUBLE | NV_EXPNOTE) == (NV_DOUBLE | NV_EXPNOTE)) {
+                size = DBL_DIG;
+                if (nv_isattr(np, NV_LONG)) {
+                    size = LDBL_DIG;
+                } else if (nv_isattr(np, NV_SHORT)) {
+                    size = FLT_DIG;
                 }
-                if (nv_size(np) != size) {
-                    if (nv_isattr(np, NV_DOUBLE) == NV_DOUBLE) {
-                        cp = "precision";
-                    } else {
-                        cp = "base";
-                    }
-                    if (!prefix) sfputr(out, cp, ' ');
-                    sfprintf(out, "%d ", nv_size(np));
-                }
-                break;
+                size -= 2;
             }
+            if (nv_size(np) != size) {
+                if (nv_isattr(np, NV_DOUBLE) == NV_DOUBLE) {
+                    cp = "precision";
+                } else {
+                    cp = "base";
+                }
+                if (!prefix) sfputr(out, cp, ' ');
+                sfprintf(out, "%d ", nv_size(np));
+            }
+            break;
         }
         if (fp) outtype(np, fp, out, prefix);
         if (noname) return;
