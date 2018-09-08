@@ -1942,41 +1942,40 @@ static_fn void kia_add(Namval_t *np, void *data) {
 }
 
 int kiaclose(Lex_t *lexp) {
+    if (!lexp->kiafile) return sfclose(lexp->kiafile);
+
     off_t off1, off2;
     int n;
-
-    if (lexp->kiafile) {
-        unsigned long r =
-            kiaentity(lexp, lexp->scriptname, -1, 'p', -1, lexp->sh->inlineno - 1, 0, 's', 0, "");
-        kiaentity(lexp, lexp->scriptname, -1, 'p', 1, lexp->sh->inlineno - 1, r, 's', 0, "");
-        kiaentity(lexp, lexp->scriptname, -1, 'f', 1, lexp->sh->inlineno - 1, r, 's', 0, "");
-        nv_scan(lexp->entity_tree, kia_add, (void *)lexp, NV_TAGGED, 0);
-        off1 = sfseek(lexp->kiafile, (off_t)0, SEEK_END);
-        sfseek(lexp->kiatmp, (off_t)0, SEEK_SET);
-        sfmove(lexp->kiatmp, lexp->kiafile, SF_UNBOUND, -1);
-        off2 = sfseek(lexp->kiafile, (off_t)0, SEEK_END);
+    unsigned long r =
+        kiaentity(lexp, lexp->scriptname, -1, 'p', -1, lexp->sh->inlineno - 1, 0, 's', 0, "");
+    kiaentity(lexp, lexp->scriptname, -1, 'p', 1, lexp->sh->inlineno - 1, r, 's', 0, "");
+    kiaentity(lexp, lexp->scriptname, -1, 'f', 1, lexp->sh->inlineno - 1, r, 's', 0, "");
+    nv_scan(lexp->entity_tree, kia_add, (void *)lexp, NV_TAGGED, 0);
+    off1 = sfseek(lexp->kiafile, (off_t)0, SEEK_END);
+    sfseek(lexp->kiatmp, (off_t)0, SEEK_SET);
+    sfmove(lexp->kiatmp, lexp->kiafile, SF_UNBOUND, -1);
+    off2 = sfseek(lexp->kiafile, (off_t)0, SEEK_END);
 #ifdef SF_BUFCONST
-        if (off2 == off1) {
-            n = sfprintf(lexp->kiafile, "DIRECTORY\nENTITY;%lld;%d\nDIRECTORY;",
-                         (Sflong_t)lexp->kiabegin, (size_t)(off1 - lexp->kiabegin));
-        } else {
-            n = sfprintf(lexp->kiafile,
-                         "DIRECTORY\nENTITY;%lld;%d\nRELATIONSHIP;%lld;%d\nDIRECTORY;",
-                         (Sflong_t)lexp->kiabegin, (size_t)(off1 - lexp->kiabegin), (Sflong_t)off1,
-                         (size_t)(off2 - off1));
-        }
-        if (off2 >= INT_MAX) off2 = -(n + 12);
-        sfprintf(lexp->kiafile, "%010.10lld;%010d\n", (Sflong_t)off2 + 10, n + 12);
-#else
-        if (off2 == off1) {
-            n = sfprintf(lexp->kiafile, "DIRECTORY\nENTITY;%d;%d\nDIRECTORY;", lexp->kiabegin,
-                         off1 - lexp->kiabegin);
-        } else {
-            n = sfprintf(lexp->kiafile, "DIRECTORY\nENTITY;%d;%d\nRELATIONSHIP;%d;%d\nDIRECTORY;",
-                         lexp->kiabegin, off1 - lexp->kiabegin, off1, off2 - off1);
-        }
-        sfprintf(lexp->kiafile, "%010d;%010d\n", off2 + 10, n + 12);
-#endif
+    if (off2 == off1) {
+        n = sfprintf(lexp->kiafile, "DIRECTORY\nENTITY;%lld;%d\nDIRECTORY;",
+                        (Sflong_t)lexp->kiabegin, (size_t)(off1 - lexp->kiabegin));
+    } else {
+        n = sfprintf(lexp->kiafile,
+                        "DIRECTORY\nENTITY;%lld;%d\nRELATIONSHIP;%lld;%d\nDIRECTORY;",
+                        (Sflong_t)lexp->kiabegin, (size_t)(off1 - lexp->kiabegin), (Sflong_t)off1,
+                        (size_t)(off2 - off1));
     }
+    if (off2 >= INT_MAX) off2 = -(n + 12);
+    sfprintf(lexp->kiafile, "%010.10lld;%010d\n", (Sflong_t)off2 + 10, n + 12);
+#else
+    if (off2 == off1) {
+        n = sfprintf(lexp->kiafile, "DIRECTORY\nENTITY;%d;%d\nDIRECTORY;", lexp->kiabegin,
+                        off1 - lexp->kiabegin);
+    } else {
+        n = sfprintf(lexp->kiafile, "DIRECTORY\nENTITY;%d;%d\nRELATIONSHIP;%d;%d\nDIRECTORY;",
+                        lexp->kiabegin, off1 - lexp->kiabegin, off1, off2 - off1);
+    }
+    sfprintf(lexp->kiafile, "%010d;%010d\n", off2 + 10, n + 12);
+#endif
     return sfclose(lexp->kiafile);
 }
