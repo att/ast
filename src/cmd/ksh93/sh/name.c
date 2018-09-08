@@ -388,51 +388,51 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                     }
                     nv_setvec(np, (arg->argflag & ARG_APPEND), argc, argv);
                     nv_onattr(np, NV_ARRAY);
-                    if (traceon || trap) {
-                        int n = -1;
-                        char *name = nv_name(np);
-                        if (arg->argflag & ARG_APPEND) n = '+';
-                        if (trap) {
-                            sh_debug(shp, trap, name, NULL, argv,
-                                     (arg->argflag & ARG_APPEND) | ARG_ASSIGN);
-                        }
-                        if (traceon) {
-                            sh_trace(shp, NULL, 0);
-                            sfputr(sfstderr, name, n);
-                            sfwrite(sfstderr, "=( ", 3);
-                            while ((cp = *argv++)) sfputr(sfstderr, sh_fmtq(cp), ' ');
-                            sfwrite(sfstderr, ")\n", 2);
-                        }
+                    if (!traceon && !trap) goto check_type;
+
+                    int n = -1;
+                    char *name = nv_name(np);
+                    if (arg->argflag & ARG_APPEND) n = '+';
+                    if (trap) {
+                        sh_debug(shp, trap, name, NULL, argv,
+                                    (arg->argflag & ARG_APPEND) | ARG_ASSIGN);
+                    }
+                    if (traceon) {
+                        sh_trace(shp, NULL, 0);
+                        sfputr(sfstderr, name, n);
+                        sfwrite(sfstderr, "=( ", 3);
+                        while ((cp = *argv++)) sfputr(sfstderr, sh_fmtq(cp), ' ');
+                        sfwrite(sfstderr, ")\n", 2);
                     }
                     goto check_type;
                 }
                 if ((tp->tre.tretyp & COMMSK) == TFUN) goto skip;
                 if (tp->tre.tretyp == TCOM && !tp->com.comset && !tp->com.comarg) {
-                    if (!(arg->argflag & ARG_APPEND)) {
-                        if (ap && ap->nelem > 0) {
-                            nv_putsub(np, NULL, 0, ARRAY_SCAN);
-                            if (!ap->fun && !(ap->flags & ARRAY_TREE) && !np->nvfun->next &&
-                                !nv_type(np)) {
-                                int nvflag = np->nvflag;
-                                int nvsize = np->nvsize;
-                                _nv_unset(np, NV_EXPORT);
-                                np->nvflag = nvflag;
-                                np->nvsize = nvsize;
-                            } else {
-                                ap->nelem++;
-                                while (1) {
-                                    ap->flags &= ~ARRAY_SCAN;
-                                    _nv_unset(np, NV_EXPORT);
-                                    ap->flags |= ARRAY_SCAN;
-                                    if (!nv_nextsub(np)) break;
-                                }
-                                ap->nelem--;
-                            }
-                        } else if (nv_isattr(np, NV_BINARY | NV_NOFREE | NV_RAW) !=
-                                       (NV_BINARY | NV_NOFREE | NV_RAW) &&
-                                   !nv_isarray(np)) {
+                    if (arg->argflag & ARG_APPEND) goto skip;
+
+                    if (ap && ap->nelem > 0) {
+                        nv_putsub(np, NULL, 0, ARRAY_SCAN);
+                        if (!ap->fun && !(ap->flags & ARRAY_TREE) && !np->nvfun->next &&
+                            !nv_type(np)) {
+                            int nvflag = np->nvflag;
+                            int nvsize = np->nvsize;
                             _nv_unset(np, NV_EXPORT);
+                            np->nvflag = nvflag;
+                            np->nvsize = nvsize;
+                        } else {
+                            ap->nelem++;
+                            while (1) {
+                                ap->flags &= ~ARRAY_SCAN;
+                                _nv_unset(np, NV_EXPORT);
+                                ap->flags |= ARRAY_SCAN;
+                                if (!nv_nextsub(np)) break;
+                            }
+                            ap->nelem--;
                         }
+                    } else if (nv_isattr(np, NV_BINARY | NV_NOFREE | NV_RAW) !=
+                                    (NV_BINARY | NV_NOFREE | NV_RAW) &&
+                                !nv_isarray(np)) {
+                        _nv_unset(np, NV_EXPORT);
                     }
                     goto skip;
                 }
@@ -1817,23 +1817,24 @@ static_fn int ja_size(char *str, int size, int type) {
         oldcp = cp;
         if (size <= 0 && type == 0) break;
     }
+
     // Check for right justified fields that need truncating.
-    if (size < 0) {
-        if (type == 0) {
-            // Left justified and character crosses field boundary.
-            n = oldn;
-            // Save boundary char and replace with spaces.
-            size = c;
-            savechars[size] = 0;
-            while (size--) {
-                savechars[size] = cp[size];
-                cp[size] = ' ';
-            }
-            savep = cp;
+    if (size >= 0) return n;
+
+    if (type == 0) {
+        // Left justified and character crosses field boundary.
+        n = oldn;
+        // Save boundary char and replace with spaces.
+        size = c;
+        savechars[size] = 0;
+        while (size--) {
+            savechars[size] = cp[size];
+            cp[size] = ' ';
         }
-        size = -size;
-        if (type) n -= (ja_size(str, size, 0) - size);
+        savep = cp;
     }
+    size = -size;
+    if (type) n -= (ja_size(str, size, 0) - size);
     return n;
 }
 
@@ -1950,27 +1951,27 @@ static_fn int scanfilter(Dt_t *dict, void *arg, void *data) {
 
     if (!is_abuiltin(np) && tp && tp->tp && nv_type(np) != tp->tp) return (0);
     if (sp->scanmask == NV_TABLE && nv_isvtree(np)) k = NV_TABLE;
-    if (sp->scanmask ? (k & sp->scanmask) == sp->scanflags
-                     : (!sp->scanflags || (k & sp->scanflags))) {
-        if (tp && tp->mapname) {
-            if (sp->scanflags == NV_FUNCTION || sp->scanflags == (NV_NOFREE | NV_BINARY | NV_RAW)) {
-                int n = strlen(tp->mapname);
-                if (strncmp(np->nvname, tp->mapname, n) || np->nvname[n] != '.' ||
-                    strchr(&np->nvname[n + 1], '.')) {
-                    return 0;
-                }
-            } else if ((sp->scanflags == NV_UTOL || sp->scanflags == NV_LTOU) &&
-                       (cp = (char *)nv_mapchar(np, NULL)) && strcmp(cp, tp->mapname)) {
+    if (!(sp->scanmask ? (k & sp->scanmask) == sp->scanflags
+                       : (!sp->scanflags || (k & sp->scanflags)))) return 0;
+
+    if (tp && tp->mapname) {
+        if (sp->scanflags == NV_FUNCTION || sp->scanflags == (NV_NOFREE | NV_BINARY | NV_RAW)) {
+            int n = strlen(tp->mapname);
+            if (strncmp(np->nvname, tp->mapname, n) || np->nvname[n] != '.' ||
+                strchr(&np->nvname[n + 1], '.')) {
                 return 0;
             }
+        } else if ((sp->scanflags == NV_UTOL || sp->scanflags == NV_LTOU) &&
+                    (cp = (char *)nv_mapchar(np, NULL)) && strcmp(cp, tp->mapname)) {
+            return 0;
         }
-        if (!np->nvalue.cp && !np->nvfun && !nv_isattr(np, ~NV_DEFAULT)) return (0);
-        if (sp->scanfn) {
-            if (nv_isarray(np)) nv_putsub(np, NULL, 0L, 0);
-            (*sp->scanfn)(np, sp->scandata);
-        }
-        sp->scancount++;
     }
+    if (!np->nvalue.cp && !np->nvfun && !nv_isattr(np, ~NV_DEFAULT)) return (0);
+    if (sp->scanfn) {
+        if (nv_isarray(np)) nv_putsub(np, NULL, 0L, 0);
+        (*sp->scanfn)(np, sp->scandata);
+    }
+    sp->scancount++;
     return 0;
 }
 
@@ -2127,40 +2128,41 @@ void _nv_unset(Namval_t *np, int flags) {
             np->nvalue.rp->running |= 1;
             return;
         }
-        if (slp && !nv_isattr(np, NV_NOFREE)) {
-            struct Ufunction *rq, *rp = np->nvalue.rp;
-            // Free function definition.
-            char *name = nv_name(np), *cp = strrchr(name, '.');
-            if (cp) {
-                Namval_t *npv;
-                *cp = 0;
-                npv = nv_open(name, shp->var_tree, NV_NOARRAY | NV_VARNAME | NV_NOADD);
-                *cp++ = '.';
-                if (npv && npv != shp->namespace) {
-                    nv_setdisc(npv, cp, NULL, (Namfun_t *)npv);
-                }
+        if (!slp) goto done;
+        if (nv_isattr(np, NV_NOFREE)) goto done;
+
+        struct Ufunction *rq, *rp = np->nvalue.rp;
+        // Free function definition.
+        char *name = nv_name(np), *cp = strrchr(name, '.');
+        if (cp) {
+            Namval_t *npv;
+            *cp = 0;
+            npv = nv_open(name, shp->var_tree, NV_NOARRAY | NV_VARNAME | NV_NOADD);
+            *cp++ = '.';
+            if (npv && npv != shp->namespace) {
+                nv_setdisc(npv, cp, NULL, (Namfun_t *)npv);
             }
-            if (rp->fname && shp->fpathdict &&
-                (rq = (struct Ufunction *)nv_search(rp->fname, shp->fpathdict, 0))) {
-                do {
-                    if (rq->np != np) continue;
-                    dtdelete(shp->fpathdict, rq);
-                    break;
-                } while ((rq = (struct Ufunction *)dtnext(shp->fpathdict, rq)));
-            }
-            if (rp->sdict) {
-                Namval_t *mp, *nq;
-                for (mp = (Namval_t *)dtfirst(rp->sdict); mp; mp = nq) {
-                    nq = dtnext(rp->sdict, mp);
-                    _nv_unset(mp, NV_RDONLY);
-                    nv_delete(mp, rp->sdict, 0);
-                }
-                dtclose(rp->sdict);
-            }
-            stakdelete(slp->slptr);
-            free(np->nvalue.ip);
-            np->nvalue.ip = 0;
         }
+        if (rp->fname && shp->fpathdict &&
+            (rq = (struct Ufunction *)nv_search(rp->fname, shp->fpathdict, 0))) {
+            do {
+                if (rq->np != np) continue;
+                dtdelete(shp->fpathdict, rq);
+                break;
+            } while ((rq = (struct Ufunction *)dtnext(shp->fpathdict, rq)));
+        }
+        if (rp->sdict) {
+            Namval_t *mp, *nq;
+            for (mp = (Namval_t *)dtfirst(rp->sdict); mp; mp = nq) {
+                nq = dtnext(rp->sdict, mp);
+                _nv_unset(mp, NV_RDONLY);
+                nv_delete(mp, rp->sdict, 0);
+            }
+            dtclose(rp->sdict);
+        }
+        stakdelete(slp->slptr);
+        free(np->nvalue.ip);
+        np->nvalue.ip = 0;
         goto done;
     }
     if (shp->subshell) np = sh_assignok(np, 0);
