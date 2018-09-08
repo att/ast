@@ -1782,22 +1782,24 @@ again:
         jpold = 0;
         goto again;
     }
-    if (jp && (env < 0 || jp->env == env)) {
-        r = 0;
-        if (pid) r = jp->exitval;
-        if (jpold) {
-            jpold->next = jp->next;
-        } else {
-            bp->list = jp->next;
-        }
-        bp->count--;
-        if (njob_savelist < NJOB_SAVELIST) {
-            njob_savelist++;
-            jp->next = job_savelist;
-            job_savelist = jp;
-        } else {
-            free(jp);
-        }
+
+    if (!jp) return r;
+    if (env >= 0 && jp->env != env) return r;
+
+    r = 0;
+    if (pid) r = jp->exitval;
+    if (jpold) {
+        jpold->next = jp->next;
+    } else {
+        bp->list = jp->next;
+    }
+    bp->count--;
+    if (njob_savelist < NJOB_SAVELIST) {
+        njob_savelist++;
+        jp->next = job_savelist;
+        job_savelist = jp;
+    } else {
+        free(jp);
     }
     return r;
 }
