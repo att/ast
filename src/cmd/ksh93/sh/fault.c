@@ -402,6 +402,7 @@ void sh_chktrap(Shell_t *shp) {
                 if (shp->siginfo) {
                     do {
                         ip = shp->siginfo[sig];
+                        // cppcheck-suppress nullPointerArithmetic
                     } while (asocasptr(&shp->siginfo[sig], ip, 0) != ip);
                 }
             again:
