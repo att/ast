@@ -683,25 +683,24 @@ struct dolnod *sh_argfree(Shell_t *shp, struct dolnod *blk, int flag) {
     Arg_t *ap = (Arg_t *)shp->arg_context;
     argblk = argr;
     if (!argblk) return argr;
+    if (--argblk->dolrefcnt != 0) return argr;
 
-    if (--argblk->dolrefcnt == 0) {
-        argr = argblk->dolnxt;
-        if (flag && argblk == ap->dolh) {
-            ap->dolh->dolrefcnt = 1;
+    argr = argblk->dolnxt;
+    if (flag && argblk == ap->dolh) {
+        ap->dolh->dolrefcnt = 1;
+    } else {
+        // Delete from chain.
+        if (ap->argfor == argblk) {
+            ap->argfor = argblk->dolnxt;
         } else {
-            // Delete from chain.
-            if (ap->argfor == argblk) {
-                ap->argfor = argblk->dolnxt;
-            } else {
-                for (argr = ap->argfor; argr; argr = argr->dolnxt) {
-                    if (argr->dolnxt == argblk) break;
-                }
-                if (!argr) return NULL;
-                argr->dolnxt = argblk->dolnxt;
-                argr = argblk->dolnxt;
+            for (argr = ap->argfor; argr; argr = argr->dolnxt) {
+                if (argr->dolnxt == argblk) break;
             }
-            free(argblk);
+            if (!argr) return NULL;
+            argr->dolnxt = argblk->dolnxt;
+            argr = argblk->dolnxt;
         }
+        free(argblk);
     }
     return argr;
 }
