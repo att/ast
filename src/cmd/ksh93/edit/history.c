@@ -277,25 +277,26 @@ retry:
     sfdisc(hp->histfp, &hp->histdisc);
     (HISTCUR)->nvalue.lp = (&hp->histind);
     sh_timeradd(1000L * (HIST_RECENT - 30), 1, hist_touch, (void *)hp->histname);
+    hp->auditfp = 0;
 
     char buff[SF_BUFSIZE];
-    hp->auditfp = 0;
-    if (sh_isstate(shp, SH_INTERACTIVE) &&
-        (hp->auditmask = sh_checkaudit(hp, stringify(AUDIT_FILE), buff, sizeof(buff)))) {
-        if ((fd = sh_open(buff, O_BINARY | O_WRONLY | O_APPEND | O_CREAT | O_CLOEXEC,
-                          S_IRUSR | S_IWUSR)) >= 0 &&
-            fd < 10) {
-            int n;
-            if ((n = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10)) >= 0) {
-                sh_close(fd);
-                fd = n;
-            }
+    if (!sh_isstate(shp, SH_INTERACTIVE)) return 1;
+    hp->auditmask = sh_checkaudit(hp, stringify(AUDIT_FILE), buff, sizeof(buff));
+    if (!hp->auditmask) return 1;
+
+    if ((fd = sh_open(buff, O_BINARY | O_WRONLY | O_APPEND | O_CREAT | O_CLOEXEC,
+                        S_IRUSR | S_IWUSR)) >= 0 &&
+        fd < 10) {
+        int n;
+        if ((n = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10)) >= 0) {
+            sh_close(fd);
+            fd = n;
         }
-        if (fd >= 0) {
-            (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
-            hp->tty = strdup(ttyname(2));
-            hp->auditfp = sfnew(NULL, NULL, -1, fd, SF_WRITE);
-        }
+    }
+    if (fd >= 0) {
+        (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
+        hp->tty = strdup(ttyname(2));
+        hp->auditfp = sfnew(NULL, NULL, -1, fd, SF_WRITE);
     }
 
     return 1;
