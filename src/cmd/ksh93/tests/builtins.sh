@@ -638,3 +638,12 @@ builtin  -d set 2> /dev/null && log_error 'buitin -d allows special builtins to 
 builtin -f $LIBSAMPLE_PATH sample || log_error "Failed to load sample builtin"
 
 sample >/dev/null || log_error "Sample builtin should exit with 0 status"
+
+# List special builtins
+# Setting locale affects the order of listing builtins
+[[ $(LC_ALL=C builtin -s) = $'.\n:\n_Bool\nalias\nbreak\ncontinue\nenum\neval\nexec\nexit\nexport\nhash\nlogin\nnewgrp\nreadonly\nreturn\nset\nshift\ntrap\ntypeset\nunalias\nunset' ]] ||
+    log_error "builtin -s mismatches list of special builtins"
+
+builtin -d alias 2>/dev/null && log_error "Deleting a special builtin should fail"
+
+[[ $(builtin -p | grep -v "^builtin") = "" ]] || log_error "builtin -p does not prepend all lines with builtin"
