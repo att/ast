@@ -585,19 +585,35 @@ then
     rmdir "$pwd/f1"
 fi
 
-OLDPWDSYMLINK="$TEST_DIR/oldpwdsymlink"
-ln -s "$OLDPWD" "$TEST_DIR/oldpwdsymlink"
+TESTDIRSYMLINK="$TEST_DIR/testdirsymlink"
+ln -s "$TEST_DIR" "$TEST_DIR/testdirsymlink"
+
+# TODO: cd -@
+# Change into the hidden attribute directory of directory which may also be a file. CDPATH is
+# ignored. Hidden attribute directories are file system and operating system specific.
+
+cd -L "$TESTDIRSYMLINK"
+actual="$(pwd)"
+expected="$TEST_DIR/testdirsymlink"
+[[ "$actual" = "$expected" ]] || log_error "cd -L should enter logical path" "$expected" "$actual"
+
+# Enter physical path to skip resolving multiple symlinks while testing
+cd -P "$TEST_DIR"
+cd -P "$TESTDIRSYMLINK" || log_error "cd -P to symlink failed"
+actual="$(pwd)"
+expected="$OLDPWD"
+[[ "$actual" = "$expected"  ]] || log_error "cd -P should enter physical path." "$expected" "$actual"
 
 # Enter physical path to skip resolving multiple symlinks while testing
 cd $(pwd -P)
-cd "$OLDPWDSYMLINK"
+cd "$TESTDIRSYMLINK"
 
 actual="$(pwd)"
-expected="$TEST_DIR/oldpwdsymlink"
+expected="$TEST_DIR/testdirsymlink"
 [[ "$actual" = "$expected" ]] || log_error "pwd should print logical path" "$expected" "$actual"
 
 actual="$(pwd -L)"
-expected="$TEST_DIR/oldpwdsymlink"
+expected="$TEST_DIR/testdirsymlink"
 [[ "$actual" = "$expected"  ]] || log_error "pwd -L should print logical path" "$expected" "$actual"
 
 actual="$(pwd -P)"
