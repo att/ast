@@ -555,30 +555,30 @@ int sh_argopts(int argc, char *argv[], void *context) {
     // Handling SH_INTERACTIVE and SH_PRIVILEGED has been moved to
     // sh_applyopts(), so that the code can be reused from b_shopt(), too.
     sh_applyopts(shp, newflags);
-    if (ap->kiafile) {
-        if (!argv[0]) {
-            errormsg(SH_DICT, ERROR_usage(2), "-R requires scriptname");
-            __builtin_unreachable();
-        }
-        if (!(lp->kiafile = sfopen(NULL, ap->kiafile, "w+"))) {
-            errormsg(SH_DICT, ERROR_system(3), e_create, ap->kiafile);
-            __builtin_unreachable();
-        }
-        if (!(lp->kiatmp = sftmp(2 * SF_BUFSIZE))) {
-            errormsg(SH_DICT, ERROR_system(3), e_tmpcreate);
-            __builtin_unreachable();
-        }
-        sfputr(lp->kiafile, ";vdb;CIAO/ksh", '\n');
-        lp->kiabegin = sftell(lp->kiafile);
-        lp->entity_tree = dtopen(&_Nvdisc, Dtbag);
-        lp->scriptname = strdup(sh_fmtq(argv[0]));
-        lp->script = kiaentity(lp, lp->scriptname, -1, 'p', -1, 0, 0, 's', 0, "");
-        lp->fscript = kiaentity(lp, lp->scriptname, -1, 'f', -1, 0, 0, 's', 0, "");
-        lp->unknown = kiaentity(lp, "<unknown>", -1, 'p', -1, 0, 0, '0', 0, "");
-        kiaentity(lp, "<unknown>", -1, 'p', 0, 0, lp->unknown, '0', 0, "");
-        lp->current = lp->script;
-        ap->kiafile = 0;
+    if (!ap->kiafile) return argc;
+
+    if (!argv[0]) {
+        errormsg(SH_DICT, ERROR_usage(2), "-R requires scriptname");
+        __builtin_unreachable();
     }
+    if (!(lp->kiafile = sfopen(NULL, ap->kiafile, "w+"))) {
+        errormsg(SH_DICT, ERROR_system(3), e_create, ap->kiafile);
+        __builtin_unreachable();
+    }
+    if (!(lp->kiatmp = sftmp(2 * SF_BUFSIZE))) {
+        errormsg(SH_DICT, ERROR_system(3), e_tmpcreate);
+        __builtin_unreachable();
+    }
+    sfputr(lp->kiafile, ";vdb;CIAO/ksh", '\n');
+    lp->kiabegin = sftell(lp->kiafile);
+    lp->entity_tree = dtopen(&_Nvdisc, Dtbag);
+    lp->scriptname = strdup(sh_fmtq(argv[0]));
+    lp->script = kiaentity(lp, lp->scriptname, -1, 'p', -1, 0, 0, 's', 0, "");
+    lp->fscript = kiaentity(lp, lp->scriptname, -1, 'f', -1, 0, 0, 's', 0, "");
+    lp->unknown = kiaentity(lp, "<unknown>", -1, 'p', -1, 0, 0, '0', 0, "");
+    kiaentity(lp, "<unknown>", -1, 'p', 0, 0, lp->unknown, '0', 0, "");
+    lp->current = lp->script;
+    ap->kiafile = 0;
 
     return argc;
 }
@@ -682,25 +682,25 @@ struct dolnod *sh_argfree(Shell_t *shp, struct dolnod *blk, int flag) {
     struct dolnod *argblk;
     Arg_t *ap = (Arg_t *)shp->arg_context;
     argblk = argr;
-    if (argblk) {
-        if (--argblk->dolrefcnt == 0) {
-            argr = argblk->dolnxt;
-            if (flag && argblk == ap->dolh) {
-                ap->dolh->dolrefcnt = 1;
+    if (!argblk) return argr;
+
+    if (--argblk->dolrefcnt == 0) {
+        argr = argblk->dolnxt;
+        if (flag && argblk == ap->dolh) {
+            ap->dolh->dolrefcnt = 1;
+        } else {
+            // Delete from chain.
+            if (ap->argfor == argblk) {
+                ap->argfor = argblk->dolnxt;
             } else {
-                // Delete from chain.
-                if (ap->argfor == argblk) {
-                    ap->argfor = argblk->dolnxt;
-                } else {
-                    for (argr = ap->argfor; argr; argr = argr->dolnxt) {
-                        if (argr->dolnxt == argblk) break;
-                    }
-                    if (!argr) return NULL;
-                    argr->dolnxt = argblk->dolnxt;
-                    argr = argblk->dolnxt;
+                for (argr = ap->argfor; argr; argr = argr->dolnxt) {
+                    if (argr->dolnxt == argblk) break;
                 }
-                free(argblk);
+                if (!argr) return NULL;
+                argr->dolnxt = argblk->dolnxt;
+                argr = argblk->dolnxt;
             }
+            free(argblk);
         }
     }
     return argr;
