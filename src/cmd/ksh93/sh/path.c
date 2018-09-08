@@ -287,23 +287,23 @@ static_fn char *path_lib(Shell_t *shp, Pathcomp_t *pp, char *path) {
     }
     r = stat(path, &statb);
     if (last) *last = '/';
-    if (r >= 0) {
-        Pathcomp_t pcomp;
-        char save[8];
-        for (; pp; pp = pp->next) {
-            if (!pp->dev && !pp->ino) path_checkdup(shp, pp);
-            if (pp->ino == statb.st_ino && pp->dev == statb.st_dev && pp->mtime == statb.st_mtime) {
-                return (pp->lib);
-            }
+    if (r < 0) return NULL;
+
+    Pathcomp_t pcomp;
+    char save[8];
+    for (; pp; pp = pp->next) {
+        if (!pp->dev && !pp->ino) path_checkdup(shp, pp);
+        if (pp->ino == statb.st_ino && pp->dev == statb.st_dev && pp->mtime == statb.st_mtime) {
+            return (pp->lib);
         }
-        pcomp.len = 0;
-        if (last) pcomp.len = last - path;
-        memcpy((void *)save, (void *)stkptr(shp->stk, PATH_OFFSET + pcomp.len), sizeof(save));
-        if (path_chkpaths(shp, NULL, NULL, &pcomp, PATH_OFFSET)) {
-            return (stkfreeze(shp->stk, 1));
-        }
-        memcpy((void *)stkptr(shp->stk, PATH_OFFSET + pcomp.len), (void *)save, sizeof(save));
     }
+    pcomp.len = 0;
+    if (last) pcomp.len = last - path;
+    memcpy((void *)save, (void *)stkptr(shp->stk, PATH_OFFSET + pcomp.len), sizeof(save));
+    if (path_chkpaths(shp, NULL, NULL, &pcomp, PATH_OFFSET)) {
+        return (stkfreeze(shp->stk, 1));
+    }
+    memcpy((void *)stkptr(shp->stk, PATH_OFFSET + pcomp.len), (void *)save, sizeof(save));
     return NULL;
 }
 
