@@ -262,12 +262,7 @@ static_fn int sh_outenum(Shell_t *shp, Sfio_t *iop, Namval_t *tp) {
     return 0;
 }
 
-#ifdef STANDALONE
-static_fn int enum_create(int argc, char **argv, Shbltin_t *context)
-#else
-int b_enum(int argc, char **argv, Shbltin_t *context)
-#endif
-{
+int b_enum(int argc, char **argv, Shbltin_t *context) {
     bool pflag = false, iflag = false;
     int i, n;
     ssize_t sz = -1;
@@ -368,14 +363,3 @@ int b_enum(int argc, char **argv, Shbltin_t *context)
     nv_open(0, shp->var_tree, 0);
     return error_info.errors != 0;
 }
-
-#ifdef STANDALONE
-void lib_init(int flag, void *context) {
-    Shell_t *shp = ((Shbltin_t *)context)->shp;
-    Namval_t *mp, *bp;
-    if (flag) return;
-    bp = sh_addbuiltin(shp, "Enum", enum_create, NULL);
-    mp = nv_search("typeset", shp->bltin_tree, 0);
-    nv_onattr(bp, nv_isattr(mp, NV_PUBLIC));
-}
-#endif
