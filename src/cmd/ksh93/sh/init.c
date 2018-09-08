@@ -433,32 +433,32 @@ static_fn char *get_ifs(Namval_t *np, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
 
     value = nv_getv(np, fp);
-    if (np != ifsp->ifsnp) {
-        ifsp->ifsnp = np;
-        memset(shp->ifstable, 0, (1 << CHAR_BIT));
-        cp = value;
-        if (cp) {
-            while (n = mblen(cp, MB_CUR_MAX), c = *(unsigned char *)cp) {
-                cp++;
-                if (n > 1) {
-                    cp += (n - 1);
-                    shp->ifstable[c] = S_MBYTE;
-                    continue;
-                }
-                n = S_DELIM;
-                if (c == *cp) {
-                    cp++;
-                } else if (c == '\n') {
-                    n = S_NL;
-                } else if (isspace(c)) {
-                    n = S_SPACE;
-                }
-                shp->ifstable[c] = n;
+    if (np == ifsp->ifsnp) return value;
+
+    ifsp->ifsnp = np;
+    memset(shp->ifstable, 0, (1 << CHAR_BIT));
+    cp = value;
+    if (cp) {
+        while (n = mblen(cp, MB_CUR_MAX), c = *(unsigned char *)cp) {
+            cp++;
+            if (n > 1) {
+                cp += (n - 1);
+                shp->ifstable[c] = S_MBYTE;
+                continue;
             }
-        } else {
-            shp->ifstable[' '] = shp->ifstable['\t'] = S_SPACE;
-            shp->ifstable['\n'] = S_NL;
+            n = S_DELIM;
+            if (c == *cp) {
+                cp++;
+            } else if (c == '\n') {
+                n = S_NL;
+            } else if (isspace(c)) {
+                n = S_SPACE;
+            }
+            shp->ifstable[c] = n;
         }
+    } else {
+        shp->ifstable[' '] = shp->ifstable['\t'] = S_SPACE;
+        shp->ifstable['\n'] = S_NL;
     }
     return value;
 }
@@ -2008,31 +2008,32 @@ static_fn void env_init(Shell_t *shp) {
             next = strchr(++cp, '=');
             if (next) *next = 0;
             np = nv_search(cp + 2, shp->var_tree, NV_ADD);
-            if (np != SHLVL && nv_isattr(np, NV_IMPORT | NV_EXPORT)) {
-                int flag = *(unsigned char *)cp - ' ';
-                int size = *(unsigned char *)(cp + 1) - ' ';
-                if ((flag & NV_INTEGER) && size == 0) {
-                    // Check for floating
-                    char *ep, *val = nv_getval(np);
-                    strtol(val, &ep, 10);
-                    if (*ep == '.' || *ep == 'e' || *ep == 'E') {
-                        char *lp;
-                        flag |= NV_DOUBLE;
-                        if (*ep == '.') {
-                            strtol(ep + 1, &lp, 10);
-                            if (*lp) ep = lp;
-                        }
-                        if (*ep && *ep != '.') {
-                            flag |= NV_EXPNOTE;
-                            size = ep - val;
-                        } else {
-                            size = strlen(ep);
-                        }
-                        size--;
+            if (np == SHLVL) continue;
+            if (!nv_isattr(np, NV_IMPORT | NV_EXPORT)) continue;
+
+            int flag = *(unsigned char *)cp - ' ';
+            int size = *(unsigned char *)(cp + 1) - ' ';
+            if ((flag & NV_INTEGER) && size == 0) {
+                // Check for floating
+                char *ep, *val = nv_getval(np);
+                strtol(val, &ep, 10);
+                if (*ep == '.' || *ep == 'e' || *ep == 'E') {
+                    char *lp;
+                    flag |= NV_DOUBLE;
+                    if (*ep == '.') {
+                        strtol(ep + 1, &lp, 10);
+                        if (*lp) ep = lp;
                     }
+                    if (*ep && *ep != '.') {
+                        flag |= NV_EXPNOTE;
+                        size = ep - val;
+                    } else {
+                        size = strlen(ep);
+                    }
+                    size--;
                 }
-                nv_newattr(np, flag | NV_IMPORT | NV_EXPORT, size);
             }
+            nv_newattr(np, flag | NV_IMPORT | NV_EXPORT, size);
         }
     }
 
