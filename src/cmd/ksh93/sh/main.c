@@ -511,22 +511,22 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
         shp->readscript = 0;
         if (sh_isstate(shp, SH_INTERACTIVE) && shp->gd->hist_ptr) hist_flush(shp->gd->hist_ptr);
         sh_offstate(shp, SH_HISTORY);
-        if (t) {
-            execflags = sh_state(SH_ERREXIT) | sh_state(SH_INTERACTIVE);
-            // The last command may not have to fork.
-            if (!sh_isstate(shp, SH_PROFILE) && sh_isoption(shp, SH_CFLAG) &&
-                (fno < 0 || !(shp->fdstatus[fno] & (IOTTY | IONOSEEK))) && !sfreserve(iop, 0, 0)) {
-                execflags |= sh_state(SH_NOFORK);
-            }
-            shp->st.execbrk = 0;
-            sh_exec(shp, t, execflags);
-            if (shp->forked) {
-                sh_offstate(shp, SH_INTERACTIVE);
-                goto done;
-            }
-            // This is for sh -t.
-            if (sh_isoption(shp, SH_TFLAG) && !sh_isstate(shp, SH_PROFILE)) tdone++;
+        if (!t) continue;
+
+        execflags = sh_state(SH_ERREXIT) | sh_state(SH_INTERACTIVE);
+        // The last command may not have to fork.
+        if (!sh_isstate(shp, SH_PROFILE) && sh_isoption(shp, SH_CFLAG) &&
+            (fno < 0 || !(shp->fdstatus[fno] & (IOTTY | IONOSEEK))) && !sfreserve(iop, 0, 0)) {
+            execflags |= sh_state(SH_NOFORK);
         }
+        shp->st.execbrk = 0;
+        sh_exec(shp, t, execflags);
+        if (shp->forked) {
+            sh_offstate(shp, SH_INTERACTIVE);
+            goto done;
+        }
+        // This is for sh -t.
+        if (sh_isoption(shp, SH_TFLAG) && !sh_isstate(shp, SH_PROFILE)) tdone++;
     }
 done:
     sh_popcontext(shp, &buff);
