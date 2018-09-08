@@ -33,6 +33,7 @@
 #include "defs.h"
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "cdt.h"
 #include "error.h"
 #include "fault.h"
@@ -1567,6 +1568,7 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
                 if (iop && sfseek(iop, (Sfoff_t)mp->nvalue.rp->hoffset, SEEK_SET) >= 0) {
                     sfmove(iop, out, nv_size(mp), -1);
                 } else {
+                    assert(iop);
                     sfputc(iop, '\n');
                 }
                 if (xp) sfclose(iop);
@@ -1616,6 +1618,7 @@ void nv_checkrequired(Namval_t *mp) {
             errormsg(SH_DICT, ERROR_exit(1), e_required, np->nvname, nv_type(mp)->nvname);
             __builtin_unreachable();
         }
+        assert(nq);
         if (nv_isattr(nq, NV_RDONLY)) nv_onattr(np, NV_RDONLY);
     }
 }

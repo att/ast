@@ -35,6 +35,7 @@
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "cdt.h"
 #include "fault.h"
 #include "lexstates.h"
@@ -384,7 +385,9 @@ static_fn void outtype(Namval_t *np, Namfun_t *fp, Sfio_t *out, const char *pref
     char *type = 0;
     Namval_t *tp = fp->type;
 
-    if (!tp && fp->disc && fp->disc->typef) tp = (*fp->disc->typef)(np, fp);
+    assert(fp->disc);
+    assert(fp->disc->typef);
+    if (!tp) tp = (*fp->disc->typef)(np, fp);
     for (fp = fp->next; fp; fp = fp->next) {
         if (fp->type || (fp->disc && fp->disc->typef && (*fp->disc->typef)(np, fp))) {
             outtype(np, fp, out, prefix);
@@ -961,6 +964,7 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
                         wp->indent++;
                         if (json) endchar = ']';
                     } else {
+                        assert(outfile);
                         sfputc(outfile, ' ');
                     }
                     wp->array = 0;

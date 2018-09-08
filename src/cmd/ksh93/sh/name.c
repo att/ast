@@ -2740,12 +2740,13 @@ static_fn void cache_purge(const char *name) {
 
 bool nv_rename(Namval_t *np, int flags) {
     Shell_t *shp = sh_ptr(np);
-    Namval_t *mp = 0, *nr = 0;
+    Namval_t *mp = NULL;
+    Namval_t *nr = NULL;
     char *cp;
     int arraynr, index = -1;
     Namval_t *last_table = shp->last_table;
     Dt_t *last_root = shp->last_root;
-    Dt_t *hp = 0;
+    Dt_t *hp = NULL;
     char *nvenv = 0, *prefix = shp->prefix;
     Namarr_t *ap;
 
@@ -2855,6 +2856,7 @@ bool nv_rename(Namval_t *np, int flags) {
             cache_purge(nv_name(nr));
 #endif  // NVCACHE
         }
+        assert(mp);
         mp->nvenv = nvenv;
         if (flags & NV_MOVE) {
             if (arraynr && !nv_isattr(nr, NV_MINIMAL) && (mp = (Namval_t *)nr->nvenv) &&
@@ -2888,11 +2890,13 @@ bool nv_rename(Namval_t *np, int flags) {
 //
 void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
     Shell_t *shp = sh_ptr(np);
-    Namval_t *nq = 0, *nr = 0;
+    Namval_t *nq = NULL;
+    Namval_t *nr = NULL;
     char *ep, *cp;
-    Dt_t *root = shp->last_root, *hpnext = 0;
-    Namarr_t *ap = 0;
     Dt_t *openmatch;
+    Dt_t *root = shp->last_root;
+    Dt_t *hpnext = NULL;
+    Namarr_t *ap = NULL;
     Namval_t *last_table = shp->last_table;
 
     if (nv_isref(np)) return;
@@ -2931,7 +2935,7 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
             if (nr && nv_isvtree(nr) && (nr = nv_open(cp, hp, flags | NV_NOSCOPE | NV_NOFAIL))) {
                 nq = nr;
             } else {
-                nr = 0;
+                nr = NULL;
             }
         }
         hp = hp ? (openmatch ? openmatch : shp->var_base) : shp->var_tree;
@@ -2974,6 +2978,7 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
     }
     if (ep) {
         // Cause subscript evaluation and return result.
+        assert(nq);
         if (nv_isarray(nq)) {
             ep = nv_getsub(nq);
         } else {
@@ -2983,12 +2988,13 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
             ep[n] = ']';
             nq = nv_opensub(nr);
             if (nq) {
-                ep = 0;
+                ep = NULL;
             } else {
                 ep = nv_getsub(nq = nr);
             }
         }
     }
+    assert(nq);
     shp->instance = 0;
     shp->last_root = root;
     _nv_unset(np, 0);
