@@ -249,69 +249,70 @@ again:
                 break;
             }
             case '.': {
-                if (brace == 1 && *cp == '.') {
-                    char *endc;
-                    incr = 1;
-                    if (isdigit(*pat) || *pat == '+' || *pat == '-') {
-                        first = strtol(pat, &endc, 0);
-                        if (endc == (cp - 1)) {
-                            last = strtol(cp + 1, &endc, 0);
-                            if (*endc == '.' && endc[1] == '.') {
-                                incr = strtol(endc + 2, &endc, 0);
-                            } else if (last < first) {
-                                incr = -1;
-                            }
-                            if (incr) {
-                                if (*endc == '%') {
-                                    Sffmt_t fmt;
-                                    memset(&fmt, 0, sizeof(fmt));
-                                    fmt.version = SFIO_VERSION;
-                                    fmt.form = endc;
-                                    fmt.extf = checkfmt;
-                                    sfprintf(sfstdout, "%!", &fmt);
-                                    if (!(fmt.flags & (SFFMT_LLONG | SFFMT_LDOUBLE)))
-                                        switch (fmt.fmt) {
-                                            case 'c':
-                                            case 'd':
-                                            case 'i':
-                                            case 'o':
-                                            case 'u':
-                                            case 'x':
-                                            case 'X': {
-                                                format = endc;
-                                                endc = fmt.form;
-                                                break;
-                                            }
-                                        }
-                                } else {
-                                    format = "%d";
-                                }
-                                if (*endc == '}') {
-                                    cp = endc + 1;
-                                    range = 2;
-                                    goto endloop1;
-                                }
-                            }
-                        }
-                    } else if ((cp[2] == '}' || (cp[2] == '.' && cp[3] == '.')) &&
-                               ((*pat >= 'a' && *pat <= 'z' && cp[1] >= 'a' && cp[1] <= 'z') ||
-                                (*pat >= 'A' && *pat <= 'Z' && cp[1] >= 'A' && cp[1] <= 'Z'))) {
-                        first = *pat;
-                        last = cp[1];
-                        cp += 2;
-                        if (*cp == '.') {
-                            incr = strtol(cp + 2, &endc, 0);
-                            cp = endc;
-                        } else if (first > last)
+                if (brace != 1) break;
+                if (*cp != '.') break;
+
+                char *endc;
+                incr = 1;
+                if (isdigit(*pat) || *pat == '+' || *pat == '-') {
+                    first = strtol(pat, &endc, 0);
+                    if (endc == (cp - 1)) {
+                        last = strtol(cp + 1, &endc, 0);
+                        if (*endc == '.' && endc[1] == '.') {
+                            incr = strtol(endc + 2, &endc, 0);
+                        } else if (last < first) {
                             incr = -1;
-                        if (incr && *cp == '}') {
-                            cp++;
-                            range = 1;
-                            goto endloop1;
+                        }
+                        if (incr) {
+                            if (*endc == '%') {
+                                Sffmt_t fmt;
+                                memset(&fmt, 0, sizeof(fmt));
+                                fmt.version = SFIO_VERSION;
+                                fmt.form = endc;
+                                fmt.extf = checkfmt;
+                                sfprintf(sfstdout, "%!", &fmt);
+                                if (!(fmt.flags & (SFFMT_LLONG | SFFMT_LDOUBLE)))
+                                    switch (fmt.fmt) {
+                                        case 'c':
+                                        case 'd':
+                                        case 'i':
+                                        case 'o':
+                                        case 'u':
+                                        case 'x':
+                                        case 'X': {
+                                            format = endc;
+                                            endc = fmt.form;
+                                            break;
+                                        }
+                                    }
+                            } else {
+                                format = "%d";
+                            }
+                            if (*endc == '}') {
+                                cp = endc + 1;
+                                range = 2;
+                                goto endloop1;
+                            }
                         }
                     }
-                    cp++;
+                } else if ((cp[2] == '}' || (cp[2] == '.' && cp[3] == '.')) &&
+                            ((*pat >= 'a' && *pat <= 'z' && cp[1] >= 'a' && cp[1] <= 'z') ||
+                            (*pat >= 'A' && *pat <= 'Z' && cp[1] >= 'A' && cp[1] <= 'Z'))) {
+                    first = *pat;
+                    last = cp[1];
+                    cp += 2;
+                    if (*cp == '.') {
+                        incr = strtol(cp + 2, &endc, 0);
+                        cp = endc;
+                    } else if (first > last)
+                        incr = -1;
+                    if (incr && *cp == '}') {
+                        cp++;
+                        range = 1;
+                        goto endloop1;
+                    }
                 }
+                cp++;
                 break;
             }
             case ',': {
