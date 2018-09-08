@@ -467,23 +467,22 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 killing = 2;  // set killing signal
                 out[i] = 0;
                 draw(ep, UPDATE);
-                if (c == KILLCHAR) {
-                    if (ep->terminal == PAPER) {
-                        putchar(ep->ed, '\n');
-                        putstring(ep, Prompt);
-                    }
-                    c = ed_getchar(ep->ed, 0);
-                    if (c != usrkill) {
-                        ed_ungetchar(ep->ed, c);
-                        continue;
-                    }
-                    if (ep->terminal == PAPER) {
-                        ep->terminal = CRT;
-                    } else {
-                        ep->terminal = PAPER;
-                        putchar(ep->ed, '\n');
-                        putstring(ep, Prompt);
-                    }
+                if (c != KILLCHAR) continue;
+                if (ep->terminal == PAPER) {
+                    putchar(ep->ed, '\n');
+                    putstring(ep, Prompt);
+                }
+                c = ed_getchar(ep->ed, 0);
+                if (c != usrkill) {
+                    ed_ungetchar(ep->ed, c);
+                    continue;
+                }
+                if (ep->terminal == PAPER) {
+                    ep->terminal = CRT;
+                } else {
+                    ep->terminal = PAPER;
+                    putchar(ep->ed, '\n');
+                    putstring(ep, Prompt);
                 }
                 continue;
             }
