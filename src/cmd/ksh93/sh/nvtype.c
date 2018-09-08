@@ -418,52 +418,53 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
         nr = nv_create(stkptr(shp->stk, offset), root, NV_VARNAME | NV_NOADD, fp);
         fp->nofree = save;
         stkseek(shp->stk, offset);
-        if (nr) {
-            if (nv_isattr(nq, NV_RDONLY) && nv_type(np) != np &&
-                (nq->nvalue.cp || nv_isattr(nq, NV_INTEGER))) {
-                errormsg(SH_DICT, ERROR_exit(1), e_readonly, nq->nvname);
-                __builtin_unreachable();
-            }
-            if (nv_isref(nq)) nq = nv_refnode(nq);
-            if ((size = nv_datasize(nr, NULL)) && size == nv_datasize(nq, NULL)) {
-                if (nv_isattr(nr, NV_INT16 | NV_DOUBLE) == NV_INT16) {
-                    if (nv_isattr(nq, NV_INT16P) == NV_INT16P) {
-                        *nq->nvalue.i16p = nr->nvalue.i16;
-                    } else {
-                        nq->nvalue.cp = nr->nvalue.cp;
-                    }
+
+        if (!nr) continue;
+
+        if (nv_isattr(nq, NV_RDONLY) && nv_type(np) != np &&
+            (nq->nvalue.cp || nv_isattr(nq, NV_INTEGER))) {
+            errormsg(SH_DICT, ERROR_exit(1), e_readonly, nq->nvname);
+            __builtin_unreachable();
+        }
+        if (nv_isref(nq)) nq = nv_refnode(nq);
+        if ((size = nv_datasize(nr, NULL)) && size == nv_datasize(nq, NULL)) {
+            if (nv_isattr(nr, NV_INT16 | NV_DOUBLE) == NV_INT16) {
+                if (nv_isattr(nq, NV_INT16P) == NV_INT16P) {
+                    *nq->nvalue.i16p = nr->nvalue.i16;
                 } else {
-                    memcpy((char *)nq->nvalue.cp, nr->nvalue.cp, size);
+                    nq->nvalue.cp = nr->nvalue.cp;
                 }
-            } else if ((ap = nv_arrayptr(nr))) {
-                nv_putsub(nr, NULL, 0, ARRAY_SCAN | ARRAY_NOSCOPE);
-                do {
-                    if (array_assoc(ap)) {
-                        cp = (char *)((*ap->fun)(nr, NULL, NV_ANAME));
-                    } else {
-                        cp = nv_getsub(nr);
-                    }
-                    nv_putsub(nq, cp, 0, ARRAY_ADD | ARRAY_NOSCOPE);
-                    if (array_assoc(ap)) {
-                        Namval_t *mr = (Namval_t *)((*ap->fun)(nr, NULL, NV_ACURRENT));
-                        Namval_t *mq = (Namval_t *)((*ap->fun)(nq, NULL, NV_ACURRENT));
-                        nv_clone(mr, mq, NV_MOVE);
-                        ap->nelem--;
-                        nv_delete(mr, ap->table, 0);
-                    } else {
-                        cp = nv_getval(nr);
-                        nv_putval(nq, cp, 0);
-                    }
-                } while (nv_nextsub(nr));
             } else {
-                nv_putval(nq, nv_getval(nr), NV_RDONLY);
+                memcpy((char *)nq->nvalue.cp, nr->nvalue.cp, size);
             }
-            if (shp->mktype) nv_addnode(nr, 1);
-            if (pp->strsize < 0) continue;
-            if (nr != (Namval_t *)np->nvenv) {
-                _nv_unset(nr, 0);
-                if (!nv_isattr(nr, NV_MINIMAL)) nv_delete(nr, shp->last_root, 0);
-            }
+        } else if ((ap = nv_arrayptr(nr))) {
+            nv_putsub(nr, NULL, 0, ARRAY_SCAN | ARRAY_NOSCOPE);
+            do {
+                if (array_assoc(ap)) {
+                    cp = (char *)((*ap->fun)(nr, NULL, NV_ANAME));
+                } else {
+                    cp = nv_getsub(nr);
+                }
+                nv_putsub(nq, cp, 0, ARRAY_ADD | ARRAY_NOSCOPE);
+                if (array_assoc(ap)) {
+                    Namval_t *mr = (Namval_t *)((*ap->fun)(nr, NULL, NV_ACURRENT));
+                    Namval_t *mq = (Namval_t *)((*ap->fun)(nq, NULL, NV_ACURRENT));
+                    nv_clone(mr, mq, NV_MOVE);
+                    ap->nelem--;
+                    nv_delete(mr, ap->table, 0);
+                } else {
+                    cp = nv_getval(nr);
+                    nv_putval(nq, cp, 0);
+                }
+            } while (nv_nextsub(nr));
+        } else {
+            nv_putval(nq, nv_getval(nr), NV_RDONLY);
+        }
+        if (shp->mktype) nv_addnode(nr, 1);
+        if (pp->strsize < 0) continue;
+        if (nr != (Namval_t *)np->nvenv) {
+            _nv_unset(nr, 0);
+            if (!nv_isattr(nr, NV_MINIMAL)) nv_delete(nr, shp->last_root, 0);
         }
     }
     if (nv_isattr(mp, NV_BINARY)) {
