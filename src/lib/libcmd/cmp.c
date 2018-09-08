@@ -246,8 +246,7 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
     Sfoff_t differences = -1;
     int flags = 0;
 
-    UNUSED(argc);
-    cmdinit(argc, argv, context, ERROR_CATALOG, 0);
+    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
     for (;;) {
         switch (optget(argv, usage)) {
             case 'b':

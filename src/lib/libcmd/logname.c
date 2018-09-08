@@ -54,7 +54,7 @@ static const char usage[] = "[-?\n@(#)$Id: logname (AT&T Research) 1999-04-30 $\
 int b_logname(int argc, char **argv, Shbltin_t *context) {
     char *logname;
 
-    cmdinit(argc, argv, context, ERROR_CATALOG, 0);
+    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
     for (;;) {
         switch (optget(argv, usage)) {
             case ':':

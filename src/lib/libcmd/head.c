@@ -84,7 +84,7 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
     int header = 1;
     char *format = (char *)header_fmt + 1;
 
-    cmdinit(argc, argv, context, ERROR_CATALOG, 0);
+    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
     for (;;) {
         switch (optget(argv, usage)) {
             case 'c':

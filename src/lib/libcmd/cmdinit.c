@@ -29,15 +29,12 @@
 #include "error.h"
 #include "option.h"
 
-int _cmd_init(int argc, char **argv, Shbltin_t *context, const char *catalog, int flags) {
+int cmdinit(int argc, char **argv, Shbltin_t *context, const char *catalog, int flags) {
     char *cp;
 
     if (argc <= 0) return -1;
     if (context) {
-        if (flags & ERROR_CALLBACK) {
-            flags &= ~ERROR_CALLBACK;
-            flags |= ERROR_NOTIFY;
-        } else if (flags & ERROR_NOTIFY) {
+        if (flags & ERROR_NOTIFY) {
             context->notify = 1;
             flags &= ~ERROR_NOTIFY;
         }

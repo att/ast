@@ -90,7 +90,7 @@ int b_wc(int argc, char **argv, Shbltin_t *context) {
     Sfoff_t tlines = 0, twords = 0, tchars = 0;
     struct stat statb;
 
-    cmdinit(argc, argv, context, ERROR_CATALOG, 0);
+    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
     for (;;) {
         switch (optget(argv, usage)) {
             case 'c':

@@ -82,16 +82,6 @@ struct Shbltin_s {
 #else  // defined(SFIO_VERSION) || defined(_AST_H)
 #define LIB_INIT(c) ((c) && (sh_context(c)->nosfio = 1))
 #endif  // defined(SFIO_VERSION) || defined(_AST_H)
-#ifndef _CMD_H
-#ifndef ERROR_NOTIFY
-#define ERROR_NOTIFY 1
-#endif  // ERROR_NOTIFY
-#define cmdinit(ac, av, c, cat, flg)                            \
-    do {                                                        \
-        if ((ac) <= 0) return (0);                              \
-        (sh_context(c)->notify = ((flg)&ERROR_NOTIFY) ? 1 : 0); \
-    } while (0)
-#endif  // !_CMD_H
 #endif  // defined(SH_VERSION) || defined(_SH_PRIVATE)
 
 extern int astintercept(Shbltin_t *, int);

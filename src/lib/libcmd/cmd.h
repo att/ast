@@ -27,20 +27,8 @@
 #define _CMD_H 1
 
 #include "ast.h"
-#include "error.h"
 #include "shcmd.h"
 
-extern int b_stty(int argc, char **argv, Shbltin_t *context);
-
-#define ERROR_CALLBACK ERROR_SET
-
-#include "cmdext.h"
-
-#define cmdinit(a, b, c, d, e)                   \
-    do {                                         \
-        if (_cmd_init(a, b, c, d, e)) return -1; \
-    } while (0)
-
-extern int _cmd_init(int, char **, Shbltin_t *, const char *, int);
+extern int cmdinit(int, char **, Shbltin_t *, const char *, int);
 
 #endif  // _CMD_H

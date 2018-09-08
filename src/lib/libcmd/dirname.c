@@ -103,7 +103,7 @@ int b_dirname(int argc, char **argv, Shbltin_t *context) {
     int mode = 0;
     char buf[PATH_MAX];
 
-    cmdinit(argc, argv, context, ERROR_CATALOG, 0);
+    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
     for (;;) {
         switch (optget(argv, usage)) {
             case 'f':
