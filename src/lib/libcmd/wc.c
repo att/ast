@@ -30,9 +30,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "cmd.h"
 #include "error.h"
 #include "option.h"
+#include "shcmd.h"
 #include "wc.h"
 
 static const char usage[] =

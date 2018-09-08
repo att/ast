@@ -39,7 +39,6 @@ typedef struct Shell_s Shell_t;
 
 #include "ast.h"
 #include "cdt.h"
-#include "cmd.h"
 #include "fault.h"
 #include "shcmd.h"
 #include "stk.h"

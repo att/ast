@@ -26,10 +26,10 @@
 #include <sys/fcntl.h>
 #include <unistd.h>
 
-#include "cmd.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"
 
 static const char optsync[] =
     "[-?\n@(#)$Id: sync (AT&T Research) 2013-09-22 $\n]" USAGE_LICENSE
@@ -74,7 +74,7 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
     bool do_sfsync = 0;
     bool do_sync = 0;
 
-    UNUSED(context);
+    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
     for (;;) {
         switch (optget(argv, optsync)) {
             case 'f':

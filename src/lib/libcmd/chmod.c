@@ -37,10 +37,10 @@
 
 #include "ast.h"
 #include "ast_mode.h"
-#include "cmd.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: chmod (AT&T Research) 2012-04-20 $\n]" USAGE_LICENSE

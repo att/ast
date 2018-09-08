@@ -34,10 +34,10 @@
 #include <sys/types.h>
 
 #include "ast.h"
-#include "cmd.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: cat (AT&T Research) 2013-09-13 $\n]" USAGE_LICENSE

@@ -30,10 +30,10 @@
 
 #include "ast.h"
 #include "ast_errorf.h"
-#include "cmd.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: getconf (AT&T Research) 2013-12-01 $\n]" USAGE_LICENSE

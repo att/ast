@@ -25,9 +25,9 @@
 
 #include <string.h>
 
-#include "cmd.h"
 #include "error.h"
 #include "option.h"
+#include "shcmd.h"
 
 int cmdinit(int argc, char **argv, Shbltin_t *context, const char *catalog, int flags) {
     char *cp;

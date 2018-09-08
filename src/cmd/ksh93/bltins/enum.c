@@ -28,13 +28,13 @@
 
 #include "ast.h"
 #include "cdt.h"
-#include "cmd.h"
 #include "error.h"
 #include "fault.h"
 #include "name.h"
 #include "nvapi.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"  // IWYU pragma: keep
 #include "stk.h"
 
 static const char enum_usage[] =

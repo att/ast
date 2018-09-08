@@ -84,6 +84,6 @@ struct Shbltin_s {
 #endif  // defined(SFIO_VERSION) || defined(_AST_H)
 #endif  // defined(SH_VERSION) || defined(_SH_PRIVATE)
 
-extern int astintercept(Shbltin_t *, int);
+extern int cmdinit(int, char **, Shbltin_t *, const char *, int);
 
 #endif  // _SHCMD_H

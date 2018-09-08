@@ -30,10 +30,10 @@
 
 #include <string.h>
 
-#include "cmd.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: basename (AT&T Research) 2010-05-06 $\n]" USAGE_LICENSE

@@ -36,10 +36,10 @@
 #endif
 
 #include "ast.h"
-#include "cmd.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"
 
 #define MAXHOSTNAME 64
 

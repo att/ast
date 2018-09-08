@@ -32,9 +32,9 @@
 #include <unistd.h>
 
 #include "ast.h"
-#include "cmd.h"
 #include "error.h"
 #include "option.h"
+#include "shcmd.h"
 
 static const char usage[] = "[-?\n@(#)$Id: mkdir (AT&T Research) 2010-04-08 $\n]" USAGE_LICENSE
                             "[+NAME?mkdir - make directories]"
