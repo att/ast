@@ -400,69 +400,69 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
         xp = (Namtype_t *)nv_hasdisc(nq, &type_disc);
         if (xp) xp->parent = mp;
         if (flags == (NV_NOFREE | NV_ARRAY)) continue;
-        if (nq->nvalue.cp || !nv_isvtree(nq) || nv_isattr(nq, NV_RDONLY)) {
-            // See if default value has been overwritten.
-            if (!mp->nvname) continue;
-            shp->last_table = last_table;
-            if (pp->strsize < 0) {
-                cp = nv_name(np);
-            } else {
-                cp = nv_name(mp);
+        if (!nq->nvalue.cp && nv_isvtree(nq) && !nv_isattr(nq, NV_RDONLY)) continue;
+
+        // See if default value has been overwritten.
+        if (!mp->nvname) continue;
+        shp->last_table = last_table;
+        if (pp->strsize < 0) {
+            cp = nv_name(np);
+        } else {
+            cp = nv_name(mp);
+        }
+        sfputr(shp->stk, cp, '.');
+        sfputr(shp->stk, nq->nvname, 0);
+        root = nv_dict(mp);
+        save = fp->nofree;
+        fp->nofree = 1;
+        nr = nv_create(stkptr(shp->stk, offset), root, NV_VARNAME | NV_NOADD, fp);
+        fp->nofree = save;
+        stkseek(shp->stk, offset);
+        if (nr) {
+            if (nv_isattr(nq, NV_RDONLY) && nv_type(np) != np &&
+                (nq->nvalue.cp || nv_isattr(nq, NV_INTEGER))) {
+                errormsg(SH_DICT, ERROR_exit(1), e_readonly, nq->nvname);
+                __builtin_unreachable();
             }
-            sfputr(shp->stk, cp, '.');
-            sfputr(shp->stk, nq->nvname, 0);
-            root = nv_dict(mp);
-            save = fp->nofree;
-            fp->nofree = 1;
-            nr = nv_create(stkptr(shp->stk, offset), root, NV_VARNAME | NV_NOADD, fp);
-            fp->nofree = save;
-            stkseek(shp->stk, offset);
-            if (nr) {
-                if (nv_isattr(nq, NV_RDONLY) && nv_type(np) != np &&
-                    (nq->nvalue.cp || nv_isattr(nq, NV_INTEGER))) {
-                    errormsg(SH_DICT, ERROR_exit(1), e_readonly, nq->nvname);
-                    __builtin_unreachable();
-                }
-                if (nv_isref(nq)) nq = nv_refnode(nq);
-                if ((size = nv_datasize(nr, NULL)) && size == nv_datasize(nq, NULL)) {
-                    if (nv_isattr(nr, NV_INT16 | NV_DOUBLE) == NV_INT16) {
-                        if (nv_isattr(nq, NV_INT16P) == NV_INT16P) {
-                            *nq->nvalue.i16p = nr->nvalue.i16;
-                        } else {
-                            nq->nvalue.cp = nr->nvalue.cp;
-                        }
+            if (nv_isref(nq)) nq = nv_refnode(nq);
+            if ((size = nv_datasize(nr, NULL)) && size == nv_datasize(nq, NULL)) {
+                if (nv_isattr(nr, NV_INT16 | NV_DOUBLE) == NV_INT16) {
+                    if (nv_isattr(nq, NV_INT16P) == NV_INT16P) {
+                        *nq->nvalue.i16p = nr->nvalue.i16;
                     } else {
-                        memcpy((char *)nq->nvalue.cp, nr->nvalue.cp, size);
+                        nq->nvalue.cp = nr->nvalue.cp;
                     }
-                } else if ((ap = nv_arrayptr(nr))) {
-                    nv_putsub(nr, NULL, 0, ARRAY_SCAN | ARRAY_NOSCOPE);
-                    do {
-                        if (array_assoc(ap)) {
-                            cp = (char *)((*ap->fun)(nr, NULL, NV_ANAME));
-                        } else {
-                            cp = nv_getsub(nr);
-                        }
-                        nv_putsub(nq, cp, 0, ARRAY_ADD | ARRAY_NOSCOPE);
-                        if (array_assoc(ap)) {
-                            Namval_t *mr = (Namval_t *)((*ap->fun)(nr, NULL, NV_ACURRENT));
-                            Namval_t *mq = (Namval_t *)((*ap->fun)(nq, NULL, NV_ACURRENT));
-                            nv_clone(mr, mq, NV_MOVE);
-                            ap->nelem--;
-                            nv_delete(mr, ap->table, 0);
-                        } else {
-                            cp = nv_getval(nr);
-                            nv_putval(nq, cp, 0);
-                        }
-                    } while (nv_nextsub(nr));
                 } else {
-                    nv_putval(nq, nv_getval(nr), NV_RDONLY);
+                    memcpy((char *)nq->nvalue.cp, nr->nvalue.cp, size);
                 }
-                if (shp->mktype) nv_addnode(nr, 1);
-                if (pp->strsize < 0) continue;
-                if (nr != (Namval_t *)np->nvenv) {
-                    _nv_unset(nr, 0);
-                    if (!nv_isattr(nr, NV_MINIMAL)) nv_delete(nr, shp->last_root, 0);
-                }
+            } else if ((ap = nv_arrayptr(nr))) {
+                nv_putsub(nr, NULL, 0, ARRAY_SCAN | ARRAY_NOSCOPE);
+                do {
+                    if (array_assoc(ap)) {
+                        cp = (char *)((*ap->fun)(nr, NULL, NV_ANAME));
+                    } else {
+                        cp = nv_getsub(nr);
+                    }
+                    nv_putsub(nq, cp, 0, ARRAY_ADD | ARRAY_NOSCOPE);
+                    if (array_assoc(ap)) {
+                        Namval_t *mr = (Namval_t *)((*ap->fun)(nr, NULL, NV_ACURRENT));
+                        Namval_t *mq = (Namval_t *)((*ap->fun)(nq, NULL, NV_ACURRENT));
+                        nv_clone(mr, mq, NV_MOVE);
+                        ap->nelem--;
+                        nv_delete(mr, ap->table, 0);
+                    } else {
+                        cp = nv_getval(nr);
+                        nv_putval(nq, cp, 0);
+                    }
+                } while (nv_nextsub(nr));
+            } else {
+                nv_putval(nq, nv_getval(nr), NV_RDONLY);
+            }
+            if (shp->mktype) nv_addnode(nr, 1);
+            if (pp->strsize < 0) continue;
+            if (nr != (Namval_t *)np->nvenv) {
+                _nv_unset(nr, 0);
+                if (!nv_isattr(nr, NV_MINIMAL)) nv_delete(nr, shp->last_root, 0);
             }
         }
     }
@@ -941,22 +941,22 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
         if (is_afunction(np)) {
             sp = np->nvname + m;
             if (strncmp(np->nvname, NV_CLASS, sizeof(NV_CLASS) - 1) == 0) sp += sizeof(NV_CLASS);
-            if (!std_disc(np, pp)) {
-                // see if discipline already defined.
-                for (j = 0; j < nd; j++) {
-                    if (strcmp(sp, pp->names[j]) == 0) {
-                        mnodes[j] = nodes[i];
-                        break;
-                    }
+            if (std_disc(np, pp)) continue;
+
+            // See if discipline already defined.
+            for (j = 0; j < nd; j++) {
+                if (strcmp(sp, pp->names[j]) == 0) {
+                    mnodes[j] = nodes[i];
+                    break;
                 }
-                if (j >= nd) {
-                    pp->names[nd] = cp;
-                    mnodes[nd++] = nodes[i];
-                    cp = strcopy(cp, sp);
-                    *cp++ = 0;
-                }
-                nv_onattr(mnodes[j], NV_NOFREE);
             }
+            if (j >= nd) {
+                pp->names[nd] = cp;
+                mnodes[nd++] = nodes[i];
+                cp = strcopy(cp, sp);
+                *cp++ = 0;
+            }
+            nv_onattr(mnodes[j], NV_NOFREE);
             continue;
         }
         if (inherit) {
@@ -1363,21 +1363,20 @@ Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *
         m = strlen(fp->name) + 1;
         size += m;
         nnodes++;
-        if (strncmp(fp->type, "typeset", 7)) {
-            sfputr(shp->stk, fp->type, 0);
-            tp =
-                nv_open(stkptr(shp->stk, offset), shp->var_tree, NV_VARNAME | NV_NOADD | NV_NOFAIL);
-            stkseek(shp->stk, r);
-            if (!tp) {
-                errormsg(SH_DICT, ERROR_exit(1), e_unknowntype, strlen(fp->type), fp->type);
-                __builtin_unreachable();
-            }
-            dp = (Namtype_t *)nv_hasdisc(tp, &type_disc);
-            if (dp) {
-                nnodes += dp->numnodes;
-                if ((i = dp->strsize) < 0) i = -i;
-                size += i + dp->numnodes * m;
-            }
+        if (!strncmp(fp->type, "typeset", 7)) continue;
+
+        sfputr(shp->stk, fp->type, 0);
+        tp = nv_open(stkptr(shp->stk, offset), shp->var_tree, NV_VARNAME | NV_NOADD | NV_NOFAIL);
+        stkseek(shp->stk, r);
+        if (!tp) {
+            errormsg(SH_DICT, ERROR_exit(1), e_unknowntype, strlen(fp->type), fp->type);
+            __builtin_unreachable();
+        }
+        dp = (Namtype_t *)nv_hasdisc(tp, &type_disc);
+        if (dp) {
+            nnodes += dp->numnodes;
+            if ((i = dp->strsize) < 0) i = -i;
+            size += i + dp->numnodes * m;
         }
     }
     pp = newof(NULL, Namtype_t, 1, nnodes * NV_MINSZ + rsize + size);
@@ -1556,32 +1555,33 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
             } else {
                 sfprintf(out, "\tfunction %s", cp);
             }
-            xp = 0;
-            if (mp->nvalue.ip && mp->nvalue.rp->hoffset >= 0) {
-                if (nv_isattr(mp, NV_FTMP)) {
-                    iop = shp->heredocs;
-                } else if ((xp = mp->nvalue.rp->fname)) {
-                    iop = sfopen(iop, xp, "r");
-                } else if (shp->gd->hist_ptr) {
-                    iop = (shp->gd->hist_ptr)->histfp;
-                }
-                if (iop && sfseek(iop, (Sfoff_t)mp->nvalue.rp->hoffset, SEEK_SET) >= 0) {
-                    sfmove(iop, out, nv_size(mp), -1);
-                } else {
-                    assert(iop);
-                    sfputc(iop, '\n');
-                }
-                if (xp) sfclose(iop);
-                if (nv_isattr(mp, NV_STATICF | NV_TAGGED)) {
-                    if (indent) sfnputc(out, '\t', indent);
-                    sfwrite(out, "\ttypeset -f", 11);
-                    if (nv_isattr(mp, NV_STATICF)) sfputc(out, 'S');
-                    if (nv_isattr(mp, NV_TAGGED)) sfputc(out, 't');
-                    if (mp->nvalue.rp->help) sfprintf(out, "h '%s'", mp->nvalue.rp->help);
-                    sfprintf(out, " %s\n", cp);
-                }
-                iop = 0;
+            xp = NULL;
+            if (!mp->nvalue.ip) continue;
+            if (mp->nvalue.rp->hoffset < 0) continue;
+
+            if (nv_isattr(mp, NV_FTMP)) {
+                iop = shp->heredocs;
+            } else if ((xp = mp->nvalue.rp->fname)) {
+                iop = sfopen(iop, xp, "r");
+            } else if (shp->gd->hist_ptr) {
+                iop = (shp->gd->hist_ptr)->histfp;
             }
+            if (iop && sfseek(iop, (Sfoff_t)mp->nvalue.rp->hoffset, SEEK_SET) >= 0) {
+                sfmove(iop, out, nv_size(mp), -1);
+            } else {
+                assert(iop);
+                sfputc(iop, '\n');
+            }
+            if (xp) sfclose(iop);
+            if (nv_isattr(mp, NV_STATICF | NV_TAGGED)) {
+                if (indent) sfnputc(out, '\t', indent);
+                sfwrite(out, "\ttypeset -f", 11);
+                if (nv_isattr(mp, NV_STATICF)) sfputc(out, 'S');
+                if (nv_isattr(mp, NV_TAGGED)) sfputc(out, 't');
+                if (mp->nvalue.rp->help) sfprintf(out, "h '%s'", mp->nvalue.rp->help);
+                sfprintf(out, " %s\n", cp);
+            }
+            iop = 0;
         }
         if (indent) sfnputc(out, '\t', indent);
         sfwrite(out, ")\n", 2);
