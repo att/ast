@@ -49,13 +49,11 @@
 static char *modifiers = "htrepqxs&";
 static int mod_flags[] = {0, 0, 0, 0, HIST_PRINT, HIST_QUOTE, HIST_QUOTE | HIST_QUOTE_BR, 0, 0};
 
-#define DONE()                \
-    {                         \
-        flag |= HIST_ERROR;   \
-        cp = 0;               \
-        stkseek(shp->stk, 0); \
-        goto done;            \
-    }
+#define DONE()            \
+    flag |= HIST_ERROR;   \
+    cp = NULL;            \
+    stkseek(shp->stk, 0); \
+    goto done             \
 
 struct subst {
     char *str[2];  // [0] is "old", [1] is "new" string
