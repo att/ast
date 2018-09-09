@@ -71,7 +71,8 @@ int pathexists(char *path, int mode) {
         for (t = p->tree; t && (*cmp)(s, t->name); t = t->next)
             ;
         if (!t) {
-            if (!(t = newof(0, Tree_t, 1, strlen(s)))) {
+            t = calloc(1, sizeof(Tree_t) + strlen(s));
+            if (!t) {
                 *e = c;
                 return 0;
             }
@@ -91,7 +92,8 @@ int pathexists(char *path, int mode) {
                 e = ee;
                 c = cc;
                 if (!x || errno == ENOENT) t->mode = PATH_READ | PATH_EXECUTE;
-                if (!(p = newof(0, Tree_t, 1, strlen(s)))) {
+                p = calloc(1, sizeof(Tree_t) + strlen(s));
+                if (!p) {
                     *e = c;
                     return 0;
                 }

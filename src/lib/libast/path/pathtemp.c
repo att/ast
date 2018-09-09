@@ -190,7 +190,8 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
                     s++;
                     n++;
                 }
-                if (!(tmp.vec = newof(0, char *, n, strlen(x) + 1))) return 0;
+                tmp.vec = calloc(1, n * sizeof(char *) + strlen(x) + 1);
+                if (!tmp.vec) return NULL;
                 tmp.dir = tmp.vec;
                 x = strcpy((char *)(tmp.dir + n), x);
                 *tmp.dir++ = x;
@@ -203,7 +204,8 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
                 *tmp.dir = 0;
             } else {
                 if (((d = tmp.tmpdir) || (d = getenv(TMP_ENV))) && !VALID(d)) d = 0;
-                if (!(tmp.vec = newof(0, char *, 2, d ? (strlen(d) + 1) : 0))) return 0;
+                tmp.vec = calloc(1, 2 * sizeof(char *) + (d ? strlen(d) + 1 : 0));
+                if (!tmp.vec) return NULL;
                 if (d) *tmp.vec = strcpy((char *)(tmp.vec + 2), d);
             }
             tmp.dir = tmp.vec;
@@ -218,7 +220,11 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
     }
     if (!len) len = PATH_MAX;
     len--;
-    if (!(b = buf) && !(b = newof(0, char, len, 1))) return 0;
+    b = buf;
+    if (!b) {
+        b = calloc(1, len + 1);
+        if (!b) return NULL;
+    }
     z = 0;
     if (!pfx && !(pfx = tmp.pfx)) pfx = "ast";
     m = strlen(pfx);
