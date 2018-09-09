@@ -141,12 +141,7 @@ then
     log_error 'break labels not working'
 fi
 
-if [[ $(command -v if)    != if ]]
-then
-    log_error    'command -v not working'
-fi
 
-$SHELL -c 'command -p ls >/dev/null' 2>/dev/null || log_error 'command -p not working'
 
 mkdir -p $TEST_DIR/a/b/c 2>/dev/null || log_error  "mkdir -p failed"
 $SHELL -c "cd $TEST_DIR/a/b; cd c" || log_error "initial script relative cd fails"
@@ -311,44 +306,6 @@ done
 
 #rm -f $TEST_DIR/fifo
 
-function longline
-{
-    integer i
-    for((i=0; i < $1; i++))
-    do
-        print argument$i
-    done
-}
-# test command -x option
-integer sum=0 n=10000
-if ! ${SHELL:-ksh} -c 'print $#' count $(longline $n) > /dev/null  2>&1
-then
-    for i in $(command command -x ${SHELL:-ksh} -c 'print $#;[[ $1 != argument0 ]]' count $(longline $n) 2> /dev/null)
-    do
-        ((sum += $i))
-   done
-
-   (( sum == n )) || log_error "command -x processed only $sum arguments"
-   command -p command -x ${SHELL:-ksh} -c 'print $#;[[ $1 == argument0 ]]' count $(longline $n) > /dev/null  2>&1
-   [[ $? != 1 ]] && log_error 'incorrect exit status for command -x'
-fi
-
-# test command -x option with extra arguments
-integer sum=0 n=10000
-if   ! ${SHELL:-ksh} -c 'print $#' count $(longline $n) > /dev/null  2>&1
-then
-    for i in $(command command -x ${SHELL:-ksh} -c 'print $#;[[ $1 != argument0 ]]' count $(longline $n) one two three) #2> /dev/null)
-    do
-        ((sum += $i))
-    done
-
-    (( sum  > n )) || log_error "command -x processed only $sum arguments"
-    (( (sum-n)%3==0 )) || log_error "command -x processed only $sum arguments"
-    (( sum == n+3)) && log_error "command -x processed only $sum arguments"
-    command -p command -x ${SHELL:-ksh} -c 'print $#;[[ $1 == argument0 ]]' count $(longline $n) > /dev/null  2>&1
-    [[ $? != 1 ]] && log_error 'incorrect exit status for command -x'
-fi
-
 # test for debug trap
 [[ $(typeset -i i=0
     trap 'print $i' DEBUG
@@ -507,27 +464,6 @@ SH_OPTIONS=astbin=/bin
 PATH=/bin:/usr/bin:/opt/ast/bin
 [[ $(whence basename) == "$basename" ]] || log_error "basename bound to $(whence basename) but should be bound to $basename when PATH=$PATH"
 [[ $(whence cmp) == "$cmp" ]] || log_error "cmp bound to $(whence cmp) but should be bound to $cmp when PATH=$PATH"
-
-unset y
-expect='outside f, 1, 2, 3, outside f'
-actual=$(
-    f() {
-        if [ -n "${_called_f+_}" ]; then
-            for y; do
-                printf '%s, ' "$y"
-            done
-        else
-            _called_f= y= command eval '{ typeset +x y; } 2>/dev/null; f "$@"'
-        fi
-
-    }
-    y='outside f'
-    printf "$y, "
-    f 1 2 3
-    echo "$y"
-)
-[[ $actual == "$expect" ]] ||
-   log_error 'assignments to "command special_built-in" leaving side effects' "$expect" "$actual"
 
 # tests with cd
 pwd=$PWD
