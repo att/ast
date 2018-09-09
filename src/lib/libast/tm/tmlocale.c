@@ -308,7 +308,8 @@ static_fn void native_lc_time(Lc_info_t *li) {
     nl = 3 * GetLocaleInfo(lcid, LOCALE_SLONGDATE, 0, 0);
     n = nt + ns + nl;
     for (i = 0; i < elementsof(map); i++) n += GetLocaleInfo(lcid, map[i].native, 0, 0);
-    if (!(b = newof(0, char *, TM_NFORM, n))) return;
+    b = calloc(1, TM_NFORM * sizeof(char *) + n);
+    if (!b) return;
     s = (char *)(b + TM_NFORM);
     for (i = 0; i < elementsof(map); i++) {
         if (!(m = GetLocaleInfo(lcid, map[i].native, s, n))) goto bad;
@@ -452,7 +453,8 @@ static_fn void native_lc_time() {
         if (!(t = nl_langinfo(map[i].native))) t = tm_data.format[map[i].local];
         n += strlen(t) + 1;
     }
-    if (!(b = newof(0, char *, TM_NFORM, n))) return;
+    b = calloc(1, TM_NFORM * sizeof(char *) + n);
+    if (!b) return;
     s = (char *)(b + TM_NFORM);
     for (i = 0; i < elementsof(map); i++) {
         b[map[i].local] = s;
@@ -516,7 +518,7 @@ static_fn void load() {
             }
             if (!tp) sfread(sp, u, 0);
         }
-        b = newof(0, char *, TM_NFORM, n + 2);
+        b = calloc(1, TM_NFORM * sizeof(char *) + n + 2);
         if (b) {
             v = b;
             e = b + TM_NFORM;

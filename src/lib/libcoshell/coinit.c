@@ -118,14 +118,14 @@ char *coinitialize(Coshell_t *co, int flags) {
     //
     // Pwd
     //
-    if (stat(".", &st)) return 0;
+    if (stat(".", &st)) return NULL;
     if (!state.pwd || st.st_ino != co->init.pwd_ino || st.st_dev != co->init.pwd_dev) {
         co->init.pwd_dev = st.st_dev;
         co->init.pwd_ino = st.st_ino;
         if (state.pwd) free(state.pwd);
         state.pwd = getcwd(NULL, 0);
         if (!state.pwd) {
-            if (errno != EINVAL || !(state.pwd = newof(0, char, PATH_MAX, 0))) return 0;
+            if (errno != EINVAL || !(state.pwd = calloc(1, PATH_MAX))) return NULL;
             if (!getcwd(state.pwd, PATH_MAX)) {
                 free(state.pwd);
                 state.pwd = 0;
@@ -328,7 +328,7 @@ char *coinitialize(Coshell_t *co, int flags) {
 //
 char *coinit(int flags) {
     if (!state.generic) {
-        state.generic = newof(0, Coshell_t, 1, 0);
+        state.generic = calloc(1, sizeof(Coshell_t));
         if (!state.generic) return 0;
         state.generic->init.sync = 1;
     }

@@ -432,7 +432,7 @@ Time_t tmxscan(const char *s, char **e, const char *format, char **f, Time_t t, 
                 for (n = 1; sfgetr(sp, '\n', 0); n++)
                     ;
                 m = sfseek(sp, 0L, SEEK_CUR);
-                p = newof(0, char *, n, m);
+                p = calloc(1, n * sizeof(char *) + m);
                 if (p) {
                     sfseek(sp, 0L, SEEK_SET);
                     v = (char *)(p + n);

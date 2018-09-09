@@ -164,7 +164,8 @@ void *dll_lib(Dllnames_t *names, unsigned long version, Dllerror_f dllerrorf, vo
     //
     // add to the loaded list
     //
-    lib = newof(0, Dll_lib_t, 1, (n = strlen(names->base)) + strlen(names->path) + 1);
+    n = strlen(names->base);
+    lib = calloc(1, sizeof(Dll_lib_t) + n + strlen(names->path) + 1);
     if (lib) {
         lib->libf = libf;
         strcpy(lib->base, names->base);

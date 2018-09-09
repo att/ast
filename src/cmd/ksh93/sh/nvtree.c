@@ -34,7 +34,6 @@
 #include "defs.h"
 
 #include "argnod.h"
-#include "ast.h"
 #include "ast_assert.h"
 #include "cdt.h"
 #include "fault.h"
@@ -1211,7 +1210,7 @@ void nv_setvtree(Namval_t *np) {
 
     if (shp->subshell) sh_assignok(np, 1);
     if (nv_hasdisc(np, &treedisc)) return;
-    nfp = newof(NULL, Namfun_t, 1, sizeof(void *));
+    nfp = calloc(1, sizeof(Namfun_t) + sizeof(void *));
     *(void **)(nfp + 1) = 0;
     nfp->disc = &treedisc;
     nfp->dsize = sizeof(Namfun_t);

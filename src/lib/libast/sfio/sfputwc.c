@@ -56,9 +56,10 @@ Mbstate_t *_sfmbstate(Sfio_t *f) {
     Sfdisc_t *disc;
     Sfmbstate_t *mbs;
 
-    for (disc = f->disc; disc; disc = disc->disc)
+    for (disc = f->disc; disc; disc = disc->disc) {
         if (disc->exceptf == _sfmbexcept) return &((Sfmbstate_t *)disc)->mbs;
-    mbs = newof(0, Sfmbstate_t, 1, 0);
+    }
+    mbs = calloc(1, sizeof(Sfmbstate_t));
     if (mbs) {
         mbs->disc.exceptf = _sfmbexcept;
         sfdisc(f, &mbs->disc);

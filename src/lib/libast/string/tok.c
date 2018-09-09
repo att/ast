@@ -57,7 +57,7 @@ char *tokopen(char *s, int f) {
     p = freelist;
     if (p) {
         freelist = freelist->ptr.nxt;
-    } else if (!(p = newof(0, Tok_t, 1, 0))) {
+    } else if (!(p = calloc(1, sizeof(Tok_t)))) {
         return NULL;
     }
     p->chr = *(p->ptr.end = s);

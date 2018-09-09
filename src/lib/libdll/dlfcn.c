@@ -301,7 +301,7 @@ void *dlopen(const char *path, int mode) {
 
     if (!_dyld_present()) {
         dlmessage = e_static;
-        return 0;
+        return NULL;
     }
     if (!init) {
         init = 1;
@@ -309,9 +309,9 @@ void *dlopen(const char *path, int mode) {
     }
     if (!path) {
         dll = &global;
-    } else if (!(dll = newof(0, Dll_t, 1, strlen(path)))) {
+    } else if (!(dll = calloc(1, sizeof(Dll_t) + strlen(path)))) {
         dlmessage = e_space;
-        return 0;
+        return NULL;
     } else {
         switch (NSCreateObjectFileImageFromFile(path, &image)) {
             case NSObjectFileImageSuccess:
