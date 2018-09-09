@@ -23,18 +23,12 @@
 
 #include <string.h>
 
-#include "ast.h"
-
-#if !_lib_memdup
-
-/*
- * return a copy of s of n chars using malloc
- */
-
+//
+// Return a copy of s of n chars using malloc.
+//
 void *memdup(const void *s, size_t n) {
-    void *t;
+    void *t = malloc(n);
 
-    return ((t = (void *)newof(0, char, n, 0)) ? memcpy(t, s, n) : 0);
+    if (!t) return NULL;
+    return memcpy(t, s, n);
 }
-
-#endif  // !_lib_memdup
