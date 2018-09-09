@@ -101,6 +101,7 @@ int main(int argc, char **argv) {
             str = 1;
         } else if (!strcmp(command, "-+")) {
             argv++;
+            ast.locale.set |= (1 << LC_MESSAGES);
             error_info.translate = translate;
         } else if (!strcmp(command, "+") && *(argv + 2)) {
             ext += 2;
