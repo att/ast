@@ -43,7 +43,6 @@
 #define stkptr(sp, n) ((char *)((sp)->_data) + (n))
 #define stktop(sp) ((char *)(sp)->_next)
 #define stktell(sp) ((sp)->_next - (sp)->_data)
-#define stkseek(sp, n) ((n) == 0 ? (char *)((sp)->_next = (sp)->_data) : _stkseek(sp, n))
 
 extern Sfio_t _Stk_data;
 
@@ -54,7 +53,7 @@ extern int stklink(Stk_t *);
 extern void *stkalloc(Stk_t *, size_t);
 extern char *stkcopy(Stk_t *, const char *);
 extern char *stkset(Stk_t *, char *, size_t);
-extern char *_stkseek(Stk_t *, ssize_t);
+extern char *stkseek(Stk_t *, ssize_t);
 extern char *stkfreeze(Stk_t *, size_t);
 extern int stkon(Stk_t *, char *);
 

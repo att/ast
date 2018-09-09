@@ -373,7 +373,7 @@ void *stkalloc(Sfio_t *stream, size_t n) {
 /*
  * begin a new stack word of at least <n> bytes
  */
-char *_stkseek(Sfio_t *stream, ssize_t n) {
+char *stkseek(Sfio_t *stream, ssize_t n) {
     if (!init) stkinit(n);
     increment(seek);
     if (stkleft(stream) <= n && !stkgrow(stream, n)) return (0);
@@ -430,7 +430,7 @@ char *stkcopy(Sfio_t *stream, const char *str) {
         strcpy((char *)(cp = stream->_data), str);
         stream->_data = stream->_next = cp + n;
         if (off) {
-            _stkseek(stream, off);
+            stkseek(stream, off);
             memcpy(stream->_data, tp, off);
         }
     }
