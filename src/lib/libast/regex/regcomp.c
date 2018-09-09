@@ -1269,7 +1269,8 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
         dt = lc_collate_data;
         if (ast.locale.serial != lc_collate_serial || !dt) {
             disc.key = offsetof(Cchr_t, key);
-            if ((cc = newof(0, Cchr_t, elementsof(primary), 0)) && (dt = dtopen(&disc, Dtoset))) {
+            cc = calloc(1, elementsof(primary) * sizeof(Cchr_t));
+            if (cc && (dt = dtopen(&disc, Dtoset))) {
                 for (i = 0; i < elementsof(primary) - 1; i++, cc++) {
                     cc->nam[0] = primary[i];
                     mbxfrm(cc->key, cc->nam, COLL_KEY_MAX);
@@ -2875,8 +2876,8 @@ int regcomp(regex_t *p, const char *pattern, regflags_t flags) {
     }
     fold = lc_ctype_data;
     if (ast.locale.serial != lc_ctype_serial || !fold) {
-        if (!(fold = newof(0, unsigned char, UCHAR_MAX, 1)))
-            return fatal(disc, REG_ESPACE, pattern);
+        fold = calloc(1, UCHAR_MAX + 1);
+        if (!fold) return fatal(disc, REG_ESPACE, pattern);
         for (i = 0; i <= UCHAR_MAX; i++) fold[i] = toupper(i);
         lc_ctype_data = fold;
         lc_ctype_serial = ast.locale.serial;

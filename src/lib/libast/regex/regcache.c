@@ -89,7 +89,8 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
         regex_flushcache();
         i = 0;
         if (reflags > matchstate.size) {
-            matchstate.cache = newof(matchstate.cache, Cache_t *, reflags, 0);
+            if (matchstate.cache) free(matchstate.cache);
+            matchstate.cache = calloc(1, reflags * sizeof(Cache_t *));
             if (matchstate.cache) {
                 matchstate.size = reflags;
             } else {
@@ -98,10 +99,11 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
             }
         }
         if (status) *status = i;
-        return 0;
+        return NULL;
     }
     if (!matchstate.cache) {
-        if (!(matchstate.cache = newof(0, Cache_t *, CACHE, 0))) return 0;
+        matchstate.cache = calloc(1, CACHE * sizeof(Cache_t *));
+        if (!matchstate.cache) return NULL;
         matchstate.size = CACHE;
     }
 
@@ -144,9 +146,9 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
                 unused = empty;
         }
         if (!(cp = matchstate.cache[unused]) &&
-            !(cp = matchstate.cache[unused] = newof(0, Cache_t, 1, 0))) {
+            !(cp = matchstate.cache[unused] = calloc(1, sizeof(Cache_t)))) {
             if (status) *status = REG_ESPACE;
-            return 0;
+            return NULL;
         }
         if (cp->keep) {
             cp->keep = 0;
@@ -154,9 +156,11 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
         }
         if ((i = strlen(pattern) + 1) > cp->size) {
             cp->size = roundof(i, ROUND);
-            if (!(cp->pattern = newof(cp->pattern, char, cp->size, 0))) {
+            if (cp->pattern) free(cp->pattern);
+            cp->pattern = calloc(1, cp->size);
+            if (!cp->pattern) {
                 if (status) *status = REG_ESPACE;
-                return 0;
+                return NULL;
             }
         }
         strcpy(cp->pattern, pattern);
@@ -165,7 +169,7 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
         i = regcomp(&cp->re, pattern, reflags);
         if (i) {
             if (status) *status = i;
-            return 0;
+            return NULL;
         }
         cp->keep = 1;
         cp->reflags = reflags;
