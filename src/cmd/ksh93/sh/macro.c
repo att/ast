@@ -1931,7 +1931,7 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
                 sfprintf(mp->shp->strbuf, "%Lg", num);
             }
             str = sfstruse(mp->shp->strbuf);
-            mac_copy(mp, str, strlen(str));
+            if (str) mac_copy(mp, str, strlen(str));
             mp->shp->st.staklist = saveslp;
             fcrestore(&save);
             return;
