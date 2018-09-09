@@ -53,6 +53,7 @@ static const char usage[] = "[-?\n@(#)$Id: logname (AT&T Research) 1999-04-30 $\
 
 int b_logname(int argc, char **argv, Shbltin_t *context) {
     char *logname;
+    char buf[12];
 
     if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
     for (;;) {
@@ -71,7 +72,7 @@ int b_logname(int argc, char **argv, Shbltin_t *context) {
         __builtin_unreachable();
     }
     logname = getlogin();
-    if (!logname) logname = fmtuid(getuid());
+    if (!logname) logname = snprintf(buf, sizeof(buf), "%d", getuid());
     sfputr(sfstdout, logname, '\n');
     return 0;
 }
