@@ -159,7 +159,8 @@ then
     log_error 'break labels not working'
 fi
 
-
+[[ $(echo -n hello) = "hello" ]] || log_error "echo -n should not print a newline"
+[[ $(echo -e "hello\tworld") = $'hello\tworld' ]] || log_error "echo -e should interpret escape sequences"
 
 mkdir -p $TEST_DIR/a/b/c 2>/dev/null || log_error  "mkdir -p failed"
 $SHELL -c "cd $TEST_DIR/a/b; cd c" || log_error "initial script relative cd fails"
