@@ -324,7 +324,8 @@ Spawnvex_t *spawnvex_open(unsigned int flags) {
 int spawnvex_add(Spawnvex_t *vex, intmax_t op, intmax_t arg, Spawnvex_f callback, void *handle) {
     if ((vex->cur + (callback ? 4 : 2)) >= vex->max) {
         vex->max += VEXCHUNK;
-        if (!(vex->op = oldof(vex->op, Spawnvex_u, vex->max, 0))) {
+        vex->op = realloc(vex->op, vex->max * sizeof(Spawnvex_u));
+        if (!vex->op) {
             vex->max = 0;
             VEXINIT(vex);
             return -1;

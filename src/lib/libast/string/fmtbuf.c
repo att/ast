@@ -48,7 +48,7 @@ char *fmtbuf(size_t n) {
             if (n > sizeof(buf)) {
                 if (n > bigsiz) {
                     bigsiz = roundof(n, 8 * 1024);
-                    if (!(big = oldof(big, char, bigsiz, 0))) return 0;
+                    big = realloc(big, bigsiz);
                 }
                 return big;
             }
