@@ -121,6 +121,24 @@ do
     fi
 done
 
+[[ $(for ((i=0;i<10;i++))
+do
+    for ((j=0;j<10;j++))
+    do
+        echo $i $j
+        break 2
+    done
+done) == "0 0" ]] || log_error "break [n] does not break to outer loop"
+
+[[ $(for ((i=0;i<2;i++))
+do
+    for ((j=0;j<10;j++))
+    do
+        echo $i $j
+        continue 2
+    done
+done) == $'0 0\n1 0' ]] || log_error "continue [n] does not continue to outer loop"
+
 if [[ $(print -f "%b" "\a\n\v\b\r\f\E\03\\oo") != $'\a\n\v\b\r\f\E\03\\oo' ]]
 then
     log_error 'print -f "%b" not working'
