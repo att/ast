@@ -184,7 +184,7 @@ static_fn int error_setopt(void *a, const void *p, int n, const char *v) {
             case OPT_MATCH:
                 if (error_state.match) regfree(error_state.match);
                 if (n) {
-                    if ((error_state.match || (error_state.match = newof(0, regex_t, 1, 0))) &&
+                    if ((error_state.match || (error_state.match = calloc(1, sizeof(regex_t)))) &&
                         regcomp(error_state.match, v, REG_EXTENDED | REG_LENIENT)) {
                         free(error_state.match);
                         error_state.match = 0;
@@ -532,7 +532,7 @@ Error_info_t *errorctx(Error_info_t *p, int op, int flags) {
             if (p) {
                 freecontext = freecontext->context;
             } else {
-                p = newof(0, Error_info_t, 1, 0);
+                p = calloc(1, sizeof(Error_info_t));
                 if (!p) return NULL;
             }
             *p = *_error_infop_;

@@ -108,10 +108,10 @@ char *fgetcwd(int fd, char *buf, size_t len) {
                     if (buf) {
                         if (len < namlen) ERROR(ERANGE);
                     } else {
-                        buf = newof(0, char, namlen, len);
+                        buf = calloc(1, namlen + len);
                         if (!buf) ERROR(ENOMEM);
                     }
-                    return (char *)memcpy(buf, p, namlen);
+                    return memcpy(buf, p, namlen);
                 }
             }
         }
@@ -120,7 +120,8 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     if (!buf) {
         extra = len;
         len = PATH_MAX;
-        if (!(buf = newof(0, char, len, extra))) ERROR(ENOMEM);
+        buf = calloc(1, len + extra);
+        if (!buf) ERROR(ENOMEM);
     }
     p = buf + len - 1;
     *p = 0;

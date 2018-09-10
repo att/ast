@@ -73,7 +73,7 @@ static_fn char **initconformance(void) {
             }
         i = sfstrtell(sp);
         sfstrseek(sp, 0, SEEK_SET);
-        p = newof(0, char *, j, i);
+        p = calloc(1, j * sizeof(char *) + i);
         if (p) {
             m = (char *)(p + j--);
             memcpy(m, sfstrbase(sp), i);
