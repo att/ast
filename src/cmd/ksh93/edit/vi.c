@@ -196,7 +196,7 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
 #define viraw 1
 
     if (!vp) {
-        ed->e_vi = vp = newof(0, Vi_t, 1, 0);
+        ed->e_vi = vp = calloc(1, sizeof(Vi_t));
         vp->lastline = (genchar *)malloc(MAXLINE * CHARSIZE);
         vp->direction = -1;
         vp->ed = ed;

@@ -169,7 +169,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
 
     memset(Screen, 0, sizeof(Screen));
     if (!ep) {
-        ep = ed->e_emacs = newof(0, Emacs_t, 1, 0);
+        ep = ed->e_emacs = calloc(1, sizeof(Emacs_t));
         ep->ed = ed;
         ep->prevdirection = 1;
         location.hist_command = -5;
