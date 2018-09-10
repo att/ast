@@ -90,7 +90,7 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
             int oerrno;
 
             outbytesleft = n * MB_CUR_MAX;
-            outbuf_start = oldof(0, char, (outbytesleft + 2) + (n * UTF8_LEN_MAX + 1), 0);
+            outbuf_start = malloc(outbytesleft + 2 + (n * UTF8_LEN_MAX + 1));
             if (!outbuf_start) return -1;
             inbuf_start = outbuf_start + outbytesleft + 2;
             for (inbuf = inbuf_start, i = 0; i < n; i++) inbuf += utf32toutf8(inbuf, utf32[i]);

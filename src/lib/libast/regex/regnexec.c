@@ -1848,12 +1848,15 @@ int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, oldregm
         ssize_t i;
         int r;
 
-        if (!(match = oldof(0, regmatch_t, nmatch, 0))) return -1;
-        if (!(r = regnexec_20120528(p, s, len, nmatch, match, flags)))
+        match = malloc(nmatch * sizeof(regmatch_t));
+        if (!match) return -1;
+        r = regnexec_20120528(p, s, len, nmatch, match, flags);
+        if (!r) {
             for (i = 0; i < nmatch; i++) {
                 oldmatch[i].rm_so = match[i].rm_so;
                 oldmatch[i].rm_eo = match[i].rm_eo;
             }
+        }
         free(match);
         return r;
     }

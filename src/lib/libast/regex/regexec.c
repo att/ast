@@ -70,12 +70,15 @@ int regexec(const regex_t *p, const char *s, size_t nmatch, oldregmatch_t *oldma
         size_t i;
         int r;
 
-        if (!(match = oldof(0, regmatch_t, nmatch, 0))) return -1;
-        if (!(r = regexec_20120528(p, s, nmatch, match, flags)))
+        match = malloc(nmatch * sizeof(regmatch_t));
+        if (!match) return -1;
+        r = regexec_20120528(p, s, nmatch, match, flags);
+        if (!r) {
             for (i = 0; i < nmatch; i++) {
                 oldmatch[i].rm_so = match[i].rm_so;
                 oldmatch[i].rm_eo = match[i].rm_eo;
             }
+        }
         free(match);
         return r;
     }
