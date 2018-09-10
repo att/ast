@@ -119,10 +119,9 @@ int strngrpmatch(const char *b, size_t z, const char *p, ssize_t *sub, int n, in
     if (!sub || n <= 0) reflags |= REG_NOSUB;
     if (!(re = regcache(p, reflags, NULL))) return 0;
     if (n > matchstate.nmatch) {
-        free(matchstate.match);
-        matchstate.nmatch = n;
-        matchstate.match = calloc(1, n * sizeof(regmatch_t));
+        matchstate.match = newof(matchstate.match, regmatch_t, n, 0);
         if (!matchstate.match) return 0;
+        matchstate.nmatch = n;
     }
     if (regnexec(re, b, z, n, matchstate.match,
                  reflags & ~(REG_MINIMAL | REG_SHELL_GROUP | REG_LEFT | REG_RIGHT | REG_ICASE)))
