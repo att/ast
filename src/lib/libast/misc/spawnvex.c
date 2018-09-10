@@ -307,7 +307,8 @@ static int restore(Spawnvex_t *vex, int i, int j, int fl) {
 Spawnvex_t *spawnvex_open(unsigned int flags) {
     Spawnvex_t *vex;
 
-    if (vex = newof(0, Spawnvex_t, 1, 0)) {
+    vex = calloc(1, sizeof(Spawnvex_t));
+    if (vex) {
         VEXINIT(vex);
         vex->flags = flags;
 #ifdef F_DUPFD_CLOEXEC
@@ -669,7 +670,8 @@ pid_t spawnvex(const char *path, char *const argv[], char *const envv[], Spawnve
     map = 0;
     if (vex) {
         if (m) {
-            if (!(map = newof(0, int, m, 0))) goto bad;
+            map = calloc(1, m * sizeof(int));
+            if (!map) goto bad;
             for (i = 0; i < m; i++) map[i] = i;
         }
         for (i = 0; i < vex->cur;) {

@@ -203,7 +203,9 @@ static int modify(Proc_t *proc, int forked, int op, long arg1, long arg2) {
     {
         Modify_t *m;
 
-        if (!(m = newof(NULL, Modify_t, 1, 0))) return -1;
+        m = calloc(1, sizeof(Modify_t));
+        if (!m) return -1;
+
         m->next = proc->mods;
         proc->mods = m;
         switch (m->op = op) {
@@ -377,10 +379,11 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
             procfd = 2;
             break;
     }
-    if (proc_default.pid == -1)
+    if (proc_default.pid == -1) {
         proc = &proc_default;
-    else if (!(proc = newof(0, Proc_t, 1, 0)))
+    } else if (!(proc = calloc(1, sizeof(Proc_t)))) {
         goto bad;
+    }
     proc->pid = -1;
     proc->pgrp = 0;
     proc->rfd = -1;
@@ -608,9 +611,11 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
              */
 
             if (!(flags & PROC_ARGMOD)) {
-                while (*p++)
-                    ;
-                if (!(v = newof(0, char *, p - argv + 2, 0))) goto cleanup;
+                while (*p++) {
+                    ;  // empty loop
+                }
+                v = calloc(1, (p - argv + 2) * sizeof(char *));
+                if (!v) goto cleanup;
                 p = v + 2;
                 if (*argv) argv++;
                 while ((*p++ = *argv++)) {
