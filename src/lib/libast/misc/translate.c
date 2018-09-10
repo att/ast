@@ -98,7 +98,8 @@ static char *tempuse(Sfio_t *sp, int off) {
 static int entry(Dt_t *dict, int set, int seq, const char *msg) {
     Message_t *mp;
 
-    if (!(mp = newof(0, Message_t, 1, strlen(msg)))) return 0;
+    mp = calloc(1, sizeof(Message_t) + strlen(msg));
+    if (!mp) return 0;
     strcpy(mp->text, msg);
     mp->set = set;
     mp->seq = seq;
@@ -175,7 +176,8 @@ static Catalog_t *init(char *s) {
      * insert into the catalog dictionary
      */
 
-    if (!(cp = newof(0, Catalog_t, 1, strlen(s)))) return 0;
+    cp = calloc(1, sizeof(Catalog_t) + strlen(s));
+    if (!cp) return NULL;
     strcpy(cp->name, s);
     if (!dtinsert(state.catalogs, cp)) {
         free(cp);
