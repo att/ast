@@ -360,7 +360,7 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
     } else {
         r = 0;
     }
-    if (argc == fixargs && (rp = newof(NULL, struct read_save, 1, 0))) {
+    if (argc == fixargs && (rp = calloc(1, sizeof(struct read_save)))) {
         context->data = (void *)rp;
         rp->fd = fd;
         rp->flags = flags;

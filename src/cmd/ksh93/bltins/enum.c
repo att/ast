@@ -141,7 +141,7 @@ static_fn Namfun_t *clone_enum(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     UNUSED(mp);
     UNUSED(flags);
     struct Enum *ep, *pp = (struct Enum *)fp;
-    ep = newof(0, struct Enum, 1, pp->nelem * sizeof(char *));
+    ep = calloc(1, sizeof(struct Enum) + pp->nelem * sizeof(char *));
     memcpy((void *)ep, (void *)pp, sizeof(struct Enum) + pp->nelem * sizeof(char *));
     return &ep->hdr;
 }
@@ -327,7 +327,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
             sz += strlen(nv_getval(np));
         } while (nv_nextsub(np));
         sz += n * sizeof(char *);
-        ep = newof(0, struct Enum, 1, sz);
+        ep = calloc(1, sizeof(struct Enum) + sz);
         if (!ep) {
             error(ERROR_system(1), "out of space");
             __builtin_unreachable();
