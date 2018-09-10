@@ -228,7 +228,7 @@ static_fn int lexfill(Lex_t *lp) {
 //
 Lex_t *sh_lexopen(Lex_t *lp, Shell_t *shp, int mode) {
     if (!lp) {
-        lp = (Lex_t *)newof(0, Lex_t, 1, 0);
+        lp = calloc(1, sizeof(Lex_t));
         lp->sh = shp;
         shp->lexsize = sizeof(Lex_t);
     }
@@ -1561,7 +1561,7 @@ static_fn void nested_here(Lex_t *lp) {
     offset = stktell(stkp);
     if (offset) base = stkfreeze(stkp, 0);
     if (lp->lexd.docend) n = fcseek(0) - lp->lexd.docend;
-    iop = newof(0, struct ionod, 1, lp->lexd.docextra + n + ARGVAL);
+    iop = calloc(1, sizeof(struct ionod) + lp->lexd.docextra + n + ARGVAL);
     iop->iolst = lp->heredoc;
     stkseek(stkp, ARGVAL);
     if (lp->lexd.docextra) {

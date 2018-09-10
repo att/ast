@@ -132,7 +132,7 @@ static_fn int charlen(const char *, int);
 static_fn char *lastchar(const char *, const char *);
 
 void *sh_macopen(Shell_t *shp) {
-    void *addr = newof(0, Mac_t, 1, 0);
+    void *addr = calloc(1, sizeof(Mac_t));
     Mac_t *mp = (Mac_t *)addr;
     mp->shp = shp;
     return addr;

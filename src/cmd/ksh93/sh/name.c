@@ -3001,7 +3001,7 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
     shp->last_root = root;
     _nv_unset(np, 0);
     nv_delete(np, NULL, 0);
-    np->nvalue.nrp = newof(0, struct Namref, 1, sizeof(Dtlink_t));
+    np->nvalue.nrp = calloc(1, sizeof(struct Namref) + sizeof(Dtlink_t));
     np->nvalue.nrp->np = nq;
     np->nvalue.nrp->root = hp;
     np->nvalue.nrp->oldnp = shp->oldnp;

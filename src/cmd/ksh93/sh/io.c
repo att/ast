@@ -345,7 +345,7 @@ Sfio_t *sh_iostream(Shell_t *shp, int fd, int fn) {
         iop = sfnew((fd <= 2 ? iop : 0), bp, IOBSIZE, fd, flags);
         if (!iop) return NULL;
     }
-    dp = newof(0, struct Iodisc, 1, 0);
+    dp = calloc(1, sizeof(struct Iodisc));
     dp->sh = shp;
     if (status & IOREAD) {
         sfset(iop, SF_MALLOC, 1);

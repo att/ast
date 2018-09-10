@@ -101,7 +101,7 @@ pid_t pid_fromstring(char *str) {
 static_fn void init_savelist(void) {
     struct jobsave *jp;
     while (njob_savelist < NJOB_SAVELIST) {
-        jp = newof(0, struct jobsave, 1, 0);
+        jp = calloc(1, sizeof(struct jobsave));
         jp->next = job_savelist;
         job_savelist = jp;
         njob_savelist++;
@@ -254,7 +254,7 @@ static_fn struct jobsave *jobsave_create(pid_t pid) {
         njob_savelist--;
         job_savelist = jp->next;
     } else {
-        jp = newof(0, struct jobsave, 1, 0);
+        jp = calloc(1, sizeof(struct jobsave));
     }
     if (jp) {
         jp->pid = pid;
