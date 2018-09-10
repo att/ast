@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
             argv++;
             *s++ = 0;
             command++;
-            ip = newof(0, Info_t, 1, 0);
+            ip = calloc(1, sizeof(Info_t));
             ip->name = command;
             ip->value = s;
             ip->next = info;

@@ -500,7 +500,7 @@ static_fn void put_level(Namval_t *np, const void *val, int flags, Namfun_t *fp)
 static const Namdisc_t level_disc = {.dsize = sizeof(struct Level), .putval = put_level};
 
 static_fn struct Level *init_level(Shell_t *shp, int level) {
-    struct Level *lp = newof(NULL, struct Level, 1, 0);
+    struct Level *lp = calloc(1, sizeof(struct Level));
 
     lp->maxlevel = level;
     _nv_unset(SH_LEVELNOD, 0);
@@ -713,7 +713,7 @@ static_fn void *sh_coinit(Shell_t *shp, char **argv) {
         __builtin_unreachable();
     }
     environ[0][2] = 0;
-    csp = newof(0, struct cosh, 1, strlen(name) + 1);
+    csp = calloc(1, sizeof(struct cosh) + strlen(name) + 1);
     if (!(csp->coshell = coopen(NULL, CO_SHELL | CO_SILENT, argv[1]))) {
         free(csp);
         errormsg(SH_DICT, ERROR_exit(1), "%s: unable to create namespace", name);
@@ -3372,7 +3372,7 @@ int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *
                 for (r = 0; args[r]; r++) {
                     np = nv_search(args[r], shp->var_tree, HASH_NOSCOPE | NV_ADD);
                     if (np && (nq = *nref++)) {
-                        np->nvalue.nrp = newof(0, struct Namref, 1, 0);
+                        np->nvalue.nrp = calloc(1, sizeof(struct Namref));
                         if (nv_isattr(nq, NV_LDOUBLE) == NV_LDOUBLE) {
                             np->nvalue.nrp->np = nq;
                         } else {

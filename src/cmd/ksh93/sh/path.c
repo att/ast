@@ -1287,7 +1287,7 @@ static_fn Pathcomp_t *path_addcomp(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *
     for (pp = first, oldpp = 0; pp; oldpp = pp, pp = pp->next) {
         ;  // empty loop
     }
-    pp = newof(NULL, Pathcomp_t, 1, len + 1);
+    pp = calloc(1, sizeof(Pathcomp_t) + len + 1);
     pp->shp = shp;
     pp->refcount = 1;
     memcpy((char *)(pp + 1), name, len + 1);
