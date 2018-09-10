@@ -776,7 +776,7 @@ found:
 }
 
 void nv_addtype(Namval_t *np, const char *optstr, Optdisc_t *op, size_t optsz) {
-    Namdecl_t *cp = newof(NULL, Namdecl_t, 1, optsz);
+    Namdecl_t *cp = calloc(1, sizeof(Namdecl_t) + optsz);
     Optdisc_t *dp = (Optdisc_t *)(cp + 1);
     Shell_t *shp = sh_ptr(np);
     Namval_t *mp, *bp;
@@ -905,7 +905,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
     nv_setsize(mp, offset);
     k = roundof(sizeof(Namtype_t) + nnodes * NV_MINSZ, sizeof(Sfdouble_t)) -
         (sizeof(Namtype_t) + nnodes * NV_MINSZ);
-    pp = newof(NULL, Namtype_t, 1,
+    pp = calloc(1, sizeof(Namtype_t) +
                nnodes * NV_MINSZ + offset + size + (nnodes + nd) * sizeof(char *) +
                    iref * sizeof(struct Namref) + k);
     pp->fun.dsize = sizeof(Namtype_t) + nnodes * NV_MINSZ + offset + k;
@@ -928,7 +928,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
     help = &pp->names[nd];
     pp->strsize = size;
     cp = (char *)&pp->names[nd + nnodes];
-    if (qp) mnodes = newof(NULL, Namval_t *, nd + 1, 0);
+    if (qp) mnodes = calloc(1, (nd + 1) * sizeof(Namval_t *));
     nd = 0;
     nq = nv_namptr(pp->nodes, 0);
     nq->nvname = cp;
@@ -1173,7 +1173,7 @@ Namval_t *nv_mkinttype(char *name, size_t size, int sign, const char *help, Namd
     mp = nv_open(stkptr(shp->stk, offset), shp->var_tree, NV_VARNAME);
     stkseek(shp->stk, offset);
     offset = size + sizeof(Namdisc_t);
-    fp = newof(NULL, Namfun_t, 1, offset);
+    fp = calloc(1, sizeof(Namfun_t) + offset);
     fp->type = mp;
     fp->nofree |= 1;
     fp->dsize = sizeof(Namfun_t) + size;
@@ -1380,7 +1380,7 @@ Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *
             size += i + dp->numnodes * m;
         }
     }
-    pp = newof(NULL, Namtype_t, 1, nnodes * NV_MINSZ + rsize + size);
+    pp = calloc(1, sizeof(Namtype_t) + nnodes * NV_MINSZ + rsize + size);
     pp->fun.dsize = sizeof(Namtype_t) + nnodes * NV_MINSZ + rsize;
     pp->fun.type = mp;
     pp->np = mp;
@@ -1471,7 +1471,7 @@ void nv_mkstat(Shell_t *shp) {
     tp = nv_mkstruct("stat_t", sizeof(struct stat), stat_fields, (void *)shp);
     nv_offattr(tp, NV_RDONLY);
     nv_setvtree(tp);
-    fp = newof(NULL, Namfun_t, 1, 0);
+    fp = calloc(1, sizeof(Namfun_t));
     fp->type = tp;
     fp->disc = &stat_disc;
     nv_disc(tp, fp, NV_FIRST);
