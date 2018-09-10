@@ -46,12 +46,14 @@ static Opt_t *freecontext;
 
 Opt_t *optctx(Opt_t *p, Opt_t *o) {
     if (o) {
-        if (freecontext)
+        if (freecontext) {
             free(o);
-        else
+        } else {
             freecontext = o;
+        }
         if (!p) return NULL;
     }
+
     if (p) {
         o = _opt_infop_;
         _opt_infop_ = p;
@@ -59,7 +61,7 @@ Opt_t *optctx(Opt_t *p, Opt_t *o) {
         o = freecontext;
         if (o) {
             freecontext = 0;
-        } else if (!(o = newof(0, Opt_t, 1, 0))) {
+        } else if (!(o = calloc(1, sizeof(Opt_t)))) {
             return NULL;
         }
         memset(o, 0, sizeof(Opt_t));

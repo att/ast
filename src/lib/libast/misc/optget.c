@@ -624,7 +624,7 @@ static_fn char *optget_save(const char *ap, size_t az, const char *bp, size_t bz
     static Dt_t *dict;
 
     if (!dict) {
-        d = newof(0, Dtdisc_t, 1, 0);
+        d = calloc(1, sizeof(Dtdisc_t));
         d->key = offsetof(Save_t, text);
         if (!(dict = dtopen(d, Dtset))) return (char *)ap;
     }
@@ -641,7 +641,7 @@ static_fn char *optget_save(const char *ap, size_t az, const char *bp, size_t bz
     }
     *b = 0;
     if (!(p = (Save_t *)dtmatch(dict, buf))) {
-        p = newof(0, Save_t, 1, b - buf);
+        p = calloc(1, sizeof(Save_t) + (b - buf));
         strcpy(p->text, buf);
         dtinsert(dict, p);
     }
@@ -972,7 +972,7 @@ static_fn Push_t *optget_info(Push_t *psp, char *s, char *e, Sfio_t *ip, char *i
     opt_info.number = number;
     opt_info.arg = arg;
     n = strlen(b);
-    tsp = newof(0, Push_t, 1, n + 1);
+    tsp = calloc(1, sizeof(Push_t) + n + 1);
     tsp->nb = (char *)(tsp + 1);
     tsp->ne = tsp->nb + n;
     strcpy(tsp->nb, b);
@@ -1009,7 +1009,7 @@ static_fn Push_t *optget_localize(Push_t *psp, char *s, char *e, int term, int n
     }
     if (!(s = sfstruse(ip)) || (u = T(id, catalog, s)) == s) return 0;
     n = strlen(u);
-    tsp = newof(0, Push_t, 1, n + 1);
+    tsp = calloc(1, sizeof(Push_t) + n + 1);
     tsp->nb = (char *)(tsp + 1);
     tsp->ne = tsp->nb + n;
     strcpy(tsp->nb, u);
@@ -3814,7 +3814,7 @@ again:
                 }
                 cache = 0;
             } else {
-                cache = newof(0, Optcache_t, 1, 0);
+                cache = calloc(1, sizeof(Optcache_t));
                 cache->caching = c;
                 c = 0;
                 cache->pass = *pass;
