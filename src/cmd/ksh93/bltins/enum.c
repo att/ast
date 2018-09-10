@@ -26,7 +26,6 @@
 
 #include "defs.h"
 
-#include "ast.h"
 #include "cdt.h"
 #include "error.h"
 #include "fault.h"
