@@ -199,12 +199,14 @@ static_fn int stkexcept(Sfio_t *stream, int type, void *val, Sfdisc_t *dp) {
  */
 Sfio_t *stkopen(int flags) {
     size_t bsize;
-    Sfio_t *stream;
     struct stk *sp;
     struct frame *fp;
     Sfdisc_t *dp;
     char *cp;
-    if (!(stream = newof(NULL, Sfio_t, 1, sizeof(*dp) + sizeof(*sp)))) return (0);
+
+    Sfio_t *stream = calloc(1, sizeof(Sfio_t) + sizeof(*dp) + sizeof(*sp));
+    if (!stream) return NULL;
+
     increment(create);
     count(addsize, sizeof(*stream) + sizeof(*dp) + sizeof(*sp));
     dp = (Sfdisc_t *)(stream + 1);
@@ -224,9 +226,10 @@ Sfio_t *stkopen(int flags) {
 #endif /* USE_REALLOC */
         bsize = roundof(bsize, STK_FSIZE);
     bsize -= sizeof(struct frame);
-    if (!(fp = newof(NULL, struct frame, 1, bsize))) {
+    fp = calloc(1, sizeof(struct frame) + bsize);
+    if (!fp) {
         free(stream);
-        return (0);
+        return NULL;
     }
     count(addsize, sizeof(*fp) + bsize);
     cp = (char *)(fp + 1);

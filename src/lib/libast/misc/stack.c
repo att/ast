@@ -39,15 +39,20 @@ stackalloc(int size, void *error) {
     struct stackblock *b;
 
     if (size <= 0) size = 100;
-    if (!(stack = newof(0, struct stacktable, 1, 0))) return (0);
-    if (!(b = newof(0, struct stackblock, 1, 0))) {
+    stack = calloc(1, sizeof(struct stacktable));
+    if (!stack) return NULL;
+
+    b = calloc(1, sizeof(struct stackblock));
+    if (!b) {
         free(stack);
-        return (0);
+        return NULL;
     }
-    if (!(b->stack = newof(0, void *, size, 0))) {
+
+    b->stack = calloc(1, size * sizeof(void *));
+    if (!b->stack) {
         free(b);
         free(stack);
-        return (0);
+        return NULL;
     }
     stack->blocks = b;
     stack->size = size;
@@ -106,12 +111,14 @@ int stackpush(STACK stack, void *value) {
 
     if (++stack->position.index >= stack->size) {
         b = stack->position.block;
-        if (b->next)
+        if (b->next) {
             b = b->next;
-        else {
-            if (!(b->next = newof(0, struct stackblock, 1, 0))) return (-1);
+        } else {
+            b->next = calloc(1, sizeof(struct stackblock));
+            if (!b->next) return -1;
             b = b->next;
-            if (!(b->stack = newof(0, void *, stack->size, 0))) return (-1);
+            b->stack = calloc(1, stack->size * sizeof(void *));
+            if (!b->stack) return -1;
             b->prev = stack->position.block;
             b->next = 0;
         }
