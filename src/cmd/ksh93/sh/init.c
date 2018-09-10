@@ -1242,7 +1242,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     if (!beenhere) {
         beenhere = 1;
         shp = sh_getinterp();
-        shgd = newof(0, struct shared, 1, 0);
+        shgd = calloc(1, sizeof(struct shared));
         shgd->pid = getpid();
         shgd->ppid = getppid();
         shgd->userid = getuid();
@@ -1268,7 +1268,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 #endif
         error_info.id = path_basename(argv[0]);
     } else {
-        shp = newof(0, Shell_t, 1, 0);
+        shp = calloc(1, sizeof(Shell_t));
     }
     umask(shp->mask = umask(0));
     shp->gd = shgd;
@@ -1677,7 +1677,7 @@ static_fn int svar_init(Shell_t *shp, Namval_t *pp, const Shtable_t *tab, size_t
     int nnodes = 0;
     while (*tab[nnodes].sh_name) nnodes++;
     size_t xtra = nnodes * (sizeof(int) + NV_MINSZ) + sizeof(Namfun_t) + sizeof(void *) + extra;
-    sp = newof(0, struct Svars, 1, xtra);
+    sp = calloc(1, sizeof(struct Svars) + xtra);
     sp->nodes = (char *)(sp + 1);
     fp = (Namfun_t *)((char *)sp->nodes + nnodes * NV_MINSZ);
     memset(fp, 0, sizeof(Namfun_t));
@@ -1790,8 +1790,9 @@ void sh_setsiginfo(siginfo_t *sip) {
 //
 static_fn Init_t *nv_init(Shell_t *shp) {
     double d = 0;
-    ip = newof(0, Init_t, 1, 0);
-    if (!ip) return 0;
+
+    ip = calloc(1, sizeof(Init_t));
+    if (!ip) return NULL;
     shp->nvfun.last = (char *)shp;
     shp->nvfun.nofree = 1;
     shp->var_base = shp->var_tree = inittree(shp, shtab_variables);
@@ -1905,7 +1906,7 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     nv_onattr(DOTSHNOD, NV_RDONLY);
     SH_LINENO->nvalue.llp = &shp->st.lineno;
     SH_PWDFD->nvalue.ip = &shp->pwdfd;
-    VERSIONNOD->nvalue.nrp = newof(0, struct Namref, 1, 0);
+    VERSIONNOD->nvalue.nrp = calloc(1, sizeof(struct Namref));
     VERSIONNOD->nvalue.nrp->np = SH_VERSIONNOD;
     VERSIONNOD->nvalue.nrp->root = nv_dict(DOTSHNOD);
     VERSIONNOD->nvalue.nrp->table = DOTSHNOD;
@@ -2136,7 +2137,7 @@ Namfun_t *nv_mapchar(Namval_t *np, const char *name) {
         nv_disc(np, &mp->hdr, NV_POP);
         if (!(mp->hdr.nofree & 1)) free(mp);
     }
-    mp = newof(0, struct Mapchar, 1, n);
+    mp = calloc(1, sizeof(struct Mapchar) + n);
     mp->trans = trans;
     mp->lctype = lctype;
     if (low == 0) {

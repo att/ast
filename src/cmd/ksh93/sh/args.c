@@ -195,7 +195,7 @@ static_fn int numsort(const char *s1, const char *s2) {
 // ======== option handling ========
 
 void *sh_argopen(Shell_t *shp) {
-    void *addr = newof(0, Arg_t, 1, 0);
+    void *addr = calloc(1, sizeof(Arg_t));
     Arg_t *ap = (Arg_t *)addr;
 
     ap->sh = shp;
@@ -958,7 +958,8 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
     pid0 = shp->procsub ? *shp->procsub : 0;
     if (fd) {
         if (!shp->procsub) {
-            shp->procsub = procsub = newof(0, pid_t, shp->nprocsub = 4, 0);
+            shp->nprocsub = 4;
+            shp->procsub = procsub = calloc(1, shp->nprocsub * sizeof(pid_t));
         } else {
             nn = procsub - shp->procsub;
             if (nn >= shp->nprocsub) {

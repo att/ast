@@ -76,7 +76,8 @@ static_fn Namarr_t *array_scope(Namval_t *np, Namarr_t *ap, int flags) {
     size_t size = ap->hdr.dsize;
 
     if (size == 0) size = ap->hdr.disc->dsize;
-    if (!(aq = newof(NULL, Namarr_t, 1, size - sizeof(Namarr_t)))) return (0);
+    aq = calloc(1, size);
+    if (!aq) return NULL;
     memcpy(aq, ap, size);
     aq->hdr.nofree &= ~1;
     aq->hdr.nofree |= (flags & NV_RDONLY) ? 1 : 0;
