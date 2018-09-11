@@ -6,10 +6,18 @@ services:
 
 matrix:
     include:
-        - env:
+        - os: linux
+          env:
             - PROJECT_NAME=kshdb
               GIT_URL="https://github.com/rocky/kshdb.git"
               COMMANDS="git checkout att-ksh93v-testing; ksh ./autogen.sh; make test"
+
+        - os: linux
+          env:
+            - PROJECT_NAME=yash
+              # This fork contains list of tests and a test runner script
+              GIT_URL="https://github.com/siteshwar/yash.git"
+              COMMANDS="git checkout ksh-tests; cd tests; LANG=C ./run-ksh-tests.sh"
 
 script:
     - docker pull fedora
@@ -18,7 +26,7 @@ script:
     - docker run fedora bash -c "
       dnf install -y 'dnf-command(copr)';
       dnf copr enable -y @ksh/latest;
-      dnf install -y ksh git autoconf automake make findutils;
+      dnf install -y ksh git autoconf automake make findutils yash;
       git clone $GIT_URL;
       cd $PROJECT_NAME;
       $COMMANDS"
