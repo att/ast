@@ -3371,12 +3371,17 @@ int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *
                 shp->last_root = 0;
                 for (r = 0; args[r]; r++) {
                     np = nv_search(args[r], shp->var_tree, HASH_NOSCOPE | NV_ADD);
-                    if (np && (nq = *nref++)) {
+                    if (np && *nref) {
+                        nq = *nref++;
                         np->nvalue.nrp = calloc(1, sizeof(struct Namref));
                         if (nv_isattr(nq, NV_LDOUBLE) == NV_LDOUBLE) {
                             np->nvalue.nrp->np = nq;
                         } else {
-                            np->nvalue.nrp->np = pointerof((Sflong_t)(*nq->nvalue.ldp));
+                            // TODO: Figure out where the assignment to nq->nvalue.ldp is occurring.
+                            // This used to be the sole use of `pointerof()` which simply did what
+                            // we're now doing. But when spelled out like this it is obvious there
+                            // is a problem.
+                            np->nvalue.nrp->np = (void *)((uintptr_t)*nq->nvalue.ldp);
                             nv_onattr(nq, NV_LDOUBLE);
                         }
                         nv_onattr(np, NV_REF | NV_NOFREE);
