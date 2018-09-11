@@ -617,4 +617,7 @@ sample >/dev/null || log_error "Sample builtin should exit with 0 status"
 
 builtin -d alias 2>/dev/null && log_error "Deleting a special builtin should fail"
 
-[[ $(builtin -p | grep -v "^builtin") = "" ]] || log_error "builtin -p does not prepend all lines with builtin"
+[[ $(builtin -p | grep -v "^builtin") = "" ]] || log_error "builtin -p does not prepend all lines with 'builtin'"
+
+# The -p option causes the word export to be inserted before each one.
+[[ $(export -p | grep -v "^export") = "" ]] || log_error "export -p does not prepend all lines with 'export'"
