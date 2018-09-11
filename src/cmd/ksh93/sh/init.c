@@ -105,10 +105,6 @@ extern void bash_init(Shell_t *, int);
 extern char **environ;
 #endif
 
-#ifndef getconf
-#define getconf(x) strtol(astconf(x, NULL, NULL), NULL, 0)
-#endif
-
 struct seconds {
     Namfun_t hdr;
     Shell_t *sh;
