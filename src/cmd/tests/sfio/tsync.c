@@ -33,7 +33,7 @@ static int except(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
     UNUSED(f);
     UNUSED(disc);
 
-    if (type == SF_SYNC && integralof(arg) == 1) Count += 1;
+    if (type == SF_SYNC && (uintptr_t)arg == 1) Count += 1;
     return 0;
 }
 Sfdisc_t Disc = {.exceptf = except};
@@ -46,7 +46,7 @@ typedef struct _mydisc_s {
 int event(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
     UNUSED(f);
 
-    if (type == SF_SYNC) ((Mydisc_t *)disc)->sync = integralof(arg);
+    if (type == SF_SYNC) ((Mydisc_t *)disc)->sync = (uintptr_t)arg;
     return 0;
 }
 

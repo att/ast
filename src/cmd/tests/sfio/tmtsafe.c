@@ -46,7 +46,7 @@ void *writesmall(arg) void *arg;
     char *s;
     int n;
 
-    s = Str[integralof(arg)];
+    s = Str[(uintptr_t)arg];
     for (n = 0; n < N_STR; ++n) {
         if (sfputr(Sf, s, '\n') != 10) {
             if (Inverted)

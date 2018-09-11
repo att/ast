@@ -38,7 +38,7 @@ static char Rec[] = "0";
 void count(Sfio_t *f, int type, void *data) {
     UNUSED(f);
     UNUSED(type);
-    int fd = integralof(data);
+    int fd = (uintptr_t)data;
 
     if (fd >= 0) Count += 1;
 }

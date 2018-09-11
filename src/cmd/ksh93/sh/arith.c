@@ -763,10 +763,13 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                 lvalue->emode |= 010;
                 return 0;
             }
-            if (lvalue->userfn && (ap = nv_arrayptr(np)) && (ap->flags & ARRAY_UNDEF)) {
-                r = (Sfdouble_t)integralof(np);
-                lvalue->isfloat = 5;
-                return r;
+            if (lvalue->userfn) {
+                ap = nv_arrayptr(np);
+                if (ap && (ap->flags & ARRAY_UNDEF)) {
+                    r = (Sfdouble_t)(uintptr_t)np;
+                    lvalue->isfloat = 5;
+                    return r;
+                }
             }
             r = nv_getnum(np);
             if (nv_isattr(np, NV_INTEGER | NV_BINARY) == (NV_INTEGER | NV_BINARY)) {

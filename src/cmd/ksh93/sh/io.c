@@ -2276,7 +2276,7 @@ static_fn void sftrack(Sfio_t *sp, int flag, void *data) {
     int fd = sffileno(sp);
     struct checkpt *pp;
     int mode;
-    int newfd = integralof(data);
+    int newfd = (uintptr_t)data;
 
     if (flag == SF_SETFD || flag == SF_CLOSING) {
         if (newfd < 0) flag = SF_CLOSING;
