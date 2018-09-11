@@ -37,6 +37,7 @@
  * additional intrinsics and emulations by
  * Glenn Fowler 2011-11-11
  */
+#define integralof(x) (((char *)(x)) - ((char *)0))
 
 typedef union {
     uint8_t c[2];

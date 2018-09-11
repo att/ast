@@ -179,7 +179,6 @@
 
 #define elementsof(x) (sizeof(x) / sizeof(x[0]))
 #define getconf(x) strtol(astconf((x), NULL, NULL), NULL, 0)
-#define integralof(x) (((char *)(x)) - ((char *)0))
 #define roundof(x, y) (((x) + ((y)-1)) & ~((y)-1))
 
 typedef int (*Ast_confdisc_f)(const char *, const char *, const char *);
