@@ -172,7 +172,6 @@ typedef struct _init_ {
 } Init_t;
 
 static Init_t *ip;
-static int lctype;
 static int nbltins;
 static int shlvl;
 static int rand_shift;
@@ -2079,7 +2078,6 @@ struct Mapchar {
     Namfun_t hdr;
     const char *name;
     wctrans_t trans;
-    int lctype;
 };
 
 static_fn void put_trans(Namval_t *np, const void *vp, int flags, Namfun_t *fp) {
@@ -2087,10 +2085,6 @@ static_fn void put_trans(Namval_t *np, const void *vp, int flags, Namfun_t *fp) 
     struct Mapchar *mp = (struct Mapchar *)fp;
     int c, offset = staktell(), off = offset;
     if (val) {
-        if (mp->lctype != lctype) {
-            mp->lctype = lctype;
-            mp->trans = wctrans(mp->name);
-        }
         if (!mp->trans || (flags & NV_INTEGER)) goto skip;
         while ((c = mb1char(val))) {
             c = towctrans(c, mp->trans);
@@ -2135,7 +2129,6 @@ Namfun_t *nv_mapchar(Namval_t *np, const char *name) {
     }
     mp = calloc(1, sizeof(struct Mapchar) + n);
     mp->trans = trans;
-    mp->lctype = lctype;
     if (low == 0) {
         mp->name = e_tolower;
     } else if (n == 0) {
