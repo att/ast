@@ -119,7 +119,7 @@ int strngrpmatch(const char *b, size_t z, const char *p, ssize_t *sub, int n, in
     if (!sub || n <= 0) reflags |= REG_NOSUB;
     if (!(re = regcache(p, reflags, NULL))) return 0;
     if (n > matchstate.nmatch) {
-        matchstate.match = newof(matchstate.match, regmatch_t, n, 0);
+        matchstate.match = realloc(matchstate.match, n * sizeof(regmatch_t));
         if (!matchstate.match) return 0;
         matchstate.nmatch = n;
     }

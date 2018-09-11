@@ -472,7 +472,7 @@ static_fn char *stkgrow(Sfio_t *stream, size_t size) {
         end = fp->end;
     }
     endoff = end - dp;
-    cp = newof(dp, char, n, nn * sizeof(char *));
+    cp = realloc(dp, n + nn * sizeof(char *));
     if (!cp && (!sp->stkoverflow || !(cp = (*sp->stkoverflow)(n)))) return (0);
     increment(grow);
     count(addsize, n - (dp ? m : 0));

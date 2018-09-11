@@ -171,7 +171,10 @@ char *fgetcwd(int fd, char *buf, size_t len) {
         while ((p -= namlen) <= (buf + 1)) {
             x = (buf + len - 1) - (p + namlen);
             s = buf + len;
-            if (extra < 0 || !(buf = newof(buf, char, len += PATH_MAX, extra))) ERROR(ERANGE);
+            if (extra < 0) ERROR(ERANGE);
+            len += PATH_MAX;
+            buf = realloc(buf, len + extra);
+            if (!buf) ERROR(ERANGE);
             p = buf + len;
             while (p > buf + len - 1 - x) *--p = *--s;
         }
@@ -198,7 +201,10 @@ char *fgetcwd(int fd, char *buf, size_t len) {
             ;  // empty loop
         }
         len = s - buf;
-        if (extra >= 0 && !(buf = newof(buf, char, len, extra))) ERROR(ENOMEM);
+        if (extra >= 0) {
+            buf = realloc(buf, len + extra);
+            if (!buf) ERROR(ENOMEM);
+        }
     }
     if (env[0].path) free(env[0].path);
     env[0].path = strdup(buf);
