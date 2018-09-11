@@ -546,11 +546,13 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
         }
     }
     if (flags & (N_FLAG | NN_FLAG)) {
-        char buf[256], *var = buf, *cur, *end, *up, *v;
+        char buf[256], *cur, *end, *up, *v;
+        char *var = buf;
 
         // Reserved buffer.
         if ((c = size) >= sizeof(buf)) {
-            if (!(var = (char *)malloc(c + 1))) sh_exit(shp, 1);
+            var = malloc(c + 1);
+            if (!var) sh_exit(shp, 1);
             end = var + c;
         } else {
             end = var + sizeof(buf) - 1;
@@ -595,10 +597,10 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                         ssize_t cx = cur - var, ux = up - var;
                         m = (end - var) + (c - (end - cur));
                         if (var == buf) {
-                            v = (char *)malloc(m + 1);
+                            v = malloc(m + 1);
                             var = memcpy(v, var, cur - var);
                         } else {
-                            var = newof(var, char, m, 1);
+                            var = realloc(var, m + 1);
                         }
                         end = var + m;
                         cur = var + cx;
