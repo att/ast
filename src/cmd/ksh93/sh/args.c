@@ -964,7 +964,7 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
             nn = procsub - shp->procsub;
             if (nn >= shp->nprocsub) {
                 shp->nprocsub += 3;
-                shp->procsub = newof(shp->procsub, pid_t, shp->nprocsub, 0);
+                shp->procsub = realloc(shp->procsub, shp->nprocsub * sizeof(pid_t));
                 procsub = shp->procsub + nn;
             }
         }

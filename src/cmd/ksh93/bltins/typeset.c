@@ -914,7 +914,7 @@ int sh_addlib(Shell_t *shp, void *dll, char *name, Pathcomp_t *pp) {
     }
     if (nlib >= maxlib) {
         maxlib += GROWLIB;
-        liblist = newof(liblist, Libcomp_t, maxlib + 1, 0);
+        liblist = realloc(liblist, (maxlib + 1) * sizeof(Libcomp_t));
     }
     liblist[nlib].dll = dll;
     liblist[nlib].attr = (sp->nosfio ? BLT_NOSFIO : 0);
