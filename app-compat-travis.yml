@@ -12,10 +12,10 @@ matrix:
               GIT_URL="https://github.com/rocky/kshdb.git"
               COMMANDS="git checkout att-ksh93v-testing; ksh ./autogen.sh; make test"
 
+        # These tests are run from yash fork that contains list of tests and a test runner script
         - os: linux
           env:
             - PROJECT_NAME=yash
-              # This fork contains list of tests and a test runner script
               GIT_URL="https://github.com/siteshwar/yash.git"
               COMMANDS="git checkout ksh-tests; cd tests; LANG=C ./run-ksh-tests.sh"
 
