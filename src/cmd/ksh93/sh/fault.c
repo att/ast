@@ -554,12 +554,12 @@ void sh_done(void *ptr, int sig) {
     if ((savxit & SH_EXITMASK) == shp->lastsig) sig = savxit & SH_EXITMASK;
     if (sig) {
         // Generate fault termination code.
-        if (RLIMIT_CORE != RLIMIT_UNKNOWN) {
-            struct rlimit rlp;
-            getrlimit(RLIMIT_CORE, &rlp);
-            rlp.rlim_cur = 0;
-            setrlimit(RLIMIT_CORE, &rlp);
-        }
+#if RLIMIT_CORE != RLIMIT_UNKNOWN
+        struct rlimit rlp;
+        getrlimit(RLIMIT_CORE, &rlp);
+        rlp.rlim_cur = 0;
+        setrlimit(RLIMIT_CORE, &rlp);
+#endif
         sh_signal(sig, (sh_sigfun_t)(SIG_DFL));
         sh_sigaction(sig, SIG_UNBLOCK);
         kill(getpid(), sig);
