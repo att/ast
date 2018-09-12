@@ -230,6 +230,7 @@ feature_data.set('_ast_sizeof_long', long_size)
 feature_data.set('_ast_sizeof_size_t', size_t_size)
 feature_data.set('_ast_sizeof_off_t', off_t_size)
 feature_data.set('_ast_sizeof_pointer', ptr_size)
+feature_data.set('_ast_sizeof_wchar_t', wchar_t_size)
 feature_data.set('_ptr_bits', ptr_size * 8)
 
 subdir('features')

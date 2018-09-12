@@ -33,7 +33,7 @@
 #define LOOKAHEAD 80
 
 typedef wchar_t genchar;
-#define CHARSIZE (sizeof(wchar_t) <= 2 ? 3 : sizeof(wchar_t))
+#define CHARSIZE _ast_sizeof_wchar_t
 
 #define TABSIZE 8
 #define PRSIZE 256
