@@ -85,7 +85,10 @@ pid_t pid_fromstring(char *str) {
     pid_t pid;
     char *last;
     errno = 0;
-    if (sizeof(pid) == sizeof(Sflong_t)) {
+    // This isn't a preprocessor test based on feature time detection of the datum sizes because the
+    // use of the AST specific `Sflong_t` type makes that difficult.
+    // TODO: Figure out how to eliminate this test such as by using explicit widening casts.
+    if (sizeof(pid) == sizeof(Sflong_t)) {  //!OCLINT(constant if expression)
         pid = (pid_t)strtoll(str, &last, 10);
     } else {
         pid = (pid_t)strtol(str, &last, 10);
