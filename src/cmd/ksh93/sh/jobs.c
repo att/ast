@@ -618,7 +618,6 @@ void job_init(Shell_t *shp, int lflag) {
 #endif /* FIOLOOKLD */
     if (job.linedisc != NTTYDISC && job.linedisc != OTTYDISC) {
         // No job control when running with MPX.
-        sh_onoption(shp, SH_VIRAW);
         return;
     }
     if (job.linedisc == NTTYDISC) job.linedisc = -1;

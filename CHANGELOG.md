@@ -51,6 +51,10 @@ None at this time.
 
 ## Other significant changes
 
+- Vi raw mode is now the default and cannot be disabled. Note that this was
+  true at least as far back as ksh93u+. The difference is that now it's no
+  longer even theoretically possible to even build with that feature disabled.
+  (issue #864).
 - The AST locale subsystem has been replaced by the platform's implementation
   (issue #579).
 - The AST Vmalloc subsystem has been removed. The project now uses the system
