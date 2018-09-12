@@ -115,6 +115,7 @@
     { symbol: ["__uint32_t", "private", "<stdint.h>", "public"] },
     { symbol: ["uint32_t", "private", "<stdint.h>", "public"] },
     { symbol: ["intptr_t", "private", "<stdint.h>", "public"] },
+    { symbol: ["uintptr_t", "private", "<stdint.h>", "public"] },
     { symbol: ["intmax_t", "private", "<stdint.h>", "public"] },
     { symbol: ["uintmax_t", "private", "<stdint.h>", "public"] },
     { symbol: ["tparm", "private", "<ncurses.h>", "public"] },

@@ -19,10 +19,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdint.h>
 #include <string.h>
 #include <unistd.h>
 
-#include "ast.h"
 #include "sfdisc.h"
 #include "sfio.h"
 #include "terror.h"
