@@ -836,9 +836,14 @@ static_fn int pat_line(const regex_t *rp, const char *buff, size_t n) {
 
 static_fn int io_patseek(Shell_t *shp, regex_t *rp, Sfio_t *sp, int flags) {
     char *cp, *match;
-    int r, fd, close_exec;
-    int was_share, s = (PIPE_BUF > SF_BUFSIZE ? SF_BUFSIZE : PIPE_BUF);
+    int r, fd, close_exec, was_share, s;
     size_t n, m;
+
+#if PIPE_BUF > SF_BUFSIZE
+    s = SF_BUFSIZE;
+#else
+    s = PIPE_BUF;
+#endif
 
     fd = sffileno(sp);
     if (!sh_iovalidfd(shp, fd)) abort();
