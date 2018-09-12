@@ -46,7 +46,6 @@
 #mesondefine _ast_sizeof_size_t
 #mesondefine _ast_sizeof_int32_t
 #mesondefine _ast_sizeof_wchar_t
-#mesondefine _cmd_newgrp
 #mesondefine _cmd_nfsd
 #mesondefine _cmd_tput
 #mesondefine _dll_DYNAMIC
