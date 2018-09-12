@@ -18,11 +18,15 @@ typedef Sfdouble_t (*Math_f)(Sfdouble_t, ...);
 
 // This used to use `finite()` but that function is deprecated and generates compiler warnings
 // on some platforms.
-static int local_finite(Sfdouble_t a1) { return !isinf(a1) && !isnan(a1); }
+static int local_finite(Sfdouble_t a1) {
+    return !isinf(a1) && !isnan(a1);  //!OCLINT(constant conditional operator)
+}
 
 static Sfdouble_t local_float(Sfdouble_t a1) { return a1; }
 
-static int local_fpclassify(Sfdouble_t a1) { return fpclassify(a1); }
+static int local_fpclassify(Sfdouble_t a1) {
+    return fpclassify(a1);  //!OCLINT(constant conditional operator)
+}
 
 static Sfdouble_t local_int(Sfdouble_t a1) {
     if (a1 < LLONG_MIN || a1 > ULLONG_MAX) return (Sfdouble_t)0;
@@ -30,13 +34,17 @@ static Sfdouble_t local_int(Sfdouble_t a1) {
     return (Sfdouble_t)((Sfulong_t)a1);
 }
 
-static int local_isfinite(Sfdouble_t a1) { return isfinite(a1); }
+static int local_isfinite(Sfdouble_t a1) {
+    return isfinite(a1);  //!OCLINT(constant conditional operator)
+}
 
 static int local_isgreater(Sfdouble_t a1, Sfdouble_t a2) { return isgreater(a1, a2); }
 
 static int local_isgreaterequal(Sfdouble_t a1, Sfdouble_t a2) { return isgreaterequal(a1, a2); }
 
-static int local_isinf(Sfdouble_t a1) { return isinf(a1); }
+static int local_isinf(Sfdouble_t a1) {
+    return isinf(a1);  //!OCLINT(constant conditional operator)
+}
 
 static int local_isless(Sfdouble_t a1, Sfdouble_t a2) { return isless(a1, a2); }
 
@@ -44,19 +52,23 @@ static int local_islessequal(Sfdouble_t a1, Sfdouble_t a2) { return islessequal(
 
 static int local_islessgreater(Sfdouble_t a1, Sfdouble_t a2) { return islessgreater(a1, a2); }
 
-static int local_isnan(Sfdouble_t a1) { return isnan(a1); }
+static int local_isnan(Sfdouble_t a1) {
+    return isnan(a1);  //!OCLINT(constant conditional operator)
+}
 
-static int local_isnormal(Sfdouble_t a1) { return isnormal(a1); }
+static int local_isnormal(Sfdouble_t a1) {
+    return isnormal(a1);  //!OCLINT(constant conditional operator)
+}
 
 static int local_issubnormal(Sfdouble_t a1) {
-    int q = fpclassify(a1);
+    int q = fpclassify(a1);  //!OCLINT(constant conditional operator)
     return q == FP_SUBNORMAL;
 }
 
 static int local_isunordered(Sfdouble_t a1, Sfdouble_t a2) { return isunordered(a1, a2); }
 
 static int local_iszero(Sfdouble_t a1) {
-    int q = fpclassify(a1);
+    int q = fpclassify(a1);  //!OCLINT(constant conditional operator)
     return q == FP_ZERO;
 }
 
@@ -70,31 +82,39 @@ static Sfdouble_t local_nextafter(int type_1, Sfdouble_t arg_1, int type_2, Sfdo
     UNUSED(type_2);
 
     switch (type_1) {
-        case 1:
+        case 1: {
             return nextafterf((float)arg_1, arg_2);
-        case 2:
+        }
+        case 2: {
             return nextafter((double)arg_1, arg_2);
-        case 3:
+        }
+        case 3: {
             return nextafterl(arg_1, arg_2);
+        }
+        default: { return 0; }
     }
-    return 0;
 }
 
 static Sfdouble_t local_nexttoward(int type_1, Sfdouble_t arg_1, int type_2, Sfdouble_t arg_2) {
     UNUSED(type_2);
 
     switch (type_1) {
-        case 1:
+        case 1: {
             return nexttowardf((float)arg_1, arg_2);
-        case 2:
+        }
+        case 2: {
             return nexttoward((double)arg_1, arg_2);
-        case 3:
+        }
+        case 3: {
             return nexttowardl(arg_1, arg_2);
+        }
+        default: { return 0; }
     }
-    return 0;
 }
 
-static int local_signbit(Sfdouble_t a1) { return signbit(a1); }
+static int local_signbit(Sfdouble_t a1) {
+    return signbit(a1);  //!OCLINT(constant conditional operator)
+}
 
 static Sfdouble_t local_y0(Sfdouble_t a1) { return y0(a1); }
 
