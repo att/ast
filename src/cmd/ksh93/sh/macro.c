@@ -2369,7 +2369,11 @@ static_fn void tilde_expand2(Shell_t *shp, int offset) {
     av[0] = ".sh.tilde";
     av[1] = &ptr[offset];
     av[2] = 0;
-    iop = sftmp((IOBSIZE > PATH_MAX ? IOBSIZE : PATH_MAX) + 1);
+#if IOBSIZE > PATH_MAX
+    iop = sftmp(IOBSIZE + 1);
+#else
+    iop = sftmp(PATH_MAX + 1);
+#endif
     sfset(iop, SF_READ, 0);
     sfstdout = iop;
     if (np) {

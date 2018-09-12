@@ -26,9 +26,7 @@
 
 #include "shell.h"
 
-#ifndef IOBSIZE
-#define IOBSIZE (SF_BUFSIZE * sizeof(char *))
-#endif  // IOBSIZE
+#define IOBSIZE (SF_BUFSIZE * _ast_sizeof_pointer)
 #define IOMAXTRY 20
 
 #ifndef SF_CLOSING
