@@ -197,9 +197,6 @@ if not fts_feature_result
     add_global_arguments('-U_FILE_OFFSET_BITS', language: 'c')
 endif
 
-newgrp = find_program('newgrp', required: false)
-feature_data.set10('_cmd_newgrp', newgrp.found())
-
 tput = find_program('tput', required: false)
 feature_data.set10('_cmd_tput', tput.found())
 

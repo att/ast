@@ -245,7 +245,7 @@ print -r -- "'xxx" > $tmpfile
 actual="$($SHELL -c ". $tmpfile"$'\n print ok' 2> /dev/null)"
 expect="ok"
 [[ $actual == $expect ]] ||
-   log_error 'syntax error in dot command affects next command' "$expect" "$actual"
+    log_error 'syntax error in dot command affects next command' "$expect" "$actual"
 
 typeset -r z=3
 y=5
@@ -505,10 +505,13 @@ builtin -f $LIBSAMPLE_PATH sample || log_error "Failed to load sample builtin"
 
 sample >/dev/null || log_error "Sample builtin should exit with 0 status"
 
-# List special builtins
-# Setting locale affects the order of listing builtins
-[[ $(LC_ALL=C builtin -s) = $'.\n:\n_Bool\nalias\nbreak\ncontinue\nenum\neval\nexec\nexit\nexport\nhash\nlogin\nnewgrp\nreadonly\nreturn\nset\nshift\ntrap\ntypeset\nunalias\nunset' ]] ||
-    log_error "builtin -s mismatches list of special builtins"
+# List special builtins.
+# The locale affects the order of listing builtins.
+expect=". : _Bool alias break continue enum eval exec exit export hash login newgrp readonly"
+expect="$expect return set shift trap typeset unalias unset "
+actual=$(LC_ALL=C builtin -s | tr '\n' ' ')
+[[ "$actual" == "$expect" ]] ||
+    log_error "builtin -s mismatches list of special builtins" "$expect" "$actual"
 
 builtin -d alias 2>/dev/null && log_error "Deleting a special builtin should fail"
 
