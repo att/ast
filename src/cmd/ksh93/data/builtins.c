@@ -71,9 +71,7 @@ const struct shtable3 shtab_builtins[] = {
     {"declare", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_DCL, bltin(typeset)},
     {"local", NV_BLTIN | BLT_ENV | BLT_DCL, bltin(typeset)},
 #endif  // SHOPT_BASH
-#if _cmd_newgrp
     {"newgrp", NV_BLTIN | BLT_ENV | BLT_SPC, Bltin(login)},
-#endif  // _cmd_newgrp
     {"alias", NV_BLTIN | BLT_SPC | BLT_DCL, bltin(alias)},
     {"hash", NV_BLTIN | BLT_SPC | BLT_DCL, bltin(alias)},
     {"eval", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_EXIT, bltin(eval)},
