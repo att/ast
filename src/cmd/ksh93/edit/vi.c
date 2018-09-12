@@ -32,7 +32,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <termios.h>
-#include <wchar.h>
 
 #include "defs.h"
 
