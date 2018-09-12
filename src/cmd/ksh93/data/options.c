@@ -136,6 +136,8 @@ const Shtable_t shtab_options[] = {{"allexport", SH_ALLEXPORT},
                                    {"nounset", SH_NOUNSET},
                                    {"verbose", SH_VERBOSE},
                                    {"vi", SH_VI},
+                                   // This option is now always enabled and disabling it has no
+                                   // effect.
                                    {"viraw", SH_VIRAW},
 
 #if SHOPT_BASH

@@ -5230,8 +5230,6 @@ Delete previous character.
 .TP 10
 .BI ^W
 Delete the previous blank separated word.
-On some systems the \f3viraw\fP option
-may be required for this to work.
 .TP 10
 .I eof
 As the first character of the line causes
@@ -5248,8 +5246,6 @@ or
 if not defined.)
 Removes the next character's
 editing features (if any).
-On some systems the \f3viraw\fP option
-may be required for this to work.
 .TP 10
 .BI \e
 Escape the next
@@ -7261,6 +7257,7 @@ Each character is processed as it is typed
 in
 .I vi\^
 mode.
+This is now always enabled. Disabling the option at run time has no effect.
 .TP 8
 .B xtrace
 Same as
