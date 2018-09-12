@@ -41,8 +41,8 @@
 #define PATH_STD_DIR 0100  // directory is on  $(getconf PATH)
 #define PATH_BIN 0200      // path behaves like /bin for builtins
 
-#define PATH_OFFSET 2                               // path offset for path_join
-#define MAXDEPTH (sizeof(char *) == 2 ? 64 : 1024)  // maximum recursion depth
+#define PATH_OFFSET 2  // path offset for path_join
+#define MAXDEPTH 1024  // maximum recursion depth
 
 //
 // Path component structure for path searching.
