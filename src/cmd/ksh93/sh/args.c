@@ -812,7 +812,6 @@ void sh_printopts(Shell_t *shp, Shopt_t oflags, int mode, Shopt_t *mask) {
         return;
     }
 
-    on_option(&oflags, SH_VIRAW);
     if (!(mode & (PRINT_ALL | PRINT_VERBOSE))) {  // only print set options
         if (mode & PRINT_SHOPT) {
             sfwrite(sfstdout, "shopt -s", 3);

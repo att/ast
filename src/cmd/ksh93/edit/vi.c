@@ -166,7 +166,6 @@ static void vigetline(Vi_t *, int);
 static int getrchar(Vi_t *);
 static int mvcursor(Vi_t *, int);
 static void pr_string(Vi_t *, const char *);
-static void putstring(Vi_t *, int, int);
 static void refresh(Vi_t *, int);
 static void replace(Vi_t *, int, int);
 static void restore_v(Vi_t *);
@@ -183,7 +182,6 @@ static int textmod(Vi_t *, int, int);
 int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
     Edit_t *ed = (Edit_t *)context;
     int i;              // general variable
-    int term_char = 0;  // read() termination character
     Vi_t *vp = ed->e_vi;
     char prompt[PRSIZE + 2];        // prompt
     genchar Physical[2 * MAXLINE];  // physical image
@@ -191,9 +189,6 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
     genchar ubuf[MAXLINE];          // used for u command
     genchar Window[MAXLINE];        // window image
     int Globals[9];                 // local global variables
-    int esc_or_hang = 0;            // <ESC> or hangup
-    char cntl_char = 0;             // TRUE if control character present
-#define viraw 1
 
     if (!vp) {
         ed->e_vi = vp = calloc(1, sizeof(Vi_t));
@@ -252,104 +247,6 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
     if (nchar + plen > MAXCHAR) nchar = MAXCHAR - plen;
     max_col = nchar - 2;
 
-    if (!viraw) {
-        int kill_erase = 0;
-        for (i = (echoctl ? last_virt : 0); i < last_virt; ++i) {
-            // Change \r to \n, check for control characters, delete appropriate ^Vs,
-            // and estimate last physical column.
-            if (virtual[i] == '\r') virtual[i] = '\n';
-            if (echoctl) continue;
-            int c = virtual[i];
-            if (c <= usrerase) {
-                // User typed escaped erase or kill char.
-                cntl_char = 1;
-                if (is_print(c)) kill_erase++;
-            } else if (!is_print(c)) {
-                cntl_char = 1;
-                if (c == usrlnext) {
-                    if (i == last_virt) {
-                        // Eol/eof was escaped so replace ^V with it.
-                        virtual[i] = term_char;
-                        break;
-                    }
-
-                    // Delete ^V.
-                    gencpy((&virtual[i]), (&virtual[i + 1]));
-                    --cur_virt;
-                    --last_virt;
-                }
-            }
-        }
-
-        // Copy virtual image to window.
-        if (last_virt > 0) last_phys = ed_virt_to_phys(vp->ed, virtual, physical, last_virt, 0, 0);
-        if (last_phys >= w_size) {
-            // Line longer than window.
-            vp->last_wind = w_size - 1;
-        } else {
-            vp->last_wind = last_phys;
-        }
-        genncpy(window, virtual, vp->last_wind + 1);
-
-        if (term_char != ESC && (last_virt == INVALID || virtual[last_virt] != term_char)) {
-            // Line not terminated with ESC or escaped (^V) eol, so return after doing a total
-            // update. if( (speed is greater or equal to 1200 and something was typed) and (control
-            // character present or typeahead occurred).
-            tty_cooked(ERRIO);
-            if (editb.e_ttyspeed == FAST && last_virt != INVALID && (vp->typeahead || cntl_char)) {
-                refresh(vp, TRANSLATE);
-                pr_string(vp, Prompt);
-                putstring(vp, 0, last_phys + 1);
-                if (echoctl) {
-                    ed_crlf(vp->ed);
-                } else {
-                    while (kill_erase-- > 0) putchar(' ');
-                }
-            }
-
-            if (term_char == '\n') {
-                if (!echoctl) ed_crlf(vp->ed);
-                virtual[++last_virt] = '\n';
-            }
-            vp->last_cmd = 'i';
-            save_last(vp);
-            virtual[last_virt + 1] = 0;
-            last_virt = ed_external(virtual, shbuf);
-            return (last_virt);
-        }
-
-        // Line terminated with escape, or escaped eol/eof, so set raw mode.
-        if (tty_raw(ERRIO, 0) < 0) {
-            tty_cooked(ERRIO);
-            // The following prevents drivers that return 0 on causing an infinite loop.
-            if (esc_or_hang) return -1;
-            virtual[++last_virt] = '\n';
-            virtual[last_virt + 1] = 0;
-            last_virt = ed_external(virtual, shbuf);
-            return last_virt;
-        }
-
-        if (echoctl) {  // for cntl-echo erase the ^[
-            pr_string(vp, "\b\b\b\b      \b\b");
-        }
-
-        if (crallowed) {
-            // Start over since there may be a control char, or cursor might not be at left margin
-            // (this lets us know where we are.
-            cur_phys = 0;
-            window[0] = '\0';
-            pr_string(vp, Prompt);
-            if (term_char == ESC && (last_virt < 0 || virtual[last_virt] != ESC)) {
-                refresh(vp, CONTROL);
-            } else {
-                refresh(vp, INPUT);
-            }
-        } else {
-            // Just update everything internally.
-            refresh(vp, TRANSLATE);
-        }
-    }
-
     // Handle usrintr, usrquit, or EOF.
     i = sigsetjmp(editb.e_env, 0);
     if (i != 0) {
@@ -378,13 +275,7 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
         vp->ofirst_wind = INVALID;
         refresh(vp, INPUT);
     }
-    if (viraw) {
-        vigetline(vp, APPEND);
-    } else if (last_virt >= 0 && virtual[last_virt] == term_char) {
-        vigetline(vp, APPEND);
-    } else {
-        vigetline(vp, ESC);
-    }
+    vigetline(vp, APPEND);
     if (vp->ed->e_multiline) cursor(vp, last_phys);
     // Add a new line if user typed unescaped \n to cause the shell to process the line.
     tty_cooked(ERRIO);
@@ -1351,14 +1242,6 @@ static_fn void pr_string(Vi_t *vp, const char *sp) {
     char *ptr = editb.e_outptr;
     while (*sp) *ptr++ = *sp++;
     editb.e_outptr = ptr;
-    return;
-}
-
-//
-// Put nchars starting at column of physical into the workspace to be printed.
-//
-static_fn void putstring(Vi_t *vp, int col, int nchars) {
-    while (nchars--) putchar(physical[col++]);
     return;
 }
 

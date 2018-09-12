@@ -19,6 +19,7 @@ None at this time.
 
 ## Notable non-backward compatible changes
 
+- Vi raw mode is now the default and cannot be disabled (issue #864).
 - Support for the `universe` command has been removed (issue #793).
 - Support for building on systems using EBCDIC has been removed (issue #742).
 - Support for the `LC_OPTIONS` env var has been removed (issue #579).

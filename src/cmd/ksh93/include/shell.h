@@ -85,6 +85,7 @@ typedef union Shnode_u Shnode_t;
 #define SH_MARKDIRS 15
 #define SH_BGNICE 16
 #define SH_VI 17
+// The "viraw" option no longer has any effect as its behavior is now always eanbled.
 #define SH_VIRAW 18
 #define SH_TFLAG 19
 #define SH_TRACKALL 20

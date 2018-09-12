@@ -1519,7 +1519,6 @@ int sh_reinit_20120720(Shell_t *shp, char *argv[]) {
     if (sh_isoption(shp, SH_EMACS)) on_option(&opt, SH_EMACS);
     if (sh_isoption(shp, SH_GMACS)) on_option(&opt, SH_GMACS);
     if (sh_isoption(shp, SH_VI)) on_option(&opt, SH_VI);
-    if (sh_isoption(shp, SH_VIRAW)) on_option(&opt, SH_VIRAW);
     shp->options = opt;
     // Set up new args.
     if (argv) shp->arglist = sh_argcreate(argv);
