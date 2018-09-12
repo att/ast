@@ -239,13 +239,12 @@ const Namdisc_t ENUM_disc = {.dsize = 0,
 
 static_fn int sh_outenum(Shell_t *shp, Sfio_t *iop, Namval_t *tp) {
     Namval_t *mp;
-    Dt_t *dp = 0;
-    char nvtype[sizeof(NV_CLASS)];
+    Dt_t *dp = NULL;
     struct Enum *ep;
     int i;
+
     if (!tp) {
-        strcpy(nvtype, NV_CLASS);
-        mp = nv_open(nvtype, shp->var_tree, NV_NOADD | NV_VARNAME);
+        mp = nv_open(NV_CLASS, shp->var_tree, NV_NOADD | NV_VARNAME);
         if (!mp) return 0;
         dp = nv_dict(mp);
         tp = (Namval_t *)dtfirst(dp);
@@ -294,6 +293,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
                 error(2, "%s", opt_info.arg);
                 break;
             }
+            default: { break; }
         }
         break;
     }
