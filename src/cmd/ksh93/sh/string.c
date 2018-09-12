@@ -498,10 +498,10 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
             q = 1;
             while ((c = mb1char(cp))) {
                 switch (c) {
-                    case ('a' == 97 ? '\033' : 39): {
-                            c = 'E';
-                            break;
-                        }
+                    case '\033': {
+                        c = 'E';
+                        break;
+                    }
                     case '\n': {
                         q = 0;
                         n = fold - 1;
