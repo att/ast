@@ -446,10 +446,13 @@ endargs:
         __builtin_unreachable();
     }
 
-    if (sizeof(char *) < 8 && tdata.argnum > SHRT_MAX) {
+#if _ast_sizeof_pointer < 8
+    if (tdata.argnum > SHRT_MAX) {
         errormsg(SH_DICT, ERROR_exit(2), "option argument cannot be greater than %d", SHRT_MAX);
         __builtin_unreachable();
     }
+#endif
+
     if (isfloat) flag |= NV_DOUBLE;
     if (isshort) {
         flag &= ~NV_LONG;
@@ -472,7 +475,7 @@ endargs:
         if (tdata.sh->namespace) {
             off = stktell(stkp) + 1;
             sfputr(stkp, nv_name(tdata.sh->namespace), '.');
-        } else if (NV_CLASS[sizeof(NV_CLASS) - 2] != '.') {
+        } else {
             sfputc(stkp, '.');
         }
         sfputr(stkp, tdata.prefix, 0);
@@ -1179,7 +1182,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
         errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
         __builtin_unreachable();
     }
-    if (!troot) return (1);
+    if (!troot) return 1;
     r = 0;
     if (troot == shp->var_tree) {
         nflag |= NV_VARNAME;
@@ -1232,7 +1235,8 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
             }
 #if 0
             // Causes unsetting local variable to expose global.
-            else if(shp->var_tree==troot && shp->var_tree!=shp->var_base && nv_search((char*)np,shp->var_tree,HASH_BUCKET|HASH_NOSCOPE)) {
+            else if(shp->var_tree == troot && shp->var_tree != shp->var_base &&
+                    nv_search((char*)np, shp->var_tree, HASH_BUCKET | HASH_NOSCOPE)) {
                     nv_delete(np,shp->var_tree,0);
             }
 #endif
