@@ -247,14 +247,8 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
         virtual[0] = '\0';
         tty_cooked(ERRIO);
 
-        switch (i) {
-            case UEOF: {  // EOF
-                return 0;
-            }
-            case UINTR: {  // interrupt
-                return -1;
-            }
-        }
+        if (i == UEOF) return 0;    // EOF
+        if (i == UINTR) return -1;  // interrupt
         return -1;
     }
 

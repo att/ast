@@ -2625,6 +2625,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             if (!skipexitset) exitset(shp);
             break;
         }
+        default: { break; }
     }
 
     if (procsub && *procsub) {

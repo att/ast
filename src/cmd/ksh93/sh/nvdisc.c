@@ -1274,15 +1274,9 @@ Namval_t *nv_mount(Namval_t *np, const char *name, Dt_t *dict) {
 }
 
 const Namdisc_t *nv_discfun(int which) {
-    switch (which) {
-        case NV_DCADD: {
-            return &Nv_bdisc;
-        }
-        case NV_DCRESTRICT: {
-            return &RESTRICTED_disc;
-        }
-    }
-    return 0;
+    if (which == NV_DCADD) return &Nv_bdisc;
+    if (which == NV_DCRESTRICT) return &RESTRICTED_disc;
+    return NULL;
 }
 
 bool nv_hasget(Namval_t *np) {

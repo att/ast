@@ -587,7 +587,8 @@ static_fn int gettok(vars_t *vp) {
     vp->errchr = vp->nextchr;
     while (1) {
         c = getchr(vp);
-        switch (op = getop(c)) {
+        op = getop(c);
+        switch (op) {
             case 0: {
                 vp->errchr = vp->nextchr;
                 continue;
@@ -650,6 +651,7 @@ static_fn int gettok(vars_t *vp) {
                     op--;
                 }
             }
+            default: { break; }
         }
         return op;
     }

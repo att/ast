@@ -321,8 +321,8 @@ Sfio_t *sh_iostream(Shell_t *shp, int fd, int fn) {
             case 2: {
                 return sfstderr;
             }
+            default: { return NULL; }
         }
-        return NULL;
     }
     if (status & IOREAD) {
         if (shp->bltinfun && shp->bltinfun != b_read && shp->bltindata.bnode &&
@@ -2618,6 +2618,7 @@ int sh_fcntl(int fd, int op, ...) {
                 shp->fdstatus[fd] &= ~IOCLEX;
             }
         }
+        default: { break; }
     }
 
     return newfd;
