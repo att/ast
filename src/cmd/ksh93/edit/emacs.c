@@ -280,28 +280,18 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     if (ep->ed->e_tabcount == 0) {
                         ep->ed->e_tabcount = 1;
                         ed_ungetchar(ep->ed, ESC);
-                        goto do_escape;
+                        adjust = escape(ep, out, oadjust);
+                        continue;
                     } else if (ep->ed->e_tabcount == 1) {
                         ed_ungetchar(ep->ed, '=');
-                        goto do_escape;
+                        adjust = escape(ep, out, oadjust);
+                        continue;
                     }
                     ep->ed->e_tabcount = 0;
                 } else {
                     ep->ed->e_tabcount = 1;
                 }
-            // FALLTHRU
-            do_default_processing:
-            default:
-                if ((eol + 1) >= (scend)) /*  will not fit on line */
-                {
-                    ed_ungetchar(ep->ed, c); /* save character for next line */
-                    goto process;
-                }
-                for (i = ++eol; i > cur; i--) out[i] = out[i - 1];
-                backslash = (c == '\\');
-                out[cur++] = c;
-                draw(ep, APPEND);
-                continue;
+                goto do_default_processing;
             }
             case cntl('Y'): {
                 c = genlen(kstack);
@@ -342,7 +332,9 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 genncpy(kstack, out + i, cur - i);
                 gencpy(out + i, out + cur);
                 ep->mark = i;
-                goto update;
+                cur = i;
+                draw(ep, UPDATE);
+                continue;
             }
             case cntl('W'): {
                 ++killing;  // keep killing flag
@@ -375,7 +367,9 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     i = cur;
                 }
                 *kptr = '\0';
-                goto update;
+                cur = i;
+                draw(ep, UPDATE);
+                continue;
             }
             case cntl('C'):
             case cntl('F'): {
@@ -390,7 +384,9 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     }
                     i++;
                 }
-                goto update;
+                cur = i;
+                draw(ep, UPDATE);
+                continue;
             }
             case cntl(']'): {
                 c = ed_getchar(ep->ed, 1);
@@ -400,15 +396,19 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 }
                 if (out[i]) i++;
                 while (i < eol) {
-                    if (out[i] == c && --count == 0) goto update;
+                    if (out[i] == c && --count == 0) break;
                     i++;
+                }
+                if (i < eol) {
+                    cur = i;
+                    draw(ep, UPDATE);
+                    continue;
                 }
                 i = 0;
                 while (i < cur) {
                     if (out[i] == c && --count == 0) break;
                     i++;
                 };
-            update:
                 cur = i;
                 draw(ep, UPDATE);
                 continue;
@@ -416,7 +416,9 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
             case cntl('B'): {
                 if (count > i) count = i;
                 i -= count;
-                goto update;
+                cur = i;
+                draw(ep, UPDATE);
+                continue;
             }
             case cntl('T'): {
                 if ((sh_isoption(ep->ed->sh, SH_EMACS)) && (eol != i)) i++;
@@ -429,15 +431,21 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     beep();
                     continue;
                 }
-                goto update;
+                cur = i;
+                draw(ep, UPDATE);
+                continue;
             }
             case cntl('A'): {
                 i = 0;
-                goto update;
+                cur = i;
+                draw(ep, UPDATE);
+                continue;
             }
             case cntl('E'): {
                 i = eol;
-                goto update;
+                cur = i;
+                draw(ep, UPDATE);
+                continue;
             }
             case cntl('U'): {
                 adjust = 4 * count;
@@ -492,13 +500,15 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 continue;
             }
             case cntl('['): {
-            do_escape:
                 adjust = escape(ep, out, oadjust);
                 continue;
             }
             case cntl('R'): {
                 search(ep, out, count);
-                goto drawline;
+                eol = genlen(out);
+                cur = eol;
+                draw(ep, UPDATE);
+                continue;
             }
             case cntl('P'): {
                 if (ep->ed->hlist) {
@@ -507,7 +517,9 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                         continue;
                     }
                     ep->ed->hoff--;
-                    goto hupdate;
+                    ed_histlist(ep->ed, *ep->ed->hlist != 0);
+                    draw(ep, REFRESH);
+                    continue;
                 }
                 if (count <= hloff) {
                     hloff -= count;
@@ -519,7 +531,17 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     hline = hismin + 1;
                     beep();
                 }
-                goto common;
+                // This is shared in common with [ctrl-N].
+                location.hist_command = hline;  // save current position
+                location.hist_line = hloff;
+                cur = 0;
+                draw(ep, UPDATE);
+                hist_copy((char *)out, MAXLINE, hline, hloff);
+                ed_internal((char *)(out), out);
+                eol = genlen(out);
+                cur = eol;
+                draw(ep, UPDATE);
+                continue;
             }
             case cntl('O'): {
                 location.hist_command = hline;
@@ -535,7 +557,6 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                         continue;
                     }
                     ep->ed->hoff++;
-                hupdate:
                     ed_histlist(ep->ed, *ep->ed->hlist != 0);
                     draw(ep, REFRESH);
                     continue;
@@ -550,17 +571,29 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 }
                 hline = location.hist_command;
                 hloff = location.hist_line;
-            common:
+                // This is shared in common with [ctrl-P].
                 location.hist_command = hline;  // save current position
                 location.hist_line = hloff;
                 cur = 0;
                 draw(ep, UPDATE);
                 hist_copy((char *)out, MAXLINE, hline, hloff);
                 ed_internal((char *)(out), out);
-            drawline:
                 eol = genlen(out);
                 cur = eol;
                 draw(ep, UPDATE);
+                continue;
+            }
+            default: {
+            do_default_processing:
+                if ((eol + 1) >= (scend)) /*  will not fit on line */
+                {
+                    ed_ungetchar(ep->ed, c); /* save character for next line */
+                    goto process;
+                }
+                for (i = ++eol; i > cur; i--) out[i] = out[i - 1];
+                backslash = (c == '\\');
+                out[cur++] = c;
+                draw(ep, APPEND);
                 continue;
             }
         }
@@ -629,7 +662,7 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
     if (digit) {
         ed_ungetchar(ep->ed, i);
         ++killing;  // don't modify killing signal
-        return (value);
+        return value;
     }
     value = count;
     if (value < 0) value = 1;
@@ -676,19 +709,20 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
             }
 
             else if (ch == 'f') {
-                goto update;
+                cur = i;
+                draw(ep, UPDATE);
+                return -1;
             } else if (ch == 'c') {
                 ed_ungetchar(ep->ed, cntl('C'));
                 return i - cur;
-            } else {
-                if (i - cur) {
-                    ed_ungetchar(ep->ed, cntl('D'));
-                    ++killing;  // keep killing signal
-                    return i - cur;
-                }
-                beep();
-                return (-1);
             }
+            if (i - cur) {
+                ed_ungetchar(ep->ed, cntl('D'));
+                ++killing;  // keep killing signal
+                return i - cur;
+            }
+            beep();
+            return -1;
         }
         case 'b':
         case DELETE:
@@ -701,12 +735,13 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
                 while ((i > 0) && (isword(i - 1))) i--;
             }
             if (ch == 'b') {
-                goto update;
-            } else {
-                ed_ungetchar(ep->ed, usrerase);
-                ++killing;
-                return cur - i;
+                cur = i;
+                draw(ep, UPDATE);
+                return -1;
             }
+            ed_ungetchar(ep->ed, usrerase);
+            ++killing;
+            return cur - i;
         }
         case '>': {
             ed_ungetchar(ep->ed, cntl('N'));
@@ -773,7 +808,7 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
                     value = histlines - ep->ed->hlist[value - 1]->index;
                     ed_histlist(ep->ed, 0);
                     ed_ungetchar(ep->ed, cntl('P'));
-                    return (value);
+                    return value;
                 }
             }
             i = '\\';
@@ -818,15 +853,19 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
             i = cur;
             if (i > 0) i--;
             while (i >= 0) {
-                if (out[i] == c && --value == 0) goto update;
+                if (out[i] == c && --value == 0) break;
                 i--;
+            }
+            if (i >= 0) {
+                cur = i;
+                draw(ep, UPDATE);
+                return -1;
             }
             i = eol;
             while (i > cur) {
                 if (out[i] == c && --value == 0) break;
                 i--;
             };
-        update:
             cur = i;
             draw(ep, UPDATE);
             return -1;
@@ -835,7 +874,7 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
         case cntl('L'): {  // clear screen
             sh_trap(ep->ed->sh, "tput clear", 0);
             draw(ep, REFRESH);
-            return (-1);
+            return -1;
         }
 #endif               // _cmd_tput
         case 'O':    // after running top <ESC>O instead of <ESC>[
