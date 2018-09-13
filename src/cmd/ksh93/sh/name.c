@@ -1678,32 +1678,34 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                     memset((void *)&cp[dot], 0, size - dot);
                 }
                 return;
-            } else {
-                if (size == 0 && nv_isattr(np, NV_HOST) != NV_HOST &&
-                    nv_isattr(np, NV_LJUST | NV_RJUST | NV_ZFILL)) {
-                    size = dot;
-                    nv_setsize(np, size);
-                    tofree = up->sp;
-                } else if (size > dot) {
-                    dot = size;
-                } else if (nv_isattr(np, NV_LJUST | NV_RJUST) == NV_LJUST && dot > size) {
-                    dot = size;
-                }
-                if (flags & NV_APPEND) {
-                    if (dot == 0) return;
-                    append = strlen(up->cp);
-                    if (!tofree || size) {
-                        offset = stktell(shp->stk);
-                        sfputr(shp->stk, up->cp, -1);
-                        sfputr(shp->stk, sp, 0);
-                        sp = stkptr(shp->stk, offset);
-                        dot += append;
-                        append = 0;
-                    } else {
-                        flags &= ~NV_APPEND;
-                    }
+            }
+
+            if (size == 0 && nv_isattr(np, NV_HOST) != NV_HOST &&
+                nv_isattr(np, NV_LJUST | NV_RJUST | NV_ZFILL)) {
+                size = dot;
+                nv_setsize(np, size);
+                tofree = up->sp;
+            } else if (size > dot) {
+                dot = size;
+            } else if (nv_isattr(np, NV_LJUST | NV_RJUST) == NV_LJUST && dot > size) {
+                dot = size;
+            }
+
+            if (flags & NV_APPEND) {
+                if (dot == 0) return;
+                append = strlen(up->cp);
+                if (!tofree || size) {
+                    offset = stktell(shp->stk);
+                    sfputr(shp->stk, up->cp, -1);
+                    sfputr(shp->stk, sp, 0);
+                    sp = stkptr(shp->stk, offset);
+                    dot += append;
+                    append = 0;
+                } else {
+                    flags &= ~NV_APPEND;
                 }
             }
+
             if (size == 0 || tofree || dot || !(cp = (char *)up->cp)) {
                 if (dot == 0 && !nv_isattr(np, NV_LJUST | NV_RJUST)) {
                     cp = (char *)EmptyStr;  // we'd better not try to modify this buf as it's const
