@@ -126,6 +126,7 @@ static_fn unsigned long writedefs(Lex_t *lexp, struct argnod *arglist, int line,
             case 'l': {
                 break;
             }
+            default: { break; }
         }
         while ((argp = argp->argnxt.ap)) {
             if ((n = *(cp = argp->argval)) != '-' && n != '+') break;
@@ -401,6 +402,7 @@ Shnode_t *sh_dolparen(Lex_t *lp) {
             t = sh_cmd(lp, RBRACE, SH_NL | SH_EMPTY);
             break;
         }
+        default: { break; }
     }
     lp->comsub = 0;
     if (!sp && (sp = fcfile())) {

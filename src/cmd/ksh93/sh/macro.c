@@ -398,6 +398,7 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
                     }
                 }
             }
+            default: { break; }
         }
         cp = fcseek(0);
     }
@@ -803,6 +804,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                 }
                 break;
             }
+            default: { break; }
         }
     }
 done:
@@ -2548,6 +2550,7 @@ static_fn char *special(Shell_t *shp, int c) {
             }
             return shp->st.cmdname;
         }
+        default: { break; }
     }
     return NULL;
 }
