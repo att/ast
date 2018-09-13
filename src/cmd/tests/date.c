@@ -236,8 +236,9 @@ int main(int argc, char **argv) {
 
         if (*p == 0 || *p == '#') continue;
         if (*p == ':') {
-            while (*++p == ' ')
-                ;
+            while (*++p == ' ') {
+                ;  // empty body
+            }
             sfprintf(sfstdout, "NOTE	%s\n", p);
             continue;
         }

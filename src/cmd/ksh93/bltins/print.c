@@ -1042,8 +1042,9 @@ static_fn int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
             }
         }
     } else {
-        while ((c = *cp++) && (c != '\\'))
-            ;  // empty loop
+        while ((c = *cp++) && (c != '\\')) {
+            ;  // empty body
+        }
     }
     if (c == 0) return -1;
     c = --cp - string;

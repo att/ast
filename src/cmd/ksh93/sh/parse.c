@@ -763,9 +763,12 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
             argv0 = argv = ((struct dolnod *)ac->comarg)->dolval + ARG_SPARE;
             while ((cp = *argv++)) {
                 size += strlen(cp) + 1;
-                if ((c = mb1char(cp)) && isaletter(c))
-                    while (c = mb1char(cp), isaname(c))
-                        ;
+                c = mb1char(cp);
+                if (isaletter(c)) {
+                    while (c = mb1char(cp), isaname(c)) {
+                        ;  // empty body
+                    }
+                }
             }
             if (c) {
                 errormsg(SH_DICT, ERROR_exit(3), e_lexsyntax4, lexp->sh->inlineno);
@@ -1139,8 +1142,9 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
             t->for_.fornam = (char *)lexp->arg->argval;
             t->for_.fortyp |= FLINENO;
             if (lexp->kiafile) writedefs(lexp, lexp->arg, lexp->sh->inlineno, 'v', NULL);
-            while ((tok = sh_lex(lexp)) == NL)
-                ;
+            while ((tok = sh_lex(lexp)) == NL) {
+                ;  // empty body
+            }
             if (tok == INSYM) {
                 if (sh_lex(lexp)) {
                     if (lexp->token != NL && lexp->token != ';') sh_syntax(lexp);
