@@ -497,7 +497,7 @@ const char sh_optcommand[] =
 const char sh_optdot[] =
     "[-1c?@(#)$Id: \b.\b (AT&T Research) 2000-04-02 $\n]" USAGE_LICENSE
     "[+NAME?\b.\b - execute commands in the current environment]"
-    "[+DESCRIPTION?\f$0\f is a special built-in command that executes commands "
+    "[+DESCRIPTION?\f?\f is a special built-in command that executes commands "
     "from a function or a file in the current environment.]"
     "[+?If \aname\a refers to a function defined with the \bfunction\b \aname\a "
     "syntax, the function executes in the current environment as "
