@@ -215,7 +215,6 @@ feature_data.set10('has_dev_stdout',
                    has_dev_stdout.returncode() == 0 and has_dev_stdout.stdout() == 'yes\n')
 
 subdir('dll')
-subdir('ids')
 subdir('locales')
 subdir('sockets')
 subdir('time')

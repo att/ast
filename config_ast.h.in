@@ -116,7 +116,6 @@
 #mesondefine _lib_dllload
 #mesondefine _lib_dlopen
 #mesondefine _lib_fdopendir
-#mesondefine _lib_fsid
 #mesondefine _lib_fstat64
 #mesondefine _lib_fstatvfs64
 #mesondefine _lib_fsync
@@ -124,8 +123,6 @@
 #mesondefine _lib_ftruncate64
 #mesondefine _lib_getdomainname
 #mesondefine _lib_getexecname
-#mesondefine _lib_getfsgid
-#mesondefine _lib_getgrent
 #mesondefine _lib_gethostid
 #mesondefine _lib_gethostname
 #mesondefine _lib_getsid
@@ -136,7 +133,6 @@
 #mesondefine _lib_htonl
 #mesondefine _lib_htons
 #mesondefine _lib_inet_ntoa
-#mesondefine _lib_isfsg
 #mesondefine _lib_iswalnum
 #mesondefine _lib_iswprint
 #mesondefine _lib_lchmod
