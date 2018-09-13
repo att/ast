@@ -180,6 +180,7 @@ static Shnode_t *r_tree(Shell_t *shp) {
                 if ((type & TBINARY)) t->lst.lstrit = (Shnode_t *)r_arg(shp);
             }
         }
+        default: { break; }
     }
     if (t) t->tre.tretyp = type;
     return t;

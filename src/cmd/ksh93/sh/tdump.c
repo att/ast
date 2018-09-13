@@ -25,6 +25,7 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 
@@ -119,8 +120,12 @@ static_fn int dump_p_tree(const Shnode_t *t) {
             if ((t->tre.tretyp & TBINARY)) return dump_p_arg(&(t->lst.lstrit->arg));
             return 0;
         }
+        default: {
+            return -1;
+        }
     }
-    return -1;
+
+    abort();
 }
 
 static_fn int dump_p_arg(const struct argnod *arg) {

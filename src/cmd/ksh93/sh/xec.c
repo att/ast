@@ -331,8 +331,9 @@ static_fn int xec_p_comarg(Shell_t *shp, struct comnod *com) {
 extern void sh_optclear(Shell_t *, void *);
 
 static_fn int sh_tclear(Shell_t *shp, Shnode_t *t) {
-    int n = 0;
     if (!t) return 0;
+
+    int n;
     switch (t->tre.tretyp & COMMSK) {
         case TTIME:
         case TPAR: {
@@ -352,6 +353,7 @@ static_fn int sh_tclear(Shell_t *shp, Shnode_t *t) {
             return n;
         }
         case TWH: {
+            n = 0;
             if (t->wh.whinc) n = sh_tclear(shp, (Shnode_t *)(t->wh.whinc));
             n += sh_tclear(shp, t->wh.whtre);
             n += sh_tclear(shp, t->wh.dotre);
@@ -385,9 +387,14 @@ static_fn int sh_tclear(Shell_t *shp, Shnode_t *t) {
             }
             n = xec_p_arg(shp, &(t->lst.lstlef->arg), 0);
             if (t->tre.tretyp & TBINARY) n += xec_p_arg(shp, &(t->lst.lstrit->arg), 0);
+            return n;
+        }
+        default: {
+            return 0;
         }
     }
-    return n;
+
+    abort();
 }
 
 static_fn int xec_p_arg(Shell_t *shp, struct argnod *arg, int flag) {
@@ -445,6 +452,7 @@ static_fn void out_pattern(Sfio_t *iop, const char *cp, int n) {
                 sfputc(iop, '\\');
                 break;
             }
+            default: { break; }
         }
         sfputc(iop, c);
     } while (*cp++);
