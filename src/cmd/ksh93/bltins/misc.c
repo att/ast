@@ -97,6 +97,7 @@ int b_exec(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
+            default: { break; }
         }
     }
 
@@ -181,6 +182,7 @@ int b_let(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
+            default: { break; }
         }
     }
 
@@ -208,6 +210,7 @@ int b_eval(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
+            default: { break; }
         }
     }
 
@@ -253,6 +256,7 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
+            default: { break; }
         }
     }
 
@@ -380,6 +384,7 @@ int b_shift(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
+            default: { break; }
         }
     }
 
@@ -415,6 +420,7 @@ int b_wait(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
+            default: { break; }
         }
     }
 
@@ -452,6 +458,7 @@ int b_bg(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
+            default: { break; }
         }
     }
     if (error_info.errors) {
@@ -503,6 +510,7 @@ int b_jobs(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
+            default: { break; }
         }
     }
 

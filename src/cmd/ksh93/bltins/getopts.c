@@ -96,6 +96,7 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
+            default: { break; }
         }
     }
 
