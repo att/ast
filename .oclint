@@ -88,6 +88,14 @@ disable-rules:
     #
     - GotoStatement
     #
+    # Oclint has too many false positives regarding missing `break;`
+    # statements. Mostly having to do with `case` blocks that use  `goto` to
+    # exit the block. In some cases because it doesn't recognize
+    # `__builtin_unreachable()` to flag that the previous statement won't
+    # return. And the compiler already alerts us to case blocks that fall
+    # through to the next case block.
+    - MissingBreakInSwitchStatement
+    #
     # TODO: Enable These in the future after simpler or more serious issues
     # have been addressed. At this time these warnings just make it hard to
     # see the issues that are easier or more urgent to resolve. So disable them.
