@@ -50,10 +50,6 @@
 #define echoctl 0
 #endif  // ECHOCTL
 
-#ifndef FIORDCHK
-#define NTICKS 5  // number of ticks for typeahead
-#endif            // FIORDCHK
-
 #define MAXCHAR MAXLINE - 2  // max char per line
 
 #define gencpy(a, b) ed_gencpy(a, b)
@@ -100,11 +96,6 @@ typedef struct _vi_ {
     int U_saved;       // original virtual saved
     genchar *U_space;  // used for U command
     genchar *u_space;  // used for u command
-#ifdef FIORDCHK
-    clock_t typeahead;  // typeahead occurred
-#else                   // FIORDCHK
-    int typeahead;  // typeahead occurred
-#endif                  // FIORDCHK
     int bigvi;
     Edit_t *ed;  // pointer to edit data
 } Vi_t;

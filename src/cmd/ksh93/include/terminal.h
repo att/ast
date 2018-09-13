@@ -61,12 +61,6 @@
 #include <sys/filio.h>
 #endif  // FIONREAD
 #endif  // _sys_filio
-// Set FIORDCHK if you can check for characters in input queue.
-#ifdef FIONREAD
-#ifndef FIORDCHK
-#define FIORDCHK FIONREAD
-#endif  // !FIORDCHK
-#endif  // FIONREAD
 
 // This symbol is used by the CLI editor modes to signal an invalid character.
 // Why it is U+DFFF (the last char in the low-surrogate range) is a mystery.
