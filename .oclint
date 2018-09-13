@@ -96,6 +96,13 @@ disable-rules:
     # through to the next case block.
     - MissingBreakInSwitchStatement
     #
+    # This warning is perfectly reasonable for most projects but not for ksh.
+    # There are simply too many `switch` blocks with as little as two branches
+    # but which we cannot justify rewriting.
+    # TODO: Enable this warning in the future.
+    #
+    - TooFewBranchesInSwitchStatement
+    #
     # TODO: Enable These in the future after simpler or more serious issues
     # have been addressed. At this time these warnings just make it hard to
     # see the issues that are easier or more urgent to resolve. So disable them.
