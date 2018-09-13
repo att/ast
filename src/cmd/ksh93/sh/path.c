@@ -392,9 +392,11 @@ Pathcomp_t *path_nextcomp(Shell_t *shp, Pathcomp_t *pp, const char *name, Pathco
 }
 
 static_fn Pathcomp_t *defpath_init(Shell_t *shp) {
-    if (!std_path && !(std_path = astconf("PATH", NULL, NULL))) std_path = e_defpath;
-    Pathcomp_t *pp = (void *)path_addpath(shp, NULL, (std_path), PATH_PATH);
-    return pp;
+    if (!std_path) {
+        std_path = astconf("PATH", NULL, NULL);
+        if (!std_path) std_path = e_defpath;
+    }
+    return path_addpath(shp, NULL, std_path, PATH_PATH);
 }
 
 static_fn void path_init(Shell_t *shp) {
