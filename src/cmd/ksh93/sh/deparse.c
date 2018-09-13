@@ -86,7 +86,8 @@ static_fn void p_tree(const Shnode_t *t, int tflags) {
     } else {
         end_line = '\n';
     }
-    switch (t->tre.tretyp & COMMSK) {
+    int cmd_type = t->tre.tretyp & COMMSK;
+    switch (cmd_type) {
         case TTIME: {
             if (t->tre.tretyp & COMSCAN) {
                 p_keyword("!", BEGIN);
@@ -164,7 +165,10 @@ static_fn void p_tree(const Shnode_t *t, int tflags) {
                 p_tree(t->wh.whtre, 0);
             }
             t = t->wh.dotre;
-            goto dolist;
+            p_keyword("do", MIDDLE);
+            p_tree(t, 0);
+            p_keyword("done", END);
+            break;
         }
         case TLST: {
             Shnode_t *tr = t->lst.lstrit;
@@ -182,17 +186,16 @@ static_fn void p_tree(const Shnode_t *t, int tflags) {
             if (needbrace) p_keyword("}", END);
             break;
         }
-        case TAND: {
-            cp = "&&";
-            goto andor;
-        }
-        case TORF: {
-            cp = "||";
-            goto andor;
-        }
+        case TAND:
+        case TORF:
         case TFIL: {
-            cp = "|";
-        andor:  // goto label (see above)
+            if (cmd_type == TAND) {
+                cp = "&&";
+            } else if (cmd_type == TORF) {
+                cp = "||";
+            } else {
+                cp = "|";
+            }
             if (t->tre.tretyp & TTEST) {
                 tflags |= NO_NEWLINE;
                 if (!(tflags & NO_BRACKET)) {
@@ -247,7 +250,6 @@ static_fn void p_tree(const Shnode_t *t, int tflags) {
                 sfputc(outfile, '\n');
             begin_line = 1;
             t = t->for_.fortre;
-        dolist:
             p_keyword("do", MIDDLE);
             p_tree(t, 0);
             p_keyword("done", END);
