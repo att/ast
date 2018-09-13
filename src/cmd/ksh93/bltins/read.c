@@ -117,6 +117,7 @@ static_fn int json2sh(Shell_t *shp, Sfio_t *in, Sfio_t *out) {
                     sfputc(shp->stk, c);
                     continue;
                 }
+                default: { break; }
             }
             sfputc(out, c);
             if (level == 0) break;
@@ -328,6 +329,7 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
+            default: { break; }
         }
     }
     argv += opt_info.index;
@@ -837,6 +839,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                 if (c != S_MBYTE) cp[-1] = 0;
                 continue;
             }
+            default: { break; }
         }
         // Assign value and advance to next variable.
         if (!val) val = "";
