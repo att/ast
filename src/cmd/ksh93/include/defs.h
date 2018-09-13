@@ -315,7 +315,7 @@ extern void *const builtin_disable;
 #define WMASK (0xff)
 
 #define is_option(s, x) \
-    ((bool)(((s)->v[((x)&WMASK) / WBITS] & (1ULL << ((x) % WBITS))) ? true : false))
+    (((s)->v[((x)&WMASK) / WBITS] & (1ULL << ((x) % WBITS))) ? true : false)
 #define on_option(s, x) ((void)((s)->v[((x)&WMASK) / WBITS] |= (1ULL << ((x) % WBITS))))
 #define off_option(s, x) ((void)((s)->v[((x)&WMASK) / WBITS] &= ~(1ULL << ((x) % WBITS))))
 

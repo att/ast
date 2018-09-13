@@ -72,7 +72,7 @@ static_fn int _vi_isblank(int);
 #define fold(c) ((c) & ~040)  // lower and uppercase equivalent
 
 #ifndef iswascii
-#define iswascii(c) (!((c) & (~0177)))
+#define iswascii(c) (((c) & ~0177) == 0)
 #endif  // !iswascii
 
 typedef struct _vi_ {

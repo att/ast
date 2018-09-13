@@ -197,6 +197,7 @@ struct Namval {
 #define nv_isattr(np, f) ((np)->nvflag & (f))
 #define nv_onattr(n, f) ((n)->nvflag |= (f))
 #define nv_offattr(n, f) ((n)->nvflag &= ~(f))
+#define nv_setattr(n, f) ((n)->nvflag = (f))
 #define nv_isarray(np) (nv_isattr((np), NV_ARRAY))
 
 // The following are operations for associative arrays.

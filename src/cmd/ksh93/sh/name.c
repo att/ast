@@ -2565,8 +2565,8 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
     if (size == -1) size = oldsize;
     if ((size == oldsize || (n & NV_INTEGER)) && !trans && ((n ^ newatts) & ~NV_NOCHANGE) == 0) {
         if (size) nv_setsize(np, size);
-        nv_offattr(np, ~NV_NOFREE);
-        nv_onattr(np, newatts);
+        if (nv_isattr(np, NV_NOFREE)) newatts |= NV_NOFREE;
+        nv_setattr(np, newatts);
         return;
     }
     // For an array, change all the elements.
@@ -2659,7 +2659,12 @@ char *sh_getenv(const char *name) {
 
     if (!shp->var_tree) {
 #if 0
-		if(name[0] == 'P' && name[1] == 'A' && name[2] == 'T' && name[3] == 'H' && name[4] == 0 || name[0] == 'L' && ((name[1] == 'C' || name[1] == 'D') && name[2] == '_' || name[1] == 'A' && name[1] == 'N') || name[0] == 'V' && name[1] == 'P' && name[2] == 'A' && name[3] == 'T' && name[4] == 'H' && name[5] == 0 || name[0] == '_' && name[1] == 'R' && name[2] == 'L' && name[3] == 'D' || name[0] == '_' && name[1] == 'A' && name[2] == 'S' && name[3] == 'T' && name[4] == '_')
+        if(name[0] == 'P' && name[1] == 'A' && name[2] == 'T' && name[3] == 'H' && name[4] == 0 ||
+                name[0] == 'L' && ((name[1] == 'C' || name[1] == 'D') && name[2] == '_' || name[1]
+                    == 'A' && name[1] == 'N') || name[0] == 'V' && name[1] == 'P' && name[2] == 'A'
+                && name[3] == 'T' && name[4] == 'H' && name[5] == 0 || name[0] == '_' && name[1] ==
+                'R' && name[2] == 'L' && name[3] == 'D' || name[0] == '_' && name[1] == 'A' &&
+                name[2] == 'S' && name[3] == 'T' && name[4] == '_')
 #endif
         return oldgetenv(name);
     } else if ((np = nv_search(name, shp->var_tree, 0)) && nv_isattr(np, NV_EXPORT)) {

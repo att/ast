@@ -163,7 +163,6 @@ struct argnod;
 // NAMNOD macros.
 //
 // ... for attributes.
-#define nv_setattr(n, f) ((n)->nvflag = (f))
 #define nv_context(n) ((void *)(n)->nvfun)  // for builtins
 // The following are for name references.
 #define nv_refnode(n) ((n)->nvalue.nrp->np)

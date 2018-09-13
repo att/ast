@@ -795,7 +795,7 @@ void sh_printopts(Shell_t *shp, Shopt_t oflags, int mode, Shopt_t *mask) {
         i = 0;
         for (tp = shtab_options; (value = tp->sh_number); tp++) {
             if (mask && !is_option(mask, value & 0xff)) continue;
-            on = !!is_option(&oflags, value);
+            on = is_option(&oflags, value);
             name = tp->sh_name;
             if (name[0] == 'n' && name[1] == 'o' && name[2] != 't') {
                 name += 2;
@@ -826,7 +826,7 @@ void sh_printopts(Shell_t *shp, Shopt_t oflags, int mode, Shopt_t *mask) {
         } else if (value & (SH_BASHEXTRA | SH_BASHOPT)) {
             continue;
         }
-        on = !!is_option(&oflags, value);
+        on = is_option(&oflags, value);
         name = tp->sh_name;
         if (name[0] == 'n' && name[1] == 'o' && name[2] != 't') {
             name += 2;
