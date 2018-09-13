@@ -200,13 +200,14 @@ retry:
         if (unlink(cp) >= 0) goto retry;
         fd = -1;
     }
-    if (fd < 0) {
-        // Don't allow root a history_file in /tmp.
-        if (shgd->userid) {
-            if (!(fname = pathtmp(NULL, 0, 0, NULL))) return 0;
-            fd = open(fname, O_BINARY | O_APPEND | O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | O_CLOEXEC);
-        }
+
+    // Don't allow root a history_file in /tmp.
+    if (fd < 0 && shgd->userid) {
+        fname = pathtmp(NULL, 0, 0, NULL);
+        if (!fname) return 0;
+        fd = open(fname, O_BINARY | O_APPEND | O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | O_CLOEXEC);
     }
+
     if (fd < 0) return 0;
     // Set the file to close-on-exec.
     (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
