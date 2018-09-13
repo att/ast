@@ -222,6 +222,7 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
             result = (*cp == 0);
             goto done;
         }
+        default: { break; }
     }
     tdata.ac = argc;
     result = !eval_expr(&tdata, 0);
@@ -541,9 +542,8 @@ int test_binop(Shell_t *shp, int op, const char *left, const char *right) {
         case TEST_LE: {
             return lnum <= rnum;
         }
+        default: { abort(); }
     }
-    // NOTREACHED
-    return 0;
 }
 
 //
