@@ -98,7 +98,6 @@ static struct State_s {
     regex_t *match;
 } error_state;
 
-#undef ERROR_CATALOG
 #define ERROR_CATALOG (ERROR_LIBRARY << 1)
 
 #define OPT_BREAK 1

@@ -84,6 +84,6 @@ struct Shbltin_s {
 #endif  // defined(SFIO_VERSION) || defined(_AST_H)
 #endif  // defined(SH_VERSION) || defined(_SH_PRIVATE)
 
-extern int cmdinit(int, char **, Shbltin_t *, const char *, int);
+extern int cmdinit(int, char **, Shbltin_t *, int);
 
 #endif  // _SHCMD_H

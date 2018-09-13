@@ -100,7 +100,7 @@ int b_basename(int argc, char **argv, Shbltin_t *context) {
     char *suffix = 0;
     int all = 0;
 
-    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
+    if (cmdinit(argc, argv, context, 0)) return -1;
     for (;;) {
         switch (optget(argv, usage)) {
             case 'a':

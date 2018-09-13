@@ -74,7 +74,7 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
     bool do_sfsync = 0;
     bool do_sync = 0;
 
-    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
+    if (cmdinit(argc, argv, context, 0)) return -1;
     for (;;) {
         switch (optget(argv, optsync)) {
             case 'f':

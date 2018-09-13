@@ -274,7 +274,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
         Namval_t *np;
     } optdisc;
 
-    if (cmdinit(argc, argv, context, ERROR_CATALOG, ERROR_NOTIFY)) return -1;
+    if (cmdinit(argc, argv, context, ERROR_NOTIFY)) return -1;
     for (;;) {
         switch (optget(argv, enum_usage)) {
             case 'p': {

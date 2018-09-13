@@ -164,7 +164,7 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
     static const char empty[] = "-";
     static const Path_t equiv[] = {{"/bin", 4}, {"/usr/bin", 8}};
 
-    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
+    if (cmdinit(argc, argv, context, 0)) return -1;
     oargv = argv;
     native = astconf("GETCONF", NULL, NULL);
     if (*native != '/') native = 0;

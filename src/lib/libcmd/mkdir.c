@@ -78,7 +78,7 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
     mode_t dmode;
     struct stat st;
 
-    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
+    if (cmdinit(argc, argv, context, 0)) return -1;
     for (;;) {
         switch (optget(argv, usage)) {
             case 'm':

@@ -171,7 +171,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
     struct stat st;
     int recursive = 0;
 
-    if (cmdinit(argc, argv, context, ERROR_CATALOG, ERROR_NOTIFY)) return -1;
+    if (cmdinit(argc, argv, context, ERROR_NOTIFY)) return -1;
     flags = fts_flags() | FTS_COMFOLLOW;
 
     /*
