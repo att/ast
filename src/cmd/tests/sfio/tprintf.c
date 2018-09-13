@@ -116,6 +116,9 @@ int DOXSprint(Sfio_t *f, void *v, Sffmt_t *fe) {
             *((char **)v) = OXstr;
             fe->flags |= SFFMT_VALUE;
             return 0;
+
+        default:
+            return 0;
     }
 
     return 0;

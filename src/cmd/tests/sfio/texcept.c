@@ -43,6 +43,9 @@ static int except(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
         // FALLTHRU
         case SF_SYNC:
             if (Type == SF_CLOSING) return 0;
+            break;
+        default:
+            break;
     }
 
     Type = type;

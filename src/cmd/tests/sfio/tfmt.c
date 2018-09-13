@@ -28,11 +28,9 @@ static char *Mystr = "abc";
 int myprint(Sfio_t *f, void *v, Sffmt_t *fe) {
     UNUSED(f);
 
-    switch (fe->fmt) {
-        case 's':
-            *((char **)v) = Mystr;
-            fe->flags |= SFFMT_VALUE;
-            return 0;
+    if (fe->fmt == 's') {
+        *((char **)v) = Mystr;
+        fe->flags |= SFFMT_VALUE;
     }
 
     return 0;
