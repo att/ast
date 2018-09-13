@@ -365,7 +365,7 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
     int dovcat = 0;
     char states[UCHAR_MAX + 1];
 
-    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
+    if (cmdinit(argc, argv, context, 0)) return -1;
     att = !strcmp(astconf("UNIVERSE", NULL, NULL), "att");
     mode = "r";
     for (;;) {

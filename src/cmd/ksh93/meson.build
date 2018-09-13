@@ -25,24 +25,13 @@ shared_c_args += [
     '-DAUDIT_FILE=' + '"@0@"'.format(get_option('audit-file'))
 ]
 
-# TODO: Figure out why there is a different definition of these symbols for
-# ksh93 versus shcomp and if there is a good reason add a comment why they are
-# defined differently.
-ksh93_c_args = shared_c_args + [
-    '-DERROR_CATALOG=NULL',
-]
-
-shcomp_c_args = shared_c_args + [
-    '-DERROR_CATALOG="libshell"',
-]
-
-ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args,
+ksh93_exe = executable('ksh', ksh93_files, c_args: shared_c_args,
     include_directories: [configuration_incdir, ksh93_incdir],
     link_with: [libast, libcmd, libcoshell, libdll],
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
     install: true)
 
-shcomp_exe = executable('shcomp', shcomp_files, c_args: shcomp_c_args ,
+shcomp_exe = executable('shcomp', shcomp_files, c_args: shared_c_args,
     include_directories: [configuration_incdir, ksh93_incdir],
     link_with: [ libast, libcmd, libcoshell, libdll],
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep],

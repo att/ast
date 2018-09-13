@@ -55,7 +55,7 @@ int b_logname(int argc, char **argv, Shbltin_t *context) {
     char *logname;
     char buf[12];
 
-    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
+    if (cmdinit(argc, argv, context, 0)) return -1;
     for (;;) {
         switch (optget(argv, usage)) {
             case ':':
