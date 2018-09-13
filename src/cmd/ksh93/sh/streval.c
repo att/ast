@@ -600,7 +600,7 @@ static_fn int gettok(vars_t *vp) {
             case A_COMMA: {
                 if (vp->shp->decomma && (c = peekchr(vp)) >= '0' && c <= '9') {
                     op = A_DIG;
-                    goto keep;
+                    ungetchr(vp);
                 }
                 break;
             }
@@ -615,7 +615,6 @@ static_fn int gettok(vars_t *vp) {
             case A_DIG:
             case A_REG:
             case A_LIT: {
-            keep:
                 ungetchr(vp);
                 break;
             }
