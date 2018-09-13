@@ -393,8 +393,6 @@ static_fn int sh_tclear(Shell_t *shp, Shnode_t *t) {
             return 0;
         }
     }
-
-    abort();
 }
 
 static_fn int xec_p_arg(Shell_t *shp, struct argnod *arg, int flag) {

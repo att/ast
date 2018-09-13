@@ -124,8 +124,6 @@ static_fn int dump_p_tree(const Shnode_t *t) {
             return -1;
         }
     }
-
-    abort();
 }
 
 static_fn int dump_p_arg(const struct argnod *arg) {
