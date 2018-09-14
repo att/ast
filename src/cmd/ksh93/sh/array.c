@@ -529,8 +529,8 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
                         // for it https://github.com/att/ast/issues/398
                         if (!xfree) nv_delete(mp, ap->table, NV_NOFREE);
                     }
-                    if (!array_covered(np, (struct index_array *)ap)) {
-                        if (array_elem(ap)) ap->nelem--;
+                    if (!array_covered(np, (struct index_array *)ap) && array_elem(ap)) {
+                        ap->nelem--;
                     }
                 }
             }

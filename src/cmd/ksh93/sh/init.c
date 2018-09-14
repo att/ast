@@ -1159,12 +1159,10 @@ int sh_type(const char *path) {
             }
 #endif
         }
-        if (!(t & (SH_TYPE_PROFILE | SH_TYPE_RESTRICTED))) {
-            if (*s == 'r') {
-                s++;
-                t |= SH_TYPE_RESTRICTED;
-                continue;
-            }
+        if (!(t & (SH_TYPE_PROFILE | SH_TYPE_RESTRICTED)) && *s == 'r') {
+            s++;
+            t |= SH_TYPE_RESTRICTED;
+            continue;
         }
         break;
     }
