@@ -1318,19 +1318,15 @@ skip:
             Namarr_t *ap;
             int isref;
             shp->prefix = 0;
-            if ((flags & NV_STATIC) && !shp->mktype) {
-                if (!nv_isnull(np)) {
-                    shp->prefix = prefix;
-                    return np;
-                }
+            if ((flags & NV_STATIC) && !shp->mktype && !nv_isnull(np)) {
+                shp->prefix = prefix;
+                return np;
             }
             isref = nv_isref(np);
             if (sh_isoption(shp, SH_XTRACE) && nv_isarray(np)) sub = nv_getsub(np);
             c = msg == e_aliname ? 0 : (append | (flags & NV_EXPORT));
             if (isref) nv_offattr(np, NV_REF);
-            if (!append && (flags & NV_UNJUST)) {
-                if (!np->nvfun) _nv_unset(np, NV_EXPORT);
-            }
+            if (!append && (flags & NV_UNJUST) && !np->nvfun) _nv_unset(np, NV_EXPORT);
             if (flags & NV_MOVE) {
                 ap = nv_arrayptr(np);
                 if (ap) {
