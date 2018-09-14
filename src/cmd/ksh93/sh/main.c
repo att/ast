@@ -287,9 +287,8 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                         sp = path_absolute(shp, name, NULL);
 #endif
                         if (sp) {
-                            if ((fdin = sh_open(sp, O_RDONLY, 0)) >= 0) {
-                                shp->st.filename = path_fullname(shp, sp);
-                            }
+                            fdin = sh_open(sp, O_RDONLY, 0);
+                            if (fdin >= 0) shp->st.filename = path_fullname(shp, sp);
                         }
                     }
                     if (fdin < 0) {
