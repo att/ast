@@ -196,9 +196,7 @@ int b_trap(int argc, char *argv[], Shbltin_t *context) {
                     shp->st.trapcom[sig] = strdup(cp);
                 }
                 if (arg && arg != Empty) free(arg);
-                if (sig == 0) {
-                    if (!shp->fn_depth || shp->end_fn) shp->exittrap = 1;
-                }
+                if (sig == 0 && (!shp->fn_depth || shp->end_fn)) shp->exittrap = 1;
             }
         }
     } else {  // print out current traps
@@ -291,7 +289,8 @@ endopts:
         return shp->exitval;
     }
     if (flag & S_FLAG) {
-        if ((sig = sig_number(shp, signame)) < 0 || sig >= shp->gd->sigmax) {
+        sig = sig_number(shp, signame);
+        if (sig < 0 || sig >= shp->gd->sigmax) {
             shp->exitval = 2;
             errormsg(SH_DICT, ERROR_exit(1), e_nosignal, signame);
             __builtin_unreachable();
