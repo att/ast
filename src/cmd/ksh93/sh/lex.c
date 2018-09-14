@@ -391,14 +391,14 @@ int sh_lex(Lex_t *lp) {
                         c = LPAREN;
                         break;
                     }
-                    default: {
-                        c = LBRACE;
-                        break;
-                    }
                     case '"':
                     case '`':
                     case '\'': {
                         lp->lexd.balance = c;
+                        break;
+                    }
+                    default: {
+                        c = LBRACE;
                         break;
                     }
                 }
@@ -1306,6 +1306,12 @@ breakloop:
         lp->lex.incase = 0;
         c = sh_lookup(state, shtab_testops);
         switch (c) {
+            case 0:
+            case TEST_OR:
+            case TEST_AND: {
+                lp->token = 0;
+                return lp->token;
+            }
             case TEST_END: {
                 lp->lex.testop2 = lp->lex.intest = 0;
                 lp->lex.reservok = 1;
@@ -1313,8 +1319,9 @@ breakloop:
                 return lp->token;
             }
             case TEST_SEQ: {
-                if (lp->lexd.warn && state[1] == 0)
+                if (lp->lexd.warn && state[1] == 0) {
                     errormsg(SH_DICT, ERROR_warn(0), e_lexobsolete3, shp->inlineno);
+                }
             }
             // FALLTHRU
             default: {
@@ -1332,11 +1339,6 @@ breakloop:
                     lp->token = TESTBINOP;
                     return lp->token;
                 }
-            }
-            // FALLTHRU
-            case TEST_OR:
-            case TEST_AND:
-            case 0: {
                 lp->token = 0;
                 return lp->token;
             }

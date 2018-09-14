@@ -107,14 +107,6 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
                 hit = ~0;
                 break;
             }
-            default: {
-                if (n < 0) {
-                    hit |= (1L << (-(n + 1)));
-                } else {
-                    errormsg(SH_DICT, 2, e_notimp, opt_info.name);
-                }
-                break;
-            }
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
                 break;
@@ -122,6 +114,14 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
+            }
+            default: {
+                if (n < 0) {
+                    hit |= (1L << (-(n + 1)));
+                } else {
+                    errormsg(SH_DICT, 2, e_notimp, opt_info.name);
+                }
+                break;
             }
         }
     }

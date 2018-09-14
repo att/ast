@@ -343,13 +343,7 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
                         sfseek(wm, 0, SEEK_SET);
                         goto skip;
                     }
-                }
-                // FALLTHRU
-                default: {
-                skip2:
-                    cp--;
-                    n = 2;
-                    break;
+                    goto skip2;
                 }
                 case '*': {  // until last word
                     if (n == 0) w[0] = 1;
@@ -384,6 +378,12 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
                     } else
                         n = 2;
                     cp--;
+                    break;
+                }
+                default: {
+                skip2:
+                    cp--;
+                    n = 2;
                     break;
                 }
             }
