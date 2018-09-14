@@ -386,8 +386,9 @@ bypass:
     readfn = (flags & C_FLAG) ? methods[mindex].fun : 0;
     r = sh_readline(shp, argv, readfn, fd, flags, len, timeout);
     shp->nextprompt = save_prompt;
-    if (r == 0 && (r = (sfeof(shp->sftable[fd]) || sferror(shp->sftable[fd])))) {
-        if (fd == shp->cpipe[0] && errno != EINTR) sh_pclose(shp->cpipe);
+    if (r == 0) {
+        r = (sfeof(shp->sftable[fd]) || sferror(shp->sftable[fd]));
+        if (r && fd == shp->cpipe[0] && errno != EINTR) sh_pclose(shp->cpipe);
     }
     return r;
 }
