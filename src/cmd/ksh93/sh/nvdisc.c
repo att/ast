@@ -530,12 +530,11 @@ static_fn void putdisc(Namval_t *np, const void *val, int flag, Namfun_t *fp) {
         int i;
         for (i = 0; vp->bnames[i]; i++) {
             Namval_t *mp;
-            if ((mp = vp->bltins[i]) && !nv_isattr(mp, NV_NOFREE)) {
-                if (is_abuiltin(mp)) {
-                    if (mp->nvfun && !nv_isattr(mp, NV_NOFREE)) free(mp->nvfun);
-                    dtdelete(shp->bltin_tree, mp);
-                    free(mp);
-                }
+            mp = vp->bltins[i];
+            if (mp && !nv_isattr(mp, NV_NOFREE) && is_abuiltin(mp)) {
+                if (mp->nvfun && !nv_isattr(mp, NV_NOFREE)) free(mp->nvfun);
+                dtdelete(shp->bltin_tree, mp);
+                free(mp);
             }
         }
         nv_disc(np, fp, NV_POP);
