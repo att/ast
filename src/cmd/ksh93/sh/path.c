@@ -277,9 +277,9 @@ void path_delete(Pathcomp_t *first) {
 // Returns library variable from .paths. The value might be returned on the stack overwriting path.
 //
 static_fn char *path_lib(Shell_t *shp, Pathcomp_t *pp, char *path) {
-    char *last = strrchr(path, '/');
     int r;
     struct stat statb;
+    char *last = strrchr(path, '/');
 
     if (last) {
         *last = 0;
@@ -290,20 +290,19 @@ static_fn char *path_lib(Shell_t *shp, Pathcomp_t *pp, char *path) {
     if (last) *last = '/';
     if (r < 0) return NULL;
 
-    Pathcomp_t pcomp;
-    char save[8];
     for (; pp; pp = pp->next) {
         if (!pp->dev && !pp->ino) path_checkdup(shp, pp);
         if (pp->ino == statb.st_ino && pp->dev == statb.st_dev && pp->mtime == statb.st_mtime) {
-            return (pp->lib);
+            return pp->lib;
         }
     }
-    pcomp.len = 0;
+
+    Pathcomp_t pcomp = {0};
     if (last) pcomp.len = last - path;
+
+    char save[8];
     memcpy((void *)save, (void *)stkptr(shp->stk, PATH_OFFSET + pcomp.len), sizeof(save));
-    if (path_chkpaths(shp, NULL, NULL, &pcomp, PATH_OFFSET)) {
-        return (stkfreeze(shp->stk, 1));
-    }
+    if (path_chkpaths(shp, NULL, NULL, &pcomp, PATH_OFFSET)) return stkfreeze(shp->stk, 1);
     memcpy((void *)stkptr(shp->stk, PATH_OFFSET + pcomp.len), (void *)save, sizeof(save));
     return NULL;
 }
