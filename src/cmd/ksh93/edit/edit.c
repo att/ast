@@ -585,7 +585,8 @@ int ed_read(void *context, int fd, char *buff, int size, int reedit) {
         struct stat statb;
         struct utimbuf utimes;
         if (errno == 0 && !ep->e_tty) {
-            if ((ep->e_tty = ttyname(fd)) && stat(ep->e_tty, &statb) >= 0) {
+            ep->e_tty = ttyname(fd);
+            if (ep->e_tty && stat(ep->e_tty, &statb) >= 0) {
                 ep->e_tty_ino = statb.st_ino;
                 ep->e_tty_dev = statb.st_dev;
             }
@@ -705,10 +706,8 @@ int ed_getchar(Edit_t *ep, int mode) {
             if ((readin[0] = -c) == ESC) {
                 while (1) {
                     if (!ep->e_lookahead) {
-                        if ((c = sfpkrd(ep->e_fd, readin + n, 1, '\r', (mode ? 400L : -1L), 0)) >
-                            0) {
-                            putstack(ep, readin + n, c, 1);
-                        }
+                        c = sfpkrd(ep->e_fd, readin + n, 1, '\r', (mode ? 400L : -1L), 0);
+                        if (c > 0) putstack(ep, readin + n, c, 1);
                     }
                     if (!ep->e_lookahead) break;
                     if ((c = ep->e_lbuf[--ep->e_lookahead]) >= 0) {

@@ -152,8 +152,10 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
     hc[0] = '!';
     hc[1] = '^';
     hc[2] = 0;
-    if ((np = nv_open("histchars", shp->var_tree, 0)) && (cp = nv_getval(np))) {
-        if (cp[0]) {
+    np = nv_open("histchars", shp->var_tree, 0);
+    if (np) {
+        cp = nv_getval(np);
+        if (cp && cp[0]) {
             hc[0] = cp[0];
             if (cp[1]) {
                 hc[1] = cp[1];

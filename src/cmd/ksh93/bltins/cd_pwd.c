@@ -223,9 +223,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
             char *cp;
             stakseek(PATH_MAX + PATH_OFFSET);
             cp = stakptr(PATH_OFFSET);
-            if (*cp == '/') {
-                if (!pathcanon(cp, PATH_MAX, PATH_ABSOLUTE | PATH_DOTDOT)) continue;
-            }
+            if (*cp == '/' && !pathcanon(cp, PATH_MAX, PATH_ABSOLUTE | PATH_DOTDOT)) continue;
         }
 
         newdirfd = sh_diropenat(shp, dirfd, path_relative(shp, stakptr(PATH_OFFSET)));
