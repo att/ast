@@ -648,9 +648,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
                     errormsg(SH_DICT, ERROR_system(1), e_toomany);
                     __builtin_unreachable();
                 }
-                if (fd >= shp->gd->lim.open_max) {
-                    if (!sh_iovalidfd(shp, fd)) abort();
-                }
+                if (fd >= shp->gd->lim.open_max && !sh_iovalidfd(shp, fd)) abort();
                 shp->sftable[fd] = iop;
                 (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
                 shp->fdstatus[fd] = (shp->fdstatus[1] | IOCLEX);
