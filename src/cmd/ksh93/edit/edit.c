@@ -705,8 +705,8 @@ int ed_getchar(Edit_t *ep, int mode) {
             if ((readin[0] = -c) == ESC) {
                 while (1) {
                     if (!ep->e_lookahead) {
-                        if ((c = sfpkrd(ep->e_fd, readin + n, 1, '\r', (mode ? 400L : -1L),
-                                        0)) > 0) {
+                        if ((c = sfpkrd(ep->e_fd, readin + n, 1, '\r', (mode ? 400L : -1L), 0)) >
+                            0) {
                             putstack(ep, readin + n, c, 1);
                         }
                     }

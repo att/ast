@@ -905,9 +905,8 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
     nv_setsize(mp, offset);
     k = roundof(sizeof(Namtype_t) + nnodes * NV_MINSZ, sizeof(Sfdouble_t)) -
         (sizeof(Namtype_t) + nnodes * NV_MINSZ);
-    pp = calloc(1, sizeof(Namtype_t) +
-               nnodes * NV_MINSZ + offset + size + (nnodes + nd) * sizeof(char *) +
-                   iref * sizeof(struct Namref) + k);
+    pp = calloc(1, sizeof(Namtype_t) + nnodes * NV_MINSZ + offset + size +
+                       (nnodes + nd) * sizeof(char *) + iref * sizeof(struct Namref) + k);
     pp->fun.dsize = sizeof(Namtype_t) + nnodes * NV_MINSZ + offset + k;
     pp->fun.type = mp;
     pp->sh = sh_ptr(mp);
@@ -999,8 +998,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                 }
                 if (!nv_isattr(nr, NV_REF) && !nv_hasdisc(nr, &type_disc)) {
                     if (nr->nvsize) {
-                        memcpy((char *)nq->nvalue.cp, nr->nvalue.cp,
-                               size = nv_datasize(nr, NULL));
+                        memcpy((char *)nq->nvalue.cp, nr->nvalue.cp, size = nv_datasize(nr, NULL));
                     } else {
                         nq->nvalue.cp = nr->nvalue.cp;
                         nv_onattr(nq, NV_NOFREE);

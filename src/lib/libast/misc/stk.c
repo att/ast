@@ -238,8 +238,7 @@ Sfio_t *stkopen(int flags) {
     fp->nalias = 0;
     fp->aliases = 0;
     fp->end = sp->stkend = cp + bsize;
-    if (!sfnew(stream, cp, bsize, -1, SF_STRING | SF_WRITE | SF_STATIC | SF_EOF))
-        return NULL;
+    if (!sfnew(stream, cp, bsize, -1, SF_STRING | SF_WRITE | SF_STATIC | SF_EOF)) return NULL;
     sfdisc(stream, dp);
     return (stream);
 }

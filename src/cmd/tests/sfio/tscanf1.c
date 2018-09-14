@@ -56,8 +56,7 @@ tmain() {
     if ((n = sfsscanf("ten 10 10", "%s %d %lf", s, &i, &d)) != 3) terror("Bad scanning %d", n);
     if (strncmp("ten", s, 3) != 0 || i != 10 || d != 10) terror("Bad scanned values ");
 
-    if (!(f = sfnew(NULL, NULL, (size_t)SF_UNBOUND, 0, SF_READ)))
-        terror("Can't create stream f");
+    if (!(f = sfnew(NULL, NULL, (size_t)SF_UNBOUND, 0, SF_READ))) terror("Can't create stream f");
     if (!(str = sfopen(0, "ten 10 10", "s"))) terror("Can't open string stream str");
     Mydisc.disc.readf = oneread;
     Mydisc.f = str;

@@ -171,7 +171,7 @@ static int textmod(Vi_t *, int, int);
 //
 int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
     Edit_t *ed = (Edit_t *)context;
-    int i;              // general variable
+    int i;  // general variable
     Vi_t *vp = ed->e_vi;
     char prompt[PRSIZE + 2];        // prompt
     genchar Physical[2 * MAXLINE];  // physical image

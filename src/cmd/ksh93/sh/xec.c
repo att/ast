@@ -389,9 +389,7 @@ static_fn int sh_tclear(Shell_t *shp, Shnode_t *t) {
             if (t->tre.tretyp & TBINARY) n += xec_p_arg(shp, &(t->lst.lstrit->arg), 0);
             return n;
         }
-        default: {
-            return 0;
-        }
+        default: { return 0; }
     }
 }
 
@@ -1053,8 +1051,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
 #if SHOPT_BASH
                     if (np == SYSLOCAL) {
                         if (!nv_getval(SH_FUNNAMENOD)) {
-                            errormsg(SH_DICT, ERROR_exit(1),
-                                        "%s: can only be used in a function", com0);
+                            errormsg(SH_DICT, ERROR_exit(1), "%s: can only be used in a function",
+                                     com0);
                             __builtin_unreachable();
                         }
                         if (!shp->st.var_local) {
@@ -1077,8 +1075,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             if (shp->namespace) {
                                 char *sp, *xp;
                                 if (!shp->strbuf2) shp->strbuf2 = sfstropen();
-                                sfprintf(shp->strbuf2, "%s%s%c", NV_CLASS,
-                                            nv_name(shp->namespace), 0);
+                                sfprintf(shp->strbuf2, "%s%s%c", NV_CLASS, nv_name(shp->namespace),
+                                         0);
                                 char *p = sfstruse(shp->strbuf2);
                                 assert(p);
                                 shp->prefix = strdup(p);
@@ -1296,8 +1294,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         for (item = buffp->olist; item; item = item->next) {
                             if (item->strm) {
                                 sfclrlock(item->strm);
-                                if (shp->gd->hist_ptr &&
-                                    item->strm == shp->gd->hist_ptr->histfp) {
+                                if (shp->gd->hist_ptr && item->strm == shp->gd->hist_ptr->histfp) {
                                     hist_close(shp->gd->hist_ptr);
                                 } else {
                                     sfclose(item->strm);
@@ -1505,12 +1502,12 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     sh_subfork();
                 }
             }
-            no_fork = !ntflag && !(type & (FAMP | FPOU)) && !shp->subshell &&
-                        !(shp->st.trapcom[SIGINT] && *shp->st.trapcom[SIGINT]) &&
-                        !shp->st.trapcom[0] && !shp->st.trap[SH_ERRTRAP] &&
-                        ((struct checkpt *)shp->jmplist)->mode != SH_JMPEVAL &&
-                        (execflg2 || (execflg && shp->fn_depth == 0 &&
-                                    !(pipejob && sh_isoption(shp, SH_PIPEFAIL))));
+            no_fork =
+                !ntflag && !(type & (FAMP | FPOU)) && !shp->subshell &&
+                !(shp->st.trapcom[SIGINT] && *shp->st.trapcom[SIGINT]) && !shp->st.trapcom[0] &&
+                !shp->st.trap[SH_ERRTRAP] && ((struct checkpt *)shp->jmplist)->mode != SH_JMPEVAL &&
+                (execflg2 ||
+                 (execflg && shp->fn_depth == 0 && !(pipejob && sh_isoption(shp, SH_PIPEFAIL))));
             if (sh_isstate(shp, SH_PROFILE) || shp->dot_depth) {
                 // Disable foreground job monitor.
                 if (!(type & FAMP)) sh_offstate(shp, SH_MONITOR);
@@ -1735,8 +1732,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             pid_t pid;
             int jmpval, waitall;
             int simple = (t->fork.forktre->tre.tretyp & COMMSK) == TCOM;
-            struct checkpt *buffp =
-                (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+            struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
 #if SHOPT_COSHELL
             if (shp->inpool) {
                 sh_redirect(shp, t->fork.forkio, 0);
@@ -1846,8 +1842,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 if (jmpval > SH_JMPEXIT) siglongjmp(*shp->jmplist, jmpval);
                 if (shp->exitval > 256) shp->exitval -= 128;
                 sh_done(shp, 0);
-            } else if (((type = t->par.partre->tre.tretyp) & FAMP) &&
-                        ((type & COMMSK) == TFORK)) {
+            } else if (((type = t->par.partre->tre.tretyp) & FAMP) && ((type & COMMSK) == TFORK)) {
                 pid_t pid;
                 sfsync(NULL);
                 while ((pid = fork()) < 0) _sh_fork(shp, pid, 0, 0);
@@ -1935,8 +1930,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             tt = tt->lst.lstrit;
                         t = tt;
                         continue;
-                    } else if (tt->tre.tretyp == TFIL &&
-                                tt->lst.lstlef->tre.tretyp & FALTPIPE) {
+                    } else if (tt->tre.tretyp == TFIL && tt->lst.lstlef->tre.tretyp & FALTPIPE) {
                         sh_copipe(shp, pvn, 0);
                         pvo[2] = pvn[2];
                         copipe = 0;
@@ -1948,8 +1942,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
 #if SHOPT_COSHELL
                 pvn[2] = 0;
             coskip2:
-#endif  // SHOPT_COSHELL
-    // Execute out part of pipe no wait.
+#endif          // SHOPT_COSHELL
+                // Execute out part of pipe no wait.
                 (t->lst.lstlef)->tre.tretyp |= showme;
                 type = sh_exec(shp, t->lst.lstlef, errorflg);
                 // Close out-part of pipe.
@@ -2051,8 +2045,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             int poolfiles;
 #endif /* SHOPT_COSHELL */
             int jmpval = ((struct checkpt *)shp->jmplist)->mode;
-            struct checkpt *buffp =
-                (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+            struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
             void *optlist = shp->optlist;
             shp->optlist = 0;
             sh_tclear(shp, t->for_.fortre);
@@ -2069,7 +2062,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 nargs = argn;
             }
             np = nv_open(t->for_.fornam, shp->var_tree,
-                            NV_NOASSIGN | NV_NOARRAY | NV_VARNAME | NV_NOREF);
+                         NV_NOASSIGN | NV_NOARRAY | NV_VARNAME | NV_NOREF);
             nameref = nv_isref(np) != 0;
             shp->st.loopcnt++;
             cp = *args;
@@ -2085,8 +2078,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     save_prompt = shp->nextprompt;
                     shp->nextprompt = 3;
                     shp->timeout = 0;
-                    shp->exitval = sh_readline(shp, &nullptr, NULL, 0, 1, (size_t)0,
-                                                1000 * shp->st.tmout);
+                    shp->exitval =
+                        sh_readline(shp, &nullptr, NULL, 0, 1, (size_t)0, 1000 * shp->st.tmout);
                     shp->nextprompt = save_prompt;
                     if (shp->exitval || sfeof(sfstdin) || sferror(sfstdin)) {
                         shp->exitval = 1;
@@ -2169,8 +2162,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             Sfio_t *iop = 0;
             int savein;
             int jmpval = ((struct checkpt *)shp->jmplist)->mode;
-            struct checkpt *buffp =
-                (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+            struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
             void *optlist = shp->optlist;
 #if SHOPT_COSHELL
             if (shp->inpool) {
@@ -2376,7 +2368,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             at = shp->gd->lim.clk_tck * (ta.tv_sec - tb.tv_sec);
             at += ((shp->gd->lim.clk_tck *
                     (((1000000L / 2) / shp->gd->lim.clk_tck) + (ta.tv_usec - tb.tv_usec))) /
-                    1000000L);
+                   1000000L);
 #else   // timeofday
             at = times(&after) - bt;
 #endif  // timeofday
@@ -2451,7 +2443,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     sfwrite(stkp, fname, cp++ - fname);
                     sfputc(stkp, 0);
                     npv = nv_open(stkptr(stkp, offset), shp->var_tree,
-                                    NV_NOASSIGN | NV_NOARRAY | NV_VARNAME);
+                                  NV_NOASSIGN | NV_NOARRAY | NV_VARNAME);
                 }
                 offset = stktell(stkp);
                 sfprintf(stkp, "%s.%s%c", nv_name(npv), cp, 0);
@@ -2465,7 +2457,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             }
             if (!np) {
                 np = nv_open(fname, sh_subfuntree(shp, 1),
-                                NV_NOASSIGN | NV_NOARRAY | NV_VARNAME | NV_NOSCOPE);
+                             NV_NOASSIGN | NV_NOARRAY | NV_VARNAME | NV_NOSCOPE);
             }
             if (npv) {
                 if (!shp->mktype) cp = nv_setdisc(npv, cp, np, (Namfun_t *)npv);
@@ -2502,8 +2494,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             }
             if (t->funct.functstak) {
                 static Dtdisc_t _Rpdisc = {.key = offsetof(struct Ufunction, fname),
-                                            .size = -1,
-                                            .link = sizeof(struct Ufunction)};
+                                           .size = -1,
+                                           .link = sizeof(struct Ufunction)};
                 struct functnod *fp;
                 struct comnod *ac = t->funct.functargs;
                 slp = t->funct.functstak;
@@ -2566,9 +2558,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 n = type >> TSHIFT;
                 left = sh_macpat(shp, &(t->lst.lstlef->arg), OPTIMIZE);
                 if (type & TBINARY) {
-                    right =
-                        sh_macpat(shp, &(t->lst.lstrit->arg),
-                                    ((n == TEST_PEQ || n == TEST_PNE) ? ARG_EXP : 0) | OPTIMIZE);
+                    right = sh_macpat(shp, &(t->lst.lstrit->arg),
+                                      ((n == TEST_PEQ || n == TEST_PNE) ? ARG_EXP : 0) | OPTIMIZE);
                 }
                 shp->savexit = savexit;
                 trap = shp->st.trap[SH_DEBUGTRAP];

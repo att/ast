@@ -39,8 +39,7 @@ tmain() {
     if (dtuserlock(dt) != 0) terror("dtuserlock() should have succeeded to lock");
     if (dtuserunlock(dt) != 0) terror("dtuserlock() should have succeeded to unlock");
 
-    if (dtuserdata(dt, (void *)11, 1) != NULL)
-        terror("dtuserdata() should have returned NULL");
+    if (dtuserdata(dt, (void *)11, 1) != NULL) terror("dtuserdata() should have returned NULL");
     if (dt->user->data != (void *)11) terror("user->data should be 11");
 
     if (dtuserdata(dt, NULL, 0) != (void *)11) terror("dtuserdata() should have returned 11");

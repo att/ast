@@ -736,8 +736,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                 } else {
                     cp = stkptr(shp->stk, m);
                 }
-                if (!strcmp(cp, LIBCMD) &&
-                    (addr = (Shbltin_f)dlllook(NULL, stkptr(shp->stk, n))) &&
+                if (!strcmp(cp, LIBCMD) && (addr = (Shbltin_f)dlllook(NULL, stkptr(shp->stk, n))) &&
                     (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NULL)) &&
                     nv_isattr(np, NV_BLTINOPT)) {
                 found:

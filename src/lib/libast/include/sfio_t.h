@@ -102,33 +102,33 @@
     }
 
 /* function to clear an Sfio_t structure */
-#define SFCLEAR(f, mtx)                              \
-    ((f)->next = NULL,                  /* next		*/  \
-     (f)->endw = NULL,                  /* endw		*/  \
-     (f)->endr = NULL,                  /* endr		*/  \
-     (f)->endb = NULL,                  /* endb		*/  \
-     (f)->push = NULL,                  /* push		*/  \
-     (f)->flags = 0,                    /* flags	*/  \
-     (f)->file = -1,                    /* file		*/  \
-     (f)->data = NULL,                  /* data		*/  \
-     (f)->size = -1,                    /* size		*/  \
-     (f)->val = -1,                     /* val		*/   \
-     (f)->extent = -1,                  /* extent	*/ \
-     (f)->here = 0,                     /* here		*/  \
-     (f)->ngetr = 0,                    /* ngetr	*/  \
-     (f)->tiny[0] = 0,                  /* tiny		*/  \
-     (f)->bits = 0,                     /* bits		*/  \
-     (f)->mode = 0,                     /* mode		*/  \
-     (f)->disc = NULL,                  /* disc		*/  \
-     (f)->pool = NULL,                  /* pool		*/  \
-     (f)->rsrv = NULL,                  /* rsrv		*/  \
-     (f)->proc = NULL,                  /* proc		*/  \
-     (f)->mutex = (mtx),                /* mutex	*/  \
-     (f)->stdio = NULL,                 /* stdio	*/  \
-     (f)->lpos = 0,                     /* lpos		*/  \
-     (f)->iosz = 0,                     /* iosz		*/  \
-     (f)->blksz = 0,                    /* blksz	*/  \
-     (f)->getr = 0                      /* getr		*/  \
+#define SFCLEAR(f, mtx)               \
+    ((f)->next = NULL,   /* next		*/  \
+     (f)->endw = NULL,   /* endw		*/  \
+     (f)->endr = NULL,   /* endr		*/  \
+     (f)->endb = NULL,   /* endb		*/  \
+     (f)->push = NULL,   /* push		*/  \
+     (f)->flags = 0,     /* flags	*/  \
+     (f)->file = -1,     /* file		*/  \
+     (f)->data = NULL,   /* data		*/  \
+     (f)->size = -1,     /* size		*/  \
+     (f)->val = -1,      /* val		*/   \
+     (f)->extent = -1,   /* extent	*/ \
+     (f)->here = 0,      /* here		*/  \
+     (f)->ngetr = 0,     /* ngetr	*/  \
+     (f)->tiny[0] = 0,   /* tiny		*/  \
+     (f)->bits = 0,      /* bits		*/  \
+     (f)->mode = 0,      /* mode		*/  \
+     (f)->disc = NULL,   /* disc		*/  \
+     (f)->pool = NULL,   /* pool		*/  \
+     (f)->rsrv = NULL,   /* rsrv		*/  \
+     (f)->proc = NULL,   /* proc		*/  \
+     (f)->mutex = (mtx), /* mutex	*/  \
+     (f)->stdio = NULL,  /* stdio	*/  \
+     (f)->lpos = 0,      /* lpos		*/  \
+     (f)->iosz = 0,      /* iosz		*/  \
+     (f)->blksz = 0,     /* blksz	*/  \
+     (f)->getr = 0       /* getr		*/  \
     )
 
 /* expose next stream inside discipline function; state saved in int f */

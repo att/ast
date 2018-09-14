@@ -1092,9 +1092,8 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                 if (env->stack) {
                     if (rex->re.group.number) env->match[rex->re.group.number].rm_so = s - env->beg;
                     if (pospush(env, rex, s, BEG_SUB)) return BAD;
-                    catcher.re.group_catch.eo = rex->re.group.number
-                                                    ? &env->match[rex->re.group.number].rm_eo
-                                                    : NULL;
+                    catcher.re.group_catch.eo =
+                        rex->re.group.number ? &env->match[rex->re.group.number].rm_eo : NULL;
                 }
                 catcher.type = REX_GROUP_CATCH;
                 catcher.serial = rex->serial;

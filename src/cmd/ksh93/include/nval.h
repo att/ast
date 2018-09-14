@@ -108,7 +108,7 @@ struct Namval {
     char *nvname;     // pointer to name of the node
 #if _ast_sizeof_pointer >= 8
     unsigned short nvflag;  // attributes
-    uint32_t nvsize;  // size or base
+    uint32_t nvsize;        // size or base
 #else
     unsigned short nvflag;  // attributes
     unsigned short nvsize;  // size or base

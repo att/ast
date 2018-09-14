@@ -395,7 +395,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                     if (arg->argflag & ARG_APPEND) n = '+';
                     if (trap) {
                         sh_debug(shp, trap, name, NULL, argv,
-                                    (arg->argflag & ARG_APPEND) | ARG_ASSIGN);
+                                 (arg->argflag & ARG_APPEND) | ARG_ASSIGN);
                     }
                     if (traceon) {
                         sh_trace(shp, NULL, 0);
@@ -430,8 +430,8 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                             ap->nelem--;
                         }
                     } else if (nv_isattr(np, NV_BINARY | NV_NOFREE | NV_RAW) !=
-                                    (NV_BINARY | NV_NOFREE | NV_RAW) &&
-                                !nv_isarray(np)) {
+                                   (NV_BINARY | NV_NOFREE | NV_RAW) &&
+                               !nv_isarray(np)) {
                         _nv_unset(np, NV_EXPORT);
                     }
                     goto skip;
@@ -1954,7 +1954,8 @@ static_fn int scanfilter(Dt_t *dict, void *arg, void *data) {
     if (!is_abuiltin(np) && tp && tp->tp && nv_type(np) != tp->tp) return (0);
     if (sp->scanmask == NV_TABLE && nv_isvtree(np)) k = NV_TABLE;
     if (!(sp->scanmask ? (k & sp->scanmask) == sp->scanflags
-                       : (!sp->scanflags || (k & sp->scanflags)))) return 0;
+                       : (!sp->scanflags || (k & sp->scanflags))))
+        return 0;
 
     if (tp && tp->mapname) {
         if (sp->scanflags == NV_FUNCTION || sp->scanflags == (NV_NOFREE | NV_BINARY | NV_RAW)) {
@@ -1964,7 +1965,7 @@ static_fn int scanfilter(Dt_t *dict, void *arg, void *data) {
                 return 0;
             }
         } else if ((sp->scanflags == NV_UTOL || sp->scanflags == NV_LTOU) &&
-                    (cp = (char *)nv_mapchar(np, NULL)) && strcmp(cp, tp->mapname)) {
+                   (cp = (char *)nv_mapchar(np, NULL)) && strcmp(cp, tp->mapname)) {
             return 0;
         }
     }

@@ -271,8 +271,7 @@ again:
                                 fmt.form = endc;
                                 fmt.extf = checkfmt;
                                 sfprintf(sfstdout, "%!", &fmt);
-                                if (!(fmt.flags & (SFFMT_LLONG | SFFMT_LDOUBLE)))
-                                    switch (fmt.fmt) {
+                                if (!(fmt.flags & (SFFMT_LLONG | SFFMT_LDOUBLE))) switch (fmt.fmt) {
                                         case 'c':
                                         case 'd':
                                         case 'i':
@@ -297,7 +296,7 @@ again:
                         }
                     }
                 } else if ((cp[2] == '}' || (cp[2] == '.' && cp[3] == '.')) &&
-                            ((*pat >= 'a' && *pat <= 'z' && cp[1] >= 'a' && cp[1] <= 'z') ||
+                           ((*pat >= 'a' && *pat <= 'z' && cp[1] >= 'a' && cp[1] <= 'z') ||
                             (*pat >= 'A' && *pat <= 'Z' && cp[1] >= 'A' && cp[1] <= 'Z'))) {
                     first = *pat;
                     last = cp[1];

@@ -277,8 +277,7 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
              */
 
             tmp.pid = getpid();
-            tmp.rng = (uintmax_t)tmp.pid * ((uintmax_t)time(NULL) ^
-                                            (((uintptr_t)&attempt) >> 3) ^
+            tmp.rng = (uintmax_t)tmp.pid * ((uintmax_t)time(NULL) ^ (((uintptr_t)&attempt) >> 3) ^
                                             (((uintptr_t)tmp.dir) >> 3));
             if (!tmp.key)
                 tmp.key = (tmp.rng >> (sizeof(tmp.rng) * 4)) |

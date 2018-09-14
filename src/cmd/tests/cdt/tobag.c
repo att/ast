@@ -39,60 +39,45 @@ tmain() {
     /* testing Dtobag */
     dt = dtopen(&Disc, Dtobag);
     x = 5;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     x = 2;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     x = 5;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     for (k = 0, i = (long)dtfirst(dt); i; k = i, i = (long)dtnext(dt, i))
         if (i < k) terror("Disorder %ld >= %ld", k, i);
     x = 3;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     x = 5;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     for (k = 0, i = (long)dtfirst(dt); i; k = i, i = (long)dtnext(dt, i))
         if (i < k) terror("Disorder %ld >= %ld", k, i);
     x = 4;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     x = 1;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     for (k = 0, i = (long)dtfirst(dt); i; k = i, i = (long)dtnext(dt, i))
         if (i < k) terror("Disorder %ld >= %ld", k, i);
     x = 2;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     x = 5;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     x = 4;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     x = 3;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     for (k = 0, i = (long)dtfirst(dt); i; k = i, i = (long)dtnext(dt, i))
         if (i < k) terror("Disorder %ld >= %ld", k, i);
     x = 4;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     x = 5;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     for (k = 0, i = (long)dtfirst(dt); i; k = i, i = (long)dtnext(dt, i))
         if (i < k) terror("Disorder %ld >= %ld", k, i);
     x = 3;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     x = 4;
-    if ((g = (void *)dtinsert(dt, x) - NULL) != x)
-        terror("Insert -- expected %ld, got %ld", x, g);
+    if ((g = (void *)dtinsert(dt, x) - NULL) != x) terror("Insert -- expected %ld, got %ld", x, g);
     for (k = 0, i = (long)dtfirst(dt); i; k = i, i = (long)dtnext(dt, i))
         if (i < k) terror("Disorder %ld >= %ld", k, i);
     for (i = 0; i <= 5; ++i) count[i] = 0;

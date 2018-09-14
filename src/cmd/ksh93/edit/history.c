@@ -286,7 +286,7 @@ retry:
     if (!hp->auditmask) return 1;
 
     if ((fd = sh_open(buff, O_BINARY | O_WRONLY | O_APPEND | O_CREAT | O_CLOEXEC,
-                        S_IRUSR | S_IWUSR)) >= 0 &&
+                      S_IRUSR | S_IWUSR)) >= 0 &&
         fd < 10) {
         int n;
         if ((n = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10)) >= 0) {

@@ -925,7 +925,7 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
             i = '_';
         }
         // FALLTHRU
-        default: {  // look for user defined macro definitions
+        default: {                                  // look for user defined macro definitions
             if (ed_macro(ep->ed, i)) return count;  // pass argument to macro
             beep();
             return -1;

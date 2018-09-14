@@ -314,8 +314,7 @@ extern void *const builtin_disable;
 #define WBITS (sizeof(Shopt_t_data_t) * 8)
 #define WMASK (0xff)
 
-#define is_option(s, x) \
-    (((s)->v[((x)&WMASK) / WBITS] & (1ULL << ((x) % WBITS))) ? true : false)
+#define is_option(s, x) (((s)->v[((x)&WMASK) / WBITS] & (1ULL << ((x) % WBITS))) ? true : false)
 #define on_option(s, x) ((void)((s)->v[((x)&WMASK) / WBITS] |= (1ULL << ((x) % WBITS))))
 #define off_option(s, x) ((void)((s)->v[((x)&WMASK) / WBITS] &= ~(1ULL << ((x) % WBITS))))
 

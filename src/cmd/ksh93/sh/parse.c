@@ -1964,22 +1964,21 @@ int kiaclose(Lex_t *lexp) {
 #ifdef SF_BUFCONST
     if (off2 == off1) {
         n = sfprintf(lexp->kiafile, "DIRECTORY\nENTITY;%lld;%d\nDIRECTORY;",
-                        (Sflong_t)lexp->kiabegin, (size_t)(off1 - lexp->kiabegin));
+                     (Sflong_t)lexp->kiabegin, (size_t)(off1 - lexp->kiabegin));
     } else {
-        n = sfprintf(lexp->kiafile,
-                        "DIRECTORY\nENTITY;%lld;%d\nRELATIONSHIP;%lld;%d\nDIRECTORY;",
-                        (Sflong_t)lexp->kiabegin, (size_t)(off1 - lexp->kiabegin), (Sflong_t)off1,
-                        (size_t)(off2 - off1));
+        n = sfprintf(lexp->kiafile, "DIRECTORY\nENTITY;%lld;%d\nRELATIONSHIP;%lld;%d\nDIRECTORY;",
+                     (Sflong_t)lexp->kiabegin, (size_t)(off1 - lexp->kiabegin), (Sflong_t)off1,
+                     (size_t)(off2 - off1));
     }
     if (off2 >= INT_MAX) off2 = -(n + 12);
     sfprintf(lexp->kiafile, "%010.10lld;%010d\n", (Sflong_t)off2 + 10, n + 12);
 #else
     if (off2 == off1) {
         n = sfprintf(lexp->kiafile, "DIRECTORY\nENTITY;%d;%d\nDIRECTORY;", lexp->kiabegin,
-                        off1 - lexp->kiabegin);
+                     off1 - lexp->kiabegin);
     } else {
         n = sfprintf(lexp->kiafile, "DIRECTORY\nENTITY;%d;%d\nRELATIONSHIP;%d;%d\nDIRECTORY;",
-                        lexp->kiabegin, off1 - lexp->kiabegin, off1, off2 - off1);
+                     lexp->kiabegin, off1 - lexp->kiabegin, off1, off2 - off1);
     }
     sfprintf(lexp->kiafile, "%010d;%010d\n", off2 + 10, n + 12);
 #endif

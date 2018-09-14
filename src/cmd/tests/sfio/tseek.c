@@ -92,8 +92,7 @@ tmain() {
     if (sfseek(f, (Sfoff_t)10, SEEK_CUR | SF_PUBLIC) != (Sfoff_t)20) terror("sfseek failed");
     sfseek(f, (Sfoff_t)0, SEEK_SET);
 
-    if (!(sf = sfnew(NULL, little, sizeof(little), sffileno(f), SF_READ)))
-        terror("sfnew failed");
+    if (!(sf = sfnew(NULL, little, sizeof(little), sffileno(f), SF_READ))) terror("sfnew failed");
     if (sfread(f, buf, 10) != 10) terror("sfread failed2");
     if (sftell(f) != 10) terror("sftell failed2");
 

@@ -176,8 +176,8 @@ struct _sffmt_s {
 #define SF_EVENT 100  // start of user-defined events
 
 /* for stack and disciplines */
-#define SF_POPSTACK (NULL)  /* pop the stream stack		*/
-#define SF_POPDISC (NULL) /* pop the discipline stack	*/
+#define SF_POPSTACK (NULL) /* pop the stream stack		*/
+#define SF_POPDISC (NULL)  /* pop the discipline stack	*/
 
 /* for the notify function and discipline exception */
 #define SF_NEW 0         /* new stream				*/
@@ -375,17 +375,17 @@ extern ssize_t sfmaxr(ssize_t, int);
 #define sfstropen() sfnew(0, 0, -1, -1, SF_READ | SF_WRITE | SF_STRING)
 #define sfstrclose(f) sfclose(f)
 
-#define sfstrseek(f, p, m)                                                                       \
-    ((m) == SEEK_SET                                                                             \
-         ? (((p) < 0 || (p) > (f)->_size) ? NULL : (char *)((f)->_next = (f)->_data + (p))) \
-         : (m) == SEEK_CUR                                                                       \
-               ? ((f)->_next += (p),                                                             \
-                  (((f)->_next < (f)->_data || (f)->_next > (f)->_data + (f)->_size)             \
-                       ? ((f)->_next -= (p), NULL)                                          \
-                       : (char *)(f)->_next))                                                    \
-               : (m) == SEEK_END ? (((p) > 0 || (f)->_size < -(p))                               \
-                                        ? NULL                                              \
-                                        : (char *)((f)->_next = (f)->_data + (f)->_size + (p)))  \
+#define sfstrseek(f, p, m)                                                                      \
+    ((m) == SEEK_SET                                                                            \
+         ? (((p) < 0 || (p) > (f)->_size) ? NULL : (char *)((f)->_next = (f)->_data + (p)))     \
+         : (m) == SEEK_CUR                                                                      \
+               ? ((f)->_next += (p),                                                            \
+                  (((f)->_next < (f)->_data || (f)->_next > (f)->_data + (f)->_size)            \
+                       ? ((f)->_next -= (p), NULL)                                              \
+                       : (char *)(f)->_next))                                                   \
+               : (m) == SEEK_END ? (((p) > 0 || (f)->_size < -(p))                              \
+                                        ? NULL                                                  \
+                                        : (char *)((f)->_next = (f)->_data + (f)->_size + (p))) \
                                  : NULL)
 
 #define sfstrsize(f) ((f)->_size)

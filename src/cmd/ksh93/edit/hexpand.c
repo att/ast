@@ -53,7 +53,7 @@ static int mod_flags[] = {0, 0, 0, 0, HIST_PRINT, HIST_QUOTE, HIST_QUOTE | HIST_
     flag |= HIST_ERROR;   \
     cp = NULL;            \
     stkseek(shp->stk, 0); \
-    goto done             \
+    goto done
 
 struct subst {
     char *str[2];  // [0] is "old", [1] is "new" string
