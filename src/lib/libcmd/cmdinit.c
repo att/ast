@@ -29,7 +29,7 @@
 #include "option.h"
 #include "shcmd.h"
 
-int cmdinit(int argc, char **argv, Shbltin_t *context, const char *catalog, int flags) {
+int cmdinit(int argc, char **argv, Shbltin_t *context, int flags) {
     char *cp;
 
     if (argc <= 0) return -1;
@@ -47,7 +47,6 @@ int cmdinit(int argc, char **argv, Shbltin_t *context, const char *catalog, int 
         cp = argv[0];
     }
     error_info.id = cp;
-    if (!error_info.catalog) error_info.catalog = catalog;
     opt_info.index = 0;
     return 0;
 }

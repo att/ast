@@ -158,7 +158,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
     struct utsname ut;
     char buf[257];
 
-    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
+    if (cmdinit(argc, argv, context, 0)) return -1;
     for (;;) {
         switch (optget(argv, usage)) {
             case 'a':

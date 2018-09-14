@@ -519,7 +519,7 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
     Delim_t ldelim = {NULL, 0, 0};
     size_t reclen = 0;
 
-    if (cmdinit(argc, argv, context, ERROR_CATALOG, 0)) return -1;
+    if (cmdinit(argc, argv, context, 0)) return -1;
     wdelim.chr = '\t';
     ldelim.chr = '\n';
     wdelim.len = ldelim.len = 1;

@@ -6,7 +6,6 @@ libcmd_files += [ 'basename.c', 'chmod.c', 'dirname.c', 'head.c', 'getconf.c', '
 
 libcmd_c_args = shared_c_args + [
     '-DUSAGE_LICENSE=""',
-    '-DERROR_CATALOG=0',
 ]
 
 incdir = include_directories('../libast/include')
