@@ -468,14 +468,23 @@ static_fn int cntlmode(Vi_t *vp) {
             case 'j':  // get next command
             case '+': {
                 if (vp->ed->hlist) {
-                    if (vp->ed->hoff >= vp->ed->hmax) goto ringbell;
+                    if (vp->ed->hoff >= vp->ed->hmax) {
+                        ed_ringbell();
+                        vp->repeat = 1;
+                        continue;
+                    }
                     vp->ed->hoff++;
-                    goto hupdate;
+                    ed_histlist(vp->ed, *vp->ed->hlist != 0);
+                    vp->nonewline++;
+                    ed_ungetchar(vp->ed, cntl('L'));
+                    continue;
                 }
                 curhline += vp->repeat;
                 if (curhline > histmax) {
                     curhline = histmax;
-                    goto ringbell;
+                    ed_ringbell();
+                    vp->repeat = 1;
+                    continue;
                 } else if (curhline == histmax && tmp_u_column != INVALID) {
                     vp->u_space = tmp_u_space;
                     vp->u_column = tmp_u_column;
@@ -490,9 +499,12 @@ static_fn int cntlmode(Vi_t *vp) {
             case 'k':  // get previous command
             case '-': {
                 if (vp->ed->hlist) {
-                    if (vp->ed->hoff == 0) goto ringbell;
+                    if (vp->ed->hoff == 0) {
+                        ed_ringbell();
+                        vp->repeat = 1;
+                        continue;
+                    }
                     vp->ed->hoff--;
-                hupdate:
                     ed_histlist(vp->ed, *vp->ed->hlist != 0);
                     vp->nonewline++;
                     ed_ungetchar(vp->ed, cntl('L'));
@@ -510,7 +522,9 @@ static_fn int cntlmode(Vi_t *vp) {
                 curhline -= vp->repeat;
                 if (curhline <= histmin) {
                     curhline += vp->repeat;
-                    goto ringbell;
+                    ed_ringbell();
+                    vp->repeat = 1;
+                    continue;
                 }
                 save_v(vp);
                 cur_virt = INVALID;
@@ -538,33 +552,38 @@ static_fn int cntlmode(Vi_t *vp) {
             }
             case 'U': {  // undo everything
                 save_v(vp);
-                if (virtual[0] == '\0')
-                    goto ringbell;
-                else {
+                if (virtual[0] == '\0') {
+                    ed_ringbell();
+                    vp->repeat = 1;
+                    continue;
+                } else {
                     gencpy(virtual, vp->U_space);
                     last_virt = genlen(vp->U_space) - 1;
                     cur_virt = 0;
                 }
                 break;
             }
-            case 'v': {
-                if (vp->repeat_set == 0) goto vcommand;
-            }
-            // FALLTHRU
-            case 'G': {  // goto command repeat
-                if (vp->repeat_set == 0) vp->repeat = histmin + 1;
-                if (vp->repeat <= histmin || vp->repeat > histmax) {
-                    goto ringbell;
+            case 'v':    // run command `hist -e ${VISUAL:-${EDITOR:-vi}}`
+            case 'G': {  // fetch command from hist
+                if (c == 'G' || vp->repeat_set != 0) {
+                    if (vp->repeat_set == 0) vp->repeat = histmin + 1;
+                    if (vp->repeat <= histmin || vp->repeat > histmax) {
+                        ed_ringbell();
+                        vp->repeat = 1;
+                        continue;
+                    }
+                    curhline = vp->repeat;
+                    save_v(vp);
+                    if (c == 'G') {
+                        cur_virt = INVALID;
+                        goto newhist;
+                    }
                 }
-                curhline = vp->repeat;
-                save_v(vp);
-                if (c == 'G') {
-                    cur_virt = INVALID;
-                    goto newhist;
-                }
-            vcommand:
-                if (ed_fulledit(vp->ed) == GOOD) return (BIGVI);
-                goto ringbell;
+
+                if (ed_fulledit(vp->ed) == GOOD) return BIGVI;
+                ed_ringbell();
+                vp->repeat = 1;
+                continue;
             }
             // FALLTHRU
             case '#': {  // insert(delete) # to (no)comment command
@@ -596,16 +615,22 @@ static_fn int cntlmode(Vi_t *vp) {
             }
             // FALLTHRU
             case '\n': {  // send to shell
-                if (!vp->ed->hlist) return (ENTER);
+                if (!vp->ed->hlist) return ENTER;
             }
             // FALLTHRU
             case '\t': {  // bring choice to edit
                 if (vp->ed->hlist) {
-                    if (vp->repeat > vp->ed->nhlist - vp->ed->hoff) goto ringbell;
+                    if (vp->repeat > vp->ed->nhlist - vp->ed->hoff) {
+                        ed_ringbell();
+                        vp->repeat = 1;
+                        continue;
+                    }
                     curhline = vp->ed->hlist[vp->repeat + vp->ed->hoff - 1]->index;
                     goto newhist;
                 }
-                goto ringbell;
+                ed_ringbell();
+                vp->repeat = 1;
+                continue;
             }
             case ESC: {  // don't ring bell if next char is '['
                 if (!lookahead) {
@@ -619,10 +644,11 @@ static_fn int cntlmode(Vi_t *vp) {
                         continue;
                     }
                 }
+                ed_ringbell();
+                vp->repeat = 1;
+                continue;
             }
-            // FALLTHRU
             default: {
-            ringbell:
                 ed_ringbell();
                 vp->repeat = 1;
                 continue;
@@ -725,7 +751,7 @@ static_fn void del_line(Vi_t *vp, int mode) {
 static_fn int delmotion(Vi_t *vp, int motion, int mode) {
     int begin, end, delta;
 
-    if (cur_virt == INVALID) return (0);
+    if (cur_virt == INVALID) return 0;
     if (mode != 'y') save_v(vp);
     begin = cur_virt;
 
@@ -1075,14 +1101,23 @@ static_fn int mvcursor(Vi_t *vp, int motion) {
                     ed_ungetchar(vp->ed, 'j');
                     return 1;
                 }
-                case 'C': {
-                    motion = last_virt;
-                    incr = 1;
-                    goto walk;
-                }
+                case 'C':
                 case 'D': {
-                    motion = first_virt;
-                    goto walk;
+                    if (motion == 'C') {
+                        motion = last_virt;
+                        incr = 1;
+                    } else {  // motion == 'D'
+                        motion = first_virt;
+                    }
+
+                    tcur_virt = cur_virt;
+                    if (incr * tcur_virt < motion) {
+                        tcur_virt += vp->repeat * incr;
+                        if (incr * tcur_virt > motion) tcur_virt = motion;
+                    } else {
+                        return 0;
+                    }
+                    break;
                 }
                 case 'H': {
                     tcur_virt = 0;
@@ -1099,16 +1134,17 @@ static_fn int mvcursor(Vi_t *vp, int motion) {
             }
             break;
         }
-        case 'h':  // left one
-        case '\b': {
-            motion = first_virt;
-            goto walk;
-        }
-        case ' ':  // right one
-        case 'l': {
-            motion = last_virt;
-            incr = 1;
-        walk:
+        case 'h':    // left one
+        case '\b':   // left one
+        case ' ':    // right one
+        case 'l': {  // right one
+            if (motion == 'h' || motion == '\b') {
+                motion = first_virt;
+            } else {
+                motion = last_virt;
+                incr = 1;
+            }
+
             tcur_virt = cur_virt;
             if (incr * tcur_virt < motion) {
                 tcur_virt += vp->repeat * incr;
@@ -1163,7 +1199,7 @@ static_fn int mvcursor(Vi_t *vp, int motion) {
         case 'T':    // find up to new char backward
         case 'F': {  // find new char backward
             vp->last_find = motion;
-            if ((vp->findchar = getrchar(vp)) == ESC) return (1);
+            if ((vp->findchar = getrchar(vp)) == ESC) return 1;
         find_b:
             tcur_virt = cur_virt;
             count = vp->repeat;
@@ -1208,7 +1244,7 @@ static_fn int mvcursor(Vi_t *vp, int motion) {
         case 'w': {
             tcur_virt = cur_virt;
             forward(vp, vp->repeat, motion);
-            if (tcur_virt == cur_virt) return (0);
+            if (tcur_virt == cur_virt) return 0;
             return 1;
         }
         default: { return 0; }
@@ -1514,7 +1550,7 @@ static_fn int curline_search(Vi_t *vp, const char *string) {
 
     ed_external(vp->u_space, (char *)vp->u_space);
     for (dp = (char *)vp->u_space, dpmax = dp + strlen(dp) - len; dp <= dpmax; dp++) {
-        if (*dp == *cp && strncmp(cp, dp, len) == 0) return (dp - (char *)vp->u_space);
+        if (*dp == *cp && strncmp(cp, dp, len) == 0) return dp - (char *)vp->u_space;
     }
     ed_internal((char *)vp->u_space, vp->u_space);
     return -1;
@@ -1656,7 +1692,7 @@ static_fn int textmod(Vi_t *vp, int c, int mode) {
 addin:
     switch (c) {  // input commands
         case '\t': {
-            if (vp->ed->e_tabcount != 1) return (BAD);
+            if (vp->ed->e_tabcount != 1) return BAD;
             c = '=';
         }
         // FALLTHRU
@@ -1767,17 +1803,21 @@ addin:
             }
             return INSERT;
         }
-        case 'C': {  // change to eol
-            c = '$';
-            goto chgeol;
-        }
+        case 'S':    // substitute line - cc
+        case 'C':    // change to eol
         case 'c': {  // change
-            if (mode) {
-                c = vp->lastmotion;
-            } else {
-                c = getcount(vp, ed_getchar(vp->ed, -1));
+            if (c == 'S') {
+                c = 'c';
+            } else if (c == 'C') {
+                c = '$';
+            } else {  // c == 'c'
+                if (mode) {
+                    c = vp->lastmotion;
+                } else {
+                    c = getcount(vp, ed_getchar(vp->ed, -1));
+                }
             }
-        chgeol:
+
             vp->lastmotion = c;
             if (c == 'c') {
                 del_line(vp, GOOD);
@@ -1793,23 +1833,30 @@ addin:
             first_virt = cur_virt + 1;
             return APPEND;
         }
-        case 'D': {  // delete to eol
-            c = '$';
-            goto deleol;
-        }
-        case 'd': {  // delete
-            if (mode) {
-                c = vp->lastmotion;
-            } else {
-                c = getcount(vp, ed_getchar(vp->ed, -1));
+        case 'D':    // delete to eol
+        case 'd':    // delete
+        case 'X':    // delete repeat chars backward - dh
+        case 'x': {  // delete repeat chars forward - dl
+            if (c == 'D') {
+                c = '$';
+            } else if (c == 'd') {
+                if (mode) {
+                    c = vp->lastmotion;
+                } else {
+                    c = getcount(vp, ed_getchar(vp->ed, -1));
+                }
+            } else if (c == 'X') {
+                c = 'h';
+            } else {  // c == 'x'
+                c = 'l';
             }
-        deleol:
+
             vp->lastmotion = c;
             if (c == 'd') {
                 del_line(vp, GOOD);
                 break;
             }
-            if (!delmotion(vp, c, 'd')) return (BAD);
+            if (!delmotion(vp, c, 'd')) return BAD;
             if (cur_virt < last_virt) ++cur_virt;
             break;
         }
@@ -1863,10 +1910,6 @@ addin:
             while (trepeat--) replace(vp, c, trepeat != 0);
             return GOOD;
         }
-        case 'S': {  // substitute line - cc
-            c = 'c';
-            goto chgeol;
-        }
         case 's': {  // substitute
             save_v(vp);
             cdelete(vp, vp->repeat, BAD);
@@ -1878,17 +1921,18 @@ addin:
             first_virt = cur_virt + 1;
             return APPEND;
         }
-        case 'Y': {  // yank to end of line
-            c = '$';
-            goto yankeol;
-        }
+        case 'Y':    // yank to end of line
         case 'y': {  // yank thru motion
-            if (mode) {
-                c = vp->lastmotion;
-            } else {
-                c = getcount(vp, ed_getchar(vp->ed, -1));
+            if (c == 'Y') {
+                c = '$';
+            } else {  // c == 'y'
+                if (mode) {
+                    c = vp->lastmotion;
+                } else {
+                    c = getcount(vp, ed_getchar(vp->ed, -1));
+                }
             }
-        yankeol:
+
             vp->lastmotion = c;
             if (c == 'y') {
                 gencpy(yankbuf, virtual);
@@ -1896,14 +1940,6 @@ addin:
                 return BAD;
             }
             break;
-        }
-        case 'x': {  // delete repeat chars forward - dl
-            c = 'l';
-            goto deleol;
-        }
-        case 'X': {  // delete repeat chars backward - dh
-            c = 'h';
-            goto deleol;
         }
         case '~': {  // invert case and advance
             if (cur_virt == INVALID) return BAD;
