@@ -1,10 +1,6 @@
 build_dir = meson.build_root()
 
 ksh93_files = []
-# We use same set of files as ksh93 to compile shcomp, we should check if it
-# can be modularized.
-shcomp_files = []
-
 ksh93_incdir = include_directories('include',
                                    '../../lib/libast/include/',
                                    '../../lib/libcmd/',
@@ -25,15 +21,21 @@ shared_c_args += [
     '-DAUDIT_FILE=' + '"@0@"'.format(get_option('audit-file'))
 ]
 
-ksh93_exe = executable('ksh', ksh93_files, c_args: shared_c_args,
+libksh = library('ksh', ksh93_files,
+                 include_directories: [configuration_incdir, ksh93_incdir],
+                 c_args: shared_c_args,
+                 dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
+                 install: false)
+
+ksh93_exe = executable('ksh', ['sh/pmain.c'], c_args: shared_c_args,
     include_directories: [configuration_incdir, ksh93_incdir],
-    link_with: [libast, libcmd, libcoshell, libdll],
+    link_with: [libksh, libast, libcmd, libcoshell, libdll],
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
     install: true)
 
-shcomp_exe = executable('shcomp', shcomp_files, c_args: shared_c_args,
+shcomp_exe = executable('shcomp', ['sh/shcomp.c'], c_args: shared_c_args,
     include_directories: [configuration_incdir, ksh93_incdir],
-    link_with: [ libast, libcmd, libcoshell, libdll],
+    link_with: [libksh, libast, libcmd, libcoshell, libdll],
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
     install: true)
 

@@ -4,4 +4,3 @@ vcs_version = vcs_tag(command: ['git', 'describe', '--always', '--dirty', '--tag
 # Yes, vcs_version is a header rather than a .c file but we have to define a dependency to force it
 # to ge generated.
 ksh93_files += [vcs_version]
-shcomp_files += [vcs_version]
