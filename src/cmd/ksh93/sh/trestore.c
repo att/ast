@@ -39,13 +39,13 @@
 #include "stak.h"
 #include "stk.h"
 
-static struct dolnod *r_comlist(Shell_t *);
-static struct argnod *r_arg(Shell_t *);
-static struct ionod *r_redirect(Shell_t *);
-static struct regnod *r_switch(Shell_t *);
-static Shnode_t *r_tree(Shell_t *);
-static char *r_string(Stk_t *);
-static void r_comarg(Shell_t *, struct comnod *);
+static_fn struct dolnod *r_comlist(Shell_t *);
+static_fn struct argnod *r_arg(Shell_t *);
+static_fn struct ionod *r_redirect(Shell_t *);
+static_fn struct regnod *r_switch(Shell_t *);
+static_fn Shnode_t *r_tree(Shell_t *);
+static_fn char *r_string(Stk_t *);
+static_fn void r_comarg(Shell_t *, struct comnod *);
 
 static Sfio_t *infile;
 
@@ -61,7 +61,7 @@ Shnode_t *sh_trestore(Shell_t *shp, Sfio_t *in) {
 //
 // Read in a shell tree.
 //
-static Shnode_t *r_tree(Shell_t *shp) {
+static_fn Shnode_t *r_tree(Shell_t *shp) {
     long l = sfgetl(infile);
     int type;
     Shnode_t *t = NULL;
@@ -186,7 +186,7 @@ static Shnode_t *r_tree(Shell_t *shp) {
     return t;
 }
 
-static struct argnod *r_arg(Shell_t *shp) {
+static_fn struct argnod *r_arg(Shell_t *shp) {
     struct argnod *ap = 0, *apold, *aptop = 0;
     long l;
     Stk_t *stkp = shp->stk;
@@ -238,7 +238,7 @@ static struct argnod *r_arg(Shell_t *shp) {
     return aptop;
 }
 
-static struct ionod *r_redirect(Shell_t *shp) {
+static_fn struct ionod *r_redirect(Shell_t *shp) {
     long l;
     struct ionod *iop = 0, *iopold, *ioptop = 0;
 
@@ -274,7 +274,7 @@ static struct ionod *r_redirect(Shell_t *shp) {
     return ioptop;
 }
 
-static void r_comarg(Shell_t *shp, struct comnod *com) {
+static_fn void r_comarg(Shell_t *shp, struct comnod *com) {
     char *cmdname = NULL;
 
     com->comio = r_redirect(shp);
@@ -302,7 +302,7 @@ static void r_comarg(Shell_t *shp, struct comnod *com) {
     }
 }
 
-static struct dolnod *r_comlist(Shell_t *shp) {
+static_fn struct dolnod *r_comlist(Shell_t *shp) {
     struct dolnod *dol = 0;
     long l;
     char **argv;
@@ -322,7 +322,7 @@ static struct dolnod *r_comlist(Shell_t *shp) {
     return dol;
 }
 
-static struct regnod *r_switch(Shell_t *shp) {
+static_fn struct regnod *r_switch(Shell_t *shp) {
     long l;
     struct regnod *reg = 0, *regold, *regtop = 0;
 
@@ -342,7 +342,7 @@ static struct regnod *r_switch(Shell_t *shp) {
     return regtop;
 }
 
-static char *r_string(Stk_t *stkp) {
+static_fn char *r_string(Stk_t *stkp) {
     Sfio_t *in = infile;
     unsigned long l = sfgetu(in);
     char *ptr;
