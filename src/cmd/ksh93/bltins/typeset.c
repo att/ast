@@ -709,15 +709,14 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             }
             if (!nv_isarray(np) && !strchr(name, '=') &&
                 !(shp->envlist && nv_onlist(shp->envlist, name))) {
-                if (comvar ||
-                    (shp->last_root == shp->var_tree &&
-                     ((tp->tp && tp->tp != nv_type(np)) ||
-                      (!shp->st.real_fun && (nvflags & NV_STATIC)) ||
-                      (!(flag & (NV_EXPORT | NV_RDONLY)) &&
-                       nv_isattr(np, (NV_EXPORT | NV_IMPORT)) == (NV_EXPORT | NV_IMPORT))))) {
-                    {
-                        if ((flag & (NV_HOST | NV_INTEGER)) != NV_HOST) _nv_unset(np, NV_EXPORT);
-                    }
+                bool export_import =
+                    nv_isattr(np, (NV_EXPORT | NV_IMPORT)) == (NV_EXPORT | NV_IMPORT);
+                if (comvar || (shp->last_root == shp->var_tree &&
+                               ((tp->tp && tp->tp != nv_type(np)) ||
+                                (!shp->st.real_fun && (nvflags & NV_STATIC)) ||
+                                (!(flag & (NV_EXPORT | NV_RDONLY)) && export_import)))) {
+                    bool nv_int_set = (flag & (NV_HOST | NV_INTEGER)) != NV_HOST;
+                    if (nv_int_set) _nv_unset(np, NV_EXPORT);
                 }
             }
             if (troot == shp->var_tree) {
@@ -833,7 +832,8 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                 if (tp->aflag == '-') {
                     Dt_t *hp = 0;
                     if (nv_isattr(np, NV_PARAM) && shp->st.prevst) {
-                        if (!(hp = (Dt_t *)shp->st.prevst->save_tree)) hp = dtvnext(shp->var_tree);
+                        hp = (Dt_t *)shp->st.prevst->save_tree;
+                        if (!hp) hp = dtvnext(shp->var_tree);
                     }
                     if (tp->sh->mktype) {
                         nv_onattr(np, NV_REF | NV_FUNCT);
