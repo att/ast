@@ -297,7 +297,8 @@ static_fn char *path_lib(Shell_t *shp, Pathcomp_t *pp, char *path) {
         }
     }
 
-    Pathcomp_t pcomp = {0};
+    Pathcomp_t pcomp;
+    memset(&pcomp, 0, sizeof(pcomp));
     if (last) pcomp.len = last - path;
 
     char save[8];
@@ -423,7 +424,8 @@ Pathcomp_t *path_get(Shell_t *shp, const char *name) {
         pp = (Pathcomp_t *)shp->pathlist;
     }
     if ((!pp && !(sh_scoped(shp, PATHNOD)->nvalue.cp)) || sh_isstate(shp, SH_DEFPATH)) {
-        if (!(pp = (Pathcomp_t *)shp->defpathlist)) pp = defpath_init(shp);
+        pp = (Pathcomp_t *)shp->defpathlist;
+        if (!pp) pp = defpath_init(shp);
     }
     return pp;
 }
@@ -437,29 +439,23 @@ static_fn int path_opentype(Shell_t *shp, const char *name, Pathcomp_t *pp, int 
     Pathcomp_t *oldpp;
 
     if (!pp && !shp->pathlist) path_init(shp);
-    if (!fun && strchr(name, '/')) {
-        if (sh_isoption(shp, SH_RESTRICTED)) {
-            errormsg(SH_DICT, ERROR_exit(1), e_restricted, name);
-            __builtin_unreachable();
-        }
+    if (!fun && strchr(name, '/') && sh_isoption(shp, SH_RESTRICTED)) {
+        errormsg(SH_DICT, ERROR_exit(1), e_restricted, name);
+        __builtin_unreachable();
     }
     do {
         pp = path_nextcomp(shp, oldpp = pp, name, 0);
         while (oldpp && (oldpp->flags & PATH_SKIP)) oldpp = oldpp->next;
         if (fun && (!oldpp || !(oldpp->flags & PATH_FPATH))) continue;
-        if ((fd = sh_open(path_relative(shp, stkptr(shp->stk, PATH_OFFSET)), O_RDONLY | O_CLOEXEC,
-                          0)) >= 0) {
-            if (fstat(fd, &statb) < 0 || S_ISDIR(statb.st_mode)) {
-                errno = EISDIR;
-                sh_close(fd);
-                fd = -1;
-            }
+        fd = sh_open(path_relative(shp, stkptr(shp->stk, PATH_OFFSET)), O_RDONLY | O_CLOEXEC, 0);
+        if (fd >= 0 && (fstat(fd, &statb) < 0 || S_ISDIR(statb.st_mode))) {
+            errno = EISDIR;
+            sh_close(fd);
+            fd = -1;
         }
     } while (fd < 0 && pp);
 
-    if (fd >= 0) {
-        if (!sh_iovalidfd(shp, fd)) abort();
-    }
+    assert(fd < 0 || sh_iovalidfd(shp, fd));
 
     if (fd >= 0 && (fd = sh_iomovefd(shp, fd)) > 0) {
         (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
