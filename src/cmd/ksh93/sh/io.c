@@ -392,9 +392,7 @@ static_fn void io_preserve(Shell_t *shp, Sfio_t *sp, int f2) {
         errormsg(SH_DICT, ERROR_system(1), e_toomany);
         __builtin_unreachable();
     }
-    if (f2 >= shp->gd->lim.open_max) {
-        if (!sh_iovalidfd(shp, f2)) abort();
-    }
+    if (f2 >= shp->gd->lim.open_max && !sh_iovalidfd(shp, f2)) abort();
     shp->fdptrs[fd] = shp->fdptrs[f2];
     if (shp->fdptrs[fd]) {
         if (f2 == job.fd) job.fd = fd;
@@ -664,9 +662,7 @@ ok:
     } else {
         mode = IOREAD;
     }
-    if (fd >= shp->gd->lim.open_max) {
-        if (!sh_iovalidfd(shp, fd)) abort();
-    }
+    if (fd >= shp->gd->lim.open_max && !sh_iovalidfd(shp, fd)) abort();
     if ((sp = shp->sftable[fd]) && (sfset(sp, 0, 0) & SF_STRING)) {
         int n, err = errno;
         if ((n = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10)) >= 10) {
@@ -859,7 +855,8 @@ static_fn int io_patseek(Shell_t *shp, regex_t *rp, Sfio_t *sp, int flags) {
         if (r < 0) {
             m = match - cp;
         } else if (r == 2) {
-            if ((m = pat_line(rp, cp, m)) < n) r = -1;
+            m = pat_line(rp, cp, m);
+            if (m < n) r = -1;
         }
         if (m && (flags & IOCOPY)) sfwrite(sfstdout, cp, m);
         sfread(sp, cp, m);
@@ -2599,9 +2596,7 @@ int sh_fcntl(int fd, int op, ...) {
         case F_DUPFD:
         case F_DUPFD_CLOEXEC: {
             if (shp->fdstatus[fd] == IOCLOSE) shp->fdstatus[fd] = 0;
-            if (newfd >= shp->gd->lim.open_max) {
-                if (!sh_iovalidfd(shp, newfd)) abort();
-            }
+            if (newfd >= shp->gd->lim.open_max && !sh_iovalidfd(shp, newfd)) abort();
             if (op == F_DUPFD) {
                 shp->fdstatus[newfd] = (shp->fdstatus[fd] & ~IOCLEX);
             } else {
