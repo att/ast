@@ -564,7 +564,8 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
     char *ep, *xp;
     Namval_t *mp;
     Namarr_t *ap = nv_arrayptr(np);
-    int scan, tabs = 0, c, more, associative = 0;
+    int scan, tabs = 0, c, more;
+    bool associative = false;
     int saveI = Indent, dot = -1;
     bool json = (special & NV_JSON);
     bool json_last = (special & NV_JSON_LAST);
@@ -580,9 +581,8 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
             sfputc(out, '\n');
             tabs = 1;
         }
-        if (!(associative = (array_assoc(ap) != 0))) {
-            if (array_elem(ap) < nv_aimax(np) + 1) associative = 1;
-        }
+        associative = (array_assoc(ap) != 0);
+        if (!associative && array_elem(ap) < nv_aimax(np) + 1) associative = true;
     }
     mp = nv_opensub(np);
     while (1) {
