@@ -349,9 +349,7 @@ static char *r_string(Stk_t *stkp) {
 
     if (l == 0) return NULL;
     ptr = stkalloc(stkp, (unsigned)l);
-    if (--l > 0) {
-        if (sfread(in, ptr, (size_t)l) != (size_t)l) return (NULL);
-    }
+    if (--l > 0 && sfread(in, ptr, (size_t)l) != (size_t)l) return NULL;
     ptr[l] = 0;
     return ptr;
 }
