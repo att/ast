@@ -103,6 +103,14 @@ disable-rules:
     #
     - TooFewBranchesInSwitchStatement
     #
+    # The structure of the code means that it is often clearer to nest `if()`
+    # statements even though they could be written as a single `if()`. I've
+    # simplified all the instances where no clarity is lost by combining them.
+    # Those instances that remain would be made harder to read and reason
+    # about if they were combined. Eliminating these instances requires
+    # refactoring that is hard to justify. So disable this warning.
+    - CollapsibleIfStatements
+    #
     # TODO: Enable These in the future after simpler or more serious issues
     # have been addressed. At this time these warnings just make it hard to
     # see the issues that are easier or more urgent to resolve. So disable them.
