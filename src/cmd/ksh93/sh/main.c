@@ -99,12 +99,6 @@ bool sh_source(Shell_t *shp, Sfio_t *iop, const char *file) {
     return true;
 }
 
-#ifdef S_ISSOCK
-#define REMOTE(m) (S_ISSOCK(m) || !(m))
-#else
-#define REMOTE(m) !(m)
-#endif
-
 int sh_main(int ac, char *av[], Shinit_f userinit) {
     int fdin = 0;
     char *name;
