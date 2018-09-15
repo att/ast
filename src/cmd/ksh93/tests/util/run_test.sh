@@ -63,6 +63,9 @@ export BUILD_DIR=$PWD
 # Create a temp dir and make it the CWD for the unit test. It will be removed by the unit test
 # postscript if there are no test failures.
 #
+# NOTE: We deliberately includle a space char in the pathname to help ensure we don't introduce
+# tests that break when that is true. See issue #166 and #158.
+#
 # The use of `mktemp -dt` isn't ideal as it has slightly different meaning on BSD and GNU. But for
 # our purposes that doesn't matter. It simply means the temp file name will contain the X's on a BSD
 # system.
@@ -81,7 +84,7 @@ log_info "TEST_DIR=$TEST_DIR"
 # See issue #429.
 #
 export ORIG_PATH=$PATH
-export SAFE_PATH=$TEST_DIR:$TEST_SRC_DIR:$BUILD_DIR/src/cmd/builtin
+export SAFE_PATH="$TEST_DIR:$TEST_DIR/space dir:$TEST_SRC_DIR:$BUILD_DIR/src/cmd/builtin"
 export FULL_PATH=$SAFE_PATH:$ORIG_PATH
 export PATH=$FULL_PATH
 
@@ -97,6 +100,7 @@ mkfifo fifo8
 # We don't want the tests to modify the command history and the like of the user running the tests.
 #
 mkdir $TEST_DIR/home
+mkdir "$TEST_DIR/home/space dir"
 export HOME=$TEST_DIR/home
 export HISTFILE=$TEST_DIR/sh_history
 

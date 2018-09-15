@@ -37,9 +37,9 @@ builtin getconf
 ABSHELL=$(abspath)
 print exit 0 >.profile
 ${ABSHELL}  <<!
-HOME=$PWD \
-PATH=$PATH \
-SHELL=$ABSSHELL \
+HOME='$PWD' \
+PATH='$PATH' \
+SHELL='$ABSSHELL' \
 $(
     v=$(getconf LIBPATH)
     for v in ${v//,/ }
