@@ -35,6 +35,7 @@ do
     case "${1}" in
         --all | all )
             all=yes
+            enable_global_analysis='-enable-global-analysis'
             ;;
         * )
             break
