@@ -26,6 +26,7 @@
 
 #include "defs.h"
 
+#include "ast_assert.h"
 #include "cdt.h"
 #include "error.h"
 #include "fault.h"
@@ -177,10 +178,13 @@ static_fn void put_enum(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
 }
 
 static_fn char *get_enum(Namval_t *np, Namfun_t *fp) {
+    if (nv_isattr(np, NV_NOTSET) == NV_NOTSET) return "";
+
     static char buff[6];
     struct Enum *ep = (struct Enum *)fp;
     long n = nv_getn(np, fp);
-    if (nv_isattr(np, NV_NOTSET) == NV_NOTSET) return "";
+
+    assert(n >= 0);
     if (n < ep->nelem) return (char *)ep->values[n];
     sfsprintf(buff, sizeof(buff), "%u%c", n, 0);
     return buff;
