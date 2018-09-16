@@ -80,7 +80,7 @@ all_tests = [
     # parallel.
     ['special-dev-paths'],
     # These are interactive tests to be run via the `expect` utility.
-    ['emacs.exp'], ['jobs.exp'], ['read.exp'], ['vi.exp'],
+    ['emacs.exp'], ['hist.exp'], ['jobs.exp'], ['read.exp'], ['vi.exp'],
 ]
 
 # This is a list of the tests that must be run in isolation; i.e., not in parallel with other tests.

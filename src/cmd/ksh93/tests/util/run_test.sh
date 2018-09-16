@@ -118,6 +118,11 @@ function run_interactive {
 
     cp $TEST_SRC_DIR/util/interactive.kshrc $HOME/.kshrc
 
+    # Use pre-populated history file for history related tests
+    if [[ $test_name == "hist.exp" ]]; then
+        cp $TEST_SRC_DIR/util/sh_history $HISTFILE
+    fi
+
     export TERM=dumb
     expect -n -c "source $TEST_SRC_DIR/util/interactive.expect.rc" -f $test_path \
         >$test_name.out 2>$test_name.err
