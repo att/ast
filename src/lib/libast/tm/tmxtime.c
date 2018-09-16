@@ -58,7 +58,7 @@ Time_t tmxtime(Tm_t *tm, int west) {
     ts = *tm;
     to = tm;
     tm = &ts;
-    tmset(tm_info.zone);
+    tminit(tm_info.zone);
     tmfix(tm);
     y = tm->tm_year;
     if (y < 69 || y > (TMX_MAXYEAR - 1900)) return TMX_NOTIME;

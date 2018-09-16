@@ -52,7 +52,7 @@ Tm_t *tmxtm(Tm_t *tm, Time_t t, Tm_zone_t *zone) {
     uint32_t i;
 #endif
 
-    tmset(tm_info.zone);
+    tminit(tm_info.zone);
     leapsec = 0;
     if ((tm_info.flags & (TM_ADJUST | TM_LEAP)) == (TM_ADJUST | TM_LEAP) && (n = tmxsec(t))) {
         for (lp = &tm_data.leap[0]; n < lp->time; lp++)

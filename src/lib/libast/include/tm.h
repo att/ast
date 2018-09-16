@@ -35,7 +35,6 @@
 
 #undef daylight
 
-#define tmset(z) tminit(z)
 #define tmisleapyear(y) \
     (!((y) % 4) && (((y) % 100) || !((((y) < 1900) ? ((y) + 1900) : (y)) % 400)))
 
