@@ -1711,7 +1711,7 @@ static_fn ssize_t tee_write(Sfio_t *iop, const void *buff, size_t n, Sfdisc_t *u
 void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
     int savefd;
     Sfio_t *sp;
-    int fd, flag = (oldtop & (IOSUBSHELL | IOPICKFD));
+    int flag = (oldtop & (IOSUBSHELL | IOPICKFD));
     int savestr = 0;
 
     oldtop &= ~(IOSUBSHELL | IOPICKFD);
@@ -1753,18 +1753,19 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
             __builtin_unreachable();
         }
         if (savefd < 0 && (sp = shp->sftable[origfd]) && (sfset(sp, 0, 0) & SF_STRING)) {
-            const char *devnull = "/dev/null";
             savestr = 1;
-            fd = open(devnull, O_RDONLY | O_CLOEXEC);
+            int fd = open("/dev/null", O_RDONLY | O_CLOEXEC);
 
-            if (fd < 0) {
-                errormsg(SH_DICT, ERROR_system(1), e_open, devnull);
+            if (fd == -1) {
+                errormsg(SH_DICT, ERROR_system(1), e_open, "/dev/null");
                 __builtin_unreachable();
             }
 
             if (fd < 10) {
                 savefd = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10);
                 close(fd);
+            } else {
+                savefd = fd;
             }
         }
     }
