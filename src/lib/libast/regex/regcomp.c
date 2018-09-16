@@ -2111,46 +2111,53 @@ static_fn Rex_t *regcomp_grp(Cenv_t *env, int parno) {
                 do {
                     if (c > (INT_MAX / 10)) {
                         env->error = REG_BADRPT;
-                        return 0;
+                        return NULL;
                     }
                     c = c * 10 + (*env->cursor++ - '0');
                 } while (isdigit(*env->cursor));
                 if (*env->cursor++ != ')') {
                     env->error = REG_BADRPT;
-                    return 0;
+                    return NULL;
                 }
                 if (c && env->type >= SRE) c = c * 2 - 1;
                 if (!c || c > env->parno || !env->paren[c]) {
                     if (!(env->flags & (REG_LENIENT | REG_REGEXP))) {
                         env->error = REG_ESUBREG;
-                        return 0;
+                        return NULL;
                     }
                     if (c) c = -1;
                 }
             } else {
                 if (env->type < SRE && *env->cursor++ != '?') {
                     env->error = REG_BADRPT;
-                    return 0;
+                    return NULL;
                 }
-                if (!(f = regcomp_grp(env, parno + 1)) && env->error) return 0;
+                f = regcomp_grp(env, parno + 1);
+                if (!f && env->error) return NULL;
             }
-            if (!(e = regcomp_node(env, REX_GROUP_COND, 0, 0, 0))) {
+            e = regcomp_node(env, REX_GROUP_COND, 0, 0, 0);
+            if (!e) {
                 drop(env->disc, f);
-                return 0;
+                return NULL;
             }
             e->re.group.size = c;
             e->re.group.expr.binary.left = f;
-            if (!(e->re.group.expr.binary.right = regcomp_alt(env, parno, 1))) {
+            e->re.group.expr.binary.right = regcomp_alt(env, parno, 1);
+            if (!e->re.group.expr.binary.right) {
                 drop(env->disc, e);
-                return 0;
+                free(e);
+                return NULL;
             }
             if (regcomp_token(env) != T_CLOSE) {
                 env->error = REG_EPAREN;
-                return 0;
+                free(e);
+                return NULL;
             }
             eat(env);
             env->parnest--;
-            return regcomp_rep(env, e, parno, parno);
+            Rex_t *rv = regcomp_rep(env, e, parno, parno);
+            if (!rv) free(e);
+            return rv;
         case '{':
             p = env->cursor;
             n = 1;
