@@ -2130,23 +2130,27 @@ static_fn Rex_t *regcomp_grp(Cenv_t *env, int parno) {
             } else {
                 if (env->type < SRE && *env->cursor++ != '?') {
                     env->error = REG_BADRPT;
-                    return 0;
+                    return NULL;
                 }
-                if (!(f = regcomp_grp(env, parno + 1)) && env->error) return 0;
+                f = regcomp_grp(env, parno + 1);
+                if (!f && env->error) return NULL;
             }
-            if (!(e = regcomp_node(env, REX_GROUP_COND, 0, 0, 0))) {
+            e = regcomp_node(env, REX_GROUP_COND, 0, 0, 0);
+            if (!e) {
                 drop(env->disc, f);
-                return 0;
+                return NULL;
             }
             e->re.group.size = c;
             e->re.group.expr.binary.left = f;
-            if (!(e->re.group.expr.binary.right = regcomp_alt(env, parno, 1))) {
+            e->re.group.expr.binary.right = regcomp_alt(env, parno, 1);
+            if (!e->re.group.expr.binary.right) {
                 drop(env->disc, e);
-                return 0;
+                free(e);
+                return NULL;
             }
             if (regcomp_token(env) != T_CLOSE) {
                 env->error = REG_EPAREN;
-                return 0;
+                return NULL;
             }
             eat(env);
             env->parnest--;
