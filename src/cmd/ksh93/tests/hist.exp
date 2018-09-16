@@ -1,0 +1,118 @@
+# Interactive tests for hist builtin
+set pid [spawn $ksh]
+expect_prompt
+
+# ==========
+# hist -l lists commands on standard output
+log_test_entry
+send "hist -l\r"
+
+expect -ex "hist -l\r\n8\tcd foo2\r\n9\tcd ..\r\n10\tmkdir foo3\r\n11\tcd foo3\r\n12\tcd ..\r\n13\techo hello world\r\n14\techo hello world1 > foo\r\n15\techo hello world2 >> foo\r\n16\techo hello world3 >> foo\r\n17\techo hello world1 > bar\r\n18\techo hello world2 >> bar\r\n19\techo hello world3 >> bar\r\n20\techo hello world1 > baz\r\n21\techo hello world2 >> baz\r\n22\techo hello world3 >> baz\r\n23\thist -l\r\n" {
+    puts "hist -l lists commands on standard output"
+}
+
+expect_prompt
+
+# ==========
+# hist -lr lists commands on standard output in reverse order
+log_test_entry
+send "hist -lr\r"
+
+expect -ex "hist -lr\r\n24\thist -lr\r\n23\thist -l\r\n22\techo hello world3 >> baz\r\n21\techo hello world2 >> baz\r\n20\techo hello world1 > baz\r\n19\techo hello world3 >> bar\r\n18\techo hello world2 >> bar\r\n17\techo hello world1 > bar\r\n16\techo hello world3 >> foo\r\n15\techo hello world2 >> foo\r\n14\techo hello world1 > foo\r\n13\techo hello world\r\n12\tcd ..\r\n11\tcd foo3\r\n10\tmkdir foo3\r\n9\tcd ..\r\n" {
+    puts "hist -lr lists commands on standard output in reverse order"
+}
+
+expect_prompt
+
+# ==========
+# hist -ln skips command numbers while listing commands
+log_test_entry
+send "hist -ln\r"
+
+expect -ex "hist -ln\r\n\tmkdir foo3\r\n\tcd foo3\r\n\tcd ..\r\n\techo hello world\r\n\techo hello world1 > foo\r\n\techo hello world2 >> foo\r\n\techo hello world3 >> foo\r\n\techo hello world1 > bar\r\n\techo hello world2 >> bar\r\n\techo hello world3 >> bar\r\n\techo hello world1 > baz\r\n\techo hello world2 >> baz\r\n\techo hello world3 >> baz\r\n\thist -l\r\n\thist -lr\r\n\thist -ln\r\n" {
+    puts "hist -ln skips command numbers while listing commands"
+}
+
+expect_prompt
+
+# ==========
+# hist -s old=new replaces text 'old' with 'new' in command
+log_test_entry
+send "hist -s hello=bye 13\r"
+expect -re "bye world\r\n" {
+    puts "hist -s old=new replaces text 'old' with 'new' in command"
+}
+expect_prompt
+
+# ==========
+# hist -N starts N commands back
+# This test also checks for negative indexes.
+log_test_entry
+send "hist -N 1\r"
+sleep 0.5
+send "Q\r"
+expect -re "bye world\r\n" {
+    puts "hist -N starts N commands back"
+}
+expect_prompt
+
+# ==========
+# hist command triggers ed editor.
+# This test also checks for negative indexes.
+log_test_entry
+send "hist -1\r"
+sleep 0.5
+send "Q\r"
+expect -re "bye world\r\n" {
+    puts "hist command triggers ed editor"
+}
+expect_prompt
+
+# ==========
+# hist -p writes history expansion on standard output
+log_test_entry
+send "hist -p '!!'\r"
+expect -re "echo bye world\r\n" {
+    puts "hist -p writes history expansion on standard output"
+}
+expect_prompt
+
+# ==========
+# hist -e vi triggers vi editor
+log_test_entry
+send "hist -e vi 13\r"
+sleep 0.5
+send ":q!\r"
+expect -re "hello world\r\n" {
+    puts "hist -e vi triggers vi editor"
+}
+expect_prompt
+
+# ==========
+# HISTEDIT=vi triggers vi editor
+log_test_entry
+send "HISTEDIT=vi hist 13\r"
+sleep 0.5
+send ":q!\r"
+expect -re "hello world\r\n" {
+    puts "HISTEDIT=vi triggers vi editor"
+}
+expect_prompt
+
+# ==========
+# When both HISTEDIT and FCEDIT are set, HISTEDIT should take priority
+log_test_entry
+send "HISTEDIT=vi FCEDIT=ed hist 13\r"
+sleep 0.5
+send ":q!\r"
+expect -re "hello world\r\n" {
+    puts "When both HISTEDIT and FCEDIT are set, HISTEDIT takes priority"
+}
+expect_prompt
+
+# ==========
+# Verify that asking the shell to exit works.
+log_test_entry
+send "exit\r"
+catch {expect default exp_continue} output
+catch {wait}
