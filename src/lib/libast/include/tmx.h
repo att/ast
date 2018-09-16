@@ -43,7 +43,6 @@ typedef uint32_t Tmxnsec_t;
 
 extern Time_t tmxdate(const char *, char **, Time_t);
 extern char *tmxfmt(char *, size_t, const char *, Time_t);
-extern Time_t tmxleap(Time_t);
 extern Tm_t *tmxmake(Time_t);
 extern Time_t tmxscan(const char *, char **, const char *, char **, Time_t, long);
 extern int tmxsleep(Time_t);
