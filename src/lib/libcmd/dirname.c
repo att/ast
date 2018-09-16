@@ -101,7 +101,6 @@ static void l_dirname(Sfio_t *outfile, const char *pathname) {
 
 int b_dirname(int argc, char **argv, Shbltin_t *context) {
     int mode = 0;
-    char buf[PATH_MAX];
 
     if (cmdinit(argc, argv, context, 0)) return -1;
     for (;;) {
@@ -134,8 +133,13 @@ int b_dirname(int argc, char **argv, Shbltin_t *context) {
 
     if (!mode) {
         l_dirname(sfstdout, argv[0]);
-    } else if (pathpath(argv[0], "", mode, buf, sizeof(buf))) {
-        sfputr(sfstdout, buf, '\n');
+        return 0;
+    }
+
+    char *path = pathpath(argv[0], "", mode, NULL, 0);
+    if (path) {
+        sfputr(sfstdout, path, '\n');
+        free(path);
     } else {
         error(1 | ERROR_WARNING, "%s: relative path not found", argv[0]);
     }
