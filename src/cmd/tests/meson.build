@@ -1,4 +1,4 @@
-test_files = [ 'base64.c', 'date.c', 'opt.c', 'strelapsed.c' ]
+test_files = [ 'base64.c', 'opt.c', 'strelapsed.c' ]
 
 incdir = include_directories('../../lib/libast/include/')
 
