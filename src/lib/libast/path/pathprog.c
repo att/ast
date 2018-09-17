@@ -38,7 +38,6 @@
 #endif
 
 #include "ast.h"
-#include "ast_api.h"
 
 #if __CYGWIN__
 #include "ast_windows.h"
@@ -62,8 +61,10 @@ static_fn size_t path_prog(const char *command, char *path, size_t size) {
 #endif
 
 #ifdef _PROC_PROG
-    if ((n = readlink(_PROC_PROG, path, size)) > 0 && *path == '/') {
-        if (n < size) path[n] = 0;
+    n = readlink(_PROC_PROG, path, size);
+    if (n > 0 && *path == '/') {
+        // readlink() doesn't null terminate the path so do so now.
+        path[n < size ? n : size - 1] = 0;
         return n;
     }
 #endif
@@ -113,10 +114,13 @@ size_t pathprog(const char *command, char *path, size_t size) {
     char *rel;
     ssize_t n;
 
-    if ((n = path_prog(command, path, size)) > 0 && n < size && *path != '/' &&
-        (rel = strdup(path))) {
-        n = pathpath(rel, NULL, PATH_REGULAR | PATH_EXECUTE, path, size) ? strlen(path) : 0;
-        free(rel);
+    n = path_prog(command, path, size);
+    if (n > 0 && n < size && *path != '/') {
+        rel = strdup(path);
+        if (rel) {
+            n = pathpath(rel, NULL, PATH_REGULAR | PATH_EXECUTE, path, size) ? strlen(path) : 0;
+            free(rel);
+        }
     }
     return n;
 }
