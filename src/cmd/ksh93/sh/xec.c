@@ -759,7 +759,7 @@ static_fn int sh_coexec(Shell_t *shp, const Shnode_t *t, int filt) {
     sh_offoption(shp, SH_XTRACE);
     sh_offoption(shp, SH_VERBOSE);
     if (!shp->strbuf2) shp->strbuf2 = sfstropen();
-    sfswap(shp->strbuf2, sfstdout);
+    if (sfswap(shp->strbuf2, sfstdout) != sfstdout) abort();
     sh_trap(shp, "typeset -p\nprint cd \"$PWD\"\nprint .sh.dollar=$$\nprint umask $(umask)", 0);
     for (sig = shp->st.trapmax; --sig > 0;) {
         if ((trap = shp->st.trapcom[sig]) && *trap == 0) sfprintf(sfstdout, "trap '' %d\n", sig);
@@ -812,7 +812,7 @@ static_fn int sh_coexec(Shell_t *shp, const Shnode_t *t, int filt) {
     sh_trap(shp, "set +o", 0);
     sh_deparse(sfstdout, t, filt == 1 || filt == 2 ? FALTPIPE : 0);
     sfputc(sfstdout, 0);
-    sfswap(shp->strbuf2, sfstdout);
+    if (sfswap(shp->strbuf2, sfstdout) != sfstdout) abort();
     str = sfstruse(shp->strbuf2);
     cjp = coexec(csp->coshell, str, 0, NULL, NULL, NULL);
     if (cjp) {

@@ -267,11 +267,11 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
             case 'x': {
                 sfsync(sfstdout);
                 saveout = sfswap(sfstdout, NULL);
-                sfswap(tmp, sfstdout);
+                if (sfswap(tmp, sfstdout) != sfstdout) abort();
                 sh_trap(shp, str, 0);
                 sfsync(sfstdout);
                 tmp = sfswap(sfstdout, NULL);
-                sfswap(saveout, sfstdout);
+                if (sfswap(saveout, sfstdout) != sfstdout) abort();
                 break;
             }
             case 'y': {

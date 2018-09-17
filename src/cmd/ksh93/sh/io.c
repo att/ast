@@ -432,7 +432,7 @@ int sh_iorenumber(Shell_t *shp, int f1, int f2) {
             Sfio_t *spnew = sh_iostream(shp, f1, f1);
             shp->fdstatus[f2] = (shp->fdstatus[f1] & ~IOCLEX);
             sfsetfd(spnew, f2);
-            sfswap(spnew, sp);
+            if (sfswap(spnew, sp) != sp) abort();
             sfset(sp, SF_SHARE | SF_PUBLIC, 1);
         } else {
             shp->fdstatus[f2] = (shp->fdstatus[f1] & ~IOCLEX);
@@ -983,7 +983,7 @@ static_fn int iovex_child(void *context, uintmax_t fd1, uintmax_t fd2) {
     if (sp) {
         spnew = sh_iostream(shp, fd1, fd1);
         shp->fdstatus[fd2] = (shp->fdstatus[fd1] & ~IOCLEX);
-        sfswap(spnew, sp);
+        if (sfswap(spnew, sp) != sp) abort();
         sp->_file = fd2;
         sfset(sp, SF_SHARE | SF_PUBLIC, 1);
     }
@@ -1585,7 +1585,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                 shp->sftable[fn] = shp->sftable[-1];
                 shp->fdstatus[fn] = shp->fdstatus[-1];
                 if (fn <= 2) {
-                    sfswap(shp->sftable[fn], sp);
+                    if (sfswap(shp->sftable[fn], sp) != sp) abort();
                     shp->sftable[fn] = sp;
                 }
                 shp->fdptrs[fn] = 0;
@@ -1910,7 +1910,13 @@ void sh_iorestore(Shell_t *shp, int last, int jmpval) {
             shp->fdstatus[origfd] = shp->fdstatus[savefd];
             // Turn off close-on-exec if flag if necessary.
             if (origfd <= 2) {
-                sfswap(shp->sftable[savefd], shp->sftable[origfd]);
+                // It is unclear what conditions will cause us to attempt to swap entries when the
+                // `savefd` entry is NULL but it happens a lot. When it does  `sfswap()` returns
+                // NULL to indicate failure.
+                if (shp->sftable[savefd]) {
+                    Sfio_t *sfio_orig = shp->sftable[origfd];
+                    if (sfswap(shp->sftable[savefd], sfio_orig) != sfio_orig) abort();
+                }
                 if (origfd == 0) shp->st.ioset = 0;
             } else {
                 shp->sftable[origfd] = shp->sftable[savefd];

@@ -579,11 +579,11 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
             sp->pipefd = -1;
             // Use sftmp() file for standard output.
             if (!(iop = sftmp(IOBSIZE))) {
-                sfswap(sp->saveout, sfstdout);
+                if (sfswap(sp->saveout, sfstdout) != sfstdout) abort();
                 errormsg(SH_DICT, ERROR_system(1), e_tmpcreate);
                 __builtin_unreachable();
             }
-            sfswap(iop, sfstdout);
+            if (sfswap(iop, sfstdout) != sfstdout) abort();
             sfset(sfstdout, SF_READ, 0);
             shp->fdstatus[1] = IOWRITE;
             if (!(sp->nofork = sh_state(SH_NOFORK))) sh_onstate(shp, SH_NOFORK);
@@ -657,7 +657,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
             sfset(iop, SF_READ, 1);
         }
         if (sp->saveout) {
-            sfswap(sp->saveout, sfstdout);
+            if (sfswap(sp->saveout, sfstdout) != sfstdout) abort();
         } else {
             sfstdout = &_Sfstdout;
         }
