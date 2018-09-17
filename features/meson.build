@@ -48,10 +48,6 @@ endif
 # library.
 libcatgets_dep = cc.find_library('catgets', required: false, dirs: lib_dirs)
 
-
-# It was turned off on Linux but the iffe test was botched, keeping it on here.
-feature_data.set('_map_malloc', 1)
-
 feature_data.set10('_hdr_execinfo', cc.has_header('execinfo.h', args: feature_test_args))
 
 # TODO: Figure out if detecting header unistd.h is really necessary.
@@ -60,16 +56,9 @@ feature_data.set10('_hdr_execinfo', cc.has_header('execinfo.h', args: feature_te
 feature_data.set10('_hdr_unistd', cc.has_header('unistd.h', args: feature_test_args))
 feature_data.set10('_hdr_stdlib', cc.has_header('stdlib.h', args: feature_test_args))
 feature_data.set10('_hdr_malloc', cc.has_header('malloc.h', args: feature_test_args))
-feature_data.set10('_hdr_paths', cc.has_header('paths.h', args: feature_test_args))
-feature_data.set10('_hdr_termios', cc.has_header('termios.h', args: feature_test_args))
-feature_data.set10('_hdr_sys_sysmacros', cc.has_header('sys/sysmacros.h', args: feature_test_args))
-feature_data.set10('_hdr_utmp', cc.has_header('utmp.h', args: feature_test_args))
-feature_data.set10('_hdr_utmpx', cc.has_header('utmpx.h', args: feature_test_args))
 
 feature_data.set10('_lib_sigqueue',
     cc.has_function('sigqueue', prefix: '#include <signal.h>', args: feature_test_args))
-feature_data.set10('_lib_tcgetattr',
-    cc.has_function('tcgetattr', prefix: '#include <termios.h>', args: feature_test_args))
 # TODO: Enable iswprint() detection when we understand why doing so causes the
 # `wchar` unit test to fail. For now we force it to false to use the AST definition.
 # feature_data.set10('_lib_iswprint',
@@ -126,43 +115,6 @@ else
     error('Cannot determine modification time field in struct stat.')
 endif
 
-feature_data.set10('_mem_ut_host_utmp',
-    cc.has_member('struct utmp', 'ut_host', prefix: '#include <utmp.h>', args: feature_test_args))
-feature_data.set10('_mem_ut_tv_utmp',
-    cc.has_member('struct utmp', 'ut_tv', prefix: '#include <utmp.h>', args: feature_test_args))
-feature_data.set10('_mem_ut_type_utmp',
-    cc.has_member('struct utmp', 'ut_type', prefix: '#include <utmp.h>', args: feature_test_args))
-feature_data.set10('_mem_ut_user_utmp',
-    cc.has_member('struct utmp', 'ut_user', prefix: '#include <utmp.h>', args: feature_test_args))
-feature_data.set10('_mem_ut_host_utmpx',
-    cc.has_member('struct utmpx', 'ut_host', prefix: '#include <utmpx.h>', args: feature_test_args))
-feature_data.set10('_mem_ut_tv_utmpx',
-    cc.has_member('struct utmpx', 'ut_tv', prefix: '#include <utmpx.h>', args: feature_test_args))
-feature_data.set10('_mem_ut_type_utmxp',
-    cc.has_member('struct utmp', 'ut_type', prefix: '#include <utmpx.h>', args: feature_test_args))
-feature_data.set10('_mem_ut_user_utmpx',
-    cc.has_member('struct utmpx', 'ut_user', prefix: '#include <utmpx.h>', args: feature_test_args))
-
-feature_data.set10('_lib_mallinfo',
-    cc.has_function('mallinfo', prefix: '#include <malloc.h>', args: feature_test_args))
-
-feature_data.set10('_lib_mstats',
-    cc.has_member('struct mstats', 'bytes_total', prefix : '#include<malloc/malloc.h>',
-                  args: feature_test_args))
-
-feature_data.set10('_lib_mallopt',
-    cc.has_function('mallopt', prefix: '#include <malloc.h>', args: feature_test_args))
-feature_data.set10('_lib___libc_malloc',
-    cc.has_function('__libc_malloc', prefix: '#include <malloc.h>', args: feature_test_args))
-
-feature_data.set10('_mem_arena_mallinfo',
-    cc.has_member('struct mallinfo', 'arena', prefix : '#include<malloc.h>',
-                  args: feature_test_args))
-
-# This was defined in iffe tests when '_mmap_anon' is true
-# '_mmap_anon' is always true so keeping this macro on here
-feature_data.set('_mem_mmap_anon', 1)
-
 libpath_result = run_command('libpath.sh')
 if libpath_result.returncode() == 0
     libpath_output = libpath_result.stdout().strip()
@@ -205,11 +157,6 @@ endif
 has_dev_fd = run_command('sh', '-c', 'ls /dev/fd/9 9<&0')
 feature_data.set10('has_dev_fd', has_dev_fd.returncode() == 0)
 
-has_dev_stdout = run_command('sh', '-c', 'echo yes >/dev/stdout')
-feature_data.set10('has_dev_stdout',
-                   has_dev_stdout.returncode() == 0 and has_dev_stdout.stdout() == 'yes\n')
-
 subdir('dll')
-subdir('sockets')
 subdir('time')
 subdir('utsname')
