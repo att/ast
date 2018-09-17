@@ -2326,7 +2326,7 @@ static_fn Rex_t *regcomp_seq(Cenv_t *env) {
             }
             eat(env);
         }
-        if (c == T_BAD) return 0;
+        if (c == T_BAD) return NULL;
         if (s > buf) {
             switch (c) {
                 case T_STAR:
@@ -2334,39 +2334,45 @@ static_fn Rex_t *regcomp_seq(Cenv_t *env) {
                 case T_LEFT:
                 case T_QUES:
                 case T_BANG:
-                    if ((s -= n) == buf)
-                        e = 0;
-                    else {
+                    if ((s -= n) == buf) {
+                        e = NULL;
+                    }  else {
                         i = s - buf;
-                        if (!(e = regcomp_node(env, REX_STRING, 0, 0, i))) return 0;
-                        memcpy((char *)(e->re.string.base = (unsigned char *)e->re.data),
-                               (char *)buf, i);
+                        e = regcomp_node(env, REX_STRING, 0, 0, i);
+                        if (!e) return NULL;
+                        e->re.string.base = (unsigned char *)e->re.data;
+                        memcpy(e->re.string.base, buf, i);
                         e->re.string.size = i;
                     }
                     if (x >= 0) {
                         if (!(f = regcomp_node(env, REX_ONECHAR, 1, 1, 0))) {
                             drop(env->disc, e);
-                            return 0;
+                            return NULL;
                         }
                         f->re.onechar = (env->flags & REG_ICASE) ? toupper(x) : x;
                     } else {
-                        if (!(f = regcomp_node(env, REX_STRING, 0, 0, n))) return 0;
-                        memcpy((char *)(f->re.string.base = (unsigned char *)f->re.data), (char *)p,
-                               n);
+                        f = regcomp_node(env, REX_STRING, 0, 0, n);
+                        if (!f) {
+                            free(e);
+                            return NULL;
+                        }
+                        f->re.string.base = (unsigned char *)f->re.data;
+                        memcpy(f->re.string.base, p, n);
                         f->re.string.size = n;
                     }
                     if (!(f = regcomp_rep(env, f, 0, 0)) ||
                         !(f = regcomp_cat(env, f, regcomp_seq(env)))) {
                         drop(env->disc, e);
-                        return 0;
+                        return NULL;
                     }
                     if (e) f = regcomp_cat(env, e, f);
                     return f;
                 default:
                     c = s - buf;
-                    if (!(e = regcomp_node(env, REX_STRING, 0, 0, c))) return 0;
-                    memcpy((char *)(e->re.string.base = (unsigned char *)e->re.data), (char *)buf,
-                           c);
+                    e = regcomp_node(env, REX_STRING, 0, 0, c);
+                    if (!e) return NULL;
+                    e->re.string.base = (unsigned char *)e->re.data;
+                    memcpy(e->re.string.base, buf, c);
                     e->re.string.size = c;
                     return regcomp_cat(env, e, regcomp_seq(env));
             }
@@ -2375,7 +2381,7 @@ static_fn Rex_t *regcomp_seq(Cenv_t *env) {
             c -= T_BACK;
             if (c > env->parno || !env->paren[c]) {
                 env->error = REG_ESUBREG;
-                return 0;
+                return NULL;
             }
             env->paren[c]->re.group.back = 1;
             e = regcomp_rep(env, regcomp_node(env, REX_BACK, c, 0, 0), 0, 0);
@@ -2412,18 +2418,18 @@ static_fn Rex_t *regcomp_seq(Cenv_t *env) {
                                       *env->cursor == env->terminator)
                                          ? REG_EPAREN
                                          : REG_ENULL;
-                        return 0;
+                        return NULL;
                     }
                     if (regcomp_token(env) != T_CLOSE) {
                         drop(env->disc, e);
                         env->error = REG_EPAREN;
-                        return 0;
+                        return NULL;
                     }
                     env->parnest--;
                     eat(env);
                     if (!(f = regcomp_node(env, REX_GROUP, 0, 0, 0))) {
                         drop(env->disc, e);
-                        return 0;
+                        return NULL;
                     }
                     if (parno < elementsof(env->paren)) env->paren[parno] = f;
                     f->re.group.back = 0;
@@ -2433,11 +2439,11 @@ static_fn Rex_t *regcomp_seq(Cenv_t *env) {
                         tok.push = 1;
                         env->token = tok;
                     }
-                    if (!(e = regcomp_rep(env, f, parno, env->parno))) return 0;
+                    if (!(e = regcomp_rep(env, f, parno, env->parno))) return NULL;
                     if (env->type == KRE) {
                         if (!(f = regcomp_node(env, REX_GROUP, 0, 0, 0))) {
                             drop(env->disc, e);
-                            return 0;
+                            return NULL;
                         }
                         if (--parno < elementsof(env->paren)) env->paren[parno] = f;
                         f->re.group.back = 0;
@@ -2455,7 +2461,7 @@ static_fn Rex_t *regcomp_seq(Cenv_t *env) {
                     type = env->type;
                     e = regcomp_grp(env, env->parno + 1);
                     if (!e) {
-                        if (env->error) return 0;
+                        if (env->error) return NULL;
                         if (env->literal == env->pattern && env->literal == p) {
                             env->literal = env->cursor;
                         }
@@ -2529,7 +2535,7 @@ static_fn Rex_t *regcomp_seq(Cenv_t *env) {
                     break;
                 default:
                     env->error = REG_BADRPT;
-                    return 0;
+                    return NULL;
             }
         if (e && *env->cursor != 0 && *env->cursor != env->delimiter &&
             *env->cursor != env->terminator)
@@ -2548,12 +2554,12 @@ static_fn Rex_t *regcomp_con(Cenv_t *env) {
     eat(env);
     if (!(f = regcomp_con(env))) {
         drop(env->disc, e);
-        return 0;
+        return NULL;
     }
     if (!(g = regcomp_node(env, REX_CONJ, 0, 0, 0))) {
         drop(env->disc, e);
         drop(env->disc, f);
-        return 0;
+        return NULL;
     }
     g->re.group.expr.binary.left = e;
     g->re.group.expr.binary.right = f;
