@@ -64,7 +64,6 @@
 #mesondefine _ptr_bits
 #mesondefine _socketpair_shutdown_mode
 #mesondefine _std_remove
-#mesondefine _stk_down
 #mesondefine isnanl
 #mesondefine const_const_fts_open
 #mesondefine MAX_SIGNUM

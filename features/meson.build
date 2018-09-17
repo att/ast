@@ -163,11 +163,6 @@ feature_data.set10('_mem_arena_mallinfo',
 # '_mmap_anon' is always true so keeping this macro on here
 feature_data.set('_mem_mmap_anon', 1)
 
-stack_direction_feature_file = files('stack_direction.c')
-stack_direction_feature_result = cc.run(stack_direction_feature_file, name: 'stack grows downward',
-                                        args: feature_test_args)
-feature_data.set10('_stk_down', stack_direction_feature_result.returncode() == 0)
-
 libpath_result = run_command('libpath.sh')
 if libpath_result.returncode() == 0
     libpath_output = libpath_result.stdout().strip()
