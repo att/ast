@@ -39,40 +39,34 @@
 #include <unistd.h>
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "ast_api.h"
 #include "sfio.h"
 
-#undef pathpath
-char *pathpath(char *path, const char *p, const char *a, int mode) {
-    return pathpath_20100601(p, a, mode, path, PATH_MAX);
-}
-
-char *pathpath_20100601(const char *p, const char *a, int mode, char *path, size_t size) {
+char *pathpath(const char *p, const char *a, int mode, char *path, size_t size) {
     char *s;
     char *x;
-    char buf[PATH_MAX];
 
     static char *cmd;
 
-    if (!path) {
-        path = buf;
-        if (!size || size > sizeof(buf)) size = sizeof(buf);
-    }
+    assert(path && size);
     if (!p) {
         if (cmd) free(cmd);
         cmd = a ? strdup(a) : NULL;
-        return 0;
+        return NULL;
     }
     if (strlen(p) < size) {
         strcpy(path, p);
         if (pathexists(path, mode)) {
             if (*p != '/' && (mode & PATH_ABSOLUTE)) {
+                char buf[PATH_MAX];
+
                 getcwd(buf, sizeof(buf));
                 s = buf + strlen(buf);
                 sfsprintf(s, sizeof(buf) - (s - buf), "/%s", p);
-                if (path != buf) strcpy(path, buf);
+                strcpy(path, buf);
             }
-            return (path == buf) ? strdup(path) : path;
+            return path;
         }
     }
     if (*p == '/') {
@@ -88,19 +82,20 @@ char *pathpath_20100601(const char *p, const char *a, int mode, char *path, size
             }
             if ((!cmd || *cmd) && (strchr(s, '/') || (s = cmd))) {
                 if (!cmd && *s == '/') cmd = strdup(s);
-                if (strlen(s) < (sizeof(buf) - 6)) {
+                if (strlen(s) < size - 6) {
                     s = stpcpy(path, s);
                     for (;;) {
-                        do
+                        do {
                             if (s <= path) goto normal;
+                        }
                         while (*--s == '/');
-                        do
+                        do {
                             if (s <= path) goto normal;
-                        while (*--s != '/');
+                        } while (*--s != '/');
                         strcpy(s + 1, "bin");
                         if (pathexists(path, PATH_EXECUTE)) {
                             s = pathaccess(path, p, a, mode, path, size);
-                            if (s) return path == buf ? strdup(s) : s;
+                            if (s) return s;
                             goto normal;
                         }
                     }
@@ -109,8 +104,10 @@ char *pathpath_20100601(const char *p, const char *a, int mode, char *path, size
             }
         }
     }
+
     x = !a && strchr(p, '/') ? "" : pathbin();
-    if (!(s = pathaccess(x, p, a, mode, path, size)) && !*x && (x = getenv("FPATH")))
+    if (!(s = pathaccess(x, p, a, mode, path, size)) && !*x && (x = getenv("FPATH"))) {
         s = pathaccess(x, p, a, mode, path, size);
-    return (s && path == buf) ? strdup(s) : s;
+    }
+    return s;
 }

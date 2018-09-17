@@ -238,8 +238,7 @@ extern char *pathkey(char *, char *, const char *, const char *, const char *);
 extern char *pathkey_20100601(const char *, const char *, const char *, char *, size_t, char *,
                               size_t);
 extern size_t pathnative(const char *, char *, size_t);
-extern char *pathpath(char *, const char *, const char *, int);
-extern char *pathpath_20100601(const char *, const char *, int, char *, size_t);
+extern char *pathpath(const char *, const char *, int, char *, size_t);
 extern size_t pathposix(const char *, char *, size_t);
 extern size_t pathprog(const char *, char *, size_t);
 extern char *pathrepl(char *, const char *, const char *);

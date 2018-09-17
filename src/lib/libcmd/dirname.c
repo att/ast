@@ -136,11 +136,13 @@ int b_dirname(int argc, char **argv, Shbltin_t *context) {
         return 0;
     }
 
-    char *path = pathpath(argv[0], "", mode, NULL, 0);
-    if (path) {
+    char path[PATH_MAX];
+    char *p = pathpath(argv[0], "", mode, path, sizeof(path));
+    if (p) {
         sfputr(sfstdout, path, '\n');
-        free(path);
     } else {
+        // How is this possible? A filesystem problem of some sort? Such as the CWD no longer being
+        // valid?
         error(1 | ERROR_WARNING, "%s: relative path not found", argv[0]);
     }
     return 0;

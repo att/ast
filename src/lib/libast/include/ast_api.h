@@ -8,9 +8,6 @@
 #undef pathcat
 #define pathcat pathcat_20100601
 
-#undef pathpath
-#define pathpath pathpath_20100601
-
 #undef regexec
 #define regexec regexec_20120528
 
