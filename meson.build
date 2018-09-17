@@ -2,8 +2,8 @@ project('ksh93', 'c', default_options: ['b_lundef=false', 'default_library=stati
 
 cc = meson.get_compiler('c')
 system = host_machine.system()
-# So the `config_ast.h`, `lc.h`, and other headers can be found (see below).
-configuration_incdir = include_directories(['.', 'features/locales'])
+# So the `config_ast.h` and other dynamically generated headers can be found (see below).
+configuration_incdir = include_directories(['.'])
 
 if get_option('warnings-are-errors') == true
     add_global_arguments('-Werror', language: 'c')
