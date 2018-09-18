@@ -191,6 +191,17 @@ unset LC_MONETARY
 unset LC_NUMERIC
 unset LC_TIME
 
+#
+# Make sure the user's environment doesn't affect tests. For example, if we don't unset these vars
+# (or set them to known values) then things like the hist.exp test is likely to fail because the
+# user's preferred editor may confuse the test.
+#
+unset EDITOR
+unset FCEDIT
+unset PAGER
+unset VIEWER
+unset VISUAL
+
 if [[ $test_name == *.exp ]]
 then
     # Interactive test.
