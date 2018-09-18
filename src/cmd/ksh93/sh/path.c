@@ -1057,24 +1057,12 @@ pid_t path_spawn(Shell_t *shp, const char *opath, char **argv, char **envp, Path
     sfsync(sfstderr);
     sh_sigcheck(shp);
     path = path_relative(shp, opath);
-    if (*path != '/' && path != opath) {
-        // The following code because execv(foo,) and execv(./foo,) may not yield the same results.
-        char *sp = (char *)malloc(strlen(path) + 3);
-        sp[0] = '.';
-        sp[1] = '/';
-        strcpy(sp + 2, path);
-        path = sp;
-    }
     if (spawn /* && !sh_isoption(shp,SH_PFSH) */) {
         pid = _spawnveg(shp, opath, &argv[0], envp, spawn >> 1);
     } else {
         pid = path_pfexecve(shp, opath, &argv[0], envp, spawn);
     }
     if (xp) *xp = xval;
-    if (*path == '.' && path != opath) {
-        free(path);
-        path = path_relative(shp, opath);
-    }
     if (pid > 0) return pid;
 retry:
     shp->path_err = errno;
