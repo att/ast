@@ -834,7 +834,10 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
     } else if (shp->shcomp) {
         exit(1);
     } else {
-        assert(fp != NULL);
+        // Since `fp` is volatile simply evaluating it for not NULL can have a side-effect. To avoid
+        // differences in behavior between debug/non-debug builds we can't use assert() since it may
+        // or may not be a no-op.
+        if (!fp) abort();
     }
     sh_popcontext(shp, &buff);
     loop_level = saveloop;
