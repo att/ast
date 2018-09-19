@@ -39,8 +39,8 @@
 #include <unistd.h>
 
 #include "ast.h"
-#include "ast_assert.h"
 #include "ast_api.h"
+#include "ast_assert.h"
 #include "sfio.h"
 
 char *pathpath(const char *p, const char *a, int mode, char *path, size_t size) {
@@ -87,8 +87,7 @@ char *pathpath(const char *p, const char *a, int mode, char *path, size_t size) 
                     for (;;) {
                         do {
                             if (s <= path) goto normal;
-                        }
-                        while (*--s == '/');
+                        } while (*--s == '/');
                         do {
                             if (s <= path) goto normal;
                         } while (*--s != '/');

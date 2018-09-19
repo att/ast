@@ -32,7 +32,7 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "ast.h"  // IWYU pragma: keep
+#include "ast.h"         // IWYU pragma: keep
 #include "ast_assert.h"  // IWYU pragma: keep
 
 #define PAD '='

@@ -1944,8 +1944,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
 #if SHOPT_COSHELL
                 pvn[2] = 0;
             coskip2:
-#endif          // SHOPT_COSHELL
-                // Execute out part of pipe no wait.
+#endif  // SHOPT_COSHELL
+        // Execute out part of pipe no wait.
                 (t->lst.lstlef)->tre.tretyp |= showme;
                 type = sh_exec(shp, t->lst.lstlef, errorflg);
                 // Close out-part of pipe.

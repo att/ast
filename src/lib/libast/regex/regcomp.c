@@ -2336,7 +2336,7 @@ static_fn Rex_t *regcomp_seq(Cenv_t *env) {
                 case T_BANG:
                     if ((s -= n) == buf) {
                         e = NULL;
-                    }  else {
+                    } else {
                         i = s - buf;
                         e = regcomp_node(env, REX_STRING, 0, 0, i);
                         if (!e) return NULL;
