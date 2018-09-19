@@ -32,6 +32,8 @@
 #include <string.h>
 #include <sys/types.h>
 
+#include "ast.h"  // IWYU pragma: keep
+
 #define PAD '='
 
 #define B64_UC 3
@@ -49,7 +51,7 @@ static const char alp[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0
  * mime base64 encode
  */
 
-ssize_t base64encode(const void *fb, size_t fz, void **fn, void *tb, size_t tz, void **tn) {
+ssize_t base64encode(const void *fb, size_t fz, void **fn, void *tb, size_t tz) {
     unsigned char *fp;
     unsigned char *tp;
     unsigned char *fe;
@@ -73,7 +75,6 @@ ssize_t base64encode(const void *fb, size_t fz, void **fn, void *tb, size_t tz, 
         n = 0;
     } else {
         if (fn) *fn = fp;
-        if (tn) *tn = 0;
         tp = tmp;
         te = tp + sizeof(tmp) - B64_EC + 1;
         n = 1;
@@ -84,7 +85,6 @@ ssize_t base64encode(const void *fb, size_t fz, void **fn, void *tb, size_t tz, 
             if (fp >= fe) goto done;
             if (tp >= te) {
                 if (fn) *fn = fp;
-                if (tn) *tn = tp;
                 n = tp - (unsigned char *)tb + 1;
                 tp = tmp;
                 te = tp + sizeof(tmp) - B64_EC + 1;
@@ -107,7 +107,6 @@ done:
     if (fz) {
         if (tp >= te) {
             if (fn) *fn = fp;
-            if (tn) *tn = tp;
             n = tp - (unsigned char *)tb + 1;
             tp = tmp;
             te = tp + sizeof(tmp) - B64_EC + 1;
@@ -119,13 +118,12 @@ done:
         *tp++ = (fz == 2) ? m[(b >> 6) & 077] : PAD;
         *tp++ = PAD;
     }
-    if (n)
+    if (n) {
         n += (tp - tmp) - 1;
-    else {
-        if (tp > (unsigned char *)tb && *(tp - 1) == '\n') tp--;
+    } else {
+        if (tp != tmp && tp > (unsigned char *)tb && *(tp - 1) == '\n') tp--;
         if (tp < te) *tp = 0;
         n = tp - (unsigned char *)tb;
-        if (tn) *tn = tp;
         if (fn) *fn = fp;
     }
     return n;
@@ -135,7 +133,7 @@ done:
  * mime base64 decode
  */
 
-ssize_t base64decode(const void *fb, size_t fz, void **fn, void *tb, size_t tz, void **tn) {
+ssize_t base64decode(const void *fb, size_t fz, void **fn, void *tb, size_t tz) {
     unsigned char *fp;
     unsigned char *tp;
     unsigned char *fe;
@@ -187,7 +185,6 @@ ssize_t base64decode(const void *fb, size_t fz, void **fn, void *tb, size_t tz, 
                                     if (tp < te) *tp++ = (v);
                                 }
                             }
-                            if (tn) *tn = tp;
                             if (fn) *fn = fc;
                         }
                     } else {
@@ -212,7 +209,6 @@ ssize_t base64decode(const void *fb, size_t fz, void **fn, void *tb, size_t tz, 
                     n++;
                 else {
                     n = tp - (unsigned char *)tb + 2;
-                    if (tn) *tn = tp;
                     if (fn) *fn = fc;
                 }
                 break;
@@ -223,14 +219,12 @@ ssize_t base64decode(const void *fb, size_t fz, void **fn, void *tb, size_t tz, 
                         *tp++ = v >> 2;
                     else {
                         n = tp - (unsigned char *)tb + 2;
-                        if (tn) *tn = tp;
                         if (fn) *fn = fc;
                     }
                 } else if (n)
                     n += 2;
                 else {
                     n = tp - (unsigned char *)tb + 3;
-                    if (tn) *tn = tp;
                     if (fn) *fn = fc;
                 }
                 break;
@@ -247,7 +241,6 @@ done:
         if (tp < te) *tp = 0;
         n = tp - (unsigned char *)tb;
         if (fn) *fn = fp;
-        if (tn) *tn = tp;
     }
     return n;
 }

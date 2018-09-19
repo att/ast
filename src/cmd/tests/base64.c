@@ -25,7 +25,7 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "ast.h"
+#include "ast.h"  // IWYU pragma: keep
 #include "sfio.h"
 
 int main() {
@@ -49,13 +49,13 @@ int main() {
     for (i = 0; i < sizeof(dat) - 1; i++) {
         testno++;
         if (i > 0) {
-            l = base64encode(dat, i, NULL, buf, sizeof(buf), NULL);
+            l = base64encode(dat, i, NULL, buf, sizeof(buf));
             if (l < 0 || l > sizeof(buf)) {
                 errors++;
                 sfprintf(sfstdout, "test %02d left buffer encode size %ld failed\n", testno, l);
                 continue;
             }
-            t = base64decode(buf, l, NULL, tst, sizeof(tst), NULL);
+            t = base64decode(buf, l, NULL, tst, sizeof(tst));
             if (t != i) {
                 errors++;
                 sfprintf(sfstdout, "test %02d left buffer decode size %ld failed\n", testno, t);
@@ -68,13 +68,13 @@ int main() {
             }
         } else
             l = 0;
-        r = base64encode(dat + i, sizeof(dat) - i, NULL, buf + l, sizeof(buf) - l, NULL);
+        r = base64encode(dat + i, sizeof(dat) - i, NULL, buf + l, sizeof(buf) - l);
         if (r < 0 || r > sizeof(buf) - l) {
             errors++;
             sfprintf(sfstdout, "test %02d right buffer encode size %ld failed\n", testno, r);
             continue;
         }
-        t = base64decode(buf + l, r, NULL, tst, sizeof(tst), NULL);
+        t = base64decode(buf + l, r, NULL, tst, sizeof(tst));
         if (t != (sizeof(dat) - i)) {
             errors++;
             sfprintf(sfstdout, "test %02d total buffer decode size %ld failed\n", testno, t);
@@ -85,7 +85,7 @@ int main() {
             sfprintf(sfstdout, "test %02d right buffer decode failed\n", testno);
             continue;
         }
-        t = base64decode(buf, l + r, NULL, tst, sizeof(tst), NULL);
+        t = base64decode(buf, l + r, NULL, tst, sizeof(tst));
         if (t != sizeof(dat)) {
             errors++;
             sfprintf(sfstdout, "test %02d total buffer decode size %ld failed\n", testno, t);
@@ -101,7 +101,7 @@ int main() {
         testno++;
         memset(tst, '*', sizeof(pat));
         tst[sizeof(pat) - 1] = 0;
-        t = base64decode(en, sizeof(en) - 1, NULL, tst, r, NULL);
+        t = base64decode(en, sizeof(en) - 1, NULL, tst, r);
         if (t != (sizeof(de) - 1)) {
             sfprintf(sfstdout, "decode size %r failed, %r expected\n", t, sizeof(de) - 1);
             errors++;

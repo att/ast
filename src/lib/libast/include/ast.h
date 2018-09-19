@@ -197,8 +197,8 @@ extern Ast_confdisc_f astconfdisc(Ast_confdisc_f);
 extern void astconflist(Sfio_t *, const char *, int, const char *);
 extern void astwinsize(int, int *, int *);
 
-extern ssize_t base64encode(const void *, size_t, void **, void *, size_t, void **);
-extern ssize_t base64decode(const void *, size_t, void **, void *, size_t, void **);
+extern ssize_t base64encode(const void *, size_t, void **, void *, size_t);
+extern ssize_t base64decode(const void *, size_t, void **, void *, size_t);
 extern int chresc(const char *, char **);
 extern int chrexp(const char *, char **, int *, int);
 extern char *conformance(const char *, size_t);
