@@ -781,22 +781,28 @@ static_fn Namarr_t *nv_changearray(Namval_t *np, void *(*fun)(Namval_t *, const 
 //
 Namarr_t *nv_setarray(Namval_t *np, void *(*fun)(Namval_t *, const char *, int)) {
     Namarr_t *ap;
-    char *value = NULL;
-    Namfun_t *fp;
     int flags = 0;
 
-    if (fun && (ap = nv_arrayptr(np))) {
-        // If it's already an indexed array, convert to associative // structure.
-        if (!is_associative(ap)) ap = nv_changearray(np, fun);
-        return ap;
+    if (fun) {
+        ap = nv_arrayptr(np);
+        if (ap) {
+            // If it's already an indexed array, convert to associative structure.
+            if (!is_associative(ap)) ap = nv_changearray(np, fun);
+            return ap;
+        }
     }
+
     if (nv_isnull(np) && nv_isattr(np, NV_NOFREE)) {
         flags = ARRAY_TREE;
         nv_offattr(np, NV_NOFREE);
     }
-    if (!(fp = nv_isvtree(np))) value = nv_getval(np);
+
     if (!fun) return NULL;
-    if (ap) return NULL;
+
+    // Must be done before calling *fun() because it is likely to mutate the namval.
+    Namfun_t *fp = nv_isvtree(np);
+    char *value = fp ? NULL : nv_getval(np);
+
     ap = (Namarr_t *)((*fun)(np, NULL, NV_AINIT));
     if (!ap) return NULL;
 
