@@ -397,10 +397,4 @@ static inline int getdecimal() {
     return '.';
 }
 
-//
-// This defintion has been taken from iffe feature test for pipes.
-// TODO: Verfiy this assumption is safe.
-//
-#define _pipe_socketpair 1  // use socketpair() for peekable pipe()
-
 #endif  // _DEFS_H
