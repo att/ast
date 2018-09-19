@@ -43,7 +43,12 @@
 #include "ast_windows.h"
 #endif
 
-#if _hdr_mach_o_dyld
+// Including this header results in this bizarre warning:
+//   [/usr/include/libkern/OSByteOrder.h:301] error (preprocessorErrorDirective):
+//   #error Unknown endianess.
+// There isn't anything wrong with the include and the error doesn't happen when compiling the code.
+// So suppress the include if being checked by cppcheck.
+#if _hdr_mach_o_dyld && !_CPPCHECK
 #include <mach-o/dyld.h>
 #endif
 

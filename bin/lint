@@ -190,7 +190,7 @@ then
     do
         flags=( $(../scripts/extract_flags ${project_file} "${c_file}") )
         cppcheck "${lint_args[@]}" \
-                 "${flags[@]}" \
+                 "${flags[@]}" -D_CPPCHECK \
                  -q --verbose --std=c99 --std=posix --language=c \
                  --suppress=missingIncludeSystem --inline-suppr \
                  --enable="${cppchecks}" --rule-file=../.cppcheck.rules \
