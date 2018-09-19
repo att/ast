@@ -34,7 +34,6 @@
 #include <unistd.h>
 
 #include "ast.h"
-#include "ast_api.h"
 #include "cdt.h"
 #include "colib.h"
 #include "sfio.h"

@@ -26,7 +26,6 @@
 #include <sys/types.h>
 
 #include "aso.h"
-#include "ast.h"
 #include "ast_aso.h"
 #include "ast_assert.h"
 #include "cdtlib.h"

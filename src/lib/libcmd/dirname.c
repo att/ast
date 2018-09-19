@@ -32,7 +32,6 @@
 #include <stddef.h>
 
 #include "ast.h"
-#include "ast_api.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"

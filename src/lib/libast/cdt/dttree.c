@@ -24,7 +24,6 @@
 #include <stddef.h>
 #include <string.h>
 
-#include "ast.h"
 #include "ast_assert.h"
 #include "cdtlib.h"
 

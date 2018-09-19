@@ -39,7 +39,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ast.h"
 #include "option.h"
 
 static Opt_t *freecontext;

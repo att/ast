@@ -28,6 +28,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <string.h>
 #include <sys/stat.h>   // IWYU pragma: keep
 #include <sys/types.h>  // IWYU pragma: keep
 

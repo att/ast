@@ -27,9 +27,9 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <string.h>
 #include <unistd.h>
 
-#include "ast.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"

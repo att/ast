@@ -64,8 +64,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdlib.h>
-
-#include "ast.h"
+#include <string.h>
 
 static char empty[1];
 

@@ -35,7 +35,6 @@
 #include <stddef.h>
 
 #include "ast.h"
-#include "ast_api.h"
 #include "proclib.h"
 
 int procrun(const char *path, char **argv, int flags) {

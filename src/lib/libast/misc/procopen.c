@@ -45,7 +45,6 @@
 #include <unistd.h>
 
 #include "ast.h"
-#include "ast_api.h"
 #include "error.h"
 #include "proclib.h"
 #include "sfio.h"

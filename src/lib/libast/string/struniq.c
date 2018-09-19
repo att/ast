@@ -29,7 +29,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
+#include <string.h>
 
 int struniq(char **argv, int n) {
     char **ao;

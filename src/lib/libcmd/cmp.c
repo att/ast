@@ -37,7 +37,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "ast.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
