@@ -53,7 +53,7 @@ fi
 # Figure out which files to lint.
 if [[ ${all} == yes ]]
 then
-    files=( $(find src/cmd -name "*.c") )
+    files=( $(find src -name "*.c") )
 elif [[ "${#}" -ne 0 ]]
 then
     for next_file in "$@"
