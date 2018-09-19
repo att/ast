@@ -40,14 +40,15 @@
 int sfpoll(Sfio_t **fa, int n, int tm) {
     int r, c, m, np, eintr;
     Sfio_t *f;
-    int *status, *check;
+    int *check;
 
     if (n <= 0 || !fa) return -1;
 
-    if (!(status = (int *)malloc(2 * n * sizeof(int)))) return -1;
-    check = status + n; /* streams that need polling */
+    int *status = malloc(2 * n * sizeof(int));
+    if (!status) return -1;
+    check = status + n;  // streams that need polling
 
-    /* a SF_READ stream is ready if there is buffered read data */
+    // A SF_READ stream is ready if there is buffered read data.
 #define RDREADY(f)                                 \
     (((f->mode & SF_READ) && f->next < f->endb) || \
      ((f->mode & SF_WRITE) && f->proc && f->proc->ndata > 0))
@@ -104,7 +105,11 @@ int sfpoll(Sfio_t **fa, int n, int tm) {
             f = fa[check[r]];
             if (HASAUXFD(f)) m += 1;
         }
-        if (!(fds = (struct pollfd *)malloc(m * sizeof(struct pollfd)))) return -1;
+        fds = malloc(m * sizeof(struct pollfd));
+        if (!fds) {
+            free(status);
+            return -1;
+        }
 
         for (m = 0, r = 0; r < c; ++r, ++m) {
             f = fa[check[r]];
