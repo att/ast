@@ -1326,7 +1326,7 @@ static_fn bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, P
     sfputr(shp->stk, "/.paths", -1);
     fd = open(stkptr(shp->stk, offset), O_RDONLY | O_CLOEXEC);
     if (fd >= 0) {
-        fstat(fd, &statb);
+        if (fstat(fd, &statb) == -1) abort();  // it should be impossible for this to fail
         n = statb.st_size;
         stkseek(shp->stk, offset + pp->len + n + 2);
         sp = stkptr(shp->stk, offset + pp->len);
