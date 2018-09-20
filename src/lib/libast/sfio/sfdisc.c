@@ -134,13 +134,13 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
             int rv = 0;
             if (rv == 0 && f->disc && f->disc->exceptf) /* ask current discipline */
             {
-                SFOPEN(f, 0);
+                SFOPEN(f);
                 rv = (*f->disc->exceptf)(f, SF_DBUFFER, &n, f->disc);
                 SFLOCK(f, 0);
             }
             if (rv == 0 && disc && disc->exceptf) /* ask discipline being pushed */
             {
-                SFOPEN(f, 0);
+                SFOPEN(f);
                 rv = (*disc->exceptf)(f, SF_DBUFFER, &n, disc);
                 SFLOCK(f, 0);
             }
@@ -178,7 +178,7 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
         if (!(d = f->disc)) goto done;
         disc = d->disc;
         if (d->exceptf) {
-            SFOPEN(f, 0);
+            SFOPEN(f);
             if ((*(d->exceptf))(f, SF_DPOP, (void *)disc, d) < 0) goto done;
             SFLOCK(f, 0);
         }
@@ -188,7 +188,7 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
         do { /* loop to handle the case where d may pop itself */
             d = f->disc;
             if (d && d->exceptf) {
-                SFOPEN(f, 0);
+                SFOPEN(f);
                 if ((*(d->exceptf))(f, SF_DPUSH, (void *)disc, d) < 0) goto done;
                 SFLOCK(f, 0);
             }
@@ -239,6 +239,6 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
     }
 
 done:
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, rdisc);
 }

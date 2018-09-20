@@ -68,6 +68,6 @@ ssize_t sfnputc(Sfio_t *f, int c, size_t n) {
         if ((size_t)p > n) p = n;
     }
 done:
-    SFOPEN(f, local);
+    if (!local) SFOPEN(f);
     SFMTXRETURN(f, w);
 }

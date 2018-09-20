@@ -678,7 +678,7 @@ typedef struct _sfextern_s {
     ((f)->mode == SF_READ \
          ? _SFOPENRD(f)   \
          : (f)->mode == SF_WRITE ? _SFOPENWR(f) : ((f)->endw = (f)->endr = (f)->data))
-#define SFOPEN(f, l) (void)((l) ? 0 : ((f)->mode &= ~(SF_LOCK | SF_RC | SF_RV), _SFOPEN(f), 0))
+#define SFOPEN(f) do { (f)->mode &= ~(SF_LOCK | SF_RC | SF_RV); _SFOPEN(f); } while (0)
 
 /* check to see if the stream can be accessed */
 #define SFFROZEN(f)                              \

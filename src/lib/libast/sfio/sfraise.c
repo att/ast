@@ -69,7 +69,7 @@ int sfraise(Sfio_t *f, int type, void *data) {
         if (type == SF_FINAL) f->disc = next;
 
         if (disc->exceptf) {
-            SFOPEN(f, 0);
+            SFOPEN(f);
             // We do not return the value from the disc->exceptf function. That's because it can
             // return a negative or positive value to indicate a problem. This function, however,
             // must only return -1 on error. See issue #398.
@@ -84,6 +84,6 @@ int sfraise(Sfio_t *f, int type, void *data) {
         }
     }
 
-    SFOPEN(f, local);
+    if (!local) SFOPEN(f);
     SFMTXRETURN(f, 0);
 }

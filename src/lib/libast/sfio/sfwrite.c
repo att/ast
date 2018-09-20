@@ -145,7 +145,7 @@ ssize_t sfwrite(Sfio_t *f, const void *buf, size_t n) {
         if (n >= HIFORLINE) (void)SFFLSBUF(f, -1);
     }
 
-    SFOPEN(f, local);
+    if (!local) SFOPEN(f);
 
     w = s - begs;
     SFMTXRETURN(f, w);

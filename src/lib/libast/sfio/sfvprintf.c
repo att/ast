@@ -545,7 +545,7 @@ loop_fmt:
         {
             FMTSET(ft, form, args, fmt, size, flags, width, precis, base, t_str, n_str);
             SFEND(f);
-            SFOPEN(f, 0);
+            SFOPEN(f);
             v = (*ft->extf)(f, (void *)(&argv), ft);
             SFLOCK(f, 0);
             SFBUF(f);
@@ -1377,6 +1377,6 @@ done:
     else
         f->next += n;
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, n_output);
 }

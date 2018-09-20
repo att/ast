@@ -81,6 +81,6 @@ int _sfputu(Sfio_t *f, Sfulong_t v) {
         f->next = ps;
     }
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, (int)n);
 }

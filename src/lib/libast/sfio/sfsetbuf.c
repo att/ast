@@ -225,7 +225,7 @@ void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
         /* synchronize first */
         SFLOCK(f, local);
         rv = SFSYNC(f);
-        SFOPEN(f, local);
+        if (!local) SFOPEN(f);
         if (rv < 0) SFMTXRETURN(f, NULL);
 
         /* turn off the SF_SYNCED bit because buffer is changing */
@@ -465,7 +465,7 @@ done:
     while (blksz > f->size / 2) blksz /= 2;
     f->blksz = blksz;
 
-    SFOPEN(f, local);
+    if (!local) SFOPEN(f);
 
     SFMTXRETURN(f, (void *)obuf);
 }

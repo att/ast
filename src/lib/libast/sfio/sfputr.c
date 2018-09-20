@@ -117,6 +117,6 @@ ssize_t sfputr(Sfio_t *f, const char *s, int rc) {
         (void)SFWRITE(f, (void *)f->next, n);
     }
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, w);
 }

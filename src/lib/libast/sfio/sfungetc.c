@@ -67,7 +67,7 @@ int sfungetc(Sfio_t *f, int c) {
         }
         _Sfudisc->exceptf = _uexcept;
         sfdisc(uf, _Sfudisc);
-        SFOPEN(f, 0);
+        SFOPEN(f);
         (void)sfstack(f, uf);
         SFLOCK(f, 0);
     }
@@ -90,6 +90,6 @@ int sfungetc(Sfio_t *f, int c) {
 
     *--f->next = (uchar)c;
 done:
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, c);
 }
