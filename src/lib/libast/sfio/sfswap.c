@@ -55,7 +55,7 @@ Sfio_t *sfswap(Sfio_t *f1, Sfio_t *f2) {
         if ((!f2 || !(f2->mode & SF_AVAIL))) {
             if (!(f2 = (Sfio_t *)malloc(sizeof(Sfio_t)))) {
                 f1->mode = f1mode;
-                SFOPEN(f1, 0);
+                SFOPEN(f1);
                 return NULL;
             }
 
@@ -101,10 +101,10 @@ Sfio_t *sfswap(Sfio_t *f1, Sfio_t *f2) {
         if (!(f1->flags & SF_STATIC)) free(f1);
     } else {
         f1->mode = f2mode;
-        SFOPEN(f1, 0);
+        SFOPEN(f1);
     }
 
     f2->mode = f1mode;
-    SFOPEN(f2, 0);
+    SFOPEN(f2);
     return f2;
 }

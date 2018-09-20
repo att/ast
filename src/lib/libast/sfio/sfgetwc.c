@@ -85,6 +85,6 @@ int sfgetwc(Sfio_t *f) {
             }
         }
     }
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, c);
 }

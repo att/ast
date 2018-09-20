@@ -59,6 +59,6 @@ Sfulong_t sfgetm(Sfio_t *f, Sfulong_t m) {
         f->next = s;
     }
 done:
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, v);
 }

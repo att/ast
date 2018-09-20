@@ -147,7 +147,7 @@ done:
     /* prepare for a call to get the broken record */
     if (rsrv) rsrv->slen = found ? 0 : -un;
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
 
     if (us && (type & SF_LOCKR)) {
         f->mode |= SF_PEEK | SF_GETR;

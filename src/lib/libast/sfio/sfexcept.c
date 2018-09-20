@@ -47,7 +47,7 @@ int _sfexcept(Sfio_t *f, int type, ssize_t io, Sfdisc_t *disc) {
     if (local && io <= 0) f->flags |= io < 0 ? SF_ERROR : SF_EOF;
 
     if (disc && disc->exceptf) { /* let the stream be generally accessible for this duration */
-        if (local && lock) SFOPEN(f, 0);
+        if (local && lock) SFOPEN(f);
 
         /* so that exception handler knows what we are asking for */
         _Sfi = f->val = io;
@@ -102,7 +102,7 @@ chk_stack:
          (type == SF_WRITE && f->next <= f->data))) { /* pop the stack */
         Sfio_t *pf;
 
-        if (lock) SFOPEN(f, 0);
+        if (lock) SFOPEN(f);
 
         /* pop and close */
         pf = (*_Sfstack)(f, NULL);

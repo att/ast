@@ -101,8 +101,8 @@ Sfio_t *sfstack(Sfio_t *f1, Sfio_t *f2) {
         rf = f2;
     }
 
-    SFOPEN(f1, 0);
-    SFOPEN(f2, 0);
+    SFOPEN(f1);
+    SFOPEN(f2);
 
     STKMTXRETURN(f1, f2, rf);
 }

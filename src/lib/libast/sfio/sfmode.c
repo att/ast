@@ -104,7 +104,7 @@ static_fn void _sfcleanup(void) {
             f->mode |= pool;
 
             SFMTXUNLOCK(f);
-            SFOPEN(f, 0);
+            SFOPEN(f);
         }
     }
 }
@@ -494,6 +494,6 @@ int _sfmode(Sfio_t *f, int wanted, int local) {
     }
 
 done:
-    SFOPEN(f, local);
+    if (!local) SFOPEN(f);
     return rv;
 }

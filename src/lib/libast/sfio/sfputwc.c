@@ -115,6 +115,6 @@ int sfputwc(Sfio_t *f, int w) {
         f->next = s;
     }
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, (int)n);
 }

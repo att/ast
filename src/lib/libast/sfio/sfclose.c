@@ -88,7 +88,7 @@ int sfclose(Sfio_t *f) {
             f->mode &= ~SF_LOCK; /**/
             ASSERT(_Sfpmove);
             if ((*_Sfpmove)(f, -1) < 0) {
-                SFOPEN(f, 0);
+                SFOPEN(f);
                 SFMTXRETURN(f, -1);
             }
             f->mode |= SF_LOCK;

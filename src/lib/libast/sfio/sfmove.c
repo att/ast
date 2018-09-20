@@ -193,8 +193,8 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
         }
 
     again:
-        SFOPEN(fr, 0);
-        if (fw) SFOPEN(fw, 0);
+        SFOPEN(fr);
+        if (fw) SFOPEN(fw);
     }
 
     if (n < 0 && (fr->bits & SF_MMAP) && (fr->bits & SF_MVSIZE)) { /* back to normal access mode */
@@ -206,10 +206,10 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
     if (rbuf) free(rbuf);
 
     if (fw) {
-        SFOPEN(fw, 0);
+        SFOPEN(fw);
         SFMTXEND2(fw);
     }
 
-    SFOPEN(fr, 0);
+    SFOPEN(fr);
     SFMTXRETURN(fr, n_move);
 }

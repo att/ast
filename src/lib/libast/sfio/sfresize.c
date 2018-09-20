@@ -66,7 +66,7 @@ int sfresize(Sfio_t *f, Sfoff_t size) {
 
     f->extent = size;
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
 
     SFMTXRETURN(f, 0);
 }
