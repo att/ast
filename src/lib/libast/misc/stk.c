@@ -321,6 +321,7 @@ char *stkset(Sfio_t *stream, char *loc, size_t offset) {
     if (!init) stkinit(offset + 1);
     increment(set);
     int ctr = 0;
+
     while (1) {
         ctr++;
         fp = (struct frame *)sp->stkbase;
@@ -337,25 +338,25 @@ char *stkset(Sfio_t *stream, char *loc, size_t offset) {
             if (frames) sfsetbuf(stream, cp, sp->stkend - cp);
             stream->_data = (unsigned char *)(cp + roundof(loc - cp, STK_ALIGN));
             stream->_next = (unsigned char *)loc + offset;
-            goto found;
+            return (char *)stream->_data;
         }
         if (fp->prev) {
             sp->stkbase = fp->prev;
             sp->stkend = ((struct frame *)(fp->prev))->end;
             free(fp);
-            fp = NULL;
-        } else
+        } else  {
             break;
+        }
         frames++;
     }
     /* set stack back to the beginning */
     cp = (char *)(fp + 1);
-    if (frames)
+    if (frames) {
         sfsetbuf(stream, cp, sp->stkend - cp);
-    else
+    }  else {
         stream->_data = stream->_next = (unsigned char *)cp;
-found:
-    return ((char *)stream->_data);
+    }
+    return (char *)stream->_data;
 }
 
 /*
@@ -448,14 +449,17 @@ char *stkcopy(Sfio_t *stream, const char *str) {
  */
 
 static_fn char *stkgrow(Sfio_t *stream, size_t size) {
+    char *cp;
     size_t n = size;
     struct stk *sp = stream2stk(stream);
     struct frame *fp = (struct frame *)sp->stkbase;
-    char *cp, *dp = 0;
+    char *dp = NULL;
     size_t m = stktell(stream);
-    size_t endoff;
+    size_t endoff = 0;
     char *end = NULL;
-    int nn = 0, add = 1;
+    int nn = 0;
+    int add = 1;
+
     n += (m + sizeof(struct frame) + 1);  // what is the purpose of the `+ 1`?
     if (sp->stkflags & STK_SMALL)
 #ifndef USE_REALLOC
@@ -467,10 +471,10 @@ static_fn char *stkgrow(Sfio_t *stream, size_t size) {
     if (stkptr(stream, 0) == sp->stkbase + sizeof(struct frame)) {
         nn = fp->nalias + 1;
         dp = sp->stkbase;
-        sp->stkbase = ((struct frame *)dp)->prev;
         end = fp->end;
+        endoff = end - dp;
+        sp->stkbase = ((struct frame *)dp)->prev;
     }
-    endoff = end - dp;
     cp = realloc(dp, n + nn * sizeof(char *));
     if (!cp && (!sp->stkoverflow || !(cp = (*sp->stkoverflow)(n)))) return (0);
     increment(grow);
@@ -499,5 +503,5 @@ static_fn char *stkgrow(Sfio_t *stream, size_t size) {
         count(movsize, m);
     }
     sfsetbuf(stream, cp, sp->stkend - cp);
-    return ((char *)(stream->_next = stream->_data + m));
+    return (char *)(stream->_next = stream->_data + m);
 }
