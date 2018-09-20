@@ -466,9 +466,8 @@ int sh_close(int fd) {
     }
 
     if (!(sp = shp->sftable[fd]) || (sffileno(sp) != fd) || (sfclose(sp) < 0)) {
-        int err = errno;
         if (fdnotify) (*fdnotify)(fd, SH_FDCLOSE);
-        while ((r = close(fd)) < 0 && errno == EINTR) errno = err;
+        close(fd);
     }
 
     if (fd > 2) shp->sftable[fd] = 0;
@@ -664,9 +663,9 @@ ok:
     }
     if (fd >= shp->gd->lim.open_max && !sh_iovalidfd(shp, fd)) abort();
     if ((sp = shp->sftable[fd]) && (sfset(sp, 0, 0) & SF_STRING)) {
-        int n, err = errno;
+        int n;
         if ((n = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10)) >= 10) {
-            while (close(fd) < 0 && errno == EINTR) errno = err;
+            close(fd);
             fd = n;
             mode |= IOCLEX;
         }
