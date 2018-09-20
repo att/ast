@@ -711,7 +711,8 @@ typeset -T baz_t=(
 )
 baz_t z
 [[ ${z.z} == 789 ]] || log_error "z.z is ${z.z} should be 789"
-[[ ${ z.out } == "$out" ]] 2> /dev/null || log_error "z.out should be $out"
+[[ ${ z.out } == "$out" ]] 2> /dev/null || log_error "z.out wrong" "$out" "${ z.out }"
+typeset -p z >&2
 
 $SHELL  2> /dev/null <<- \EOF || log_error 'typeset -p with types not working'
 	typeset -T Man_t=( typeset X)
