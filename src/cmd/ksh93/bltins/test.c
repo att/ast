@@ -24,7 +24,6 @@
 //   David Korn
 //   AT&T Labs
 //
-#define _shtest_c
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
@@ -576,8 +575,7 @@ int test_inode(const char *file1, const char *file2) {
 }
 
 //
-// This version of access checks against effective uid/gid. The static buffer statb is shared with
-// test_mode.
+// This version of access checks against effective uid/gid.
 //
 int sh_access(const char *name, int mode) {
     Shell_t *shp = sh_getinterp();

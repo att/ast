@@ -1013,7 +1013,7 @@ pid_t path_spawn(Shell_t *shp, const char *opath, char **argv, char **envp, Path
             path = stkptr(shp->stk, PATH_OFFSET);
             if (v && buff[0] == '.' && buff[1] == '.') {
                 pathcanon(path, n - PATH_OFFSET, 0);
-                if (r && access(path, X_OK)) {
+                if (r && sh_access(path, X_OK)) {
                     memcpy(path, save, r);
                     break;
                 }
