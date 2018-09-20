@@ -389,12 +389,6 @@ extern Shell_t sh;
 #undef stat
 #define stat(a, b) sh_stat(a, b)
 #endif
-#ifndef _shtest_c
-#ifndef _SH_PRIVATE
-#undef access
-#define access(a, b) sh_access(a, b)
-#endif
-#endif  // !_shtest_c
 #ifndef _shio_h
 #undef chdir
 #define chdir(a) sh_chdir(a)
@@ -414,8 +408,6 @@ extern Shell_t sh;
 #endif
 #endif
 #ifndef _SH_PRIVATE
-#undef access
-#define access(a, b) sh_access(a, b)
 #undef close
 #define close(a) sh_close(a)
 #if SHELLAPI(20120720)
