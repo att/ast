@@ -127,9 +127,8 @@ void sh_subtmpfile(Shell_t *shp) {
         struct subshell *sp = subshell_data->pipe;
         // Save file descriptor 1 if open.
         if ((sp->tmpfd = fd = sh_fcntl(1, F_DUPFD_CLOEXEC, 10)) >= 0) {
-            int err = errno;
             shp->fdstatus[fd] = shp->fdstatus[1] | IOCLEX;
-            while (close(1) < 0 && errno == EINTR) errno = err;
+            close(1);
         } else if (errno != EBADF) {
             errormsg(SH_DICT, ERROR_system(1), e_toomany);
             __builtin_unreachable();
@@ -663,8 +662,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         }
         // Check if standard output was preserved.
         if (sp->tmpfd >= 0) {
-            int err = errno;
-            while (close(1) < 0 && errno == EINTR) errno = err;
+            close(1);
             if (fcntl(sp->tmpfd, F_DUPFD, 1) != 1) duped++;
             sh_close(sp->tmpfd);
         }

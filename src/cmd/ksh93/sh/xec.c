@@ -136,7 +136,7 @@ static_fn void fifo_check(void *handle) {
 static int subpipe[3], subdup, tsetio, usepipe;
 
 static_fn bool iousepipe(Shell_t *shp) {
-    int i, err = errno;
+    int i;
     int fd = sffileno(sfstdout);
     if (!sh_iovalidfd(shp, fd)) abort();
     if (usepipe) {
@@ -153,7 +153,7 @@ static_fn bool iousepipe(Shell_t *shp) {
     subpipe[2] = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10);
     if (!sh_iovalidfd(shp, subpipe[2])) abort();
     shp->fdstatus[subpipe[2]] = shp->fdstatus[1];
-    while (close(fd) < 0 && errno == EINTR) errno = err;
+    close(fd);
     fcntl(subpipe[1], F_DUPFD, fd);
     shp->fdstatus[1] = shp->fdstatus[subpipe[1]] & ~IOCLEX;
     sh_close(subpipe[1]);
@@ -171,7 +171,7 @@ static_fn bool iousepipe(Shell_t *shp) {
 }
 
 void sh_iounpipe(Shell_t *shp) {
-    int fd = sffileno(sfstdout), n, err = errno;
+    int fd = sffileno(sfstdout), n;
     char buff[SF_BUFSIZE];
     if (!usepipe) return;
     --usepipe;
@@ -182,7 +182,7 @@ void sh_iounpipe(Shell_t *shp) {
         }
         goto done;
     }
-    while (close(fd) < 0 && errno == EINTR) errno = err;
+    close(fd);
     fcntl(subpipe[2], F_DUPFD, fd);
     shp->fdstatus[1] = shp->fdstatus[subpipe[2]];
     if (subdup) {
@@ -672,13 +672,12 @@ static_fn void unset_instance(Namval_t *nq, Namval_t *node, struct Namref *nr, l
 static_fn Sfio_t *openstream(Shell_t *shp, struct ionod *iop, int *save) {
     Sfio_t *sp;
     int savein;
-    int err = errno;
     int fd = sh_redirect(shp, iop, 3);
 
     savein = dup(0);
     if (fd == 0) fd = savein;
     sp = sfnew(NULL, NULL, SF_UNBOUND, fd, SF_READ);
-    while (close(0) < 0 && errno == EINTR) errno = err;
+    close(0);
     if (open(e_devnull, O_RDONLY | O_CLOEXEC) != 0) abort();
     shp->offsets[0] = -1;
     shp->offsets[1] = 0;
