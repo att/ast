@@ -86,7 +86,7 @@ void *sfreserve(Sfio_t *f, ssize_t size, int type) {
 
         if (!mode && !(mode = f->flags & SF_READ)) mode = SF_WRITE;
         if ((int)f->mode != mode && _sfmode(f, mode, local) < 0) {
-            SFOPEN(f, 0);
+            SFOPEN(f);
             SFMTXRETURN(f, NULL);
         }
 
@@ -170,7 +170,7 @@ done: /* compute the buffer to be returned */
             rsrv->slen = -n;
     }
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
 
     if (data) {
         if (type == SF_LOCKR) {

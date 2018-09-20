@@ -119,7 +119,7 @@ ssize_t sfread(Sfio_t *f, void *buf, size_t n) {
         }
     }
 
-    SFOPEN(f, local);
+    if (!local) SFOPEN(f);
     r = s - begs;
     SFMTXRETURN(f, r);
 }

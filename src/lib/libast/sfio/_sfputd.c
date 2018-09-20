@@ -65,7 +65,7 @@ int _sfputd(Sfio_t *f, Sfdouble_t v) {
     }
 
     /* write out the signs and the exp */
-    SFOPEN(f, 0);
+    SFOPEN(f);
     if (sfputc(f, n) < 0 || (w = sfputu(f, w)) < 0) SFMTXRETURN(f, -1);
     SFLOCK(f, 0);
     w += 1;
@@ -86,6 +86,6 @@ int _sfputd(Sfio_t *f, Sfdouble_t v) {
     n = ends - s + 1;
     w = SFWRITE(f, (void *)s, n) == n ? w + n : -1;
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, w);
 }

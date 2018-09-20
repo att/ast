@@ -300,19 +300,19 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
     if (_sfsetpool(f) < 0) goto done;
 
     /**/ ASSERT(p->sf[0] == pf && p->sf[p->n_sf - 1] == f);
-    SFOPEN(pf, 0);
-    SFOPEN(f, 0);
+    SFOPEN(pf);
+    SFOPEN(f);
     if (_sfpmove(f, 0) < 0) /* make f head of pool */
         goto done;
     rv = pf;
 
 done:
     if (f) {
-        SFOPEN(f, 0);
+        SFOPEN(f);
         SFMTXUNLOCK(f);
     }
     if (pf) {
-        SFOPEN(pf, 0);
+        SFOPEN(pf);
         SFMTXUNLOCK(pf);
     }
     return rv;

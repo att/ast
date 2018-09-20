@@ -97,6 +97,6 @@ Sfoff_t sfsize(Sfio_t *f) {
         }
     }
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, s);
 }

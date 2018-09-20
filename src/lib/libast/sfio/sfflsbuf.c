@@ -61,7 +61,7 @@ int _sfflsbuf(Sfio_t *f, int c) {
             if (f->next < f->endb || !(f->flags & SF_STRING))
                 n = f->next - (data = f->data);
             else {
-                SFOPEN(f, local);
+                if (!local) SFOPEN(f);
                 SFMTXRETURN(f, -1);
             }
         }
@@ -96,7 +96,7 @@ int _sfflsbuf(Sfio_t *f, int c) {
                 break;       /* do normal exit below */
             else             /* nothing was done, returning failure */
             {
-                SFOPEN(f, local);
+                if (!local) SFOPEN(f);
                 SFMTXRETURN(f, -1);
             }
         } else /* w < 0 means SF_EDISC or SF_ESTACK in sfwr() */
@@ -108,7 +108,7 @@ int _sfflsbuf(Sfio_t *f, int c) {
         }
     }
 
-    SFOPEN(f, local);
+    if (!local) SFOPEN(f);
 
     if (inpc < 0) inpc = f->endb - f->next;
 

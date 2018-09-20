@@ -71,7 +71,7 @@ int sfsetfd(Sfio_t *f, int newfd) {
         if (oldfd >= 0) {
             if (newfd >= 0) {
                 if ((newfd = _sfdup(oldfd, newfd)) < 0) {
-                    SFOPEN(f, 0);
+                    SFOPEN(f);
                     SFMTXRETURN(f, -1);
                 }
                 CLOSE(oldfd);
@@ -79,14 +79,14 @@ int sfsetfd(Sfio_t *f, int newfd) {
                 if (((f->mode & SF_WRITE) && f->next > f->data) || (f->mode & SF_READ) ||
                     f->disc == _Sfudisc) {
                     if (SFSYNC(f) < 0) {
-                        SFOPEN(f, 0);
+                        SFOPEN(f);
                         SFMTXRETURN(f, -1);
                     }
                 }
 
                 if (((f->mode & SF_WRITE) && f->next > f->data) ||
                     ((f->mode & SF_READ) && f->extent < 0 && f->next < f->endb)) {
-                    SFOPEN(f, 0);
+                    SFOPEN(f);
                     SFMTXRETURN(f, -1);
                 }
 
@@ -103,7 +103,7 @@ int sfsetfd(Sfio_t *f, int newfd) {
             }
         }
 
-        SFOPEN(f, 0);
+        SFOPEN(f);
     }
 
     /* notify changes */

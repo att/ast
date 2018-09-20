@@ -238,7 +238,7 @@ done:
 
     f->lpos = p;
 
-    SFOPEN(f, local);
+    if (!local) SFOPEN(f);
 
     if (mustsync) sfsync(f);
     SFMTXRETURN(f, p);

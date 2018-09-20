@@ -100,7 +100,7 @@ int _sffilbuf(Sfio_t *f, int n) {
         }
     }
 
-    SFOPEN(f, local);
+    if (!local) SFOPEN(f);
 
     rcrv = (n == 0) ? (r > 0 ? (int)(*f->next++) : EOF) : (int)r;
 

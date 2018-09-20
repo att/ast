@@ -56,13 +56,13 @@ int sfpurge(Sfio_t *f) {
             SFMUNMAP(f, f->data, f->endb - f->data);
             (void)SFSK(f, f->here, SEEK_SET, f->disc);
         }
-        SFOPEN(f, 0);
+        SFOPEN(f);
         SFMTXRETURN(f, 0);
     }
 
     switch (f->mode & ~SF_LOCK) {
         default:
-            SFOPEN(f, 0);
+            SFOPEN(f);
             SFMTXRETURN(f, -1);
         case SF_WRITE:
             f->next = f->data;
@@ -80,7 +80,7 @@ int sfpurge(Sfio_t *f) {
             break;
     }
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
 
 done:
     if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf)

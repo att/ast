@@ -599,7 +599,7 @@ loop_fmt:
         } else if (ft && ft->extf) {
             FMTSET(ft, form, args, fmt, size, flags, width, 0, base, t_str, n_str);
             SFend(f);
-            SFOPEN(f, 0);
+            SFOPEN(f);
             v = (*ft->extf)(f, (void *)&argv, ft);
             SFLOCK(f, 0);
             SFbuf(f);
@@ -967,7 +967,7 @@ done:
 
     SFend(f);
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
 
     if (n_assign == 0 && inp < 0) n_assign = -1;
 

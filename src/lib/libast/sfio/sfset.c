@@ -82,6 +82,6 @@ int sfset(Sfio_t *f, int flags, int set) {
     /* if not shared or unseekable, public means nothing */
     if (!(f->flags & SF_SHARE) || f->extent < 0) f->flags &= ~SF_PUBLIC;
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, (oflags & SFIO_FLAGS));
 }

@@ -68,6 +68,6 @@ done:
     v = ldexpl(v, (sign & 02) ? -exp : exp);
     if (sign & 01) v = -v;
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, v);
 }

@@ -88,6 +88,6 @@ int _sfputl(Sfio_t *f, Sflong_t v) {
         f->next = ps;
     }
 
-    SFOPEN(f, 0);
+    SFOPEN(f);
     SFMTXRETURN(f, n);
 }
