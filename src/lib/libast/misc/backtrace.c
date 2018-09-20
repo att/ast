@@ -7,6 +7,8 @@
 
 #if _hdr_execinfo
 #include <execinfo.h>
+#else
+#include <string.h>
 #endif
 
 // Write a primitive backtrace to stderr. This can be called from anyplace in
