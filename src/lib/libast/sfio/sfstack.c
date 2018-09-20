@@ -67,9 +67,10 @@ Sfio_t *sfstack(Sfio_t *f1, Sfio_t *f2) {
         if (f1->pool && f1->pool != &_Sfpool && f1->pool != f2->pool &&
             f1 == f1->pool->sf[0]) { /* get something else to pool front since f1 will be locked */
             for (n = 1; n < f1->pool->n_sf; ++n) {
-                if (SFFROZEN(f1->pool->sf[n])) continue;
-                (*_Sfpmove)(f1->pool->sf[n], 0);
-                break;
+                if (!SFFROZEN(f1->pool->sf[n])) {
+                    (*_Sfpmove)(f1->pool->sf[n], 0);
+                    break;
+                }
             }
         }
     }
