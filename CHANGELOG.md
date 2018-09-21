@@ -19,6 +19,7 @@ None at this time.
 
 ## Notable non-backward compatible changes
 
+- Support for coshell has been removed (issue #619).
 - Support for the `universe` command has been removed (issue #793).
 - Support for building on systems using EBCDIC has been removed (issue #742).
 - Support for the `LC_OPTIONS` env var has been removed (issue #579).

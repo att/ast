@@ -19,6 +19,6 @@ libast_files += [
     'string/strton.c', 'string/strtonll.c',
     'string/struniq.c',
     'string/tok.c',
-    'string/tokscan.c', 'string/utf32stowcs.c', 'string/utf32toutf8.c',
+    'string/utf32stowcs.c', 'string/utf32toutf8.c',
     'string/utf8toutf32.c', 'string/wcstoutf32s.c'
 ]
