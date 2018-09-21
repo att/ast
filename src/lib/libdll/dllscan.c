@@ -25,6 +25,7 @@
 
 #include <ctype.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -202,6 +203,7 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
     int j;
     int k;
     char buf[32];
+    bool name_duped = false;
 
     if (lib && *lib && (*lib != '-' || *(lib + 1))) {
         //
@@ -215,9 +217,10 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
         i = 0;
     }
     if (version && (!*version || (*version == '-' && !*(version + 1)))) version = 0;
-    if (!(scan = calloc(1, sizeof(Dllscan_t) + i)) || !(scan->tmp = sfstropen())) {
-        return 0;
-    }
+    scan = calloc(1, sizeof(Dllscan_t) + i);
+    if (!scan) return NULL;
+    scan->tmp = sfstropen();
+    if (!scan->tmp) return NULL;
     info = dllinfo();
     scan->flags = info->flags;
     if (lib) {
@@ -226,14 +229,15 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
         sfsprintf(s, i, "lib/%s", lib);
         if (!version && !strcmp(info->suffix, ".dylib")) version = "0.0";
     }
-    if (!name || !*name || (*name == '-' && !*(name + 1))) {
-        name = (const char *)"?*";
+    if (!name || !*name || (name[0] == '-' && !name[1])) {
+        name = "?*";
         scan->flags |= DLL_MATCH_NAME;
     } else {
         t = strrchr(name, '/');
         if (t) {
-            if (!(scan->pb = calloc(1, t - (char *)name + 2))) goto bad;
-            memcpy(scan->pb, name, t - (char *)name);
+            scan->pb = malloc(t - name + 2);
+            if (!scan->pb) goto bad;
+            memcpy(scan->pb, name, t - name);
             name = (const char *)(t + 1);
         }
     }
@@ -244,11 +248,12 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
             k = strlen(info->suffix);
             if (i > k && !strcmp(name + i - k, info->suffix)) {
                 i -= j + k;
-                t = calloc(1, i + 1);
+                t = malloc(i + 1);
                 if (!t) goto bad;
                 memcpy(t, name + j, i);
                 t[i] = 0;
                 name = (const char *)t;
+                name_duped = true;
             }
         }
         if (!version)
@@ -256,9 +261,10 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
                 if ((*t == '-' || *t == '.' || *t == '?') && isdigit(*(t + 1))) {
                     if (*t != '-') scan->flags |= DLL_MATCH_VERSION;
                     version = t + 1;
-                    s = calloc(1, t - (char *)name + 1);
+                    s = malloc(t - name + 1);
                     if (!s) goto bad;
                     memcpy(s, name, t - (char *)name);
+                    if (name_duped) free((char *)name);
                     name = (const char *)s;
                     break;
                 }
@@ -307,10 +313,13 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
     scan->sp = scan->sb = (scan->lib ? scan->lib : info->sibling);
     scan->prelen = strlen(info->prefix);
     scan->suflen = strlen(info->suffix);
+    if (name_duped) free((char *)name);
     return scan;
+
 bad:
     dllsclose(scan);
-    return 0;
+    if (name_duped) free((char *)name);
+    return NULL;
 }
 
 //
