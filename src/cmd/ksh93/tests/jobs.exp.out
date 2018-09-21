@@ -1,5 +1,7 @@
 Ctrl-z stops cat processs
 jobs lists stopped cat process
+jobs -l lists pid of stopped cat process
+jobs -p lists process group of stopped cat process
 bg brings last stopped process to background
 fg brings last stopped process to foreground
 Warning before exit for stopped jobs works

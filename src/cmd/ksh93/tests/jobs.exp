@@ -23,6 +23,24 @@ expect -re ".*Stopped.*cat\r\n" {
 expect_prompt
 
 # ======
+# Test if jobs builtin lists pid of stopped process
+log_test_entry
+send "jobs -l\r"
+expect -re "\[1\].*\[0-9\]+.*Stopped.*cat\r\n" {
+    puts "jobs -l lists pid of stopped cat process"
+}
+expect_prompt
+
+# ======
+# Test if jobs builtin lists process groups of stopped process
+log_test_entry
+send "jobs -p\r"
+expect -re "\[0-9\]+\r\n" {
+    puts "jobs -p lists process group of stopped cat process"
+}
+expect_prompt
+
+# ======
 # bg should put last stopped process in background
 log_test_entry
 send "bg\r"
