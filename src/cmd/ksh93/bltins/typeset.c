@@ -142,8 +142,11 @@ int b_readonly(int argc, char *argv[], Shbltin_t *context) {
         flag = (NV_ASSIGN | NV_RDONLY | NV_VARNAME);
     } else {
         flag = (NV_ASSIGN | NV_EXPORT | NV_IDENT);
-        if (!tdata.sh->prefix) tdata.sh->prefix = "";
     }
+
+    // This unsets `NV_NOSCOPE` attribute while creating variables
+    if (!tdata.sh->prefix) tdata.sh->prefix = "";
+
     return setall(argv, flag, tdata.sh->var_tree, &tdata);
 }
 
