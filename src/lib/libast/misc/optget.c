@@ -568,27 +568,28 @@ static_fn int optget_match(char *s, char *t, int version, const char *id, const 
                     while (w > ww && *w != *x) w--;
                 }
             }
-            if (!*w) {
-                if (!v) {
-                    for (;;) {
-                        switch (*x++) {
-                            case 0:
-                            case ':':
-                            case '|':
-                            case '?':
-                            case ']':
-                                return 1;
-                            case '*':
-                                break;
-                            default:
-                                continue;
-                        }
-                        break;
+
+            if (*w) continue;
+
+            if (!v) {
+                for (;;) {
+                    switch (*x++) {
+                        case 0:
+                        case ':':
+                        case '|':
+                        case '?':
+                        case ']':
+                            return 1;
+                        case '*':
+                            break;
+                        default:
+                            continue;
                     }
                     break;
                 }
-                return 1;
+                break;
             }
+            return 1;
         } while (*(x = optget_skip(x, '|', 0, 0, 1, 0, 0, version)) == '|' && x++);
     }
     return 0;
