@@ -369,30 +369,15 @@ extern ssize_t sfmaxr(ssize_t, int);
 #define sfslen() (__sf_slen())
 #define sfmaxr(n, s) (__sf_maxr(n, s))
 
-#ifndef _SFSTR_H /* GSF's string manipulation stuff */
-#define _SFSTR_H 1
+// GSF's string manipulation stuff.
+extern char *sfstrseek(Sfio_t *, Sfoff_t, int);
 
 #define sfstropen() sfnew(0, 0, -1, -1, SF_READ | SF_WRITE | SF_STRING)
 #define sfstrclose(f) sfclose(f)
-
-#define sfstrseek(f, p, m)                                                                      \
-    ((m) == SEEK_SET                                                                            \
-         ? (((p) < 0 || (p) > (f)->_size) ? NULL : (char *)((f)->_next = (f)->_data + (p)))     \
-         : (m) == SEEK_CUR                                                                      \
-               ? ((f)->_next += (p),                                                            \
-                  (((f)->_next < (f)->_data || (f)->_next > (f)->_data + (f)->_size)            \
-                       ? ((f)->_next -= (p), NULL)                                              \
-                       : (char *)(f)->_next))                                                   \
-               : (m) == SEEK_END ? (((p) > 0 || (f)->_size < -(p))                              \
-                                        ? NULL                                                  \
-                                        : (char *)((f)->_next = (f)->_data + (f)->_size + (p))) \
-                                 : NULL)
-
 #define sfstrsize(f) ((f)->_size)
 #define sfstrtell(f) ((f)->_next - (f)->_data)
 #define sfstrpend(f) ((f)->_size - sfstrtell())
 #define sfstrbase(f) ((char *)(f)->_data)
-
 #define sfstruse(f) (sfputc((f), 0) < 0 ? NULL : (char *)((f)->_next = (f)->_data))
 
 #define sfstrrsrv(f, n)                                                     \
@@ -402,7 +387,5 @@ extern ssize_t sfmaxr(ssize_t, int);
 #define sfstrbuf(f, b, n, m)                                        \
     (sfsetbuf((f), (b), (n)), ((f)->_flags |= (m) ? SF_MALLOC : 0), \
      ((f)->_data == (unsigned char *)(b) ? 0 : -1))
-
-#endif /* _SFSTR_H */
 
 #endif  // _SFIO_H
