@@ -389,9 +389,10 @@ again:
                 // fts_open() expects it's first argument to be NULL terminated
                 char *argv[2] = {t, NULL};
                 scan->fts = fts_open(argv, FTS_LOGICAL, vercmp);
-                if (scan && (scan->ent = fts_read(scan->fts)) &&
-                    (scan->ent = fts_children(scan->fts, FTS_NOSTAT))) {
-                    break;
+                scan->ent = fts_read(scan->fts);
+                if (scan->ent) {
+                    scan->ent = fts_children(scan->fts, FTS_NOSTAT);
+                    if (scan->ent) break;
                 }
             }
         }
