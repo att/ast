@@ -181,48 +181,45 @@ static Catalog_t *init(char *s) {
     strcpy(cp->name, s);
     if (!dtinsert(state.catalogs, cp)) {
         free(cp);
-        return 0;
+        return NULL;
     }
     cp->cat = NOCAT;
 
+    // Locate the default locale catalog.
+    d = find("C", s);
+    if (d == NOCAT) return cp;
+
     /*
-     * locate the default locale catalog
-     */
-
-    if ((d = find("C", s)) != NOCAT) {
-        /*
-         * load the default locale messages
-         * this assumes one mesage set for ast (AST_MESSAGE_SET or fallback to 1)
-         * different packages can share the same message catalog
-         * name by using different message set numbers
-         * see <mc.h> mcindex()
-         *
-         * this method requires a scan of each catalog, and the
-         * catalogs do not advertise the max message number, so
-         * we assume there are no messages after a gap of GAP
-         * missing messages
-         */
-
-        cp->messages = dtopen(&state.message_disc, Dtset);
-        if (cp->messages) {
-            n = m = 0;
-            for (;;) {
-                n++;
-                if ((((s = catgets(d, set = AST_MESSAGE_SET, n, state.null)) && *s) ||
-                     ((s = catgets(d, set = 1, n, state.null)) && *s)) &&
-                    entry(cp->messages, set, n, s)) {
-                    m = n;
-                } else if ((n - m) > GAP) {
-                    break;
-                }
-            }
-            if (!m) {
-                dtclose(cp->messages);
-                cp->messages = 0;
+    * load the default locale messages
+    * this assumes one mesage set for ast (AST_MESSAGE_SET or fallback to 1)
+    * different packages can share the same message catalog
+    * name by using different message set numbers
+    * see <mc.h> mcindex()
+    *
+    * this method requires a scan of each catalog, and the
+    * catalogs do not advertise the max message number, so
+    * we assume there are no messages after a gap of GAP
+    * missing messages
+    */
+    cp->messages = dtopen(&state.message_disc, Dtset);
+    if (cp->messages) {
+        n = m = 0;
+        for (;;) {
+            n++;
+            if ((((s = catgets(d, set = AST_MESSAGE_SET, n, state.null)) && *s) ||
+                    ((s = catgets(d, set = 1, n, state.null)) && *s)) &&
+                entry(cp->messages, set, n, s)) {
+                m = n;
+            } else if ((n - m) > GAP) {
+                break;
             }
         }
-        catclose(d);
+        if (!m) {
+            dtclose(cp->messages);
+            cp->messages = 0;
+        }
     }
+    catclose(d);
     return cp;
 }
 
