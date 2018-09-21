@@ -4,8 +4,7 @@ ksh93_files = []
 ksh93_incdir = include_directories('include',
                                    '../../lib/libast/include/',
                                    '../../lib/libcmd/',
-                                   '../../lib/libdll/',
-                                   '../../lib/libcoshell/')
+                                   '../../lib/libdll/')
 
 subdir('include')
 subdir('bltins')
@@ -29,13 +28,13 @@ libksh = library('ksh', ksh93_files,
 
 ksh93_exe = executable('ksh', ['sh/pmain.c'], c_args: shared_c_args,
     include_directories: [configuration_incdir, ksh93_incdir],
-    link_with: [libksh, libast, libcmd, libcoshell, libdll],
+    link_with: [libksh, libast, libcmd, libdll],
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
     install: true)
 
 shcomp_exe = executable('shcomp', ['sh/shcomp.c'], c_args: shared_c_args,
     include_directories: [configuration_incdir, ksh93_incdir],
-    link_with: [libksh, libast, libcmd, libcoshell, libdll],
+    link_with: [libksh, libast, libcmd, libdll],
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
     install: true)
 
@@ -50,11 +49,10 @@ shcomp_var = 'SHCOMP=' + shcomp_exe.full_path()
 
 libast_build_dir = join_paths(build_dir, 'src', 'lib', 'libast')
 libcmd_build_dir = join_paths(build_dir, 'src', 'lib', 'libcmd')
-libcoshell_build_dir = join_paths(build_dir, 'src', 'lib', 'libcoshell')
 libdll_build_dir = join_paths(build_dir, 'src', 'lib', 'libdll')
 
 ld_library_path = 'LD_LIBRARY_PATH=' + ':'.join(
-    [libast_build_dir, libcmd_build_dir, libcoshell_build_dir, libdll_build_dir])
+    [libast_build_dir, libcmd_build_dir, libdll_build_dir])
 
 # Sample loadable builtin will be loaded from this path in builtins test cases
 libsample_path = 'LIBSAMPLE_PATH=' + libsample.full_path()

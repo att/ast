@@ -165,10 +165,6 @@ shared_c_args = [
     '-D_AST_no_spawnveg=1',
 ]
 
-if get_option('coshell') == true
-    shared_c_args += [ '-DSHOPT_COSHELL' ]
-endif
-
 ptr_size = cc.sizeof('void*')
 int_size = cc.sizeof('int')
 long_size = cc.sizeof('long')
@@ -244,7 +240,6 @@ run_command('scripts/libast_prereq.sh')
 subdir('src/lib/libast')
 subdir('src/lib/libcmd')
 subdir('src/lib/libdll')
-subdir('src/lib/libcoshell')
 
 # Check if api tests should be built
 if get_option('build-api-tests') == true

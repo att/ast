@@ -9,7 +9,6 @@ libast_c_args = shared_c_args
 subdir('aso')
 subdir('comp')
 subdir('cdt')
-subdir('disc')
 subdir('sfio')
 subdir('path')
 subdir('port')
