@@ -73,7 +73,7 @@ int b_logname(int argc, char **argv, Shbltin_t *context) {
     }
     logname = getlogin();
     if (!logname) {
-        (void)snprintf(buf, sizeof(buf), "%d", getuid());
+        (void)snprintf(buf, sizeof(buf), "%u", getuid());
         logname = buf;
     }
     sfputr(sfstdout, logname, '\n');
