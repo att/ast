@@ -126,98 +126,99 @@ static const Namval_t options[] = {{"break", OPT_BREAK},     {"catalog", OPT_CAT
  */
 static_fn int error_setopt(void *a, const void *p, int n, const char *v) {
     UNUSED(a);
-    if (p) {
-        switch (((Namval_t *)p)->value) {
-            case OPT_BREAK:
-            case OPT_CORE:
-                if (n) {
-                    switch (*v) {
-                        case 'e':
-                        case 'E':
-                            error_state.breakpoint = ERROR_ERROR;
-                            break;
-                        case 'f':
-                        case 'F':
-                            error_state.breakpoint = ERROR_FATAL;
-                            break;
-                        case 'p':
-                        case 'P':
-                            error_state.breakpoint = ERROR_PANIC;
-                            break;
-                        default:
-                            error_state.breakpoint = strtol(v, NULL, 0);
-                            break;
-                    }
-                } else {
-                    error_state.breakpoint = 0;
+    if (!p) return 0;
+
+    switch (((Namval_t *)p)->value) {
+        case OPT_BREAK:
+        case OPT_CORE:
+            if (n) {
+                switch (*v) {
+                    case 'e':
+                    case 'E':
+                        error_state.breakpoint = ERROR_ERROR;
+                        break;
+                    case 'f':
+                    case 'F':
+                        error_state.breakpoint = ERROR_FATAL;
+                        break;
+                    case 'p':
+                    case 'P':
+                        error_state.breakpoint = ERROR_PANIC;
+                        break;
+                    default:
+                        error_state.breakpoint = strtol(v, NULL, 0);
+                        break;
                 }
-                if (((Namval_t *)p)->value == OPT_CORE) error_info.core = error_state.breakpoint;
-                break;
-            case OPT_CATALOG:
-                if (n)
-                    error_info.set |= ERROR_CATALOG;
-                else
-                    error_info.clear |= ERROR_CATALOG;
-                break;
-            case OPT_COUNT:
-                if (n)
-                    error_state.count = strtol(v, NULL, 0);
-                else
-                    error_state.count = 0;
-                break;
-            case OPT_FD:
-                error_info.fd = n ? strtol(v, NULL, 0) : -1;
-                break;
-            case OPT_LIBRARY:
-                if (n)
-                    error_info.set |= ERROR_LIBRARY;
-                else
-                    error_info.clear |= ERROR_LIBRARY;
-                break;
-            case OPT_MASK:
-                if (n)
-                    error_info.mask = strtol(v, NULL, 0);
-                else
-                    error_info.mask = 0;
-                break;
-            case OPT_MATCH:
-                if (error_state.match) regfree(error_state.match);
-                if (n) {
-                    if ((error_state.match || (error_state.match = calloc(1, sizeof(regex_t)))) &&
-                        regcomp(error_state.match, v, REG_EXTENDED | REG_LENIENT)) {
-                        free(error_state.match);
-                        error_state.match = 0;
-                    }
-                } else if (error_state.match) {
+            } else {
+                error_state.breakpoint = 0;
+            }
+            if (((Namval_t *)p)->value == OPT_CORE) error_info.core = error_state.breakpoint;
+            break;
+        case OPT_CATALOG:
+            if (n)
+                error_info.set |= ERROR_CATALOG;
+            else
+                error_info.clear |= ERROR_CATALOG;
+            break;
+        case OPT_COUNT:
+            if (n)
+                error_state.count = strtol(v, NULL, 0);
+            else
+                error_state.count = 0;
+            break;
+        case OPT_FD:
+            error_info.fd = n ? strtol(v, NULL, 0) : -1;
+            break;
+        case OPT_LIBRARY:
+            if (n)
+                error_info.set |= ERROR_LIBRARY;
+            else
+                error_info.clear |= ERROR_LIBRARY;
+            break;
+        case OPT_MASK:
+            if (n)
+                error_info.mask = strtol(v, NULL, 0);
+            else
+                error_info.mask = 0;
+            break;
+        case OPT_MATCH:
+            if (error_state.match) regfree(error_state.match);
+            if (n) {
+                if ((error_state.match || (error_state.match = calloc(1, sizeof(regex_t)))) &&
+                    regcomp(error_state.match, v, REG_EXTENDED | REG_LENIENT)) {
                     free(error_state.match);
                     error_state.match = 0;
                 }
-                break;
-            case OPT_PREFIX:
-                if (n)
-                    error_state.prefix = strdup(v);
-                else if (error_state.prefix) {
-                    free(error_state.prefix);
-                    error_state.prefix = 0;
-                }
-                break;
-            case OPT_SYSTEM:
-                if (n)
-                    error_info.set |= ERROR_SYSTEM;
-                else
-                    error_info.clear |= ERROR_SYSTEM;
-                break;
-            case OPT_TIME:
-                error_info.time = n ? 1 : 0;
-                break;
-            case OPT_TRACE:
-                if (n)
-                    error_info.trace = -strtol(v, NULL, 0);
-                else
-                    error_info.trace = 0;
-                break;
-        }
+            } else if (error_state.match) {
+                free(error_state.match);
+                error_state.match = 0;
+            }
+            break;
+        case OPT_PREFIX:
+            if (n)
+                error_state.prefix = strdup(v);
+            else if (error_state.prefix) {
+                free(error_state.prefix);
+                error_state.prefix = 0;
+            }
+            break;
+        case OPT_SYSTEM:
+            if (n)
+                error_info.set |= ERROR_SYSTEM;
+            else
+                error_info.clear |= ERROR_SYSTEM;
+            break;
+        case OPT_TIME:
+            error_info.time = n ? 1 : 0;
+            break;
+        case OPT_TRACE:
+            if (n)
+                error_info.trace = -strtol(v, NULL, 0);
+            else
+                error_info.trace = 0;
+            break;
     }
+
     return 0;
 }
 
