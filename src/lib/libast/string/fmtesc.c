@@ -84,7 +84,7 @@ char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int fla
     mbinit(&q);
     while (s < e) {
         if ((m = mbrlen((char *)s, MB_LEN_MAX, &q.mb_state)) > 1 && (s + m) <= e) {
-            c = mbchar(&w, s, MB_LEN_MAX, &q);
+            c = mbchar(&w, (char **)&s, MB_LEN_MAX, &q);
             if (!spaced && !escaped && (iswspace(c) || iswcntrl(c))) spaced = 1;
             s -= m;
             while (m--) *b++ = *s++;

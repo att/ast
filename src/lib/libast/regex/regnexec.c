@@ -657,7 +657,7 @@ static_fn int collmatch(Env_t *env, Rex_t *rex, unsigned char *s, unsigned char 
         memcpy((char *)key, (char *)s, z);
         key[z] = 0;
         t = s;
-        c = mbchar(&w, t, MB_LEN_MAX, &env->q);
+        c = mbchar(&w, (char **)&t, MB_LEN_MAX, &env->q);
         x = 0;
     } else {
         c = s[0];
@@ -826,8 +826,8 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                 } else {
                     mbinit(&env->s);
                     while (s < e) {
-                        c = mbchar(&w, s, MB_LEN_MAX, &env->q);
-                        d = mbchar(&w, t, MB_LEN_MAX, &env->s);
+                        c = mbchar(&w, (char **)&s, MB_LEN_MAX, &env->q);
+                        d = mbchar(&w, (char **)&t, MB_LEN_MAX, &env->s);
                         if (towupper(c) != towupper(d)) return NONE;
                     }
                 }
@@ -1392,14 +1392,14 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                             for (i = 0; s < e && i < n; i++, s = t) {
                                 t = s;
                                 mbinit(&env->s);
-                                if (mbchar(&w, t, MB_LEN_MAX, &env->s) != c) break;
+                                if (mbchar(&w, (char **)&t, MB_LEN_MAX, &env->s) != c) break;
                                 b[i] = t - s;
                             }
                         } else {
                             for (i = 0; s < e && i < n; i++, s = t) {
                                 t = s;
                                 mbinit(&env->s);
-                                if (towupper(mbchar(&w, t, MB_LEN_MAX, &env->s)) != c) break;
+                                if (towupper(mbchar(&w, (char **)&t, MB_LEN_MAX, &env->s)) != c) break;
                                 b[i] = t - s;
                             }
                         }
@@ -1465,7 +1465,7 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                             for (i = 0; i < m && s < e; i++, s = t) {
                                 t = s;
                                 mbinit(&env->s);
-                                if (mbchar(&w, t, MB_LEN_MAX, &env->s) != c) return r;
+                                if (mbchar(&w, (char **)&t, MB_LEN_MAX, &env->s) != c) return r;
                             }
                             while (i++ <= n) {
                                 switch (follow(env, rex, cont, s)) {
@@ -1479,13 +1479,15 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                                 }
                                 if (s >= e) break;
                                 mbinit(&env->s);
-                                if (mbchar(&w, s, MB_LEN_MAX, &env->s) != c) break;
+                                if (mbchar(&w, (char **)&s, MB_LEN_MAX, &env->s) != c) break;
                             }
                         } else {
                             for (i = 0; i < m && s < e; i++, s = t) {
                                 t = s;
                                 mbinit(&env->s);
-                                if (towupper(mbchar(&w, t, MB_LEN_MAX, &env->s)) != c) return r;
+                                if (towupper(mbchar(&w, (char **)&t, MB_LEN_MAX, &env->s)) != c) {
+                                    return r;
+                                }
                             }
                             while (i++ <= n) {
                                 switch (follow(env, rex, cont, s)) {
@@ -1499,7 +1501,9 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                                 }
                                 if (s >= e) break;
                                 mbinit(&env->s);
-                                if (towupper(mbchar(&w, s, MB_LEN_MAX, &env->s)) != c) break;
+                                if (towupper(mbchar(&w, (char **)&s, MB_LEN_MAX, &env->s)) != c) {
+                                    break;
+                                }
                             }
                         }
                     }
@@ -1557,8 +1561,8 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                         if (p[*s++] != *t++) return NONE;
                 } else {
                     while (t < e) {
-                        c = mbchar(&w, s, MB_LEN_MAX, &env->q);
-                        d = mbchar(&w, t, MB_LEN_MAX, &env->s);
+                        c = mbchar(&w, (char **)&s, MB_LEN_MAX, &env->q);
+                        d = mbchar(&w, (char **)&t, MB_LEN_MAX, &env->s);
                         if (towupper(c) != d) return NONE;
                     }
                 }

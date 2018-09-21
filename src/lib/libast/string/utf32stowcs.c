@@ -80,7 +80,7 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
             } else {
                 inbuf = tmp_out;
                 mbinit(&q);
-                (void)mbchar(wchar, inbuf, outbuf - tmp_out, &q);
+                (void)mbchar(wchar, &inbuf, outbuf - tmp_out, &q);
                 if (mberrno(&q)) return -1;
             }
             i = 1;
@@ -105,7 +105,7 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
             if (mbwide()) {
                 mbinit(&q);
                 for (outbuf = outbuf_start; i < n && outbuf < inbuf; i++) {
-                    (void)mbchar(&wchar[i], outbuf, inbuf - outbuf, &q);
+                    (void)mbchar(&wchar[i], &outbuf, inbuf - outbuf, &q);
                     if (mberrno(&q)) break;
                 }
             } else {

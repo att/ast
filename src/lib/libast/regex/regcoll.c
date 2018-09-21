@@ -61,7 +61,7 @@ int regcollate(const char *s, char **e, char *buf, size_t size, wchar_t *wc) {
     }
     t = s;
     mbinit(&q);
-    w = mbchar(&w, s, MB_LEN_MAX, &q);
+    w = mbchar(&w, (char **)&s, MB_LEN_MAX, &q);
     if ((r = (s - t)) > 1) {
         if (*s++ != term || *s++ != ']') goto oops;
         goto done;

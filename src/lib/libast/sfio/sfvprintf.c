@@ -730,7 +730,7 @@ loop_fmt:
                         for (;;) {
                             if ((size >= 0 && w >= size) || (size < 0 && *ssp == 0)) break;
                             osp = ssp;
-                            n = mbchar(&tw, osp, MB_LEN_MAX, &mbs);
+                            n = mbchar(&tw, &osp, MB_LEN_MAX, &mbs);
                             if (!n) break;
                             n_w = mbwidth(n);
                             if (n_w > 0) {
@@ -778,7 +778,7 @@ loop_fmt:
                             osp = sp;
                             while (n < 0) {
                                 ssp = sp;
-                                k = mbchar(&tw, sp, MB_LEN_MAX, &mbs);
+                                k = mbchar(&tw, &sp, MB_LEN_MAX, &mbs);
                                 if (mberrno(&mbs)) {
                                     sp = ssp;
                                     break;

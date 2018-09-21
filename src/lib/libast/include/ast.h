@@ -285,8 +285,17 @@ extern char **environ;
 
 #define mbinit(q) (void)memset(q, 0, sizeof(*q))
 #define mberrno(q) ((q)->mb_errno)
-#define mbchar(w, s, n, q) (((s) += (ast_mbrchar)((wchar_t *)(w), (char *)(s), (n), (q))), (*(w)))
 #define mbconv(s, w, q) (*ast._ast_wcrtomb)((s), (w), (mbstate_t *)(q))
+
+// This function used to be defined as a macro:
+//   #define mbchar(w, s, n, q) (((s) += ast_mbrchar((wchar_t *)(w), (char *)(s), (n), (q))), *(w))
+// But that causes lint tools like cppcheck to issue warnings we'd rather not have to suppress.
+// So instead make it an inline function. Note that this does change the signature slightly. The
+// second arg is now a char** rather than char*.
+static inline wchar_t mbchar(wchar_t *w, char **s, size_t n, Mbstate_t *q) {
+    *s += ast_mbrchar(w, *s, n, q);
+    return *w;
+}
 
 // This is the pre 2013-09-13 implementation of the `mbchar()` macro. We retain it, under a new
 // name, solely to facilitate removing the `ASTAPI()` macro. This allows us to avoid changing every

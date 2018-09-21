@@ -120,7 +120,6 @@
 // The cast is because some calls pass a `Mbstate_t*` which embeds a `mbstate_t` at its start.
 #define SFMBLEN(s, mb) mbrlen((s), MB_LEN_MAX, (mbstate_t *)(mb))
 #define SFMBDCL(ms) Mbstate_t ms;
-#define SFMBDCLP(ms) Mbstate_t *ms;
 #define SFMBSTATE(f) _sfmbstate(f)
 
 /* dealing with streams that might be accessed concurrently */

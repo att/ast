@@ -949,7 +949,7 @@ static_fn Celt_t *regcomp_col(Cenv_t *env, Celt_t *ce, int ic, unsigned char *bp
         } else if (bw < COLL_KEY_MAX) {
             s = (char *)bp;
             if (ic) {
-                c = mbchar(&w, s, MB_LEN_MAX, &env->q);
+                c = mbchar(&w, &s, MB_LEN_MAX, &env->q);
                 if (iswupper(c)) {
                     c = towlower(c);
                     cc = 1;
@@ -971,7 +971,7 @@ static_fn Celt_t *regcomp_col(Cenv_t *env, Celt_t *ce, int ic, unsigned char *bp
         if (ep) {
             k = key;
             mbinit(&env->q);
-            c = mbchar(&w, k, MB_LEN_MAX, &env->q);
+            c = mbchar(&w, (char **)&k, MB_LEN_MAX, &env->q);
             if (iswupper(c))
                 bt = COLL_range_uc;
             else if (iswlower(c))
@@ -995,7 +995,7 @@ static_fn Celt_t *regcomp_col(Cenv_t *env, Celt_t *ce, int ic, unsigned char *bp
                 s = (char *)ep;
                 if (ic) {
                     mbinit(&env->q);
-                    c = mbchar(&w, s, MB_LEN_MAX, &env->q);
+                    c = mbchar(&w, &s, MB_LEN_MAX, &env->q);
                     if (iswupper(c)) {
                         c = towlower(c);
                         cc = 1;
@@ -1015,7 +1015,7 @@ static_fn Celt_t *regcomp_col(Cenv_t *env, Celt_t *ce, int ic, unsigned char *bp
             *k = 0;
             mbxfrm(ce->end, key, COLL_KEY_MAX);
             k = key;
-            c = mbchar(&w, k, MB_LEN_MAX, &env->q);
+            c = mbchar(&w, (char **)&k, MB_LEN_MAX, &env->q);
             if (iswupper(c))
                 et = COLL_range_uc;
             else if (iswlower(c))
@@ -2306,7 +2306,7 @@ static_fn Rex_t *regcomp_seq(Cenv_t *env) {
                 n = 1;
                 *s++ = (env->flags & REG_ICASE) ? toupper(c) : c;
             } else if (c == C_ESC || (env->flags & REG_ICASE)) {
-                c = (c == C_ESC) ? env->token.lex : mbchar(&w, p, MB_LEN_MAX, &env->q);
+                c = (c == C_ESC) ? env->token.lex : mbchar(&w, (char **)&p, MB_LEN_MAX, &env->q);
                 if (env->flags & REG_ICASE) c = towupper(c);
                 if ((&buf[sizeof(buf)] - s) < MB_CUR_MAX) break;
                 mbinit(&q);

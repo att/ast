@@ -28,6 +28,7 @@
 #include "sfhdr.h"
 
 #include "ast.h"
+#include "ast_std.h"
 
 /*	Read the next multibyte character from f and return the corresponding rune (wide char.)
 **
@@ -55,13 +56,12 @@ int sfgetwc(Sfio_t *f) {
         f->next = s;
     } else {
         wchar_t w;
-        SFMBDCLP(q)
+        Mbstate_t *q = SFMBSTATE(f);
 
-        q = SFMBSTATE(f);
-        c = mbchar(&w, s, n, q);
-        if (!mberrno(q))
+        c = mbchar(&w, (char **)&s, n, q);
+        if (!mberrno(q)) {
             f->next = s;
-        else if (n < (m = MB_CUR_MAX)) {
+        } else if (n < (m = MB_CUR_MAX)) {
             for (i = 0; i < n; i++) buf[i] = *s++;
             for (;;) {
                 f->next = s;
@@ -73,7 +73,7 @@ int sfgetwc(Sfio_t *f) {
                 for (; i < n; i++) buf[i] = *s++;
                 e = buf + i;
                 b = buf;
-                c = mbchar(&w, b, n, q);
+                c = mbchar(&w, &b, n, q);
                 if (!mberrno(q)) {
                     f->next = s - (e - b);
                     break;
