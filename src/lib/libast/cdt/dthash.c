@@ -221,22 +221,22 @@ static_fn void *dthash_hstat(Dt_t *dt, Dtstat_t *st) {
     Dtlink_t **tbl, **endt, *lnk;
     Dthash_t *hash = (Dthash_t *)dt->data;
 
-    if (st) {
-        memset(st, 0, sizeof(Dtstat_t));
-        st->meth = dt->meth->type;
-        st->size = hash->data.size;
-        st->space = sizeof(Dthash_t) + hash->tblz * sizeof(Dtlink_t *) +
-                    (dt->disc->link >= 0 ? 0 : hash->data.size * sizeof(Dthold_t));
+    if (!st) return (void *)hash->data.size;
 
-        for (endt = (tbl = hash->htbl) + hash->tblz; tbl < endt; ++tbl) {
-            for (n = 0, lnk = *tbl; lnk; lnk = lnk->_rght) {
-                if (n < DT_MAXSIZE) st->lsize[n] += 1;
-                n += 1;
-            }
-            st->mlev = n > st->mlev ? n : st->mlev;
-            if (n < DT_MAXSIZE) /* if chain length is small */
-                st->msize = n > st->msize ? n : st->msize;
+    memset(st, 0, sizeof(Dtstat_t));
+    st->meth = dt->meth->type;
+    st->size = hash->data.size;
+    st->space = sizeof(Dthash_t) + hash->tblz * sizeof(Dtlink_t *) +
+                (dt->disc->link >= 0 ? 0 : hash->data.size * sizeof(Dthold_t));
+
+    for (endt = (tbl = hash->htbl) + hash->tblz; tbl < endt; ++tbl) {
+        for (n = 0, lnk = *tbl; lnk; lnk = lnk->_rght) {
+            if (n < DT_MAXSIZE) st->lsize[n] += 1;
+            n += 1;
         }
+        st->mlev = n > st->mlev ? n : st->mlev;
+        if (n < DT_MAXSIZE) /* if chain length is small */
+            st->msize = n > st->msize ? n : st->msize;
     }
 
     return (void *)hash->data.size;

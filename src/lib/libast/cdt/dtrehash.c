@@ -704,36 +704,33 @@ static_fn int dtrehash_event(Dt_t *dt, int event, void *arg) {
         (void)(*dt->memoryf)(dt, hash, 0, disc);
         dt->data = NULL;
         return 0;
-    } else if (event == DT_SHARE) /* turn on/off concurrency - return 1 on success */
-    {
+    } else if (event == DT_SHARE) {  // turn on/off concurrency - return 1 on success
         if (!hash) return -1;
+        if ((int)((Dtuint_t)arg) <= 0) return 1;
 
-        if ((int)((Dtuint_t)arg) > 0) /* set up structures for share mode */
-        {
-            if (!hash->lock) /* allocate lock table */
-            {
-                z = (hash->mask[0] + 1) * sizeof(uchar);
-                if (!(hash->lock = (uchar *)(*dt->memoryf)(dt, 0, z, dt->disc))) {
-                    DTERROR(dt, "Error in allocating hashtrie locks");
-                    return -1;
-                }
-                memset(hash->lock, 0, z);
-                hash->lmax = z - 1; /* max lock index - usable for modulo 2^n */
+        // Set up structures for share mode.
+        if (!hash->lock) {  // allocate lock table
+            z = (hash->mask[0] + 1) * sizeof(uchar);
+            if (!(hash->lock = (uchar *)(*dt->memoryf)(dt, 0, z, dt->disc))) {
+                DTERROR(dt, "Error in allocating hashtrie locks");
+                return -1;
             }
+            memset(hash->lock, 0, z);
+            hash->lmax = z - 1;  // max lock index - usable for modulo 2^n
+        }
 
-            if (!hash->refn) /* allocate hazard table */
-            {
-                z = (hash->mask[0] + 1) * sizeof(uint);
-                if (!(hash->refn = (uint *)(*dt->memoryf)(dt, 0, z, dt->disc))) {
-                    DTERROR(dt, "Error in allocating hashtrie references");
-                    return -1;
-                }
-                memset(hash->refn, 0, z);
+        if (!hash->refn) {  // allocate hazard table
+            z = (hash->mask[0] + 1) * sizeof(uint);
+            if (!(hash->refn = (uint *)(*dt->memoryf)(dt, 0, z, dt->disc))) {
+                DTERROR(dt, "Error in allocating hashtrie references");
+                return -1;
             }
+            memset(hash->refn, 0, z);
         }
         return 1;
-    } else
+    } else {
         return 0;
+    }
 }
 
 static Dtmethod_t _Dtrhset = {
