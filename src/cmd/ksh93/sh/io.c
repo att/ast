@@ -46,7 +46,6 @@
 
 #include "argnod.h"
 #include "ast.h"
-#include "ast_api.h"
 #include "builtins.h"
 #include "edit.h"
 #include "error.h"

@@ -40,7 +40,6 @@
 #include <sys/utsname.h>
 
 #include "ast.h"
-#include "ast_api.h"
 #include "ast_errorf.h"
 #include "ast_lib.h"
 #include "conftab.h"

@@ -225,12 +225,10 @@ extern char *fmtscale(Sfulong_t, int);
 extern char *fmttime(const char *, time_t);
 extern char *fmtuid(int);
 extern void *memdup(const void *, size_t);
-extern char *pathaccess(char *, const char *, const char *, const char *, int);
-extern char *pathaccess_20100601(const char *, const char *, const char *, int, char *, size_t);
+extern char *pathaccess(const char *, const char *, const char *, int, char *, size_t);
 extern char *pathbin(void);
 extern char *pathcanon(char *, size_t, int);
-extern char *pathcat(char *, const char *, int, const char *, const char *);
-extern char *pathcat_20100601(const char *, int, const char *, const char *, char *, size_t);
+extern char *pathcat(const char *, int, const char *, const char *, char *, size_t);
 extern int pathexists(char *, int);
 extern int pathgetlink(const char *, char *, int);
 extern int pathinclude(const char *);
@@ -252,8 +250,7 @@ extern char *strcopy(char *, const char *);
 extern unsigned long strelapsed(const char *, char **, int);
 extern int stresc(char *);
 extern int strexp(char *, int);
-extern int strgrpmatch(const char *, const char *, int *, int, int);
-extern int strgrpmatch_20120528(const char *, const char *, ssize_t *, int, int);
+extern int strgrpmatch(const char *, const char *, ssize_t *, int, int);
 extern int strngrpmatch(const char *, size_t, const char *, ssize_t *, int, int);
 extern int strmatch(const char *, const char *);
 extern int stropt(const char *, const void *, int, int (*)(void *, const void *, int, const char *),
@@ -280,8 +277,6 @@ extern size_t ast_mbrchar(wchar_t *, const char *, size_t, Mbstate_t *);
  * C library global data symbols not prototyped by <unistd.h>
  */
 extern char **environ;
-
-#include "ast_api.h"
 
 #define mbinit(q) (void)memset(q, 0, sizeof(*q))
 #define mberrno(q) ((q)->mb_errno)

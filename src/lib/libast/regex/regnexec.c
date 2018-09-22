@@ -27,7 +27,6 @@
 
 #include <ctype.h>
 #include <limits.h>
-#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <wchar.h>
@@ -1659,13 +1658,11 @@ static_fn int regnexec_list(Env_t *env, Rex_t *rex) {
 
 #endif
 
-/*
- * returning REG_BADPAT or REG_ESPACE is not explicitly
- * countenanced by the standard
- */
-
-int regnexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatch_t *match,
-                      regflags_t flags) {
+//
+// Returning REG_BADPAT or REG_ESPACE is not explicitly countenanced by the standard.
+//
+int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatch_t *match,
+             regflags_t flags) {
     ssize_t n;
     int i;
     int j;
@@ -1833,35 +1830,4 @@ void regfree(regex_t *p) {
             alloc(env->disc, env, 0);
         }
     }
-}
-
-/*
- * 20120528: regoff_t changed from int to ssize_t
- */
-
-#undef regnexec
-#if _map_libc
-#define regnexec _ast_regnexec
-#endif
-
-int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, oldregmatch_t *oldmatch,
-             regflags_t flags) {
-    if (oldmatch) {
-        regmatch_t *match;
-        ssize_t i;
-        int r;
-
-        match = malloc(nmatch * sizeof(regmatch_t));
-        if (!match) return -1;
-        r = regnexec_20120528(p, s, len, nmatch, match, flags);
-        if (!r) {
-            for (i = 0; i < nmatch; i++) {
-                oldmatch[i].rm_so = match[i].rm_so;
-                oldmatch[i].rm_eo = match[i].rm_eo;
-            }
-        }
-        free(match);
-        return r;
-    }
-    return regnexec_20120528(p, s, len, 0, NULL, flags);
 }

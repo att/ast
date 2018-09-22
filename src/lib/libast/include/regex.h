@@ -36,8 +36,6 @@
 
 #include <wchar.h>
 
-#include "ast_api.h"
-
 #define REG_VERSION 20100930L
 
 /* regcomp flags */

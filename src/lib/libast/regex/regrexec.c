@@ -26,18 +26,16 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stddef.h>
-#include <stdlib.h>
 
 #include "ast.h"  // IWYU pragma: keep
-#include "ast_api.h"
 #include "reglib.h"
 
 /*
  * call regnexec() on records selected by Boyer-Moore
  */
 
-int regrexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatch_t *match,
-                      regflags_t flags, int sep, void *handle, regrecord_t record) {
+int regrexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatch_t *match,
+             regflags_t flags, int sep, void *handle, regrecord_t record) {
     unsigned char *buf;
     unsigned char *beg;
     unsigned char *l;
@@ -130,35 +128,4 @@ int regrexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch
 done:
     env->rex = e;
     return n;
-}
-
-/*
- * 20120528: regoff_t changed from int to ssize_t
- */
-
-#undef regrexec
-#if _map_libc
-#define regrexec _ast_regrexec
-#endif
-
-int regrexec(const regex_t *p, const char *s, size_t len, size_t nmatch, oldregmatch_t *oldmatch,
-             regflags_t flags, int sep, void *handle, regrecord_t record) {
-    if (oldmatch) {
-        regmatch_t *match;
-        ssize_t i;
-        int r;
-
-        match = malloc(nmatch * sizeof(regmatch_t));
-        if (!match) return -1;
-        r = regrexec_20120528(p, s, len, nmatch, match, flags, sep, handle, record);
-        if (!r) {
-            for (i = 0; i < nmatch; i++) {
-                oldmatch[i].rm_so = match[i].rm_so;
-                oldmatch[i].rm_eo = match[i].rm_eo;
-            }
-        }
-        free(match);
-        return r;
-    }
-    return regrexec_20120528(p, s, len, 0, NULL, flags, sep, handle, record);
 }

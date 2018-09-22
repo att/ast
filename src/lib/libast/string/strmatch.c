@@ -59,7 +59,6 @@
 #include <string.h>
 
 #include "ast.h"
-#include "ast_api.h"
 #include "regex.h"
 
 static struct State_s {
@@ -147,7 +146,7 @@ int strngrpmatch(const char *b, size_t z, const char *p, ssize_t *sub, int n, in
     return i + 1;
 }
 
-int strgrpmatch_20120528(const char *b, const char *p, ssize_t *sub, int n, int flags) {
+int strgrpmatch(const char *b, const char *p, ssize_t *sub, int n, int flags) {
     return strngrpmatch(b, strlen(b), p, sub, n, flags);
 }
 
@@ -174,13 +173,4 @@ char *strsubmatch(const char *s, const char *p, int flags) {
     return strngrpmatch(s, strlen(s), p, match, 1, (flags ? STR_MAXIMAL : 0) | STR_LEFT)
                ? (char *)s + match[1]
                : NULL;
-}
-
-#undef strgrpmatch
-#if _map_libc
-#define strgrpmatch _ast_strgrpmatch
-#endif
-
-int strgrpmatch(const char *b, const char *p, int *sub, int n, int flags) {
-    return strngrpmatch(b, strlen(b), p, (ssize_t *)sub, n, flags | STR_INT);
 }

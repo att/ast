@@ -39,7 +39,6 @@
 #include <unistd.h>
 
 #include "ast.h"
-#include "ast_api.h"
 #include "ast_assert.h"
 #include "sfio.h"
 

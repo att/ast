@@ -37,15 +37,9 @@
 #include <unistd.h>
 
 #include "ast.h"
-#include "ast_api.h"
 
-#undef pathaccess
-char *pathaccess(char *path, const char *dirs, const char *a, const char *b, int mode) {
-    return pathaccess_20100601(dirs, a, b, mode, path, PATH_MAX);
-}
-
-char *pathaccess_20100601(const char *dirs, const char *a, const char *b, int mode, char *path,
-                          size_t size) {
+char *pathaccess(const char *dirs, const char *a, const char *b, int mode, char *path,
+                 size_t size) {
     int sib = a && a[0] == '.' && a[1] == '.' && a[2] == 0;
     int sep = ':';
     char cwd[PATH_MAX];
@@ -59,5 +53,6 @@ char *pathaccess_20100601(const char *dirs, const char *a, const char *b, int mo
             sep = 0;
         }
     } while (dirs);
-    return 0;
+
+    return NULL;
 }

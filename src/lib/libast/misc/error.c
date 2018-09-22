@@ -43,7 +43,6 @@
 #include <unistd.h>
 
 #include "ast.h"
-#include "ast_api.h"
 #include "error.h"
 #include "namval.h"
 #include "option.h"
