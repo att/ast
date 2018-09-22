@@ -136,3 +136,9 @@ alias | grep -q "^foo" && log_error "unalias does not remove aliases"
 # This should remove all aliases
 unalias -a
 [[ $(alias) == "" ]] || log_error "unalias -a does not remove all aliases"
+
+# =======
+# https://github.com/att/ast/issues/909
+alias foo=bar
+unalias foo
+unalias foo && log_error "Unaliasing undefined alias should exit with non-zero status"
