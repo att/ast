@@ -1146,12 +1146,15 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
     Dt_t *dp;
     int nflag = 0, all = 0, isfun, jmpval;
     struct checkpt buff;
+    enum {ALIAS, VARIABLE} type;
     UNUSED(argc);
 
     if (troot == shp->alias_tree) {
+        type = ALIAS;
         name = sh_optunalias;
         if (shp->subshell) troot = sh_subaliastree(shp, 0);
     } else {
+        type = VARIABLE;
         name = sh_optunset;
     }
     while ((r = optget(argv, name))) {
@@ -1238,6 +1241,9 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
                 nv_delete(np, dp, NV_NOFREE);
             } else if (isfun && !(np->nvalue.rp && np->nvalue.rp->running)) {
                 nv_delete(np, troot, 0);
+            } else if (type == ALIAS) {
+                // Alias has been unset by call to _nv_unset, remove it from the tree.
+                nv_delete(np, troot, 0);
             }
 #if 0
             // Causes unsetting local variable to expose global.
@@ -1250,7 +1256,9 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
                 nv_close(np);
             }
 
-        } else if (troot == shp->alias_tree) {
+        } else if (type == ALIAS) {
+            // Alias not found
+            sfprintf(sfstderr, sh_translate(e_noalias), name);
             r = 1;
         }
     }
