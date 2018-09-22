@@ -123,19 +123,19 @@ ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
     ssize_t w;
     Sfdisc_t *dc;
     int local, oerrno;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, (ssize_t)(-1));
+    SFMTXENTER(f, -1)
 
     GETLOCAL(f, local);
     if (!local && !(f->bits & SF_DCDOWN)) /* an external user's call */
     {
-        if (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0) SFMTXRETURN(f, (ssize_t)(-1));
-        if (f->next > f->data && SFSYNC(f) < 0) SFMTXRETURN(f, (ssize_t)(-1));
+        if (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0) SFMTXRETURN(f, -1)
+        if (f->next > f->data && SFSYNC(f) < 0) SFMTXRETURN(f, -1)
     }
 
     for (;;) { /* stream locked by sfsetfd() */
-        if (!(f->flags & SF_STRING) && f->file < 0) SFMTXRETURN(f, (ssize_t)0);
+        if (!(f->flags & SF_STRING) && f->file < 0) SFMTXRETURN(f, 0)
 
         /* clear current error states */
         f->flags &= ~(SF_EOF | SF_ERROR);
@@ -152,7 +152,7 @@ ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
                     n = rv;
                 else if (rv < 0) {
                     f->flags |= SF_ERROR;
-                    SFMTXRETURN(f, rv);
+                    SFMTXRETURN(f, rv)
                 }
             }
 
@@ -194,7 +194,7 @@ ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
                     if (f->extent >= 0 && f->here > f->extent) f->extent = f->here;
                 }
 
-                SFMTXRETURN(f, (ssize_t)w);
+                SFMTXRETURN(f, (ssize_t)w)
             }
         }
 
@@ -204,12 +204,12 @@ ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
                 goto do_continue;
             case SF_EDONE:
                 w = local ? 0 : w;
-                SFMTXRETURN(f, (ssize_t)w);
+                SFMTXRETURN(f, (ssize_t)w)
             case SF_EDISC:
                 if (!local && !(f->flags & SF_STRING)) goto do_continue;
                 /* else fall thru */
             case SF_ESTACK:
-                SFMTXRETURN(f, (ssize_t)(-1));
+                SFMTXRETURN(f, -1)
         }
 
     do_continue:

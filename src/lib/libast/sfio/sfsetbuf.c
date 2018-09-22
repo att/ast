@@ -188,17 +188,16 @@ void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
     sfstat_t st;
     uchar *obuf = NULL;
     ssize_t osize = 0;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFONCE();
-
-    SFMTXENTER(f, NULL);
+    SFONCE()  // initialize mutexes
+    SFMTXENTER(f, NULL)
 
     GETLOCAL(f, local);
 
     if (size == 0 && buf) { /* special case to get buffer info */
         _Sfi = f->val = (f->bits & SF_MMAP) ? (f->endb - f->data) : f->size;
-        SFMTXRETURN(f, (void *)f->data);
+        SFMTXRETURN(f, (void *)f->data)
     }
 
     /* cleanup actions already done, don't allow write buffering any more */
@@ -208,9 +207,9 @@ void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
     }
 
     if ((init = f->mode & SF_INIT)) {
-        if (!f->pool && _sfsetpool(f) < 0) SFMTXRETURN(f, NULL);
+        if (!f->pool && _sfsetpool(f) < 0) SFMTXRETURN(f, NULL)
     } else if ((f->mode & SF_RDWR) != SFMODE(f, local) && _sfmode(f, 0, local) < 0)
-        SFMTXRETURN(f, NULL);
+        SFMTXRETURN(f, NULL)
 
     if (init)
         f->mode = (f->mode & SF_RDWR) | SF_LOCK;
@@ -220,19 +219,19 @@ void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
         /* make sure there is no hidden read data */
         if (f->proc && (f->flags & SF_READ) && (f->mode & SF_WRITE) &&
             _sfmode(f, SF_READ, local) < 0)
-            SFMTXRETURN(f, NULL);
+            SFMTXRETURN(f, NULL)
 
         /* synchronize first */
-        SFLOCK(f, local);
+        SFLOCK(f, local)
         rv = SFSYNC(f);
-        if (!local) SFOPEN(f);
-        if (rv < 0) SFMTXRETURN(f, NULL);
+        if (!local) SFOPEN(f)
+        if (rv < 0) SFMTXRETURN(f, NULL)
 
         /* turn off the SF_SYNCED bit because buffer is changing */
         f->mode &= ~SF_SYNCED;
     }
 
-    SFLOCK(f, local);
+    SFLOCK(f, local)
 
     if ((Sfio_t *)buf != f)
         blksz = -1;
@@ -465,7 +464,7 @@ done:
     while (blksz > f->size / 2) blksz /= 2;
     f->blksz = blksz;
 
-    if (!local) SFOPEN(f);
+    if (!local) SFOPEN(f)
 
-    SFMTXRETURN(f, (void *)obuf);
+    SFMTXRETURN(f, (void *)obuf)
 }

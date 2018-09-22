@@ -35,25 +35,25 @@
 int sfclose(Sfio_t *f) {
     int local, ex, rv;
     void *data = NULL;
-    SFMTXDECL(f); /* declare a local stream variable for multithreading */
+    SFMTXDECL(f)  // declare a local stream variable for multithreading
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
     GETLOCAL(f, local);
 
     if (!(f->mode & SF_INIT) && SFMODE(f, local) != (f->mode & SF_RDWR) &&
         SFMODE(f, local) != (f->mode & (SF_READ | SF_SYNCED)) && _sfmode(f, SF_SYNCED, local) < 0)
-        SFMTXRETURN(f, -1);
+        SFMTXRETURN(f, -1)
 
     /* closing a stack of streams */
     while (f->push) {
         Sfio_t *pop;
 
-        if (!(pop = (*_Sfstack)(f, NULL))) SFMTXRETURN(f, -1);
+        if (!(pop = (*_Sfstack)(f, NULL))) SFMTXRETURN(f, -1)
 
         if (sfclose(pop) < 0) {
             (*_Sfstack)(f, pop);
-            SFMTXRETURN(f, -1);
+            SFMTXRETURN(f, -1)
         }
     }
 
@@ -66,10 +66,10 @@ int sfclose(Sfio_t *f) {
         rv = sfsync(f);
     }
 
-    SFLOCK(f, 0);
+    SFLOCK(f, 0)
 
     /* raise discipline exceptions */
-    if (f->disc && (ex = SFRAISE(f, local ? SF_NEW : SF_CLOSING, NULL)) != 0) SFMTXRETURN(f, ex);
+    if (f->disc && (ex = SFRAISE(f, local ? SF_NEW : SF_CLOSING, NULL)) != 0) SFMTXRETURN(f, ex)
 
     if (!local && f->pool) { /* remove from pool */
         if (f->pool == &_Sfpool) {
@@ -88,8 +88,8 @@ int sfclose(Sfio_t *f) {
             f->mode &= ~SF_LOCK; /**/
             ASSERT(_Sfpmove);
             if ((*_Sfpmove)(f, -1) < 0) {
-                SFOPEN(f);
-                SFMTXRETURN(f, -1);
+                SFOPEN(f)
+                SFMTXRETURN(f, -1)
             }
             f->mode |= SF_LOCK;
         }

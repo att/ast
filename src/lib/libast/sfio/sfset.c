@@ -30,11 +30,11 @@
 
 int sfset(Sfio_t *f, int flags, int set) {
     int oflags, tflags, rv;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, 0);
+    SFMTXENTER(f, 0)
 
-    if (flags == 0 && set == 0) SFMTXRETURN(f, (f->flags & SFIO_FLAGS));
+    if (flags == 0 && set == 0) SFMTXRETURN(f, (f->flags & SFIO_FLAGS))
 
     if ((oflags = (f->mode & SF_RDWR)) !=
         (int)f->mode) { /* avoid sfsetbuf() isatty() call if user sets (SF_LINE|SF_WCWIDTH) */
@@ -45,11 +45,11 @@ int sfset(Sfio_t *f, int flags, int set) {
             tflags = 0;
         rv = _sfmode(f, oflags, 0);
         if (tflags) f->flags &= ~tflags;
-        if (rv < 0) SFMTXRETURN(f, 0);
+        if (rv < 0) SFMTXRETURN(f, 0)
     }
-    if (flags == 0) SFMTXRETURN(f, (f->flags & SFIO_FLAGS));
+    if (flags == 0) SFMTXRETURN(f, (f->flags & SFIO_FLAGS))
 
-    SFLOCK(f, 0);
+    SFLOCK(f, 0)
 
     /* preserve at least one rd/wr flag */
     oflags = f->flags;
@@ -82,6 +82,6 @@ int sfset(Sfio_t *f, int flags, int set) {
     /* if not shared or unseekable, public means nothing */
     if (!(f->flags & SF_SHARE) || f->extent < 0) f->flags &= ~SF_PUBLIC;
 
-    SFOPEN(f);
-    SFMTXRETURN(f, (oflags & SFIO_FLAGS));
+    SFOPEN(f)
+    SFMTXRETURN(f, (oflags & SFIO_FLAGS))
 }

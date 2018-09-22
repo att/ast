@@ -34,7 +34,7 @@
 */
 
 Sfio_t *sfnew(Sfio_t *oldf, void *buf, size_t size, int file, int flags) {
-    SFONCE();  // initialize mutexes
+    SFONCE()  // initialize mutexes
 
     if (!(flags & SF_RDWR)) return NULL;
 

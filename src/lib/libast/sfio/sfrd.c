@@ -65,21 +65,21 @@ ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     Sfoff_t r;
     Sfdisc_t *dc;
     int local, rcrv, dosync, oerrno;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
     GETLOCAL(f, local);
     if ((rcrv = f->mode & (SF_RC | SF_RV))) f->mode &= ~(SF_RC | SF_RV);
     f->bits &= ~SF_JUSTSEEK;
 
-    if (f->mode & SF_PKRD) SFMTXRETURN(f, -1);
+    if (f->mode & SF_PKRD) SFMTXRETURN(f, -1)
 
     if (!local && !(f->bits & SF_DCDOWN)) /* an external user's call */
     {
-        if (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0) SFMTXRETURN(f, -1);
+        if (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0) SFMTXRETURN(f, -1)
         if (f->next < f->endb) {
-            if (SFSYNC(f) < 0) SFMTXRETURN(f, -1);
+            if (SFSYNC(f) < 0) SFMTXRETURN(f, -1)
             if ((f->mode & (SF_SYNCED | SF_READ)) == (SF_SYNCED | SF_READ)) {
                 f->endb = f->next = f->endr = f->data;
                 f->mode &= ~SF_SYNCED;
@@ -93,7 +93,7 @@ ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     }
 
     for (dosync = 0;;) { /* stream locked by sfsetfd() */
-        if (!(f->flags & SF_STRING) && f->file < 0) SFMTXRETURN(f, 0);
+        if (!(f->flags & SF_STRING) && f->file < 0) SFMTXRETURN(f, 0)
 
         f->flags &= ~(SF_EOF | SF_ERROR);
 
@@ -101,7 +101,7 @@ ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
         if (f->flags & SF_STRING) {
             if ((r = (f->data + f->extent) - f->next) < 0) r = 0;
             if (r <= 0) goto do_except;
-            SFMTXRETURN(f, (ssize_t)r);
+            SFMTXRETURN(f, (ssize_t)r)
         }
 
         /* warn that a read is about to happen */
@@ -113,7 +113,7 @@ ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
                 n = rv;
             else if (rv < 0) {
                 f->flags |= SF_ERROR;
-                SFMTXRETURN(f, (ssize_t)rv);
+                SFMTXRETURN(f, (ssize_t)rv)
             }
         }
 
@@ -188,7 +188,7 @@ ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
                 } else
                     n = f->endb - f->next;
 
-                SFMTXRETURN(f, n);
+                SFMTXRETURN(f, n)
             } else {
                 r = -1;
                 f->here += a;
@@ -266,7 +266,7 @@ ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
                     f->endb = f->endr = ((uchar *)buf) + r;
             }
 
-            SFMTXRETURN(f, (ssize_t)r);
+            SFMTXRETURN(f, (ssize_t)r)
         }
 
     do_except:
@@ -276,12 +276,12 @@ ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
                 goto do_continue;
             case SF_EDONE:
                 n = local ? 0 : (ssize_t)r;
-                SFMTXRETURN(f, n);
+                SFMTXRETURN(f, n)
             case SF_EDISC:
                 if (!local && !(f->flags & SF_STRING)) goto do_continue;
                 /* else fall thru */
             case SF_ESTACK:
-                SFMTXRETURN(f, -1);
+                SFMTXRETURN(f, -1)
         }
 
     do_continue:

@@ -34,18 +34,18 @@
 Sfoff_t sftell(Sfio_t *f) {
     int mode;
     Sfoff_t p;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, (Sfoff_t)(-1));
+    SFMTXENTER(f, (Sfoff_t)(-1))
 
     /* set the stream to the right mode */
     if ((mode = f->mode & SF_RDWR) != (int)f->mode && _sfmode(f, mode, 0) < 0)
-        SFMTXRETURN(f, (Sfoff_t)(-1));
+        SFMTXRETURN(f, (Sfoff_t)-1)
 
     /* throw away ungetc data */
     if (f->disc == _Sfudisc) (void)sfclose((*_Sfstack)(f, NULL));
 
-    if (f->flags & SF_STRING) SFMTXRETURN(f, (Sfoff_t)(f->next - f->data));
+    if (f->flags & SF_STRING) SFMTXRETURN(f, (Sfoff_t)(f->next - f->data))
 
     /* let sfseek() handle the hard case */
     if (f->extent >= 0 && (f->flags & (SF_SHARE | SF_APPENDWR)))
@@ -53,5 +53,5 @@ Sfoff_t sftell(Sfio_t *f) {
     else
         p = f->here + ((f->mode & SF_WRITE) ? f->next - f->data : f->next - f->endb);
 
-    SFMTXRETURN(f, p);
+    SFMTXRETURN(f, p)
 }

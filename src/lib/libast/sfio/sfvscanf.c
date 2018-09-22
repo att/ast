@@ -294,14 +294,14 @@ int sfvscanf(Sfio_t *f, const char *form, va_list args) {
 #define SFgetc(f, c) ((c) = (d < endd || (SFend(f), SFbuf(f), d < endd)) ? (int)(*d++) : -1)
 #define SFungetc(f, c) (d -= 1)
 
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFCVINIT(); /* initialize conversion tables */
+    SFCVINIT()  // initialize conversion tables
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
-    if (!form || (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0)) SFMTXRETURN(f, -1);
-    SFLOCK(f, 0);
+    if (!form || (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0)) SFMTXRETURN(f, -1)
+    SFLOCK(f, 0)
 
     SFinit(f); /* initialize local buffering system */
 
@@ -316,7 +316,7 @@ int sfvscanf(Sfio_t *f, const char *form, va_list args) {
     oform = (char *)form;
     va_copy(oargs, args);
 
-    SFSETLOCALE(&decimal, &thousand);
+    SFSETLOCALE(&decimal, &thousand)
 
 loop_fmt:
     SFMBCLR(&fmbs);
@@ -599,9 +599,9 @@ loop_fmt:
         } else if (ft && ft->extf) {
             FMTSET(ft, form, args, fmt, size, flags, width, 0, base, t_str, n_str);
             SFend(f);
-            SFOPEN(f);
+            SFOPEN(f)
             v = (*ft->extf)(f, (void *)&argv, ft);
-            SFLOCK(f, 0);
+            SFLOCK(f, 0)
             SFbuf(f);
 
             if (v < 0)
@@ -966,10 +966,9 @@ done:
     }
 
     SFend(f);
-
-    SFOPEN(f);
+    SFOPEN(f)
 
     if (n_assign == 0 && inp < 0) n_assign = -1;
 
-    SFMTXRETURN(f, n_assign);
+    SFMTXRETURN(f, n_assign)
 }

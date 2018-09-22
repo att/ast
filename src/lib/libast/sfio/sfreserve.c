@@ -35,9 +35,9 @@ void *sfreserve(Sfio_t *f, ssize_t size, int type) {
     Sfrsrv_t *rsrv;
     void *data;
     int mode, local;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, NULL);
+    SFMTXENTER(f, NULL)
 
     sz = size < 0 ? -size : size;
 
@@ -61,20 +61,20 @@ void *sfreserve(Sfio_t *f, ssize_t size, int type) {
             data = NULL;
         }
 
-        SFMTXRETURN(f, data);
+        SFMTXRETURN(f, data)
     }
 
     if (type > 0) {
         if (type == 1) /* upward compatibility mode */
             type = SF_LOCKR;
         else if (type != SF_LOCKR)
-            SFMTXRETURN(f, NULL);
+            SFMTXRETURN(f, NULL)
     }
 
     if (size == 0 && (type < 0 || type == SF_LOCKR)) {
-        if ((f->mode & SF_RDWR) != f->mode && _sfmode(f, 0, 0) < 0) SFMTXRETURN(f, NULL);
+        if ((f->mode & SF_RDWR) != f->mode && _sfmode(f, 0, 0) < 0) SFMTXRETURN(f, NULL)
 
-        SFLOCK(f, 0);
+        SFLOCK(f, 0)
         if ((n = f->endb - f->next) < 0) n = 0;
 
         goto done;
@@ -86,11 +86,11 @@ void *sfreserve(Sfio_t *f, ssize_t size, int type) {
 
         if (!mode && !(mode = f->flags & SF_READ)) mode = SF_WRITE;
         if ((int)f->mode != mode && _sfmode(f, mode, local) < 0) {
-            SFOPEN(f);
-            SFMTXRETURN(f, NULL);
+            SFOPEN(f)
+            SFMTXRETURN(f, NULL)
         }
 
-        SFLOCK(f, local);
+        SFLOCK(f, local)
 
         if ((n = now = f->endb - f->next) < 0) n = 0;
         if (n > 0 && n >= sz) /* all done */
@@ -170,7 +170,7 @@ done: /* compute the buffer to be returned */
             rsrv->slen = -n;
     }
 
-    SFOPEN(f);
+    SFOPEN(f)
 
     if (data) {
         if (type == SF_LOCKR) {
@@ -185,5 +185,5 @@ done: /* compute the buffer to be returned */
 
     _Sfi = f->val = n; /* return true buffer size */
 
-    SFMTXRETURN(f, data);
+    SFMTXRETURN(f, data)
 }

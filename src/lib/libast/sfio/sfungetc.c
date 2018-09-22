@@ -46,12 +46,12 @@ static_fn int _uexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
 
 int sfungetc(Sfio_t *f, int c) {
     Sfio_t *uf;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
-    if (c < 0 || (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0)) SFMTXRETURN(f, -1);
-    SFLOCK(f, 0);
+    if (c < 0 || (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0)) SFMTXRETURN(f, -1)
+    SFLOCK(f, 0)
 
     /* fast handling of the typical unget */
     if (f->next > f->data && f->next[-1] == (uchar)c) {
@@ -67,9 +67,9 @@ int sfungetc(Sfio_t *f, int c) {
         }
         _Sfudisc->exceptf = _uexcept;
         sfdisc(uf, _Sfudisc);
-        SFOPEN(f);
+        SFOPEN(f)
         (void)sfstack(f, uf);
-        SFLOCK(f, 0);
+        SFLOCK(f, 0)
     }
 
     /* space for data */
@@ -90,6 +90,6 @@ int sfungetc(Sfio_t *f, int c) {
 
     *--f->next = (uchar)c;
 done:
-    SFOPEN(f);
-    SFMTXRETURN(f, c);
+    SFOPEN(f)
+    SFMTXRETURN(f, c)
 }

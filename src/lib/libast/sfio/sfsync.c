@@ -73,11 +73,12 @@ static_fn int _sfall(void) {
 int sfsync(Sfio_t *f) {
     int local, rv, mode, lock;
     Sfio_t *origf;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    if (!(origf = f)) return _sfall();
+    if (!f) return _sfall();
+    origf = f;
 
-    SFMTXENTER(origf, -1);
+    SFMTXENTER(origf, -1)
 
     GETLOCAL(origf, local);
 
@@ -99,7 +100,7 @@ int sfsync(Sfio_t *f) {
         if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf)
             (void)(*f->disc->exceptf)(f, SF_SYNC, (void *)((int)1), f->disc);
 
-        SFLOCK(f, local);
+        SFLOCK(f, local)
 
         /* pretend that this stream is not on a stack */
         mode = f->mode & SF_PUSH;
@@ -138,7 +139,7 @@ int sfsync(Sfio_t *f) {
 
     next:
         f->mode |= mode;
-        if (!local) SFOPEN(f);
+        if (!local) SFOPEN(f)
 
         if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf)
             (void)(*f->disc->exceptf)(f, SF_SYNC, (void *)((int)0), f->disc);

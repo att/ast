@@ -85,10 +85,11 @@ static_fn void _sfcleanup(void) {
 
     for (p = &_Sfpool; p; p = p->next) {
         for (n = 0; n < p->n_sf; ++n) {
-            if (!(f = p->sf[n]) || SFFROZEN(f)) continue;
+            f = p->sf[n];
+            if (!f || SFFROZEN(f)) continue;
 
-            SFLOCK(f, 0);
-            SFMTXLOCK(f);
+            SFLOCK(f, 0)
+            SFMTXLOCK(f)
 
             /* let application know that we are leaving */
             (void)SFRAISE(f, SF_ATEXIT, NULL);
@@ -103,8 +104,8 @@ static_fn void _sfcleanup(void) {
                 (void)SFSETBUF(f, NULL, 0);
             f->mode |= pool;
 
-            SFMTXUNLOCK(f);
-            SFOPEN(f);
+            SFMTXUNLOCK(f)
+            SFOPEN(f)
         }
     }
 }
@@ -295,7 +296,7 @@ int _sfmode(Sfio_t *f, int wanted, int local) {
     Sfoff_t addr;
     int rv = 0;
 
-    SFONCE(); /* initialize mutexes */
+    SFONCE()  // initialize mutexes
 
     if (wanted & SF_SYNCED) /* for (SF_SYNCED|SF_READ) stream, just junk data */
     {
@@ -357,7 +358,7 @@ int _sfmode(Sfio_t *f, int wanted, int local) {
         f->mode &= ~SF_POOL;
     }
 
-    SFLOCK(f, local);
+    SFLOCK(f, local)
 
     /* buffer initialization */
     wanted &= SF_RDWR;
@@ -494,6 +495,6 @@ int _sfmode(Sfio_t *f, int wanted, int local) {
     }
 
 done:
-    if (!local) SFOPEN(f);
+    if (!local) SFOPEN(f)
     return rv;
 }

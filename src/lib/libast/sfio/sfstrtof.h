@@ -201,9 +201,8 @@ S2F_function(const char *str, char **end)
     /*
      * radix char and thousands separator are locale specific
      */
-
-    SFSETLOCALE(&decimal, &thousand);
-    SFCVINIT();
+    SFSETLOCALE(&decimal, &thousand)
+    SFCVINIT()
 
     /*
      * skip initial blanks

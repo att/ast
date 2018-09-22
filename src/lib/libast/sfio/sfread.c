@@ -35,27 +35,27 @@ ssize_t sfread(Sfio_t *f, void *buf, size_t n) {
     uchar *s, *begs;
     ssize_t r;
     int local, justseek;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, (ssize_t)(-1));
+    SFMTXENTER(f, (ssize_t)(-1))
 
     GETLOCAL(f, local);
     justseek = f->bits & SF_JUSTSEEK;
     f->bits &= ~SF_JUSTSEEK;
 
-    if (!buf) SFMTXRETURN(f, (ssize_t)(n == 0 ? 0 : -1));
+    if (!buf) SFMTXRETURN(f, (ssize_t)(n == 0 ? 0 : -1))
 
     /* release peek lock */
     if (f->mode & SF_PEEK) {
-        if (!(f->mode & SF_READ)) SFMTXRETURN(f, (ssize_t)(-1));
+        if (!(f->mode & SF_READ)) SFMTXRETURN(f, (ssize_t)-1)
 
         if (f->mode & SF_GETR) {
             if (((uchar *)buf + f->val) != f->next && (!f->rsrv || f->rsrv->data != (uchar *)buf))
-                SFMTXRETURN(f, (ssize_t)(-1));
+                SFMTXRETURN(f, (ssize_t)-1)
             f->mode &= ~SF_PEEK;
-            SFMTXRETURN(f, 0);
+            SFMTXRETURN(f, 0)
         } else {
-            if ((uchar *)buf != f->next) SFMTXRETURN(f, (ssize_t)(-1));
+            if ((uchar *)buf != f->next) SFMTXRETURN(f, (ssize_t)-1)
             f->mode &= ~SF_PEEK;
             if (f->mode & SF_PKRD) { /* actually read the data now */
                 f->mode &= ~SF_PKRD;
@@ -65,7 +65,7 @@ ssize_t sfread(Sfio_t *f, void *buf, size_t n) {
             }
             f->next += n;
             f->endr = f->endb;
-            SFMTXRETURN(f, n);
+            SFMTXRETURN(f, n)
         }
     }
 
@@ -73,10 +73,10 @@ ssize_t sfread(Sfio_t *f, void *buf, size_t n) {
     for (;; f->mode &= ~SF_LOCK) { /* check stream mode */
         if (SFMODE(f, local) != SF_READ && _sfmode(f, SF_READ, local) < 0) {
             n = s > begs ? s - begs : (size_t)(-1);
-            SFMTXRETURN(f, (ssize_t)n);
+            SFMTXRETURN(f, (ssize_t)n)
         }
 
-        SFLOCK(f, local);
+        SFLOCK(f, local)
 
         if ((r = f->endb - f->next) > 0) /* has buffered data */
         {
@@ -119,7 +119,7 @@ ssize_t sfread(Sfio_t *f, void *buf, size_t n) {
         }
     }
 
-    if (!local) SFOPEN(f);
+    if (!local) SFOPEN(f)
     r = s - begs;
-    SFMTXRETURN(f, r);
+    SFMTXRETURN(f, r)
 }

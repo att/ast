@@ -40,13 +40,13 @@ int sfgetwc(Sfio_t *f) {
     char *e, *b;
     int c, n, m, i;
     char buf[32];
-    SFMTXDECL(f); /* declare a local stream variable for multithreading */
+    SFMTXDECL(f)  // declare a local stream variable for multithreading
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
-    if (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0) SFMTXRETURN(f, -1);
+    if (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0) SFMTXRETURN(f, -1)
 
-    SFLOCK(f, 0);
+    SFLOCK(f, 0)
 
     if (SFRPEEK(f, s, n) <= 0) {
         f->flags |= SF_ERROR;
@@ -85,6 +85,6 @@ int sfgetwc(Sfio_t *f) {
             }
         }
     }
-    SFOPEN(f);
-    SFMTXRETURN(f, c);
+    SFOPEN(f)
+    SFMTXRETURN(f, c)
 }

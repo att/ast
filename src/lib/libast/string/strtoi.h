@@ -290,7 +290,7 @@ S2I_function(const char *a, char **e, int base)
      * this part transcribed from sfvscanf()
      */
 
-    SFSETLOCALE(&decimal, &thousand);
+    SFSETLOCALE(&decimal, &thousand)
     x = mm[base];
     n = 0;
     if (base == 10) {
@@ -330,7 +330,7 @@ S2I_function(const char *a, char **e, int base)
             }
         }
     } else {
-        SFCVINIT();
+        SFCVINIT()
         cv = base <= 36 ? _Sfcv36 : _Sfcv64;
         if ((base & ~(base - 1)) == base) {
 #if !S2I_unsigned

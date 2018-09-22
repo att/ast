@@ -50,31 +50,31 @@ static_fn int _sfraiseall(int type, void *data) {
 int sfraise(Sfio_t *f, int type, void *data) {
     Sfdisc_t *disc, *next, *d;
     int local;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
     if (!f) return _sfraiseall(type, data);
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
     GETLOCAL(f, local);
     if (!SFKILLED(f) &&
         !(local &&
           (type == SF_NEW || type == SF_CLOSING || type == SF_FINAL || type == SF_ATEXIT)) &&
         SFMODE(f, local) != (f->mode & SF_RDWR) && _sfmode(f, 0, local) < 0)
-        SFMTXRETURN(f, -1);
-    SFLOCK(f, local);
+        SFMTXRETURN(f, -1)
+    SFLOCK(f, local)
 
     for (disc = f->disc; disc;) {
         next = disc->disc;
         if (type == SF_FINAL) f->disc = next;
 
         if (disc->exceptf) {
-            SFOPEN(f);
+            SFOPEN(f)
             // We do not return the value from the disc->exceptf function. That's because it can
             // return a negative or positive value to indicate a problem. This function, however,
             // must only return -1 on error. See issue #398.
-            if ((*disc->exceptf)(f, type, data, disc) != 0) SFMTXRETURN(f, -1);
-            SFLOCK(f, 0);
+            if ((*disc->exceptf)(f, type, data, disc) != 0) SFMTXRETURN(f, -1)
+            SFLOCK(f, 0)
         }
 
         if ((disc = next)) { /* make sure that "next" hasn't been popped */
@@ -84,6 +84,6 @@ int sfraise(Sfio_t *f, int type, void *data) {
         }
     }
 
-    if (!local) SFOPEN(f);
-    SFMTXRETURN(f, 0);
+    if (!local) SFOPEN(f)
+    SFMTXRETURN(f, 0)
 }

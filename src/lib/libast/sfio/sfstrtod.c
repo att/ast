@@ -73,7 +73,8 @@ Sfdouble_t _sfstrtod(const char *s, char **retp) {
     Sfdouble_t dval;
     int decpoint = 0;
     int thousand = 0;
-    SFSETLOCALE(&decpoint, &thousand);
+
+    SFSETLOCALE(&decpoint, &thousand)
 
     /* skip initial blanks */
     while (isspace(*s)) ++s;

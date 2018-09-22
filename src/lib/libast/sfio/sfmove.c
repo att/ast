@@ -45,11 +45,11 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
     Sfoff_t n_move, sk, cur;
     uchar *rbuf = NULL;
     ssize_t rsize = 0;
-    SFMTXDECL(fr);  /* declare a shadow stream variable for from stream */
-    SFMTXDECL2(fw); /* declare a shadow stream variable for to stream */
+    SFMTXDECL(fr)   // declare a shadow stream variable for from stream
+    SFMTXDECL2(fw)  // declare a shadow stream variable for to stream
 
-    SFMTXENTER(fr, (Sfoff_t)0);
-    if (fw) SFMTXBEGIN2(fw, (Sfoff_t)0);
+    SFMTXENTER(fr, (Sfoff_t)0)
+    if (fw) SFMTXBEGIN2(fw, (Sfoff_t)0)
 
     for (n_move = 0; n != 0;) {
         if (rc >= 0) /* moving records, let sfgetr() deal with record reading */
@@ -73,12 +73,12 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
         /* get the streams into the right mode */
         if (fr->mode != SF_READ && _sfmode(fr, SF_READ, 0) < 0) break;
 
-        SFLOCK(fr, 0);
+        SFLOCK(fr, 0)
 
         /* flush the write buffer as necessary to make room */
         if (fw) {
             if (fw->mode != SF_WRITE && _sfmode(fw, SF_WRITE, 0) < 0) break;
-            SFLOCK(fw, 0);
+            SFLOCK(fw, 0)
             if (fw->next >= fw->endb || (fw->next > fw->data && fr->extent < 0 &&
                                          (fw->extent < 0 || (fw->flags & SF_SHARE))))
                 if (SFFLSBUF(fw, -1) < 0) break;
@@ -193,8 +193,8 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
         }
 
     again:
-        SFOPEN(fr);
-        if (fw) SFOPEN(fw);
+        SFOPEN(fr)
+        if (fw) SFOPEN(fw)
     }
 
     if (n < 0 && (fr->bits & SF_MMAP) && (fr->bits & SF_MVSIZE)) { /* back to normal access mode */
@@ -206,10 +206,10 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
     if (rbuf) free(rbuf);
 
     if (fw) {
-        SFOPEN(fw);
-        SFMTXEND2(fw);
+        SFOPEN(fw)
+        SFMTXEND2(fw)
     }
 
-    SFOPEN(fr);
-    SFMTXRETURN(fr, n_move);
+    SFOPEN(fr)
+    SFMTXRETURN(fr, n_move)
 }

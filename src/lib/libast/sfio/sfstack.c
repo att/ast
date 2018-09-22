@@ -29,12 +29,10 @@
 **
 **	Written by Kiem-Phong Vo.
 */
-#define STKMTXRETURN(f1, f2, rv) \
-    {                            \
-        if (f1) SFMTXUNLOCK(f1); \
-        if (f2) SFMTXUNLOCK(f2); \
-        return rv;             \
-    }
+
+#define STKMTXEND(f1, f2)    \
+    if (f1) SFMTXUNLOCK(f1); \
+    if (f2) SFMTXUNLOCK(f2)
 
 Sfio_t *sfstack(Sfio_t *f1, Sfio_t *f2) {
     int n;
@@ -42,13 +40,19 @@ Sfio_t *sfstack(Sfio_t *f1, Sfio_t *f2) {
     Sfrsrv_t *rsrv;
     void *mtx;
 
-    if (f1) SFMTXLOCK(f1);
-    if (f2) SFMTXLOCK(f2);
+    if (f1) SFMTXLOCK(f1)
+    if (f2) SFMTXLOCK(f2)
 
-    if (f1 && (f1->mode & SF_RDWR) != f1->mode && _sfmode(f1, 0, 0) < 0) STKMTXRETURN(f1, f2, NULL);
-    if (f2 && (f2->mode & SF_RDWR) != f2->mode && _sfmode(f2, 0, 0) < 0) STKMTXRETURN(f1, f2, NULL);
+    if (f1 && (f1->mode & SF_RDWR) != f1->mode && _sfmode(f1, 0, 0) < 0) {
+        STKMTXEND(f1, f2);
+        return NULL;
+    }
+    if (f2 && (f2->mode & SF_RDWR) != f2->mode && _sfmode(f2, 0, 0) < 0) {
+        STKMTXEND(f1, f2);
+        return NULL;
+    }
     if (!f1) {
-        if (f2) SFMTXUNLOCK(f2);
+        if (f2) SFMTXUNLOCK(f2)
         return f2;
     }
 
@@ -58,12 +62,15 @@ Sfio_t *sfstack(Sfio_t *f1, Sfio_t *f2) {
     if (f2 == SF_POPSTACK) {
         f2 = f1->push;
         if (!f2) {
-            SFMTXUNLOCK(f1);
+            SFMTXUNLOCK(f1)
             return NULL;
         }
         f2->mode &= ~SF_PUSH;
     } else {
-        if (f2->push) STKMTXRETURN(f1, f2, NULL);
+        if (f2->push) {
+            STKMTXEND(f1, f2);
+            return NULL;
+        }
         if (f1->pool && f1->pool != &_Sfpool && f1->pool != f2->pool &&
             f1 == f1->pool->sf[0]) { /* get something else to pool front since f1 will be locked */
             for (n = 1; n < f1->pool->n_sf; ++n) {
@@ -88,8 +95,8 @@ Sfio_t *sfstack(Sfio_t *f1, Sfio_t *f2) {
     f1->mutex = f2->mutex;
     f2->mutex = mtx;
 
-    SFLOCK(f1, 0);
-    SFLOCK(f2, 0);
+    SFLOCK(f1, 0)
+    SFLOCK(f2, 0)
 
     if (f2->push != f2) { /* freeze the pushed stream */
         f2->mode |= SF_PUSH;
@@ -101,8 +108,9 @@ Sfio_t *sfstack(Sfio_t *f1, Sfio_t *f2) {
         rf = f2;
     }
 
-    SFOPEN(f1);
-    SFOPEN(f2);
+    SFOPEN(f1)
+    SFOPEN(f2)
 
-    STKMTXRETURN(f1, f2, rf);
+    STKMTXEND(f1, f2);
+    return rf;
 }

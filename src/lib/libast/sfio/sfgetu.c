@@ -34,13 +34,13 @@ Sfulong_t sfgetu(Sfio_t *f) {
     Sfulong_t v;
     uchar *s, *ends, c;
     int p;
-    SFMTXDECL(f); /* declare a local stream variable for multithreading */
+    SFMTXDECL(f)  // declare a local stream variable for multithreading
 
-    SFMTXENTER(f, (Sfulong_t)(-1));
+    SFMTXENTER(f, (Sfulong_t)-1)
 
-    if (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0) SFMTXRETURN(f, (Sfulong_t)(-1));
+    if (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0) SFMTXRETURN(f, (Sfulong_t)-1)
 
-    SFLOCK(f, 0);
+    SFLOCK(f, 0)
 
     for (v = 0;;) {
         if (SFRPEEK(f, s, p) <= 0) {
@@ -59,6 +59,6 @@ Sfulong_t sfgetu(Sfio_t *f) {
         f->next = s;
     }
 done:
-    SFOPEN(f);
-    SFMTXRETURN(f, v);
+    SFOPEN(f)
+    SFMTXRETURN(f, v)
 }

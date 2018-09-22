@@ -35,12 +35,12 @@ int _sfputm(Sfio_t *f, Sfulong_t v, Sfulong_t m) {
     uchar *s, *ps;
     ssize_t n, p;
     uchar c[N_ARRAY];
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
-    if (v > m || (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0)) SFMTXRETURN(f, -1);
-    SFLOCK(f, 0);
+    if (v > m || (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0)) SFMTXRETURN(f, -1)
+    SFLOCK(f, 0)
 
     /* code v as integers in base SF_UBASE */
     s = ps = &(c[N_ARRAY - 1]);
@@ -84,6 +84,6 @@ int _sfputm(Sfio_t *f, Sfulong_t v, Sfulong_t m) {
         f->next = ps;
     }
 
-    SFOPEN(f);
-    SFMTXRETURN(f, (int)n);
+    SFOPEN(f)
+    SFMTXRETURN(f, (int)n)
 }

@@ -50,9 +50,9 @@ static_fn void newpos(Sfio_t *f, Sfoff_t p) {
 Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type) {
     Sfoff_t r, s;
     int mode, local, hardseek, mustsync;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, (Sfoff_t)(-1));
+    SFMTXENTER(f, (Sfoff_t)(-1))
 
     GETLOCAL(f, local);
 
@@ -72,7 +72,7 @@ Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type) {
         mode = _sfmode(f, mode, local);
         if (hardseek & SF_PUBLIC) f->flags = flags;
 
-        if (mode < 0) SFMTXRETURN(f, (Sfoff_t)(-1));
+        if (mode < 0) SFMTXRETURN(f, (Sfoff_t)-1)
     }
 
     mustsync =
@@ -82,19 +82,19 @@ Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type) {
     if ((type &= (SEEK_SET | SEEK_CUR | SEEK_END)) != SEEK_SET && type != SEEK_CUR &&
         type != SEEK_END) {
         errno = EINVAL;
-        SFMTXRETURN(f, (Sfoff_t)(-1));
+        SFMTXRETURN(f, (Sfoff_t)-1)
     }
 
     if (f->extent < 0) { /* let system call set errno */
         (void)SFSK(f, (Sfoff_t)0, SEEK_CUR, f->disc);
-        SFMTXRETURN(f, (Sfoff_t)(-1));
+        SFMTXRETURN(f, (Sfoff_t)-1)
     }
 
     /* throw away ungetc data */
     if (f->disc == _Sfudisc) (void)sfclose((*_Sfstack)(f, NULL));
 
     /* lock the stream for internal manipulations */
-    SFLOCK(f, local);
+    SFLOCK(f, local)
 
     /* clear error and eof bits */
     f->flags &= ~(SF_EOF | SF_ERROR);
@@ -239,10 +239,10 @@ done:
 
     f->lpos = p;
 
-    if (!local) SFOPEN(f);
+    if (!local) SFOPEN(f)
 
     if (mustsync) sfsync(f);
-    SFMTXRETURN(f, p);
+    SFMTXRETURN(f, p)
 }
 
 char *sfstrseek(Sfio_t *f, Sfoff_t p, int type) {

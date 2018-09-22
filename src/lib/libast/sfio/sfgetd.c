@@ -34,15 +34,15 @@ Sfdouble_t sfgetd(Sfio_t *f) {
     uchar *s, *ends, c;
     int p, sign, exp;
     Sfdouble_t v;
-    SFMTXDECL(f); /* declare a local stream variable for multithreading */
+    SFMTXDECL(f)  // declare a local stream variable for multithreading
 
-    SFMTXENTER(f, -1.);
+    SFMTXENTER(f, -1.0)
 
-    if ((sign = sfgetc(f)) < 0 || (exp = (int)sfgetu(f)) < 0) SFMTXRETURN(f, -1.);
+    if ((sign = sfgetc(f)) < 0 || (exp = (int)sfgetu(f)) < 0) SFMTXRETURN(f, -1.0)
 
-    if (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0) SFMTXRETURN(f, -1.);
+    if (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0) SFMTXRETURN(f, -1.0)
 
-    SFLOCK(f, 0);
+    SFLOCK(f, 0)
 
     v = 0.;
     for (;;) { /* fast read for data */
@@ -68,6 +68,6 @@ done:
     v = ldexpl(v, (sign & 02) ? -exp : exp);
     if (sign & 01) v = -v;
 
-    SFOPEN(f);
-    SFMTXRETURN(f, v);
+    SFOPEN(f)
+    SFMTXRETURN(f, v)
 }

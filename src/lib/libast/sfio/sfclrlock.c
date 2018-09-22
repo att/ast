@@ -31,12 +31,12 @@
 */
 int sfclrlock(Sfio_t *f) {
     int rv;
-    SFMTXDECL(f); /* declare a local stream variable for multithreading */
+    SFMTXDECL(f)  // declare a local stream variable for multithreading
 
     /* already closed */
     if (f && (f->mode & SF_AVAIL)) return 0;
 
-    SFMTXENTER(f, 0);
+    SFMTXENTER(f, 0)
 
     /* clear error bits */
     f->flags &= ~(SF_ERROR | SF_EOF);
@@ -54,5 +54,5 @@ int sfclrlock(Sfio_t *f) {
 
     rv = (f->mode & SF_PUSH) ? 0 : (f->flags & SFIO_FLAGS);
 
-    SFMTXRETURN(f, rv);
+    SFMTXRETURN(f, rv)
 }

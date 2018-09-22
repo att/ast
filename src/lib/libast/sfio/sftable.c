@@ -154,7 +154,7 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
                 flags |= SFFMT_ALTER;
                 goto loop_flags;
             case QUOTE:
-                SFSETLOCALE(&decimal, &thousand);
+                SFSETLOCALE(&decimal, &thousand)
                 if (thousand > 0) flags |= SFFMT_THOUSAND;
                 goto loop_flags;
 

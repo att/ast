@@ -38,12 +38,12 @@ int _sfputd(Sfio_t *f, Sfdouble_t v) {
     int exp;
     uchar c[N_ARRAY];
     Sfdouble_t x;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
-    if (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0) SFMTXRETURN(f, -1);
-    SFLOCK(f, 0);
+    if (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0) SFMTXRETURN(f, -1)
+    SFLOCK(f, 0)
 
     /* get the sign of v */
     if (v < 0.) {
@@ -65,9 +65,9 @@ int _sfputd(Sfio_t *f, Sfdouble_t v) {
     }
 
     /* write out the signs and the exp */
-    SFOPEN(f);
-    if (sfputc(f, n) < 0 || (w = sfputu(f, w)) < 0) SFMTXRETURN(f, -1);
-    SFLOCK(f, 0);
+    SFOPEN(f)
+    if (sfputc(f, n) < 0 || (w = sfputu(f, w)) < 0) SFMTXRETURN(f, -1)
+    SFLOCK(f, 0)
     w += 1;
 
     s = (ends = &c[0]) + sizeof(c);
@@ -86,6 +86,6 @@ int _sfputd(Sfio_t *f, Sfdouble_t v) {
     n = ends - s + 1;
     w = SFWRITE(f, (void *)s, n) == n ? w + n : -1;
 
-    SFOPEN(f);
-    SFMTXRETURN(f, w);
+    SFOPEN(f)
+    SFMTXRETURN(f, w)
 }

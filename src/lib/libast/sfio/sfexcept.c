@@ -37,9 +37,9 @@ int _sfexcept(Sfio_t *f, int type, ssize_t io, Sfdisc_t *disc) {
     int ev, local, lock;
     ssize_t size;
     uchar *data;
-    SFMTXDECL(f); /* declare a local stream variable for multithreading */
+    SFMTXDECL(f)  // declare a local stream variable for multithreading
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
     GETLOCAL(f, local);
     lock = f->mode & SF_LOCK;
@@ -47,25 +47,25 @@ int _sfexcept(Sfio_t *f, int type, ssize_t io, Sfdisc_t *disc) {
     if (local && io <= 0) f->flags |= io < 0 ? SF_ERROR : SF_EOF;
 
     if (disc && disc->exceptf) { /* let the stream be generally accessible for this duration */
-        if (local && lock) SFOPEN(f);
+        if (local && lock) SFOPEN(f)
 
         /* so that exception handler knows what we are asking for */
         _Sfi = f->val = io;
         ev = (*(disc->exceptf))(f, type, &io, disc);
 
         /* relock if necessary */
-        if (local && lock) SFLOCK(f, 0);
+        if (local && lock) SFLOCK(f, 0)
 
-        if (io > 0 && !(f->flags & SF_STRING)) SFMTXRETURN(f, ev);
-        if (ev < 0) SFMTXRETURN(f, SF_EDONE);
-        if (ev > 0) SFMTXRETURN(f, SF_EDISC);
+        if (io > 0 && !(f->flags & SF_STRING)) SFMTXRETURN(f, ev)
+        if (ev < 0) SFMTXRETURN(f, SF_EDONE)
+        if (ev > 0) SFMTXRETURN(f, SF_EDISC)
     }
 
     if (f->flags & SF_STRING) {
         if (type == SF_READ)
             goto chk_stack;
         else if (type != SF_WRITE && type != SF_SEEK)
-            SFMTXRETURN(f, SF_EDONE);
+            SFMTXRETURN(f, SF_EDONE)
         if (local && io >= 0) {
             if (f->size >= 0 && !(f->flags & SF_MALLOC)) goto chk_stack;
             /* extend buffer */
@@ -82,18 +82,18 @@ int _sfexcept(Sfio_t *f, int type, ssize_t io, Sfdisc_t *disc) {
             f->endr = f->endw = f->data = data;
             f->size = size;
         }
-        SFMTXRETURN(f, SF_EDISC);
+        SFMTXRETURN(f, SF_EDISC)
     }
 
     if (errno == EINTR) {
         if (_Sfexiting || (f->bits & SF_ENDING) || /* stop being a hero	*/
             (f->flags & SF_IOINTR))                /* application requests to return	*/
-            SFMTXRETURN(f, SF_EDONE);
+            SFMTXRETURN(f, SF_EDONE)
 
         /* a normal interrupt, we can continue */
         errno = 0;
         f->flags &= ~(SF_EOF | SF_ERROR);
-        SFMTXRETURN(f, SF_ECONT);
+        SFMTXRETURN(f, SF_ECONT)
     }
 
 chk_stack:
@@ -102,18 +102,18 @@ chk_stack:
          (type == SF_WRITE && f->next <= f->data))) { /* pop the stack */
         Sfio_t *pf;
 
-        if (lock) SFOPEN(f);
+        if (lock) SFOPEN(f)
 
         /* pop and close */
         pf = (*_Sfstack)(f, NULL);
         if ((ev = sfclose(pf)) < 0) /* can't close, restack */
             (*_Sfstack)(f, pf);
 
-        if (lock) SFLOCK(f, 0);
+        if (lock) SFLOCK(f, 0)
 
         ev = ev < 0 ? SF_EDONE : SF_ESTACK;
     } else
         ev = SF_EDONE;
 
-    SFMTXRETURN(f, ev);
+    SFMTXRETURN(f, ev)
 }

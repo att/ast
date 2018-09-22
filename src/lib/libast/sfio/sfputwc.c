@@ -72,12 +72,12 @@ int sfputwc(Sfio_t *f, int w) {
     char *b;
     int n, m;
     char buf[32];
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
-    if (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0) SFMTXRETURN(f, -1);
-    SFLOCK(f, 0);
+    if (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0) SFMTXRETURN(f, -1)
+    SFLOCK(f, 0)
 
     n = mbconv(buf, w, SFMBSTATE(f));
 
@@ -115,6 +115,6 @@ int sfputwc(Sfio_t *f, int w) {
         f->next = s;
     }
 
-    SFOPEN(f);
-    SFMTXRETURN(f, (int)n);
+    SFOPEN(f)
+    SFMTXRETURN(f, (int)n)
 }

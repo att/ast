@@ -35,20 +35,20 @@ ssize_t sfwrite(Sfio_t *f, const void *buf, size_t n) {
     uchar *s, *begs, *next;
     ssize_t w;
     int local;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, (ssize_t)(-1));
+    SFMTXENTER(f, -1)
 
     GETLOCAL(f, local);
 
-    if (!buf) SFMTXRETURN(f, (ssize_t)(n == 0 ? 0 : -1));
+    if (!buf) SFMTXRETURN(f, (ssize_t)(n == 0 ? 0 : -1))
 
     /* release peek lock */
     if (f->mode & SF_PEEK) {
-        if (!(f->mode & SF_WRITE) && (f->flags & SF_RDWR) != SF_RDWR) SFMTXRETURN(f, (ssize_t)(-1));
+        if (!(f->mode & SF_WRITE) && (f->flags & SF_RDWR) != SF_RDWR) SFMTXRETURN(f, -1)
 
         if ((uchar *)buf != f->next && (!f->rsrv || f->rsrv->data != (uchar *)buf))
-            SFMTXRETURN(f, (ssize_t)(-1));
+            SFMTXRETURN(f, -1)
 
         f->mode &= ~SF_PEEK;
 
@@ -80,7 +80,7 @@ ssize_t sfwrite(Sfio_t *f, const void *buf, size_t n) {
             SFMTXRETURN(f, w);
         }
 
-        SFLOCK(f, local);
+        SFLOCK(f, local)
 
         w = f->endb - f->next;
 
@@ -145,8 +145,8 @@ ssize_t sfwrite(Sfio_t *f, const void *buf, size_t n) {
         if (n >= HIFORLINE) (void)SFFLSBUF(f, -1);
     }
 
-    if (!local) SFOPEN(f);
+    if (!local) SFOPEN(f)
 
     w = s - begs;
-    SFMTXRETURN(f, w);
+    SFMTXRETURN(f, w)
 }

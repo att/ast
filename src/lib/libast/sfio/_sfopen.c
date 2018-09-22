@@ -43,7 +43,7 @@
 
 Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
     int fd, oldfd, oflags, fflags, sflags;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
     if (file && *file == '/') cwd = AT_FDCWD;
 #if !defined(sysopenatf)
@@ -62,7 +62,7 @@ Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
 
     /* changing the control flags */
     if (f && !file && !((f->flags | sflags) & SF_STRING)) {
-        SFMTXENTER(f, NULL);
+        SFMTXBEGIN(f, NULL)
 
         if (f->mode & SF_INIT) /* stream uninitialized, ok to set flags */
         {
@@ -84,7 +84,7 @@ Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
             }
         } else /* make sure there is no buffered data */
         {
-            if (sfsync(f) < 0) SFMTXRETURN(f, NULL);
+            if (sfsync(f) < 0) SFMTXRETURN(f, NULL)
         }
 
         if (f->file >= 0) {
@@ -98,7 +98,7 @@ Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
 #endif
         }
 
-        SFMTXRETURN(f, f);
+        SFMTXRETURN(f, f)
     }
 
     if (sflags & SF_STRING) {

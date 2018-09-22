@@ -54,40 +54,40 @@ static_fn int _sfdup(int fd, int newfd) {
 
 int sfsetfd(Sfio_t *f, int newfd) {
     int oldfd;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
-    if (f->flags & SF_STRING) SFMTXRETURN(f, -1);
+    if (f->flags & SF_STRING) SFMTXRETURN(f, -1)
 
     if ((f->mode & SF_INIT) &&
         f->file < 0) { /* restoring file descriptor after a previous freeze */
-        if (newfd < 0) SFMTXRETURN(f, -1);
+        if (newfd < 0) SFMTXRETURN(f, -1)
     } else { /* change file descriptor */
-        if ((f->mode & SF_RDWR) != f->mode && _sfmode(f, 0, 0) < 0) SFMTXRETURN(f, -1);
-        SFLOCK(f, 0);
+        if ((f->mode & SF_RDWR) != f->mode && _sfmode(f, 0, 0) < 0) SFMTXRETURN(f, -1)
+        SFLOCK(f, 0)
 
         oldfd = f->file;
         if (oldfd >= 0) {
             if (newfd >= 0) {
                 if ((newfd = _sfdup(oldfd, newfd)) < 0) {
-                    SFOPEN(f);
-                    SFMTXRETURN(f, -1);
+                    SFOPEN(f)
+                    SFMTXRETURN(f, -1)
                 }
                 CLOSE(oldfd);
             } else { /* sync stream if necessary */
                 if (((f->mode & SF_WRITE) && f->next > f->data) || (f->mode & SF_READ) ||
                     f->disc == _Sfudisc) {
                     if (SFSYNC(f) < 0) {
-                        SFOPEN(f);
-                        SFMTXRETURN(f, -1);
+                        SFOPEN(f)
+                        SFMTXRETURN(f, -1)
                     }
                 }
 
                 if (((f->mode & SF_WRITE) && f->next > f->data) ||
                     ((f->mode & SF_READ) && f->extent < 0 && f->next < f->endb)) {
-                    SFOPEN(f);
-                    SFMTXRETURN(f, -1);
+                    SFOPEN(f)
+                    SFMTXRETURN(f, -1)
                 }
 
                 if ((f->bits & SF_MMAP) && f->data) {
@@ -103,7 +103,7 @@ int sfsetfd(Sfio_t *f, int newfd) {
             }
         }
 
-        SFOPEN(f);
+        SFOPEN(f)
     }
 
     /* notify changes */
@@ -111,5 +111,5 @@ int sfsetfd(Sfio_t *f, int newfd) {
 
     f->file = newfd;
 
-    SFMTXRETURN(f, newfd);
+    SFMTXRETURN(f, newfd)
 }

@@ -34,13 +34,13 @@ ssize_t sfputr(Sfio_t *f, const char *s, int rc) {
     ssize_t p, n, w, sn;
     uchar *ps;
     char *ss;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
-    if (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0) SFMTXRETURN(f, -1);
+    if (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0) SFMTXRETURN(f, -1)
 
-    SFLOCK(f, 0);
+    SFLOCK(f, 0)
 
     f->val = sn = -1;
     ss = (char *)s;
@@ -117,6 +117,6 @@ ssize_t sfputr(Sfio_t *f, const char *s, int rc) {
         (void)SFWRITE(f, (void *)f->next, n);
     }
 
-    SFOPEN(f);
-    SFMTXRETURN(f, w);
+    SFOPEN(f)
+    SFMTXRETURN(f, w)
 }

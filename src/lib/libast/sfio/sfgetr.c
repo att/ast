@@ -37,12 +37,12 @@ char *sfgetr(Sfio_t *f, int rc, int type) {
     uchar *s, *ends, *us;
     int found;
     Sfrsrv_t *rsrv;
-    SFMTXDECL(f); /* declare a local stream variable for multithreading */
+    SFMTXDECL(f)  // declare a local stream variable for multithreading
 
-    SFMTXENTER(f, NULL);
+    SFMTXENTER(f, NULL)
 
-    if (rc < 0 || (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0)) SFMTXRETURN(f, NULL);
-    SFLOCK(f, 0);
+    if (rc < 0 || (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0)) SFMTXRETURN(f, NULL)
+    SFLOCK(f, 0)
 
     /* buffer to be returned */
     rsrv = NULL;
@@ -147,12 +147,12 @@ done:
     /* prepare for a call to get the broken record */
     if (rsrv) rsrv->slen = found ? 0 : -un;
 
-    SFOPEN(f);
+    SFOPEN(f)
 
     if (us && (type & SF_LOCKR)) {
         f->mode |= SF_PEEK | SF_GETR;
         f->endr = f->data;
     }
 
-    SFMTXRETURN(f, (char *)us);
+    SFMTXRETURN(f, (char *)us)
 }

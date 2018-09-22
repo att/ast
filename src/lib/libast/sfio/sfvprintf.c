@@ -177,13 +177,13 @@ int sfvprintf(Sfio_t *f, const char *form, va_list args) {
     uchar *d, *endd;
 #define SFBUF(f) (d = f->next, endd = f->endb)
 #define SFINIT(f) (SFBUF(f), n_output = 0)
-#define SFEND(f) ((n_output += d - f->next), (f->next = d))
+#define SFEND(f) (n_output += d - f->next), (f->next = d);
 #define SFputc(f, c)         \
     {                        \
         if (d < endd) {      \
             *d++ = (uchar)c; \
         } else {             \
-            SFEND(f);        \
+            SFEND(f)         \
             SMputc(f, c);    \
             SFBUF(f);        \
         }                    \
@@ -193,7 +193,7 @@ int sfvprintf(Sfio_t *f, const char *form, va_list args) {
         if (d + n <= endd) {               \
             while (n--) *d++ = (uchar)(c); \
         } else {                           \
-            SFEND(f);                      \
+            SFEND(f)                       \
             SMnputc(f, c, n);              \
             SFBUF(f);                      \
         }                                  \
@@ -203,25 +203,25 @@ int sfvprintf(Sfio_t *f, const char *form, va_list args) {
         if (d + n <= endd) {                  \
             while (n--) *d++ = (uchar)(*s++); \
         } else {                              \
-            SFEND(f);                         \
+            SFEND(f)                          \
             SMwrite(f, s, n);                 \
             SFBUF(f);                         \
         }                                     \
     }
 #endif /* _sffmt_small */
 
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFCVINIT(); /* initialize conversion tables */
+    SFCVINIT()  // initialize conversion tables
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
-    if (!form) SFMTXRETURN(f, -1);
+    if (!form) SFMTXRETURN(f, -1)
 
     /* make sure stream is in write mode and buffer is not NULL */
-    if (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0) SFMTXRETURN(f, -1);
+    if (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0) SFMTXRETURN(f, -1)
 
-    SFLOCK(f, 0);
+    SFLOCK(f, 0)
 
     if (!f->data && !(f->flags & SF_STRING)) {
         f->data = f->next = (uchar *)data;
@@ -344,11 +344,11 @@ loop_fmt:
                 flags |= SFFMT_ALTER;
                 goto loop_flags;
             case QUOTE:
-                SFSETLOCALE(&decimal, &thousand);
+                SFSETLOCALE(&decimal, &thousand)
                 if (thousand > 0) flags |= SFFMT_THOUSAND;
                 goto loop_flags;
             case ',':
-                SFSETLOCALE(&decimal, &thousand);
+                SFSETLOCALE(&decimal, &thousand)
                 if (thousand < 0) thousand = fmt;
                 flags |= SFFMT_THOUSAND;
                 goto loop_flags;
@@ -544,10 +544,10 @@ loop_fmt:
         } else if (ft && ft->extf) /* extended processing */
         {
             FMTSET(ft, form, args, fmt, size, flags, width, precis, base, t_str, n_str);
-            SFEND(f);
-            SFOPEN(f);
+            SFEND(f)
+            SFOPEN(f)
             v = (*ft->extf)(f, (void *)(&argv), ft);
-            SFLOCK(f, 0);
+            SFLOCK(f, 0)
             SFBUF(f);
 
             if (v < 0) /* no further processing */
@@ -898,7 +898,7 @@ loop_fmt:
                 continue;
 
             case 'n': /* return current output length */
-                SFEND(f);
+                SFEND(f)
 #if !_ast_intmax_long
                 if (size == sizeof(Sflong_t))
                     *((Sflong_t *)argv.vp) = (Sflong_t)n_output;
@@ -1199,7 +1199,7 @@ loop_fmt:
             a_format:
                 *endsp++ = *ep ? *ep++ : '0';
 
-                SFSETLOCALE(&decimal, &thousand);
+                SFSETLOCALE(&decimal, &thousand)
                 if (precis > 0 || (flags & SFFMT_ALTER)) *endsp++ = decimal;
                 ssp = endsp;
                 endep = ep + precis;
@@ -1238,7 +1238,7 @@ loop_fmt:
                     goto end_aefg;
                 }
 
-                SFSETLOCALE(&decimal, &thousand);
+                SFSETLOCALE(&decimal, &thousand)
                 endsp = sp = buf + 1; /* save a space for sign */
                 endep = ep + decpt;
                 if (decpt > 3 && (flags & SFFMT_THOUSAND)) {
@@ -1365,7 +1365,7 @@ done:
         free(fm);
     }
 
-    SFEND(f);
+    SFEND(f)
 
     n = f->next - f->data;
     if ((sp = (char *)f->data) == data) f->endw = f->endr = f->endb = f->data = NULL;
@@ -1377,6 +1377,6 @@ done:
     else
         f->next += n;
 
-    SFOPEN(f);
-    SFMTXRETURN(f, n_output);
+    SFOPEN(f)
+    SFMTXRETURN(f, n_output)
 }

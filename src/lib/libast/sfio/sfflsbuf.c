@@ -38,15 +38,15 @@ int _sfflsbuf(Sfio_t *f, int c) {
     uchar outc;
     int local, isall;
     int inpc = c;
-    SFMTXDECL(f); /* declare a local stream variable for multithreading */
+    SFMTXDECL(f)  // declare a local stream variable for multithreading
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
     GETLOCAL(f, local);
 
     for (written = 0;; f->mode &= ~SF_LOCK) { /* check stream mode */
-        if (SFMODE(f, local) != SF_WRITE && _sfmode(f, SF_WRITE, local) < 0) SFMTXRETURN(f, -1);
-        SFLOCK(f, local);
+        if (SFMODE(f, local) != SF_WRITE && _sfmode(f, SF_WRITE, local) < 0) SFMTXRETURN(f, -1)
+        SFLOCK(f, local)
 
         /* current data extent */
         n = f->next - (data = f->data);
@@ -61,8 +61,8 @@ int _sfflsbuf(Sfio_t *f, int c) {
             if (f->next < f->endb || !(f->flags & SF_STRING))
                 n = f->next - (data = f->data);
             else {
-                if (!local) SFOPEN(f);
-                SFMTXRETURN(f, -1);
+                if (!local) SFOPEN(f)
+                SFMTXRETURN(f, -1)
             }
         }
 
@@ -96,8 +96,8 @@ int _sfflsbuf(Sfio_t *f, int c) {
                 break;       /* do normal exit below */
             else             /* nothing was done, returning failure */
             {
-                if (!local) SFOPEN(f);
-                SFMTXRETURN(f, -1);
+                if (!local) SFOPEN(f)
+                SFMTXRETURN(f, -1)
             }
         } else /* w < 0 means SF_EDISC or SF_ESTACK in sfwr() */
         {
@@ -108,9 +108,9 @@ int _sfflsbuf(Sfio_t *f, int c) {
         }
     }
 
-    if (!local) SFOPEN(f);
+    if (!local) SFOPEN(f)
 
     if (inpc < 0) inpc = f->endb - f->next;
 
-    SFMTXRETURN(f, inpc);
+    SFMTXRETURN(f, inpc)
 }

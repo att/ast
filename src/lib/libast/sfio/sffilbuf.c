@@ -40,9 +40,9 @@
 int _sffilbuf(Sfio_t *f, int n) {
     ssize_t r;
     int first, local, rcrv, rc, justseek;
-    SFMTXDECL(f); /* declare a local stream variable for multithreading */
+    SFMTXDECL(f)  // declare a local stream variable for multithreading
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
     GETLOCAL(f, local);
 
@@ -54,8 +54,8 @@ int _sffilbuf(Sfio_t *f, int n) {
     f->bits &= ~SF_JUSTSEEK;
 
     for (first = 1;; first = 0, (f->mode &= ~SF_LOCK)) { /* check mode */
-        if (SFMODE(f, local) != SF_READ && _sfmode(f, SF_READ, local) < 0) SFMTXRETURN(f, -1);
-        SFLOCK(f, local);
+        if (SFMODE(f, local) != SF_READ && _sfmode(f, SF_READ, local) < 0) SFMTXRETURN(f, -1)
+        SFLOCK(f, local)
 
         /* current extent of available data */
         if ((r = f->endb - f->next) > 0) { /* on first iteration, n is amount beyond current buffer;
@@ -100,9 +100,9 @@ int _sffilbuf(Sfio_t *f, int n) {
         }
     }
 
-    if (!local) SFOPEN(f);
+    if (!local) SFOPEN(f)
 
     rcrv = (n == 0) ? (r > 0 ? (int)(*f->next++) : EOF) : (int)r;
 
-    SFMTXRETURN(f, rcrv);
+    SFMTXRETURN(f, rcrv)
 }

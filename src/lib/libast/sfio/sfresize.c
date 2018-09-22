@@ -32,14 +32,14 @@
 */
 
 int sfresize(Sfio_t *f, Sfoff_t size) {
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
     if (size < 0 || f->extent < 0 || (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0))
-        SFMTXRETURN(f, -1);
+        SFMTXRETURN(f, -1)
 
-    SFLOCK(f, 0);
+    SFLOCK(f, 0)
 
     if (f->flags & SF_STRING) {
         SFSTRSIZE(f);
@@ -56,17 +56,17 @@ int sfresize(Sfio_t *f, Sfoff_t size) {
             }
             memset(f->data + size, 0, f->extent - size);
         } else {
-            if (SFSK(f, size, SEEK_SET, f->disc) != size) SFMTXRETURN(f, -1);
+            if (SFSK(f, size, SEEK_SET, f->disc) != size) SFMTXRETURN(f, -1)
             memset(f->data + f->extent, 0, size - f->extent);
         }
     } else {
         if (f->next > f->data) SFSYNC(f);
-        if (ftruncate(f->file, (sfoff_t)size) < 0) SFMTXRETURN(f, -1);
+        if (ftruncate(f->file, (sfoff_t)size) < 0) SFMTXRETURN(f, -1)
     }
 
     f->extent = size;
 
-    SFOPEN(f);
+    SFOPEN(f)
 
-    SFMTXRETURN(f, 0);
+    SFMTXRETURN(f, 0)
 }

@@ -36,14 +36,14 @@ ssize_t sfnputc(Sfio_t *f, int c, size_t n) {
     ssize_t p, w;
     uchar buf[128];
     int local;
-    SFMTXDECL(f); /* declare a local stream variable for multithreading */
+    SFMTXDECL(f)  // declare a local stream variable for multithreading
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
     GETLOCAL(f, local);
-    if (SFMODE(f, local) != SF_WRITE && _sfmode(f, SF_WRITE, local) < 0) SFMTXRETURN(f, -1);
+    if (SFMODE(f, local) != SF_WRITE && _sfmode(f, SF_WRITE, local) < 0) SFMTXRETURN(f, -1)
 
-    SFLOCK(f, local);
+    SFLOCK(f, local)
 
     /* write into a suitable buffer */
     if ((size_t)(p = (f->endb - (ps = f->next))) < n) {
@@ -68,6 +68,6 @@ ssize_t sfnputc(Sfio_t *f, int c, size_t n) {
         if ((size_t)p > n) p = n;
     }
 done:
-    if (!local) SFOPEN(f);
-    SFMTXRETURN(f, w);
+    if (!local) SFOPEN(f)
+    SFMTXRETURN(f, w)
 }

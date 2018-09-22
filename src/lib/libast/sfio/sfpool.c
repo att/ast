@@ -101,7 +101,7 @@ static_fn int _sfphead(Sfpool_t *p, Sfio_t *f, int n) {
     head = p->sf[0];
     if (SFFROZEN(head)) POOLMTXRETURN(p, -1);
 
-    SFLOCK(head, 0);
+    SFLOCK(head, 0)
     rv = -1;
 
     if (!(p->mode & SF_SHARE) || (head->mode & SF_READ) || (f->mode & SF_READ)) {
@@ -175,7 +175,7 @@ static_fn int _sfpdelete(Sfpool_t *p, Sfio_t *f, int n) {
     /* head stream has SF_POOL off */
     f = p->sf[0];
     f->mode &= ~SF_POOL;
-    if (!SFFROZEN(f)) _SFOPEN(f);
+    if (!SFFROZEN(f)) _SFOPEN(f)
 
     /* if only one stream left, delete pool */
     if (p->n_sf == 1) {
@@ -220,20 +220,19 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
             return pf->pool->sf[0];
     }
 
-    if (f) /* check for permissions */
-    {
-        SFMTXLOCK(f);
+    if (f) {  // check for permissions
+        SFMTXLOCK(f)
         if ((f->mode & SF_RDWR) != f->mode && _sfmode(f, 0, 0) < 0) {
-            SFMTXUNLOCK(f);
+            SFMTXUNLOCK(f)
             return NULL;
         }
         if (f->disc == _Sfudisc) (void)sfclose((*_Sfstack)(f, NULL));
     }
     if (pf) {
-        SFMTXLOCK(pf);
+        SFMTXLOCK(pf)
         if ((pf->mode & SF_RDWR) != pf->mode && _sfmode(pf, 0, 0) < 0) {
-            if (f) SFMTXUNLOCK(f);
-            SFMTXUNLOCK(pf);
+            if (f) SFMTXUNLOCK(f)
+            SFMTXUNLOCK(pf)
             return NULL;
         }
         if (pf->disc == _Sfudisc) (void)sfclose((*_Sfstack)(pf, NULL));
@@ -241,15 +240,15 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
 
     /* f already in the same pool with pf */
     if (f == pf || (pf && f->pool == pf->pool && f->pool != &_Sfpool)) {
-        if (f) SFMTXUNLOCK(f);
-        if (pf) SFMTXUNLOCK(pf);
+        if (f) SFMTXUNLOCK(f)
+        if (pf) SFMTXUNLOCK(pf)
         return pf;
     }
 
     /* lock streams before internal manipulations */
     rv = NULL;
-    SFLOCK(f, 0);
-    if (pf) SFLOCK(pf, 0);
+    SFLOCK(f, 0)
+    if (pf) SFLOCK(pf, 0)
 
     if (!pf) /* deleting f from its current pool */
     {
@@ -300,20 +299,20 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
     if (_sfsetpool(f) < 0) goto done;
 
     /**/ ASSERT(p->sf[0] == pf && p->sf[p->n_sf - 1] == f);
-    SFOPEN(pf);
-    SFOPEN(f);
+    SFOPEN(pf)
+    SFOPEN(f)
     if (_sfpmove(f, 0) < 0) /* make f head of pool */
         goto done;
     rv = pf;
 
 done:
     if (f) {
-        SFOPEN(f);
-        SFMTXUNLOCK(f);
+        SFOPEN(f)
+        SFMTXUNLOCK(f)
     }
     if (pf) {
-        SFOPEN(pf);
-        SFMTXUNLOCK(pf);
+        SFOPEN(pf)
+        SFMTXUNLOCK(pf)
     }
     return rv;
 }

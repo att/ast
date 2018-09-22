@@ -43,19 +43,19 @@ Sfio_t *sfswap(Sfio_t *f1, Sfio_t *f2) {
     if (f1 == f2) return f2;
 
     f1mode = f1->mode;
-    SFLOCK(f1, 0);
+    SFLOCK(f1, 0)
     f1->mode |= SF_PUSH; /* make sure there is no recursion on f1 */
 
     if (f2) {
         f2mode = f2->mode;
-        SFLOCK(f2, 0);
+        SFLOCK(f2, 0)
         f2->mode |= SF_PUSH; /* make sure there is no recursion on f2 */
     } else {
         f2 = f1->file == 0 ? sfstdin : f1->file == 1 ? sfstdout : f1->file == 2 ? sfstderr : NULL;
         if ((!f2 || !(f2->mode & SF_AVAIL))) {
             if (!(f2 = (Sfio_t *)malloc(sizeof(Sfio_t)))) {
                 f1->mode = f1mode;
-                SFOPEN(f1);
+                SFOPEN(f1)
                 return NULL;
             }
 
@@ -101,10 +101,10 @@ Sfio_t *sfswap(Sfio_t *f1, Sfio_t *f2) {
         if (!(f1->flags & SF_STATIC)) free(f1);
     } else {
         f1->mode = f2mode;
-        SFOPEN(f1);
+        SFOPEN(f1)
     }
 
     f2->mode = f1mode;
-    SFOPEN(f2);
+    SFOPEN(f2)
     return f2;
 }

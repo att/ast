@@ -32,12 +32,12 @@
 
 int sfpurge(Sfio_t *f) {
     int mode;
-    SFMTXDECL(f);
+    SFMTXDECL(f)
 
-    SFMTXENTER(f, -1);
+    SFMTXENTER(f, -1)
 
     if ((mode = f->mode & SF_RDWR) != (int)f->mode && _sfmode(f, mode | SF_SYNCED, 0) < 0)
-        SFMTXRETURN(f, -1);
+        SFMTXRETURN(f, -1)
 
     if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf)
         (void)(*f->disc->exceptf)(f, SF_PURGE, (void *)((int)1), f->disc);
@@ -47,7 +47,7 @@ int sfpurge(Sfio_t *f) {
     /* cannot purge read string streams */
     if ((f->flags & SF_STRING) && (f->mode & SF_READ)) goto done;
 
-    SFLOCK(f, 0);
+    SFLOCK(f, 0)
 
     /* if memory map must be a read stream, pretend data is gone */
     if (f->bits & SF_MMAP) {
@@ -56,14 +56,14 @@ int sfpurge(Sfio_t *f) {
             SFMUNMAP(f, f->data, f->endb - f->data);
             (void)SFSK(f, f->here, SEEK_SET, f->disc);
         }
-        SFOPEN(f);
-        SFMTXRETURN(f, 0);
+        SFOPEN(f)
+        SFMTXRETURN(f, 0)
     }
 
     switch (f->mode & ~SF_LOCK) {
         default:
-            SFOPEN(f);
-            SFMTXRETURN(f, -1);
+            SFOPEN(f)
+            SFMTXRETURN(f, -1)
         case SF_WRITE:
             f->next = f->data;
             if (!f->proc || !(f->flags & SF_READ) || !(f->mode & SF_WRITE)) break;
@@ -80,11 +80,11 @@ int sfpurge(Sfio_t *f) {
             break;
     }
 
-    SFOPEN(f);
+    SFOPEN(f)
 
 done:
     if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf)
         (void)(*f->disc->exceptf)(f, SF_PURGE, (void *)((int)0), f->disc);
 
-    SFMTXRETURN(f, 0);
+    SFMTXRETURN(f, 0)
 }

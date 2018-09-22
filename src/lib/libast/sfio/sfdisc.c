@@ -100,21 +100,21 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
     Sfseek_f oseekf;
     ssize_t n;
     Dccache_t *dcca = NULL;
-    SFMTXDECL(f); /* declare a local stream variable for multithreading */
+    SFMTXDECL(f)  // declare a local stream variable for multithreading
 
-    SFMTXENTER(f, NULL);
+    SFMTXENTER(f, NULL)
 
     if ((Sfio_t *)disc == f) /* special case to get the top discipline */
-        SFMTXRETURN(f, f->disc);
+        SFMTXRETURN(f, f->disc)
 
     if ((f->flags & SF_READ) && f->proc &&
         (f->mode & SF_WRITE)) { /* make sure in read mode to check for read-ahead data */
-        if (_sfmode(f, SF_READ, 0) < 0) SFMTXRETURN(f, NULL);
+        if (_sfmode(f, SF_READ, 0) < 0) SFMTXRETURN(f, NULL)
     } else {
-        if ((f->mode & SF_RDWR) != f->mode && _sfmode(f, 0, 0) < 0) SFMTXRETURN(f, NULL);
+        if ((f->mode & SF_RDWR) != f->mode && _sfmode(f, 0, 0) < 0) SFMTXRETURN(f, NULL)
     }
 
-    SFLOCK(f, 0);
+    SFLOCK(f, 0)
     rdisc = NULL;
 
     /* disallow popping while there is cached data */
@@ -134,15 +134,15 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
             int rv = 0;
             if (rv == 0 && f->disc && f->disc->exceptf) /* ask current discipline */
             {
-                SFOPEN(f);
+                SFOPEN(f)
                 rv = (*f->disc->exceptf)(f, SF_DBUFFER, &n, f->disc);
-                SFLOCK(f, 0);
+                SFLOCK(f, 0)
             }
             if (rv == 0 && disc && disc->exceptf) /* ask discipline being pushed */
             {
-                SFOPEN(f);
+                SFOPEN(f)
                 rv = (*disc->exceptf)(f, SF_DBUFFER, &n, disc);
-                SFLOCK(f, 0);
+                SFLOCK(f, 0)
             }
             if (rv < 0) goto done;
         }
@@ -178,9 +178,9 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
         if (!(d = f->disc)) goto done;
         disc = d->disc;
         if (d->exceptf) {
-            SFOPEN(f);
+            SFOPEN(f)
             if ((*(d->exceptf))(f, SF_DPOP, (void *)disc, d) < 0) goto done;
-            SFLOCK(f, 0);
+            SFLOCK(f, 0)
         }
         f->disc = disc;
         rdisc = d;
@@ -188,9 +188,9 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
         do { /* loop to handle the case where d may pop itself */
             d = f->disc;
             if (d && d->exceptf) {
-                SFOPEN(f);
+                SFOPEN(f)
                 if ((*(d->exceptf))(f, SF_DPUSH, (void *)disc, d) < 0) goto done;
-                SFLOCK(f, 0);
+                SFLOCK(f, 0)
             }
         } while (d != f->disc);
 
@@ -239,6 +239,6 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
     }
 
 done:
-    SFOPEN(f);
-    SFMTXRETURN(f, rdisc);
+    SFOPEN(f)
+    SFMTXRETURN(f, rdisc)
 }

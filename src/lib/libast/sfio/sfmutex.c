@@ -37,7 +37,7 @@ int sfmutex(Sfio_t *f, int type) {
     return 0;
 #else
 
-    SFONCE();
+    SFONCE()  // initialize mutexes
 
     if (!f) return -1;
 
