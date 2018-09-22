@@ -202,7 +202,6 @@ extern ssize_t base64decode(const void *, size_t, void **, void *, size_t);
 extern int chresc(const char *, char **);
 extern int chrexp(const char *, char **, int *, int);
 extern char *conformance(const char *, size_t);
-extern ssize_t debug_printf(int, const char *, ...);
 extern void dump_backtrace(int max_frames, int skip_levels);
 extern char *fmtbase(intmax_t, int, int);
 #define fmtbasell(a, b, c) fmtbase(a, b, c) /* until 2014-01-01 */
@@ -223,7 +222,6 @@ extern char *fmtquote(const char *, const char *, const char *, size_t, int);
 extern char *fmtre(const char *);
 extern char *fmtscale(Sfulong_t, int);
 extern char *fmttime(const char *, time_t);
-extern char *fmtuid(int);
 extern void *memdup(const void *, size_t);
 extern char *pathaccess(const char *, const char *, const char *, int, char *, size_t);
 extern char *pathbin(void);
@@ -232,20 +230,14 @@ extern char *pathcat(const char *, int, const char *, const char *, char *, size
 extern int pathexists(char *, int);
 extern int pathgetlink(const char *, char *, int);
 extern int pathinclude(const char *);
-extern char *pathkey(char *, char *, const char *, const char *, const char *);
-extern char *pathkey_20100601(const char *, const char *, const char *, char *, size_t, char *,
-                              size_t);
 extern size_t pathnative(const char *, char *, size_t);
 extern char *pathpath(const char *, const char *, int, char *, size_t);
 extern size_t pathposix(const char *, char *, size_t);
 extern size_t pathprog(const char *, char *, size_t);
-extern char *pathrepl(char *, const char *, const char *);
-extern char *pathrepl_20100601(char *, size_t, const char *, const char *);
 extern char *pathshell(void);
 extern char *pathtemp(char *, size_t, const char *, const char *, int *);
 extern char *pathtmp(char *, const char *, const char *, int *);
 extern char *sh_setenviron(const char *);
-extern int stracmp(const char *, const char *);
 extern char *strcopy(char *, const char *);
 extern unsigned long strelapsed(const char *, char **, int);
 extern int stresc(char *);
