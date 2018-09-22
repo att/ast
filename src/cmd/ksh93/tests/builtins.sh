@@ -24,16 +24,6 @@
 
 false ${foo=bar} &&  log_error "false failed"
 
-if [[ $(print -R -) != - ]]
-then
-    log_error "print -R not working correctly"
-fi
-
-if [[ $(print -- -) != - ]]
-then
-    log_error "print -- not working correctly"
-fi
-
 print -n -u2 2>&1-
 [[ -w /dev/fd/1 ]] || log_error "2<&1- with built-ins has side effects"
 x=$0
@@ -97,21 +87,6 @@ do
         continue 2
     done
 done) == $'0 0\n1 0' ]] || log_error "continue [n] does not continue to outer loop"
-
-if [[ $(print -f "%b" "\a\n\v\b\r\f\E\03\\oo") != $'\a\n\v\b\r\f\E\03\\oo' ]]
-then
-    log_error 'print -f "%b" not working'
-fi
-
-if [[ $(print -f "%P" "[^x].*b\$") != '*[!x]*b' ]]
-then
-    log_error 'print -f "%P" not working'
-fi
-
-if [[ $(print -f "%(pattern)q" "[^x].*b\$") != '*[!x]*b' ]]
-then
-    log_error 'print -f "%(pattern)q" not working'
-fi
 
 if [[ $(abc: for i in foo bar;do print $i;break abc;done) != foo ]]
 then
@@ -482,22 +457,6 @@ then
     cd $TEST_DIR/a/b 2> /dev/null && log_error 'cd to directory without execute should fail'
 fi
 chmod +x $TEST_DIR/a/b  # so the test temp dir can be removed when the test completes
-
-# -s flag writes to history file
-if print -s 'print hello world' 2> /dev/null
-then
-    [[ $(history -1) == *'hello world'* ]] || log_error 'history file does not contain result of print -s'
-else
-    log_error 'print -s fails'
-fi
-
-# Check if history file is updated correclty if entry does not end with newline
-if print -s -f 'print foo' 2> /dev/null
-then
-    [[ $(history -1) == *'foo' ]] || log_error 'history file does not contain result of print -s -f'
-else
-    log_error 'print -s -f fails'
-fi
 
 builtin  -d set 2> /dev/null && log_error 'buitin -d allows special builtins to be deleted'
 
