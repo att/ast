@@ -1,0 +1,90 @@
+# Interactive tests for `set` builtin
+set pid [spawn $ksh]
+expect_prompt
+
+send "set -o emacs\r"
+expect_prompt
+
+# ==========
+# TODO
+# https://github.com/att/ast/issues/911
+# -b The shell writes a message to standard error as soon it
+#    detects that a background job completes rather than waiting
+#    until the next prompt.
+
+# ==========
+# -v Verbose. The shell displays its input onto standard error as
+#    it reads it.
+send "set -v\r"
+expect_prompt
+send "echo hello\r"
+expect -re "echo hello\r\necho hello\r\nhello\r\n"
+expect_prompt
+
+# ==========
+# -H Enable !-style history expansion similar to csh.
+send "set -H\r"
+expect_prompt
+send "echo hello\r"
+expect -re ".*hello\r\n"
+expect_prompt
+
+send "!-1\r"
+expect -re ".*hello\r\n"
+expect_prompt
+
+# ==========
+# TODO
+# https://github.com/att/ast/issues/912
+# -G Causes ** by itself to also match all sub-directories during
+#    pathname expansion.
+
+
+# ==========
+# -f Pathname expansion is disabled.
+send "set +f\r"
+expect_prompt
+send "fals"
+send "\t"
+redraw_prompt
+expect -re ".*false "
+send [ctrl C]
+expect_prompt
+
+send "set -f\r"
+expect_prompt
+send "fals"
+send "\t"
+redraw_prompt
+expect -re ".*fals    "
+send [ctrl C]
+expect_prompt
+
+# ==========
+# TODO
+# -m When enabled, the shell runs background jobs in a separate
+#    process group and displays a line upon completion. This mode
+#    is enabled by default for interactive shells on systems that
+#    support job control.
+
+# set -o ignoreeof
+# Prevents an interactive shell from exiting on reading
+# an end-of-file.
+send "set -o ignoreeof\r"
+expect_prompt
+send [ctrl D]
+expect -re "Use 'exit' to terminate this shell"
+expect_prompt
+
+# ==========
+# TODO
+# markdirs
+# A trailing / is appended to directories resulting
+# from pathname expansion.
+
+# ==========
+# Verify that asking the shell to exit works.
+log_test_entry
+send "exit\r"
+catch {expect default exp_continue} output
+catch {wait}
