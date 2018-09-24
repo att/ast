@@ -71,14 +71,14 @@ all_tests = [
     ['io'], ['jobs'], ['leaks'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
     ['modifiers'], ['options'], ['path'], ['pointtype'], ['print'], ['printf'], ['quoting'],
     ['quoting2'], ['read'], ['readcsv'], ['recttype'], ['restricted'], ['return'],
-    ['select'], ['sh_match'], ['sigchld', 100], ['signal'], ['statics'],
+    ['select'], ['set'], ['sh_match'], ['sigchld', 100], ['signal'], ['statics'],
     ['subshell', 100], ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
     ['variables'], ['vartree1'], ['vartree2'], ['wchar'],
     # The following are tests that must be run serially after all other tests that might be run in
     # parallel.
     ['special-dev-paths'],
     # These are interactive tests to be run via the `expect` utility.
-    ['emacs.exp'], ['hist.exp'], ['jobs.exp'], ['read.exp'], ['vi.exp'],
+    ['emacs.exp'], ['hist.exp'], ['jobs.exp'], ['read.exp'], ['set.exp'], ['vi.exp'],
 ]
 
 # This is a list of the tests that must be run in isolation; i.e., not in parallel with other tests.
@@ -89,7 +89,7 @@ serial_tests = ['special-dev-paths']
 # This is a list of tests to be skipped because they are known to be broken when
 # compiled by `shcomp`.
 # TODO: Fix these tests.
-shcomp_tests_to_skip = ['io', 'namespace', 'treemove', 'printf']
+shcomp_tests_to_skip = ['io', 'namespace', 'treemove', 'printf', 'set']
 macos_tests_to_skip = ['jobs.exp' ]
 
 # The test cases are executed in parallel by default
