@@ -54,7 +54,7 @@
 #define ELOOP EINVAL
 #endif
 
-char *pathcanon(char *path, size_t size, int flags) {
+char *pathcanon(const char *path, size_t size, int flags) {
     char *p;
     char *r;
     char *s;
@@ -66,6 +66,9 @@ char *pathcanon(char *path, size_t size, int flags) {
     int oerrno = errno;
 
     v = path + ((flags >> 5) & 01777);
+    if (size < strlen(path)) {
+        fprintf(stderr, "WTF path |%s| size=%d strlen=%d\n", path, size, strlen(path));
+    }
     if (!size) size = strlen(path) + 1;
     if (*path == '/') {
         if (*(path + 1) == '/' && *astconf("PATH_LEADING_SLASHES", NULL, NULL) == '1') {
@@ -73,7 +76,7 @@ char *pathcanon(char *path, size_t size, int flags) {
                 path++;
             } while (*path == '/' && *(path + 1) == '/');
         }
-        if (!*(path + 1)) return path + 1;
+        if (!path[1]) return path + 1;
     }
     p = r = s = t = path;
     for (;;) {
@@ -99,6 +102,10 @@ char *pathcanon(char *path, size_t size, int flags) {
 
                             *(t - 2) = 0;
                             if (stat(phys, &st)) {
+if (strlen(path) < strlen(s)) {
+    fprintf(stderr, "WTF %d path |%s| size=%d strlen=%d\n", __LINE__, path, size, strlen(path));
+    fprintf(stderr, "WTF %d s    |%s| size=%d strlen=%d\n", __LINE__, s, size, strlen(s));
+}
                                 strcpy(path, s);
                                 return 0;
                             }
@@ -138,6 +145,10 @@ char *pathcanon(char *path, size_t size, int flags) {
                                 strcpy(p, buf);
                             } else if (dots < 0 && errno == ENOENT) {
                                 if (flags & PATH_EXISTS) {
+if (strlen(path) < strlen(s)) {
+    fprintf(stderr, "WTF %d path |%s| size=%d strlen=%d\n", __LINE__, path, size, strlen(path));
+    fprintf(stderr, "WTF %d s    |%s| size=%d strlen=%d\n", __LINE__, s, size, strlen(s));
+}
                                     strcpy(path, s);
                                     return 0;
                                 }
@@ -153,6 +164,10 @@ char *pathcanon(char *path, size_t size, int flags) {
 
                     *(t - 1) = 0;
                     if (stat(phys, &st)) {
+if (strlen(path) < strlen(s)) {
+    fprintf(stderr, "WTF %d path |%s| size=%d strlen=%d\n", __LINE__, path, size, strlen(path));
+    fprintf(stderr, "WTF %d s    |%s| size=%d strlen=%d\n", __LINE__, s, size, strlen(s));
+}
                         strcpy(path, s);
                         return 0;
                     }
