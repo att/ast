@@ -1037,23 +1037,22 @@ loop_fmt:
                     if (v == 0 && precis == 0) break;
                     if (v < 0 && fmt == 'd') {
                         flags |= SFFMT_MINUS;
-                        if (v == HIGHBITI) /* avoid overflow */
-                        {
+                        // This is testing if v == INT_MIN.
+                        // cppcheck-suppress oppositeInnerCondition
+                        if (v == HIGHBITI) {  // avoid overflow
                             v = (int)(HIGHBITI / base);
                             *--sp = _Sfdigits[HIGHBITI - ((uint)v) * base];
-                        } else
+                        } else {
                             v = -v;
+                        }
                     }
-                    if (n_s < 0) /* base 10 */
-                    {
+                    if (n_s < 0) {  // base 10
                         sfucvt(v, sp, n, ssp, int, uint);
-                    } else if (n_s > 0) /* base power-of-2 */
-                    {
+                    } else if (n_s > 0) {  // base power-of-2
                         do {
                             *--sp = ssp[v & n_s];
                         } while ((v = ((uint)v) >> n));
-                    } else /* n_s == 0, general base */
-                    {
+                    } else {  // n_s == 0, general base
                         do {
                             *--sp = ssp[((uint)v) % base];
                         } while ((v = ((uint)v) / base));
