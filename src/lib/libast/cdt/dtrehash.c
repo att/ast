@@ -559,7 +559,6 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
                         if (!opnt) {
                             opnt = tbl;
                             opnp = pos;
-                            oplv = lev;
                         }
                         goto do_insert;
                     }
