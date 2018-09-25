@@ -225,7 +225,7 @@ extern char *fmttime(const char *, time_t);
 extern void *memdup(const void *, size_t);
 extern char *pathaccess(const char *, const char *, const char *, int, char *, size_t);
 extern char *pathbin(void);
-extern char *pathcanon(const char *, size_t, int);
+extern char *pathcanon(char *, size_t, int);
 extern char *pathcat(const char *, int, const char *, const char *, char *, size_t);
 extern int pathexists(char *, int);
 extern int pathgetlink(const char *, char *, int);
