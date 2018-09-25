@@ -3,7 +3,11 @@
 #define _def_aso_features 1
 
 #include <stdint.h>
-#define asointegralof(x) (void *)(((char *)(x)) - ((char *)0))
+// This is the original definition of this macro:
+//   #define asointegralof(x) (void *)(((char *)(x)) - ((char *)0))
+// Which is just a roundabout way to coerce a possibly non-pointer value to a pointer.
+// So do it the straightforward way and avoid lint warnings about subtracting NULL.
+#define asointegralof(x) (void *)(x)
 
 #if GCC_4_1PLUS_64_BIT_MEMORY_ATOMIC_OPERATIONS_MODEL
 /* gcc 4.1+ 64 bit memory atomic operations model */
