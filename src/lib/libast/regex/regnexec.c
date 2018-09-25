@@ -265,12 +265,14 @@ static_fn int _matchpush(Env_t *env, Rex_t *rex) {
     regmatch_t *m;
     regmatch_t *e;
     regmatch_t *s;
-    int num;
+    int num = 0;
 
-    if (rex->re.group.number <= 0 || (num = rex->re.group.last - rex->re.group.number + 1) <= 0)
-        num = 0;
-    if (!(f = (Match_frame_t *)stkpush(env->mst,
-                                       sizeof(Match_frame_t) + (num - 1) * sizeof(regmatch_t)))) {
+    if (rex->re.group.number > 0) {
+        num = rex->re.group.last - rex->re.group.number + 1;
+        if (num < 0) num = 0;
+    }
+    f = stkpush(env->mst, sizeof(Match_frame_t) + ((size_t)num - 1) * sizeof(regmatch_t));
+    if (!f) {
         env->error = REG_ESPACE;
         return 1;
     }
