@@ -49,6 +49,7 @@
 #include <sys/stat.h>
 
 #include "ast.h"
+#include "ast_assert.h"
 
 #ifndef ELOOP
 #define ELOOP EINVAL
@@ -73,7 +74,7 @@ char *pathcanon(char *path, size_t size, int flags) {
                 path++;
             } while (*path == '/' && *(path + 1) == '/');
         }
-        if (!*(path + 1)) return path + 1;
+        if (!path[1]) return path + 1;
     }
     p = r = s = t = path;
     for (;;) {
@@ -99,6 +100,7 @@ char *pathcanon(char *path, size_t size, int flags) {
 
                             *(t - 2) = 0;
                             if (stat(phys, &st)) {
+                                assert(size > strlen(s));
                                 strcpy(path, s);
                                 return 0;
                             }
@@ -138,6 +140,7 @@ char *pathcanon(char *path, size_t size, int flags) {
                                 strcpy(p, buf);
                             } else if (dots < 0 && errno == ENOENT) {
                                 if (flags & PATH_EXISTS) {
+                                    assert(size > strlen(s));
                                     strcpy(path, s);
                                     return 0;
                                 }
@@ -153,6 +156,7 @@ char *pathcanon(char *path, size_t size, int flags) {
 
                     *(t - 1) = 0;
                     if (stat(phys, &st)) {
+                        assert(size >= strlen(s));
                         strcpy(path, s);
                         return 0;
                     }
