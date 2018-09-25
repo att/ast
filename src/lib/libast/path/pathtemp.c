@@ -113,6 +113,15 @@ static struct Tmp_s {
     char *tmppath;
 } tmp = {.mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH};
 
+static_fn char *get_pathtemp_dir() {
+    char *d = astconf("TMP", NULL, NULL);
+    if (*d && eaccess(d, W_OK | X_OK) == 0) return d;
+
+    if (eaccess(TMP1, W_OK | X_OK) == 0) return TMP1;
+    if (eaccess(TMP2, W_OK | X_OK) == 0) return TMP2;
+    return NULL;
+}
+
 char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp) {
     char *d;
     char *b;
@@ -210,13 +219,15 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
             }
             tmp.dir = tmp.vec;
         }
-        if (!(d = *tmp.dir++)) {
+        d = *tmp.dir++;
+        if (!d) {
             tmp.dir = tmp.vec;
             d = *tmp.dir++;
         }
-        if (!d && (!*(d = astconf("TMP", NULL, NULL)) || eaccess(d, W_OK | X_OK)) &&
-            eaccess(d = TMP1, W_OK | X_OK) && eaccess(d = TMP2, W_OK | X_OK))
-            return 0;
+        if (!d) {
+            d = get_pathtemp_dir();
+            if (!d) return NULL;
+        }
     }
     if (!len) len = PATH_MAX;
     len--;
