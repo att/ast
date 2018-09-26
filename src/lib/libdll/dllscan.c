@@ -77,19 +77,22 @@ typedef struct Uniq_s {
 
 #include "dlldefs.h"
 
-static char bin[] = "bin";
-static char lib[] = "lib";
+static char *bin = "bin";
+static char *lib = "lib";
 
 //
-// we need a sibling dir in PATH to search for dlls
-// the confstr LIBPATH provides the local info
+// We need a sibling dir in PATH to search for dlls.
+// The confstr LIBPATH provides the local info.
 //
 //	<sibling-dir>[:<env-var>[:<host-pattern>]][,...]
 //
-// if <host-pattern> is present then it must match confstr HOSTTYPE
+// If <host-pattern> is present then it must match confstr HOSTTYPE.
 //
-
 Dllinfo_t *dllinfo(void) {
+    static Dllinfo_t info;
+
+    if (info.sibling) return &info;
+
     char *s;
     char *h;
     char *d;
@@ -100,63 +103,59 @@ Dllinfo_t *dllinfo(void) {
     int pn;
     char pat[256];
 
-    static Dllinfo_t info;
-
-    if (!info.sibling) {
-        info.sibling = info.sib;
-        s = astconf("LIBPATH", NULL, NULL);
+    info.sibling = info.sib;
+    s = astconf("LIBPATH", NULL, NULL);
+    if (*s) {
+        while (*s == ':' || *s == ',') s++;
         if (*s) {
-            while (*s == ':' || *s == ',') s++;
-            if (*s) {
-                h = 0;
-                for (;;) {
-                    for (d = s; *s && *s != ':' && *s != ','; s++)
+            h = 0;
+            for (;;) {
+                for (d = s; *s && *s != ':' && *s != ','; s++)
+                    ;
+                dn = s - d;
+                if (!dn) d = 0;
+                if (*s == ':') {
+                    for (v = ++s; *s && *s != ':' && *s != ','; s++)
                         ;
-                    dn = s - d;
-                    if (!dn) d = 0;
+                    if (!(vn = s - v)) v = 0;
                     if (*s == ':') {
-                        for (v = ++s; *s && *s != ':' && *s != ','; s++)
+                        for (p = ++s; *s && *s != ':' && *s != ','; s++)
                             ;
-                        if (!(vn = s - v)) v = 0;
-                        if (*s == ':') {
-                            for (p = ++s; *s && *s != ':' && *s != ','; s++)
-                                ;
-                            if (!(pn = s - p)) p = 0;
-                        } else {
-                            p = 0;
-                        }
+                        if (!(pn = s - p)) p = 0;
                     } else {
-                        v = 0;
                         p = 0;
                     }
-                    while (*s && *s++ != ',')
-                        ;
-                    if (!*s || !p || (!h && !*(h = astconf("HOSTTYPE", NULL, NULL)))) break;
-                    if (pn >= sizeof(pat)) pn = sizeof(pat) - 1;
-                    memcpy(pat, p, pn);
-                    pat[pn] = 0;
-                    if (strmatch(h, pat)) break;
+                } else {
+                    v = 0;
+                    p = 0;
                 }
-                if (d && dn < sizeof(info.sibbuf)) {
-                    memcpy(info.sibbuf, d, dn);
-                    info.sibling[0] = info.sibbuf;
-                }
-                if (v && vn < sizeof(info.envbuf)) {
-                    memcpy(info.envbuf, v, vn);
-                    info.env = info.envbuf;
-                }
+                while (*s && *s++ != ',')
+                    ;
+                if (!*s || !p || (!h && !*(h = astconf("HOSTTYPE", NULL, NULL)))) break;
+                if (pn >= sizeof(pat)) pn = sizeof(pat) - 1;
+                memcpy(pat, p, pn);
+                pat[pn] = 0;
+                if (strmatch(h, pat)) break;
+            }
+            if (d && dn < sizeof(info.sibbuf)) {
+                memcpy(info.sibbuf, d, dn);
+                info.sibling[0] = info.sibbuf;
+            }
+            if (v && vn < sizeof(info.envbuf)) {
+                memcpy(info.envbuf, v, vn);
+                info.env = info.envbuf;
             }
         }
-        if (!info.sibling[0] || !strcmp(info.sibling[0], bin)) info.sibling[0] = bin;
-        if (!!strcmp(info.sibling[0], lib)) info.sibling[1] = lib;
-        if (!info.env) info.env = "LD_LIBRARY_PATH";
-        info.prefix = astconf("LIBPREFIX", NULL, NULL);
-        info.suffix = astconf("LIBSUFFIX", NULL, NULL);
-        if (!strcmp(info.suffix, ".dll")) {
-            info.flags |= DLL_INFO_PREVER;
-        } else {
-            info.flags |= DLL_INFO_DOTVER;
-        }
+    }
+    if (!info.sibling[0] || !strcmp(info.sibling[0], bin)) info.sibling[0] = bin;
+    if (!!strcmp(info.sibling[0], lib)) info.sibling[1] = lib;
+    if (!info.env) info.env = "LD_LIBRARY_PATH";
+    info.prefix = astconf("LIBPREFIX", NULL, NULL);
+    info.suffix = astconf("LIBSUFFIX", NULL, NULL);
+    if (!strcmp(info.suffix, ".dll")) {
+        info.flags |= DLL_INFO_PREVER;
+    } else {
+        info.flags |= DLL_INFO_DOTVER;
     }
     return &info;
 }
