@@ -63,6 +63,12 @@ function empty_fifos {
 alias empty_fifos='empty_fifos $LINENO'
 
 #
+# Platforms like OpenBSD have `jot` instead of `seq`. For the simple case of emitting ints from one
+# to n they are equivalent. And that should be the only use of `seq` in unit tests.
+#
+whence -q seq || alias seq=jot
+
+#
 # Capture the current line number so we can calculate the correct line number in the unit test file
 # that will be appended to this preamble script. This must be the last line in this preamble script.
 #
