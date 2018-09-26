@@ -203,7 +203,7 @@ retry:
 
     // Don't allow root a history_file in /tmp.
     if (fd < 0 && shgd->userid) {
-        fname = pathtmp(NULL, 0, 0, NULL);
+        fname = pathtemp(NULL, 0, NULL, NULL, NULL);
         if (!fname) return 0;
         fd = open(fname, O_BINARY | O_APPEND | O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | O_CLOEXEC);
     }
@@ -352,14 +352,13 @@ static History_t *hist_trim(History_t *hp, int n) {
         int fd;
         char *last, *name = hist_old->histname;
         sh_close(sffileno(hist_old->histfp));
-        tmpname = (char *)malloc(strlen(name) + 14);
         last = strrchr(name, '/');
         if (last) {
             *last = 0;
-            pathtmp(tmpname, name, "hist", NULL);
+            tmpname = pathtemp(NULL, 0, name, "hist", NULL);
             *last = '/';
         } else {
-            pathtmp(tmpname, ".", "hist", NULL);
+            tmpname = pathtemp(NULL, 0, ".", "hist", NULL);
         }
         if (rename(name, tmpname) < 0) {
             free(tmpname);
