@@ -22,7 +22,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
-#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -136,7 +135,7 @@ static_fn int _tmpfd(Sfio_t *f) {
     char *file;
     int fd;
 
-    if (!(file = pathtemp(NULL, PATH_MAX, NULL, "sf", &fd))) return -1;
+    if (!(file = pathtemp(NULL, 0, NULL, "sf", &fd))) return -1;
     _rmtmp(f, file);
     free(file);
     return fd;

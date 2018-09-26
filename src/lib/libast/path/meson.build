@@ -5,5 +5,5 @@ libast_files += [
     'path/pathpath.c', 'path/pathposix.c',
     'path/pathprog.c',
     'path/pathshell.c', 'path/pathstat.c',
-    'path/pathtemp.c', 'path/pathtmp.c'
+    'path/pathtemp.c'
 ]

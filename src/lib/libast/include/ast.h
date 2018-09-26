@@ -236,7 +236,6 @@ extern size_t pathposix(const char *, char *, size_t);
 extern size_t pathprog(const char *, char *, size_t);
 extern char *pathshell(void);
 extern char *pathtemp(char *, size_t, const char *, const char *, int *);
-extern char *pathtmp(char *, const char *, const char *, int *);
 extern char *sh_setenviron(const char *);
 extern char *strcopy(char *, const char *);
 extern unsigned long strelapsed(const char *, char **, int);

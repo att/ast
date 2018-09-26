@@ -204,7 +204,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
         outfile = sfstdout;
         arg = "\n\t";
     } else {
-        fname = pathtmp(NULL, 0, 0, NULL);
+        fname = pathtemp(NULL, 0, NULL, NULL, NULL);
         if (!fname) {
             errormsg(SH_DICT, ERROR_exit(1), e_create, "");
             __builtin_unreachable();
