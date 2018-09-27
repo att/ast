@@ -171,28 +171,27 @@ static_fn void *dthash_hflatten(Dt_t *dt, int type) {
             hash->data.size = 0;
 
         return (void *)head;
-    } else /* restoring a previous flattened list */
-    {
-        head = hash->here;
-        for (endt = (tbl = hash->htbl) + hash->tblz; tbl < endt; ++tbl) {
-            if (*tbl == NULL) continue;
-
-            /* find the tail of the list for this slot */
-            for (lnk = head; lnk && lnk != *tbl; lnk = lnk->_rght)
-                ;
-            if (!lnk) /* something is seriously wrong */
-                return NULL;
-
-            *tbl = head;       /* head of list for this slot */
-            head = lnk->_rght; /* head of next list */
-            lnk->_rght = NULL;
-        }
-
-        hash->here = NULL;
-        hash->type &= ~H_FLATTEN;
-
-        return NULL;
     }
+
+    // Restoring a previous flattened list.
+    head = hash->here;
+    for (endt = (tbl = hash->htbl) + hash->tblz; tbl < endt; ++tbl) {
+        if (*tbl == NULL) continue;
+
+        // Find the tail of the list for this slot.
+        for (lnk = head; lnk && lnk != *tbl; lnk = lnk->_rght) {
+            ;  // empty loop
+        }
+        if (!lnk) return NULL;  // something is seriously wrong
+
+        *tbl = head;        // head of list for this slot
+        head = lnk->_rght;  // head of next list
+        lnk->_rght = NULL;
+    }
+
+    hash->here = NULL;
+    hash->type &= ~H_FLATTEN;
+    return NULL;
 }
 
 static_fn void *dthash_hlist(Dt_t *dt, Dtlink_t *list, int type) {
@@ -200,20 +199,16 @@ static_fn void *dthash_hlist(Dt_t *dt, Dtlink_t *list, int type) {
     Dtlink_t *lnk, *next;
     Dtdisc_t *disc = dt->disc;
 
-    if (type & DT_FLATTEN)
-        return dthash_hflatten(dt, DT_FLATTEN);
-    else if (type & DT_EXTRACT)
-        return dthash_hflatten(dt, DT_EXTRACT);
-    else /* if(type&DT_RESTORE) */
-    {
-        dt->data->size = 0;
-        for (lnk = list; lnk; lnk = next) {
-            next = lnk->_rght;
-            obj = _DTOBJ(disc, lnk);
-            if ((*dt->meth->searchf)(dt, (void *)lnk, DT_RELINK) == obj) dt->data->size += 1;
-        }
-        return (void *)list;
+    if (type & DT_FLATTEN) return dthash_hflatten(dt, DT_FLATTEN);
+    if (type & DT_EXTRACT) return dthash_hflatten(dt, DT_EXTRACT);
+    // if(type&DT_RESTORE)
+    dt->data->size = 0;
+    for (lnk = list; lnk; lnk = next) {
+        next = lnk->_rght;
+        obj = _DTOBJ(disc, lnk);
+        if ((*dt->meth->searchf)(dt, (void *)lnk, DT_RELINK) == obj) dt->data->size += 1;
     }
+    return list;
 }
 
 static_fn void *dthash_hstat(Dt_t *dt, Dtstat_t *st) {
@@ -469,8 +464,9 @@ static_fn int dthash_event(Dt_t *dt, int event, void *arg) {
         (void)(*dt->memoryf)(dt, hash, 0, dt->disc);
         dt->data = NULL;
         return 0;
-    } else
-        return 0;
+    }
+
+    return 0;
 }
 
 static Dtmethod_t _Dtset = {
