@@ -330,9 +330,9 @@ static_fn int dtlist_event(Dt_t *dt, int event, void *arg) {
     Dtlist_t *list = (Dtlist_t *)dt->data;
 
     if (event == DT_OPEN) {
-        if (list) /* already initialized */
-            return 0;
-        if (!(list = (Dtlist_t *)(*dt->memoryf)(dt, 0, sizeof(Dtlist_t), dt->disc))) {
+        if (list) return 0;  // already initialized
+        list = (Dtlist_t *)(*dt->memoryf)(dt, 0, sizeof(Dtlist_t), dt->disc);
+        if (!list) {
             DTERROR(dt, "Error in allocating a list data structure");
             return -1;
         }
@@ -340,15 +340,14 @@ static_fn int dtlist_event(Dt_t *dt, int event, void *arg) {
         dt->data = (Dtdata_t *)list;
         return 1;
     } else if (event == DT_CLOSE) {
-        if (!list) /* already closed */
-            return 0;
-        if (list->link) /* remove all items */
-            (void)lclear(dt);
+        if (!list) return 0;  // already closed
+        if (list->link) (void)lclear(dt);  // remove all items
         (void)(*dt->memoryf)(dt, (void *)list, 0, dt->disc);
         dt->data = NULL;
         return 0;
-    } else
-        return 0;
+    }
+
+    return 0;
 }
 
 static Dtmethod_t _Dtlist = {
