@@ -54,19 +54,19 @@ ssize_t sfread(Sfio_t *f, void *buf, size_t n) {
                 SFMTXRETURN(f, (ssize_t)-1)
             f->mode &= ~SF_PEEK;
             SFMTXRETURN(f, 0)
-        } else {
-            if ((uchar *)buf != f->next) SFMTXRETURN(f, (ssize_t)-1)
-            f->mode &= ~SF_PEEK;
-            if (f->mode & SF_PKRD) { /* actually read the data now */
-                f->mode &= ~SF_PKRD;
-                if (n > 0) n = (r = sysreadf(f->file, f->data, n)) < 0 ? 0 : r;
-                f->endb = f->data + n;
-                f->here += n;
-            }
-            f->next += n;
-            f->endr = f->endb;
-            SFMTXRETURN(f, n)
         }
+
+        if ((uchar *)buf != f->next) SFMTXRETURN(f, (ssize_t)-1)
+        f->mode &= ~SF_PEEK;
+        if (f->mode & SF_PKRD) { /* actually read the data now */
+            f->mode &= ~SF_PKRD;
+            if (n > 0) n = (r = sysreadf(f->file, f->data, n)) < 0 ? 0 : r;
+            f->endb = f->data + n;
+            f->here += n;
+        }
+        f->next += n;
+        f->endr = f->endb;
+        SFMTXRETURN(f, n)
     }
 
     s = begs = (uchar *)buf;
