@@ -39,19 +39,15 @@ int dtuserunlock(Dt_t *dt) { return pthread_mutex_unlock(&dt->data->user.lock); 
 
 /* managing the user data slot dt->data->user.data */
 void *dtuserdata(Dt_t *dt, void *data, int set) {
-    if (set == 0) /* just return current value */
-        return asogetptr(&dt->data->user.data);
-    else
-        while (1) {
-            void *current = dt->data->user.data;
-            if (asocasptr(&dt->data->user.data, current, data) == current) return current;
-        }
+    if (set == 0) return asogetptr(&dt->data->user.data);  // just return current value
+    while (1) {
+        void *current = dt->data->user.data;
+        if (asocasptr(&dt->data->user.data, current, data) == current) return current;
+    }
 }
 
 /* announcing an event on the user's behalf */
 int dtuserevent(Dt_t *dt, int flags, void *data) {
-    if (!dt->disc->eventf)
-        return 0;
-    else
-        return (*dt->disc->eventf)(dt, DT_ANNOUNCE | DT_USER | flags, data, dt->disc);
+    if (!dt->disc->eventf) return 0;
+    return (*dt->disc->eventf)(dt, DT_ANNOUNCE | DT_USER | flags, data, dt->disc);
 }
