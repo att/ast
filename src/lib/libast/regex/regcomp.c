@@ -1201,7 +1201,6 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                         collate++;
                     else
                         setadd(e->re.charclass, buf[0]);
-                    c = buf[0];
                     inrange = 0;
                     complicated++;
                     elements++;
@@ -1462,7 +1461,6 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                                 i = 0;
                             }
                             inrange = 0;
-                            c = *pp;
                             continue;
                         case '.':
                             if (env->flags & REG_REGEXP) goto complicated_normal;
