@@ -164,62 +164,61 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                 if (n < T_CONTROL) break;
                 pp = cp - 1;
                 m = mblen((char *)pp, MB_LEN_MAX);
-                if (m > 1)
+                if (m > 1) {
                     cp += m - 1;
-                else {
-                    if (m <= 0) {
-                        if (cur == pp) {
-                            if (last > 0) {
-                                *end = last;
-                                last = -1;
-                                c = end - pp + 1;
-                                m = mblen((char *)pp, MB_LEN_MAX);
-                                if (m == c) {
+                } else {
+                    if (m > 0) break;
+                    if (cur == pp) {
+                        if (last > 0) {
+                            *end = last;
+                            last = -1;
+                            c = end - pp + 1;
+                            m = mblen((char *)pp, MB_LEN_MAX);
+                            if (m == c) {
+                                any = 1;
+                                if (header) {
+                                    header = 0;
+                                    sfprintf(op, "%6d\t", line);
+                                }
+                                sfwrite(op, cur, m);
+                                *(cp = cur = end) = 0;
+                            } else {
+                                memcpy(tmp, pp, c);
+                                nxt = (unsigned char *)(*reserve)(ip, SF_UNBOUND, 0);
+                                if (!nxt) {
+                                    states[0] = sfvalue(ip) ? T_ERROR : T_EOF;
+                                    *(cp = end = tmp + sizeof(tmp) - 1) = 0;
+                                    last = -1;
+                                } else if ((n = sfvalue(ip)) <= 0) {
+                                    states[0] = n ? T_ERROR : T_EOF;
+                                    *(cp = end = tmp + sizeof(tmp) - 1) = 0;
+                                    last = -1;
+                                } else {
+                                    cp = buf = nxt;
+                                    end = buf + n - 1;
+                                    last = *end;
+                                    *end = 0;
+                                }
+                            mb:
+                                n = end - cp + 1;
+                                if (n >= (sizeof(tmp) - c)) n = sizeof(tmp) - c - 1;
+                                memcpy(tmp + c, cp, n);
+                                m = mblen((char *)tmp, MB_LEN_MAX);
+                                if (m >= c) {
                                     any = 1;
                                     if (header) {
                                         header = 0;
                                         sfprintf(op, "%6d\t", line);
                                     }
-                                    sfwrite(op, cur, m);
-                                    *(cp = cur = end) = 0;
-                                } else {
-                                    memcpy(tmp, pp, c);
-                                    nxt = (unsigned char *)(*reserve)(ip, SF_UNBOUND, 0);
-                                    if (!nxt) {
-                                        states[0] = sfvalue(ip) ? T_ERROR : T_EOF;
-                                        *(cp = end = tmp + sizeof(tmp) - 1) = 0;
-                                        last = -1;
-                                    } else if ((n = sfvalue(ip)) <= 0) {
-                                        states[0] = n ? T_ERROR : T_EOF;
-                                        *(cp = end = tmp + sizeof(tmp) - 1) = 0;
-                                        last = -1;
-                                    } else {
-                                        cp = buf = nxt;
-                                        end = buf + n - 1;
-                                        last = *end;
-                                        *end = 0;
-                                    }
-                                mb:
-                                    n = end - cp + 1;
-                                    if (n >= (sizeof(tmp) - c)) n = sizeof(tmp) - c - 1;
-                                    memcpy(tmp + c, cp, n);
-                                    m = mblen((char *)tmp, MB_LEN_MAX);
-                                    if (m >= c) {
-                                        any = 1;
-                                        if (header) {
-                                            header = 0;
-                                            sfprintf(op, "%6d\t", line);
-                                        }
-                                        sfwrite(op, tmp, m);
-                                        cur = cp += m - c;
-                                    }
+                                    sfwrite(op, tmp, m);
+                                    cur = cp += m - c;
                                 }
-                                continue;
                             }
-                        } else {
-                            cp = pp + 1;
-                            n = 0;
+                            continue;
                         }
+                    } else {
+                        cp = pp + 1;
+                        n = 0;
                     }
                     break;
                 }
