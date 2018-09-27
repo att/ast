@@ -90,12 +90,12 @@ static_fn void pushname(Namval_t *, void *);
 static_fn void (*nullscan)(Namval_t *, void *);
 
 //
-// Note `export` and `readonly` are the same.
+// Note the `export` and `readonly` builtins are handled by this function.
 //
-#if 0
-    /* for the dictionary generator */
-    int    b_export(int argc,char *argv[],Shbltin_t *context){}
-#endif
+// TODO: Refactor the function so that each builtin has a distinct function. 99% of the shared code
+// is boilerplate for things like parsing the command line. And even that has two explicit tests for
+// which variant is being handled.
+//
 int b_readonly(int argc, char *argv[], Shbltin_t *context) {
     int flag;
     char *command = argv[0];
@@ -219,11 +219,6 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
     troot = tdata.sh->track_tree;
     return setall(argv, flag, troot, &tdata);
 }
-
-#if 0
-// For the dictionary generator.
-int    b_local(int argc,char *argv[],Shbltin_t *context){}
-#endif
 
 int b_typeset(int argc, char *argv[], Shbltin_t *context) {
     int n, flag = NV_VARNAME | NV_ASSIGN;
