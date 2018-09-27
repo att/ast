@@ -90,16 +90,18 @@ void stackclear(STACK stack) {
     stack->position.index = -1;
 }
 
+#if 0
+// TODO: Consider removing this since it is unused.
+
 /*
  * get value on top of stack
  */
 
 void *stackget(STACK stack) {
-    if (stack->position.index < 0)
-        return (stack->error);
-    else
-        return (stack->position.block->stack[stack->position.index]);
+    if (stack->position.index < 0) return stack->error;
+    return stack->position.block->stack[stack->position.index];
 }
+#endif
 
 /*
  * push value on to stack
@@ -128,6 +130,9 @@ int stackpush(STACK stack, void *value) {
     return (0);
 }
 
+#if 0
+// TODO: Consider removing this since it is unused.
+
 /*
  * pop value off stack
  */
@@ -142,15 +147,15 @@ int stackpop(STACK stack) {
      */
 
     if (stack->position.index < 0)
-        return (-1);
+        return -1;
     else if (--stack->position.index < 0) {
-        if (!stack->position.block->prev) return (0);
+        if (!stack->position.block->prev) return 0;
         stack->position.block = stack->position.block->prev;
         stack->position.index = stack->size - 1;
-        return (1);
-    } else
-        return (1);
+    }
+    return 1;
 }
+#endif
 
 /*
  * set|get stack position
