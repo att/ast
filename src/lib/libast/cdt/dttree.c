@@ -188,35 +188,28 @@ static_fn ssize_t dttree_size(Dtlink_t *root, ssize_t lev, Dtstat_t *st) {
     }
 
     size = 1;
+    z = dttree_size(root->_left, lev + 1, st);
+    if (z < 0) return -1;
 
-    if ((z = dttree_size(root->_left, lev + 1, st)) < 0)
-        return -1;
-    else
-        size += z;
+    size += z;
+    z = dttree_size(root->_rght, lev + 1, st);
+    if (z < 0) return -1;
 
-    if ((z = dttree_size(root->_rght, lev + 1, st)) < 0)
-        return -1;
-    else
-        size += z;
-
-    return size;
+    return size + z;
 }
 
 static_fn void *dttree_stat(Dt_t *dt, Dtstat_t *st) {
     ssize_t size;
     Dttree_t *tree = (Dttree_t *)dt->data;
 
-    if (!st)
-        return (void *)dt->data->size;
-    else {
-        memset(st, 0, sizeof(Dtstat_t));
-        size = dttree_size(tree->root, 0, st);
-        assert((dt->data->type & DT_SHARE) || size == dt->data->size);
-        st->meth = dt->meth->type;
-        st->size = size;
-        st->space = sizeof(Dttree_t) + (dt->disc->link >= 0 ? 0 : size * sizeof(Dthold_t));
-        return (void *)size;
-    }
+    if (!st) return (void *)dt->data->size;
+    memset(st, 0, sizeof(Dtstat_t));
+    size = dttree_size(tree->root, 0, st);
+    assert((dt->data->type & DT_SHARE) || size == dt->data->size);
+    st->meth = dt->meth->type;
+    st->size = size;
+    st->space = sizeof(Dttree_t) + (dt->disc->link >= 0 ? 0 : size * sizeof(Dthold_t));
+    return (void *)size;
 }
 
 /* make a list into a balanced tree */
@@ -660,12 +653,11 @@ static_fn int dttree_event(Dt_t *dt, int event, void *arg) {
         (void)(*dt->memoryf)(dt, (void *)tree, 0, dt->disc);
         dt->data = NULL;
         return 0;
-    } else if (event == DT_OPTIMIZE) /* balance the search tree */
-    {
+    } else if (event == DT_OPTIMIZE) {  // balance the search tree
         dttree_optimize(dt);
         return 0;
-    } else
-        return 0;
+    }
+    return 0;
 }
 
 /* make this method available */
