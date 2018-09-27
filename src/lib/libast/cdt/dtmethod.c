@@ -57,8 +57,7 @@ Dtmethod_t *dtmethod(Dt_t *dt, Dtmethod_t *meth) {
     if (dt->searchf == meth->searchf) dt->searchf = oldmt->searchf;
     dt->meth = oldmt;
     dt->data = olddt;
-    if (newdt) /* switch was successful, remove old data */
-    {
+    if (newdt) {  // switch was successful, remove old data
         (void)(*dt->meth->eventf)(dt, DT_CLOSE, NULL);
 
         if (dt->searchf == oldmt->searchf) dt->searchf = meth->searchf;
@@ -66,11 +65,11 @@ Dtmethod_t *dtmethod(Dt_t *dt, Dtmethod_t *meth) {
         dt->data = newdt;
         dtrestore(dt, list);
         return oldmt;
-    } else /* switch failed, restore dictionary to previous states */
-    {
-        dtrestore(dt, list);
-        return NULL;
     }
+
+    // Switch failed, restore dictionary to previous states.
+    dtrestore(dt, list);
+    return NULL;
 }
 
 /* customize certain actions in a container data structure */
