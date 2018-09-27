@@ -178,18 +178,19 @@ static_fn int _sfwaccept(wchar_t wc, Accept_t *ac) {
     SFMBDCL(mbs)
 
     SFMBCLR(&mbs);
-    for (n = 1; *form != ']'; form += n) {
+    for (; *form != ']'; form += n) {
         if ((c = *((uchar *)form)) == 0) return 0;
 
         if (*(form + 1) == '-') {
             endc = *((uchar *)(form + 2));
-            if (c >= 128 || endc >= 128) /* range must be ascii */
-                goto one_char;
+            if (c >= 128 || endc >= 128) {  // range must be ascii and thus single byte char
+                n = mbrtowc(&fwc, form, ac->endf - form, (mbstate_t *)&mbs);
+                if (n > 1 && wc == fwc) return ac->yes;
+            }
             n = 3;
         } else {
-        one_char:
-            if ((n = mbrtowc(&fwc, form, ac->endf - form, (mbstate_t *)&mbs)) > 1 && wc == fwc)
-                return ac->yes;
+            n = mbrtowc(&fwc, form, ac->endf - form, (mbstate_t *)&mbs);
+            if (n > 1 && wc == fwc) return ac->yes;
         }
     }
 
