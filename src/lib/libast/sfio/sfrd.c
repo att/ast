@@ -178,31 +178,24 @@ ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
                 f->endw = f->data;
                 f->here += r;
 
-                /* make known our seek location */
-                (void)SFSK(f, f->here, SEEK_SET, dc);
-
+                (void)SFSK(f, f->here, SEEK_SET, dc);  // make known our seek location
                 if (buf) {
                     if (n > (size_t)(r - a)) n = (ssize_t)(r - a);
                     memcpy(buf, f->next, n);
                     f->next += n;
-                } else
+                } else {
                     n = f->endb - f->next;
+                }
 
                 SFMTXRETURN(f, n)
-            } else {
-                r = -1;
-                f->here += a;
+            }
 
-                /* reset seek pointer to its physical location */
-                (void)SFSK(f, f->here, SEEK_SET, dc);
-
-                /* make a buffer */
-                (void)SFSETBUF(f, (void *)f->tiny, (size_t)SF_UNBOUND);
-
-                if (!buf) {
-                    buf = (void *)f->data;
-                    n = f->size;
-                }
+            f->here += a;
+            (void)SFSK(f, f->here, SEEK_SET, dc);  // reset seek pointer to its physical location
+            (void)SFSETBUF(f, (void *)f->tiny, (size_t)SF_UNBOUND);  // make a buffer
+            if (!buf) {
+                buf = (void *)f->data;
+                n = f->size;
             }
         }
 
