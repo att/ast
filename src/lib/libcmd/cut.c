@@ -162,7 +162,7 @@ static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, siz
             case ' ':
             case '\t':
                 while (*cp == ' ' || *cp == '\t') cp++;
-            /*FALLTHROUGH*/
+            // FALLTHROUGH
             case 0:
             case ',':
                 if (range) {
@@ -181,9 +181,10 @@ static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, siz
                     int *dp;
                     *lp = HUGE;
                     n = 1 + (lp - cut->list) / 2;
-                    qsort(lp = cut->list, n, 2 * sizeof(*lp), mycomp);
-                    /* eliminate overlapping regions */
-                    for (n = 0, range = -2, dp = lp; *lp != HUGE; lp += 2) {
+                    lp = cut->list;
+                    qsort(lp, n, 2 * sizeof(*lp), mycomp);
+                    // Eliminate overlapping regions.
+                    for (range = -2, dp = lp; *lp != HUGE; lp += 2) {
                         if (lp[0] <= range) {
                             if (lp[1] == HUGE) {
                                 dp[-1] = HUGE;
@@ -239,11 +240,11 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
     int c;
     int len;
     int ncol = 0;
-    const int *lp = cut->list;
     char *bp;
-    int skip; /* non-zero for don't copy */
+    int skip;  // non-zero for don't copy
     int must;
     const char *xx;
+    const int *lp = cut->list;
 
     for (;;) {
         len = cut->reclen;
@@ -256,7 +257,7 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
         if (!bp && !(bp = sfgetr(fdin, 0, SF_LASTR))) break;
         len = sfvalue(fdin);
         xx = 0;
-        ncol = skip = *(lp = cut->list);
+        ncol = skip = *lp;
         if (!ncol) ncol = *++lp;
         must = 1;
         do {
