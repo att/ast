@@ -33,8 +33,6 @@
 #include "ast.h"
 #include "vthread.h"
 
-static char *Version = "\n@(#)$Id: sfio (AT&T Labs - Research) 2009-09-15 $\0\n";
-
 /*	Functions to set a given stream to some desired mode
 **
 **	Written by Kiem-Phong Vo.
@@ -72,20 +70,17 @@ static int _Sfsigp = 0; /* # of streams needing SIGPIPE protection */
 /* done at exiting time */
 static_fn void _sfcleanup(void) {
     Sfpool_t *p;
-    Sfio_t *f;
     int n;
     int pool;
 
-    f = (Sfio_t *)Version; /* shut compiler warning */
-
-    /* set this so that no more buffering is allowed for write streams */
+    // Set this so that no more buffering is allowed for write streams.
     _Sfexiting = 1001;
 
     sfsync(NULL);
 
     for (p = &_Sfpool; p; p = p->next) {
         for (n = 0; n < p->n_sf; ++n) {
-            f = p->sf[n];
+            Sfio_t *f = p->sf[n];
             if (!f || SFFROZEN(f)) continue;
 
             SFLOCK(f, 0)
