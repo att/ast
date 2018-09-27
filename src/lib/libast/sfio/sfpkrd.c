@@ -172,16 +172,14 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
             if (r == -2) {
             }
 
-            if (r > 0) /* there is data now */
-            {
-                if (action <= 0 && rc < 0)
-                    return sysreadf(fd, buf, n);
-                else
-                    r = -1;
-            } else if (tm >= 0) /* timeout exceeded */
-                return -1;
-            else
+            if (r > 0) {  // there is data now
+                if (action <= 0 && rc < 0) return sysreadf(fd, buf, n);
                 r = -1;
+            } else if (tm >= 0) {  // timeout exceeded
+                return -1;
+            } else {
+                r = -1;
+            }
             break;
         }
 
@@ -246,20 +244,18 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
     }
 
     if (r < 0) {
-        if (tm >= 0 || action > 0)
-            return -1;
-        else /* get here means: tm < 0 && action <= 0 && rc >= 0 */
-        {    /* number of records read at a time */
-            if ((action = action ? -action : 1) > (int)n) action = n;
-            r = 0;
-            while ((t = sysreadf(fd, buf, action)) > 0) {
-                r += t;
-                for (endbuf = buf + t; buf < endbuf;)
-                    if (*buf++ == rc) action -= 1;
-                if (action == 0 || (int)(n - r) < action) break;
-            }
-            return r == 0 ? t : r;
+        if (tm >= 0 || action > 0) return -1;
+        // Get here means: tm < 0 && action <= 0 && rc >= 0.
+        // Number of records read at a time.
+        if ((action = action ? -action : 1) > (int)n) action = n;
+        r = 0;
+        while ((t = sysreadf(fd, buf, action)) > 0) {
+            r += t;
+            for (endbuf = buf + t; buf < endbuf;)
+                if (*buf++ == rc) action -= 1;
+            if (action == 0 || (int)(n - r) < action) break;
         }
+        return r == 0 ? t : r;
     }
 
     /* successful peek, find the record end */
