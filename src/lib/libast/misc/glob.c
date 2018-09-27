@@ -468,7 +468,7 @@ skip:
     if (err == REG_ESPACE) gp->gl_error = GLOB_NOSPACE;
 }
 
-int _ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), glob_t *gp) {
+int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), glob_t *gp) {
     globlist_t *ap;
     char *pat;
     globlist_t *top;
@@ -493,10 +493,11 @@ int _ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), g
     if (flags & GLOB_APPEND) {
         if ((gp->gl_flags |= GLOB_APPEND) ^ (flags | GLOB_MAGIC)) return GLOB_APPERR;
         if (((gp->gl_flags & GLOB_STACK) == 0) == (gp->gl_stak == 0)) return GLOB_APPERR;
-        if (gp->gl_starstar > 1)
+        if (gp->gl_starstar > 1) {
             gp->gl_flags |= GLOB_STARSTAR;
-        else
+        } else {
             gp->gl_starstar = 0;
+        }
     } else {
         gp->gl_flags = (flags & 0xffff) | GLOB_MAGIC;
         gp->re_flags = REG_SHELL | REG_NOSUB | REG_LEFT | REG_RIGHT |
@@ -615,11 +616,11 @@ int _ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), g
     ap->gl_begin = ap->gl_path + gp->gl_extra;
     pat = stpcpy(ap->gl_begin, pattern + optlen);
     if (suflen) pat = stpcpy(pat, gp->gl_suffix);
-    if (optlen)
+    if (optlen) {
         strlcpy(gp->gl_pat = gp->gl_opt = pat + 1, pattern, optlen);
-    else
+    } else {
         gp->gl_pat = 0;
-    suflen = 0;
+    }
     if (!(flags & GLOB_LIST)) gp->gl_match = 0;
     re_flags = gp->re_flags;
     gp->re_first = 1;
@@ -666,13 +667,4 @@ int _ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), g
     if (gp->gl_starstar > 1) gp->gl_flags &= ~GLOB_STARSTAR;
     if (gp->gl_stak) stakinstall(oldstak, 0);
     return gp->gl_error;
-}
-
-void _ast_globfree(glob_t *gp) {
-    if ((gp->gl_flags & GLOB_MAGIC) == GLOB_MAGIC) {
-        gp->gl_flags &= ~GLOB_MAGIC;
-        if (gp->gl_stak) stkclose(gp->gl_stak);
-        if (gp->gl_ignore) regfree(gp->gl_ignore);
-        if (gp->gl_ignorei) regfree(gp->gl_ignorei);
-    }
 }

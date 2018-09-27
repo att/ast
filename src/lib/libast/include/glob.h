@@ -129,10 +129,6 @@ struct _glob_ {
 #define GLOB_APPERR 5
 #define GLOB_NOSYS 6
 
-extern int _ast_glob(const char *, int, int (*)(const char *, int), glob_t *);
-extern void _ast_globfree(glob_t *);
-
-#define glob _ast_glob
-#define globfree _ast_globfree
+extern int ast_glob(const char *, int, int (*)(const char *, int), glob_t *);
 
 #endif  // _GLOB_H

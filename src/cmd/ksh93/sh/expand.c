@@ -154,7 +154,7 @@ int path_expand(Shell_t *shp, const char *pattern, struct argnod **arghead) {
     gp->gl_intr = &shp->trapnote;
     suflen = 0;
     if (strncmp(pattern, "~(N", 3) == 0) flags &= ~GLOB_NOCHECK;
-    glob(pattern, flags, 0, gp);
+    ast_glob(pattern, flags, 0, gp);
 #if SHOPT_BASH
     if (off) {
         stkset(shp->stk, sp, off);
