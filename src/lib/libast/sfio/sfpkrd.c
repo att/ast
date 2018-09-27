@@ -183,62 +183,62 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
             break;
         }
 
-        if (t & SOCKET_PEEK) {
+        if (!(t & SOCKET_PEEK)) continue;
+
 #if __MACH__ && __APPLE__ /* check 10.4 recv(MSG_PEEK) bug that consumes pipe data */
-            static int recv_peek_pipe;
-            if (recv_peek_pipe == 0) /* this will be done just once */
-            {
-                int fds[2], r;
-                char tst[2];
+        static int recv_peek_pipe;
+        if (recv_peek_pipe == 0) /* this will be done just once */
+        {
+            int fds[2], r;
+            char tst[2];
 
-                tst[0] = 'a';
-                tst[1] = 'z';
+            tst[0] = 'a';
+            tst[1] = 'z';
 
-                /* open a pipe and write to it */
-                recv_peek_pipe = 1;
-                if (recv_peek_pipe == 1 && pipe(fds) < 0) recv_peek_pipe = -1;
-                if (recv_peek_pipe == 1 && write(fds[1], tst, 2) != 2) recv_peek_pipe = -1;
+            /* open a pipe and write to it */
+            recv_peek_pipe = 1;
+            if (recv_peek_pipe == 1 && pipe(fds) < 0) recv_peek_pipe = -1;
+            if (recv_peek_pipe == 1 && write(fds[1], tst, 2) != 2) recv_peek_pipe = -1;
 
-                /* try recv() to see if it gets anything */
-                tst[0] = tst[1] = 0;
-                if (recv_peek_pipe == 1 && (r = recv(fds[0], tst, 1, MSG_PEEK)) != 1)
-                    recv_peek_pipe = -1;
-                if (recv_peek_pipe == 1 && tst[0] != 'a') recv_peek_pipe = -1;
+            /* try recv() to see if it gets anything */
+            tst[0] = tst[1] = 0;
+            if (recv_peek_pipe == 1 && (r = recv(fds[0], tst, 1, MSG_PEEK)) != 1)
+                recv_peek_pipe = -1;
+            if (recv_peek_pipe == 1 && tst[0] != 'a') recv_peek_pipe = -1;
 
-                /* make sure that recv() did not consume data */
-                tst[0] = tst[1] = 0;
-                if (recv_peek_pipe == 1 && (r = recv(fds[0], tst, 2, MSG_PEEK)) != 2)
-                    recv_peek_pipe = -1;
-                if (recv_peek_pipe == 1 && (tst[0] != 'a' || tst[1] != 'z')) recv_peek_pipe = -1;
+            /* make sure that recv() did not consume data */
+            tst[0] = tst[1] = 0;
+            if (recv_peek_pipe == 1 && (r = recv(fds[0], tst, 2, MSG_PEEK)) != 2)
+                recv_peek_pipe = -1;
+            if (recv_peek_pipe == 1 && (tst[0] != 'a' || tst[1] != 'z')) recv_peek_pipe = -1;
 
-                close(fds[0]);
-                close(fds[1]);
+            close(fds[0]);
+            close(fds[1]);
+        }
+
+        if (recv_peek_pipe < 0) {
+            struct stat st; /* recv should work on sockets */
+            if (fstat(fd, &st) < 0 || !S_ISSOCK(st.st_mode)) {
+                r = -1;
+                t &= ~SOCKET_PEEK;
             }
-
-            if (recv_peek_pipe < 0) {
-                struct stat st; /* recv should work on sockets */
-                if (fstat(fd, &st) < 0 || !S_ISSOCK(st.st_mode)) {
-                    r = -1;
-                    t &= ~SOCKET_PEEK;
-                }
-            }
+        }
 #endif
-            while ((t & SOCKET_PEEK) && (r = recv(fd, (char *)buf, n, MSG_PEEK)) < 0) {
-                if (errno == EINTR)
-                    return -1;
-                else if (errno == EAGAIN)
-                    errno = 0;
-                else
-                    t &= ~SOCKET_PEEK;
-            }
-            if (r >= 0) {
-                if (r > 0)
-                    break;
-                else /* read past eof */
-                {
-                    if (action <= 0) r = sysreadf(fd, buf, 1);
-                    return r;
-                }
+        while ((t & SOCKET_PEEK) && (r = recv(fd, (char *)buf, n, MSG_PEEK)) < 0) {
+            if (errno == EINTR)
+                return -1;
+            else if (errno == EAGAIN)
+                errno = 0;
+            else
+                t &= ~SOCKET_PEEK;
+        }
+        if (r >= 0) {
+            if (r > 0)
+                break;
+            else /* read past eof */
+            {
+                if (action <= 0) r = sysreadf(fd, buf, 1);
+                return r;
             }
         }
     }
