@@ -57,7 +57,7 @@ int strperm(const char *aexpr, char **e, int perm) {
     } else
         masked = 0;
     for (;;) {
-        op = num = who = typ = 0;
+        num = who = typ = 0;
         for (;;) {
             switch (c = *expr++) {
                 case 'u':
