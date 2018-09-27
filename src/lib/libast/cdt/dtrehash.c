@@ -258,26 +258,25 @@ static_fn void *dtrehash_first(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev,
     return obj;
 }
 
-/* this constitutes the core of dtnext() and dtprev() */
+// This constitutes the core of dtnext() and dtprev().
 static_fn void *dtrehash_next(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos,
                               uint hsh, int type) {
     Dtlink_t *t;
     void *obj;
 
-    if ((t = asogetptr(tbl->list + pos)) && HTABLE(t))
-        if ((obj = dtrehash_first(dt, fngr, (Htbl_t *)t, lev + 1, 0, hsh, type))) return obj;
+    t = asogetptr(tbl->list + pos);
+    if (t && HTABLE(t)) {
+        obj = dtrehash_first(dt, fngr, (Htbl_t *)t, lev + 1, 0, hsh, type);
+        if (obj) return obj;
+    }
 
-    for (;;) /* search forward from current position in table */
-    {
-        if ((obj = dtrehash_first(dt, fngr, tbl, lev, pos + 1, hsh, type)))
-            return obj;
-        else if ((lev -= 1) < 0) /* just did root table */
-            return NULL;
-        else /* back up to parent table */
-        {
-            pos = HVALUE(tbl->link._ppos);
-            tbl = (Htbl_t *)tbl->link._ptbl;
-        }
+    for (;;) {  // search forward from current position in table
+        obj = dtrehash_first(dt, fngr, tbl, lev, pos + 1, hsh, type);
+        if (obj) return obj;
+        lev -= 1;
+        if (lev < 0) return NULL;  // just did root table
+        pos = HVALUE(tbl->link._ppos);
+        tbl = (Htbl_t *)tbl->link._ptbl;
     }
 }
 
@@ -540,59 +539,58 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
                 DTANNOUNCE(dt, obj, type);
                 HCLSOPEN(dt, hsh, type, share);
                 return obj;
-            } else { /**/
-                assert(type & H_INSERT);
-                if (!(dt->meth->type & DT_RHBAG)) /* no duplicates */
-                {
-                    if (type & (DT_INSERT | DT_APPEND | DT_ATTACH))
-                        type |= DT_MATCH;        /* for announcement */
-                    else if (type & DT_RELINK) { /**/
-                        assert(lnk);
-                        o = _DTOBJ(disc, t); /* remove a duplicate */
-                        _dtfree(dt, lnk, DT_DELETE);
-                        DTANNOUNCE(dt, o, DT_DELETE);
-                    } else if (type & DT_INSTALL) {
-                        o = _DTOBJ(disc, t); /* remove old object */
+            }
+
+            assert(type & H_INSERT);
+            if (!(dt->meth->type & DT_RHBAG)) {  // no duplicates
+                if (type & (DT_INSERT | DT_APPEND | DT_ATTACH))
+                    type |= DT_MATCH;        /* for announcement */
+                else if (type & DT_RELINK) {
+                    assert(lnk);
+                    o = _DTOBJ(disc, t); /* remove a duplicate */
+                    _dtfree(dt, lnk, DT_DELETE);
+                    DTANNOUNCE(dt, o, DT_DELETE);
+                } else if (type & DT_INSTALL) {
+                    o = _DTOBJ(disc, t); /* remove old object */
+                    lnkp = HLNKP(tbl, pos);
+                    dtrehash_delete(dt, lnkp, DT_DELETE);
+                    DTANNOUNCE(dt, o, DT_DELETE);
+                    if (!opnt) {
+                        opnt = tbl;
+                        opnp = pos;
+                    }
+                    goto do_insert;
+                }
+
+                obj = _DTOBJ(disc, t); /* save before unlocking */
+                DTANNOUNCE(dt, obj, type);
+                HCLSOPEN(dt, hsh, type, share);
+                return obj;
+            } else if (opnt) /* already got an open slot */
+                goto do_insert;
+            else
+                for (;;) {  // try finding an open slot
+                    for (; k < srch; ++k, pos = ((pos + 1) & modz)) {
                         lnkp = HLNKP(tbl, pos);
-                        dtrehash_delete(dt, lnkp, DT_DELETE);
-                        DTANNOUNCE(dt, o, DT_DELETE);
-                        if (!opnt) {
+                        if (!asogetptr(lnkp)) {
                             opnt = tbl;
                             opnp = pos;
+                            goto do_insert;
                         }
+                    }
+
+                    if ((t = asogetptr(tbl->list + hshp)) && HTABLE(t)) {
+                        tbl = (Htbl_t *)t;
+                        lev += 1;
+                        hshp = HBASP(hash, lev, hsh);
+                        pos = hshp;
+                        srch = HSRCH(hash, lev);
+                        k = 0;
+                        modz = HSIZE(hash, lev) - 1;
+                    } else {
                         goto do_insert;
                     }
-
-                    obj = _DTOBJ(disc, t); /* save before unlocking */
-                    DTANNOUNCE(dt, obj, type);
-                    HCLSOPEN(dt, hsh, type, share);
-                    return obj;
-                } else if (opnt) /* already got an open slot */
-                    goto do_insert;
-                else
-                    for (;;) /* try finding an open slot */
-                    {
-                        for (; k < srch; ++k, pos = ((pos + 1) & modz)) {
-                            lnkp = HLNKP(tbl, pos);
-                            if (!asogetptr(lnkp)) {
-                                opnt = tbl;
-                                opnp = pos;
-                                goto do_insert;
-                            }
-                        }
-
-                        if ((t = asogetptr(tbl->list + hshp)) && HTABLE(t)) {
-                            tbl = (Htbl_t *)t;
-                            lev += 1;
-                            hshp = HBASP(hash, lev, hsh);
-                            pos = hshp;
-                            srch = HSRCH(hash, lev);
-                            k = 0;
-                            modz = HSIZE(hash, lev) - 1;
-                        } else
-                            goto do_insert;
-                    }
-            }
+                }
         }
 
         if ((t = asogetptr(tbl->list + hshp)) && HTABLE(t)) {
@@ -604,10 +602,10 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
             {
                 (void)(*dt->memoryf)(dt, (void *)fngr, 0, disc);
                 return NULL;
-            } else if (opnt) /* (opnt,opnp,oplv) is the last known matching obj */
+            } else if (opnt) {  // (opnt,opnp,oplv) is the last known matching obj
                 return dtrehash_next(dt, fngr, opnt, oplv, opnp, hsh, type);
-            else
-                return NULL;
+            }
+            return NULL;
         } else if (type & H_INSERT)
             goto do_insert; /* inserting a  new object */
         else                /* search/delete failed */
@@ -685,13 +683,12 @@ static_fn int dtrehash_event(Dt_t *dt, int event, void *arg) {
         }
         hash->nlev = k; /* total number of levels for trie */
 
-        if (!(hash->root = dtrehash_table(dt, 0, NULL, -1))) /* make root table */
-        {
+        if (!(hash->root = dtrehash_table(dt, 0, NULL, -1))) {  // make root table
             (void)(*dt->memoryf)(dt, hash, 0, disc);
             dt->data = NULL;
             return -1;
-        } else
-            return 1;
+        }
+        return 1;
     } else if (event == DT_CLOSE) {
         if (!hash) return 0;
         if (hash->root) /* free all objects in dictionary */
@@ -727,9 +724,8 @@ static_fn int dtrehash_event(Dt_t *dt, int event, void *arg) {
             memset(hash->refn, 0, z);
         }
         return 1;
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 static Dtmethod_t _Dtrhset = {
