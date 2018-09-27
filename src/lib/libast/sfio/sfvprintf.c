@@ -55,42 +55,41 @@ static_fn int chr2str(char *buf, int v) {
     if (isprint(v) && v != '\\') {
         *buf++ = v;
         return 1;
-    } else {
-        *buf++ = '\\';
-        switch (v) {
-            case CC_bel:
-                *buf++ = 'a';
-                return 2;
-            case CC_vt:
-                *buf++ = 'v';
-                return 2;
-            case CC_esc:
-                *buf++ = 'E';
-                return 2;
-            case '\b':
-                *buf++ = 'b';
-                return 2;
-            case '\f':
-                *buf++ = 'f';
-                return 2;
-            case '\n':
-                *buf++ = 'n';
-                return 2;
-            case '\r':
-                *buf++ = 'r';
-                return 2;
-            case '\t':
-                *buf++ = 't';
-                return 2;
-            case '\\':
-                *buf++ = '\\';
-                return 2;
-            default:
-                *buf++ = '0' + ((v >> 6) & 03);
-                *buf++ = '0' + ((v >> 3) & 07);
-                *buf++ = '0' + ((v >> 0) & 07);
-                return 4;
-        }
+    }
+    *buf++ = '\\';
+    switch (v) {
+        case CC_bel:
+            *buf++ = 'a';
+            return 2;
+        case CC_vt:
+            *buf++ = 'v';
+            return 2;
+        case CC_esc:
+            *buf++ = 'E';
+            return 2;
+        case '\b':
+            *buf++ = 'b';
+            return 2;
+        case '\f':
+            *buf++ = 'f';
+            return 2;
+        case '\n':
+            *buf++ = 'n';
+            return 2;
+        case '\r':
+            *buf++ = 'r';
+            return 2;
+        case '\t':
+            *buf++ = 't';
+            return 2;
+        case '\\':
+            *buf++ = '\\';
+            return 2;
+        default:
+            *buf++ = '0' + ((v >> 6) & 03);
+            *buf++ = '0' + ((v >> 3) & 07);
+            *buf++ = '0' + ((v >> 0) & 07);
+            return 4;
     }
 }
 
