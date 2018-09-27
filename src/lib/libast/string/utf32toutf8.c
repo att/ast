@@ -52,29 +52,28 @@ size_t utf32toutf8(char *s, uint32_t w) {
 
     if (!s) s = tmp;
     for (i = 0; i < elementsof(ops); i++) {
-        if (w < ops[i].range) {
-            b = s;
-            *s++ = ops[i].prefix | (w >> ops[i].shift);
-            switch (ops[i].shift) {
-                case 30:
-                    *s++ = 0x80 | ((w >> 24) & 0x3f);
-                // FALLTHRU
-                case 24:
-                    *s++ = 0x80 | ((w >> 18) & 0x3f);
-                // FALLTHRU
-                case 18:
-                    *s++ = 0x80 | ((w >> 12) & 0x3f);
-                // FALLTHRU
-                case 12:
-                    *s++ = 0x80 | ((w >> 6) & 0x3f);
-                // FALLTHRU
-                case 6:
-                    *s++ = 0x80 | (w & 0x3f);
-                // FALLTHRU
-                default:;  // EMPTY BLOCK
-            }
-            return s - b;
+        if (w >= ops[i].range) continue;
+        b = s;
+        *s++ = ops[i].prefix | (w >> ops[i].shift);
+        switch (ops[i].shift) {
+            case 30:
+                *s++ = 0x80 | ((w >> 24) & 0x3f);
+            // FALLTHRU
+            case 24:
+                *s++ = 0x80 | ((w >> 18) & 0x3f);
+            // FALLTHRU
+            case 18:
+                *s++ = 0x80 | ((w >> 12) & 0x3f);
+            // FALLTHRU
+            case 12:
+                *s++ = 0x80 | ((w >> 6) & 0x3f);
+            // FALLTHRU
+            case 6:
+                *s++ = 0x80 | (w & 0x3f);
+            // FALLTHRU
+            default:;  // EMPTY BLOCK
         }
+        return s - b;
     }
     return 0;
 }
