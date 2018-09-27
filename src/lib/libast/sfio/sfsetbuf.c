@@ -62,6 +62,11 @@ extern int getpagesize(void);
 #define SF_TEST_read 0x01000
 
 static_fn int sfsetlinemode(void) {
+    static int modes = -1;
+
+    if (modes >= 0) return modes;
+    modes = 0;
+
     char *s;
     char *t;
     char *v;
@@ -71,108 +76,106 @@ static_fn int sfsetlinemode(void) {
     int m;
     char buf[1024];
 
-    static int modes = -1;
+    /* modeled after the VMALLOC_OPTIONS parser -- lax on the syntax */
+    /* copy option string to a writable buffer */
+    t = getenv("SFIO_OPTIONS");
+    if (!t) return modes;
 
-    if (modes < 0) {
-        modes = 0;
-        /* modeled after the VMALLOC_OPTIONS parser -- lax on the syntax */
-        if ((t = getenv("SFIO_OPTIONS")) && t[0]) { /* copy option string to a writable buffer */
-            for (s = &buf[0], v = &buf[sizeof(buf) - 1]; s < v; ++s)
-                if ((*s = *t++) == 0) break;
-            *s = 0;
+    for (s = &buf[0], v = &buf[sizeof(buf) - 1]; s < v; ++s) {
+        if ((*s = *t++) == 0) break;
+    }
+    *s = 0;
 
-            for (s = buf;;) { /* skip blanks to option name */
-                while (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n' || *s == ',') s++;
-                if (*(t = s) == 0) break;
+    for (s = buf;;) { /* skip blanks to option name */
+        while (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n' || *s == ',') s++;
+        if (*(t = s) == 0) break;
 
-                v = NULL;
-                while (*s) {
-                    if (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n' || *s == ',') {
-                        *s++ = 0; /* end of name */
-                        break;
-                    } else if (!v && *s == '=') {
-                        *s++ = 0; /* end of name */
-                        if (*(v = s) == 0) v = NULL;
-                    } else
-                        s++;
-                }
-                if ((t[0] == 'n' || t[0] == 'N') && (t[1] == 'o' || t[1] == 'O')) {
-                    t += 2;
-                    n = 0;
-                } else
-                    n = 1;
-                if (t[0] == 'S' && t[1] == 'F') {
-                    t += 2;
-                    if (t[0] == '_') t += 1;
-                }
-                switch (t[0]) {
-                    case 'L': /* SF_LINE */
-                    case 'l':
-                        if (n)
-                            modes |= SF_LINE;
-                        else
-                            modes &= ~SF_LINE;
-                        break;
-                    case 'M': /* maxrec maxmap */
-                    case 'm':
-                        if (n && v)
-                            z = (size_t)strtonll(v, NULL, NULL, 0);
-                        else
-                            z = 0;
-                        for (;;) {
-                            switch (*++t) {
-                                case 0:
-                                    break;
-                                case 'M': /* max map */
-                                case 'm':
-                                    if (z) {
-                                        if (z != (size_t)SF_UNBOUND) z = roundof(z, _Sfpage);
-                                        _Sfmaxm = z;
-                                        _Sftest &= ~SF_TEST_read;
-                                    } else
-                                        _Sftest |= SF_TEST_read;
-                                    break;
-                                case 'R': /* max rec */
-                                case 'r':
-                                    _Sfmaxr = z;
-                                    break;
-                                default:
-                                    continue;
-                            }
+        v = NULL;
+        while (*s) {
+            if (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n' || *s == ',') {
+                *s++ = 0; /* end of name */
+                break;
+            } else if (!v && *s == '=') {
+                *s++ = 0; /* end of name */
+                if (*(v = s) == 0) v = NULL;
+            } else
+                s++;
+        }
+        if ((t[0] == 'n' || t[0] == 'N') && (t[1] == 'o' || t[1] == 'O')) {
+            t += 2;
+            n = 0;
+        } else
+            n = 1;
+        if (t[0] == 'S' && t[1] == 'F') {
+            t += 2;
+            if (t[0] == '_') t += 1;
+        }
+        switch (t[0]) {
+            case 'L': /* SF_LINE */
+            case 'l':
+                if (n)
+                    modes |= SF_LINE;
+                else
+                    modes &= ~SF_LINE;
+                break;
+            case 'M': /* maxrec maxmap */
+            case 'm':
+                if (n && v)
+                    z = (size_t)strtonll(v, NULL, NULL, 0);
+                else
+                    z = 0;
+                for (;;) {
+                    switch (*++t) {
+                        case 0:
                             break;
-                        }
-                        break;
-                    case 'T':
-                    case 't':
-                        if (v) do {
-                                if (v[0] == 'n' && v[1] == 'o') {
-                                    v += 2;
-                                    m = !n;
-                                } else
-                                    m = n;
-                                switch (v[0]) {
-                                    default:
-                                        if (isdigit(v[0])) {
-                                            b = strtonll(v, NULL, NULL, 0);
-                                        } else
-                                            b = 0;
-                                        break;
-                                }
-                                if (m)
-                                    _Sftest |= b;
-                                else
-                                    _Sftest &= ~b;
-                            } while ((v = strchr(v, ',')) && ++v);
-                        break;
-                    case 'W': /* SF_WCWIDTH */
-                    case 'w':
-                        if (n)
-                            modes |= SF_WCWIDTH;
-                        else
-                            modes &= ~SF_WCWIDTH;
-                        break;
+                        case 'M': /* max map */
+                        case 'm':
+                            if (z) {
+                                if (z != (size_t)SF_UNBOUND) z = roundof(z, _Sfpage);
+                                _Sfmaxm = z;
+                                _Sftest &= ~SF_TEST_read;
+                            } else
+                                _Sftest |= SF_TEST_read;
+                            break;
+                        case 'R': /* max rec */
+                        case 'r':
+                            _Sfmaxr = z;
+                            break;
+                        default:
+                            continue;
+                    }
+                    break;
                 }
-            }
+                break;
+            case 'T':
+            case 't':
+                if (v) do {
+                        if (v[0] == 'n' && v[1] == 'o') {
+                            v += 2;
+                            m = !n;
+                        } else
+                            m = n;
+                        switch (v[0]) {
+                            default:
+                                if (isdigit(v[0])) {
+                                    b = strtonll(v, NULL, NULL, 0);
+                                } else
+                                    b = 0;
+                                break;
+                        }
+                        if (m)
+                            _Sftest |= b;
+                        else
+                            _Sftest &= ~b;
+                    } while ((v = strchr(v, ',')) && ++v);
+                break;
+            case 'W': /* SF_WCWIDTH */
+            case 'w':
+                if (n)
+                    modes |= SF_WCWIDTH;
+                else
+                    modes &= ~SF_WCWIDTH;
+                break;
         }
     }
 
