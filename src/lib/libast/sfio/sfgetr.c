@@ -66,13 +66,15 @@ char *sfgetr(Sfio_t *f, int rc, int type) {
         goto done;
     }
 
-    while (!found) { /* fill buffer if necessary */
-        if ((n = (ends = f->endb) - (s = f->next)) <=
-            0) { /* for unseekable devices, peek-read 1 record */
+    while (!found) {  // fill buffer if necessary
+        ends = f->endb;
+        s = f->next;
+        n = ends - s;
+        if (n <= 0) {  // for unseekable devices, peek-read 1 record
             f->getr = rc;
             f->mode |= SF_RC;
 
-            /* fill buffer the conventional way */
+            // Fill buffer the conventional way.
             if (SFRPEEK(f, s, n) <= 0) {
                 us = NULL;
                 goto done;
@@ -129,8 +131,11 @@ char *sfgetr(Sfio_t *f, int rc, int type) {
         ends = f->next;
         f->next += n;
         memcpy(s, ends, n);
-        s += n;
-        ends += n;
+        // These statements are commented out because the assignments are pointless. The updated
+        // value of each var is unused on the next execution of the loop. I'm leaving them here as
+        // comments in case they are relevant to someone investigating a bug in the future.
+        //   s += n;
+        //   ends += n;
     }
 
 done:
