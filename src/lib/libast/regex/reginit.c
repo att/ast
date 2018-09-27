@@ -230,9 +230,9 @@ void *alloc(regdisc_t *disc, void *p, size_t n) {
         return (*disc->re_resizef)(disc->re_resizehandle, p, n);
     } else if (!n) {
         if (!(disc->re_flags & REG_NOFREE)) free(p);
-        return 0;
-    } else if (p)
+        return NULL;
+    } else if (p) {
         return realloc(p, n);
-    else
-        return malloc(n);
+    }
+    return malloc(n);
 }
