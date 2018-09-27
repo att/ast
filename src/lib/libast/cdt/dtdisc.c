@@ -40,10 +40,11 @@ static_fn void *dtmemory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
         if (size == 0) {
             free(addr);
             return NULL;
-        } else
-            return realloc(addr, size);
-    } else
-        return size > 0 ? malloc(size) : NULL;
+        }
+        return realloc(addr, size);
+    }
+
+    return size > 0 ? malloc(size) : NULL;
 }
 
 Dtdisc_t *dtdisc(Dt_t *dt, Dtdisc_t *disc, int type) {
