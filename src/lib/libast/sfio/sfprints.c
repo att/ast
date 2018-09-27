@@ -72,13 +72,11 @@ ssize_t sfvaprints(char **sp, const char *form, va_list args) {
     char *s;
     ssize_t n;
 
-    if (!sp || !(s = sfvprints(form, args)))
-        return -1;
-    else {
-        if (!(*sp = (char *)malloc(n = strlen(s) + 1))) return -1;
-        memcpy(*sp, s, n);
-        return n - 1;
-    }
+    if (!sp || !(s = sfvprints(form, args))) return -1;
+    *sp = malloc(n = strlen(s) + 1);
+    if (!*sp) return -1;
+    memcpy(*sp, s, n);
+    return n - 1;
 }
 
 ssize_t sfaprints(char **sp, const char *form, ...) {
