@@ -191,16 +191,15 @@ static_fn int _sfpmove(Sfio_t *f, int type) {
     Sfpool_t *p;
     int n;
 
-    if (type > 0)
-        return _sfsetpool(f);
-    else {
-        if (!(p = f->pool)) return -1;
-        for (n = p->n_sf - 1; n >= 0; --n)
-            if (p->sf[n] == f) break;
-        if (n < 0) return -1;
-
-        return type == 0 ? _sfphead(p, f, n) : _sfpdelete(p, f, n);
+    if (type > 0) return _sfsetpool(f);
+    p = f->pool;
+    if (!p) return -1;
+    for (n = p->n_sf - 1; n >= 0; --n) {
+        if (p->sf[n] == f) break;
     }
+    if (n < 0) return -1;
+
+    return type == 0 ? _sfphead(p, f, n) : _sfpdelete(p, f, n);
 }
 
 Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
@@ -210,14 +209,10 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
 
     _Sfpmove = _sfpmove;
 
-    if (!f) /* return head of pool of pf regardless of lock states */
-    {
-        if (!pf)
-            return NULL;
-        else if (!pf->pool || pf->pool == &_Sfpool)
-            return pf;
-        else
-            return pf->pool->sf[0];
+    if (!f) {  // return head of pool of pf regardless of lock states
+        if (!pf) return NULL;
+        if (!pf->pool || pf->pool == &_Sfpool) return pf;
+        return pf->pool->sf[0];
     }
 
     if (f) {  // check for permissions
