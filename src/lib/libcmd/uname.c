@@ -264,7 +264,6 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
                      *argv ? ' ' : '\n');
         }
     } else {
-        s = buf;
         if (!flags) flags = OPT_system;
         memset(&ut, 0, sizeof(ut));
         if (uname(&ut) < 0) {
@@ -280,24 +279,28 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         output(OPT_version, ut.version, "version");
         output(OPT_machine, ut.machine, "machine");
         if (flags & OPT_processor) {
-            if (!*(s = astconf("ARCHITECTURE", NULL, NULL))) s = ut.machine;
+            s = astconf("ARCHITECTURE", NULL, NULL);
+            if (!*s) s = ut.machine;
             output(OPT_processor, s, "processor");
         }
         if (flags & OPT_implementation) {
             s = astconf("PLATFORM", NULL, NULL);
-            if (!(*s) && !*(s = astconf("HW_NAME", NULL, NULL))) {
-                t = strchr(hosttype, '.');
-                if (t) {
-                    t++;
-                } else {
-                    t = (char *)hosttype;
+            if (!*s) {
+                s = astconf("HW_NAME", NULL, NULL);
+                if (!*s) {
+                    t = strchr(hosttype, '.');
+                    if (t) {
+                        t++;
+                    } else {
+                        t = (char *)hosttype;
+                    }
+                    if (strlcpy(buf, t, sizeof(buf)) >= sizeof(buf)) {
+                        // TODO: Figure out what to do if the source is longer than the destination.
+                        // It should be a can't happen situation but what to do if it does happen?
+                        ;  // empty body
+                    }
+                    s = buf;
                 }
-                if (strlcpy(buf, t, sizeof(buf)) >= sizeof(buf)) {
-                    // TODO: Figure out what to do if the source is longer than the destination.
-                    // It should be a can't happen situation but what to do if it does happen?
-                    ;
-                }
-                s = buf;
             }
             output(OPT_implementation, s, "implementation");
         }
