@@ -106,40 +106,35 @@ static int invalid(const char *file, int nlines) {
 static int chkstate(int state, unsigned int c) {
     switch (state) {
         case 1:
-            state = (c == 0x9a ? 4 : 0);
-            break;
+            return c == 0x9a ? 4 : 0;
         case 2:
-            state = ((c == 0x80 || c == 0x81) ? 6 + (c & 1) : 0);
-            break;
+            return (c == 0x80 || c == 0x81) ? 6 + (c & 1) : 0;
         case 3:
-            state = (c == 0x80 ? 5 : 0);
-            break;
+            return c == 0x80 ? 5 : 0;
         case 4:
-            state = (c == 0x80 ? 10 : 0);
-            break;
+            return c == 0x80 ? 10 : 0;
         case 5:
-            state = (c == 0x80 ? 10 : 0);
-            break;
+            return c == 0x80 ? 10 : 0;
         case 6:
-            state = 0;
             if (c == 0xa0 || c == 0xa1) {
                 return 10;
             } else if ((c & 0xf0) == 0x80) {
                 if ((c &= 0xf) == 7) return iswspace(0x2007) ? 10 : 0;
-                if (c <= 0xb) return (10);
+                if (c <= 0xb) return 10;
             } else if (c == 0xaf && iswspace(0x202f)) {
                 return 10;
             }
-            break;
+            return 0;
         case 7:
-            state = (c == 0x9f ? 10 : 0);
-            break;
+            return c == 0x9f ? 10 : 0;
         case 8:
             return iswspace(c) ? 10 : 0;
-            break;
-        default:;  // EMPTY BLOCK
+        default:
+            // This is suspicious. There is an explicit `state == 10` test below and we return that
+            // magic value above. But it's not clear if this should ever be called with a value
+            // outside the range [1, 8]. And if that is true then this should be `abort()`.
+            return state;
     }
-    return state;
 }
 
 /*
