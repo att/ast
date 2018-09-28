@@ -484,25 +484,26 @@ static_fn int parserep(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s, in
                 break;
         }
     }
+
     if (n < rex->lo) return r;
-    if (!(rex->flags & REG_MINIMAL) || n >= rex->hi) {
-        if (env->stack && pospush(env, rex, s, END_ANY)) return BAD;
-        i = follow(env, rex, cont, s);
-        if (env->stack) pospop(env);
-        switch (i) {
-            case BAD:
-                r = BAD;
-                break;
-            case CUT:
-                r = CUT;
-                break;
-            case BEST:
-                r = BEST;
-                break;
-            case GOOD:
-                r = (rex->flags & REG_MINIMAL) ? BEST : GOOD;
-                break;
-        }
+    if (n < rex->hi && rex->flags & REG_MINIMAL) return r;
+    if (env->stack && pospush(env, rex, s, END_ANY)) return BAD;
+
+    i = follow(env, rex, cont, s);
+    if (env->stack) pospop(env);
+    switch (i) {
+        case BAD:
+            r = BAD;
+            break;
+        case CUT:
+            r = CUT;
+            break;
+        case BEST:
+            r = BEST;
+            break;
+        case GOOD:
+            r = (rex->flags & REG_MINIMAL) ? BEST : GOOD;
+            break;
     }
     return r;
 }
