@@ -47,7 +47,7 @@ static_fn char *sffmtint(const char *str, int *v) {
 static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t *ft, int type) {
     int base, fmt, flags, dot, width, precis;
     ssize_t n_str, size;
-    char *t_str, *sp;
+    char *t_str;
     int v, n, skip, dollar, decimal, thousand;
     Sffmt_t savft;
     Fmtpos_t *fp; /* position array of arguments	*/
@@ -65,17 +65,17 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
     while ((n = *form)) {
         if (n != '%') /* collect the non-pattern chars */
         {
-            sp = (char *)form;
             for (;;) {
                 form += SFMBLEN(form, &fmbs);
                 if (*form == 0 || *form == '%') break;
             }
             continue;
-        } else
+        } else {
             form += 1;
-        if (*form == 0)
+        }
+        if (*form == 0) {
             break;
-        else if (*form == '%') {
+        } else if (*form == '%') {
             form += 1;
             continue;
         }
@@ -88,7 +88,7 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
         } else /* get the position of this argument */
         {
             skip = 0;
-            sp = sffmtint(form, &argp);
+            char *sp = sffmtint(form, &argp);
             if (*sp == '$') {
                 dollar = 1;
                 form = sp + 1;
