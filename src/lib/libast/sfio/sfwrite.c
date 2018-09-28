@@ -77,7 +77,7 @@ ssize_t sfwrite(Sfio_t *f, const void *buf, size_t n) {
     for (;; f->mode &= ~SF_LOCK) { /* check stream mode */
         if (SFMODE(f, local) != SF_WRITE && _sfmode(f, SF_WRITE, local) < 0) {
             w = s > begs ? s - begs : -1;
-            SFMTXRETURN(f, w);
+            SFMTXRETURN(f, w)
         }
 
         SFLOCK(f, local)

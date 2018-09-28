@@ -149,5 +149,5 @@ done:
     if (!local && f && (f->mode & SF_POOL) && f->pool && f != f->pool->sf[0])
         SFSYNC(f->pool->sf[0]);
 
-    SFMTXRETURN(origf, rv);
+    SFMTXRETURN(origf, rv)
 }
