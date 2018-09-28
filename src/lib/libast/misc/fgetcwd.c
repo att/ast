@@ -92,10 +92,10 @@ char *fgetcwd(int fd, char *buf, size_t len) {
         {"HOME", NULL, 0, 0},
     };
 
-    if (buf && !len) ERROR(EINVAL);
+    if (buf && !len) ERROR(EINVAL)
     cur = &curst;
     par = &parst;
-    if (fstatat(fd, ".", par, 0)) ERROR(errno);
+    if (fstatat(fd, ".", par, 0)) ERROR(errno)
 
     for (n = 0; n < elementsof(env); n++) {
         p = env[n].name ? getenv(env[n].name) : NULL;
@@ -109,10 +109,10 @@ char *fgetcwd(int fd, char *buf, size_t len) {
         if (cur->st_ino == par->st_ino && cur->st_dev == par->st_dev) {
             namlen = strlen(p) + 1;
             if (buf) {
-                if (len < namlen) ERROR(ERANGE);
+                if (len < namlen) ERROR(ERANGE)
             } else {
                 buf = calloc(1, namlen + len);
-                if (!buf) ERROR(ENOMEM);
+                if (!buf) ERROR(ENOMEM)
             }
             return memcpy(buf, p, namlen);
         }
@@ -122,29 +122,29 @@ char *fgetcwd(int fd, char *buf, size_t len) {
         extra = len;
         len = PATH_MAX;
         buf = calloc(1, len + extra);
-        if (!buf) ERROR(ENOMEM);
+        if (!buf) ERROR(ENOMEM)
     }
     p = buf + len - 1;
     *p = 0;
     n = elementsof(env);
     dd = fd;
-    if (dd != AT_FDCWD && fchdir(dd)) ERROR(errno);
+    if (dd != AT_FDCWD && fchdir(dd)) ERROR(errno)
     for (;;) {
         tmp = cur;
         cur = par;
         par = tmp;
         dd = openat(fd, "..", O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
         if (dd < 0) {
-            ERROR(errno);
+            ERROR(errno)
         }
-        if (fstat(dd, par)) ERROR(errno);
+        if (fstat(dd, par)) ERROR(errno)
         if (par->st_dev == cur->st_dev && par->st_ino == cur->st_ino) {
             close(dd);
             *--p = '/';
             break;
         }
         if (dirp) closedir(dirp);
-        if (!(dirp = fdopendir(dd))) ERROR(errno);
+        if (!(dirp = fdopendir(dd))) ERROR(errno)
         fd = dd;
 #ifdef D_FILENO
         if (par->st_dev == cur->st_dev) {
@@ -163,7 +163,7 @@ char *fgetcwd(int fd, char *buf, size_t len) {
         }
 #endif
         do {
-            if (!(entry = readdir(dirp))) ERROR(ENOENT);
+            if (!(entry = readdir(dirp))) ERROR(ENOENT)
         } while (fstatat(fd, entry->d_name, &tstst, AT_SYMLINK_NOFOLLOW) ||
                  tstst.st_ino != cur->st_ino || tstst.st_dev != cur->st_dev);
         namlen = D_NAMLEN(entry);
@@ -172,10 +172,10 @@ char *fgetcwd(int fd, char *buf, size_t len) {
         while ((p -= namlen) <= (buf + 1)) {
             x = (buf + len - 1) - (p + namlen);
             s = buf + len;
-            if (extra < 0) ERROR(ERANGE);
+            if (extra < 0) ERROR(ERANGE)
             len += PATH_MAX;
             buf = realloc(buf, len + extra);
-            if (!buf) ERROR(ERANGE);
+            if (!buf) ERROR(ERANGE)
             p = buf + len;
             while (p > buf + len - 1 - x) *--p = *--s;
         }
@@ -204,7 +204,7 @@ char *fgetcwd(int fd, char *buf, size_t len) {
         len = s - buf;
         if (extra >= 0) {
             buf = realloc(buf, len + extra);
-            if (!buf) ERROR(ENOMEM);
+            if (!buf) ERROR(ENOMEM)
         }
     }
     if (env[0].path) free(env[0].path);
@@ -212,9 +212,10 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     if (dd != AT_FDCWD) fchdir(dd);
     if (dirp) closedir(dirp);
     return buf;
+
 error:
     if (buf && extra >= 0) free(buf);
     if (dirp) closedir(dirp);
     if (dd != AT_FDCWD) fchdir(dd);
-    return 0;
+    return NULL;
 }
