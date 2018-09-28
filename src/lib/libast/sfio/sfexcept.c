@@ -62,26 +62,24 @@ int _sfexcept(Sfio_t *f, int type, ssize_t io, Sfdisc_t *disc) {
     }
 
     if (f->flags & SF_STRING) {
-        if (type == SF_READ)
-            goto chk_stack;
-        else if (type != SF_WRITE && type != SF_SEEK)
-            SFMTXRETURN(f, SF_EDONE)
-        if (local && io >= 0) {
-            if (f->size >= 0 && !(f->flags & SF_MALLOC)) goto chk_stack;
-            /* extend buffer */
-            if ((size = f->size) < 0) size = 0;
-            if ((io -= size) <= 0) io = SF_GRAIN;
-            size = ((size + io + SF_GRAIN - 1) / SF_GRAIN) * SF_GRAIN;
-            if (f->size > 0)
-                data = (uchar *)realloc((char *)f->data, size);
-            else
-                data = (uchar *)malloc(size);
-            if (!data) goto chk_stack;
-            f->endb = data + size;
-            f->next = data + (f->next - f->data);
-            f->endr = f->endw = f->data = data;
-            f->size = size;
+        if (type == SF_READ) goto chk_stack;
+        if (type != SF_WRITE && type != SF_SEEK) SFMTXRETURN(f, SF_EDONE)
+        if (!local || io < 0) SFMTXRETURN(f, SF_EDISC)
+        if (f->size >= 0 && !(f->flags & SF_MALLOC)) goto chk_stack;
+        // Extend buffer.
+        if ((size = f->size) < 0) size = 0;
+        if ((io -= size) <= 0) io = SF_GRAIN;
+        size = ((size + io + SF_GRAIN - 1) / SF_GRAIN) * SF_GRAIN;
+        if (f->size > 0) {
+            data = (uchar *)realloc((char *)f->data, size);
+        } else {
+            data = (uchar *)malloc(size);
         }
+        if (!data) goto chk_stack;
+        f->endb = data + size;
+        f->next = data + (f->next - f->data);
+        f->endr = f->endw = f->data = data;
+        f->size = size;
         SFMTXRETURN(f, SF_EDISC)
     }
 
