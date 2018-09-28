@@ -308,7 +308,6 @@ S2F_function(const char *str, char **end)
         if (((c) == 'i' || c == 'I') && ((c = GET(s)) == 'n' || c == 'N') &&
             ((c = GET(s)) == 'i' || c == 'I') && ((c = GET(s)) == 't' || c == 'T') &&
             ((c = GET(s)) == 'y' || c == 'Y')) {
-            c = GET(s);
             SET(s, t, b);
         }
         REV(s, t, b);
