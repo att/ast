@@ -308,20 +308,19 @@ defer:
         if ((n = s - t) && *t == '/') {
             if (q) {
                 for (i = 0; i < 2; i++) {
-                    if (n == equiv[i].len && !strncmp(t, equiv[i].path, n)) {
-                        if (m & (i + 1))
-                            t = 0;
-                        else {
-                            m |= (i + 1);
-                            if (!(m & (!i + 1))) {
-                                m |= (!i + 1);
-                                e->path = t;
-                                e->len = n;
-                                e++;
-                                if (e >= &std[elementsof(std)]) break;
-                                t = equiv[!i].path;
-                                n = equiv[!i].len;
-                            }
+                    if (n != equiv[i].len || strncmp(t, equiv[i].path, n)) continue;
+                    if (m & (i + 1)) {
+                        t = 0;
+                    } else {
+                        m |= (i + 1);
+                        if (!(m & (!i + 1))) {
+                            m |= (!i + 1);
+                            e->path = t;
+                            e->len = n;
+                            e++;
+                            if (e >= &std[elementsof(std)]) break;
+                            t = equiv[!i].path;
+                            n = equiv[!i].len;
                         }
                     }
                 }
