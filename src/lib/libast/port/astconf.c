@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -452,78 +453,79 @@ static_fn void astconf_initialize(Feature_t *fp, const char *path, const char *c
             break;
         case OP_universe:
             ok = !strcmp(_UNIV_DEFAULT, DEFAULT(OP_universe));
-            /*FALLTHROUGH...*/
-        default:
+            // FALLTHROUGH
+        default: {
             p = getenv("PATH");
-            if (p) {
-                int r = 1;
-                char *d = p;
-                Sfio_t *tmp;
+            if (!p) break;
 
 #if DEBUG_astconf
-                error(-6, "astconf initialize name=%s ok=%d PATH=%s", fp->name, ok, p);
+            error(-6, "astconf initialize name=%s ok=%d PATH=%s", fp->name, ok, p);
 #endif
-                tmp = sfstropen();
-                if (tmp) {
-                    for (;;) {
-                        switch (*p++) {
-                            case 0:
-                                break;
-                            case ':':
-                                if (command && fp->op != OP_universe) {
-                                    r = p - d - 1;
-                                    if (r) {
-                                        sfwrite(tmp, d, r);
-                                        sfputc(tmp, '/');
-                                        sfputr(tmp, command, 0);
-                                        if ((d = sfstruse(tmp)) && !eaccess(d, X_OK)) {
-                                            ok = 1;
-                                            if (fp->op != OP_universe) break;
-                                        }
-                                    }
-                                    d = p;
-                                }
-                                r = 1;
-                                continue;
-                            case '/':
-                                if (r) {
-                                    r = 0;
-                                    if (fp->op == OP_universe) {
-                                        if (p[0] == 'u' && p[1] == 's' && p[2] == 'r' &&
-                                            p[3] == '/')
-                                            for (p += 4; *p == '/'; p++) {
-                                                ;  // empty loop
-                                            }
-                                        if (p[0] == 'b' && p[1] == 'i' && p[2] == 'n') {
-                                            for (p += 3; *p == '/'; p++) {
-                                                ;  // empty loop
-                                            }
-                                            if (!*p || *p == ':') break;
-                                        }
-                                    }
-                                }
-                                if (fp->op == OP_universe) {
-                                    if (!strncmp(p, "xpg", 3)) {
-                                        ok = 1;
-                                        break;
-                                    }
-                                    if (!strncmp(p, "bsd", 3) || !strncmp(p, "ucb", 3)) {
-                                        ok = 0;
-                                        break;
-                                    }
-                                }
-                                continue;
-                            default:
-                                r = 0;
-                                continue;
-                        }
-                        break;
-                    }
-                    sfclose(tmp);
-                } else
-                    ok = 1;
+            Sfio_t *tmp = sfstropen();
+            if (!tmp) {
+                ok = 1;
+                break;
             }
+
+            int r = 1;
+            char *d = p;
+            for (;;) {
+                switch (*p++) {
+                    case 0:
+                        break;
+                    case ':':
+                        if (command && fp->op != OP_universe) {
+                            r = p - d - 1;
+                            if (r) {
+                                sfwrite(tmp, d, r);
+                                sfputc(tmp, '/');
+                                sfputr(tmp, command, 0);
+                                if ((d = sfstruse(tmp)) && !eaccess(d, X_OK)) {
+                                    ok = 1;
+                                    if (fp->op != OP_universe) break;
+                                }
+                            }
+                            d = p;
+                        }
+                        r = 1;
+                        continue;
+                    case '/':
+                        if (r) {
+                            r = 0;
+                            if (fp->op == OP_universe) {
+                                if (p[0] == 'u' && p[1] == 's' && p[2] == 'r' &&
+                                    p[3] == '/')
+                                    for (p += 4; *p == '/'; p++) {
+                                        ;  // empty loop
+                                    }
+                                if (p[0] == 'b' && p[1] == 'i' && p[2] == 'n') {
+                                    for (p += 3; *p == '/'; p++) {
+                                        ;  // empty loop
+                                    }
+                                    if (!*p || *p == ':') break;
+                                }
+                            }
+                        }
+                        if (fp->op == OP_universe) {
+                            if (!strncmp(p, "xpg", 3)) {
+                                ok = 1;
+                                break;
+                            }
+                            if (!strncmp(p, "bsd", 3) || !strncmp(p, "ucb", 3)) {
+                                ok = 0;
+                                break;
+                            }
+                        }
+                        continue;
+                    default:
+                        r = 0;
+                        continue;
+                }
+                break;
+            }
+            sfclose(tmp);
             break;
+        }
     }
 #if DEBUG_astconf
     error(-6, "state.std=%d %s [%s] std=%s ast=%s value=%s ok=%d", state.std, fp->name,
@@ -711,8 +713,6 @@ static_fn int astconf_lookup(Lookup_t *look, const char *name, unsigned int flag
     Conf_t *mid = (Conf_t *)conf;
     Conf_t *lo = mid;
     Conf_t *hi = mid + conf_elements;
-    int v;
-    int c;
     char *e;
     const Prefix_t *p;
 
@@ -723,49 +723,51 @@ static_fn int astconf_lookup(Lookup_t *look, const char *name, unsigned int flag
     look->standard = (flags & ASTCONF_AST) ? CONF_AST : -1;
     look->section = -1;
     while (*name == '_') name++;
+
 again:
-    for (p = prefix; p < &prefix[prefix_elements]; p++)
-        if (!strncmp(name, p->name, p->length) &&
-            ((c = name[p->length] == '_' || name[p->length] == '(' || name[p->length] == '#') ||
-             (v = isdigit(name[p->length]) && name[p->length + 1] == '_'))) {
-            if (p->call < 0) {
-                if (look->standard >= 0) break;
-                look->standard = p->standard;
-            } else {
-                if (look->call >= 0) break;
-                look->call = p->call;
-            }
-            if (name[p->length] == '(' || name[p->length] == '#') {
-                look->conf = &num;
-                strlcpy((char *)num.name, name, sizeof(num.name));
-                num.call = p->call;
-                num.flags = *name == 'C' ? CONF_STRING : 0;
-                num.op = (short)strtol(name + p->length + 1, &e, 10);
-                if (name[p->length] == '(' && *e == ')') e++;
-                if (*e) break;
-                return 1;
-            }
-            name += p->length + c;
-            if (look->section < 0 && !c && v) {
-                look->section = name[0] - '0';
-                name += 2;
-            }
-            goto again;
+    for (p = prefix; p < &prefix[prefix_elements]; p++) {
+        if (strncmp(name, p->name, p->length)) continue;
+        bool c = name[p->length] == '_' || name[p->length] == '(' || name[p->length] == '#';
+        bool v = isdigit(name[p->length]) && name[p->length + 1] == '_';
+        if (!c && !v) continue;
+
+        if (p->call < 0) {
+            if (look->standard >= 0) break;
+            look->standard = p->standard;
+        } else {
+            if (look->call >= 0) break;
+            look->call = p->call;
         }
-#if HUH_2006_02_10
-    if (look->section < 0) look->section = 1;
-#endif
+        if (name[p->length] == '(' || name[p->length] == '#') {
+            look->conf = &num;
+            strlcpy((char *)num.name, name, sizeof(num.name));
+            num.call = p->call;
+            num.flags = *name == 'C' ? CONF_STRING : 0;
+            num.op = (short)strtol(name + p->length + 1, &e, 10);
+            if (name[p->length] == '(' && *e == ')') e++;
+            if (*e) break;
+            return 1;
+        }
+        name += p->length + (int)c;
+        if (look->section < 0 && !c && v) {
+            look->section = name[0] - '0';
+            name += 2;
+        }
+        goto again;
+    }
+
     look->name = name;
 #if DEBUG_astconf
     error(-6, "astconf normal name=%s standard=%d section=%d call=%d flags=%04x elements=%d",
           look->name, look->standard, look->section, look->call, flags, conf_elements);
 #endif
-    c = *((unsigned char *)name);
+    int c = *((unsigned char *)name);
     while (lo <= hi) {
         mid = lo + (hi - lo) / 2;
 #if DEBUG_astconf
         error(-7, "astconf lookup name=%s mid=%s", name, mid->name);
 #endif
+        int v;
         if (!(v = c - *((unsigned char *)mid->name)) && !(v = strcmp(name, mid->name))) {
             hi = mid;
             lo = (Conf_t *)conf;
