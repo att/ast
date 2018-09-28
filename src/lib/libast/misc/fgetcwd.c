@@ -98,22 +98,23 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     if (fstatat(fd, ".", par, 0)) ERROR(errno);
 
     for (n = 0; n < elementsof(env); n++) {
-        if (((env[n].name && (p = getenv(env[n].name))) || (p = env[n].path)) && *p == '/') {
-            if (stat(p, cur) == 0) {
-                env[n].path = p;
-                env[n].dev = cur->st_dev;
-                env[n].ino = cur->st_ino;
-                if (cur->st_ino == par->st_ino && cur->st_dev == par->st_dev) {
-                    namlen = strlen(p) + 1;
-                    if (buf) {
-                        if (len < namlen) ERROR(ERANGE);
-                    } else {
-                        buf = calloc(1, namlen + len);
-                        if (!buf) ERROR(ENOMEM);
-                    }
-                    return memcpy(buf, p, namlen);
-                }
+        p = env[n].name ? getenv(env[n].name) : NULL;
+        if (!p) p = env[n].path;
+        if (!p || *p != '/') continue;
+        if (stat(p, cur) != 0) continue;
+
+        env[n].path = p;
+        env[n].dev = cur->st_dev;
+        env[n].ino = cur->st_ino;
+        if (cur->st_ino == par->st_ino && cur->st_dev == par->st_dev) {
+            namlen = strlen(p) + 1;
+            if (buf) {
+                if (len < namlen) ERROR(ERANGE);
+            } else {
+                buf = calloc(1, namlen + len);
+                if (!buf) ERROR(ENOMEM);
             }
+            return memcpy(buf, p, namlen);
         }
     }
 
