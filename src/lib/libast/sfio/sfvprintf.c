@@ -390,19 +390,25 @@ loop_fmt:
                 } else
                     n = FP_SET(-1, argn);
 
-                if (fp)
+                if (fp) {
                     v = fp[n].argv.i;
-                else if (ft && ft->extf) {
+                } else if (ft && ft->extf) {
                     FMTSET(ft, form, args, '.', dot, 0, 0, 0, 0, NULL, 0);
                     if ((*ft->extf)(f, (void *)(&argv), ft) < 0) goto pop_fmt;
-                    fmt = ft->fmt;
+                    // The result of this assignment is never used according to compiler static
+                    // analysis. So I've commented it out but otherwise leave it just in case it
+                    // provides a clue for fixing a bug involving this var.
+                    //
+                    // fmt = ft->fmt;
                     flags = (flags & ~SFFMT_TYPES) | (ft->flags & SFFMT_TYPES);
-                    if (ft->flags & SFFMT_VALUE)
+                    if (ft->flags & SFFMT_VALUE) {
                         v = argv.i;
-                    else
+                    } else {
                         v = (dot <= 2) ? va_arg(args, int) : 0;
-                } else
+                    }
+                } else {
                     v = dot <= 2 ? va_arg(args, int) : 0;
+                }
                 goto dot_set;
 
             case '1':
