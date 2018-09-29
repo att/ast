@@ -162,7 +162,7 @@ static_fn Sfdouble_t nget_cur_eof(Namval_t *np, Namfun_t *fp) {
     Sfoff_t end, cur = lseek(ep->fd, (Sfoff_t)0, SEEK_CUR);
 
     if (*np->nvname == 'C') return (Sfdouble_t)cur;
-    if (cur < 0) return ((Sfdouble_t)-1);
+    if (cur < 0) return (Sfdouble_t)-1;
     end = lseek(ep->fd, (Sfoff_t)0, SEEK_END);
     lseek(ep->fd, (Sfoff_t)0, SEEK_CUR);
     return (Sfdouble_t)end;
@@ -610,7 +610,7 @@ int sh_open(const char *path, int flags, ...) {
 
     if (strncmp(path, "/dev/", sizeof("/dev/") - 1) == 0) {
         if (strncmp(path, "/dev/fd/", sizeof("/dev/fd/") - 1) == 0) {
-            if (flags == O_NONBLOCK) return (1);
+            if (flags == O_NONBLOCK) return 1;
             fd = (int)strtol(path + sizeof("/dev/fd/") - 1, &e, 10);
             if (*e) fd = -1;
         } else if (strcmp(path, "/dev/stdin") == 0) {
@@ -623,7 +623,7 @@ int sh_open(const char *path, int flags, ...) {
 
         if (fd < 0) {
             if ((fd = inetopen(path + 5, flags, onintr, shp)) < 0 && errno != ENOTDIR) return -1;
-            if (flags == O_NONBLOCK) return (fd >= 0);
+            if (flags == O_NONBLOCK) return fd >= 0;
             if (fd >= 0) goto ok;
         }
         if (flags == O_NONBLOCK) return 0;
@@ -691,7 +691,7 @@ int sh_chkopen(const char *name) {
 int sh_iomovefd(Shell_t *shp, int fdold) {
     int fdnew;
     if (!sh_iovalidfd(shp, fdold)) abort();
-    if (fdold < 0 || fdold > 9) return (fdold);
+    if (fdold < 0 || fdold > 9) return fdold;
 
     fdnew = sh_iomovefd(shp, sh_fcntl(fdold, F_DUPFD_CLOEXEC, 10));
     if (!sh_iovalidfd(shp, fdnew)) abort();
@@ -823,7 +823,7 @@ static_fn int pat_line(const regex_t *rp, const char *buff, size_t n) {
         for (sp = cp; n-- > 0 && *cp++ != '\n';) {
             ;  // empty loop
         }
-        if (regnexec(rp, sp, cp - sp, 0, NULL, 0) == 0) return (sp - buff);
+        if (regnexec(rp, sp, cp - sp, 0, NULL, 0) == 0) return sp - buff;
     }
     return cp - buff;
 }
@@ -909,7 +909,7 @@ static_fn char *io_usename(Shell_t *shp, char *name, int *perm, int fno, int mod
             r = fstat(fd, &statb);
             sh_close(fd);
             if (r) return 0;
-            if (!S_ISREG(statb.st_mode)) return (0);
+            if (!S_ISREG(statb.st_mode)) return 0;
             if (!(statb.st_mode & (S_IWUSR | S_IWOTH))) {
                 if (!(statb.st_mode & S_IWGRP) && sh_access(name, W_OK)) {
                     errno = EPERM;
@@ -1381,7 +1381,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                 if (np) sfprintf(sfstderr, "{%s", nv_name(np));
                 sfprintf(sfstderr, "%s %s%s%c", io_op, fname, after, iop->ionxt ? ' ' : '\n');
             }
-            if (flag == SH_SHOWME) return (indx);
+            if (flag == SH_SHOWME) return indx;
             if (trace && fname) {
                 char *argv[7], **av = argv;
                 av[3] = io_op;
@@ -1493,7 +1493,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                 }
                 if (!vex || !(iof & IODOC)) sh_close(fn);
             }
-            if (flag == 3) return (fd);
+            if (flag == 3) return fd;
             if (fd >= 0) {
                 if (np) {
                     int32_t v;
@@ -1966,7 +1966,7 @@ static_fn int slowexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
         sfpurge(iop);
         return -1;
     }
-    if (type != SF_READ) return (0);
+    if (type != SF_READ) return 0;
     if ((shp->trapnote & (SH_SIGSET | SH_SIGTRAP)) && errno != EIO && errno != ENXIO) errno = EINTR;
     fno = sffileno(iop);
     if ((n = sfvalue(iop)) <= 0) {
@@ -1997,7 +1997,7 @@ static_fn int slowexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
     } else {
         n = 0;
     }
-    if (shp->bltinfun && shp->bltindata.sigset) return (-1);
+    if (shp->bltinfun && shp->bltindata.sigset) return -1;
     errno = 0;
     if (shp->trapnote & SH_SIGSET) {
         if (isatty(fno)) sfputc(sfstderr, '\n');
@@ -2077,7 +2077,7 @@ static_fn ssize_t slowread(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *handl
         return -1;
     }
     while (1) {
-        if (io_prompt(shp, iop, shp->nextprompt) < 0 && errno == EIO) return (0);
+        if (io_prompt(shp, iop, shp->nextprompt) < 0 && errno == EIO) return 0;
         if (shp->timeout) {
             timeout = sh_timeradd(sh_isstate(shp, SH_GRACE) ? 1000L * TGRACE : 1000L * shp->timeout,
                                   0, time_grace, shp);
@@ -2131,12 +2131,18 @@ int sh_iocheckfd(Shell_t *shp, int fd, int fn) {
     if ((n = shp->fdstatus[fd]) & IOCLOSE) return n;
     if (!(n & (IOREAD | IOWRITE))) {
 #ifdef F_GETFL
-        if ((flags = fcntl(fd, F_GETFL, 0)) < 0) return (shp->fdstatus[fd] = IOCLOSE);
+        if ((flags = fcntl(fd, F_GETFL, 0)) < 0) {
+            shp->fdstatus[fd] = IOCLOSE;
+            return IOCLOSE;
+        }
         if ((flags & O_ACCMODE) != O_WRONLY) n |= IOREAD;
         if ((flags & O_ACCMODE) != O_RDONLY) n |= IOWRITE;
 #else
         struct stat statb;
-        if ((flags = fstat(fd, &statb)) < 0) return (shp->fdstatus[fd] = IOCLOSE);
+        if ((flags = fstat(fd, &statb)) < 0) {
+            shp->fdstatus[fd] = IOCLOSE;
+            return IOCLOSE;
+        }
         n |= (IOREAD | IOWRITE);
         if (read(fd, "", 0) < 0) n &= ~IOREAD;
 #endif /* F_GETFL */
@@ -2205,7 +2211,7 @@ static_fn int io_prompt(Shell_t *shp, Sfio_t *iop, int flag) {
 
     if (flag < 3 && !sh_isstate(shp, SH_INTERACTIVE)) flag = 0;
     if (flag == 2 && sfpkrd(sffileno(iop), buff, 1, '\n', 0, 1) >= 0) flag = 0;
-    if (flag == 0) return (sfsync(sfstderr));
+    if (flag == 0) return sfsync(sfstderr);
     sfflags = sfset(sfstderr, SF_SHARE | SF_PUBLIC | SF_READ, 0);
     if (!(shp->prompt = (char *)sfreserve(sfstderr, 0, 0))) shp->prompt = "";
     sh_onstate(shp, SH_IOPROMPT);
@@ -2442,7 +2448,7 @@ static_fn ssize_t subread(Sfio_t *sp, void *buff, size_t size, Sfdisc_t *handle)
     ssize_t n;
 
     sfseek(disp->oldsp, disp->offset, SEEK_SET);
-    if (disp->left == 0) return (0);
+    if (disp->left == 0) return 0;
     if (size > disp->left) size = disp->left;
     disp->left -= size;
     n = sfread(disp->oldsp, buff, size);
@@ -2539,7 +2545,7 @@ ssize_t sh_read(int fd, void *buff, size_t n) {
     Sfio_t *sp;
 
     sp = shp->sftable[fd];
-    if (sp) return (sfread(sp, buff, n));
+    if (sp) return sfread(sp, buff, n);
     while ((r = read(fd, buff, n)) < 0 && errno == EINTR) errno = err;
     return r;
 }
@@ -2556,7 +2562,7 @@ ssize_t sh_write(int fd, const void *buff, size_t n) {
     if (!sh_iovalidfd(shp, fd)) abort();
 
     sp = shp->sftable[fd];
-    if (sp) return (sfwrite(sp, buff, n));
+    if (sp) return sfwrite(sp, buff, n);
     while ((r = write(fd, buff, n)) < 0 && errno == EINTR) errno = err;
     return r;
 }
@@ -2569,9 +2575,9 @@ off_t sh_seek(int fd, off_t offset, int whence) {
     Sfio_t *sp;
     if (!sh_iovalidfd(shp, fd)) abort();
     if ((sp = shp->sftable[fd]) && (sfset(sp, 0, 0) & (SF_READ | SF_WRITE))) {
-        return (sfseek(sp, offset, whence));
+        return sfseek(sp, offset, whence);
     }
-    return (lseek(fd, offset, whence));
+    return lseek(fd, offset, whence);
 }
 
 int sh_dup(int old) {
@@ -2628,7 +2634,7 @@ int sh_fcntl(int fd, int op, ...) {
 mode_t sh_umask(mode_t m) {
     Shell_t *shp = sh_getinterp();
     shp->mask = m;
-    return (umask(m));
+    return umask(m);
 }
 
 //
@@ -2649,7 +2655,7 @@ Sfio_t *sh_iogetiop(int fd, int mode) {
     }
     switch (fd) {
         case SH_IOHISTFILE: {
-            if (!sh_histinit((void *)shp)) return (iop);
+            if (!sh_histinit((void *)shp)) return iop;
             fd = sffileno(shp->gd->hist_ptr->histfp);
             break;
         }
@@ -2670,8 +2676,8 @@ Sfio_t *sh_iogetiop(int fd, int mode) {
         return iop;
     }
     if (!(n = shp->fdstatus[fd])) n = sh_iocheckfd(shp, fd, fd);
-    if (mode == SF_WRITE && !(n & IOWRITE)) return (iop);
-    if (mode == SF_READ && !(n & IOREAD)) return (iop);
+    if (mode == SF_WRITE && !(n & IOWRITE)) return iop;
+    if (mode == SF_READ && !(n & IOREAD)) return iop;
     iop = shp->sftable[fd];
     if (!iop) iop = sh_iostream(shp, fd, fd);
     return iop;
@@ -2683,7 +2689,7 @@ Notify_f sh_fdnotify(Notify_f notify) {
     Notify_f old;
     old = fdnotify;
     fdnotify = notify;
-    return (old);
+    return old;
 }
 
 Sfio_t *sh_fd2sfio_20120720(Shell_t *shp, int fd) {
@@ -2700,7 +2706,7 @@ Sfio_t *sh_fd2sfio_20120720(Shell_t *shp, int fd) {
     return sp;
 }
 #undef sh_fd2sfio
-Sfio_t *sh_fd2sfio(int fd) { return (sh_fd2sfio_20120720(sh_getinterp(), fd)); }
+Sfio_t *sh_fd2sfio(int fd) { return sh_fd2sfio_20120720(sh_getinterp(), fd); }
 
 Sfio_t *sh_pathopen(Shell_t *shp, const char *cp) {
     int n;
@@ -2717,7 +2723,7 @@ Sfio_t *sh_pathopen(Shell_t *shp, const char *cp) {
 }
 
 #undef sh_pathopen
-Sfio_t *sh_pathopen(const char *cp) { return (sh_pathopen_20120720(sh_getinterp(), cp)); }
+Sfio_t *sh_pathopen(const char *cp) { return sh_pathopen_20120720(sh_getinterp(), cp); }
 
 bool sh_isdevfd(const char *fd) {
     if (!fd || strncmp(fd, "/dev/fd/", 8) || fd[8] == 0) return false;

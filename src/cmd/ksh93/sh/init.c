@@ -264,7 +264,7 @@ static_fn void put_optindex(Namval_t *np, const void *val, int flags, Namfun_t *
 static_fn Sfdouble_t nget_optindex(Namval_t *np, Namfun_t *fp) {
     UNUSED(fp);
 
-    return ((Sfdouble_t)*np->nvalue.lp);
+    return (Sfdouble_t)*np->nvalue.lp;
 }
 
 static_fn Namfun_t *clone_optindex(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
@@ -717,7 +717,7 @@ static_fn char *get_options(Namval_t *np, Namfun_t *fp) {
     cp = stkptr(shp->stk, offset);
     nv_putv(np, cp, 0, fp);
     stkseek(shp->stk, offset);
-    return ((char *)np->nvalue.cp);
+    return (char *)np->nvalue.cp;
 }
 
 #if 0
@@ -863,17 +863,14 @@ static_fn char *get_match(Namval_t *np, Namfun_t *fp) {
     sub = nv_aindex(SH_MATCHNOD);
     if (sub < 0) sub = 0;
     if (np != SH_MATCHNOD) sub2 = nv_aindex(np);
-    if (sub >= mp->nmatch) return (0);
+    if (sub >= mp->nmatch) return 0;
     if (sub2 > 0) sub += sub2 * mp->nmatch;
-    if (sub == mp->lastsub[!i]) {
-        return (mp->rval[!i]);
-    } else if (sub == mp->lastsub[i]) {
-        return (mp->rval[i]);
-    }
+    if (sub == mp->lastsub[!i]) return mp->rval[!i];
+    if (sub == mp->lastsub[i]) return mp->rval[i];
     n = mp->match[2 * sub + 1] - mp->match[2 * sub];
-    if (n <= 0) return (mp->match[2 * sub] < 0 ? Empty : "");
+    if (n <= 0) return mp->match[2 * sub] < 0 ? Empty : "";
     val = mp->val + mp->match[2 * sub];
-    if (mp->val[mp->match[2 * sub + 1]] == 0) return (val);
+    if (mp->val[mp->match[2 * sub + 1]] == 0) return val;
     mp->index = i;
     if (mp->rval[i]) {
         free(mp->rval[i]);
@@ -897,7 +894,7 @@ static_fn char *name_match(Namval_t *np, Namfun_t *fp) {
 static const Namdisc_t SH_MATCH_disc = {
     .dsize = sizeof(struct match), .getval = get_match, .namef = name_match};
 
-static_fn char *get_version(Namval_t *np, Namfun_t *fp) { return (nv_getv(np, fp)); }
+static_fn char *get_version(Namval_t *np, Namfun_t *fp) { return nv_getv(np, fp); }
 
 // This is invoked when var `.sh.version` is used in a numeric context such as
 // `$(( .sh.version ))`.
@@ -993,7 +990,7 @@ static_fn char *name_math(Namval_t *np, Namfun_t *fp) {
     UNUSED(fp);
     Shell_t *shp = sh_ptr(np);
     sfprintf(shp->strbuf, ".sh.math.%s", np->nvname);
-    return (sfstruse(shp->strbuf));
+    return sfstruse(shp->strbuf);
 }
 
 static const Namdisc_t math_child_disc = {.dsize = 0, .namef = name_math};
@@ -1024,7 +1021,7 @@ static_fn Namval_t *create_math(Namval_t *np, const void *vp, int flag, Namfun_t
     UNUSED(flag);
     const char *name = vp;
     Shell_t *shp = sh_ptr(np);
-    if (!name) return (SH_MATHNOD);
+    if (!name) return SH_MATHNOD;
     if (name[0] != 'a' || name[1] != 'r' || name[2] != 'g' || name[4] || !isdigit(name[3]) ||
         (name[3] == '0' || (name[3] - '0') > MAX_MATH_ARGS)) {
         return 0;
@@ -1066,7 +1063,7 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
     if (!event) {
         if (!action) {
             mp = (Namval_t *)dtprev(shp->fun_tree, &fake);
-            return ((char *)dtnext(shp->fun_tree, mp));
+            return (char *)dtnext(shp->fun_tree, mp);
         }
         getname = 1;
     }
@@ -1075,7 +1072,7 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
     name = stkptr(shp->stk, off);
     mp = nv_search(name, shp->fun_tree, action ? NV_ADD : 0);
     stkseek(shp->stk, off);
-    if (getname) return (mp ? (char *)dtnext(shp->fun_tree, mp) : 0);
+    if (getname) return mp ? (char *)dtnext(shp->fun_tree, mp) : 0;
     if (action == np) action = mp;
     return action ? (char *)action : "";
 }
@@ -1091,7 +1088,7 @@ static const Namdisc_t SH_JOBPOOL_disc = {.dsize = 0, .setdisc = setdisc_any};
 // TODO: Decide if this function serves a purpose.
 static_fn char *get_nspace(Namval_t *np, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
-    if (shp->namespace) return (nv_name(shp->namespace));
+    if (shp->namespace) return nv_name(shp->namespace);
     return (char *)np->nvalue.cp;
 }
 #endif
@@ -1546,7 +1543,7 @@ int sh_reinit_20120720(Shell_t *shp, char *argv[]) {
     return 1;
 }
 #undef sh_reinit
-int sh_reinit(char *argv[]) { return (sh_reinit_20120720(sh_getinterp(), argv)); }
+int sh_reinit(char *argv[]) { return sh_reinit_20120720(sh_getinterp(), argv); }
 
 //
 // Set when creating a local variable of this name.
@@ -1567,7 +1564,7 @@ static const char *shdiscnames[] = {"tilde", 0};
 
 #if 0
 // TODO: Decide if this function serves a purpose.
-static_fn Namval_t *create_sig(Namval_t *np, const char *name, int flag, Namfun_t *fp) { return (0); }
+static_fn Namval_t *create_sig(Namval_t *np, const char *name, int flag, Namfun_t *fp) { return 0; }
 #endif
 
 typedef struct Svars {
@@ -2046,9 +2043,9 @@ static_fn void env_init(Shell_t *shp) {
 
 #define DISABLE  // proto workaround
 
-bool sh_isoption_20120720 DISABLE(Shell_t *shp, int opt) { return (sh_isoption(shp, opt)); }
+bool sh_isoption_20120720 DISABLE(Shell_t *shp, int opt) { return sh_isoption(shp, opt); }
 #undef sh_isoption
-bool sh_isoption DISABLE(int opt) { return (sh_isoption_20120720(sh_getinterp(), opt)); }
+bool sh_isoption DISABLE(int opt) { return sh_isoption_20120720(sh_getinterp(), opt); }
 
 void sh_onoption_20120720 DISABLE(Shell_t *shp, int opt) { sh_onoption(shp, opt); }
 #undef sh_onoption
@@ -2063,10 +2060,10 @@ void sh_sigcheck DISABLE(Shell_t *shp) {
     sh_sigcheck(shp);
 }
 
-Dt_t *sh_bltin_tree_20120720 DISABLE(Shell_t *shp) { return (shp->bltin_tree); }
+Dt_t *sh_bltin_tree_20120720 DISABLE(Shell_t *shp) { return shp->bltin_tree; }
 
 #undef sh_bltin_tree
-Dt_t *sh_bltin_tree DISABLE(void) { return (sh_getinterp()->bltin_tree); }
+Dt_t *sh_bltin_tree DISABLE(void) { return sh_getinterp()->bltin_tree; }
 
 //
 // This code is for character mapped variables with wctrans().
@@ -2120,7 +2117,7 @@ Namfun_t *nv_mapchar(Namval_t *np, const char *name) {
     int low = strcmp(name, e_tolower);
     if (low && strcmp(name, e_toupper)) n += strlen(name) + 1;
     if (mp) {
-        if (strcmp(name, mp->name) == 0) return (&mp->hdr);
+        if (strcmp(name, mp->name) == 0) return &mp->hdr;
         nv_disc(np, &mp->hdr, NV_POP);
         if (!(mp->hdr.nofree & 1)) free(mp);
     }

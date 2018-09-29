@@ -82,7 +82,7 @@ static_fn int dump_p_tree(const Shnode_t *t) {
                 if (sfputl(outfile, -1) < 0) return -1;
             }
             if (dump_p_tree(t->wh.whtre) < 0) return -1;
-            return (dump_p_tree(t->wh.dotre));
+            return dump_p_tree(t->wh.dotre);
         }
         case TLST:
         case TAND:
@@ -114,7 +114,7 @@ static_fn int dump_p_tree(const Shnode_t *t) {
         }
         case TTST: {
             if (sfputu(outfile, t->tst.tstline) < 0) return -1;
-            if ((t->tre.tretyp & TPAREN) == TPAREN) return (dump_p_tree(t->lst.lstlef));
+            if ((t->tre.tretyp & TPAREN) == TPAREN) return dump_p_tree(t->lst.lstlef);
             if (dump_p_arg(&(t->lst.lstlef->arg)) < 0) return -1;
             if ((t->tre.tretyp & TBINARY)) return dump_p_arg(&(t->lst.lstrit->arg));
             return 0;

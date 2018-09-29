@@ -183,7 +183,7 @@ elif cc.links('''
                 return r;
             }
             else {
-                return (*(p));
+                return *(p);
             }
         }
 

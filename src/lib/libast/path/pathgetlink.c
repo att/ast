@@ -39,11 +39,11 @@
 int pathgetlink(const char *name, char *buf, int siz) {
     int n;
 
-    if ((n = readlink(name, buf, siz)) < 0) return (-1);
+    if ((n = readlink(name, buf, siz)) < 0) return -1;
     if (n >= siz) {
         errno = EINVAL;
-        return (-1);
+        return -1;
     }
     buf[n] = 0;
-    return (n);
+    return n;
 }

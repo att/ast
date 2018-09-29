@@ -737,7 +737,7 @@ int sh_trap_20120720(Shell_t *shp, const char *trap, int mode) {
                                 ((struct checkpt *)shp->jmpbuffer)->mode == SH_JMPSCRIPT)) {
         siglongjmp(*shp->jmplist, jmpval);
     }
-    return (shp->exitval);
+    return shp->exitval;
 }
 
 #undef sh_trap

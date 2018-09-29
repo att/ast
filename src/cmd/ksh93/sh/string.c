@@ -62,10 +62,10 @@ const Shtable_t *sh_locate(const char *sp, const Shtable_t *table, int size) {
     int c;
     static const Shtable_t empty = {0, 0};
 
-    if (sp == 0 || (first = *sp) == 0) return (&empty);
+    if (sp == 0 || (first = *sp) == 0) return &empty;
     tp = table;
     while ((c = *tp->sh_name) && c <= first) {
-        if (first == c && strcmp(sp, tp->sh_name) == 0) return (tp);
+        if (first == c && strcmp(sp, tp->sh_name) == 0) return tp;
         tp = (Shtable_t *)((char *)tp + size);
     }
     return &empty;
@@ -252,7 +252,7 @@ static_fn char *sh_fmtcsv(const char *string) {
     while ((c = mb1char(cp)), isaname(c)) {
         ;  // empty loop
     }
-    if (c == 0) return ((char *)string);
+    if (c == 0) return (char *)string;
     stakputc('"');
     stakwrite(string, cp - string);
     if (c == '"') stakputc('"');
@@ -290,9 +290,9 @@ char *sh_fmtstr(const char *string, int quote) {
         while ((c = mb1char(cp)), isaname(c) && (!lc_unicodeliterals || c <= 0x7f)) {
             ;  // empty loop
         }
-        if (c == 0) return ((char *)string);
+        if (c == 0) return (char *)string;
         if (c == '=') {
-            if (*cp == 0) return ((char *)string);
+            if (*cp == 0) return (char *)string;
             if (*cp == '=') cp++;
             c = cp - string;
             stakwrite(string, c);
@@ -640,12 +640,12 @@ int sh_strchr(const char *string, const char *dp, size_t size) {
 
 const char *_sh_translate(const char *message) {
 #if ERROR_VERSION >= 20000317L
-    return (ERROR_translate(0, 0, e_dict, message));
+    return ERROR_translate(0, 0, e_dict, message);
 #else
 #if ERROR_VERSION >= 20000101L
-    return (ERROR_translate(e_dict, message));
+    return ERROR_translate(e_dict, message);
 #else
-    return (ERROR_translate(message, 1));
+    return ERROR_translate(message, 1);
 #endif
 #endif
 }

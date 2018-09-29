@@ -377,7 +377,7 @@ static_fn void nv_restore(struct subshell *sp) {
 //
 Dt_t *sh_subaliastree(Shell_t *shp, int create) {
     struct subshell *sp = subshell_data;
-    if (!sp || shp->curenv == 0) return (shp->alias_tree);
+    if (!sp || shp->curenv == 0) return shp->alias_tree;
     if (!sp->salias && create) {
         sp->salias = dtopen(&_Nvdisc, Dtoset);
         dtuserdata(sp->salias, shp, 1);
@@ -393,7 +393,7 @@ Dt_t *sh_subaliastree(Shell_t *shp, int create) {
 //
 Dt_t *sh_subfuntree(Shell_t *shp, int create) {
     struct subshell *sp = subshell_data;
-    if (!sp || shp->curenv == 0) return (shp->fun_tree);
+    if (!sp || shp->curenv == 0) return shp->fun_tree;
     if (!sp->sfun && create) {
         sp->sfun = dtopen(&_Nvdisc, Dtoset);
         dtuserdata(sp->sfun, shp, 1);

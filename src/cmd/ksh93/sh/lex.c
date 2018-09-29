@@ -369,7 +369,10 @@ int sh_lex(Lex_t *lp) {
                     }
                 }
                 // End-of-file.
-                if (mode == ST_BEGIN) return (lp->token = EOFSYM);
+                if (mode == ST_BEGIN) {
+                    lp->token = EOFSYM;
+                    return EOFSYM;
+                }
                 if (mode <= ST_NORM) goto breakloop;
                 if (lp->lexd.level <= 0) goto breakloop;
                 switch (c = endchar(lp)) {
@@ -426,7 +429,10 @@ int sh_lex(Lex_t *lp) {
                     while (state[c = fcpeek(0)] == 0) fcseek(1);
                 } while (c == '#');
                 lp->lexd.nocopy = n;
-                if (c < 0) return (lp->token = EOFSYM);
+                if (c < 0) {
+                    lp->token = EOFSYM;
+                    return EOFSYM;
+                }
                 n = S_NLTOK;
                 shp->inlineno--;
             }
@@ -500,17 +506,18 @@ int sh_lex(Lex_t *lp) {
                         if (c == '<') {
                             lp->lexd.docword = 1;
                         } else if (n == LPAREN) {
-                            if (lp->lex.intest || lp->comp_assign) return (c);
+                            if (lp->lex.intest || lp->comp_assign) return c;
                             lp->lexd.nest = 1;
                             lp->lastline = shp->inlineno;
                             lp->lexd.lex_state = ST_NESTED;
                             fcseek(1);
-                            return (sh_lex(lp));
+                            return sh_lex(lp);
                         }
                         c |= SYMREP;
-                    } else if (c == '(' || c == ')')
-                        return (lp->token = c);
-                    else if (c == '&') {
+                    } else if (c == '(' || c == ')') {
+                        lp->token = c;
+                        return c;
+                    } else if (c == '&') {
                         if (!sh_isoption(lp->sh, SH_POSIX) && n == '>' &&
                             (sh_isoption(lp->sh, SH_BASH) || sh_isstate(lp->sh, SH_PROFILE))) {
                             if (!sh_isoption(lp->sh, SH_BASH) && !lp->nonstandard) {
@@ -1051,7 +1058,7 @@ int sh_lex(Lex_t *lp) {
                     lp->token = LPAREN;
                     return lp->token;
                 }
-                if (mode == ST_NONE) return (0);
+                if (mode == ST_NONE) return 0;
                 if (c != n && lp->lex.incase < TEST_RE) {
                     lp->token = c;
                     sh_syntax(lp);
@@ -1119,21 +1126,30 @@ int sh_lex(Lex_t *lp) {
                 int isfirst;
                 if (lp->lexd.dolparen) {
                     if (mode == ST_BEGIN && (lp->lex.reservok || lp->comsub)) {
-                        if (lp->comsub) return (lp->token = c);
+                        if (lp->comsub) {
+                            lp->token = c;
+                            return c;
+                        }
                         n = fcgetc();
                         if (n > 0) {
                             fcseek(-LEN);
                         } else {
                             n = '\n';
                         }
-                        if (n == RBRACT || sh_lexstates[ST_NORM][n]) return (lp->token = c);
+                        if (n == RBRACT || sh_lexstates[ST_NORM][n]) {
+                            lp->token = c;
+                            return c;
+                        }
                     }
                     break;
                 } else if (mode == ST_NESTED && endchar(lp) == RBRACE) {
                     lp->lex.nestedbrace++;
                     continue;
                 } else if (mode == ST_BEGIN) {
-                    if (lp->comsub && c == RBRACE) return (lp->token = c);
+                    if (lp->comsub && c == RBRACE) {
+                        lp->token = c;
+                        return c;
+                    }
                     goto do_reg;
                 }
                 isfirst = (lp->lexd.first && fcseek(0) == lp->lexd.first + 1);
@@ -1225,7 +1241,8 @@ breakloop:
         if (n == LBRACT) {
             c = 0;
         } else if (n == RBRACE && lp->comsub) {
-            return (lp->token = n);
+            lp->token = n;
+            return n;
         } else if (n == '~') {
             c = ARG_MAC;
         } else {
@@ -1284,7 +1301,10 @@ breakloop:
     }
     lp->arg->argchn.cp = 0;
     lp->arg->argnxt.ap = 0;
-    if (mode == ST_NONE) return (lp->token = EXPRSYM);
+    if (mode == ST_NONE) {
+        lp->token = EXPRSYM;
+        return EXPRSYM;
+    }
     if (lp->lex.intest) {
         if (lp->lex.testop1) {
             lp->lex.testop1 = 0;
@@ -1810,16 +1830,16 @@ done:
 static_fn char *fmttoken(Lex_t *lp, int sym, char *tok) {
     int n = 1;
 
-    if (sym < 0) return ((char *)sh_translate(e_lexzerobyte));
-    if (sym == 0) return (lp->arg ? lp->arg->argval : "?");
-    if (lp->lex.intest && lp->arg && *lp->arg->argval) return (lp->arg->argval);
+    if (sym < 0) return (char *)sh_translate(e_lexzerobyte);
+    if (sym == 0) return lp->arg ? lp->arg->argval : "?";
+    if (lp->lex.intest && lp->arg && *lp->arg->argval) return lp->arg->argval;
     if (sym & SYMRES) {
         const Shtable_t *tp = shtab_reserved;
         while (tp->sh_number && tp->sh_number != sym) tp++;
         return (char *)tp->sh_name;
     }
-    if (sym == EOFSYM) return ((char *)sh_translate(e_endoffile));
-    if (sym == NL) return ((char *)sh_translate(e_newline));
+    if (sym == EOFSYM) return (char *)sh_translate(e_endoffile);
+    if (sym == NL) return (char *)sh_translate(e_newline);
     tok[0] = sym;
     if (sym & SYMREP) {
         tok[n++] = sym;

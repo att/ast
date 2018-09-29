@@ -528,7 +528,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
             } else {
                 mp = nv_open(name, shp->var_tree, oflags | NV_NOREF);
             }
-            if ((c = (*nfp->disc->readf)(mp, iop, delim, nfp)) >= 0) return (c);
+            if ((c = (*nfp->disc->readf)(mp, iop, delim, nfp)) >= 0) return c;
         }
     }
     if (binary && !(flags & (N_FLAG | NN_FLAG))) {

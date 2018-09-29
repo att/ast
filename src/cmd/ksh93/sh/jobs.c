@@ -268,7 +268,7 @@ static_fn struct jobsave *jobsave_create(pid_t pid) {
 }
 
 #if SHOPT_COSHELL
-pid_t sh_copid(struct cosh *csp) { return (COPID_BIT | (csp->id << 16) | csp->cojob->id); }
+pid_t sh_copid(struct cosh *csp) { return COPID_BIT | (csp->id << 16) | csp->cojob->id; }
 
 char *sh_pid2str(Shell_t *shp, pid_t pid) {
     struct cosh *csp = 0;
@@ -727,7 +727,7 @@ int job_close(Shell_t *shp) {
         // Restore old line discipline.
 #ifdef FIOPUSHLD
         tty_get(job.fd, &my_stty);
-        if (ioctl(job.fd, FIOPOPLD, 0) < 0) return (0);
+        if (ioctl(job.fd, FIOPOPLD, 0) < 0) return 0;
         if (ioctl(job.fd, FIOPUSHLD, &job.linedisc) < 0) {
             job.linedisc = NTTYDISC;
             ioctl(job.fd, FIOPUSHLD, &job.linedisc);
@@ -735,7 +735,7 @@ int job_close(Shell_t *shp) {
         }
         tty_set(job.fd, TCSAFLUSH, &my_stty);
 #else
-        if (ioctl(job.fd, TIOCSETD, &job.linedisc) != 0) return (0);
+        if (ioctl(job.fd, TIOCSETD, &job.linedisc) != 0) return 0;
 #endif  // FIOPUSHL
         errormsg(SH_DICT, 0, e_oldtty);
     }
@@ -915,9 +915,9 @@ int job_list(struct process *pw, int flag) {
     char *home = nv_getval(HOME);
     size_t len = home ? strlen(home) : 0;
 
-    if (!pw || pw->p_job <= 0) return (1);
-    if (pw->p_env != shp->jobenv) return (0);
-    if ((flag & JOB_NFLAG) && (!(px->p_flag & P_NOTIFY) || px->p_pgrp == 0)) return (0);
+    if (!pw || pw->p_job <= 0) return 1;
+    if (pw->p_env != shp->jobenv) return 0;
+    if ((flag & JOB_NFLAG) && (!(px->p_flag & P_NOTIFY) || px->p_pgrp == 0)) return 0;
     if ((flag & JOB_PFLAG)) {
 #if SHOPT_COSHELL
         sfprintf(outfile, "%s\n", sh_pid2str(shp, px->p_pgrp ? px->p_pgrp : px->p_pid));
@@ -926,7 +926,7 @@ int job_list(struct process *pw, int flag) {
 #endif  // SHOPT_COSHELL
         return 0;
     }
-    if ((px->p_flag & P_DONE) && job.waitall && !(flag & JOB_LFLAG)) return (0);
+    if ((px->p_flag & P_DONE) && job.waitall && !(flag & JOB_LFLAG)) return 0;
     job_lock();
     n = px->p_job;
     if (px == job.pwlist) {
@@ -1005,7 +1005,7 @@ static_fn struct process *job_bystring(char *ajob) {
     struct process *pw = job.pwlist;
     int c;
     const char *msg;
-    if (*ajob++ != '%') return (NULL);
+    if (*ajob++ != '%') return NULL;
     c = *ajob;
     if (isdigit(c)) {
         pw = job_byjid((int)strtol(ajob, (char **)0, 10));
@@ -1016,7 +1016,7 @@ static_fn struct process *job_bystring(char *ajob) {
     } else {
         pw = job_byname(ajob);
     }
-    if (pw && pw->p_flag) return (pw);
+    if (pw && pw->p_flag) return pw;
     msg = sh_translate(e_no_job);
     sfprintf(sfstderr, "%s: %s\n", ajob - 1, msg);
     return NULL;
@@ -1153,7 +1153,7 @@ static_fn struct process *job_byname(char *name) {
     char *cp = name;
     int offset;
 
-    if (!shgd->hist_ptr) return (NULL);
+    if (!shgd->hist_ptr) return NULL;
     if (*cp == '?') cp++, flag = &offset;
     for (; pw; pw = pw->p_nxtjob) {
         if (hist_match(shgd->hist_ptr, pw->p_name, cp, flag) >= 0) {
@@ -1337,7 +1337,7 @@ static_fn struct process *job_bypid(pid_t pid) {
     struct process *pw, *px;
     for (pw = job.pwlist; pw; pw = pw->p_nxtjob)
         for (px = pw; px; px = px->p_nxtproc) {
-            if (px->p_pid == pid) return (px);
+            if (px->p_pid == pid) return px;
         }
     return NULL;
 }
@@ -1531,7 +1531,7 @@ bool job_wait(pid_t pid) {
         tty_set(-1, 0, NULL);
     }
 done:
-    if (!job.waitall && sh_isoption(shp, SH_PIPEFAIL)) return (nochild);
+    if (!job.waitall && sh_isoption(shp, SH_PIPEFAIL)) return nochild;
     if (!shp->intrap) {
         job_lock();
         for (pw = job.pwlist; pw; pw = px) {
@@ -1740,7 +1740,7 @@ static_fn char *job_sigmsg(Shell_t *shp, int sig) {
     UNUSED(shp);
     static char signo[40];
 
-    if (sig < shgd->sigmax && shgd->sigmsg[sig]) return (shgd->sigmsg[sig]);
+    if (sig < shgd->sigmax && shgd->sigmsg[sig]) return shgd->sigmsg[sig];
 #if defined(SIGRTMIN) && defined(SIGRTMAX)
     if (sig >= shp->gd->sigruntime[SH_SIGRTMIN] && sig <= shp->gd->sigruntime[SH_SIGRTMAX]) {
         static char sigrt[20];
@@ -1848,7 +1848,7 @@ void job_subrestore(Shell_t *shp, void *ptr) {
     job_unlock();
 }
 
-int sh_waitsafe(void) { return (job.waitsafe); }
+int sh_waitsafe(void) { return job.waitsafe; }
 
 void job_fork(pid_t parent) {
 #ifdef DEBUG

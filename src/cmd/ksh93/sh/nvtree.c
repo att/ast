@@ -113,7 +113,7 @@ static_fn Namval_t *create_tree(Namval_t *np, const void *name, int flag, Namfun
 static_fn Namfun_t *clone_tree(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     Namfun_t *dp;
 
-    if ((flags & NV_MOVE) && nv_type(np)) return (fp);
+    if ((flags & NV_MOVE) && nv_type(np)) return fp;
     dp = nv_clone_disc(fp, flags);
     if ((flags & NV_COMVAR) && !(flags & NV_RAW)) {
         walk_tree(np, mp, flags);
@@ -1152,7 +1152,7 @@ char *nv_getvtree(Namval_t *np, Namfun_t *fp) {
             return nv_getv(np, fp);
         }
     }
-    if (nv_isattr(np, NV_BINARY) && !nv_isattr(np, NV_RAW)) return (nv_getv(np, fp));
+    if (nv_isattr(np, NV_BINARY) && !nv_isattr(np, NV_RAW)) return nv_getv(np, fp);
     if (nv_isattr(np, NV_ARRAY) && !nv_type(np) && nv_arraychild(np, NULL, 0) == np) {
         return nv_getv(np, fp);
     }

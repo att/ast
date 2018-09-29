@@ -32,7 +32,7 @@ int pathstat(const char *path, struct stat *st) {
     int oerrno;
 
     oerrno = errno;
-    if (!stat(path, st)) return (0);
+    if (!stat(path, st)) return 0;
     errno = oerrno;
-    return (lstat(path, st));
+    return lstat(path, st);
 }

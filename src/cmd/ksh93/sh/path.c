@@ -76,7 +76,7 @@ static_fn bool onstdpath(Shell_t *shp, const char *name) {
             for (sp = name; *sp && (*cp == *sp); sp++, cp++) {
                 ;  // empty loop
             }
-            if (*sp == 0 && (*cp == 0 || *cp == ':')) return (true);
+            if (*sp == 0 && (*cp == 0 || *cp == ':')) return true;
             while (*cp && *cp++ != ':') {
                 ;  // empty loop
             }
@@ -183,7 +183,7 @@ static_fn pid_t path_xargs(Shell_t *shp, const char *path, char *argv[], char *c
             argv[n] = 0;
         }
         if (saveargs || av < avlast || (exitval && !spawn)) {
-            if ((pid = _spawnveg(shp, path, argv, envp, 0)) < 0) return (-1);
+            if ((pid = _spawnveg(shp, path, argv, envp, 0)) < 0) return -1;
             job_post(shp, pid, 0);
             job_wait(pid);
             if (shp->exitval > exitval) exitval = shp->exitval;
@@ -369,7 +369,7 @@ Pathcomp_t *path_nextcomp(Shell_t *shp, Pathcomp_t *pp, const char *name, Pathco
         for (; pp && pp != last; pp = ppnext) {
             ppnext = pp->next;
             if (!pp->dev && !pp->ino) path_checkdup(shp, pp);
-            if (pp->flags & PATH_SKIP) return (ppnext);
+            if (pp->flags & PATH_SKIP) return ppnext;
             if (!last || *pp->name != '/') break;
         }
         if (!pp) {  // this should not happen
@@ -418,7 +418,7 @@ static_fn void path_init(Shell_t *shp) {
 Pathcomp_t *path_get(Shell_t *shp, const char *name) {
     Pathcomp_t *pp = 0;
 
-    if (*name && strchr(name, '/')) return (0);
+    if (*name && strchr(name, '/')) return 0;
     if (!sh_isstate(shp, SH_DEFPATH)) {
         if (!shp->pathlist) path_init(shp);
         pp = (Pathcomp_t *)shp->pathlist;
@@ -600,7 +600,7 @@ bool path_search(Shell_t *shp, const char *name, Pathcomp_t **oldpp, int flag) {
         }
         pp = path_absolute(shp, name, oldpp ? *oldpp : NULL);
         if (oldpp) *oldpp = pp;
-        if (!pp && (np = nv_search(name, shp->fun_tree, 0)) && np->nvalue.ip) return (true);
+        if (!pp && (np = nv_search(name, shp->fun_tree, 0)) && np->nvalue.ip) return true;
         if (!pp) *stkptr(shp->stk, PATH_OFFSET) = 0;
     }
     if (flag == 0 || !pp || (pp->flags & PATH_FPATH)) {
@@ -632,7 +632,7 @@ static_fn bool pwdinfpath(void) {
         for (n = 0; pwd[n] && pwd[n] == fpath[n]; n++) {
             ;  // empty loop
         }
-        if (fpath[n] == ':' || fpath[n] == 0) return (true);
+        if (fpath[n] == ':' || fpath[n] == 0) return true;
         fpath += n;
         while (*fpath) fpath++;
     }
@@ -650,7 +650,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
     char *cp;
 
     shp->path_err = ENOENT;
-    if (!pp && !(pp = path_get(shp, ""))) return (0);
+    if (!pp && !(pp = path_get(shp, ""))) return 0;
     shp->path_err = 0;
     while (1) {
         sh_sigcheck(shp);
@@ -852,9 +852,9 @@ char *path_relative(Shell_t *shp, const char *file) {
     const char *fp = file;
 
     // Can't relpath when shp->pwd not set.
-    if (!(pwd = shp->pwd)) return ((char *)fp);
+    if (!(pwd = shp->pwd)) return (char *)fp;
     while (*pwd == *fp) {
-        if (*pwd++ == 0) return ((char *)e_dot);
+        if (*pwd++ == 0) return (char *)e_dot;
         fp++;
     }
     if (*pwd == 0 && *fp == '/') {
@@ -1388,7 +1388,7 @@ Pathcomp_t *path_addpath(Shell_t *shp, Pathcomp_t *first, const char *path, int 
     int offset = stktell(shp->stk);
     char *savptr;
 
-    if (!path && type != PATH_PATH) return (first);
+    if (!path && type != PATH_PATH) return first;
     if (type != PATH_FPATH) {
         old = first;
         first = 0;

@@ -235,7 +235,7 @@ int b_shopt(int argc, char *argv[], Shbltin_t *extra) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
-                return (-1);
+                return -1;
             }
         }
     }

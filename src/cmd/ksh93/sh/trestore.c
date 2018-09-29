@@ -55,7 +55,7 @@ Shnode_t *sh_trestore(Shell_t *shp, Sfio_t *in) {
     Shnode_t *t;
     infile = in;
     t = r_tree(shp);
-    return (t);
+    return t;
 }
 
 //

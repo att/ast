@@ -106,9 +106,9 @@ struct funenv {
 static_fn int io_usevex(struct ionod *iop) {
     struct ionod *first = iop;
     for (; iop; iop = iop->ionxt) {
-        if ((iop->iofile & IODOC) && !(iop->iofile & IOQUOTE) && iop != first) return (0);
+        if ((iop->iofile & IODOC) && !(iop->iofile & IOQUOTE) && iop != first) return 0;
     }
-    return (IOUSEVEX);
+    return IOUSEVEX;
 }
 #endif  // SHOPT_SPAWN
 #if 1
@@ -593,7 +593,7 @@ static_fn bool checkopt(char *argv[], int c) {
     while ((cp = *++argv)) {
         if (*cp == '+') continue;
         if (*cp != '-' || cp[1] == '-') break;
-        if (strchr(++cp, c)) return (1);
+        if (strchr(++cp, c)) return 1;
         if (*cp == 'h' && cp[1] == 0 && *++argv == 0) break;
     }
     return false;

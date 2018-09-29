@@ -105,15 +105,15 @@ static_fn int ttctl(int fd, int op, void *tt) {
 
     if (fd < 0) {
         for (fd = 0; fd <= 2; fd++)
-            if (!ioctl(fd, op, tt)) return (0);
+            if (!ioctl(fd, op, tt)) return 0;
         if ((fd = open("/dev/tty", O_RDONLY | O_CLOEXEC)) >= 0) {
             v = ioctl(fd, op, tt);
             close(fd);
-            return (v);
+            return v;
         }
     } else if (!ioctl(fd, op, tt))
-        return (0);
-    return (-1);
+        return 0;
+    return -1;
 }
 
 #endif

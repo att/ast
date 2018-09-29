@@ -110,5 +110,5 @@ char *fmtint(intmax_t ll, int unsign) {
     while (buff[k] == '0') k++;
 skip:
     if (j) buff[--k] = '-';
-    return (&buff[k]);
+    return &buff[k];
 }

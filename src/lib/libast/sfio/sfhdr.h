@@ -130,7 +130,7 @@
     {                                                               \
         if ((ff)->_flags & SF_MTSAFE) {                             \
             (_mf_) = (ff);                                          \
-            if (sfmutex((ff), SFMTX_LOCK) != 0) return (rv);        \
+            if (sfmutex((ff), SFMTX_LOCK) != 0) return rv;          \
             if (_Sfnotify) {                                        \
                 (*_Sfnotify)((_mf_), SF_MTACCESS, (void *)(&(ff))); \
                 if (!(ff)) (ff) = (_mf_);                           \
@@ -157,13 +157,13 @@
 #define SFMTXEND(ff) SFMTXend(ff, _mtxf1_);
 #define SFMTXENTER(ff, v)      \
     {                          \
-        if (!(ff)) return (v); \
+        if (!(ff)) return v;   \
         SFMTXBEGIN((ff), (v))  \
     }
 #define SFMTXRETURN(ff, v) \
     {                      \
         SFMTXEND(ff)       \
-        return (v);        \
+        return v;          \
     }
 #define SFMTXDECL2(ff) SFMTXdecl((ff), _mtxf2_);
 #define SFMTXBEGIN2(ff, v) SFMTXbegin((ff), _mtxf2_, (v));
@@ -175,7 +175,7 @@
 #define POOLMTXRETURN(p, rv) \
     {                        \
         POOLMTXUNLOCK(p);    \
-        return (rv);         \
+        return rv;           \
     }
 
 #else /*!vt_threaded*/
@@ -189,8 +189,8 @@
 #define SFMTXDECL(ff) { }
 #define SFMTXBEGIN(ff, v) { }
 #define SFMTXEND(ff) { }
-#define SFMTXENTER(ff, v) if (!(ff)) return (v);
-#define SFMTXRETURN(ff, v) return (v);
+#define SFMTXENTER(ff, v) if (!(ff)) return v;
+#define SFMTXRETURN(ff, v) return v;
 #define SFMTXDECL2(ff) { }
 #define SFMTXBEGIN2(ff, v) { }
 #define SFMTXEND2(ff) { }

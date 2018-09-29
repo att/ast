@@ -702,7 +702,7 @@ again:
         case A_TILDE: {
             op |= T_NOFLOAT;
         common:
-            if (!expr(vp, c)) return (false);
+            if (!expr(vp, c)) return false;
             sfputc(shp->stk, op);
             break;
         }
@@ -798,7 +798,7 @@ again:
                 }
                 if (!invalid) ERROR(vp, e_synbad);
                 vp->paren++;
-                if (!expr(vp, 1)) return (false);
+                if (!expr(vp, 1)) return false;
                 vp->paren--;
                 if (fun) {
                     int x = (nargs & 010) ? 2 : -1;
@@ -842,14 +842,14 @@ again:
                 stkpush(shp->stk, vp, 0, short);
                 offset1 = stkoffset(shp->stk, vp);
                 sfputc(shp->stk, A_POP);
-                if (!expr(vp, 1)) return (false);
+                if (!expr(vp, 1)) return false;
                 if (gettok(vp) != A_COLON) ERROR(vp, e_questcolon);
                 sfputc(shp->stk, A_JMP);
                 stkpush(shp->stk, vp, 0, short);
                 offset2 = stkoffset(shp->stk, vp);
                 *((short *)stkptr(shp->stk, offset1)) = stktell(shp->stk);
                 sfputc(shp->stk, A_POP);
-                if (!expr(vp, 3)) return (false);
+                if (!expr(vp, 3)) return false;
                 *((short *)stkptr(shp->stk, offset2)) = stktell(shp->stk);
                 lvalue.value = 0;
                 wasop = 0;
@@ -872,7 +872,7 @@ again:
                 stkpush(shp->stk, vp, 0, short);
                 offset = stkoffset(shp->stk, vp);
                 sfputc(shp->stk, A_POP);
-                if (!expr(vp, c)) return (false);
+                if (!expr(vp, c)) return false;
                 *((short *)stkptr(shp->stk, offset)) = stktell(shp->stk);
                 if (op != A_QCOLON) sfputc(shp->stk, A_NOTNOT);
                 lvalue.value = 0;

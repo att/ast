@@ -99,7 +99,7 @@ int fcfill(void) {
         return 0;
     }
     if (last) {
-        if (ptr < last && ptr > _Fcin.fcbuff && *(ptr - 1) == 0) return (0);
+        if (ptr < last && ptr > _Fcin.fcbuff && *(ptr - 1) == 0) return 0;
         if (_Fcin.fcchar) *last = _Fcin.fcchar;
         if (ptr > last) _Fcin.fcptr = ptr = last;
     }
@@ -122,7 +122,7 @@ int fcfill(void) {
 int fcclose(void) {
     unsigned char *ptr;
 
-    if (_Fcin.fclast == 0) return (0);
+    if (_Fcin.fclast == 0) return 0;
     if ((ptr = _Fcin.fcptr) > _Fcin.fcbuff && *(ptr - 1) == 0) _Fcin.fcptr--;
     if (_Fcin.fcchar) *_Fcin.fclast = _Fcin.fcchar;
     _Fcin.fclast = 0;

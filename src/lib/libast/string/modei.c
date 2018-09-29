@@ -39,7 +39,7 @@
 
 int modei(int x) {
 #if _S_IDPERM
-    return (x & X_IPERM);
+    return x & X_IPERM;
 #else
     int i;
     int c;
@@ -47,6 +47,6 @@ int modei(int x) {
     i = 0;
     for (c = 0; c < PERMLEN; c += 2)
         if (x & permmap[c + 1]) i |= permmap[c];
-    return (i);
+    return i;
 #endif
 }

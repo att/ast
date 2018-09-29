@@ -40,7 +40,7 @@
 
 int modex(int i) {
 #if _S_IDPERM && _S_IDTYPE
-    return (i);
+    return i;
 #else
     int x;
     int c;
@@ -78,6 +78,6 @@ int modex(int i) {
         x |= X_IFSOCK;
 #endif
 #endif
-    return (x);
+    return x;
 #endif
 }

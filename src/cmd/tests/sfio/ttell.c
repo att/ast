@@ -40,7 +40,7 @@ static Sfoff_t discseek(Sfio_t *f, Sfoff_t offset, int type, Sfdisc_t *disc) {
     UNUSED(type);
     UNUSED(disc);
 
-    return (Sfoff_t)(-1);  // pretend that stream is unseekable
+    return (Sfoff_t)-1;  // pretend that stream is unseekable
 }
 
 Sfdisc_t Disc1 = {.readf = discread, .writef = discwrite};

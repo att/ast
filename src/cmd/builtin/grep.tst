@@ -3006,7 +3006,7 @@ constants(Node *n)
 		break;
 	case NStructref:
 		if(isconst(n))
-			return (n);
+			return n;
 		break;
 	case NType:
 		break;

@@ -245,10 +245,10 @@ static_fn bool paramsub(const char *str) {
 
     while ((c = *str++)) {
         if (c == '$' && !lit) {
-            if (*str == '(') return (false);
+            if (*str == '(') return false;
             if (sub) continue;
             if (*str == '{') str++;
-            if (!isdigit(*str) && strchr("?#@*!$ ", *str) == 0) return (true);
+            if (!isdigit(*str) && strchr("?#@*!$ ", *str) == 0) return true;
         } else if (c == '`') {
             return false;
         } else if (c == '[' && !lit) {
@@ -1778,7 +1778,7 @@ static_fn struct argnod *qscan(Lex_t *lp, struct comnod *ac, int argn) {
         *cp++ = "1";
     }
     *cp = 0;
-    return ((struct argnod *)dp);
+    return (struct argnod *)dp;
 }
 
 static_fn Shnode_t *test_expr(Lex_t *lp, int sym) {
@@ -1790,13 +1790,13 @@ static_fn Shnode_t *test_expr(Lex_t *lp, int sym) {
 static_fn Shnode_t *test_or(Lex_t *lp) {
     Shnode_t *t = test_and(lp);
     while (lp->token == ORFSYM) t = makelist(lp, TORF | TTEST, t, test_and(lp));
-    return (t);
+    return t;
 }
 
 static_fn Shnode_t *test_and(Lex_t *lp) {
     Shnode_t *t = test_primary(lp);
     while (lp->token == ANDFSYM) t = makelist(lp, TAND | TTEST, t, test_primary(lp));
-    return (t);
+    return t;
 }
 
 //
@@ -1868,7 +1868,7 @@ static_fn Shnode_t *test_primary(Lex_t *lexp) {
                 t = makelist(lexp, TTST | TTEST | TUNARY | ('n' << TSHIFT), (Shnode_t *)arg,
                              (Shnode_t *)arg);
                 t->tst.tstline = lexp->sh->inlineno;
-                return (t);
+                return t;
             } else {
                 sh_syntax(lexp);
             }

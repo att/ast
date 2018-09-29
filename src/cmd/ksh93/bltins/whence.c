@@ -90,12 +90,12 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                if (argc == 0) return (0);
+                if (argc == 0) return 0;
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
                 break;
             }
             case '?': {
-                if (argc == 0) return (0);
+                if (argc == 0) return 0;
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }

@@ -60,7 +60,7 @@ stackalloc(int size, void *error) {
     stack->position.index = -1;
     b->next = 0;
     b->prev = 0;
-    return (stack);
+    return stack;
 }
 
 /*
@@ -127,7 +127,7 @@ int stackpush(STACK stack, void *value) {
         stack->position.index = 0;
     }
     stack->position.block->stack[stack->position.index] = value;
-    return (0);
+    return 0;
 }
 
 #if 0

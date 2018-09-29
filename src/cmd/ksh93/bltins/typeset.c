@@ -469,7 +469,7 @@ endargs:
     if (flag & NV_TYPE) {
         Stk_t *stkp = tdata.sh->stk;
         int off = 0, offset = stktell(stkp);
-        if (!tdata.prefix) return (sh_outtype(tdata.sh, sfstdout));
+        if (!tdata.prefix) return sh_outtype(tdata.sh, sfstdout);
         sfputr(stkp, NV_CLASS, -1);
         if (tdata.sh->namespace) {
             off = stktell(stkp) + 1;
@@ -1102,7 +1102,7 @@ int b_set(int argc, char *argv[], Shbltin_t *context) {
     tdata.sh = shp;
     tdata.prefix = 0;
     if (argv[1]) {
-        if (sh_argopts(argc, argv, tdata.sh) < 0) return (2);
+        if (sh_argopts(argc, argv, tdata.sh) < 0) return 2;
         if (sh_isoption(shp, SH_VERBOSE)) {
             sh_onstate(shp, SH_VERBOSE);
         } else {
@@ -1176,7 +1176,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
-                return (2);
+                return 2;
             }
             default: { break; }
         }
@@ -1269,7 +1269,7 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, bool omit_attrs, struct t
     int indent = tp->indent, outname = 0, isfun;
 
     sh_sigcheck(tp->sh);
-    if (tp->noref && nv_isref(np)) return (0);
+    if (tp->noref && nv_isref(np)) return 0;
     if (nv_isattr(np, NV_NOPRINT | NV_INTEGER) == NV_NOPRINT) {
         if (is_abuiltin(np) && strcmp(np->nvname, ".sh.tilde")) {
             if (tp->prefix) sfputr(file, tp->prefix, ' ');
@@ -1301,7 +1301,7 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, bool omit_attrs, struct t
     if (isfun) {
         Sfio_t *iop = 0;
         char *fname = 0;
-        if (nv_isattr(np, NV_NOFREE)) return (0);
+        if (nv_isattr(np, NV_NOFREE)) return 0;
         if (!omit_attrs) {
             if (!np->nvalue.ip) {
                 sfputr(file, "typeset -fu", ' ');

@@ -469,7 +469,7 @@ static_fn char strformat(char *s) {
             }
             case 0: {
                 *t = 0;
-                return (t - b);
+                return t - b;
             }
             default: { break; }
         }
@@ -574,7 +574,7 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
         return sfwrite(iop, (void *)&number, size);
 #else   // 1
         if (sz) *sz = size;
-        return ((void *)&number);
+        return (void *)&number;
 #endif  // 1
     }
     if (nv_isattr(np, NV_BINARY))
@@ -598,7 +598,7 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
         size = n;
         if (size == 0) size = strlen(cp);
         size = sfwrite(iop, cp, size);
-        return (n ? n : size);
+        return n ? n : size;
     } else if (nv_isarray(np) && (ap = nv_arrayptr(np)) && array_elem(ap) &&
                (ap->flags & (ARRAY_UNDEF | ARRAY_SCAN))) {
         Namval_t *nspace = shp->namespace;
@@ -630,7 +630,7 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
     if (nv_isattr(np, NV_BINARY)) nv_offattr(np, NV_RAW);
     if ((size = nv_size(np)) == 0) size = strlen(cp);
     if (sz) *sz = size;
-    return ((void *)cp);
+    return (void *)cp;
 #endif  // 1
 }
 

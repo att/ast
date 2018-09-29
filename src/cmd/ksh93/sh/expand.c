@@ -68,7 +68,7 @@ static_fn char *nextdir(glob_t *gp, char *dir) {
         pp = pp->next;
     }
     gp->gl_handle = (void *)pp;
-    if (pp) return (pp->name);
+    if (pp) return pp->name;
     return NULL;
 }
 #endif
@@ -228,7 +228,7 @@ int path_generate(Shell_t *shp, struct argnod *todo, struct argnod **arghead) {
     int first, last, incr, count = 0;
     char tmp[32], end[1];
 
-    if (!sh_isoption(shp, SH_BRACEEXPAND)) return (path_expand(shp, todo->argval, arghead));
+    if (!sh_isoption(shp, SH_BRACEEXPAND)) return path_expand(shp, todo->argval, arghead);
     todo->argchn.ap = 0;
 again:
     apin = ap = todo;

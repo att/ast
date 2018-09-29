@@ -305,7 +305,7 @@ static_fn int eval_e3(struct test *tp) {
         }
         // Test -t with no arguments.
         tp->ap--;
-        return (tty_check(1));
+        return tty_check(1);
     }
     if (*arg == '-' && arg[2] == 0) {
         op = arg[1];
@@ -315,7 +315,7 @@ static_fn int eval_e3(struct test *tp) {
             errormsg(SH_DICT, ERROR_exit(2), e_argument);
             __builtin_unreachable();
         }
-        if (strchr(test_opchars, op)) return (test_unop(tp->sh, op, cp));
+        if (strchr(test_opchars, op)) return test_unop(tp->sh, op, cp);
     }
     if (!cp) {
         tp->ap--;
@@ -387,7 +387,7 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
         case 'H': {
 #ifdef S_ISCDF
             int offset = stktell(shp->stk);
-            if (test_stat(arg, &statb) >= 0 && S_ISCDF(statb.st_mode)) return (1);
+            if (test_stat(arg, &statb) >= 0 && S_ISCDF(statb.st_mode)) return 1;
             sfputr(shp->stk, arg, '+');
             sfputc(shp->stk, 0);
             arg = (const char *)stkptr(shp->stk, offset);
@@ -425,16 +425,16 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
             } else if (op == 'O') {
                 return statb.st_uid == shp->gd->userid;
             }
-            return (statb.st_gid == shp->gd->groupid);
+            return statb.st_gid == shp->gd->groupid;
         }
         case 'a':
         case 'e': {
-            if (strncmp(arg, "/dev/", 5) == 0 && sh_open(arg, O_NONBLOCK)) return (1);
+            if (strncmp(arg, "/dev/", 5) == 0 && sh_open(arg, O_NONBLOCK)) return 1;
             return permission(arg, F_OK);
         }
         case 'o': {
             f = 1;
-            if (*arg == '?') return (sh_lookopt(arg + 1, &f) > 0);
+            if (*arg == '?') return sh_lookopt(arg + 1, &f) > 0;
             op = sh_lookopt(arg, &f);
             return op && (f == (sh_isoption(shp, op) != false));
         }
@@ -452,7 +452,7 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
                 return 0;
             }
             isref = nv_isref(np);
-            if (op == 'R') return (isref);
+            if (op == 'R') return isref;
             if (isref) {
                 if (np->nvalue.cp) {
                     np = nv_refnode(np);
@@ -461,7 +461,7 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
                 }
             }
             ap = nv_arrayptr(np);
-            if (ap) return (nv_arrayisset(np, ap));
+            if (ap) return nv_arrayisset(np, ap);
             return !nv_isnull(np) || nv_isattr(np, NV_INTEGER);
         }
         default: {
@@ -679,8 +679,8 @@ static_fn int test_mode(const char *file) {
 static_fn int test_stat(const char *name, struct stat *buff) {
     if (*name == 0) {
         errno = ENOENT;
-        return (-1);
+        return -1;
     }
-    if (sh_isdevfd(name)) return (fstat((int)strtol(name + 8, (char **)0, 10), buff));
-    return (stat(name, buff));
+    if (sh_isdevfd(name)) return fstat((int)strtol(name + 8, (char **)0, 10), buff);
+    return stat(name, buff);
 }
