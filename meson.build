@@ -125,7 +125,7 @@ endif
 # And in any case until we resolve the more serious memory management errors
 # worrying about memory leaks is premature.
 asan_debug_env.set('ASAN_OPTIONS',
-    'symbolize=1:check_initialization_order=1:detect_stack_use_after_return=1:detect_leaks=0')
+    'symbolize=1:check_initialization_order=1:detect_stack_use_after_return=1:detect_leaks=0:redzone=16')
 add_test_setup('asan', timeout_multiplier: 2, env: asan_debug_env)
 
 if get_option('ASAN') == true
@@ -133,6 +133,7 @@ if get_option('ASAN') == true
         error('You must use the "debug" build type to enable ASAN')
     endif
     add_global_arguments('-fsanitize=address', language: 'c')
+    add_global_arguments('-fno-common', language: 'c')
     add_global_arguments('-Db_lundef=false', language: 'c')
     if cc.get_id() == 'clang'
         # We explicitly disable `stack-use-after-scope` because it does not handle

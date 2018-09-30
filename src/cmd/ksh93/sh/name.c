@@ -106,7 +106,6 @@ static struct Namcache nvcache;
 #endif  // NVCACHE
 
 char nv_local = 0;
-static_fn void (*nullscan)(Namval_t *, void *);
 
 #if (SFIO_VERSION <= 20010201L)
 #define _data data
@@ -1915,7 +1914,7 @@ char **sh_envgen(Shell_t *shp) {
     // L_ARGNOD gets generated automatically as full path name of command.
     nv_offattr(L_ARGNOD, NV_EXPORT);
     data.attsize = 6;
-    namec = nv_scan(shp->var_tree, nullscan, NULL, NV_EXPORT, NV_EXPORT);
+    namec = nv_scan(shp->var_tree, NULL, NULL, NV_EXPORT, NV_EXPORT);
     namec += shp->nenv;
     er = (char **)stkalloc(shp->stk, (namec + 4) * sizeof(char *));
     data.argnam = (er += 2) + shp->nenv;

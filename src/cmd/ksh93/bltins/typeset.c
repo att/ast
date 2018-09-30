@@ -87,7 +87,6 @@ static_fn void print_scan(Sfio_t *, int, Dt_t *, bool, struct tdata *);
 static_fn int unall(int, char **, Dt_t *, Shell_t *);
 static_fn int setall(char **, int, Dt_t *, struct tdata *);
 static_fn void pushname(Namval_t *, void *);
-static_fn void (*nullscan)(Namval_t *, void *);
 
 //
 // Note the `export` and `readonly` builtins are handled by this function.
@@ -1408,7 +1407,7 @@ static_fn void print_scan(Sfio_t *file, int flag, Dt_t *root, bool omit_attrs, s
     if (flag & NV_INTEGER) tp->scanmask |= (NV_DOUBLE | NV_EXPNOTE);
     if (flag == NV_LTOU || flag == NV_UTOL) tp->scanmask |= NV_UTOL | NV_LTOU;
     if (root == tp->sh->bltin_tree) tp->scanmask |= BLT_DISABLE;
-    namec = nv_scan(root, nullscan, (void *)tp, tp->scanmask, flag & ~NV_IARRAY);
+    namec = nv_scan(root, NULL, tp, tp->scanmask, flag & ~NV_IARRAY);
     argv = tp->argnam = (char **)stkalloc(tp->sh->stk, (namec + 1) * sizeof(char *));
     namec = nv_scan(root, pushname, (void *)tp, tp->scanmask, flag & ~NV_IARRAY);
     strsort(argv, namec, strcoll);
