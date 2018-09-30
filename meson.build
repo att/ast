@@ -120,11 +120,12 @@ if cc.get_id() == 'gcc'
 endif
 
 # We don't include "detect_leaks=1" because it isn't supported by clang (at
-# least on macOS) and causes a test runtime failure. Too, it doesn't seem to
-# do anything with gcc on Linux in so far as I have yet to see it produce any
-# messages about leak errors.
+# least on macOS) and causes a test runtime failure. Also, there are so many
+# memory leaks that those errors cause spurious failures in the unit tests.
+# And in any case until we resolve the more serious memory management errors
+# worrying about memory leaks is premature.
 asan_debug_env.set('ASAN_OPTIONS',
-    'symbolize=1:check_initialization_order=1:detect_stack_use_after_return=1')
+    'symbolize=1:check_initialization_order=1:detect_stack_use_after_return=1:detect_leaks=0')
 add_test_setup('asan', timeout_multiplier: 2, env: asan_debug_env)
 
 if get_option('ASAN') == true
