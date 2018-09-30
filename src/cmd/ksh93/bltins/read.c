@@ -542,7 +542,10 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
         jmpval = sigsetjmp(buff.buff, 0);
         if (jmpval) goto done;
         if (timeout) {
-            struct timeout tmout;
+            // WARNING: This assumes that ksh is single-threaded and this block will not be run
+            // concurrently by multiple threads. It can't be a stack var because the address of
+            // the var is passed to `timedout()` after this scope has exited.
+            static struct timeout tmout;
             tmout.shp = shp;
             tmout.iop = iop;
             timeslot = (void *)sh_timeradd(timeout, 0, timedout, (void *)&tmout);
