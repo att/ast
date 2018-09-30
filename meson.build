@@ -133,15 +133,10 @@ if get_option('ASAN') == true
         error('You must use the "debug" build type to enable ASAN')
     endif
     add_global_arguments('-fsanitize=address', language: 'c')
+    add_global_arguments('-fsanitize-address-use-after-scope', language: 'c')
     add_global_arguments('-fno-common', language: 'c')
     add_global_arguments('-Db_lundef=false', language: 'c')
     if cc.get_id() == 'clang'
-        # We explicitly disable `stack-use-after-scope` because it does not handle
-        # siglongjmp() -- at least on macOS. If we don't disable this it results in
-        # almost every unit test to fail with that error because so much of the code
-        # depends on siglongjmp(). Especially things that depend on `read` command
-        # timeouts.
-        add_global_arguments('-fno-sanitize-address-use-after-scope', language: 'c')
         # This is a bit of a hack to make using ASAN with clang on my macOS
         # server work. Meson appears to be running `ld` directly, rather than
         # via `clang`, for the final link stage. So have clang tell us which
