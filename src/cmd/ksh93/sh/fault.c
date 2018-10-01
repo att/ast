@@ -76,10 +76,8 @@ static_fn int notify_builtin(Shell_t *shp, int sig) {
     int action = 0;
 
     if (!shp->bltinfun) return action;
-#ifdef ERROR_NOTIFY
     if (error_info.flags & ERROR_NOTIFY) action = (*shp->bltinfun)(-sig, NULL, NULL);
     if (action > 0) return action;
-#endif
     if (shp->bltindata.notify) shp->bltindata.sigset = 1;
     return action;
 }
