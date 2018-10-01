@@ -132,11 +132,9 @@ int sfvprintf(Sfio_t *f, const char *form, va_list args) {
     wchar_t *wsp;
     SFMBDCL(fmbs) /* state of format string	*/
     SFMBDCL(mbs)  /* state of some string		*/
-#ifdef mbwidth
     char *osp;
     int n_w, wc;
     wchar_t tw;
-#endif
 
     /* local io system */
     int o, n_output;
@@ -703,14 +701,11 @@ loop_fmt:
                 for (sp = *ls;;) { /* v: number of bytes  w: print width of those v bytes */
                     if (flags & SFFMT_LONG) {
                         v = 0;
-#ifdef mbwidth
                         w = 0;
-#endif
                         SFMBCLR(&mbs);
                         for (n = 0, wsp = (wchar_t *)sp;; ++wsp, ++n) {
                             if ((size >= 0 && n >= size) || (size < 0 && *wsp == 0)) break;
                             if ((n_s = mbconv(buf, *wsp, &mbs)) <= 0) break;
-#ifdef mbwidth
                             if (wc) {
                                 n_w = mbwidth(*wsp);
                                 if (n_w > 0) {
@@ -718,17 +713,12 @@ loop_fmt:
                                     w += n_w;
                                 }
                             } else
-#endif
                                 if (precis >= 0 && (v + n_s) > precis)
                                 break;
                             v += n_s;
                         }
-#ifdef mbwidth
                         if (!wc) w = v;
-#endif
-                    }
-#ifdef mbwidth
-                    else if (wc) {
+                    } else if (wc) {
                         w = 0;
                         SFMBCLR(&mbs);
                         ssp = sp;
@@ -746,7 +736,6 @@ loop_fmt:
                         }
                         v = ssp - sp;
                     }
-#endif
                     else {
                         if ((v = size) < 0)
                             for (v = 0; v != precis && sp[v]; ++v)
@@ -769,11 +758,7 @@ loop_fmt:
                             SFMBCLR(&mbs);
                             wsp = (wchar_t *)sp;
                             while (n < 0) {
-#ifdef mbwidth
                                 n += mbwidth(*wsp);
-#else
-                                n++;
-#endif
                                 wsp++;
                                 w--;
                             }
@@ -788,11 +773,7 @@ loop_fmt:
                                     sp = ssp;
                                     break;
                                 }
-#ifdef mbwidth
                                 n += mbwidth(k);
-#else
-                                n++;
-#endif
                             }
                             v -= (sp - osp);
                         } else {
@@ -853,9 +834,7 @@ loop_fmt:
                     if (flags & SFFMT_LONG) {
                         SFMBCLR(&mbs);
                         if ((n_s = mbconv(buf, *wsp++, &mbs)) <= 0) break;
-#ifdef mbwidth
                         if (wc) n_s = mbwidth(*(wsp - 1));
-#endif
                         n = width - precis * n_s; /* padding amount */
                     } else if (flags & SFFMT_ALTER) {
                         n_s = chr2str(buf, *sp++);
