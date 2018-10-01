@@ -639,15 +639,7 @@ int sh_strchr(const char *string, const char *dp, size_t size) {
 }
 
 const char *_sh_translate(const char *message) {
-#if ERROR_VERSION >= 20000317L
     return ERROR_translate(0, 0, e_dict, message);
-#else
-#if ERROR_VERSION >= 20000101L
-    return ERROR_translate(e_dict, message);
-#else
-    return ERROR_translate(message, 1);
-#endif
-#endif
 }
 
 //

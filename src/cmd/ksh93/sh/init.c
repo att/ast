@@ -338,19 +338,11 @@ static_fn void put_cdpath(Namval_t *np, const void *val, int flags, Namfun_t *fp
 // This function needs to be modified to handle international
 // error message translations
 //
-#if ERROR_VERSION >= 20000101L
 static_fn char *msg_translate(const char *catalog, const char *message) {
     UNUSED(catalog);
 
     return (char *)message;
 }
-#else
-static_fn char *msg_translate(const char *message, int type) {
-    UNUSED(type);
-
-    return (char *)message;
-}
-#endif
 #endif
 
 // Trap for LC_ALL, LC_CTYPE, LC_MESSAGES, LC_COLLATE and LANG.
@@ -395,9 +387,6 @@ static_fn void put_lang(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
     }
 
     nv_putv(np, val, flags, fp);
-#if ERROR_VERSION < 20000101L
-    if (type == LC_ALL || type == LC_MESSAGES) error_info.translate = msg_translate;
-#endif
 }
 
 // Trap for IFS assignment and invalidates state table.
@@ -1269,9 +1258,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     shp->stk = stkstd;
     sfsetbuf(shp->strbuf, NULL, 64);
     sh_onstate(shp, SH_INIT);
-#if ERROR_VERSION >= 20000102L
     error_info.catalog = e_dict;
-#endif
     shp->cpipe[0] = -1;
     shp->coutpipe = -1;
     for (n = 0; n < 10; n++) {
