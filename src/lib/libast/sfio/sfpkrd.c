@@ -154,8 +154,8 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
                     tmp = NULL;
                 else {
                     tmp = &tmb;
-                    tmb.tv_sec = tm / SECOND;
-                    tmb.tv_usec = (tm % SECOND) * SECOND;
+                    tmb.tv_sec = tm / 1000;
+                    tmb.tv_usec = (tm % 1000) * 1000;
                 }
                 r = select(fd + 1, &rd, NULL, NULL, tmp);
                 if (r < 0) {

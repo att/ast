@@ -182,8 +182,8 @@ int sfpoll(Sfio_t **fa, int n, int tm) {
             tmp = NULL;
         else {
             tmp = &tmb;
-            tmb.tv_sec = tm / SECOND;
-            tmb.tv_usec = (tm % SECOND) * SECOND;
+            tmb.tv_sec = tm / 1000;
+            tmb.tv_usec = (tm % 1000) * 1000;
         }
 
         while ((np = select(m + 1, &rd, &wr, NULL, tmp)) < 0) {

@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ast_assert.h"
 #include "sfhdr.h"
 #include "vthread.h"
 
@@ -109,7 +110,7 @@ static_fn int _sfphead(Sfpool_t *p, Sfio_t *f, int n) {
     } else /* shared pool of write-streams, data can be moved among streams */
     {
         if (SFMODE(head, 1) != SF_WRITE && _sfmode(head, SF_WRITE, 1) < 0) goto done;
-        /**/ ASSERT(f->next == f->data);
+        assert(f->next == f->data);
 
         v = head->next - head->data; /* pending data		*/
         if ((k = v - (f->endb - f->data)) <= 0)
@@ -293,7 +294,7 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
     f->pool = p; /* add f to pf's pool */
     if (_sfsetpool(f) < 0) goto done;
 
-    /**/ ASSERT(p->sf[0] == pf && p->sf[p->n_sf - 1] == f);
+    assert(p->sf[0] == pf && p->sf[p->n_sf - 1] == f);
     SFOPEN(pf)
     SFOPEN(f)
     if (_sfpmove(f, 0) < 0) /* make f head of pool */

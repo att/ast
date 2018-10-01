@@ -252,12 +252,6 @@
 #define SF_AVAIL 00020000  /* was closed, available for reuse	*/
 #define SF_LOCAL 00100000  /* sentinel for a local call		*/
 
-#ifdef DEBUG
-#define ASSERT(p) ((p) ? 0 : (abort(), 0))
-#else
-#define ASSERT(p)
-#endif
-
 /* short-hands */
 #ifndef uchar
 #define uchar unsigned char
@@ -271,8 +265,6 @@
 #ifndef ushort
 #define ushort unsigned short
 #endif
-
-#define SECOND 1000 /* millisecond units */
 
 /* macros do determine stream types from sfstat_t data */
 #ifndef S_IFDIR
