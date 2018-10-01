@@ -232,11 +232,10 @@
 #define SFWCGET(f, v) (((v) = (f)->bits & SF_WCFORMAT), ((f)->bits &= ~SF_WCFORMAT))
 
 #define SF_MVSIZE 00040000 /* f->size was reset in sfmove()	*/
-#define SFMVSET(f) (((f)->size *= SF_NMAP), ((f)->bits |= SF_MVSIZE))
+#define SFMVSET(f) { ((f)->size *= SF_NMAP); ((f)->bits |= SF_MVSIZE); }
 #define SFMVUNSET(f) \
-    (!((f)->bits & SF_MVSIZE) ? 0 : (((f)->bits &= ~SF_MVSIZE), ((f)->size /= SF_NMAP)))
-
-#define SFCLRBITS(f) (SFMVUNSET(f), ((f)->bits &= ~SF_TMPBITS))
+    { if ((f)->bits & SF_MVSIZE) { (f)->bits &= ~SF_MVSIZE; (f)->size /= SF_NMAP; } }
+#define SFCLRBITS(f) { SFMVUNSET(f); ((f)->bits &= ~SF_TMPBITS); }
 
 /* bits for the mode field, SF_INIT defined in sfio_t.h */
 #define SF_RC 00000010     /* peeking for a record			*/

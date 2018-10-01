@@ -95,7 +95,7 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
 
         /* about to move all, set map to a large amount */
         if (n < 0 && (fr->bits & SF_MMAP) && !(fr->bits & SF_MVSIZE)) {
-            SFMVSET(fr);
+            SFMVSET(fr)
             fr->bits |= SF_SEQUENTIAL; /* sequentially access data */
         }
 

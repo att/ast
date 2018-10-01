@@ -47,7 +47,7 @@ int sfclrlock(Sfio_t *f) {
         f->endb = f->next;
     }
 
-    SFCLRBITS(f);
+    SFCLRBITS(f)
 
     /* throw away all lock bits except for stacking state SF_PUSH */
     f->mode &= (SF_RDWR | SF_INIT | SF_POOL | SF_PUSH | SF_SYNCED | SF_STDIO);
