@@ -56,6 +56,8 @@ feature_data.set10('_hdr_execinfo', cc.has_header('execinfo.h', args: feature_te
 feature_data.set10('_hdr_unistd', cc.has_header('unistd.h', args: feature_test_args))
 feature_data.set10('_hdr_stdlib', cc.has_header('stdlib.h', args: feature_test_args))
 feature_data.set10('_hdr_malloc', cc.has_header('malloc.h', args: feature_test_args))
+feature_data.set10('_hdr_filio', cc.has_header('filio.h', args: feature_test_args))
+feature_data.set10('_sys_filio', cc.has_header('sys/filio.h', args: feature_test_args))
 
 feature_data.set10('_lib_sigqueue',
     cc.has_function('sigqueue', prefix: '#include <signal.h>', args: feature_test_args))
