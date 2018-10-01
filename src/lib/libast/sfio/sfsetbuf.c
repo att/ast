@@ -49,16 +49,6 @@ extern int getpagesize(void);
 **	Written by Kiem-Phong Vo.
 */
 
-#if !defined(SFSETLINEMODE)
-#define SFSETLINEMODE 1
-#endif
-
-#if SFSETLINEMODE
-
-#ifndef roundof
-#define roundof(x, y) (((x) + (y)-1) & ~((y)-1))
-#endif
-
 #define SF_TEST_read 0x01000
 
 static_fn int sfsetlinemode(void) {
@@ -182,7 +172,6 @@ static_fn int sfsetlinemode(void) {
     return modes;
 }
 
-#endif
 
 void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
     int sf_malloc, oflags, init, okmmap, local;
@@ -328,9 +317,7 @@ void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
             if ((_Sfpage = (size_t)getpagesize()) <= 0) _Sfpage = SF_PAGE;
         }
 
-#if SFSETLINEMODE
         if (init) f->flags |= sfsetlinemode();
-#endif
 
         if (f->here >= 0) {
             f->extent = (Sfoff_t)st.st_size;
