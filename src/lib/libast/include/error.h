@@ -34,8 +34,6 @@
 
 #include "option.h"
 
-#define ERROR_VERSION 20070319L
-
 #define ERROR_debug(n) (-(n))
 #define ERROR_exit(n) ((n) + ERROR_ERROR)
 #define ERROR_system(n) (((n) + ERROR_ERROR) | ERROR_SYSTEM)

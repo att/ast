@@ -2022,15 +2022,7 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
                         break;
                     }
                     *--dp = 0;
-#if ERROR_VERSION >= 20000317L
                     msg = ERROR_translate(0, error_info.id, 0, ep);
-#else
-#if ERROR_VERSION >= 20000101L
-                    msg = ERROR_translate(error_info.id, ep);
-#else
-                    msg = ERROR_translate(ep, 2);
-#endif
-#endif
                     n = strlen(msg);
                     dp = ep + n;
                     if (sp - dp <= 1) {

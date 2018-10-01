@@ -95,11 +95,7 @@ struct checkpt {
     int mode;
     int vexi;
     struct openlist *olist;
-#if (ERROR_VERSION >= 20030214L)
     Error_context_t err;
-#else
-    struct errorcontext err;
-#endif
 };
 
 struct siginfo_ll {
