@@ -65,7 +65,7 @@ static File_t *File; /* list pf temp files	*/
 static_fn int _tmprmfile(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     File_t *ff, *last;
 
-    NOTUSED(val);
+    UNUSED(val);
 
     if (type == SF_DPOP) /* don't allow this to pop */
         return -1;
@@ -148,7 +148,7 @@ static_fn int _tmpexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     Sfio_t newf, savf;
     Sfnotify_f notify = _Sfnotify;
 
-    NOTUSED(val);
+    UNUSED(val);
 
     /* the discipline needs to change only under the following exceptions */
     if (type != SF_WRITE && type != SF_SEEK && type != SF_DPUSH && type != SF_DPOP &&

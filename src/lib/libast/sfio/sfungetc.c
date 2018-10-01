@@ -33,7 +33,7 @@
 **	Written by Kiem-Phong Vo.
 */
 static_fn int _uexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
-    NOTUSED(val);
+    UNUSED(val);
 
     /* hmm! This should never happen */
     if (disc != _Sfudisc) return -1;
