@@ -32,8 +32,8 @@
 /* the main locking/unlocking interface */
 int sfmutex(Sfio_t *f, int type) {
 #if !vt_threaded
-    NOTUSED(f);
-    NOTUSED(type);
+    UNUSED(f);
+    UNUSED(type);
     return 0;
 #else
 

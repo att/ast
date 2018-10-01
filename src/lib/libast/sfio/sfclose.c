@@ -24,6 +24,7 @@
 #include <errno.h>
 #include <stdlib.h>
 
+#include "ast_assert.h"
 #include "sfhdr.h"
 #include "vthread.h"
 
@@ -86,7 +87,7 @@ int sfclose(Sfio_t *f) {
             POOLMTXUNLOCK(&_Sfpool);
         } else {
             f->mode &= ~SF_LOCK; /**/
-            ASSERT(_Sfpmove);
+            assert(_Sfpmove);
             if ((*_Sfpmove)(f, -1) < 0) {
                 SFOPEN(f)
                 SFMTXRETURN(f, -1)

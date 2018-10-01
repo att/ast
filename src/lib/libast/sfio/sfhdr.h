@@ -211,9 +211,6 @@
 #define X_OK 01
 #endif
 
-/* to get rid of pesky compiler warnings */
-#define NOTUSED(x) (void)(x)
-
 /* Private flags in the "bits" field */
 #define SF_MMAP 00000001       /* in memory mapping mode		*/
 #define SF_BOTH 00000002       /* both read/write			*/
@@ -255,12 +252,6 @@
 #define SF_AVAIL 00020000  /* was closed, available for reuse	*/
 #define SF_LOCAL 00100000  /* sentinel for a local call		*/
 
-#ifdef DEBUG
-#define ASSERT(p) ((p) ? 0 : (abort(), 0))
-#else
-#define ASSERT(p)
-#endif
-
 /* short-hands */
 #ifndef uchar
 #define uchar unsigned char
@@ -274,8 +265,6 @@
 #ifndef ushort
 #define ushort unsigned short
 #endif
-
-#define SECOND 1000 /* millisecond units */
 
 /* macros do determine stream types from sfstat_t data */
 #ifndef S_IFDIR
@@ -561,13 +550,6 @@ typedef struct _sfextern_s {
 #define SF_NMAP 1024
 #else
 #define SF_NMAP 32
-#endif
-
-#ifndef MAP_VARIABLE
-#define MAP_VARIABLE 0
-#endif
-#ifndef _mmap_fixed
-#define _mmap_fixed 0
 #endif
 
 /* set/unset sequential states for mmap */

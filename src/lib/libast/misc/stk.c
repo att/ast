@@ -38,6 +38,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <sys/param.h>
 #include <unistd.h>
 
 #include "sfio_t.h"  // must be first include for some reason
@@ -63,7 +64,17 @@
 // value (4 versus 16). That results in an adjacent dynamically allocated buffer header being
 // corrupted. See issue #805.
 #define STK_ALIGN 16
-#define STK_FSIZE (1024 * sizeof(char *))
+// This used to be defined this way:
+//     #define STK_FSIZE (1024 * sizeof(char *))
+// However, that means the size varies by a factor of two depending on whether pointers are 32 or 64
+// bits in length. It's also pretty arbitrary. There is a bug somewhere in the code since values
+// less than 1024 cause ASAN to report use-after-free errors. And a value of 2048 causes one unit
+// test to fail due to a corrupted sfio string. So use the system page size if possible else 4096.
+#ifdef NBPG
+#define STK_FSIZE NBPG
+#else
+#define STK_FSIZE 4096
+#endif
 #define STK_HDRSIZE (sizeof(Sfio_t) + sizeof(Sfdisc_t))
 
 typedef char *(*_stk_overflow_)(int);
@@ -213,34 +224,27 @@ Sfio_t *stkopen(int flags) {
     dp->exceptf = stkexcept;
     sp = (struct stk *)(dp + 1);
     sp->stkref = 1;
-    sp->stkflags = (flags & STK_SMALL);
-    if (flags & STK_NULL)
+    sp->stkflags = 0;
+    if (flags & STK_NULL) {
         sp->stkoverflow = 0;
-    else
+    } else {
         sp->stkoverflow = stkcur ? stkcur->stkoverflow : overflow;
+    }
     bsize = init + sizeof(struct frame);
-#ifndef USE_REALLOC
-    if (flags & STK_SMALL)
-        bsize = roundof(bsize, STK_FSIZE / 16);
-    else
-#endif /* USE_REALLOC */
-        bsize = roundof(bsize, STK_FSIZE);
-    bsize -= sizeof(struct frame);
-    fp = calloc(1, sizeof(struct frame) + bsize);
+    bsize = roundof(bsize, STK_FSIZE);
+    fp = calloc(1, bsize);
     if (!fp) {
         free(stream);
         return NULL;
     }
+    bsize -= sizeof(struct frame);
     count(addsize, sizeof(*fp) + bsize);
     cp = (char *)(fp + 1);
     sp->stkbase = (char *)fp;
-    fp->prev = 0;
-    fp->nalias = 0;
-    fp->aliases = 0;
     fp->end = sp->stkend = cp + bsize;
     if (!sfnew(stream, cp, bsize, -1, SF_STRING | SF_WRITE | SF_STATIC | SF_EOF)) return NULL;
     sfdisc(stream, dp);
-    return (stream);
+    return stream;
 }
 
 /*
@@ -264,13 +268,11 @@ Sfio_t *stkinstall(Sfio_t *stream, _stk_overflow_ oflow) {
             ;
         if (stream != stkstd) sfstack(stkstd, stream);
         stkcur = sp;
-#ifdef USE_REALLOC
-        /*** someday ***/
-#endif /* USE_REALLOC */
-    } else
+    } else {
         sp = stkcur;
+    }
     if (oflow) sp->stkoverflow = oflow;
-    return (old);
+    return old;
 }
 
 /*
@@ -461,12 +463,7 @@ static_fn char *stkgrow(Sfio_t *stream, size_t size) {
     int add = 1;
 
     n += (m + sizeof(struct frame) + 1);  // what is the purpose of the `+ 1`?
-    if (sp->stkflags & STK_SMALL)
-#ifndef USE_REALLOC
-        n = roundof(n, STK_FSIZE / 16);
-    else
-#endif /* !USE_REALLOC */
-        n = roundof(n, STK_FSIZE);
+    n = roundof(n, STK_FSIZE);
     /* see whether current frame can be extended */
     if (stkptr(stream, 0) == sp->stkbase + sizeof(struct frame)) {
         nn = fp->nalias + 1;
