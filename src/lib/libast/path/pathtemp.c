@@ -74,6 +74,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/fcntl.h>
@@ -82,6 +83,7 @@
 #include <unistd.h>
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "ast_fcntl.h"
 #include "sfio.h"
 #include "tv.h"
@@ -95,6 +97,7 @@
 #define TMP_PATH_ENV "TMPPATH"
 #define TMP1 "/tmp"
 #define TMP2 "/usr/tmp"
+#define TEMPLATE "XXXXXXXX"
 
 #define VALID(d) (*(d) && !eaccess(d, W_OK | X_OK))
 
@@ -114,12 +117,66 @@ static struct Tmp_s {
 } tmp = {.mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH};
 
 static_fn char *get_pathtemp_dir() {
-    char *d = astconf("TMP", NULL, NULL);
-    if (*d && eaccess(d, W_OK | X_OK) == 0) return d;
+    char *tmpdir = getenv("TMPDIR");
+    if (tmpdir && eaccess(tmpdir, W_OK | X_OK) == 0) return tmpdir;
+
+#ifdef P_tmpdir
+    if (eaccess(P_tmpdir, W_OK | X_OK) == 0) return P_tmpdir;
+#endif
 
     if (eaccess(TMP1, W_OK | X_OK) == 0) return TMP1;
     if (eaccess(TMP2, W_OK | X_OK) == 0) return TMP2;
     return NULL;
+}
+
+//
+// Create a temp file, open it, and return the dynamically constructed pathname and open fd.
+//
+// Args:
+//   dir: NULL to use the preferred temp dir else the directory in which to create the file.
+//   prefix: NULL to use the default "ast" prefix else the desired file name prefix. Can be the
+//     empty string.
+//   fd: Pointer to the opened file. If NULL we only construct and return a temp file name without
+//     creating and opening a file.
+//   open_flags: O_CLOEXEC and/or O_APPEND.
+//
+// Returns:
+//   Pointer to the dynamically constructed path name which must be freed by the caller.
+//   This will be NULL if anything went wrong.
+//
+//   The `fd` parameter will be updated to the file descriptor open on the file.
+//
+char *ast_temp_file(const char *dir, const char *prefix, int *fd, int open_flags) {
+    if (!dir) dir = get_pathtemp_dir();
+    if (!dir) return NULL;
+    int dir_len = strlen(dir);
+
+    if (!prefix) prefix = "ast";
+    int prefix_len = strlen(prefix);
+
+    // The first "+ 1" is for the slash between the dir and prefix.
+    // The second "+ 1" is for the period between the prefix and template.
+    // The sizeof(TEMPLATE) takes care of including space for the terminating null.
+    char *template = malloc(dir_len + prefix_len + sizeof(TEMPLATE) + 2);
+    assert(template);
+    strcpy(template, dir);
+    if (dir_len && dir[dir_len - 1] != '/') strcat(template, "/");
+    strcat(template, prefix);
+    if (prefix_len && prefix[prefix_len - 1] != '.') strcat(template, ".");
+    strcat(template, TEMPLATE);
+
+    if (fd) {
+        *fd = mkostemps(template, 0, open_flags);
+        if (*fd == -1) {
+            free(template);
+            return NULL;
+        }
+    } else {
+        // Only construct a unique file name from the template. Don't create and open a file.
+        mktemp(template);
+    }
+
+    return template;
 }
 
 char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp) {

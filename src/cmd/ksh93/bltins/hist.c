@@ -21,6 +21,7 @@
 
 #include <ctype.h>
 #include <fcntl.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -204,16 +205,12 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
         outfile = sfstdout;
         arg = "\n\t";
     } else {
-        fname = pathtemp(NULL, 0, NULL, NULL, NULL);
+        fname = ast_temp_file(NULL, NULL, &fdo, O_CLOEXEC);
         if (!fname) {
             errormsg(SH_DICT, ERROR_exit(1), e_create, "");
             __builtin_unreachable();
         }
-        fdo = open(fname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | O_CLOEXEC);
-        if (fdo < 0) {
-            errormsg(SH_DICT, ERROR_system(1), e_create, fname);
-            __builtin_unreachable();
-        }
+
         outfile = sfnew(NULL, shp->outbuff, IOBSIZE, fdo, SF_WRITE);
         arg = "\n";
         nflag++;
