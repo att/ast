@@ -936,8 +936,8 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
     sfputr(shp->stk, fmtbase((long)pv[fd], 10, 0), 0);
 #else   // has_dev_fd
     pv[0] = -1;
-    shp->fifo = pathtemp(0, 0, 0, "ksh.fifo", 0);
-    mkfifo(shp->fifo, S_IRUSR | S_IWUSR);
+    shp->fifo = ast_temp_file(NULL, "ksh.fifo", NULL, 0);
+    if (mkfifo(shp->fifo, S_IRUSR | S_IWUSR)) abort();
     sfputr(shp->stk, shp->fifo, 0);
 #endif  // has_dev_fd
     ap = (struct argnod *)stkfreeze(shp->stk, 0);
