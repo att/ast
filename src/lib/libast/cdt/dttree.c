@@ -502,16 +502,17 @@ static_fn void *dttree(Dt_t *dt, void *obj, int type) {
             root->_rght = link._left;
             tree->root = root;
 
-            if (type & DT_START) /* walk is now well-defined */
-            {
+            if (type & DT_START) {  // walk is now well-defined
+                assert(fngr);
                 *fngr = root;
                 DTRETURN(obj, (void *)fngr);
-            } else if (type & DT_STEP) /* return obj and set fngr to next */
-            {
+            } else if (type & DT_STEP) {  // return obj and set fngr to next
+                assert(fngr);
                 *fngr = root;
                 goto dt_return;
-            } else
+            } else {
                 DTRETURN(obj, _DTOBJ(disc, root));
+            }
         } else if (type & (DT_NEXT | DT_STEP)) {
             root->_left = link._rght;
             root->_rght = NULL;
