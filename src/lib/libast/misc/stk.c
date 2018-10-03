@@ -44,6 +44,7 @@
 #include "sfio_t.h"  // must be first include for some reason
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "sfdisc.h"
 #include "sfio.h"
 #include "stk.h"
@@ -253,24 +254,26 @@ Sfio_t *stkopen(int flags) {
  * <oflow> becomes the new overflow function
  */
 Sfio_t *stkinstall(Sfio_t *stream, _stk_overflow_ oflow) {
-    Sfio_t *old;
-    struct stk *sp;
     if (!init) {
         stkinit(1);
         if (oflow) stkcur->stkoverflow = oflow;
         return NULL;
     }
     increment(install);
-    old = stkcur ? stk2stream(stkcur) : 0;
+
+    Sfio_t *old = stkcur ? stk2stream(stkcur) : 0;
+    struct stk *sp;
     if (stream) {
         sp = stream2stk(stream);
-        while (sfstack(stkstd, SF_POPSTACK))
-            ;
+        while (sfstack(stkstd, SF_POPSTACK)) {
+            ;  // empty loop
+        }
         if (stream != stkstd) sfstack(stkstd, stream);
         stkcur = sp;
     } else {
         sp = stkcur;
     }
+    assert(sp);
     if (oflow) sp->stkoverflow = oflow;
     return old;
 }
