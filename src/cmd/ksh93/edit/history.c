@@ -402,9 +402,7 @@ static History_t *hist_trim(History_t *hp, int n) {
         *(endbuff = (cp = buff) + sfvalue(hist_old->histfp)) = 0;
         // Copy to null byte.
         incmd = 0;
-        while (*cp++) {
-            ;  // empty loop
-        }
+        cp += strlen(cp) + 1;  // point past the terminating null
         if (cp > endbuff) {
             incmd = 1;
         } else if (*cp == 0) {
@@ -448,9 +446,7 @@ static int hist_nearend(History_t *hp, Sfio_t *iop, off_t size) {
                 break;
             }
             incmd = 0;
-            while (*cp++) {
-                ;  // empty loop
-            }
+            cp += strlen((char *)cp) + 1;  // point past the terminating null
             if (cp > endbuff) {
                 incmd = 1;
                 break;
