@@ -72,6 +72,7 @@
     { include: ["<__hash_table>", "public", "<unordered_set>", "public"] },
 #   { include: ["<>", "private", "<>", "public"] },
 
+    { symbol: ["NBPG", "private", "<sys/param.h>", "public"] },
     { symbol: ["wctype_t", "private", "<wctype.h>", "public"] },
     { symbol: ["mutex", "private", "<mutex>", "public"] },
     { symbol: ["sig_atomic_t", "private", "<csignal>", "public"] },
