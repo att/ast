@@ -414,7 +414,6 @@ char *stkfreeze(Sfio_t *stream, size_t extra) {
  * copy string <str> onto the stack as a new stack word
  */
 char *stkcopy(Sfio_t *stream, const char *str) {
-    unsigned char *cp = (unsigned char *)str;
     size_t n;
     int off = stktell(stream);
     char buff[40], *tp = buff;
@@ -427,23 +426,22 @@ char *stkcopy(Sfio_t *stream, const char *str) {
         }
         memcpy(tp, stream->_data, off);
     }
-    while (*cp++)
-        ;
-    n = roundof(cp - (unsigned char *)str, STK_ALIGN);
+    n = roundof(strlen(str) + 1, STK_ALIGN);
     if (!init) stkinit(n);
     increment(copy);
-    if (stkleft(stream) <= n && !stkgrow(stream, n))
-        cp = 0;
-    else {
-        strcpy((char *)(cp = stream->_data), str);
-        stream->_data = stream->_next = cp + n;
+
+    char *cp = NULL;
+    if (stkleft(stream) > n || stkgrow(stream, n)) {
+        cp = (char *)stream->_data;
+        strcpy(cp, str);
+        stream->_data = stream->_next = (unsigned char *)cp + n;
         if (off) {
             stkseek(stream, off);
             memcpy(stream->_data, tp, off);
         }
     }
     if (tp != buff) free(tp);
-    return (char *)cp;
+    return cp;
 }
 
 /*
