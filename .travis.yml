@@ -47,7 +47,7 @@ matrix:
         - os: linux
           compiler: gcc
           env:
-            # i386 images are built officially by docker but not supported
+            # i686 images are built officially by docker but not supported
             - DISTRO_TYPE=i386/ubuntu
               INSTALL_REQUIREMENTS="apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -yq gcc python3 sudo locales ed vim python3-pip ninja-build findutils debianutils netcat-openbsd expect git; pip3 install meson==0.44.0; locale-gen en_US.UTF-8"
           before_install:
@@ -84,4 +84,4 @@ script:
         ${INSTALL_REQUIREMENTS};
         useradd --create-home test;
         chown -R test /source;
-        sudo -u test /source/scripts/build-on-docker.sh"
+        sudo -u test /source/scripts/build-on-docker.sh '${DISTRO_TYPE}'"

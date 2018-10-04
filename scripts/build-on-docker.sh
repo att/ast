@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+export DISTRO_TYPE=$1
+
 # shellcheck disable=SC1091
 source /source/scripts/travis_common.sh
 
