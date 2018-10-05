@@ -32,7 +32,6 @@
 #include "cdt.h"
 #include "fault.h"
 #include "jobs.h"
-#include "lexstates.h"
 #include "name.h"
 
 Shell_t sh = {.shcomp = 0};
@@ -40,9 +39,6 @@ struct jobs job = {.pwlist = NULL};
 Dtdisc_t _Nvdisc = {.key = offsetof(Namval_t, nvname), .size = -1, .comparf = nv_compare};
 struct shared *shgd = NULL;
 int32_t sh_mailchk = 600;
-
-// Reserve room for writable state table.
-char *sh_lexstates[ST_NONE] = {0};
 
 // These two magic pointers are used to distinguish the purpose of the `extra` parameter of the
 // `sh_addbuiltin()` function. It should be one of these two values, NULL, or a `Namfun_t*`.

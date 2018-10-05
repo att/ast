@@ -44,17 +44,17 @@
 static char *fmtx(Shell_t *shp, const char *string) {
     const char *cp = string;
     int n, c;
-    unsigned char *state = (unsigned char *)sh_lexstates[2];
+    const unsigned char *norm_state = (const unsigned char *)sh_lexstates[ST_NORM];
     int offset = stktell(shp->stk);
     if (*cp == '#' || *cp == '~') sfputc(shp->stk, '\\');
-    while ((c = mb1char(cp)), (c > UCHAR_MAX) || (n = state[c]) == 0 || n == S_EPAT) {
+    while ((c = mb1char(cp)), (c > UCHAR_MAX) || (n = norm_state[c]) == 0 || n == S_EPAT) {
         ;  // empty loop
     }
     if (n == S_EOF && *string != '#') return (char *)string;
     sfwrite(shp->stk, string, --cp - string);
     for (string = cp; (c = mb1char(cp)); string = cp) {
         if ((n = cp - string) == 1) {
-            if ((n = state[c]) && n != S_EPAT) sfputc(shp->stk, '\\');
+            if ((n = norm_state[c]) && n != S_EPAT) sfputc(shp->stk, '\\');
             sfputc(shp->stk, c);
         } else {
             sfwrite(shp->stk, string, n);

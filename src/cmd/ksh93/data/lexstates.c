@@ -334,9 +334,9 @@ static const char sh_lexstate9[256] = {
     S_NOP,   S_NOP, S_NOP,   S_BRACE, S_PAT, S_ENDCH, S_NOP, S_NOP,  // 120 - 127
 };
 
-const char *sh_lexrstates[ST_NONE] = {sh_lexstate0, sh_lexstate1, sh_lexstate2, sh_lexstate3,
-                                      sh_lexstate4, sh_lexstate5, sh_lexstate6, sh_lexstate7,
-                                      sh_lexstate8, sh_lexstate9, sh_lexstate5};
+const char *sh_lexstates[ST_NONE] = {sh_lexstate0, sh_lexstate1, sh_lexstate2, sh_lexstate3,
+                                     sh_lexstate4, sh_lexstate5, sh_lexstate6, sh_lexstate7,
+                                     sh_lexstate8, sh_lexstate9, sh_lexstate5};
 
 const char e_lexversion[] = "%d: invalid binary script version";
 const char e_lexspace[] = "line %d: use space or tab to separate operators %c and %c";

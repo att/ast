@@ -2062,7 +2062,6 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
 // Copy <str> onto the stack.
 //
 static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
-    char *state;
     const char *cp = str;
     const char *ep = cp + size;
     int c, n, nopat, len;
@@ -2088,7 +2087,7 @@ static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
     if (mp->sp) {
         sfwrite(mp->sp, str, size);
     } else if (mp->pattern >= 2 || (mp->pattern && nopat) || mp->assign == 3) {
-        state = sh_lexstates[ST_MACRO];
+        const char *macro_state = sh_lexstates[ST_MACRO];
         // Insert \ before file expansion characters.
         while (size-- > 0) {
             len = mblen(cp, ep - cp);
@@ -2097,7 +2096,7 @@ static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
                 size -= (len - 1);
                 continue;
             }
-            c = state[n = *(unsigned char *)cp++];
+            c = macro_state[n = *(unsigned char *)cp++];
             if (mp->assign == 3 && mp->pattern != 4) {
                 if (c == S_BRACT) {
                     nopat = 0;
@@ -2123,7 +2122,7 @@ static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
             } else if (mp->pattern == 2 && c == S_SLASH) {
                 c = 1;
             } else if (mp->pattern == 3 && c == S_ESC &&
-                       (state[*(unsigned char *)cp] == S_DIG || (*cp == ESCAPE))) {
+                       (macro_state[*(unsigned char *)cp] == S_DIG || (*cp == ESCAPE))) {
                 if (!(c = mp->quote)) cp++;
             } else {
                 c = 0;
@@ -2139,20 +2138,20 @@ static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
         if (c) sfwrite(stkp, str, c);
     } else if (!mp->quote && mp->split && (mp->ifs || mp->pattern)) {
         // Split words at ifs characters.
-        state = mp->shp->ifstable;
+        char *ifs_state = mp->shp->ifstable;
         if (mp->pattern) {
             char *sp = "&|()";
             while ((c = *sp++)) {
-                if (state[c] == 0) state[c] = S_EPAT;
+                if (ifs_state[c] == 0) ifs_state[c] = S_EPAT;
             }
             sp = "*?[{";
             while ((c = *sp++)) {
-                if (state[c] == 0) state[c] = S_PAT;
+                if (ifs_state[c] == 0) ifs_state[c] = S_PAT;
             }
-            if (state[ESCAPE] == 0) state[ESCAPE] = S_ESC;
+            if (ifs_state[ESCAPE] == 0) ifs_state[ESCAPE] = S_ESC;
         }
         while (size-- > 0) {
-            n = state[c = *(unsigned char *)cp++];
+            n = ifs_state[c = *(unsigned char *)cp++];
             if (n != S_MBYTE && (len = mblen(cp - 1, ep - cp + 1)) > 1) {
                 sfwrite(stkp, cp - 1, len);
                 cp += --len;
@@ -2176,7 +2175,7 @@ static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
                 }
                 if (n == S_SPACE || n == S_NL) {
                     while (size > 0 &&
-                           ((n = state[c = *(unsigned char *)cp++]) == S_SPACE || n == S_NL)) {
+                           ((n = ifs_state[c = *(unsigned char *)cp++]) == S_SPACE || n == S_NL)) {
                         size--;
                     }
                     if (n == S_MBYTE && sh_strchr(mp->ifsp, cp - 1, ep - cp + 1) >= 0) {
@@ -2193,7 +2192,7 @@ static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
                 mp->patfound = 0;
                 if (n == S_DELIM) {
                     while (size > 0 &&
-                           ((n = state[c = *(unsigned char *)cp++]) == S_SPACE || n == S_NL)) {
+                           ((n = ifs_state[c = *(unsigned char *)cp++]) == S_SPACE || n == S_NL)) {
                         size--;
                     }
                 }
@@ -2206,11 +2205,11 @@ static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
         if (mp->pattern) {
             cp = "&|()";
             while ((c = *cp++)) {
-                if (state[c] == S_EPAT) state[c] = 0;
+                if (ifs_state[c] == S_EPAT) ifs_state[c] = 0;
             }
             cp = "*?[{";
             while ((c = *cp++)) {
-                if (state[c] == S_PAT) state[c] = 0;
+                if (ifs_state[c] == S_PAT) ifs_state[c] = 0;
             }
             if (mp->shp->ifstable[ESCAPE] == S_ESC) mp->shp->ifstable[ESCAPE] = 0;
         }
