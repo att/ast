@@ -1241,7 +1241,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     } else if ((sp = shp->sftable[dupfd])) {
                         char *tmpname;
                         if (sfset(sp, 0, 0) & SF_STRING) {
-                            tmpname = pathtemp(NULL, 0, NULL, "sf", &f);
+                            tmpname = ast_temp_file(NULL, "sf", &f, 0);
                             if (tmpname) {
                                 Sfoff_t last = sfseek(sp, 0, SEEK_END);
                                 unlink(tmpname);

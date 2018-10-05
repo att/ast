@@ -203,9 +203,8 @@ retry:
 
     // Don't allow root a history_file in /tmp.
     if (fd < 0 && shgd->userid) {
-        fname = pathtemp(NULL, 0, NULL, NULL, NULL);
+        fname = ast_temp_file(NULL, NULL, &fd, O_APPEND | O_CLOEXEC);
         if (!fname) return 0;
-        fd = open(fname, O_BINARY | O_APPEND | O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | O_CLOEXEC);
     }
 
     if (fd < 0) return 0;
@@ -355,18 +354,26 @@ static History_t *hist_trim(History_t *hp, int n) {
         last = strrchr(name, '/');
         if (last) {
             *last = 0;
-            tmpname = pathtemp(NULL, 0, name, "hist", NULL);
+            tmpname = ast_temp_file(name, "hist", &fd, 0);
             *last = '/';
         } else {
-            tmpname = pathtemp(NULL, 0, ".", "hist", NULL);
+            tmpname = ast_temp_file(".", "hist", &fd, 0);
         }
+        if (!tmpname) {
+            errormsg(SH_DICT, ERROR_exit(1), e_create, "hist");
+            __builtin_unreachable();
+        }
+        close(fd);
         if (rename(name, tmpname) < 0) {
             free(tmpname);
             tmpname = name;
         }
         fd = open(tmpname, O_RDONLY | O_CLOEXEC);
         sfsetfd(hist_old->histfp, fd);
-        if (tmpname == name) tmpname = 0;
+        if (tmpname == name) {
+            free(tmpname);
+            tmpname = NULL;
+        }
     }
     hist_ptr = NULL;
     if (fstat(sffileno(hist_old->histfp), &statb) >= 0) {

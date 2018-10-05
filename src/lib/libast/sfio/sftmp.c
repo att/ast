@@ -132,10 +132,10 @@ static_fn int _rmtmp(Sfio_t *f, char *file) {
 }
 
 static_fn int _tmpfd(Sfio_t *f) {
-    char *file;
     int fd;
+    char *file = ast_temp_file(NULL, "sf", &fd, 0);
 
-    if (!(file = pathtemp(NULL, 0, NULL, "sf", &fd))) return -1;
+    if (!file) return -1;
     _rmtmp(f, file);
     free(file);
     return fd;
