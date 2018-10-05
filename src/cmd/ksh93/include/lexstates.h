@@ -99,8 +99,7 @@
 #define isexp(c) (sh_lexstates[ST_MACRO][c] == S_PAT || (c) == '$' || (c) == '`')
 #define ismeta(c) (sh_lexstates[ST_NAME][c] == S_BREAK)
 
-extern char *sh_lexstates[ST_NONE];
-extern const char *sh_lexrstates[ST_NONE];
+extern const char *sh_lexstates[ST_NONE];
 extern const char e_lexversion[];
 extern const char e_lexspace[];
 extern const char e_lexslash[];
