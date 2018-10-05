@@ -1217,7 +1217,6 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 
     n = strlen(e_version);
     if (e_version[n - 1] == '$' && e_version[n - 2] == ' ') e_version[n - 2] = 0;
-    memcpy(sh_lexstates, sh_lexrstates, ST_NONE * sizeof(char *));
     if (!beenhere) {
         beenhere = 1;
         shp = sh_getinterp();
