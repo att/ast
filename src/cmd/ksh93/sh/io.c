@@ -487,7 +487,6 @@ typedef int (*Inetintr_f)(struct addrinfo *, void *);
 
 static int inetopen(const char *path, int flags, Inetintr_f onintr, void *handle) {
     char *s;
-    char *t;
     int fd;
     int oerrno;
     struct addrinfo hint;
@@ -532,21 +531,26 @@ static int inetopen(const char *path, int flags, Inetintr_f onintr, void *handle
             return -1;
         }
     }
+
     if (flags == O_NONBLOCK) return 1;
-    if (!(s = strdup(path))) return -1;
-    t = strchr(s, '/');
-    if (t) {
-        *t++ = 0;
-        if (!strcmp(s, "local")) s = strdup("localhost");
-        fd = getaddrinfo(s, t, &hint, &addr);
-    } else {
-        fd = -1;
+
+    char *slash = strchr(path, '/');
+    if (!slash) return -1;
+
+    s = strdup(path);
+    s[slash - path] = 0;
+    if (!strcmp(s, "local")) {
+        free(s);
+        s = strdup("localhost");
     }
+
+    int status = getaddrinfo(s, slash + 1, &hint, &addr);
     free(s);
-    if (fd) {
-        if (fd != EAI_SYSTEM) errno = ENOTDIR;
+    if (status) {
+        if (status != EAI_SYSTEM) errno = ENOTDIR;
         return -1;
     }
+
     oerrno = errno;
     errno = 0;
     fd = -1;
