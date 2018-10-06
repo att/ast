@@ -5,8 +5,11 @@ language: c
 git:
     depth: false
 
+# Use docker to test builds on different Linux distros.
+# Latest stable image of each distro is pulled to test builds.
 matrix:
     include:
+        # https://hub.docker.com/_/fedora/
         - os: linux
           compiler: gcc
           env:
@@ -15,6 +18,7 @@ matrix:
           before_install:
               - docker pull ${DISTRO_TYPE}
 
+        # https://hub.docker.com/_/opensuse/
         # Note: Meson 0.44.0 is the newest version that works with Python
         # 3.4 available on OpenSuse Leap. See issue #430.
         - os: linux
@@ -25,6 +29,7 @@ matrix:
           before_install:
               - docker pull ${DISTRO_TYPE}
 
+        # https://hub.docker.com/_/ubuntu/
         # Ubuntu requires explicitly generating en_US.UTF-8 locale
         - os: linux
           compiler: gcc
@@ -34,6 +39,7 @@ matrix:
           before_install:
               - docker pull ${DISTRO_TYPE}
 
+        # https://hub.docker.com/_/debian/
         # Debian requires explicitly generating en_US.UTF-8 locale too
         - os: linux
           compiler: gcc
@@ -43,11 +49,13 @@ matrix:
           before_install:
               - docker pull ${DISTRO_TYPE}
 
+        # https://hub.docker.com/r/i386/ubuntu/
         # 32-bit environment
+        # i686 images are built officially by docker but not supported
+        # https://github.com/docker-library/official-images#architectures-other-than-amd64
         - os: linux
           compiler: gcc
           env:
-            # i686 images are built officially by docker but not supported
             - DISTRO_TYPE=i386/ubuntu
               INSTALL_REQUIREMENTS="apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -yq gcc python3 sudo locales ed vim python3-pip ninja-build findutils debianutils netcat-openbsd expect git; pip3 install meson==0.44.0; locale-gen en_US.UTF-8"
           before_install:
