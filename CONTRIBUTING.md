@@ -52,7 +52,7 @@ To help enforce this rule the `bin/lint` command will run the
 tool. You can find the IWYU project on
 [github](https://github.com/include-what-you-use/include-what-you-use).
 
-To install the tool on OS X you'll need to add a
+To install the tool on macOS you'll need to add a
 [formula](https://github.com/jasonmp85/homebrew-iwyu) then install it:
 
 ```sh
@@ -383,7 +383,7 @@ Coverity scans are run everyday on `master` branch. Latest results can be viewed
 
 ### Installing the Linting Tools
 
-To install the lint checkers on Mac OS X using HomeBrew:
+To install the lint checkers on macOS using HomeBrew:
 
 ```sh
 brew tap oclint/formulae
@@ -401,7 +401,7 @@ sudo apt-get install cppcheck
 
 ### Installing the Reformatting Tools
 
-To install the reformatting tool on Mac OS X using HomeBrew:
+To install the reformatting tool on macOS using HomeBrew:
 
 ```sh
 brew install clang-format
