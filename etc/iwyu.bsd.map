@@ -1,4 +1,4 @@
-# Map file for the include-what-you-use tool on OS X. For some reason
+# Map file for the include-what-you-use tool on macOS. For some reason
 # the version installed by HomeBrew doesn't have useful mappings for the
 # system provided headers. This also has mappings for FreeBSD.
 [
