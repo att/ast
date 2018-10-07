@@ -136,7 +136,7 @@ posix_spawn_feature_result = cc.run(posix_spawn_feature_file,
 feature_data.set10('_lib_posix_spawn', posix_spawn_feature_result.returncode() == 0)
 
 # Meson adds -D_FILE_OFFSET_BITS=64 flag by default, but it does not work with fts functions in older versions
-# of glibc. This feture test undefines it on such systems.
+# of glibc. This feature test undefines it on such systems.
 # https://github.com/mesonbuild/meson/issues/3519
 fts_feature_file = files('fts.c')
 fts_feature_result = cc.compiles(fts_feature_file,
