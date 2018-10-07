@@ -358,25 +358,30 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
 
     if (!argv && (flags & (PROC_ORPHAN | PROC_OVERLAY))) {
         errno = ENOEXEC;
-        return 0;
+        return NULL;
     }
     pio[0] = pio[1] = -1;
     pop[0] = pop[1] = -1;
-    if (cmd && (!*cmd || !pathpath(cmd, NULL, PATH_REGULAR | PATH_EXECUTE, path, sizeof(path))))
+    if (cmd && (!*cmd || !pathpath(cmd, NULL, PATH_REGULAR | PATH_EXECUTE, path, sizeof(path)))) {
         goto bad;
+    }
     switch (flags & (PROC_READ | PROC_WRITE)) {
-        case 0:
-            procfd = -1;
-            break;
-        case PROC_READ:
-            procfd = 1;
-            break;
-        case PROC_WRITE:
+        case PROC_WRITE: {
             procfd = 0;
             break;
-        case PROC_READ | PROC_WRITE:
+        }
+        case PROC_READ: {
+            procfd = 1;
+            break;
+        }
+        case PROC_READ | PROC_WRITE: {
             procfd = 2;
             break;
+        }
+        default: {
+            procfd = -1;
+            break;
+        }
     }
     if (proc_default.pid == -1) {
         proc = &proc_default;
