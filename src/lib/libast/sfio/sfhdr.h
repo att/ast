@@ -86,7 +86,6 @@
 
 #include "ast.h"
 #include "ast_tty.h"
-#include "ls.h"
 
 /* ast always provides multibyte handling */
 #undef _lib_wcrtomb

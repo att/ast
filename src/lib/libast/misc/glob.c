@@ -35,7 +35,6 @@
 #include <sys/stat.h>
 
 #include "ast.h"
-#include "ls.h"
 #include "regex.h"
 #include "sfio.h"
 #include "stak.h"

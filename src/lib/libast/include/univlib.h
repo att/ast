@@ -37,7 +37,6 @@
 #include <errno.h>
 
 #include "ast.h"
-#include "ls.h"
 
 #define UNIV_SIZE 9
 
