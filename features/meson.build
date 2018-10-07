@@ -37,15 +37,7 @@ libexecinfo_dep = cc.find_library('execinfo', required: false, dirs: lib_dirs)
 # On some systems (e.g., OpenBSD) `iconv()` is in libiconv.
 libiconv_dep = cc.find_library('iconv', required: false, dirs: lib_dirs)
 
-# Under Cygwin the iconv shared library exports the symbols we need with a
-# `lib` prefix. So we don't want the LIBICONV_PLUG behavior on that platform.
-# On others we either want this or it's a no-op.
-if not (system == 'cygwin' or system == 'openbsd')
-    feature_data.set('LIBICONV_PLUG', 1)
-endif
-
-# On Cygwin the message catalog functions (e.g., `catopen()`) are in this
-# library.
+# On Cygwin the message catalog functions (e.g., `catopen()`) are in this library.
 libcatgets_dep = cc.find_library('catgets', required: false, dirs: lib_dirs)
 
 feature_data.set10('_hdr_execinfo', cc.has_header('execinfo.h', args: feature_test_args))
