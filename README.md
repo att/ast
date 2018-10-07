@@ -95,7 +95,7 @@ the entire AST source. It does not apply to the current `master` branch that
 is focused solely on the `ksh` command and uses the Meson build system.
 
 
-Almost all the tools in this package (including the bin/package script are
+Almost all the tools in this package (including the bin/package script) are
 self-documenting; run <tool> --man (or --html) for the man page for the tool.
 
 (If you were used to the old AST packaging mechanism, on www.research.att.com,
@@ -109,7 +109,7 @@ the current development version of ksh93. It only contains source code
 for ksh93 and the libraries required to build it.
 
 The [2012-08-01-master branch](https://github.com/att/ast/commits/2012-08-01-master)
-contains the the last stable release of
+contains the last stable release of
 full AST source code. It contains one cherry-picked
 [change](https://github.com/att/ast/commit/e79c29295092fe2b2282d134e2b7cce32ec9dcac)
 to allow building on Linux.
@@ -121,7 +121,7 @@ normally merged to this branch.
 
 The [gh-pages branch](https://github.com/att/ast/commits/gh-pages)
 will probably be removed. It contains files needed to generate the static
-[AST project page](https://att.github.io/ast/) hosted by Github. See
+[AST project page](https://att.github.io/ast/) hosted by GitHub. See
 https://help.github.com/articles/what-is-github-pages/ for more info.
 
 ## Licensing
@@ -145,7 +145,7 @@ said the following:
 
 ## Contact Us
 
-The primary mechanism for interacting with this project is the [Github
+The primary mechanism for interacting with this project is the [GitHub
 project](https://github.com/att/ast/) by opening issues and pull-requests
 and watching the project.
 
