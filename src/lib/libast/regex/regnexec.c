@@ -1738,7 +1738,8 @@ int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatc
                     goto done;
                 }
                 index -= HIT;
-                m = mask[n = e->re.bm.size - 1][buf[index]];
+                n = e->re.bm.size - 1;
+                m = mask[n][buf[index]];
                 do {
                     if (!n--) {
                         if (e->re.bm.back < 0) goto possible;
@@ -1749,13 +1750,14 @@ int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatc
                             goto possible;
                         }
                         x = index;
-                        if (index < e->re.bm.back)
+                        if (index < e->re.bm.back) {
                             index = 0;
-                        else
+                        } else {
                             index -= e->re.bm.back;
+                        }
                         while (index <= x) {
-                            if ((i = regnexec_parse(env, e->next, &env->done, buf + index)) !=
-                                NONE) {
+                            i = regnexec_parse(env, e->next, &env->done, buf + index);
+                            if (i != NONE) {
                                 if (env->stack) env->best[0].rm_so = index;
                                 n = env->nsub;
                                 goto hit;
@@ -1765,7 +1767,8 @@ int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatc
                         index += e->re.bm.size;
                         break;
                     }
-                } while (m &= mask[n][buf[--index]]);
+                    m &= mask[n][buf[--index]];
+                } while (m);
                 if ((index += fail[n + 1]) >= len) goto done;
             }
         }
