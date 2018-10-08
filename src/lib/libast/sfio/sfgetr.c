@@ -24,6 +24,7 @@
 #include <stddef.h>
 #include <string.h>
 
+#include "ast_assert.h"
 #include "sfhdr.h"
 
 /*	Read a record delineated by a character.
@@ -142,6 +143,7 @@ done:
     _Sfi = f->val = un;
     f->getr = 0;
     if (found && rc != 0 && (type & SF_STRING)) {
+        assert(us);
         us[un - 1] = '\0';
         if (us >= f->data && us < f->endb) {
             f->getr = rc;
