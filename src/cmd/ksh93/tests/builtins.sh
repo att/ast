@@ -478,3 +478,30 @@ builtin -d alias 2>/dev/null && log_error "Deleting a special builtin should fai
 
 # The -p option causes the word export to be inserted before each one.
 [[ $(export -p | grep -v "^export") = "" ]] || log_error "export -p does not prepend all lines with 'export'"
+
+# ==========
+# shift should left shift positional parameters by 1 starting from $1
+set -- This is a message
+actual=$(while [[ $# -ne 0 ]]
+do
+    echo $1
+    shift
+done)
+expect=$'This\nis\na\nmessage'
+[[ "$actual" = "$expect" ]] || log_error "shift does not rename parameters" "$expect" "$actual"
+
+# ==========
+# shift [n] should shift n parameters
+set -- This is a message
+shift 3
+actual="$1"
+expect=$'message'
+[[ "$actual" = "$expect" ]] || log_error "shift [n] does not shift n parameters" "$expect" "$actual"
+
+# ==========
+# shift <arithmetic expression> should shift result of arithmetic expression
+set -- This is a message
+shift 1+2
+actual="$1"
+expect=$'message'
+[[ "$actual" = "$expect" ]] || log_error "shift does not work with arithmetic expressions" "$expect" "$actual"
