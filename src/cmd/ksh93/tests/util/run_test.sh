@@ -70,10 +70,10 @@ export BUILD_DIR=$PWD
 # our purposes that doesn't matter. It simply means the temp file name will contain the X's on a BSD
 # system.
 #
-export TEST_DIR=$(mktemp -dt ksh.${test_name}.XXXXXXX) ||
+export TEST_DIR=$(mktemp -dt ksh.${test_name}.XXXXXX) ||
     { log_error "mktemp -dt failed"; exit 99; }
-cd $TEST_DIR || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 99; }
-log_info "TEST_DIR=$TEST_DIR"
+    cd $TEST_DIR || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 99; }
+    log_info "TEST_DIR=$TEST_DIR"
 
 #
 # Make sure we search for external commands in the temporary test dir, then the test source dir,

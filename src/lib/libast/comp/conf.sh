@@ -42,7 +42,10 @@ cc=$*
 
 PATH="$MESON_SOURCE_ROOT/scripts:$PATH"
 
-tmpdir=`mktemp -d`
+# The use of `mktemp -dt` isn't ideal as it has slightly different meaning on BSD and GNU. But for
+# our purposes that doesn't matter. It simply means the temp file name will contain the X's on a BSD
+# system. See https://github.com/att/ast/issues/939
+tmpdir=$(mktemp -dt ksh.XXXXXX)
 tmp=$tmpdir/conf
 cd $tmpdir || exit
 trap "rm -rf $tmpdir" EXIT
