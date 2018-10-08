@@ -1305,30 +1305,30 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                 if (!(p = (unsigned char *)stkpush(env->mst, n))) return BAD;
                 memset(catcher.re.neg_catch.index = p, 0, n);
                 catcher.next = rex->next;
-                if (regnexec_parse(env, rex->re.group.expr.rex, &catcher, s) == BAD)
-                    r = BAD;
-                else {
-                    r = NONE;
-                    for (; i >= 0; i--)
-                        if (!bittst(p, i)) {
-                            switch (follow(env, rex, cont, s + i)) {
-                                case BAD:
-                                    r = BAD;
-                                    break;
-                                case BEST:
-                                    r = BEST;
-                                    break;
-                                case CUT:
-                                    r = CUT;
-                                    break;
-                                case GOOD:
-                                    r = GOOD;
-                                    /*FALLTHROUGH*/
-                                default:
-                                    continue;
-                            }
+                if (regnexec_parse(env, rex->re.group.expr.rex, &catcher, s) == BAD) {
+                    stkpop(env->mst);
+                    return BAD;
+                }
+
+                r = NONE;
+                for (; i >= 0; i--) {
+                    if (bittst(p, i)) continue;
+                    switch (follow(env, rex, cont, s + i)) {
+                        case BAD:
+                            stkpop(env->mst);
+                            return BAD;
+                        case BEST:
+                            stkpop(env->mst);
+                            return BEST;
+                        case CUT:
+                            stkpop(env->mst);
+                            return CUT;
+                        case GOOD:
+                            r = GOOD;
                             break;
-                        }
+                        default:
+                            break;
+                    }
                 }
                 stkpop(env->mst);
                 return r;
