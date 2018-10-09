@@ -1123,23 +1123,21 @@ int sh_lex(Lex_t *lp) {
                 break;
             }
             case S_BRACE: {
-                int isfirst;
                 if (lp->lexd.dolparen) {
-                    if (mode == ST_BEGIN && (lp->lex.reservok || lp->comsub)) {
-                        if (lp->comsub) {
-                            lp->token = c;
-                            return c;
-                        }
-                        n = fcgetc();
-                        if (n > 0) {
-                            fcseek(-LEN);
-                        } else {
-                            n = '\n';
-                        }
-                        if (n == RBRACT || sh_lexstates[ST_NORM][n]) {
-                            lp->token = c;
-                            return c;
-                        }
+                    if (mode != ST_BEGIN || !(lp->lex.reservok || lp->comsub)) break;
+                    if (lp->comsub) {
+                        lp->token = c;
+                        return c;
+                    }
+                    n = fcgetc();
+                    if (n > 0) {
+                        fcseek(-LEN);
+                    } else {
+                        n = '\n';
+                    }
+                    if (n == RBRACT || sh_lexstates[ST_NORM][n]) {
+                        lp->token = c;
+                        return c;
                     }
                     break;
                 } else if (mode == ST_NESTED && endchar(lp) == RBRACE) {
@@ -1152,7 +1150,8 @@ int sh_lex(Lex_t *lp) {
                     }
                     goto do_reg;
                 }
-                isfirst = (lp->lexd.first && fcseek(0) == lp->lexd.first + 1);
+
+                bool isfirst = lp->lexd.first && fcseek(0) == lp->lexd.first + 1;
                 n = fcgetc();
                 if (n < 0) break;
                 // Check for {}.
