@@ -8,7 +8,7 @@ libast_files += [
     'misc/sigcrit.c',
     'misc/stack.c', 'misc/state.c',
     'misc/stk.c', 'misc/translate.c', 'misc/univdata.c',
-    'misc/fts.c', 'misc/vmbusy.c'
+    'misc/fts.c', 'misc/vmbusy.c', 'misc/fallbacks.c'
 ]
 
 if not shared_c_args.contains('-D_AST_no_spawnveg=1')
