@@ -385,10 +385,9 @@ then
     [[ $got == $exp ]] || log_error "--pipefail -c '(sleep 0.1;false)|true|true' fails with exit status 0 (after $got/$exp iterations)"
 fi
 
-echo=$(whence -p echo)
 for ((i=0; i < 20; i++))
 do
-    if ! x=$(true | $echo 123)
+    if ! x=$(true | $bin_echo 123)
     then
         log_error 'command substitution with wrong exit status with pipefai'
         break
@@ -400,7 +399,7 @@ done
     (( $? )) || log_error 'pipe not failing in subshell with pipefail'
 ) | wc >/dev/null
 
-$SHELL -c 'set -o pipefail; false | $(whence -p true);' && log_error 'pipefail not returning failure with sh -c'
+$SHELL -c 'set -o pipefail; false | $bin_true;' && log_error 'pipefail not returning failure with sh -c'
 exp='1212 or 1221'
 got=$(
     set --pipefail
@@ -469,7 +468,8 @@ ADD=(    ''        '; :'        )
 cd $TEST_DIR
 print $'#!'$SHELL$'\nkill -KILL $$' > command-kill
 print $'kill -KILL $$' > script-kill
-chmod +x command-kill script-kill
+chmod +x command-kill
+chmod +x script-kill
 export PATH=.:$PATH
 exp='Killed'
 for ((S=0; S<${#SUB[@]}; S++))

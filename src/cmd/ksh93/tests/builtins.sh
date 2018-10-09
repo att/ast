@@ -244,11 +244,10 @@ t=$(ulimit -t)
 $SHELL 2> /dev/null -c 'cd ""' && log_error 'cd "" not producing an error'
 [[ $($SHELL 2> /dev/null -c 'cd "";print hi') != hi ]] && log_error 'cd "" should not terminate script'
 
-bincat=$(whence -p cat)
-builtin cat
 out=$TEST_DIR/seq.out
 seq 11 >$out
-cmp -s <(print -- "$($bincat<( $bincat $out ) )") <(print -- "$(cat <( cat $out ) )") || log_error "builtin cat differs from $bincat"
+cmp -s <(print -- "$($bin_cat<( $bin_cat $out ) )") <(print -- "$(cat <( cat $out ) )") || \
+    log_error "builtin cat differs from $bin_cat"
 
 v=$( $SHELL -c $'
     trap \'print "usr1"\' USR1
@@ -333,26 +332,55 @@ unset ENV
 : ~root
 [[ $(builtin) == *.sh.tilde* ]] &&  log_error 'builtin contains .sh.tilde'
 
-PATH=/bin:/usr/bin
-basename=$(whence -p basename)
-cmp=$(whence -p cmp)
-.sh.op_astbin=/opt/ast/bin
-PATH=/opt/ast/bin:$PATH
+# This series of tests is sensitive to the specific content and order of `PATH`.
 PATH=/opt/ast/bin:/bin:/usr/bin
-[[ ${SH_OPTIONS} == *astbin=/opt/ast/bin* ]] || log_error "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/opt/ast/bin"
-[[ $(whence basename) == /opt/ast/bin/basename ]] || log_error "basename bound to $(whence basename) but should be bound to /opt/ast/bin/basename"
-[[ $(whence cmp) == /opt/ast/bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be bound to /opt/ast/bin/cmp"
+
+.sh.op_astbin=/opt/ast/bin
+[[ ${SH_OPTIONS} == *astbin=/opt/ast/bin* ]] || \
+    log_error "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/opt/ast/bin"
+
+actual=$(whence basename)
+expect="/opt/ast/bin/basename"
+[[ $actual == $expect ]] || log_error "basename bound to wrong path" "$expect" "$actual"
+actual=$(whence cmp)
+expect="/opt/ast/bin/cmp"
+[[ $actual == $expect ]] || log_error "cmp bound to wrong path" "$expect" "$actual"
+
 .sh.op_astbin=/bin
 SH_OPTIONS=astbin=/bin
-[[ ${SH_OPTIONS} == *astbin=/bin* ]] || log_error "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/bin"
-[[ $(whence basename) == /bin/basename ]] || log_error "basename bound to $(whence basename) but should be bound to /bin/basename"
-[[ $(whence cmp) == /bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be bound to /bin/cmp"
+[[ ${SH_OPTIONS} == *astbin=/bin* ]] || \
+    log_error "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/bin"
+
+actual=$(whence basename)
+expect="/bin/basename"
+[[ $actual == $expect ]] || log_error "basename bound to wrong path" "$expect" "$actual"
+actual=$(whence cmp)
+expect="/bin/cmp"
+[[ $actual == $expect ]] || log_error "cmp bound to wrong path" "$expect" "$actual"
+
 .sh.op_astbin=/opt/ast/bin
-[[ $(whence basename) == /opt/ast/bin/basename ]] || log_error "basename bound to $(whence basename) but should be rebound to /opt/ast/bin/basename"
-[[ $(whence cmp) == /opt/ast/bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be rebound to /opt/ast/bin/cmp"
+actual=$(whence basename)
+expect="/opt/ast/bin/basename"
+[[ $actual == $expect ]] || log_error "basename bound to wrong path" "$expect" "$actual"
+actual=$(whence cmp)
+expect="/opt/ast/bin/cmp"
+[[ $actual == $expect ]] || log_error "cmp bound to wrong path" "$expect" "$actual"
+
+# These two tests do something unusual. The PATH when the unit test was run may have had /bin before
+# /usr/bin or vice versa. So make sure this handles both possibilities. That's because on some
+# platforms these two commands may be found in both directories.  Here we don't care which directory
+# prefixes the command other than it not being /opt/ast/bin.
 PATH=/bin:/usr/bin:/opt/ast/bin
-[[ $(whence basename) == "$basename" ]] || log_error "basename bound to $(whence basename) but should be bound to $basename when PATH=$PATH"
-[[ $(whence cmp) == "$cmp" ]] || log_error "cmp bound to $(whence cmp) but should be bound to $cmp when PATH=$PATH"
+actual=$(whence basename)
+actual="${actual#/usr}"
+expect="${bin_basename#/usr}"
+[[ $actual == $expect ]] || log_error "basename bound to wrong path" "$expect" "$actual"
+actual=$(whence cmp)
+actual="${actual#/usr}"
+expect="${bin_cmp#/usr}"
+[[ $actual == $expect ]] || log_error "cmp bound to wrong path" "$expect" "$actual"
+
+PATH=$FULL_PATH  # restore the PATH defined by the test harness
 
 # tests with cd
 pwd=$PWD

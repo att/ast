@@ -1214,10 +1214,9 @@ function foo
 bar=bam
 foo
 
-sleep=$(whence -p sleep)
 function gosleep
 {
-    $sleep 4
+    $bin_sleep 4
 }
 x=$(
     (sleep 2; pid=; ps | grep sleep | read pid extra; [[ $pid ]] && kill -- $pid) &

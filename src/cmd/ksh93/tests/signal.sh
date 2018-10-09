@@ -128,7 +128,11 @@ cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst0 > sigtst0
 cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst1 > sigtst1
 cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst2 > sigtst2
 cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst3 > sigtst3
-chmod +x sigtst?
+# TODO: Remove this workaround when builtin chmod bug #949 (multiple path handling) is fixed.
+for f in sigtst?
+do
+    chmod +x $f
+done
 $SHELL sigtst0 > sigtst.out
 while read ops actual
 do
@@ -168,7 +172,6 @@ read -u9 -t0.1 x || log_error 'subcommand unexpectedly consumed fifo go signal'
 # Verify exit due to signal can be mapped to the correct signal name.
 #
 empty_fifos
-cmd_true=$(whence -p true)
 for expect in TERM VTALRM PIPE
 do
     [[ ${SIG[$expect]} ]] || continue
@@ -179,7 +182,7 @@ do
         { sleep 0.5; kill -$expect \$\$; sleep 1; kill -KILL \$\$ 2> /dev/null; } &
         while :
         do
-            ($cmd_true; sleep .1)
+            ($bin_true; sleep .1)
         done
         EOF
     status=$?

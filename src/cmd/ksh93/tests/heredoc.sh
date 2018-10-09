@@ -513,21 +513,19 @@ $SHELL 2> /dev/null -c 'true <<- ++EOF++ || true "$(true)"
 ++EOF++' || log_error 'command substitution on heredoc line causes syntax error'
 
 (
-    cat=$(whence -p cat)
     function foobar
     {
-        $cat <<- XXX
+        $bin_cat <<- XXX
 		hello
 	XXX
     }
-    $cat > $f <<- EOF
+    $bin_cat > $f <<- EOF
 		$(foobar)
 		world
 	EOF
 ) > $f > /dev/null
 [[ $(<$f) == $'hello\nworld' ]] || log_error 'nested here-document fails'
 
-builtin cat
 exp='foo bar baz bork blah blarg'
 got=$(cat <<<"foo bar baz" 3<&0 <<<"$(</dev/fd/3) bork blah blarg")
 [[ $got == "$exp" ]] || '3<%0 not working when 0 is <<< here-doc'

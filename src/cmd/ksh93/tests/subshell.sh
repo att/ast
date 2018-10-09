@@ -18,9 +18,6 @@
 #                                                                      #
 ########################################################################
 
-builtin getconf
-bincat=$(PATH=$(getconf PATH) whence -p cat)
-
 # Some platforms have an extremely large default value for the number of open files. For example,
 # FreeBSD 11.1 has a default of 44685. This test fails with such a large value. Every other platform
 # has a limit an order of magnitude smaller. So limit the allowable values to something more
@@ -247,10 +244,9 @@ expect=foobar
 
 actual=$(
     $SHELL  2>&1  <<- \EOF
-		date=$(whence -p date)
 		function foo
 		{
-			x=$( $date > /dev/null 2>&1 ;:)
+			x=$( $bin_date > /dev/null 2>&1 ;:)
 		}
 		# consume almost all fds to push the test to the fd limit #
 		integer max=$(ulimit --nofile)
@@ -357,8 +353,8 @@ SUB=(
     ( BEG='$( '    END=' )'    )
     ( BEG='${ '    END='; }'    )
 )
-CAT=(  cat  $bincat  )
-INS=(  ""  "builtin cat; "  "builtin -d cat $bincat; "  ": > /dev/null; "  )
+CAT=(  cat  $bin_cat  )
+INS=(  ""  "builtin cat; "  "builtin -d cat $bin_cat; "  ": > /dev/null; "  )
 APP=(  ""  "; :"  )
 TST=(
     ( CMD='print foo | $cat'            EXP=3        )
@@ -483,13 +479,9 @@ then
 fi
 
 float t1=$SECONDS
-sleep=$(whence -p sleep)
-if [[ $sleep ]]
-then
-    $SHELL -c "( $sleep 5 </dev/null >/dev/null 2>&1 & );exit 0" | cat
-    (( (SECONDS-t1) > 4 )) && log_error '/bin/sleep& in subshell hanging'
-    ((t1=SECONDS))
-fi
+  $SHELL -c "( $bin_sleep 5 </dev/null >/dev/null 2>&1 & ); exit 0" | cat
+  (( (SECONDS-t1) > 4 )) && log_error '/bin/sleep& in subshell hanging'
+  ((t1=SECONDS))
 
 $SHELL -c '( sleep 5 </dev/null >/dev/null 2>&1 & );exit 0' | cat
 (( (SECONDS-t1) > 4 )) && log_error 'sleep& in subshell hanging'
@@ -544,7 +536,7 @@ wait $! 2> /dev/null
 $SHELL 2> /dev/null -c '[[ ${ print foo },${ print bar } == foo,bar ]]' || log_error  '${ print foo },${ print bar } not working'
 $SHELL 2> /dev/null -c '[[ ${ print foo; },${ print bar } == foo,bar ]]' || log_error  '${ print foo; },${ print bar } not working'
 
-src=$'true 2>&1\n: $(true | true)\n: $(true | true)\n: $(true | true)\n'$(whence -p true)
+src=$'true 2>&1\n: $(true | true)\n: $(true | true)\n: $(true | true)\n'$bin_true
 exp=ok
 got=$( $SHELL -c "(eval '$src'); echo $exp" )
 [[ $got == "$exp" ]] || log_error 'subshell eval of pipeline clobbers stdout'
@@ -556,10 +548,9 @@ x=$($SHELL -c '( function fx { export X=123;  } ; fx; ); echo $X')
 [[ $x == 123 ]] && log_error 'global variables set from with functions inside a
 subshell can leave side effects in parent shell'
 
-date=$(whence -p date)
 err() { return $1; }
 ( err 12 ) & pid=$!
-: $( $date)
+: $($bin_date)
 wait $pid
 [[ $? == 12 ]] || log_error 'exit status from subshells not being preserved'
 
@@ -599,14 +590,12 @@ EOF
 } 2> /dev/null
 [[ $x == $'END\nEND' ]] || log_error 'bug in save/restore of IFS in subshell'
 
-true=$(whence -p true)
-date=$(whence -p date)
 tmpf=$TEST_DIR/foo
 function fun1
 {
-    $true
+    $bin_true
     cd - >/dev/null 2>&1
-    print -u2 -- "$($date) SUCCESS"
+    print -u2 -- "$($bin_date) SUCCESS"
 }
 
 print -n $(fun1 2> $tmpf)
@@ -651,10 +640,11 @@ then
     log_error  'command substitution containg here-doc with command substitution fails'
 fi
 
-printf=$(whence -p printf)
-[[ $( { trap "echo foobar" EXIT; ( $printf ""); } & wait) == foobar ]] || log_error  'exit trap not being invoked'
+[[ $( { trap "echo foobar" EXIT; ( $bin_printf ""); } & wait) == foobar ]] || \
+    log_error  'exit trap not being invoked'
 
-$SHELL 2> /dev/null -c '( PATH=/bin; set -o restricted) ; exit 0'  || log_error 'restoring PATH when a subshell enables restricted exits not working'
+$SHELL 2> /dev/null -c '( PATH=/bin; set -o restricted) ; exit 0'  || \
+    log_error 'restoring PATH when a subshell enables restricted exits not working'
 
 $SHELL <<- \EOF
 	wc=$(whence wc) head=$(whence head)
@@ -691,8 +681,7 @@ out2="${out}$?"
 
 fun()
 {
-    echo=$(whence -p echo)
-    foo=` $echo foo`
+    foo=` $bin_echo foo`
     print -n stdout=$foo
     print -u2 stderr=$foo
 }
@@ -833,7 +822,7 @@ function get_value {
 
     # To trigger the bug we have to spawn an external command. Why is a
     # mystery but not really relevant.
-    $(whence -p true)
+    $bin_true
 
     (( case >= 1 )) && exec 3<&-
     (( case >= 2 )) && exec 4<&-

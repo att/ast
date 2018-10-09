@@ -25,8 +25,6 @@ then
     exit 99
 fi
 
-bintrue=$(whence -p true)
-
 function ping # id
 {
     integer x=0
@@ -37,10 +35,7 @@ function ping # id
     done
 }
 
-bincat=$(whence -p cat)
-builtin cat
-
-for cat in cat $bincat
+for cat in cat $bin_cat
 do
 
     $cat |&
@@ -351,7 +346,7 @@ function mypipe
 
 mypipe |&
 print -p "hello"
-z="$( $bintrue $($bintrue) )"
+z="$( $bin_true $($bin_true) )"
 { print -p "world";} 2> /dev/null
 read -p
 [[ $REPLY == world ]] ||  log_error "expected 'world' got '$REPLY'"
@@ -379,10 +374,9 @@ fi
 kill $pid 2>/dev/null
 wait
 
-tee=$(whence -p tee)
 ls -l |&
 pid=$!
-$tee -a /dev/null <&p > /dev/null
+$bin_tee -a /dev/null <&p > /dev/null
 wait $pid
 x=$?
 [[ $x == 0 ]] || log_error "coprocess exitval should be 0, not $x"
