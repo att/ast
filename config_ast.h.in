@@ -102,6 +102,7 @@
 #mesondefine _lib_lstat64
 #mesondefine _lib_memcntl
 #mesondefine _lib_mmap64
+#mesondefine _lib_mkostemp
 #mesondefine _lib_open64
 #mesondefine _lib_opendir
 #mesondefine _lib_pathnative
