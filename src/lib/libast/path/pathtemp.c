@@ -39,6 +39,23 @@
 #define TMP2 "/usr/tmp"
 #define TEMPLATE "XXXXXXXX"
 
+#if !_lib_mkostemp
+// This is a fallback in case the system doesn't provide it.
+static_fn int mkostemp(char *template, int oflags) {
+    for (int i = 10; i; i--) {
+#ifndef __clang_analyzer__
+        // cppcheck-suppress  mktempCalled
+        char *tp = mktemp(template);
+        assert(tp);
+#endif
+
+        int fd = open(template, O_CREAT | O_RDWR | O_EXCL | oflags, S_IRUSR | S_IWUSR);
+        if (fd != -1) return fd;
+    }
+    return -1;
+}
+#endif  // !_lib_mkostemp
+
 static_fn char *get_pathtemp_dir() {
     char *tmpdir = getenv("TMPDIR");
     if (tmpdir && eaccess(tmpdir, W_OK | X_OK) == 0) return tmpdir;
@@ -89,7 +106,7 @@ char *ast_temp_file(const char *dir, const char *prefix, int *fd, int open_flags
     strcat(template, TEMPLATE);
 
     if (fd) {
-        *fd = mkostemps(template, 0, open_flags);
+        *fd = mkostemp(template, open_flags);
         if (*fd == -1) {
             free(template);
             return NULL;
