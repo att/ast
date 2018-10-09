@@ -48,10 +48,12 @@ cat > $TEST_DIR/local/xfun <<- \EOF
     }
 EOF
 
-chmod +x "$TEST_DIR/global/xfun" "$TEST_DIR/local/xfun"
+chmod +x "$TEST_DIR/global/xfun"
+chmod +x "$TEST_DIR/local/xfun"
 print 'print local prog $1' >  $TEST_DIR/local/bin/run
 print 'print global prog $1' >  $TEST_DIR/global/bin/run
-chmod +x "$TEST_DIR/local/bin/run" "$TEST_DIR/global/bin/run"
+chmod +x "$TEST_DIR/local/bin/run"
+chmod +x "$TEST_DIR/global/bin/run"
 PATH=$TEST_DIR/global/bin:$PATH
 FPATH=$TEST_DIR/global
 
@@ -92,7 +94,9 @@ false
 [[  ${bar.y} == 4 ]] || log_error 'global compound variable should not be affected by definiton in namespace'
 [[  ${bar.z} == ''  ]] || log_error 'global compound variable should not see elements in namespace'
 [[ $(xfun) ==  'xfun global abc' ]] || log_error 'global function on FPATH failed'
-[[ $(run $foo) ==  'global prog abc' ]] || log_error 'global binary on PATH failed'
+actual=$(run $foo)
+expect='global prog abc'
+[[ $actual ==  $expect ]] || log_error 'global binary on PATH failed' "$expect" "$actual"
 false
 [[ $(.x.runxrun) ==  'xfun local bar' ]] || log_error 'namespace function on FPATH failed'
 

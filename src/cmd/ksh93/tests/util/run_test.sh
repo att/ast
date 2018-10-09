@@ -72,8 +72,8 @@ export BUILD_DIR=$PWD
 #
 export TEST_DIR=$(mktemp -dt ksh.${test_name}.XXXXXX) ||
     { log_error "mktemp -dt failed"; exit 99; }
-    cd $TEST_DIR || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 99; }
-    log_info "TEST_DIR=$TEST_DIR"
+cd $TEST_DIR || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 99; }
+log_info "TEST_DIR=$TEST_DIR"
 
 #
 # Make sure we search for external commands in the temporary test dir, then the test source dir,

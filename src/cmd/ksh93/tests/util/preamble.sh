@@ -5,8 +5,31 @@ readonly test_file=${0##*/}
 readonly test_name=$1
 
 #
+# Ensure we use ksh builtins where traditionally an external command would be used. This helps
+# ensure that a) our builtins get tested even if only indirectly, and b) our unit tests can rely
+# on predictable behavior from external commands that may have different behavior on different
+# platforms. A few tests need to use external variants of builtins so find them first.
+#
+bin_basename=$(whence -p basename)
+bin_cat=$(whence -p cat)
+bin_cmp=$(whence -p cmp)
+bin_date=$(whence -p date)
+bin_echo=$(whence -p echo)
+bin_false=$(whence -p false)
+bin_printf=$(whence -p printf)
+bin_sleep=$(whence -p sleep)
+bin_tee=$(whence -p tee)
+bin_true=$(whence -p true)
+# There is one test at the present time that is broken if all builtins are enabled by munging PATH.
+# So make it easy for a unit test to not enable all builtins by default. See issue #960.
+NO_BUILTINS_PATH=$PATH
+PATH=/opt/ast/bin:$PATH
+FULL_PATH=$PATH
+
+#
 # Make sure the unit test can't inadvertantly modify several critical env vars.
 #
+readonly NO_BUILTINS_PATH
 readonly FULL_PATH
 readonly ORIG_PATH
 readonly SAFE_PATH

@@ -378,7 +378,7 @@ EOF
 x=$(FPATH= PATH=$PWD/bin $SHELL -c  ': $(whence less);myfun') 2> /dev/null
 [[ $x == myfun ]] || log_error 'function myfun not found'
 
-cp $(whence -p echo) user_to_group_relationship.hdr.query
+cp $bin_echo user_to_group_relationship.hdr.query
 FPATH=/foobar:
 PATH=$FPATH:$PATH:.
 [[ $(user_to_group_relationship.hdr.query foobar) == foobar ]] 2> /dev/null || log_error 'Cannot execute command with . in name when PATH and FPATH end in :.'
@@ -387,7 +387,7 @@ mkdir -p $TEST_DIR/new/bin
 mkdir $TEST_DIR/new/fun
 print FPATH=../fun > $TEST_DIR/new/bin/.paths
 print FPATH=../xxfun > $TEST_DIR/bin/.paths
-cp "$(whence -p echo)" $TEST_DIR/new/bin
+cp "$bin_echo" $TEST_DIR/new/bin
 PATH=$TEST_DIR/bin:$TEST_DIR/new/bin:$PATH
 x=$(whence -p echo 2> /dev/null)
 [[ $x == "$TEST_DIR/new/bin/echo" ]] ||  log_error 'nonexistant FPATH directory in .paths file causes path search to fail'

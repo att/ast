@@ -110,11 +110,12 @@ exec 0<&-
 echo $(./close1)
 !
 print "echo abc" > close1
-chmod +x close0 close1
+chmod +x close0
+chmod +x close1
 x=$(./close0)
 if [[ $x != "abc" ]]
 then
-    log_error "picked up file descriptor zero for opening script file"
+    log_error "picked up file descriptor zero for opening script file" "abc" "$x"
 fi
 
 cat > close0 <<\!

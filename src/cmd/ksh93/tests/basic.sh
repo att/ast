@@ -257,7 +257,10 @@ fi
 
 cd $TEST_DIR || { log_error "cd $TEST_DIR failed"; exit 1; }
 print ./b > ./a; print ./c > b; print ./d > c; print ./e > d; print "echo \"hello there\"" > e
-chmod 755 a b c d e
+for x in a b c d e
+do
+    chmod 755 $x  # chmod builtin at the moment only handles one filename
+done
 x=$(./a)
 if [[ $x != "hello there" ]]
 then
@@ -406,7 +409,7 @@ kill $pids
 [[ $($SHELL -c 'o=foobar; for x in foo bar; do (o=save);print $o;done' 2> /dev/null ) == $'foobar\nfoobar' ]] || log_error 'for loop optimization subshell bug'
 
 command exec 3<> /dev/null
-if cat /dev/fd/3 >/dev/null 2>&1
+if $bin_cat /dev/fd/3 >/dev/null 2>&1
 then
     exec 3>&-
 
@@ -437,8 +440,7 @@ then
     [[ $({ $SHELL -c 'cat <(for i in x y z; do print $i; done)';} 2> /dev/null) == $'x\ny\nz' ]] ||
         log_error 'process substitution of compound commands not working'
 
-    builtin tee 2> /dev/null
-    for tee in "$(whence tee)" "$(whence -p tee)"
+    for tee in "$(whence tee)" $bin_tee
     do
     print xxx > $TEST_DIR/file
         $tee  >(sleep 1;cat > $TEST_DIR/file) <<< "hello" > /dev/null
@@ -573,8 +575,7 @@ actual=$(print -n fore;abcd)
 [[ $actual == $expect ]] ||
     log_error "\$() command substitution background with function process output error" "$expect" "$actual"
 
-binfalse=$(whence -p false)
-for false in false $binfalse
+for false in false $bin_false
 do
     x=$($false) && log_error "x=\$($false) should fail"
     $($false) && log_error "\$($false) should fail"
@@ -587,11 +588,10 @@ then
 fi
 
 float s=SECONDS
-sleep=$(whence -p sleep)
 for i in 1 2
 do
       print $i
-done | while read sec; do ( $sleep $sec; $sleep $sec) done
+done | while read sec; do ( $bin_sleep $sec; $bin_sleep $sec) done
 (( (SECONDS-s)  < 4)) && log_error '"command | while read...done" finishing too fast'
 
 s=SECONDS
@@ -603,15 +603,15 @@ do
 done | $sleep 1
 (( (SECONDS-s) < 2 )) || log_error 'early termination not causing broken pipe'
 
-[[ $({ trap 'print trap' 0; print -n | $(whence -p cat); } & wait $!) == trap ]] || log_error 'trap on exit not getting triggered'
-var=$({ trap 'print trap' ERR; print -n | $binfalse; } & wait $!)
+[[ $({ trap 'print trap' 0; print -n | $bin_cat; } & wait $!) == trap ]] || log_error 'trap on exit not getting triggered'
+var=$({ trap 'print trap' ERR; print -n | $bin_false; } & wait $!)
 [[ $var == trap ]] || log_error 'trap on ERR not getting triggered'
 
 expect=""
 actual=$(
     function fun
     {
-        $binfalse && echo FAILED
+        $bin_false && echo FAILED
     }
     : works if this line deleted : |
     fun
@@ -620,42 +620,37 @@ actual=$(
 [[ $actual == $expect ]] || log_error "pipe to function with conditional fails" "$expect" "$actual"
 actual=$(
     : works if this line deleted : |
-    { $binfalse && echo FAILED; }
+    { $bin_false && echo FAILED; }
     : works if this line deleted :
 )
 [[ $actual == $expect ]] || log_error "pipe to { ... } with conditional fails" "$expect" "$actual"
 
 actual=$(
     : works if this line deleted : |
-    ( $binfalse && echo FAILED )
+    ( $bin_false && echo FAILED )
     : works if this line deleted :
 )
 [[ $actual == $expect ]] || log_error "pipe to ( ... ) with conditional fails" "$expect" "$actual"
 
 ( $SHELL -c 'trap : DEBUG; x=( $foo); exit 0') 2> /dev/null  || log_error 'trap DEBUG fails'
 
-bintrue=$(whence -p true)
 set -o pipefail
 float start=$SECONDS end
 for ((i=0; i < 2; i++))
 do
     print foo
     sleep 1.5
-done | { read; $bintrue; end=$SECONDS ;}
+done | { read; $bin_true; end=$SECONDS ;}
 (( (SECONDS-start) < 1 )) && log_error "pipefail not waiting for pipe to finish"
 set +o pipefail
-(( (SECONDS-end) > 2 )) &&  log_error "pipefail causing $bintrue to wait for other end of pipe"
+(( (SECONDS-end) > 2 )) &&  log_error "pipefail causing $bin_true to wait for other end of pipe"
 
 
 { env A__z=C+SHLVL $SHELL -c : ;} 2> /dev/null || log_error "SHLVL with wrong attribute fails"
 
-if [[ $bintrue ]]
-then
-    float t0=SECONDS
-    { time sleep 1.5 | $bintrue ;} 2> /dev/null
-    (( (SECONDS-t0) < 1 )) && log_error 'time not waiting for pipeline to complete'
-fi
-
+float t0=SECONDS
+{ time sleep 1.5 | $bin_true ;} 2> /dev/null
+(( (SECONDS-t0) < 1 )) && log_error 'time not waiting for pipeline to complete'
 
 cat > $TEST_DIR/foo.sh <<- \EOF
     eval "cat > /dev/null  < /dev/null"
@@ -666,7 +661,6 @@ float sec=SECONDS
 (( (SECONDS-sec) < .7 ))  && log_error '. script does not restore output redirection with eval'
 
 file=$TEST_DIR/foobar
-builtin cat
 for ((n=0; n < 1000; n++))
 do
     > $file
