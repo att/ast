@@ -86,6 +86,9 @@
 #mesondefine _lib_creat64
 #mesondefine _lib_dllload
 #mesondefine _lib_dlopen
+#mesondefine _lib_eaccess
+#mesondefine _lib_euidaccess
+#mesondefine _lib_faccessat
 #mesondefine _lib_fdopendir
 #mesondefine _lib_fstat64
 #mesondefine _lib_fstatvfs64
@@ -228,15 +231,12 @@ extern void ast_free(void *ptr);
 // This is not used and is not expected to be used so make sure if it is used
 // it causes a problem.
 #define valloc(s) valloc_has_no_ast_wrapper(s)
-#endif
+#endif  // !NO_MALLOC_WRAPPERS
 
-// Some systems (e.g., macOS, OpenBSD) don't implement `eaccess()`. But all
-// the systems we currently test on do provide `faccessat()` so use that. If
-// and when we evern get built on a system without `faccessat()` we can
-// implement build time feature test and implement a more complex workaround.
-#include <fcntl.h>
-#include <unistd.h>
-#define eaccess(p, f) faccessat(AT_FDCWD, p, f, AT_EACCESS)
+#if !_lib_eaccess
+// We need a prototype for the fallback implementation.
+int eaccess(const char *pathname, int mode);
+#endif
 
 extern char *sh_getenv(const char *name);
 #define getenv(x) sh_getenv(x)

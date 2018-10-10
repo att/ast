@@ -20,3 +20,7 @@ getpwuidCalled
 ttynameCalled
 getloginCalled
 getpwnamCalled
+// The fallbacks.c module is likely to need cppcheck suppressions. But due to
+// how they are parsed, independent of any enclosing `#if` directives, they are
+// also likely to cause warnings like "Unmatched suppression: mktempCalled".
+unmatchedSuppression:../src/lib/libast/misc/fallbacks.c
