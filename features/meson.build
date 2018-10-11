@@ -64,7 +64,8 @@ if not cc.has_function('isnanl', prefix: '#include <math.h>', args: feature_test
 endif
 
 feature_data.set10('_lib_mkostemp',
-    cc.has_function('mkostemp', prefix: '#include <unistd.h>', args: feature_test_args))
+    cc.has_function('mkostemp', prefix: '\n'.join(['#include <stdlib.h>', '#include <unistd.h>']),
+                    args: feature_test_args))
 feature_data.set10('_lib_strlcat',
     cc.has_function('strlcat', prefix: '#include <string.h>', args: feature_test_args))
 feature_data.set10('_lib_utimensat',

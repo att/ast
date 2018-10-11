@@ -24,7 +24,7 @@ void do_not_use_this_fallback() {
 
 #if !_lib_mkostemp
 // This is a fallback in case the system doesn't provide it.
-static_fn int mkostemp(char *template, int oflags) {
+int mkostemp(char *template, int oflags) {
     for (int i = 10; i; i--) {
 #ifndef __clang_analyzer__
         // cppcheck-suppress  mktempCalled
