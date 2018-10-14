@@ -73,7 +73,7 @@ all_tests = [
     ['quoting2'], ['read'], ['readcsv'], ['recttype'], ['restricted'], ['return'],
     ['select'], ['set'], ['sh_match'], ['sigchld', 100], ['signal'], ['statics'],
     ['subshell', 100], ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
-    ['ulimit'], ['variables'], ['vartree1'], ['vartree2'], ['wchar'],
+    ['ulimit'], ['variables'], ['vartree1'], ['vartree2'], ['wchar'], ['whence'],
     # The following are tests that must be run serially after all other tests that might be run in
     # parallel.
     ['special-dev-paths'],
