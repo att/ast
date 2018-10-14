@@ -63,6 +63,12 @@ if not cc.has_function('isnanl', prefix: '#include <math.h>', args: feature_test
     feature_data.set('isnanl', 'isnan')
 endif
 
+feature_data.set10('_lib_eaccess',
+    cc.has_function('eaccess', prefix: '#include <unistd.h>', args: feature_test_args))
+feature_data.set10('_lib_euidaccess',
+    cc.has_function('euidaccess', prefix: '#include <unistd.h>', args: feature_test_args))
+feature_data.set10('_lib_faccessat',
+    cc.has_function('faccessat', prefix: '#include <unistd.h>', args: feature_test_args))
 feature_data.set10('_lib_mkostemp',
     cc.has_function('mkostemp', prefix: '\n'.join(['#include <stdlib.h>', '#include <unistd.h>']),
                     args: feature_test_args))
