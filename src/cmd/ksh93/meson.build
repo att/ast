@@ -70,7 +70,7 @@ all_tests = [
     ['exit'], ['expand'], ['functions'], ['glob'], ['grep'], ['getopts'], ['heredoc'], ['ifs'],
     ['io'], ['jobs'], ['leaks'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
     ['modifiers'], ['options'], ['path'], ['pointtype'], ['print'], ['printf'], ['quoting'],
-    ['quoting2'], ['read'], ['readcsv'], ['recttype'], ['restricted'], ['return'],
+    ['quoting2'], ['read'], ['readcsv'], ['recttype'], ['restricted'], ['return'], ['rksh'],
     ['select'], ['set'], ['sh_match'], ['sigchld', 100], ['signal'], ['statics'],
     ['subshell', 100], ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
     ['ulimit'], ['variables'], ['vartree1'], ['vartree2'], ['wchar'], ['whence'],
