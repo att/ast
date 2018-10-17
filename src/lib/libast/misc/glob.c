@@ -613,6 +613,7 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
     ap->gl_next = 0;
     ap->gl_flags = 0;
     ap->gl_begin = ap->gl_path + gp->gl_extra;
+    // TODO: Rewrite this to utilize safer functions like strlcpy(). See issue #956.
     pat = stpcpy(ap->gl_begin, pattern + optlen);
     if (suflen) pat = stpcpy(pat, gp->gl_suffix);
     if (optlen) {
@@ -633,13 +634,14 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
             gp->gl_pathc++;
             top->gl_next = gp->gl_match;
             gp->gl_match = top;
-            stpcpy(top->gl_path + gp->gl_extra, nocheck);
-        } else
+            strcpy(top->gl_path + gp->gl_extra, nocheck);
+        } else {
             gp->gl_error = GLOB_NOMATCH;
+        }
     }
-    if (flags & GLOB_LIST)
+    if (flags & GLOB_LIST) {
         gp->gl_list = gp->gl_match;
-    else {
+    } else {
         argv = (char **)stakalloc((gp->gl_pathc + extra) * sizeof(char *));
         if (gp->gl_flags & GLOB_APPEND) {
             skip += --extra;

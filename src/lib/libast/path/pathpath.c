@@ -81,8 +81,10 @@ char *pathpath(const char *p, const char *a, int mode, char *path, size_t size) 
             }
             if ((!cmd || *cmd) && (strchr(s, '/') || (s = cmd))) {
                 if (!cmd && *s == '/') cmd = strdup(s);
-                if (strlen(s) < size - 6) {
-                    s = stpcpy(path, s);
+                size_t slen = strlen(s);
+                if (slen < size - 6) {
+                    (void)strlcpy(path, s, slen + 1);
+                    s += slen;
                     for (;;) {
                         do {
                             if (s <= path) goto normal;
