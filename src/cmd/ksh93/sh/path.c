@@ -394,7 +394,13 @@ Pathcomp_t *path_nextcomp(Shell_t *shp, Pathcomp_t *pp, const char *name, Pathco
 static_fn Pathcomp_t *defpath_init(Shell_t *shp) {
     if (!std_path) {
         std_path = astconf("PATH", NULL, NULL);
-        if (!std_path) std_path = e_defpath;
+        if (std_path) {
+            // Value returned by astconf() is short lived, duplicate the string.
+            // https://github.com/att/ast/issues/959
+            std_path = strdup(std_path);
+        } else {
+            std_path = e_defpath;
+        }
     }
     return path_addpath(shp, NULL, std_path, PATH_PATH);
 }
