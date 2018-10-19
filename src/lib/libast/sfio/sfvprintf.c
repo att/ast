@@ -712,8 +712,7 @@ loop_fmt:
                                     if (precis >= 0 && (w + n_w) > precis) break;
                                     w += n_w;
                                 }
-                            } else
-                                if (precis >= 0 && (v + n_s) > precis)
+                            } else if (precis >= 0 && (v + n_s) > precis)
                                 break;
                             v += n_s;
                         }
@@ -735,8 +734,7 @@ loop_fmt:
                             ssp = osp;
                         }
                         v = ssp - sp;
-                    }
-                    else {
+                    } else {
                         if ((v = size) < 0)
                             for (v = 0; v != precis && sp[v]; ++v)
                                 ;

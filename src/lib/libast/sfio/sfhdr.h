@@ -148,16 +148,18 @@
 #define SFONCE() (_Sfdone ? 0 : vtonce(_Sfonce, _Sfoncef))
 
 // If `f` might be NULL the user of this macor must predicate it on `if (f)`.
-#define SFMTXLOCK(f) if ((f)->flags & SF_MTSAFE) sfmutex(f, SFMTX_LOCK)
-#define SFMTXUNLOCK(f) if ((f)->flags & SF_MTSAFE) sfmutex(f, SFMTX_UNLOCK)
+#define SFMTXLOCK(f) \
+    if ((f)->flags & SF_MTSAFE) sfmutex(f, SFMTX_LOCK)
+#define SFMTXUNLOCK(f) \
+    if ((f)->flags & SF_MTSAFE) sfmutex(f, SFMTX_UNLOCK)
 
 #define SFMTXDECL(ff) SFMTXdecl((ff), _mtxf1_);
 #define SFMTXBEGIN(ff, v) SFMTXbegin((ff), _mtxf1_, (v));
 #define SFMTXEND(ff) SFMTXend(ff, _mtxf1_);
-#define SFMTXENTER(ff, v)      \
-    {                          \
-        if (!(ff)) return v;   \
-        SFMTXBEGIN((ff), (v))  \
+#define SFMTXENTER(ff, v)     \
+    {                         \
+        if (!(ff)) return v;  \
+        SFMTXBEGIN((ff), (v)) \
     }
 #define SFMTXRETURN(ff, v) \
     {                      \
@@ -182,17 +184,27 @@
 #undef SF_MTSAFE  // no need to worry about thread-safety
 #define SF_MTSAFE 0
 
-#define SFONCE() { }
-#define SFMTXLOCK(f) { }
-#define SFMTXUNLOCK(f) { }
-#define SFMTXDECL(ff) { }
-#define SFMTXBEGIN(ff, v) { }
-#define SFMTXEND(ff) { }
-#define SFMTXENTER(ff, v) if (!(ff)) return v;
+#define SFONCE() \
+    {}
+#define SFMTXLOCK(f) \
+    {}
+#define SFMTXUNLOCK(f) \
+    {}
+#define SFMTXDECL(ff) \
+    {}
+#define SFMTXBEGIN(ff, v) \
+    {}
+#define SFMTXEND(ff) \
+    {}
+#define SFMTXENTER(ff, v) \
+    if (!(ff)) return v;
 #define SFMTXRETURN(ff, v) return v;
-#define SFMTXDECL2(ff) { }
-#define SFMTXBEGIN2(ff, v) { }
-#define SFMTXEND2(ff) { }
+#define SFMTXDECL2(ff) \
+    {}
+#define SFMTXBEGIN2(ff, v) \
+    {}
+#define SFMTXEND2(ff) \
+    {}
 
 #define POOLMTXLOCK(p)
 #define POOLMTXUNLOCK(p)
@@ -231,10 +243,23 @@
 #define SFWCGET(f, v) (((v) = (f)->bits & SF_WCFORMAT), ((f)->bits &= ~SF_WCFORMAT))
 
 #define SF_MVSIZE 00040000 /* f->size was reset in sfmove()	*/
-#define SFMVSET(f) { ((f)->size *= SF_NMAP); ((f)->bits |= SF_MVSIZE); }
-#define SFMVUNSET(f) \
-    { if ((f)->bits & SF_MVSIZE) { (f)->bits &= ~SF_MVSIZE; (f)->size /= SF_NMAP; } }
-#define SFCLRBITS(f) { SFMVUNSET(f); ((f)->bits &= ~SF_TMPBITS); }
+#define SFMVSET(f)                \
+    {                             \
+        ((f)->size *= SF_NMAP);   \
+        ((f)->bits |= SF_MVSIZE); \
+    }
+#define SFMVUNSET(f)                 \
+    {                                \
+        if ((f)->bits & SF_MVSIZE) { \
+            (f)->bits &= ~SF_MVSIZE; \
+            (f)->size /= SF_NMAP;    \
+        }                            \
+    }
+#define SFCLRBITS(f)                \
+    {                               \
+        SFMVUNSET(f);               \
+        ((f)->bits &= ~SF_TMPBITS); \
+    }
 
 /* bits for the mode field, SF_INIT defined in sfio_t.h */
 #define SF_RC 00000010     /* peeking for a record			*/
@@ -619,14 +644,22 @@ typedef struct _sfextern_s {
 
 /* lock/open a stream */
 #define SFMODE(f, l) ((f)->mode & ~(SF_RV | SF_RC | ((l) ? SF_LOCK : 0)))
-#define SFLOCK(f, l) { (f)->mode |= SF_LOCK; (f)->endr = (f)->endw = (f)->data; }
+#define SFLOCK(f, l)                       \
+    {                                      \
+        (f)->mode |= SF_LOCK;              \
+        (f)->endr = (f)->endw = (f)->data; \
+    }
 #define _SFOPENRD(f) ((f)->endr = ((f)->flags & SF_MTSAFE) ? (f)->data : (f)->endb)
 #define _SFOPENWR(f) ((f)->endw = ((f)->flags & (SF_MTSAFE | SF_LINE)) ? (f)->data : (f)->endb)
-#define _SFOPEN(f)        \
+#define _SFOPEN(f)       \
     (f)->mode == SF_READ \
-         ? _SFOPENRD(f)   \
-         : (f)->mode == SF_WRITE ? _SFOPENWR(f) : ((f)->endw = (f)->endr = (f)->data);
-#define SFOPEN(f) { (f)->mode &= ~(SF_LOCK | SF_RC | SF_RV); _SFOPEN(f) }
+        ? _SFOPENRD(f)   \
+        : (f)->mode == SF_WRITE ? _SFOPENWR(f) : ((f)->endw = (f)->endr = (f)->data);
+#define SFOPEN(f)                                \
+    {                                            \
+        (f)->mode &= ~(SF_LOCK | SF_RC | SF_RV); \
+        _SFOPEN(f)                               \
+    }
 
 /* check to see if the stream can be accessed */
 #define SFFROZEN(f)                              \
@@ -788,7 +821,8 @@ typedef struct _sftab_ {
 } Sftab_t;
 
 /* thread-safe macro/function to initialize _Sfcv* conversion tables */
-#define SFCVINIT() if (!_Sfcvinit) _Sfcvinit = (*_Sfcvinitf)();
+#define SFCVINIT() \
+    if (!_Sfcvinit) _Sfcvinit = (*_Sfcvinitf)();
 
 /* sfucvt() converts decimal integers to ASCII */
 #define SFDIGIT(v, scale, digit)        \

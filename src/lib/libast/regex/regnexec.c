@@ -1401,7 +1401,8 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                             for (i = 0; s < e && i < n; i++, s = t) {
                                 t = s;
                                 mbinit(&env->s);
-                                if (towupper(mbchar(&w, (char **)&t, MB_LEN_MAX, &env->s)) != c) break;
+                                if (towupper(mbchar(&w, (char **)&t, MB_LEN_MAX, &env->s)) != c)
+                                    break;
                                 b[i] = t - s;
                             }
                         }

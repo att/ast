@@ -46,7 +46,7 @@
 // These two symbols were used by procrun() which no longer exists.
 // #define PROC_IGNOREPATH (1 << 16) /* procrun() intercept to ignore path	*/
 // #define PROC_CHECK (1 << 17)      /* check that command exists		*/
-#define PROC_ORPHAN (1 << 18)     /* create orphaned process		*/
+#define PROC_ORPHAN (1 << 18) /* create orphaned process		*/
 
 #define PROC_ARG_BIT 14 /* bits per op arg			*/
 #define PROC_OP_BIT 4   /* bits per op				*/

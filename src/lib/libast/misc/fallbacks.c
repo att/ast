@@ -21,16 +21,12 @@
 // We define this symbol, which is otherwise unused, to ensure this module isn't empty. That's
 // because empty modules can cause build time warnings.
 //
-void do_not_use_this_fallback() {
-    abort();
-}
+void do_not_use_this_fallback() { abort(); }
 
 #if !_lib_eaccess
 #if _lib_euidaccess
 // System doesn't have eaccess() but does have the equivalent euidaccess() so use that.
-int eaccess(const char *pathname, int mode) {
-    return euidaccess(pathname, mode);
-}
+int eaccess(const char *pathname, int mode) { return euidaccess(pathname, mode); }
 #elif _lib_faccessat
 // System doesn't have eaccess() but does have faccessat() so use that.
 int eaccess(const char *pathname, int mode) {
@@ -48,10 +44,10 @@ int eaccess(const char *pathname, int mode) {
         return -1;
     }
 
-    uid_t uid = getuid ();
-    gid_t gid = getgid ();
-    uid_t euid = geteuid ();
-    gid_t egid = getegid ();
+    uid_t uid = getuid();
+    gid_t gid = getgid();
+    uid_t euid = geteuid();
+    gid_t egid = getegid();
 
     // If we aren't suid or sgid then we can just use access().
     // Similarly if we're just checking if the file exists just use access().

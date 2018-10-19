@@ -349,7 +349,7 @@ char *stkset(Sfio_t *stream, char *loc, size_t offset) {
             sp->stkbase = fp->prev;
             sp->stkend = ((struct frame *)(fp->prev))->end;
             free(fp);
-        } else  {
+        } else {
             break;
         }
         frames++;
@@ -358,7 +358,7 @@ char *stkset(Sfio_t *stream, char *loc, size_t offset) {
     cp = (char *)(fp + 1);
     if (frames) {
         sfsetbuf(stream, cp, sp->stkend - cp);
-    }  else {
+    } else {
         stream->_data = stream->_next = (unsigned char *)cp;
     }
     return (char *)stream->_data;

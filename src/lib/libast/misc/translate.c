@@ -190,24 +190,24 @@ static Catalog_t *init(char *s) {
     if (d == NOCAT) return cp;
 
     /*
-    * load the default locale messages
-    * this assumes one mesage set for ast (AST_MESSAGE_SET or fallback to 1)
-    * different packages can share the same message catalog
-    * name by using different message set numbers
-    * see <mc.h> mcindex()
-    *
-    * this method requires a scan of each catalog, and the
-    * catalogs do not advertise the max message number, so
-    * we assume there are no messages after a gap of GAP
-    * missing messages
-    */
+     * load the default locale messages
+     * this assumes one mesage set for ast (AST_MESSAGE_SET or fallback to 1)
+     * different packages can share the same message catalog
+     * name by using different message set numbers
+     * see <mc.h> mcindex()
+     *
+     * this method requires a scan of each catalog, and the
+     * catalogs do not advertise the max message number, so
+     * we assume there are no messages after a gap of GAP
+     * missing messages
+     */
     cp->messages = dtopen(&state.message_disc, Dtset);
     if (cp->messages) {
         n = m = 0;
         for (;;) {
             n++;
             if ((((s = catgets(d, set = AST_MESSAGE_SET, n, state.null)) && *s) ||
-                    ((s = catgets(d, set = 1, n, state.null)) && *s)) &&
+                 ((s = catgets(d, set = 1, n, state.null)) && *s)) &&
                 entry(cp->messages, set, n, s)) {
                 m = n;
             } else if ((n - m) > GAP) {

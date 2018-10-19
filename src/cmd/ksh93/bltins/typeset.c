@@ -1140,7 +1140,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
     Dt_t *dp;
     int nflag = 0, all = 0, isfun, jmpval;
     struct checkpt buff;
-    enum {ALIAS, VARIABLE} type;
+    enum { ALIAS, VARIABLE } type;
     UNUSED(argc);
 
     if (troot == shp->alias_tree) {

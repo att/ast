@@ -544,7 +544,7 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
             assert(type & H_INSERT);
             if (!(dt->meth->type & DT_RHBAG)) {  // no duplicates
                 if (type & (DT_INSERT | DT_APPEND | DT_ATTACH))
-                    type |= DT_MATCH;        /* for announcement */
+                    type |= DT_MATCH; /* for announcement */
                 else if (type & DT_RELINK) {
                     assert(lnk);
                     o = _DTOBJ(disc, t); /* remove a duplicate */

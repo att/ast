@@ -246,7 +246,7 @@ done:
 }
 
 char *sfstrseek(Sfio_t *f, Sfoff_t p, int type) {
-    switch(type) {
+    switch (type) {
         case SEEK_SET: {
             if (p < 0 || p > f->_size) return NULL;
             f->_next = f->_data + p;

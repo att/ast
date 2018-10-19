@@ -638,9 +638,7 @@ int sh_strchr(const char *string, const char *dp, size_t size) {
     return -1;
 }
 
-const char *_sh_translate(const char *message) {
-    return ERROR_translate(0, 0, e_dict, message);
-}
+const char *_sh_translate(const char *message) { return ERROR_translate(0, 0, e_dict, message); }
 
 //
 // Change '['identifier']' to identifier. Character before <str> must be a '['. returns pointer to

@@ -340,7 +340,7 @@ static_fn int dtlist_event(Dt_t *dt, int event, void *arg) {
         dt->data = (Dtdata_t *)list;
         return 1;
     } else if (event == DT_CLOSE) {
-        if (!list) return 0;  // already closed
+        if (!list) return 0;               // already closed
         if (list->link) (void)lclear(dt);  // remove all items
         (void)(*dt->memoryf)(dt, (void *)list, 0, dt->disc);
         dt->data = NULL;

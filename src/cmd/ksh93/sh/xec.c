@@ -1706,7 +1706,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             do {
                 // Create the pipe.
                 sh_pipe(pvn);
-        // Execute out part of pipe no wait.
+                // Execute out part of pipe no wait.
                 (t->lst.lstlef)->tre.tretyp |= showme;
                 type = sh_exec(shp, t->lst.lstlef, errorflg);
                 // Close out-part of pipe.

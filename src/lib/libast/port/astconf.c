@@ -493,8 +493,7 @@ static_fn void astconf_initialize(Feature_t *fp, const char *path, const char *c
                         if (r) {
                             r = 0;
                             if (fp->op == OP_universe) {
-                                if (p[0] == 'u' && p[1] == 's' && p[2] == 'r' &&
-                                    p[3] == '/')
+                                if (p[0] == 'u' && p[1] == 's' && p[2] == 'r' && p[3] == '/')
                                     for (p += 4; *p == '/'; p++) {
                                         ;  // empty loop
                                     }
