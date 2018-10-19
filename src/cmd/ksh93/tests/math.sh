@@ -178,3 +178,273 @@ function test_has_iszero
 # run tests
 test_arithmetric_expression_accesss_array_element_through_nameref
 test_has_iszero
+
+# ==========
+# Math functions
+
+# Rounds of floating point numbers to 8 decimal places
+function roundof {
+    number=$1
+    printf '%.8f' $number
+}
+
+# acos
+expect=3.14159265
+actual=$(roundof $(( acos(-1) )) )
+[[ $actual -eq $expect ]] || log_error "acos failed" "$expect" "$actual"
+
+# ==========
+# acosh
+expect=5.19292599
+actual=$(roundof $(( acosh(90) )) )
+[[ $actual -eq $expect ]] || log_error "acosh failed" "$expect" "$actual"
+
+# ==========
+# asin
+expect=1.57079633
+actual=$(roundof $(( asin(1) )) )
+[[ $actual -eq $expect ]] || log_error "asin failed" "$expect" "$actual"
+
+# ==========
+# asinh
+expect=5.19298771
+actual=$(roundof $(( asinh(90) )) )
+[[ $actual -eq $expect ]] || log_error "asinh failed" "$expect" "$actual"
+
+# ==========
+# atan
+expect=1.55968567
+actual=$(roundof $(( atan(90) )) )
+[[ $actual -eq $expect ]] || log_error "atan failed" "$expect" "$actual"
+
+# ==========
+# atan2
+expect=0.78539816
+actual=$(roundof $(( atan2(90, 90) )) )
+[[ $actual -eq $expect ]] || log_error "atan2 failed" "$expect" "$actual"
+
+# ==========
+# atanh
+expect=0.54930614
+actual=$(roundof $(( atanh(0.5) )) )
+[[ $actual -eq $expect ]] || log_error "atanh failed" "$expect" "$actual"
+
+# ==========
+# cbrt
+expect=4.48140475
+actual=$(roundof $(( cbrt(90) )) )
+[[ $actual -eq $expect ]] || log_error "cbrt failed" "$expect" "$actual"
+
+# ==========
+# ceil
+expect=1.0
+actual=$(( ceil(0.1) ))
+[[ $actual -eq $expect ]] || log_error "ceil failed" "$expect" "$actual"
+
+# ==========
+# copysign
+expect=-1.0
+actual=$(( copysign(1.0, -3) ))
+[[ $actual -eq $expect ]] || log_error "copysign failed" "$expect" "$actual"
+
+# ==========
+# cos
+expect=0.15425145
+actual=$(roundof $(( cos(30) )) )
+[[ $actual -eq $expect ]] || log_error "cos failed" "$expect" "$actual"
+
+# ==========
+# cosh
+expect=1.0
+actual=$(( cosh(0) ))
+[[ $actual -eq $expect ]] || log_error "cosh failed" "$expect" "$actual"
+
+# ==========
+# erf
+expect=0.84270079
+actual=$(roundof $(( erf(1) )) )
+[[ $actual -eq $expect ]] || log_error "erf failed" "$expect" "$actual"
+
+# ==========
+# erfc
+expect=0.15729921
+actual=$(roundof $(( erfc(1) )) )
+[[ $actual -eq $expect ]] || log_error "erfc failed" "$expect" "$actual"
+
+# ==========
+# exp
+expect=2.71828183
+actual=$(roundof $(( exp(1) )) )
+[[ $actual -eq $expect ]] || log_error "exp failed" "$expect" "$actual"
+
+# ==========
+# exp2
+expect=2
+actual=$(( exp2(1) ))
+[[ $actual -eq $expect ]] || log_error "exp2 failed" "$expect" "$actual"
+
+# ==========
+# expm1
+expect=1.71828183
+actual=$(roundof $(( expm1(1) )) )
+[[ $actual -eq $expect ]] || log_error "expm1 failed" "$expect" "$actual"
+
+# ==========
+# fabs
+expect=1.0
+actual=$(( fabs(-1) ))
+[[ $actual -eq $expect ]] || log_error "fabs failed" "$expect" "$actual"
+
+# ==========
+# abs
+expect=1
+actual=$(( abs(-1) ))
+[[ $actual -eq $expect ]] || log_error "abs failed" "$expect" "$actual"
+
+# ==========
+# fdim - Return positive difference between arguments
+expect=0
+actual=$(( fdim(1, 3) ))
+[[ $actual -eq $expect ]] || log_error "fdim failed" "$expect" "$actual"
+
+# ==========
+expect=2
+actual=$(( fdim(3, 1) ))
+[[ $actual -eq $expect ]] || log_error "fdim failed" "$expect" "$actual"
+
+# ==========
+# floor
+expect=-2
+actual=$(( floor(-1.5) ))
+[[ $actual -eq $expect ]] || log_error "floor failed" "$expect" "$actual"
+
+# ==========
+# fmax
+expect=1.1
+actual=$(( fmax(1.0, 1.1) ))
+[[ $actual -eq $expect ]] || log_error "fmax failed" "$expect" "$actual"
+
+# ==========
+# fmin
+expect=1.0
+actual=$(( fmin(1.0, 1.1) ))
+[[ $actual -eq $expect ]] || log_error "fmin failed" "$expect" "$actual"
+
+# ==========
+# fmod
+expect=9.99
+actual=$(roundof $(( fmod(999.99, 10) )) )
+[[ $actual -eq $expect ]] || log_error "fmod failed" "$expect" "$actual"
+
+# ==========
+# int
+expect=1
+actual=$(( int(1.9) ))
+[[ $actual -eq $expect ]] || log_error "int failed" "$expect" "$actual"
+
+# ==========
+# isgreater
+expect=0
+actual=$(( isgreater(1, 2) ))
+[[ $actual -eq $expect ]] || log_error "isgreater(1, 2) failed" "$expect" "$actual"
+
+# ==========
+expect=0
+actual=$(( isgreater(2, 2) ))
+[[ $actual -eq $expect ]] || log_error "isgreater(2, 2) failed" "$expect" "$actual"
+
+# ==========
+expect=1
+actual=$(( isgreater(3, 2) ))
+[[ $actual -eq $expect ]] || log_error "isgreater(3, 2) failed" "$expect" "$actual"
+
+# ==========
+# isless
+expect=1
+actual=$(( isless(1, 2) ))
+[[ $actual -eq $expect ]] || log_error "isless(1, 2) failed" "$expect" "$actual"
+
+# ==========
+expect=0
+actual=$(( isless(2, 2) ))
+[[ $actual -eq $expect ]] || log_error "isless(2, 2) failed" "$expect" "$actual"
+
+# ==========
+expect=0
+actual=$(( isless(3, 2) ))
+[[ $actual -eq $expect ]] || log_error "isless(3, 2) failed" "$expect" "$actual"
+
+# ==========
+# iszero
+expect=1
+actual=$(( iszero(0) ))
+[[ $actual -eq $expect ]] || log_error "iszero(0) failed" "$expect" "$actual"
+
+# ==========
+expect=0
+actual=$(( iszero(1) ))
+[[ $actual -eq $expect ]] || log_error "iszero(1) failed" "$expect" "$actual"
+
+# ==========
+# log
+expect=4.60517019
+actual=$(roundof $(( log(100) )) )
+[[ $actual -eq $expect ]] || log_error "log failed" "$expect" "$actual"
+
+# ==========
+# pow
+expect=65536
+actual=$(( pow(2, 16) ))
+[[ $actual -eq $expect ]] || log_error "pow failed" "$expect" "$actual"
+
+# ==========
+# remainder
+expect=4
+actual=$(( remainder(44, 10) ))
+[[ $actual -eq $expect ]] || log_error "remainder failed" "$expect" "$actual"
+
+# ==========
+# round
+expect=100
+actual=$(( round(99.9) ))
+[[ $actual -eq $expect ]] || log_error "round failed" "$expect" "$actual"
+
+# ==========
+# signbit
+# TODO: It returns 512 if number is negative. Is that expected behavior ?
+
+# ==========
+# sin
+expect=0.89399666
+actual=$(roundof $(( sin(90) )) )
+[[ $actual -eq $expect ]] || log_error "sin failed" "$expect" "$actual"
+
+# ==========
+# sinh
+expect=1634508.68623590
+actual=$(roundof $(( sinh(15) )) )
+[[ $actual -eq $expect ]] || log_error "sinh failed" "$expect" "$actual"
+
+# ==========
+# sqrt
+expect=40
+actual=$(( sqrt(1600) ))
+[[ $actual -eq $expect ]] || log_error "sqrt failed" "$expect" "$actual"
+
+# ==========
+# tan
+expect=1.61977519
+actual=$(roundof $(( tan(45) )) )
+[[ $actual -eq $expect ]] || log_error "tan failed" "$expect" "$actual"
+
+# ==========
+# tanh
+expect=1
+actual=$(( tanh(45) ))
+[[ $actual -eq $expect ]] || log_error "tanh failed" "$expect" "$actual"
+
+# ==========
+# trunc
+expect=99
+actual=$(( trunc(99.9) ))
+[[ $actual -eq $expect ]] || log_error "trunc failed" "$expect" "$actual"
