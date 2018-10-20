@@ -51,6 +51,9 @@ feature_data.set10('_hdr_malloc', cc.has_header('malloc.h', args: feature_test_a
 feature_data.set10('_hdr_filio', cc.has_header('filio.h', args: feature_test_args))
 feature_data.set10('_sys_filio', cc.has_header('sys/filio.h', args: feature_test_args))
 
+feature_data.set10('_lib_lchmod',
+    cc.has_function('lchmod', prefix: '\n'.join(['#include <unistd.h>', '#include <sys/stat.h>']),
+    args: feature_test_args))
 feature_data.set10('_lib_sigqueue',
     cc.has_function('sigqueue', prefix: '#include <signal.h>', args: feature_test_args))
 # TODO: Enable iswprint() detection when we understand why doing so causes the
