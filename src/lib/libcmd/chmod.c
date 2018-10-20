@@ -290,6 +290,8 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 } else if (!force) {
                     error(ERROR_system(0), "%s: cannot change mode", ent->fts_path);
                 }
+                // If this is a directory and `-R` wasn't used then don't descend into the dir.
+                if (ent->fts_info == FTS_D && !recursive) fts_set(fts, ent, FTS_SKIP);
                 break;
             case FTS_DC:
                 if (!force) error(ERROR_warn(0), "%s: directory causes cycle", ent->fts_path);
@@ -305,9 +307,9 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
             case FTS_NS:
                 if (!force) error(ERROR_system(0), "%s: not found", ent->fts_path);
                 break;
+            default:
+                break;
         }
-        // Unless '-R' is specified, avoid processing subdirectories.
-        if (!recursive) break;
     }
     fts_close(fts);
     if (ignore) umask(ignore);
