@@ -492,7 +492,7 @@ chmod +x $TEST_DIR/scriptx
 [[ $($SHELL -c "print foo | $TEST_DIR/scriptx ;:" 2> /dev/null ) == foo ]] || log_error 'piping into script fails'
 [[ $($SHELL -c 'X=1;print -r -- ${X:=$(expr "a(0)" : '"'a*(\([^)]\))')}'" 2> /dev/null) == 1 ]] || log_error 'x=1;${x:=$(..."...")} failure'
 [[ $($SHELL -c 'print -r -- ${X:=$(expr "a(0)" : '"'a*(\([^)]\))')}'" 2> /dev/null) == 0 ]] || log_error '${x:=$(..."...")} failure'
-if cat /dev/fd/3 >/dev/null 2>&1  || whence mkfifo > /dev/null
+if $bin_cat /dev/fd/3 >/dev/null 2>&1  || whence mkfifo > /dev/null
 then
     [[ $(cat <(print hello) ) == hello ]] || log_error "process substitution not working outside for or while loop"
     $SHELL -c '[[ $(for i in 1;do cat <(print hello);done ) == hello ]]' 2> /dev/null|| log_error "process substitution not working in for or while loop"

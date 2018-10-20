@@ -364,7 +364,7 @@ TST=(
     ( CMD='cat $TEST_DIR/buf | read v; print $v'        LIM=4*1024    )
 )
 
-if cat /dev/fd/3 3</dev/null >/dev/null 2>&1 || whence mkfifo > /dev/null
+if $bin_cat /dev/fd/3 3</dev/null >/dev/null 2>&1 || whence mkfifo > /dev/null
 then
     T=${#TST[@]}
     TST[T].CMD='$cat <(print foo)'
@@ -554,7 +554,7 @@ err() { return $1; }
 wait $pid
 [[ $? == 12 ]] || log_error 'exit status from subshells not being preserved'
 
-if cat /dev/fd/3 3</dev/null >/dev/null 2>&1 || whence mkfifo > /dev/null
+if $bin_cat /dev/fd/3 3</dev/null >/dev/null 2>&1 || whence mkfifo > /dev/null
 then
     x="$(sed 's/^/Hello /' <(print "Fred" | sort))"
     [[ $x == 'Hello Fred' ]] || log_error  "process substitution of pipeline in command substitution not working"
