@@ -257,10 +257,7 @@ fi
 
 cd $TEST_DIR || { log_error "cd $TEST_DIR failed"; exit 1; }
 print ./b > ./a; print ./c > b; print ./d > c; print ./e > d; print "echo \"hello there\"" > e
-for x in a b c d e
-do
-    chmod 755 $x  # chmod builtin at the moment only handles one filename
-done
+chmod 755 a b c d e
 x=$(./a)
 if [[ $x != "hello there" ]]
 then

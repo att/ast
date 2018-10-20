@@ -110,8 +110,7 @@ exec 0<&-
 echo $(./close1)
 !
 print "echo abc" > close1
-chmod +x close0
-chmod +x close1
+chmod +x close0 close1
 x=$(./close0)
 if [[ $x != "abc" ]]
 then

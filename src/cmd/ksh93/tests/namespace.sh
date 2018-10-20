@@ -48,12 +48,10 @@ cat > $TEST_DIR/local/xfun <<- \EOF
     }
 EOF
 
-chmod +x "$TEST_DIR/global/xfun"
-chmod +x "$TEST_DIR/local/xfun"
+chmod +x "$TEST_DIR/global/xfun" "$TEST_DIR/local/xfun"
 print 'print local prog $1' >  $TEST_DIR/local/bin/run
 print 'print global prog $1' >  $TEST_DIR/global/bin/run
-chmod +x "$TEST_DIR/local/bin/run"
-chmod +x "$TEST_DIR/global/bin/run"
+chmod +x "$TEST_DIR/local/bin/run" "$TEST_DIR/global/bin/run"
 PATH=$TEST_DIR/global/bin:$PATH
 FPATH=$TEST_DIR/global
 

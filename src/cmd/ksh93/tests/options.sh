@@ -468,8 +468,7 @@ ADD=(    ''        '; :'        )
 cd $TEST_DIR
 print $'#!'$SHELL$'\nkill -KILL $$' > command-kill
 print $'kill -KILL $$' > script-kill
-chmod +x command-kill
-chmod +x script-kill
+chmod +x command-kill script-kill
 export PATH=.:$PATH
 exp='Killed'
 for ((S=0; S<${#SUB[@]}; S++))

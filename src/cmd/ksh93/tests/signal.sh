@@ -128,11 +128,7 @@ cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst0 > sigtst0
 cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst1 > sigtst1
 cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst2 > sigtst2
 cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst3 > sigtst3
-# TODO: Remove this workaround when builtin chmod bug #949 (multiple path handling) is fixed.
-for f in sigtst?
-do
-    chmod +x $f
-done
+chmod +x sigtst?
 $SHELL sigtst0 > sigtst.out
 while read ops actual
 do
