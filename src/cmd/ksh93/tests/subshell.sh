@@ -24,9 +24,6 @@
 # reasonable.
 #
 # TBD is why such a large default limit causes the test to fail.
-#
-# TODO: Figure out why this test seems to depend on `ulimit` being a builtin without explicitly
-# invoking the builtin via `builtin ulimit`.
 ulimit -n 512
 
 z=()
@@ -647,8 +644,7 @@ $SHELL 2> /dev/null -c '( PATH=/bin; set -o restricted) ; exit 0'  || \
     log_error 'restoring PATH when a subshell enables restricted exits not working'
 
 $SHELL <<- \EOF
-	wc=$(whence wc) head=$(whence head)
-	print > /dev/null  $( ( $head -c 1 /dev/zero | ( $wc -c) 3>&1 ) 3>&1) &
+	print > /dev/null  $( ( head -c 1 /dev/zero | (wc -c) 3>&1 ) 3>&1) &
 	pid=$!
 	sleep 2
 	kill -9 $! 2> /dev/null && log_error '/dev/zero in command substitution hangs'
