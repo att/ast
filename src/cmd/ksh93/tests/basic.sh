@@ -600,7 +600,7 @@ for ((i=0; i < 30; i++))
 do
     print hello
     sleep .1
-done | $sleep 1
+done | $bin_sleep 1
 (( (SECONDS-s) < 2 )) || log_error 'early termination not causing broken pipe'
 
 [[ $({ trap 'print trap' 0; print -n | $bin_cat; } & wait $!) == trap ]] || log_error 'trap on exit not getting triggered'
