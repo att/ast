@@ -3,7 +3,7 @@ language: c
 env:
     global:
         # COVERITY_SCAN_TOKEN
-        - secure: "OEVGFl9FijJybDAgaoIwNsaQOlVre3HF95LnFGa3D+S8Nsr1V+DOn2FSdlxjcXqJpInJ/+8o5q2krLw85yKE+wgPsqhglGAw85XYkh15pM3VattPXCUhEZUEaeE2jspdm6s8u6BGrwbT84a2KikX21yXr3Vf+2m1oQjkQLuhrrI="
+        - secure: "BsKgvr97ykXKfTwCHQshe4pUMsPySrbqDr1LC+8ixKap3GOHO9wz8sMlPHtIuYjMeJ7sRHiNpDcZ+GC3j3uwj3Wn+2mIIcPF/lefw6KZbxSmuPwELfXdI3MCZwOgZr2KfnsAPMbv7fWFTHwLYUCler8WI+ko9Yvc/ZC1w7hEiP8="
 
 before_install:
     - sudo apt-get update
