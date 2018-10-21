@@ -113,7 +113,7 @@ static Sfdouble_t local_nexttoward(int type_1, Sfdouble_t arg_1, int type_2, Sfd
 }
 
 static int local_signbit(Sfdouble_t a1) {
-    return signbit(a1);  //!OCLINT(constant conditional operator)
+    return signbit(a1) != 0;  //!OCLINT(constant conditional operator)
 }
 
 static Sfdouble_t local_y0(Sfdouble_t a1) { return y0(a1); }
