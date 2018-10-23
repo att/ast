@@ -237,6 +237,7 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
             scan->pb = malloc(t - name + 2);
             if (!scan->pb) goto bad;
             memcpy(scan->pb, name, t - name);
+            scan->pb[t - name + 1] = 0;
             name = (const char *)(t + 1);
         }
     }
