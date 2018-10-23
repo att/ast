@@ -411,7 +411,13 @@ actual=$(( round(99.9) ))
 
 # ==========
 # signbit
-# TODO: It returns 512 if number is negative. Is that expected behavior ?
+expect=0
+actual=$(( signbit(1) ))
+[[ $actual -eq $expect ]] || log_error "signbit(1) failed" "$expect" "$actual"
+
+expect=1
+actual=$(( signbit(-1) ))
+[[ $actual -eq $expect ]] || log_error "signbit(-1) failed" "$expect" "$actual"
 
 # ==========
 # sin
