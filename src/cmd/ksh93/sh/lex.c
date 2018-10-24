@@ -1958,7 +1958,7 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
                 case -1: /* illegal multi-byte char */
                 case 0:
                 case 1: {
-                    int idx = *sp++;
+                    unsigned int idx = (unsigned char)*sp++;
                     n = state[idx];
                     break;
                 }
@@ -1975,9 +1975,9 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
             }
         } while (n == 0);
     } else {
-        int idx = *sp++;
+        unsigned int idx = (unsigned char)*sp++;
         while ((n = state[idx]) == 0) {
-            idx = *sp++;
+            idx = (unsigned char)*sp++;
         }
     }
     dp = sp;
@@ -2073,7 +2073,7 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
                     if (ep) *dp++ = *sp++;
                     break;
                 }
-                n = *sp;
+                n = (unsigned char)*sp;
                 if (!(inquote & 1) || (sh_lexstates[ST_QUOTE][n] && n != RBRACE)) {
                     if (n == '\n') {
                         dp--;
@@ -2126,7 +2126,8 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
                     case -1:  // illegal multi-byte char
                     case 0:
                     case 1: {
-                        int idx = *dp++ = *sp++;
+                        unsigned int idx = (unsigned char)*sp;
+                        *dp++ = *sp++;
                         n = state[idx];
                         break;
                     }
