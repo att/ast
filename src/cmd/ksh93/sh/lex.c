@@ -2143,9 +2143,11 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
                 }
             } while (n == 0);
         } else {
-            int idx = *dp++ = *sp++;
+            unsigned int idx = (unsigned char)*sp;
+            *dp++ = *sp++;
             while ((n = state[idx]) == 0) {
-                idx = *dp++ = *sp++;
+                idx = (unsigned char)*sp;
+                *dp++ = *sp++;
             }
         }
     }
