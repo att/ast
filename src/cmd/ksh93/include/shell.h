@@ -435,6 +435,5 @@ extern Shell_t sh;
 #define SH_SIGSET 4
 #define SH_EXITSIG 0400               // signal exit bit
 #define SH_EXITMASK (SH_EXITSIG - 1)  // normal exit status bits
-#define SH_RUNPROG -1022              // needs to be negative and < 256
 
 #endif  // _SHELL_H

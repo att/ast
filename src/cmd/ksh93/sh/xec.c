@@ -1107,7 +1107,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         bp->data = (void *)save_data;
                         if (shp->exitval && errno == EINTR && shp->lastsig) {
                             shp->exitval = SH_EXITSIG | shp->lastsig;
-                        } else if (!nv_isattr(np, BLT_EXIT) && shp->exitval != SH_RUNPROG) {
+                        } else if (!nv_isattr(np, BLT_EXIT)) {
                             shp->exitval &= SH_EXITMASK;
                         }
                     } else {
@@ -2804,19 +2804,6 @@ int sh_fun_20120720(Shell_t *shp, Namval_t *np, Namval_t *nq, char *argv[]) {
 #undef sh_fun
 int sh_fun(Namval_t *np, Namval_t *nq, char *argv[]) {
     return sh_fun_20120720(sh_getinterp(), np, nq, argv);
-}
-
-//
-// This dummy routine is called by built-ins that do recursion on the file system (chmod, chgrp,
-// chown).  It causes the shell to invoke the non-builtin version in this case.
-//
-int cmdrecurse(int argc, char *argv[], int ac, char *av[]) {
-    UNUSED(argc);
-    UNUSED(argv[0]);
-    UNUSED(ac);
-    UNUSED(av[0]);
-
-    return SH_RUNPROG;
 }
 
 //
