@@ -49,7 +49,7 @@
 #include "stk.h"
 #include "variables.h"
 
-#define NVCACHE 8  // must be a power of 2
+#define NVCACHE 8  // must be a power of 2 and not zero
 
 // This var used to be writable but was treated as if it was immutable except for one assignment
 // that failed to validate it was modifying only the first, and only, char. So we now make it
@@ -86,7 +86,6 @@ struct sh_type {
     short maxnodes;
 };
 
-#if NVCACHE
 struct Namcache {
     struct Cache_entry {
         Dt_t *root;
@@ -103,7 +102,6 @@ struct Namcache {
     short ok;
 };
 static struct Namcache nvcache;
-#endif  // NVCACHE
 
 char nv_local = 0;
 
@@ -819,9 +817,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                 }
                 shp->oldnp = np;
                 if (isref) {
-#if NVCACHE
                     nvcache.ok = 0;
-#endif
                     if (nv_isattr(np, NV_TABLE) || c == '.') {  // don't optimize
                         shp->argaddr = 0;
                     } else if ((flags & NV_NOREF) && (c != '[' && *cp != '.')) {
@@ -1058,9 +1054,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                 if (cp[1] == '_' && (cp[2] == 0 || cp[2] == '.') && shp->oldnp) {
                     cp += 2;
                     dp->last = cp;
-#if NVCACHE
                     nvcache.ok = 0;
-#endif
                     shp->oldnp = np = nv_parentnode(shp->oldnp);
                     if (*cp == 0) return np;
                     sp = nv_name(np);
@@ -1093,13 +1087,11 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
 // If np==0  && !root && flags==0,  delete the Refdict dictionary.
 //
 void nv_delete(Namval_t *np, Dt_t *root, int flags) {
-#if NVCACHE
     int c;
     struct Cache_entry *xp;
     for (c = 0, xp = nvcache.entries; c < NVCACHE; xp = &nvcache.entries[++c]) {
         if (xp->np == np) xp->root = 0;
     }
-#endif  // NVCACHE
     if (!np && !root && flags == 0) {
         if (Refdict) dtclose(Refdict);
         Refdict = 0;
@@ -1166,9 +1158,7 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
     char *fname = 0;
     int offset = stktell(shp->stk);
     Dt_t *funroot;
-#if NVCACHE
     struct Cache_entry *xp;
-#endif
 
     memset(&fun, 0, sizeof(fun));
     shp->openmatch = 0;
@@ -1227,7 +1217,6 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
     }
     c = !isaletter(c);
     if (c) goto skip;
-#if NVCACHE
     for (c = 0, xp = nvcache.entries; c < NVCACHE; xp = &nvcache.entries[++c]) {
         if (xp->root != root) continue;
         if ((*name != '_' || name[1] != '.') && *name == *xp->name &&
@@ -1244,7 +1233,6 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
         }
     }
     nvcache.ok = 1;
-#endif  // NVCACHE
 #if SHOPT_BASH
     if (root == shp->fun_tree && sh_isoption(shp, SH_BASH)) {
         c = ((flags & NV_NOSCOPE) ? HASH_NOSCOPE : 0) | ((flags & NV_NOADD) ? 0 : NV_ADD);
@@ -1256,7 +1244,6 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
         np = nv_create(name, root, flags, &fun);
         cp = fun.last;
     }
-#if NVCACHE
     if (np && nvcache.ok && cp[-1] != ']') {
         xp = &nvcache.entries[nvcache.index];
         if (*cp) {
@@ -1287,7 +1274,6 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
     }
 nocache:
     nvcache.ok = 0;
-#endif  // NVCACHE
     if (fname) {
         c = ((flags & NV_NOSCOPE) ? HASH_NOSCOPE : 0) | ((flags & NV_NOADD) ? 0 : NV_ADD);
         *fname = '.';
@@ -2726,7 +2712,6 @@ static_fn char *lastdot(char *cp, int eq, void *context) {
     return eq ? 0 : ep;
 }
 
-#if NVCACHE
 //
 // Purge all entries whose name is of the form name.
 //
@@ -2740,7 +2725,6 @@ static_fn void cache_purge(const char *name) {
         if (strncmp(name, xp->name, len) == 0) xp->root = 0;
     }
 }
-#endif  // NVCACHE
 
 bool nv_rename(Namval_t *np, int flags) {
     Shell_t *shp = sh_ptr(np);
@@ -2856,9 +2840,7 @@ bool nv_rename(Namval_t *np, int flags) {
             if (flags & NV_MOVE) sh_setmatch(shp, 0, 0, 0, 0, 0);
         } else {
             nv_clone(nr, mp, (flags & NV_MOVE) | NV_COMVAR);
-#if NVCACHE
             cache_purge(nv_name(nr));
-#endif  // NVCACHE
         }
         assert(mp);
         mp->nvenv = nvenv;
