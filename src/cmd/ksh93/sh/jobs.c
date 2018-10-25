@@ -366,7 +366,6 @@ bool job_reap(int sig) {
     struct jobsave *jp;
     bool nochild = false;
     int oerrno, wstat;
-    Waitevent_f waitevent = shp->gd->waitevent;
     static int wcontinued = WCONTINUED;
 #if SHOPT_COSHELL
     Cojob_t *cjp;
@@ -409,12 +408,10 @@ bool job_reap(int sig) {
     } else {
         flags = WUNTRACED | wcontinued;
     }
-    shp->gd->waitevent = 0;
     oerrno = errno;
     while (1) {
         if (!(flags & WNOHANG) && !shp->intrap && job.pwlist) {
             sh_onstate(shp, SH_TTYWAIT);
-            if (waitevent && (*waitevent)(-1, -1L, 0)) flags |= WNOHANG;
         }
 #if SHOPT_COSHELL
         if (cojobs) {
@@ -578,7 +575,6 @@ bool job_reap(int sig) {
         job.numbjob = 0;
         nochild = true;
     }
-    shp->gd->waitevent = waitevent;
     if (sh_isoption(shp, SH_NOTIFY) && sh_isstate(shp, SH_TTYWAIT)) {
         outfile = sfstderr;
         job_list(pw, JOB_NFLAG | JOB_NLFLAG);
