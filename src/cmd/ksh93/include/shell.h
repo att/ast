@@ -348,7 +348,6 @@ extern Sfdouble_t sh_strnum(const char *, char **, int);
 extern void sh_subfork(void);
 extern int sh_trap(const char *, int);
 extern mode_t sh_umask(mode_t);
-extern void *sh_waitnotify(Shwait_f);
 extern int sh_waitsafe(void);
 extern ssize_t sh_write(int, const void *, size_t);
 
@@ -371,7 +370,6 @@ extern int sh_run_20120720(Shell_t *, int, char *[]);
 extern Shscope_t *sh_setscope_20120720(Shell_t *, Shscope_t *);
 extern Sfdouble_t sh_strnum_20120720(Shell_t *, const char *, char **, int);
 extern int sh_trap_20120720(Shell_t *, const char *, int);
-extern void *sh_waitnotify_20120720(Shwait_f, void *);
 
 #define sh_ptr(np) ((np)->nvshell)
 

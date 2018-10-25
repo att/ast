@@ -26,6 +26,5 @@ ksh93_files += [
     'sh/tdump.c',
     'sh/timers.c',
     'sh/trestore.c',
-    'sh/waitevent.c',
     'sh/xec.c'
 ]

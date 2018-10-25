@@ -127,7 +127,6 @@ struct shared {
     int sigmax;
     int nforks;
     int shtype;
-    Shwait_f waitevent;
 };
 
 #include "shell.h"

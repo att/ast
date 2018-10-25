@@ -522,7 +522,6 @@ int ed_read(void *context, int fd, char *buff, int size, int reedit) {
     int delim = ((ep->e_raw & RAWMODE) ? nttyparm.c_cc[VEOL] : '\n');
     Shell_t *shp = ep->sh;
     int mode = -1;
-    int (*waitevent)(int, long, int) = shp->gd->waitevent;
 
     if (ep->e_raw == ALTMODE) mode = 1;
     if (size < 0) {
@@ -531,7 +530,6 @@ int ed_read(void *context, int fd, char *buff, int size, int reedit) {
     }
     sh_onstate(shp, SH_TTYWAIT);
     errno = EINTR;
-    shp->gd->waitevent = 0;
     while (rv < 0 && errno == EINTR) {
         if (shp->trapnote & (SH_SIGSET | SH_SIGTRAP)) goto done;
         if (ep->sh->winch && sh_isstate(shp, SH_INTERACTIVE) &&
@@ -576,9 +574,7 @@ int ed_read(void *context, int fd, char *buff, int size, int reedit) {
 
         // An interrupt that should be ignored.
         errno = 0;
-        if (!waitevent || (rv = (*waitevent)(fd, -1L, 0)) >= 0) {
-            rv = sfpkrd(fd, buff, size, delim, -1L, mode);
-        }
+        rv = sfpkrd(fd, buff, size, delim, -1L, mode);
     }
     if (rv < 0) {
         int isdevtty = 0;
@@ -608,7 +604,6 @@ int ed_read(void *context, int fd, char *buff, int size, int reedit) {
         rv = read(fd, buff, rv > 0 ? rv : 1);
     }
 done:
-    shp->gd->waitevent = waitevent;
     sh_offstate(shp, SH_TTYWAIT);
     return rv;
 }
