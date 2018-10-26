@@ -97,11 +97,6 @@ struct limits {
     unsigned char posix_jobcontrol;  // non-zero for job control systems
 };
 
-#ifndef SH_wait_f_defined
-typedef int (*Shwait_f)(int, long, int);
-#define SH_wait_f_defined
-#endif  // SH_wait_f_defined
-
 struct shared {
     struct limits lim;
     uid_t userid;
