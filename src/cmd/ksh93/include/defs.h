@@ -95,7 +95,6 @@ struct limits {
     int ngroups_max;                 // maximum number of process groups
     unsigned char posix_version;     // posix version number
     unsigned char posix_jobcontrol;  // non-zero for job control systems
-    unsigned char fs3d;              // non-zero for 3-d file system
 };
 
 #ifndef SH_wait_f_defined
