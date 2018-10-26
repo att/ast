@@ -127,9 +127,9 @@ static_fn const char *rexname(Rex_t *rex) {
 #define BEG_SUB 4 /* beginning of a subexpression		*/
 #define END_ANY 5 /* end of any of above			*/
 
-/*
- * returns from regnexec_parse()
- */
+    /*
+     * returns from regnexec_parse()
+     */
 
 #define NONE 0 /* no parse found			*/
 #define GOOD 1 /* some parse was found			*/
@@ -137,9 +137,9 @@ static_fn const char *rexname(Rex_t *rex) {
 #define BEST 3 /* an unbeatable parse was found	*/
 #define BAD 4  /* error ocurred			*/
 
-/*
- * REG_SHELL_DOT test
- */
+    /*
+     * REG_SHELL_DOT test
+     */
 
 #define LEADING(e, r, s) (*(s) == (e)->leading && ((s) == (e)->beg || *((s)-1) == (r)->explicit))
 

@@ -724,7 +724,7 @@ int job_close(Shell_t *shp) {
 #endif  // SIGTSTP
 #ifdef NTTYDISC
     if (job.linedisc >= 0) {
-        // Restore old line discipline.
+    // Restore old line discipline.
 #ifdef FIOPUSHLD
         tty_get(job.fd, &my_stty);
         if (ioctl(job.fd, FIOPOPLD, 0) < 0) return 0;

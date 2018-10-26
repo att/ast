@@ -95,9 +95,9 @@ char *ast_temp_file(const char *dir, const char *prefix, int *fd, int open_flags
             return NULL;
         }
     } else {
-        // Only construct a unique file name from the template. Don't create and open a file.
-        // This should only be used if the caller is going to use the name to create something
-        // other than a file; e.g., a named fifo.
+    // Only construct a unique file name from the template. Don't create and open a file.
+    // This should only be used if the caller is going to use the name to create something
+    // other than a file; e.g., a named fifo.
 #ifndef __clang_analyzer__
         // cppcheck-suppress  mktempCalled
         char *tp = mktemp(template);

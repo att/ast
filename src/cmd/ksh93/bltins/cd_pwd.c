@@ -173,7 +173,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
 #if __CYGWIN__
     if (*dir != '/' && (dir[1] != ':'))
 #else
-    if (dirfd == shp->pwdfd && *dir != '/')
+        if (dirfd == shp->pwdfd && *dir != '/')
 #endif  // __CYGWIN__
     {
         cdpath = (Pathcomp_t *)shp->cdpathlist;
@@ -240,11 +240,11 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
 #if O_SEARCH
             rval = newdirfd;
 #else
-            rval = chdir(path_relative(shp, stakptr(PATH_OFFSET)));
-            if (rval >= 0 && shp->pwdfd >= 0) {
-                sh_close(shp->pwdfd);
-                shp->pwdfd = AT_FDCWD;
-            }
+                rval = chdir(path_relative(shp, stakptr(PATH_OFFSET)));
+                if (rval >= 0 && shp->pwdfd >= 0) {
+                    sh_close(shp->pwdfd);
+                    shp->pwdfd = AT_FDCWD;
+                }
 #endif
         }
         if (saverrno == 0) saverrno = errno;

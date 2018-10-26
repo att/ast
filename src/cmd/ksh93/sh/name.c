@@ -3092,10 +3092,10 @@ void nv_unref(Namval_t *np) {
     }
 }
 
-//
-// These following are for binary compatibility with the old hash library. They will be removed
-// someday.
-//
+    //
+    // These following are for binary compatibility with the old hash library. They will be removed
+    // someday.
+    //
 
 #undef hashscope
 

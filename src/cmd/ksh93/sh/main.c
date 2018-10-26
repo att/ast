@@ -396,7 +396,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
             fcclose();
             while ((top = sfstack(iop, SF_POPSTACK))) sfclose(top);
         }
-        // Make sure that we own the terminal.
+            // Make sure that we own the terminal.
 #ifdef SIGTSTP
         tcsetpgrp(job.fd, shp->gd->pid);
 #endif  // SIGTSTP

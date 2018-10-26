@@ -113,9 +113,9 @@ static int entry(Dt_t *dict, int set, int seq, const char *msg) {
     return 1;
 }
 
-/*
- * find catalog in locale and return catopen() descriptor
- */
+    /*
+     * find catalog in locale and return catopen() descriptor
+     */
 
 #if 1
 
@@ -343,9 +343,9 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
         goto done;
     }
 
-    /*
-     * adjust for the current locale
-     */
+        /*
+         * adjust for the current locale
+         */
 
 #if DEBUG_trace
     sfprintf(sfstderr, "AHA#%d:%s cp->locale `%s' %p loc `%s' %p\n", __LINE__, __FILE__, cp->locale,

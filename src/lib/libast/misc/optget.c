@@ -1442,9 +1442,9 @@ static_fn int optget_item(Sfio_t *sp, char *s, int about, int level, int style, 
     return par;
 }
 
-/*
- * output text to sp from p according to style
- */
+    /*
+     * output text to sp from p according to style
+     */
 
 #if _BLD_DEBUG
 

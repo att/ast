@@ -1178,23 +1178,23 @@ static_fn Sfio_t *nativeconf(Proc_t **pp, const char *operand) {
 }
 #endif  // #ifdef _pth_getconf_a
 
-/*
- * value==0 gets value for name
- * value!=0 sets value for name and returns previous value
- * path==0 implies path=="/"
- *
- * settable return values are in permanent store
- * non-settable return values copied to a tmp fmtbuf() buffer
- *
- *	if (!strcmp(astgetconf("PATH_RESOLVE", NULL, NULL, 0, 0), "logical"))
- *		our_way();
- *
- *	universe = astgetconf("UNIVERSE", NULL, "att", 0, 0);
- *	astgetconf("UNIVERSE", NULL, universe, 0, 0);
- *
- * if (flags&ASTCONF_error)!=0 then error return value is 0
- * otherwise 0 not returned
- */
+    /*
+     * value==0 gets value for name
+     * value!=0 sets value for name and returns previous value
+     * path==0 implies path=="/"
+     *
+     * settable return values are in permanent store
+     * non-settable return values copied to a tmp fmtbuf() buffer
+     *
+     *	if (!strcmp(astgetconf("PATH_RESOLVE", NULL, NULL, 0, 0), "logical"))
+     *		our_way();
+     *
+     *	universe = astgetconf("UNIVERSE", NULL, "att", 0, 0);
+     *	astgetconf("UNIVERSE", NULL, universe, 0, 0);
+     *
+     * if (flags&ASTCONF_error)!=0 then error return value is 0
+     * otherwise 0 not returned
+     */
 
 #define ALT 16
 

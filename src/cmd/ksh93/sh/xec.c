@@ -116,7 +116,7 @@ static_fn int io_usevex(struct ionod *iop) {
 #define IOUSEVEX 0
 #endif
 
-// ======== command execution ========
+    // ======== command execution ========
 
 #if !has_dev_fd
 static_fn void fifo_check(void *handle) {
@@ -1414,7 +1414,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 }
                 if (type & FAMP) {
                     if (sh_isstate(shp, SH_PROFILE) || sh_isstate(shp, SH_INTERACTIVE)) {
-                        /* print job number */
+                    /* print job number */
 #ifdef JOBS
 #if SHOPT_COSHELL
                         sfprintf(sfstderr, "[%d]\t%s\n", jobid, sh_pid2str(shp, parent));

@@ -268,9 +268,9 @@ uint64_t _aso_cas64(uint64_t volatile *p, uint64_t o, uint64_t n) {
 
 #endif
 
-/*
- * sync and return "current" value
- */
+    /*
+     * sync and return "current" value
+     */
 
 #ifndef asoget8
 uint8_t asoget8(uint8_t volatile *p) {
@@ -331,9 +331,9 @@ void *asogetptr(void volatile *p) {
 }
 #endif
 
-/*
- * add and return old value
- */
+    /*
+     * add and return old value
+     */
 
 #ifndef asoadd8
 uint8_t asoadd8(uint8_t volatile *p, int n) {
@@ -383,9 +383,9 @@ uint64_t asoadd64(uint64_t volatile *p, uint64_t n) {
 
 #endif
 
-/*
- * subtract and return old value
- */
+    /*
+     * subtract and return old value
+     */
 
 #ifndef asosub8
 uint8_t asosub8(uint8_t volatile *p, int n) {
@@ -435,9 +435,9 @@ uint64_t asosub64(uint64_t volatile *p, uint64_t n) {
 
 #endif
 
-/*
- * increment and return old value
- */
+    /*
+     * increment and return old value
+     */
 
 #ifndef asoinc8
 uint8_t asoinc8(uint8_t volatile *p) {
@@ -487,9 +487,9 @@ uint64_t asoinc64(uint64_t volatile *p) {
 
 #endif
 
-/*
- * decrement and return old value
- */
+    /*
+     * decrement and return old value
+     */
 
 #ifndef asodec8
 uint8_t asodec8(uint8_t volatile *p) {
@@ -539,10 +539,10 @@ uint64_t asodec64(uint64_t volatile *p) {
 
 #endif
 
-/*
- * if *p <= n then return *p
- * else *p = n and return n
- */
+    /*
+     * if *p <= n then return *p
+     * else *p = n and return n
+     */
 
 #ifndef asomin8
 uint8_t asomin8(uint8_t volatile *p, int n) {
@@ -596,10 +596,10 @@ uint64_t asomin64(uint64_t volatile *p, uint64_t n) {
 
 #endif
 
-/*
- * if *p >= n then return *p
- * else *p = n and return n
- */
+    /*
+     * if *p >= n then return *p
+     * else *p = n and return n
+     */
 
 #ifndef asomax8
 uint8_t asomax8(uint8_t volatile *p, int n) {
@@ -653,9 +653,9 @@ uint64_t asomax64(uint64_t volatile *p, uint64_t n) {
 
 #endif
 
-/*
- * { 8 16 32 [64] } compare with old, swap with new if same, and return old value
- */
+    /*
+     * { 8 16 32 [64] } compare with old, swap with new if same, and return old value
+     */
 
 #ifndef asocas8
 uint8_t asocas8(uint8_t volatile *p, int o, int n) {
@@ -855,9 +855,9 @@ uint64_t asocas64(uint64_t volatile *p, uint64_t o, uint64_t n) {
 
 #endif
 
-/*
- * compare with old, swap with new if same, and return old value
- */
+    /*
+     * compare with old, swap with new if same, and return old value
+     */
 
 #ifndef asocasptr
 void *asocasptr(void volatile *p, void *o, void *n) {

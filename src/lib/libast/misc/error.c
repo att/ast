@@ -247,9 +247,9 @@ static_fn void error_print(Sfio_t *sp, char *name, char *delim) {
     if (delim) sfputr(sp, delim, -1);
 }
 
-/*
- * print error context FIFO stack
- */
+    /*
+     * print error context FIFO stack
+     */
 
 #define CONTEXT(f, p) \
     (((f)&ERROR_PUSH) ? ((Error_context_t *)&(p)->context->context) : ((Error_context_t *)(p)))

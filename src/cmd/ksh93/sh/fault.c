@@ -550,7 +550,7 @@ void sh_done(void *ptr, int sig) {
     sfsync((Sfio_t *)sfstdout);
     if ((savxit & SH_EXITMASK) == shp->lastsig) sig = savxit & SH_EXITMASK;
     if (sig) {
-        // Generate fault termination code.
+    // Generate fault termination code.
 #if RLIMIT_CORE != RLIMIT_UNKNOWN
         struct rlimit rlp;
         getrlimit(RLIMIT_CORE, &rlp);
