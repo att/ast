@@ -233,11 +233,15 @@ extern void ast_free(void *ptr);
 #define valloc(s) valloc_has_no_ast_wrapper(s)
 #endif  // !NO_MALLOC_WRAPPERS
 
-#if !_lib_eaccess
-// We need a prototype for the fallback implementation.
-int eaccess(const char *pathname, int mode);
-#endif
-
 extern char *sh_getenv(const char *name);
 #define getenv(x) sh_getenv(x)
+
+// We need prototypes for each fallback implementation if the system doesn't
+// provide the function.
+#if !_lib_eaccess
+int eaccess(const char *pathname, int mode);
+#endif
+#if !_lib_mkostemp
+int mkostemp(char *template, int oflags);
+#endif
 #endif
