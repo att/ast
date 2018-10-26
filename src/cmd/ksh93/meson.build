@@ -76,17 +76,13 @@ all_tests = [
     ['ulimit'], ['variables'], ['vartree1'], ['vartree2'], ['wchar'], ['whence'],
     # Test non-special builtins; i.e., those that have to be enabled explicitly.
     ['b_chmod'],
-    # The following are tests that must be run serially after all other tests that might be run in
-    # parallel.
-    ['special-dev-paths'],
     # These are interactive tests to be run via the `expect` utility.
     ['emacs.exp'], ['hist.exp'], ['jobs.exp'], ['read.exp'], ['set.exp'], ['vi.exp'],
+    # The following are tests that must be run serially after all other tests that might be run in
+    # parallel. For example, the `special-dev-paths` test opens network connections on fixed TCP/IP
+    # port numbers and thus cannot be run in parallel with itself (shcomp and non-shcomp variants).
+    ['special-dev-paths'],
 ]
-
-# This is a list of the tests that must be run in isolation; i.e., not in parallel with other tests.
-# For example, the `special-dev-paths` test opens network connections on fixed TCP/IP port numbers
-# and thus cannot be run in parellel.
-serial_tests = ['special-dev-paths']
 
 # This is a list of tests to be skipped because they are known to be broken when
 # compiled by `shcomp`.
@@ -98,7 +94,12 @@ macos_tests_to_skip = ['jobs.exp' ]
 foreach testspec : all_tests
     testname = testspec[0]
     timeout = (testspec.length() == 2) ? testspec[1] : default_timeout
-    parallel = serial_tests.contains(testname) ? false : true
+    if timeout == 0
+        parallel = false
+        timeout = default_timeout
+    else
+        parallel = false
+    endif
     if testname.endswith('.exp')
         # The interactive `expect` based tests are highly sensitive to timing variations.
         # Never run them in parallel with any other test.
@@ -115,7 +116,7 @@ foreach testspec : all_tests
             env: [shell_var, lang_var, ld_library_path, libsample_path])
     endif
 
-    # Shcomp tests are only applicable to the non-interactive tests.
+    # The shcomp variants are only applicable to the non-interactive tests.
     if not testname.endswith('.exp')
         # Run the test after compiling the script with `shcomp`.
         if not shcomp_tests_to_skip.contains(testname)
