@@ -98,11 +98,6 @@ struct limits {
     unsigned char fs3d;              // non-zero for 3-d file system
 };
 
-#ifndef SH_wait_f_defined
-typedef int (*Shwait_f)(int, long, int);
-#define SH_wait_f_defined
-#endif  // SH_wait_f_defined
-
 struct shared {
     struct limits lim;
     uid_t userid;
