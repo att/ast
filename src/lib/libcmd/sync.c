@@ -23,7 +23,7 @@
 #include <stdbool.h>
 
 #include <errno.h>
-#include <sys/fcntl.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 #include "error.h"

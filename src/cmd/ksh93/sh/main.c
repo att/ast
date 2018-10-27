@@ -27,12 +27,12 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <fcntl.h>
 #include <setjmp.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/fcntl.h>
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
