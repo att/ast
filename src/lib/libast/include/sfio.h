@@ -188,14 +188,6 @@ struct _sffmt_s {
 #define SF_BUFSIZE 8192 /* default buffer size			*/
 #define SF_UNBOUND (-1) /* unbounded buffer size		*/
 
-/* namespace incursion workarounds -- migrate to the new names */
-#ifndef SF_APPEND
-#define SF_APPEND SF_APPENDWR /* BSDI sys/stat.h		*/
-#endif
-#ifndef SF_CLOSE
-#define SF_CLOSE SF_CLOSING /* AIX sys/socket.h		*/
-#endif
-
 extern ssize_t _Sfi;
 extern ssize_t _Sfmaxr;
 

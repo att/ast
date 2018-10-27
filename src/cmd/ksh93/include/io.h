@@ -29,13 +29,6 @@
 #define IOBSIZE (SF_BUFSIZE * _ast_sizeof_pointer)
 #define IOMAXTRY 20
 
-#ifndef SF_CLOSING
-#define SF_CLOSING SF_CLOSE
-#endif
-#ifndef SF_APPENDWR
-#define SF_APPENDWR SF_APPEND
-#endif
-
 // Used for output of shell errors.
 #define ERRIO 2
 
