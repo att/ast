@@ -881,7 +881,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             shp->st.var_local = shp->var_tree;
                         }
                     }
-#endif /* SHOPT_BASH */
+#endif  // SHOPT_BASH
                     if (np == SYSTYPESET || (np && np->nvalue.bfp == SYSTYPESET->nvalue.bfp)) {
                         if (np != SYSTYPESET) {
                             shp->typeinit = np;
@@ -1560,7 +1560,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 sh_redirect(shp, t->fork.forkio, execflg);
                 (t->fork.forktre)->tre.tretyp |= t->tre.tretyp & FSHOWME;
                 t = t->fork.forktre;
-#ifdef SHOPT_BASH
+#if SHOPT_BASH
                 if ((t->tre.tretyp & COMMSK) == TCOM && sh_isoption(shp, SH_BASH) &&
                     !sh_isoption(shp, SH_LASTPIPE)) {
                     Shnode_t *tt = (Shnode_t *)stkalloc(shp->stk, sizeof(Shnode_t));
@@ -1568,7 +1568,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     tt->par.partre = (Shnode_t *)t;
                     t = tt;
                 }
-#endif
+#endif  // SHOPT_BASH
                 sh_exec(shp, t, flags & ~simple);
             } else {
                 sfsync(shp->outpool);

@@ -18,7 +18,7 @@
  *                                                                      *
  ***********************************************************************/
 
-#ifdef SHOPT_BASH
+#if SHOPT_BASH
 
 //
 // Bash specific extensions.
@@ -421,5 +421,13 @@ reinit:
     if (xtrace) sh_offoption(shp, SH_XTRACE);
     if (verbose) sh_offoption(shp, SH_VERBOSE);
 }
+
+#else  // SHOPT_BASH
+
+// This is to silence the build chain warnings about this module being empty when SHOPT_BASH is
+// not defined.
+#include <stdio.h>
+
+char *shopt_bash_is_not_defined = NULL;
 
 #endif  // SHOPT_BASH
