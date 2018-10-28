@@ -43,10 +43,10 @@
 #include <unistd.h>
 
 #include "ast.h"
+#include "ast_regex.h"
 #include "error.h"
 #include "namval.h"
 #include "option.h"
-#include "regex.h"
 #include "sfio.h"
 #include "stk.h"
 

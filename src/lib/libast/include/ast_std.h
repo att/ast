@@ -30,8 +30,6 @@
 #ifndef _AST_STD_H
 #define _AST_STD_H 1
 
-#define _AST_STD_I 1
-
 #include <iconv.h>
 #include <stdbool.h>
 
@@ -121,28 +119,6 @@ extern int rename(const char *, const char *);
 #endif
 
 /* and now introducing prototypes botched by the standard(s) */
-
-/*
- * and finally, standard interfaces hijacked by ast
- * _AST_STD_I delays headers that require <ast_map.h>
- */
-
-#undef _AST_STD_I
-
-#if _AST_GETOPT_H < 0
-#undef _AST_GETOPT_H
-#include "ast_getopt.h"
-#endif
-
-#if _GETOPT_H < 0
-#undef _GETOPT_H
-#include <getopt.h>
-#endif
-
-#if _REGEX_H < 0
-#undef _REGEX_H
-#include "regex.h"
-#endif
 
 extern char *translate(const char *, const char *, const char *, const char *);
 

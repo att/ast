@@ -43,9 +43,9 @@
 #include "ast.h"
 #include "ast_errorf.h"
 #include "ast_lib.h"
+#include "ast_regex.h"
 #include "conftab.h"
 #include "error.h"
-#include "regex.h"
 #include "sfio.h"
 #include "univlib.h"
 

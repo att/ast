@@ -53,10 +53,9 @@ typedef struct regsubop_s {
     char re_rhs[1];     /* substitution rhs		*/
 
 #include "ast.h"
+#include "ast_regex.h"
 #include "cdt.h"
 #include "stk.h"
-
-#include "regex.h"
 
 #include <ctype.h>
 #include <errno.h>

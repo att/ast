@@ -30,7 +30,7 @@
 #include <string.h>
 
 #include "ast.h"
-#include "regex.h"
+#include "ast_regex.h"
 
 #define CACHE 8  /* default # cached re's	*/
 #define ROUND 64 /* pattern buffer size round	*/

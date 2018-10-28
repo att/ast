@@ -46,6 +46,7 @@
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_regex.h"
 #include "builtins.h"
 #include "edit.h"
 #include "error.h"
@@ -55,7 +56,6 @@
 #include "jobs.h"
 #include "name.h"
 #include "path.h"
-#include "regex.h"
 #include "sfdisc.h"
 #include "sfio.h"
 #include "shellapi.h"

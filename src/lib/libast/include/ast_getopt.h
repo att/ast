@@ -22,11 +22,6 @@
 /*
  * legacy standard getopt interface
  */
-#ifdef _AST_STD_I
-#undef _AST_GETOPT_H
-#define _AST_GETOPT_H -1
-#endif
-
 #ifndef _AST_GETOPT_H
 #define _AST_GETOPT_H 1
 

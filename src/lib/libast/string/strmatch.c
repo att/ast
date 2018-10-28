@@ -52,6 +52,7 @@
  *	only ] must be \'d inside [...]
  *
  */
+
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stddef.h>
@@ -59,7 +60,7 @@
 #include <string.h>
 
 #include "ast.h"
-#include "regex.h"
+#include "ast_regex.h"
 
 static struct State_s {
     regmatch_t *match;
