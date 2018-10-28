@@ -15,10 +15,24 @@
 # newline makes it safe to handle file names with spaces.
 IFS=$'\n'
 
+# This is the minimum clang-format version we require. It is possible that
+# older versions will produce results consistent with the latest version
+# (8.0.0 as I write this). But we know that version 3.8.0 that is included in
+# some distros (e.g., OpenSuse 42) does not produce compatible results.
+#
+# Requiring a compatible minimum version avoids pointless thrashing of the
+# code style due to some people running this script on systems with too old
+# versions of clang-format.
+typeset -r MIN_CFORMAT_VER=6.0.1
+
 typeset all=no
 typeset git_clang_format=no
 typeset -a c_files=()
 typeset -a files=()
+
+function semver {
+    echo $1 | awk '{ split($1, v, "."); printf "%d%03d%03d\n", v[1], v[2], v[3] }'
+}
 
 # Deal with any CLI flags.
 while [[ "${#}" -ne 0 ]]
@@ -37,6 +51,24 @@ done
 if [[ ${all} == yes && "${#}" -ne 0 ]]
 then
     echo "Unexpected arguments: '${1}'" >&2
+    exit 1
+fi
+
+
+if command -v clang-format > /dev/null
+then
+    cformat_ver=$(clang-format --version | awk '{ print $3 }')
+    if [[ $(semver $cformat_ver) -lt $(semver $MIN_CFORMAT_VER) ]]
+    then
+        echo
+        echo "ERROR: clang-format version $cformat_ver less than min required $MIN_CFORMAT_VER"
+        echo
+        exit 1
+    fi
+else
+    echo
+    echo 'ERROR: Cannot find clang-format command'
+    echo
     exit 1
 fi
 
@@ -114,33 +146,25 @@ then
         git-clang-format
     else
         echo
-        echo 'WARNING: Cannot find git-clang-format command'
+        echo 'ERROR: Cannot find git-clang-format command'
         echo
         exit 1
     fi
 else
-    if command -v clang-format > /dev/null
-    then
-        echo
-        echo ========================================
-        echo Running clang-format
-        echo ========================================
-        for file in "${c_files[@]}"
-        do
-            cp "${file}" "${file}.new"  # preserves mode bits
-            clang-format "${file}" >"${file}.new"
-            if cmp -s "${file}" "${file}.new"
-            then
-                rm "${file}.new"
-            else
-                echo "${file} was NOT correctly formatted"
-                mv "${file}.new" "${file}"
-            fi
-        done
-    else
-        echo
-        echo 'WARNING: Cannot find clang-format command'
-        echo
-        exit 1
-    fi
+    echo
+    echo ========================================
+    echo Running clang-format
+    echo ========================================
+    for file in "${c_files[@]}"
+    do
+        cp "${file}" "${file}.new"  # preserves mode bits
+        clang-format "${file}" >"${file}.new"
+        if cmp -s "${file}" "${file}.new"
+        then
+            rm "${file}.new"
+        else
+            echo "${file} was NOT correctly formatted"
+            mv "${file}.new" "${file}"
+        fi
+    done
 fi
