@@ -68,7 +68,7 @@ typedef int (*GL_error_f)(const char *, int);
     char *gl_pat;              \
     char *gl_pad[4];
 
-#include "glob.h"
+#include "ast_glob.h"
 
 /*
  * default gl_diropen
