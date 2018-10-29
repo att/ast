@@ -746,13 +746,19 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                 lvalue->ptr = (void *)nv_hasdisc(np, &ENUM_disc);
             } else if ((Namfun_t *)lvalue->ptr && !nv_hasdisc(np, &ENUM_disc) &&
                        !nv_isattr(np, NV_INTEGER)) {
-                Namval_t *mp, node;
-                mp = ((Namfun_t *)lvalue->ptr)->type;
-                memset(&node, 0, sizeof(node));
-                nv_clone(mp, &node, 0);
-                nv_offattr(&node, NV_RDONLY | NV_NOFREE);
-                nv_putval(&node, np->nvname, 0);
-                if (nv_isattr(&node, NV_NOFREE)) return nv_getnum(&node);
+                // TODO: The calloc() below should be considered a bandaid and may not be correct.
+                // See https://github.com/att/ast/issues/980. This dynamic allocation may leak some
+                // memory but that is preferable to referencing a stack var after this function
+                // returns. I think I have addressed this by removing the NV_NOFREE flag but I'm
+                // leaving this comment due to my low confidence.
+                Namval_t *mp = ((Namfun_t *)lvalue->ptr)->type;
+                Namval_t *node = calloc(1, sizeof(Namval_t));
+                nv_clone(mp, node, 0);
+                nv_offattr(node, NV_NOFREE);
+                nv_offattr(node, NV_RDONLY);
+                nv_putval(node, np->nvname, 0);
+
+                if (nv_isattr(node, NV_NOFREE)) return nv_getnum(node);
             }
             lvalue->eflag = 0;
             if (((lvalue->emode & 2) || lvalue->level > 1 ||
