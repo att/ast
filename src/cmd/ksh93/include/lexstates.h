@@ -93,7 +93,8 @@
 #define LEN _Fcin.fclen
 #define STATE(s, c) (s[mbwide() ? ((c = fcmbget(&LEN)), LEN > 1 ? 'a' : c) : (c = fcget())])
 #define isaname(c) ((c) < 0 ? 0 : ((c) > 0x7f ? isalpha(c) : sh_lexstates[ST_NAME][(c)] == S_NOP))
-#define isaletter(c) ((c) < 0 ? 0 : ((c) > 0x7f ? isalpha(c) : sh_lexstates[ST_DOL][(c)] == S_ALP && (c) != '.'))
+#define isaletter(c) \
+    ((c) < 0 ? 0 : ((c) > 0x7f ? isalpha(c) : sh_lexstates[ST_DOL][(c)] == S_ALP && (c) != '.'))
 #define isadigit(c) ((c) < 0 ? 0 : sh_lexstates[ST_DOL][c] == S_DIG)
 #define isastchar(c) ((c) == '@' || (c) == '*')
 #define isexp(c) ((c) < 0 ? 0 : (sh_lexstates[ST_MACRO][c] == S_PAT || (c) == '$' || (c) == '`'))
