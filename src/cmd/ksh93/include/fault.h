@@ -133,7 +133,7 @@ extern void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info);
 #undef signal
 #define signal(a, b) ERROR("use sh_signal() not signal()")
 
-extern void sh_done(void *, int);
+extern __attribute__((noreturn)) void sh_done(void *, int);
 extern void sh_siginit(Shell_t *shp);
 extern void *sh_timeradd(unsigned long, int, void (*)(void *), void *);
 extern void timerdel(void *);

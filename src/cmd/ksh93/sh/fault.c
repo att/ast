@@ -39,6 +39,7 @@
 
 #include "ast.h"
 #include "ast_aso.h"
+#include "ast_assert.h"
 #include "error.h"
 #include "fault.h"
 #include "fcin.h"
@@ -432,13 +433,14 @@ void sh_chktrap(Shell_t *shp) {
 // Exit the current scope and jump to an earlier one based on pp->mode.
 //
 void sh_exit_20120720(Shell_t *shp, int xno) {
-    struct checkpt *pp = (struct checkpt *)shp->jmplist;
-    int sig = 0;
     Sfio_t *pool;
+    int sig = 0;
+    struct checkpt *pp = (struct checkpt *)shp->jmplist;
+    assert(pp);
 
     shp->exitval = xno;
     if (xno == SH_EXITSIG) shp->exitval |= (sig = shp->lastsig);
-    if (pp && pp->mode > 1) cursig = -1;
+    if (pp->mode > 1) cursig = -1;
     if (shp->procsub) *shp->procsub = 0;
 #ifdef SIGTSTP
     if ((shp->trapnote & SH_SIGTSTP) && job.jobcontrol) {
@@ -515,7 +517,7 @@ static_fn void array_notify(Namval_t *np, void *data) {
 //
 // This is the exit routine for the shell.
 //
-void sh_done(void *ptr, int sig) {
+__attribute__((noreturn)) void sh_done(void *ptr, int sig) {
     Shell_t *shp = (Shell_t *)ptr;
     char *t;
     int savxit = shp->exitval;
