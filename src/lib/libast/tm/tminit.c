@@ -163,7 +163,7 @@ static_fn void tmlocal(void) {
     Tm_zone_t *zp;
     int n;
     char *s;
-    char *e;
+    char *e = NULL;
     int i;
     int m;
     int isdst;
@@ -187,7 +187,7 @@ static_fn void tmlocal(void) {
             environ[0] = TZ;
         } else {
             TZ[0] = 0;
-            e = 0;
+            e = NULL;
         }
         tzset();
         if (environ != v)
@@ -273,8 +273,10 @@ static_fn void tmlocal(void) {
             if (zp->west == n && zp->dst == m) {
                 local.type = t;
                 local.standard = zp->standard;
-                if (!(s = zp->daylight)) {
-                    e = (s = buf) + sizeof(buf);
+                s = zp->daylight;
+                if (!s) {
+                    s = buf;
+                    e = s + sizeof(buf);
                     s = tmpoff(s, e - s, zp->standard, 0, 0);
                     if (s < e - 1) {
                         *s++ = ' ';
@@ -291,7 +293,8 @@ static_fn void tmlocal(void) {
              * not in the table
              */
 
-            e = (s = buf) + sizeof(buf);
+            s = buf;
+            e = s + sizeof(buf);
             s = tmpoff(s, e - s, tm_info.format[TM_UT], n, 0);
             local.standard = strdup(buf);
             if (s < e - 1) {
