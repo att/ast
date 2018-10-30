@@ -82,7 +82,8 @@ done:
 
     shp->savexit = n;
     sh_exit(shp, shp->savexit);
-    return 1;
+
+    abort();
 }
 
 //
