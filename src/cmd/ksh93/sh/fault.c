@@ -490,7 +490,6 @@ void sh_exit_20120720(Shell_t *shp, int xno) {
     if (shp->lastsig == SIGPIPE) sfpurge(pool);
 #endif  // SIGPIPE
     sfclrlock(sfstdin);
-    if (!pp) sh_done(shp, sig);
     shp->intrace = 0;
     shp->prefix = 0;
     shp->mktype = 0;
