@@ -81,7 +81,10 @@ all_tests = [
     # The following are tests that must be run serially after all other tests that might be run in
     # parallel. For example, the `special-dev-paths` test opens network connections on fixed TCP/IP
     # port numbers and thus cannot be run in parallel with itself (shcomp and non-shcomp variants).
-    ['special-dev-paths'],
+    #
+    # Use a timeout of zero to use the default timeout or a negative timeout to indicate the test
+    # must run in isolation from other tests.
+    ['special-dev-paths', 0],
 ]
 
 # This is a list of tests to be skipped because they are known to be broken when
@@ -94,11 +97,11 @@ macos_tests_to_skip = ['jobs.exp' ]
 foreach testspec : all_tests
     testname = testspec[0]
     timeout = (testspec.length() == 2) ? testspec[1] : default_timeout
-    if timeout == 0
+    if timeout <= 0
         parallel = false
-        timeout = default_timeout
+        timeout = timeout == 0 ? default_timeout : -timeout
     else
-        parallel = false
+        parallel = true
     endif
     if testname.endswith('.exp')
         # The interactive `expect` based tests are highly sensitive to timing variations.
