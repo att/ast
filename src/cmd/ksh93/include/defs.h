@@ -283,7 +283,6 @@ extern bool sh_trace(Shell_t *, char *[], int);
 extern void sh_trim(char *);
 extern int sh_type(const char *);
 extern void sh_unscope(Shell_t *);
-extern void sh_utol(const char *, char *);
 extern int sh_whence(char **, int);
 #if SHOPT_COSHELL
 extern bool sh_coaddfile(Shell_t *, char *);
