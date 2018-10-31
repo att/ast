@@ -108,7 +108,7 @@ struct Mathconst {
 #define M_SQRT1_2l 0.7071067811865475244008443621048490L
 #endif
 
-// The firs three entries cann't be moved or it will break the code.
+// The first three entries cann't be moved or it will break the code.
 static const struct Mathconst Mtable[] = {
     {"1_PI", M_1_PIl}, {"2_PI", M_2_PIl},   {"2_SQRTPI", M_2_SQRTPIl},
     {"E", M_El},       {"LOG2E", M_LOG2El}, {"LOG10E", M_LOG10El},
@@ -117,7 +117,7 @@ static const struct Mathconst Mtable[] = {
     {"", 0.0}};
 
 typedef struct Intconst_s {
-    const char name[4];
+    const char *name;
     short ss;
     unsigned short us;
     int si;
@@ -127,7 +127,7 @@ typedef struct Intconst_s {
 } Intconst_t;
 
 typedef struct Fltconst_s {
-    const char name[12];
+    const char *name;
     float f;
     double d;
     Sfdouble_t l;
@@ -175,6 +175,15 @@ static const Intconst_t intconst[] = {
         LONG_MIN,
         0,
 #endif
+    },
+    {
+        NULL,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
     },
 };
 
@@ -295,71 +304,79 @@ static const Fltconst_t fltconst[] = {
         0,
         0,
     },
+    {
+        NULL,
+        0,
+        0,
+        0,
+    },
 };
 
-static_fn Namval_t *check_limits(Shell_t *shp, char *cp) {
+static_fn Namval_t *int_limit(const Intconst_t *ip, Namval_t *np) {
     static Namval_t node;
     static Sfdouble_t dd;
-    Namval_t *np;
-    char *ep;
-    int n;
 
-    if (!(ep = strrchr(cp, '.'))) return 0;
-    *ep = 0;
-    np = nv_open(cp, shp->var_tree, NV_VARNAME | NV_NOADD | NV_NOFAIL);
-    *ep++ = '.';
-    if (!np || !nv_isattr(np, NV_INTEGER)) return 0;
-    if (nv_isattr(np, NV_DOUBLE) == NV_DOUBLE) {
-        const Fltconst_t *fp = fltconst;
-        n = sizeof(fltconst) / sizeof(Fltconst_t);
-        for (; n-- > 0; fp++) {
-            if (strcmp(fp->name, ep) == 0) break;
+    int unsign = nv_isattr(np, NV_LTOU);
+    node = *np;
+    node.nvalue.ldp = &dd;
+    if (nv_isattr(np, NV_SHORT)) {
+        if (unsign) {
+            node.nvalue.u = ip->us;
+        } else {
+            node.nvalue.i16 = ip->ss;
         }
-        if (n >= 0) {
-            node = *np;
-            node.nvalue.ldp = &dd;
-            if (nv_isattr(np, NV_SHORT)) {
-                *node.nvalue.fp = fp->f;
-            } else if (nv_isattr(np, NV_LONG)) {
-                *node.nvalue.ldp = fp->l;
-            } else {
-                *node.nvalue.dp = fp->d;
-            }
-            return &node;
+    } else if (nv_isattr(np, NV_LONG)) {
+        if (unsign) {
+            *node.nvalue.llp = ip->ul;
+        } else {
+            *node.nvalue.llp = ip->sl;
         }
     } else {
-        const Intconst_t *ip = intconst;
-        n = sizeof(intconst) / sizeof(Intconst_t);
-        for (; n-- >= 0; ip++) {
-            if (strcmp(ip->name, ep) == 0) break;
-        }
-        if (n >= 0) {
-            int unsign = nv_isattr(np, NV_LTOU);
-            node = *np;
-            node.nvalue.ldp = &dd;
-            if (nv_isattr(np, NV_SHORT)) {
-                if (unsign) {
-                    node.nvalue.u = ip->us;
-                } else {
-                    node.nvalue.i16 = ip->ss;
-                }
-            } else if (nv_isattr(np, NV_LONG)) {
-                if (unsign) {
-                    *node.nvalue.llp = ip->ul;
-                } else {
-                    *node.nvalue.llp = ip->sl;
-                }
-            } else {
-                if (unsign) {
-                    *node.nvalue.ip = ip->ui;
-                } else {
-                    *node.nvalue.ip = ip->ul;
-                }
-            }
-            return &node;
+        if (unsign) {
+            *node.nvalue.ip = ip->ui;
+        } else {
+            *node.nvalue.ip = ip->ul;
         }
     }
-    return NULL;
+    return &node;
+}
+
+static_fn Namval_t *float_limit(const Fltconst_t *fp, Namval_t *np) {
+    static Namval_t node;
+    static Sfdouble_t dd;
+
+    node = *np;
+    node.nvalue.ldp = &dd;
+    if (nv_isattr(np, NV_SHORT)) {
+        *node.nvalue.fp = fp->f;
+    } else if (nv_isattr(np, NV_LONG)) {
+        *node.nvalue.ldp = fp->l;
+    } else {
+        *node.nvalue.dp = fp->d;
+    }
+    return &node;
+}
+
+static_fn Namval_t *check_limits(Shell_t *shp, char *cp) {
+    char *ep = strrchr(cp, '.');
+    if (!ep) return NULL;  // no attribute name
+
+    *ep = 0;
+    Namval_t *np = nv_open(cp, shp->var_tree, NV_VARNAME | NV_NOADD | NV_NOFAIL);
+    *ep++ = '.';
+    if (!np || !nv_isattr(np, NV_INTEGER)) return NULL;  // var type not integer or float
+
+    if (nv_isattr(np, NV_DOUBLE) == NV_DOUBLE) {
+        for (const Fltconst_t *fp = fltconst; fp->name; fp++) {
+            if (strcmp(fp->name, ep) == 0) return float_limit(fp, np);
+        }
+        return NULL;  // unrecognized float attribute name
+    }
+
+    for (const Intconst_t *ip = intconst; ip->name; ip++) {
+        if (strcmp(ip->name, ep) == 0) return int_limit(ip, np);
+    }
+    return NULL;  // unrecognized int attribute name
 }
 
 static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
