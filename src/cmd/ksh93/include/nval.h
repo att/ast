@@ -275,7 +275,9 @@ extern void _nv_unset(Namval_t *, int);
 extern Namval_t *nv_search(const char *, Dt_t *, int);
 extern char *nv_name(Namval_t *);
 extern Namval_t *nv_type(Namval_t *);
-extern void nv_addtype(Namval_t *, const char *, Optdisc_t *, size_t);
+// Note that the third parameter should be a pointer to a Optdisc_t or a structure where that type
+// is the first member.
+extern void nv_addtype(Namval_t *, const char *, void *, size_t);
 extern const Namdisc_t *nv_discfun(int);
 
 #define nv_unset(np) _nv_unset(np, 0)

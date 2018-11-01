@@ -775,7 +775,7 @@ found:
     return 1;
 }
 
-void nv_addtype(Namval_t *np, const char *optstr, Optdisc_t *op, size_t optsz) {
+void nv_addtype(Namval_t *np, const char *optstr, void *op, size_t optsz) {
     Namdecl_t *cp = calloc(1, sizeof(Namdecl_t) + optsz);
     Optdisc_t *dp = (Optdisc_t *)(cp + 1);
     Shell_t *shp = sh_ptr(np);
@@ -787,7 +787,7 @@ void nv_addtype(Namval_t *np, const char *optstr, Optdisc_t *op, size_t optsz) {
     } else {
         cp->optstring = sh_opttype;
     }
-    memcpy((void *)dp, (void *)op, optsz);
+    memcpy(dp, op, optsz);
     cp->optinfof = (void *)dp;
     cp->tp = np;
     mp = nv_search("typeset", shp->bltin_tree, 0);
