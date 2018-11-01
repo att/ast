@@ -237,9 +237,17 @@ void sh_siginit(Shell_t *shp) {
     for (tp = shtab_signals; tp->sh_number; tp++) {
         int sig = tp->sh_number;
         int n = (sig >> SH_SIGBITS);
-        if ((sig &= ((1 << SH_SIGBITS) - 1)) > (shp->gd->sigmax)) continue;
+
+        sig &= (1 << SH_SIGBITS) - 1;
+        if (sig >= shp->gd->sigmax) continue;
         sig--;
-        if (n & SH_SIGRUNTIME) sig = shp->gd->sigruntime[sig];
+        if (n & SH_SIGRUNTIME) {
+            // Coverity CID#253727 caught that the use of `sig` two lines below could theoretically
+            // index past the end of `sigruntime[]`. It doesn't only by virtue of the preconditions
+            // around `tp->sh_number`. Verify those predconditions are true.
+            assert(sig < sizeof(shp->gd->sigruntime) / sizeof(*shp->gd->sigruntime));
+            sig = shp->gd->sigruntime[sig];
+        }
         if (sig >= 0) {
             shp->sigflag[sig] = n;
             if (*tp->sh_name) shp->gd->sigmsg[sig] = (char *)tp->sh_value;
