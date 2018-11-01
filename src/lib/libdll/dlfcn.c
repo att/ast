@@ -26,6 +26,14 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+
+//
+// We define this symbol, which is otherwise unused, to ensure this module isn't empty. That's
+// because empty modules can cause build time warnings.
+//
+void do_not_use_this_dlfcn() { abort(); }
+
 #define T(x) ERROR_dictionary(x)
 
 #if !_hdr_dlfcn || !_lib_dlopen
