@@ -3186,11 +3186,6 @@ int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *
     return r;
 }
 
-#undef sh_funscope
-int sh_funscope(int argn, char *argv[], int (*fun)(void *), void *arg, int execflg) {
-    return sh_funscope_20120720(sh_getinterp(), argn, argv, fun, arg, execflg);
-}
-
 //
 // Given stream <iop> compile and execute.
 //
