@@ -19,9 +19,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <signal.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/signal.h>
 #include <unistd.h>
 
 #include "sfdisc.h"

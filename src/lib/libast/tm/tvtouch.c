@@ -30,9 +30,9 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>
-#include <string.h>
 #include <sys/stat.h>
-#include <sys/time.h>
+#include <sys/time.h>  // IWYU pragma: keep
+#include <time.h>      // IWYU pragma: keep
 #include <unistd.h>
 
 #include "tv.h"

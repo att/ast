@@ -29,7 +29,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/unistd.h>
+#include <unistd.h>
 
 #include <fts.h>  // OpenBSD and possibly others require the above includes first
 

@@ -28,10 +28,10 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/signal.h>
 
 #include "defs.h"
 

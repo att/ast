@@ -19,8 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <signal.h>
 #include <stdarg.h>
-#include <sys/signal.h>
 #include <sys/types.h>
 
 // IWYU pragma: no_include "sfhdr.h"
