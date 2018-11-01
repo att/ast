@@ -821,7 +821,7 @@ void nv_newtype(Namval_t *mp) {
     memset(&optdisc, 0, sizeof(optdisc));
     optdisc.opt.infof = typeinfo;
     optdisc.np = mp;
-    nv_addtype(mp, sh_opttype, &optdisc.opt, sizeof(optdisc));
+    nv_addtype(mp, sh_opttype, &optdisc, sizeof(optdisc));
 }
 
 //
