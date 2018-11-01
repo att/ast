@@ -360,7 +360,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
         memset(&optdisc, 0, sizeof(optdisc));
         optdisc.opt.infof = enuminfo;
         optdisc.np = tp;
-        nv_addtype(tp, enum_type, &optdisc.opt, sizeof(optdisc.opt));
+        nv_addtype(tp, enum_type, &optdisc, sizeof(optdisc));
         nv_onattr(np, NV_LTOU | NV_UTOL);
     }
     nv_open(0, shp->var_tree, 0);
