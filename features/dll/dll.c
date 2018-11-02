@@ -141,9 +141,6 @@ int main() {
         "extern void*            dllplug(const char*, const char*, const char*, int, char*, "
         "size_t);\n");
     printf("extern void*            dllfind(const char*, const char*, int, char*, size_t);\n");
-    printf("extern Dllnames_t*      dllnames(const char*, const char*, Dllnames_t*);\n");
-    printf("extern void*            dll_lib(Dllnames_t*, unsigned long, Dllerror_f, void*);\n");
-    printf("extern void*            dllmeth(const char*, const char*, unsigned long);\n");
     printf("extern void*            dllopen(const char*, int);\n");
     printf("extern void*            dllnext(int);\n");
     printf("extern void*            dlllook(void*, const char*);\n");

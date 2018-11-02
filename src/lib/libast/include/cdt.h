@@ -239,12 +239,6 @@ extern ssize_t dtstat(Dt_t *, Dtstat_t *);
 
 extern Dt_t *dtopen(Dtdisc_t *, Dtmethod_t *);
 
-#if !defined(_CDTLIB_H)
-
-extern void *dllmeth(const char *, const char *, unsigned long);
-
-#endif
-
 /* internal functions for translating among holder, object and key */
 #define _DT(dt) ((Dt_t *)(dt))
 

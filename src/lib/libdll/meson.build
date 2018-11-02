@@ -1,4 +1,4 @@
-libdll_files = ['dlfcn.c', 'dllcheck.c',  'dllerror.c',  'dllfind.c', 'dll_lib.c',  'dlllook.c',
+libdll_files = ['dlfcn.c', 'dllcheck.c',  'dllerror.c',  'dllfind.c', 'dlllook.c',
                 'dllnext.c',  'dllopen.c', 'dllplug.c', 'dllscan.c']
 
 libdll_c_args = shared_c_args + [
