@@ -28,6 +28,7 @@
 #include "aso.h"
 #include "ast_aso.h"
 #include "ast_assert.h"
+#include "cdt.h"
 #include "cdtlib.h"
 
 /*	Recursive hashing data structure.
@@ -66,9 +67,6 @@
 #define H_SRCHA 4
 
 #define H_NLEV (ssize_t)(DT_NBITS / H_BITA) /* #levels	*/
-
-/* table size at a given level */
-#define HSIZE(hh, lv) ((lv) >= (hh)->nlev ? (1 << H_BITA) : (hh)->mask[lv] + 1)
 
 /* the base (starting search) position of an element in a given table and #search steps */
 #define HBASP(hh, lv, h) ((lv) >= (hh)->nlev ? 0 : (((h) >> (hh)->shft[lv]) & (hh)->mask[lv]))
@@ -115,6 +113,18 @@ typedef struct _hash_s /* recursive hashing data */
 
     Fngr_t fngr; /* finger to help dtnext/dtstep	*/
 } Hash_t;
+
+// Return hash table size at a given level.
+// The original implementation was a macro:
+//
+//   #define HSIZE(hh, lv) ((lv) >= (hh)->nlev ? (1 << H_BITA) : (hh)->mask[lv] + 1)
+//
+// We now use an inline function to make it clear to Coverity Scan that this won't use a level
+// to index beyond the end of hash->mask.
+static inline int HSIZE(Hash_t *hash, ssize_t level) {
+    if (level >= hash->nlev) return 1<< H_BITA;
+    return hash->mask[level] + 1;
+}
 
 /* lock/unlock a class of objects by hash values */
 static_fn int hclslock(Dt_t *dt, uint hsh, int type, int locking) {
@@ -342,8 +352,7 @@ static_fn ssize_t dtrehash_size(Dt_t *dt, Htbl_t *tbl, ssize_t lev, Dtstat_t *st
     Hash_t *hash = (Hash_t *)dt->data;
     int share = hash->data.type & DT_SHARE;
 
-    if (lev >= DT_MAXRECURSE) /* avoid blowing the stack */
-        return -1;
+    if (lev >= DT_MAXRECURSE) return -1;  // avoid blowing the stack
 
     size = 0;
     for (tblz = HSIZE(hash, lev), p = 0; p < tblz; ++p) {
@@ -351,10 +360,11 @@ static_fn ssize_t dtrehash_size(Dt_t *dt, Htbl_t *tbl, ssize_t lev, Dtstat_t *st
 
         z = rz = 0;
         if ((t = asogetptr(tbl->list + p))) {
-            if (!HTABLE(t))
+            if (!HTABLE(t)) {
                 z = 1;
-            else if ((rz = dtrehash_size(dt, (Htbl_t *)t, lev + 1, st)) >= 0)
+            } else if ((rz = dtrehash_size(dt, (Htbl_t *)t, lev + 1, st)) >= 0) {
                 z = ((Htbl_t *)t)->pobj ? 1 : 0;
+            }
         }
         if (rz >= 0) {
             size += z + rz;
@@ -363,16 +373,19 @@ static_fn ssize_t dtrehash_size(Dt_t *dt, Htbl_t *tbl, ssize_t lev, Dtstat_t *st
 
         if (lev == 0) HCLSOPEN(dt, p, DT_SEARCH, share);
 
-        if (rz < 0) /* failed at some recursion level */
-            return -1;
+        if (rz < 0) return -1;  // failed at some recursion level
     }
 
     if (st) {
         st->tslot = HSIZE(hash, 0);
         st->mlev = lev > st->mlev ? lev : st->mlev;
+        // Ugh! Turning `HSIZE` from a macro into an inline function now causes cppcheck to warn
+        // that the following test "is redundant or the array 'hash->mask[16]' is accessed at index
+        // 255, which is out of bounds." This code is a mess of badly defined interfaces.
+        // cppcheck-suppress arrayIndexOutOfBoundsCond
         if (lev < DT_MAXSIZE) {
             st->msize = lev > st->msize ? lev : st->msize;
-            st->tsize[lev] += HSIZE(hash, lev); /* #slots per level */
+            st->tsize[lev] += HSIZE(hash, lev);
         }
         st->space += sizeof(Htbl_t) + (tblz - 1) * sizeof(Dtlink_t *);
     }
