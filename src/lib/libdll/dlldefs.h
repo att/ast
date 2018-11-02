@@ -81,9 +81,6 @@ extern void *dllplugin(const char *, const char *, const char *, unsigned long, 
                        int, char *, size_t);
 extern void *dllplug(const char *, const char *, const char *, int, char *, size_t);
 extern void *dllfind(const char *, const char *, int, char *, size_t);
-extern Dllnames_t *dllnames(const char *, const char *, Dllnames_t *);
-extern void *dll_lib(Dllnames_t *, unsigned long, Dllerror_f, void *);
-extern void *dllmeth(const char *, const char *, unsigned long);
 extern void *dllopen(const char *, int);
 extern void *dllnext(int);
 extern void *dlllook(void *, const char *);
