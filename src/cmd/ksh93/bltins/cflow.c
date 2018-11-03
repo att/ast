@@ -37,7 +37,6 @@
 #include "error.h"
 #include "fault.h"
 #include "option.h"
-#include "shellapi.h"
 
 //
 // Builtins `return` and `exit`.

@@ -42,9 +42,7 @@
 #include "fault.h"
 #include "lexstates.h"
 #include "name.h"
-#include "nvapi.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "stak.h"
 #include "stk.h"
 #include "variables.h"
@@ -3006,7 +3004,7 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
 //
 // Get the scope corresponding to <index> whence uses the same values as lseeek().
 //
-Shscope_t *sh_getscope_20120720(Shell_t *shp, int index, int whence) {
+Shscope_t *sh_getscope(Shell_t *shp, int index, int whence) {
     struct sh_scoped *sp, *topmost;
 
     if (whence == SEEK_CUR) {
@@ -3032,11 +3030,6 @@ Shscope_t *sh_getscope_20120720(Shell_t *shp, int index, int whence) {
     return (Shscope_t *)sp;  // here be dragons
 }
 
-#undef sh_getscope
-Shscope_t *sh_getscope(int index, int whence) {
-    return sh_getscope_20120720(sh_getinterp(), index, whence);
-}
-
 //
 // Make <scoped> the top scope and return previous scope.
 //
@@ -3049,9 +3042,6 @@ Shscope_t *sh_setscope(Shell_t *shp, Shscope_t *scope) {
     SH_FUNNAMENOD->nvalue.cp = shp->st.funname;
     return old;
 }
-
-#undef sh_setscope
-Shscope_t *sh_setscope(Shscope_t *scope) { return sh_setscope_20120720(sh_getinterp(), scope); }
 
 void sh_unscope(Shell_t *shp) {
     Dt_t *root = shp->var_tree;

@@ -51,7 +51,6 @@
 #include "name.h"
 #include "path.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "stk.h"
 #include "test.h"
 #include "variables.h"

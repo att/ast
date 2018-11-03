@@ -56,11 +56,9 @@
 #include "jobs.h"
 #include "lexstates.h"
 #include "name.h"
-#include "nvapi.h"
 #include "option.h"
 #include "path.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "shlex.h"
 #include "shtable.h"
 #include "stak.h"
@@ -1205,6 +1203,18 @@ static const Namdisc_t modedisc = {
 };
 #endif
 
+// The need for the function below is unfortunate. It is due to the API split on 2012-07-20 that
+// required many functions to be passed a pointer to the shell interpreter context. And some
+// putative functions outside the ksh code cannnot do so. For example, the libast `errorv()`
+// function has no way to pass a shell interpreter pointer to the function assigned to
+// `error_info.exit`.
+//
+// See https://github.com/att/ast/issues/983
+//
+static_fn void no_shell_context_sh_exit(int exit_val) {
+    sh_exit(sh_getinterp(), exit_val);
+}
+
 //
 // Initialize the shell.
 //
@@ -1237,13 +1247,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
         if (shgd->lim.child_max <= 0) shgd->lim.child_max = CHILD_MAX;
         if (shgd->lim.clk_tck <= 0) shgd->lim.clk_tck = CLK_TCK;
         shgd->ed_context = (void *)ed_open(shp);
-#if 1
-#undef sh_exit
-#endif
-        error_info.exit = sh_exit;
-#if 1
-#define sh_exit sh_exit_20120720
-#endif
+        error_info.exit = no_shell_context_sh_exit;
         error_info.id = path_basename(argv[0]);
     } else {
         shp = calloc(1, sizeof(Shell_t));
@@ -1413,19 +1417,9 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     shp->gd->login_files = login_files;
     shp->bltindata.version = SH_VERSION;
     shp->bltindata.shp = shp;
-#if 1
-#undef sh_run
-#undef sh_trap
-#undef sh_exit
-#undef sh_addbuiltin
-#endif
     shp->bltindata.shrun = sh_run;
-    shp->bltindata.shtrap = sh_trap;
     shp->bltindata.shexit = sh_exit;
-    shp->bltindata.shbltin = sh_addbuiltin;
-#if 1
-#define sh_exit sh_exit_20120720
-#endif
+
 #if 0
 #define NV_MKINTTYPE(x, y, z) nv_mkinttype(#x, sizeof(x), (x)-1 < 0, (y), (Namdisc_t *)z);
 	NV_MKINTTYPE(pid_t,"process id",0);
@@ -1456,7 +1450,7 @@ Shell_t *sh_getinterp(void) { return &sh; }
 //
 // Reinitialize before executing a script.
 //
-int sh_reinit_20120720(Shell_t *shp, char *argv[]) {
+int sh_reinit(Shell_t *shp, char *argv[]) {
     Shopt_t opt;
     Namval_t *np, *npnext;
     Dt_t *dp;
@@ -1528,8 +1522,6 @@ int sh_reinit_20120720(Shell_t *shp, char *argv[]) {
     shp->end_fn = 0;
     return 1;
 }
-#undef sh_reinit
-int sh_reinit(char *argv[]) { return sh_reinit_20120720(sh_getinterp(), argv); }
 
 //
 // Set when creating a local variable of this name.
@@ -2024,32 +2016,6 @@ static_fn void env_init(Shell_t *shp) {
     }
     return;
 }
-
-// Function versions of these.
-
-#define DISABLE  // proto workaround
-
-bool sh_isoption_20120720 DISABLE(Shell_t *shp, int opt) { return sh_isoption(shp, opt); }
-#undef sh_isoption
-bool sh_isoption DISABLE(int opt) { return sh_isoption_20120720(sh_getinterp(), opt); }
-
-void sh_onoption_20120720 DISABLE(Shell_t *shp, int opt) { sh_onoption(shp, opt); }
-#undef sh_onoption
-void sh_onoption DISABLE(int opt) { sh_onoption_20120720(sh_getinterp(), opt); }
-
-void sh_offoption_20120720 DISABLE(Shell_t *shp, int opt) { sh_offoption(shp, opt); }
-#undef sh_offoption
-void sh_offoption DISABLE(int opt) { sh_offoption_20120720(sh_getinterp(), opt); }
-
-void sh_sigcheck DISABLE(Shell_t *shp) {
-    if (!shp) shp = sh_getinterp();
-    sh_sigcheck(shp);
-}
-
-Dt_t *sh_bltin_tree_20120720 DISABLE(Shell_t *shp) { return shp->bltin_tree; }
-
-#undef sh_bltin_tree
-Dt_t *sh_bltin_tree DISABLE(void) { return sh_getinterp()->bltin_tree; }
 
 //
 // This code is for character mapped variables with wctrans().

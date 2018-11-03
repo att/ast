@@ -58,7 +58,6 @@
 #include "path.h"
 #include "sfdisc.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "shnodes.h"
 #include "stk.h"
 #include "terminal.h"
@@ -2493,7 +2492,7 @@ static_fn int subexcept(Sfio_t *sp, int mode, void *data, Sfdisc_t *handle) {
 //
 // Print a list of arguments in columns.
 //
-void sh_menu_20120720(Shell_t *shp, Sfio_t *outfile, int argn, char *argv[]) {
+void sh_menu(Shell_t *shp, Sfio_t *outfile, int argn, char *argv[]) {
     int i, j;
     char **arg;
     int nrow, ncol = 1, ndigits = 1;
@@ -2532,11 +2531,6 @@ skip:
         }
         sfputc(outfile, '\n');
     }
-}
-
-#undef sh_menu
-void sh_menu(Sfio_t *outfile, int argn, char *argv[]) {
-    sh_menu_20120720(sh_getinterp(), outfile, argn, argv);
 }
 
 #undef read
@@ -2696,7 +2690,11 @@ Notify_f sh_fdnotify(Notify_f notify) {
     return old;
 }
 
-Sfio_t *sh_fd2sfio_20120720(Shell_t *shp, int fd) {
+// This function is commented out because it is currently unused but might be useful in the future.
+// It's original use was by the `mkservice` and `poll` builtins added for the ksh93v- build that
+// have since been removed.
+#if 0
+Sfio_t *sh_fd2sfio(Shell_t *shp, int fd) {
     int status;
     Sfio_t *sp = shp->sftable[fd];
 
@@ -2709,8 +2707,7 @@ Sfio_t *sh_fd2sfio_20120720(Shell_t *shp, int fd) {
     }
     return sp;
 }
-#undef sh_fd2sfio
-Sfio_t *sh_fd2sfio(int fd) { return sh_fd2sfio_20120720(sh_getinterp(), fd); }
+#endif
 
 Sfio_t *sh_pathopen(Shell_t *shp, const char *cp) {
     int n;
@@ -2725,9 +2722,6 @@ Sfio_t *sh_pathopen(Shell_t *shp, const char *cp) {
     }
     return sh_iostream(shp, n, n);
 }
-
-#undef sh_pathopen
-Sfio_t *sh_pathopen(const char *cp) { return sh_pathopen_20120720(sh_getinterp(), cp); }
 
 bool sh_isdevfd(const char *fd) {
     if (!fd || strncmp(fd, "/dev/fd/", 8) || fd[8] == 0) return false;

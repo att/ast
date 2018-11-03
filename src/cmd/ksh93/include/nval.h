@@ -234,8 +234,7 @@ extern void *nv_associative(Namval_t *, const char *, int);
 extern int nv_aindex(Namval_t *);
 extern bool nv_nextsub(Namval_t *);
 extern char *nv_getsub(Namval_t *);
-extern Namval_t *nv_putsub(Namval_t *, char *, long);
-extern Namval_t *nv_putsub_20120720(Namval_t *, char *, long, int);
+extern Namval_t *nv_putsub(Namval_t *, char *, long, int);
 extern Namval_t *nv_opensub(Namval_t *);
 
 // Name-value pair function prototypes.
@@ -253,8 +252,7 @@ extern char *nv_getval(Namval_t *);
 extern Namfun_t *nv_hasdisc(Namval_t *, const Namdisc_t *);
 extern int nv_isnull(Namval_t *);
 extern Namfun_t *nv_isvtree(Namval_t *);
-extern Namval_t *nv_lastdict(void);
-extern Namval_t *nv_lastdict_20120720(void *);
+extern Namval_t *nv_lastdict(void *);
 extern Namval_t *nv_mkinttype(char *, size_t, int, const char *, Namdisc_t *);
 extern void nv_newattr(Namval_t *, unsigned, int);
 extern void nv_newtype(Namval_t *);

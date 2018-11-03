@@ -38,7 +38,6 @@
 #include "name.h"
 #include "option.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "ulimit.h"
 
 #ifndef SH_DICT

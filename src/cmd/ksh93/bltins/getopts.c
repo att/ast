@@ -39,7 +39,6 @@
 #include "name.h"
 #include "option.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "stk.h"
 #include "variables.h"
 

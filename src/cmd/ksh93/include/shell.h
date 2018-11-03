@@ -302,70 +302,50 @@ struct Shell_s {
 #define SH_FDCLOSE (-1)
 
 extern int sh_access(const char *, int);
-extern Namval_t *sh_addbuiltin(const char *, int (*)(int, char *[], Shbltin_t *), void *);
-extern Dt_t *sh_bltin_tree(void);
 extern int sh_chdir(const char *);
 extern int sh_close(int);
 extern void sh_delay(double);
 extern int sh_dup(int);
-extern int sh_eval(Sfio_t *, int);
 extern int sh_exec(Shell_t *, const Shnode_t *, int);
-extern void sh_exit(int);
 extern int sh_fchdir(int);
 extern int sh_fcntl(int, int, ...);
-extern Sfio_t *sh_fd2sfio(int);
 extern int (*sh_fdnotify(int (*)(int, int)))(int, int);
 extern char *sh_fmtq(const char *);
 extern char *sh_fmtqf(const char *, int, int);
-extern int sh_fun(Namval_t *, Namval_t *, char *[]);
-extern int sh_funscope(int, char *[], int (*)(void *), void *, int);
 extern Shell_t *sh_getinterp(void);
-extern Shscope_t *sh_getscope(int, int);
 extern Shell_t *sh_init(int, char *[], Shinit_f);
 extern Sfio_t *sh_iogetiop(int, int);
 extern int sh_main(int, char *[], Shinit_f);
-extern void sh_menu(Sfio_t *, int, char *[]);
-extern void sh_offoption(int);
-extern bool sh_isoption(int);
-extern void sh_onoption(int);
 extern int sh_open(const char *, int, ...);
 extern int sh_openmax(void);
 extern void *sh_parse(Shell_t *, Sfio_t *, int);
-extern Sfio_t *sh_pathopen(const char *);
 extern int sh_pipe(int[]);
 extern ssize_t sh_read(int, void *, size_t);
-extern int sh_reinit(char *[]);
-extern int sh_run(int, char *[]);
 extern off_t sh_seek(int, off_t, int);
-extern Shscope_t *sh_setscope(Shscope_t *);
 extern void sh_sigcheck(Shell_t *);
 extern int sh_stat(const char *, struct stat *);
-extern Sfdouble_t sh_strnum(const char *, char **, int);
 extern void sh_subfork(void);
-extern int sh_trap(const char *, int);
 extern mode_t sh_umask(mode_t);
 extern int sh_waitsafe(void);
 extern ssize_t sh_write(int, const void *, size_t);
 
-extern Namval_t *sh_addbuiltin_20120720(Shell_t *, const char *,
-                                        int (*)(int, char *[], Shbltin_t *), void *);
-extern Dt_t *sh_bltin_tree_20120720(Shell_t *);
-extern int sh_eval_20120720(Shell_t *, Sfio_t *, int);
-extern void sh_exit_20120720(Shell_t *, int);
-extern Sfio_t *sh_fd2sfio_20120720(Shell_t *, int);
-extern int sh_fun_20120720(Shell_t *, Namval_t *, Namval_t *, char *[]);
-extern int sh_funscope_20120720(Shell_t *, int, char *[], int (*)(void *), void *, int);
-extern Shscope_t *sh_getscope_20120720(Shell_t *, int, int);
-extern void sh_offoption_20120720(Shell_t *, int);
-extern bool sh_isoption_20120720(Shell_t *, int);
-extern void sh_onoption_20120720(Shell_t *, int);
-extern void sh_menu_20120720(Shell_t *, Sfio_t *, int, char *[]);
-extern Sfio_t *sh_pathopen_20120720(Shell_t *, const char *);
-extern int sh_reinit_20120720(Shell_t *, char *[]);
-extern int sh_run_20120720(Shell_t *, int, char *[]);
-extern Shscope_t *sh_setscope_20120720(Shell_t *, Shscope_t *);
-extern Sfdouble_t sh_strnum_20120720(Shell_t *, const char *, char **, int);
-extern int sh_trap_20120720(Shell_t *, const char *, int);
+extern Namval_t *sh_addbuiltin(Shell_t *, const char *, int (*)(int, char *[], Shbltin_t *), void *);
+extern int sh_eval(Shell_t *, Sfio_t *, int);
+extern void sh_exit(Shell_t *, int);
+extern Sfio_t *sh_fd2sfio(Shell_t *, int);
+extern int sh_fun(Shell_t *, Namval_t *, Namval_t *, char *[]);
+extern int sh_funscope(Shell_t *, int, char *[], int (*)(void *), void *, int);
+extern Shscope_t *sh_getscope(Shell_t *, int, int);
+extern void sh_offoption(Shell_t *, int);
+extern bool sh_isoption(Shell_t *, int);
+extern void sh_onoption(Shell_t *, int);
+extern void sh_menu(Shell_t *, Sfio_t *, int, char *[]);
+extern Sfio_t *sh_pathopen(Shell_t *, const char *);
+extern int sh_reinit(Shell_t *, char *[]);
+extern int sh_run(Shell_t *, int, char *[]);
+extern Shscope_t *sh_setscope(Shell_t *, Shscope_t *);
+extern Sfdouble_t sh_strnum(Shell_t *, const char *, char **, int);
+extern int sh_trap(Shell_t *, const char *, int);
 
 #define sh_ptr(np) ((np)->nvshell)
 
@@ -373,8 +353,6 @@ extern int sh_trap_20120720(Shell_t *, const char *, int);
 // Direct access to sh is obsolete, use sh_getinterp() instead.
 //
 extern Shell_t sh;
-
-#include "shellapi.h"
 
 #if _lib_lseek64
 #undef stat64
@@ -404,13 +382,8 @@ extern Shell_t sh;
 #ifndef _SH_PRIVATE
 #undef close
 #define close(a) sh_close(a)
-#if SHELLAPI(20120720)
 #undef exit
 #define exit(a) sh_exit(sh_getinterp(), a)
-#else
-#undef exit
-#define exit(a) sh_exit(a)
-#endif
 #undef fcntl
 #define fcntl(a, b, c) sh_fcntl(a, b, c)
 #undef pipe

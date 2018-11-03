@@ -51,10 +51,8 @@ struct Shbltin_s {
     Shell_t *shp;
     void *ptr;
     int version;
-    int (*shrun)(int, char **);
-    int (*shtrap)(const char *, int);
-    void (*shexit)(int);
-    Namval_t *(*shbltin)(const char *, Shbltin_f, void *);
+    int (*shrun)(Shell_t *, int, char **);
+    void (*shexit)(Shell_t *, int);
     unsigned char notify;
     unsigned char sigset;
     unsigned char nosfio;
@@ -71,12 +69,9 @@ struct Shbltin_s {
 #undef Namval_t
 #else  // defined(SH_VERSION) || defined(_SH_PRIVATE)
 #define sh_context(c) ((Shbltin_t *)(c))
-#define sh_run(c, ac, av) ((c) ? (*sh_context(c)->shrun)(ac, av) : -1)
-#define sh_system(c, str) ((c) ? (*sh_context(c)->shtrap)(str, 0) : system(str))
-#define sh_exit(c, n) ((c) ? (*sh_context(c)->shexit)(n) : exit(n))
+#define sh_run(c, ac, av) ((c) ? (*sh_context(c)->shrun)(sh_context(c)->shp, ac, av) : -1)
+#define sh_exit(c, n) ((c) ? (*sh_context(c)->shexit)(sh_context(c)->shp, n) : exit(n))
 #define sh_checksig(c) ((c) && sh_context(c)->sigset)
-#define sh_builtin(c, n, f, p) \
-    ((c) ? (*sh_context(c)->shbltin)(n, (Shbltin_f)(f), sh_context(p)) : 0)
 #if defined(SFIO_VERSION) || defined(_AST_H)
 #define LIB_INIT(c)
 #else  // defined(SFIO_VERSION) || defined(_AST_H)

@@ -51,7 +51,6 @@
 #include "option.h"
 #include "path.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "shlex.h"
 #include "shnodes.h"
 #include "stk.h"

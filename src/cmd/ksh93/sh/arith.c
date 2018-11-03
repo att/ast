@@ -43,9 +43,7 @@
 #include "fault.h"
 #include "lexstates.h"
 #include "name.h"
-#include "nvapi.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "stk.h"
 #include "streval.h"
 #include "variables.h"
@@ -842,7 +840,7 @@ void *sh_arithcomp(Shell_t *shp, char *str) {
 // Convert number defined by string to a Sfdouble_t.
 // Ptr is set to the last character processed.
 // If mode>0, an error will be fatal with value <mode>.
-Sfdouble_t sh_strnum_20120720(Shell_t *shp, const char *str, char **ptr, int mode) {
+Sfdouble_t sh_strnum(Shell_t *shp, const char *str, char **ptr, int mode) {
     Sfdouble_t d;
     char *last;
 
@@ -863,9 +861,4 @@ Sfdouble_t sh_strnum_20120720(Shell_t *shp, const char *str, char **ptr, int mod
     }
     if (ptr) *ptr = last;
     return d;
-}
-
-#undef sh_strnum
-Sfdouble_t sh_strnum(const char *str, char **ptr, int mode) {
-    return sh_strnum_20120720(sh_getinterp(), str, ptr, mode);
 }

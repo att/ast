@@ -36,7 +36,6 @@
 #include "name.h"
 #include "option.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "shnodes.h"
 #include "stak.h"
 

@@ -54,7 +54,6 @@
 #include "name.h"
 #include "path.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "terminal.h"
 #include "variables.h"
 
