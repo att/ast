@@ -122,7 +122,7 @@ typedef struct _hash_s /* recursive hashing data */
 // We now use an inline function to make it clear to Coverity Scan that this won't use a level
 // to index beyond the end of hash->mask.
 static inline int HSIZE(Hash_t *hash, ssize_t level) {
-    if (level >= hash->nlev) return 1<< H_BITA;
+    if (level >= hash->nlev) return 1 << H_BITA;
     return hash->mask[level] + 1;
 }
 
