@@ -150,25 +150,22 @@ project](https://github.com/att/ast/) by opening issues and pull-requests
 and watching the project.
 
 ### IRC
+
 Use `#ksh` channel on freenode to discuss about AT&T KornShell and related variants.
 
 ### Gitter
-[ksh93/users](https://gitter.im/ksh93/users) is gitter chatroom for AT&T KornShell users.
+
+[ksh93/users](https://gitter.im/ksh93/users) is the Gitter chatroom for
+AT&T KornShell users.
 
 ### Mailing lists
-Mailman is reachable through e-mail commands to:
-<ast-developers-request@lists.research.att.com> and 
-<ast-users-request@lists.research.att.com>.
-
-To subscribe send an e-mail with "subscribe" in the subject line.
-[Mailman web interface](http://lists.research.att.com) is not available from internet due
-to security reasons. To confirm your subscription, please reply to the confirmation
-e-mail.
-
-Send "help" in the subject line or in the body of the message for more info, or for
-detailed instructions go to mailman 
-[email commands](http://www.list.org/mailman-member/node41.html) or
-[member options](http://www.list.org/mailman-member/node42.html) quick reference.
 
 Archives of the AST mailing lists (which is mostly about ksh) are available at:
 https://marc.info/?l=ast-developers and https://marc.info/?l=ast-users.
+
+__As of 2018-11-01 the AT&T hosted mailing lists no longer respond to
+email.__ Note that the precise date the mailing lists stopped working
+is unknown. That was simply the date it came to our attention. The last
+known message to both mailing lists was sent on 2018-03-15. Ironically,
+since you can't unsubscribe, they still send monthly reminders that you
+are subscribed.
