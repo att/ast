@@ -53,11 +53,9 @@
 #include "fault.h"
 #include "history.h"
 #include "name.h"
-#include "nvapi.h"
 #include "option.h"
 #include "path.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "stk.h"
 #include "variables.h"
 

@@ -41,7 +41,6 @@
 #include "io.h"
 #include "jobs.h"
 #include "name.h"
-#include "nvapi.h"
 #include "option.h"
 #include "sfio.h"
 #include "shlex.h"
@@ -49,7 +48,6 @@
 #include "stk.h"
 
 #if SHOPT_BASH
-#include "shellapi.h"
 
 #define BASHOPT "\374"
 #else

@@ -40,7 +40,6 @@
 #include "name.h"
 #include "option.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "shtable.h"
 
 #ifndef BASH_MAJOR
@@ -184,7 +183,7 @@ struct funcname {
 static_fn void put_funcname(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
     // Bash silently returns with an error when FUNCNAME is set, unsetting
     // FUNCNAME is allowed.
-    if (val && !(flags & NV_RDONLY)) error_info.exit(1);
+    if (val && !(flags & NV_RDONLY)) sh_exit(sh_getinterp(), 1);
 
     nv_putv(np, val, flags, fp);
 }

@@ -46,7 +46,6 @@
 #include "jobs.h"
 #include "name.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "shlex.h"
 #include "shnodes.h"
 #include "shtable.h"
@@ -440,7 +439,7 @@ void sh_chktrap(Shell_t *shp) {
 //
 // Exit the current scope and jump to an earlier one based on pp->mode.
 //
-void sh_exit_20120720(Shell_t *shp, int xno) {
+void sh_exit(Shell_t *shp, int xno) {
     Sfio_t *pool;
     int sig = 0;
     struct checkpt *pp = (struct checkpt *)shp->jmplist;
@@ -504,14 +503,6 @@ void sh_exit_20120720(Shell_t *shp, int xno) {
     if (job.in_critical) job_unlock();
     if (pp->mode == SH_JMPSCRIPT && !pp->prev) sh_done(shp, sig);
     if (pp->mode) siglongjmp(pp->buff, pp->mode);
-}
-
-#undef sh_exit
-void sh_exit(int xno) {
-    Shell_t *shp = sh_getinterp();
-    struct checkpt *pp = (struct checkpt *)shp->jmplist;
-    if (pp && pp->mode == SH_JMPIO && xno != ERROR_NOEXEC) pp->mode = SH_JMPERREXIT;
-    sh_exit_20120720(shp, xno);
 }
 
 static_fn void array_notify(Namval_t *np, void *data) {
@@ -693,7 +684,7 @@ void sh_siglist(Shell_t *shp, Sfio_t *iop, int flag) {
 // Parse and execute the given trap string, stream or tree depending on mode
 // mode==0 for string, mode==1 for stream, mode==2 for parse tree.
 //
-int sh_trap_20120720(Shell_t *shp, const char *trap, int mode) {
+int sh_trap(Shell_t *shp, const char *trap, int mode) {
     int jmpval, savxit = shp->exitval;
     int was_history = sh_isstate(shp, SH_HISTORY);
     int was_verbose = sh_isstate(shp, SH_VERBOSE);
@@ -745,12 +736,6 @@ int sh_trap_20120720(Shell_t *shp, const char *trap, int mode) {
         siglongjmp(*shp->jmplist, jmpval);
     }
     return shp->exitval;
-}
-
-#undef sh_trap
-int sh_trap(const char *trap, int mode) {
-    Shell_t *shp = sh_getinterp();
-    return sh_trap_20120720(shp, trap, mode);
 }
 
 #undef signal

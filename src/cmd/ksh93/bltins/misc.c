@@ -53,7 +53,6 @@
 #include "option.h"
 #include "path.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "shnodes.h"
 #include "stk.h"
 #include "variables.h"

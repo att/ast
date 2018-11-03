@@ -38,7 +38,6 @@
 #include "name.h"
 #include "path.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "stk.h"
 
 static char *fmtx(Shell_t *shp, const char *string) {

@@ -38,7 +38,6 @@
 #include "name.h"
 #include "option.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "stak.h"
 #include "variables.h"
 

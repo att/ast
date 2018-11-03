@@ -48,7 +48,6 @@
 #include "io.h"
 #include "name.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "stk.h"
 #include "terminal.h"
 #include "variables.h"

@@ -59,11 +59,9 @@
 #include "io.h"
 #include "jobs.h"
 #include "name.h"
-#include "nvapi.h"
 #include "option.h"
 #include "path.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "shnodes.h"
 #include "shtable.h"
 #include "stak.h"
@@ -2751,7 +2749,7 @@ static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], stru
 // External interface to execute a function without arguments. <np> is the function node. If <nq> is
 // not-null, then sh.name and sh.subscript will be set.
 //
-int sh_fun_20120720(Shell_t *shp, Namval_t *np, Namval_t *nq, char *argv[]) {
+int sh_fun(Shell_t *shp, Namval_t *np, Namval_t *nq, char *argv[]) {
     int offset;
     char *base;
     Namval_t node;
@@ -2799,11 +2797,6 @@ int sh_fun_20120720(Shell_t *shp, Namval_t *np, Namval_t *nq, char *argv[]) {
     if (offset > 0) stkset(shp->stk, base, offset);
     shp->prefix = prefix;
     return shp->exitval;
-}
-
-#undef sh_fun
-int sh_fun(Namval_t *np, Namval_t *nq, char *argv[]) {
-    return sh_fun_20120720(sh_getinterp(), np, nq, argv);
 }
 
 //
@@ -3019,8 +3012,7 @@ static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jo
 // arg points to a structure containing a pointer to a function that will be executed in the current
 // environment.
 //
-int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *arg,
-                         int execflg) {
+int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *arg, int execflg) {
     UNUSED(argn);
     char *trap;
     int nsig;
@@ -3186,15 +3178,10 @@ int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *
     return r;
 }
 
-#undef sh_funscope
-int sh_funscope(int argn, char *argv[], int (*fun)(void *), void *arg, int execflg) {
-    return sh_funscope_20120720(sh_getinterp(), argn, argv, fun, arg, execflg);
-}
-
 //
 // Given stream <iop> compile and execute.
 //
-int sh_eval_20120720(Shell_t *shp, Sfio_t *iop, int mode) {
+int sh_eval(Shell_t *shp, Sfio_t *iop, int mode) {
     Shnode_t *t;
     struct slnod *saveslp = shp->st.staklist;
     int jmpval;
@@ -3255,10 +3242,7 @@ int sh_eval_20120720(Shell_t *shp, Sfio_t *iop, int mode) {
     return shp->exitval;
 }
 
-#undef sh_eval
-int sh_eval(Sfio_t *iop, int mode) { return sh_eval_20120720(sh_getinterp(), iop, mode); }
-
-int sh_run_20120720(Shell_t *shp, int argn, char *argv[]) {
+int sh_run(Shell_t *shp, int argn, char *argv[]) {
     struct dolnod *dp;
     struct comnod *t = (struct comnod *)stkalloc(shp->stk, sizeof(struct comnod));
     int savtop = stktell(shp->stk);
@@ -3290,6 +3274,3 @@ int sh_run_20120720(Shell_t *shp, int argn, char *argv[]) {
     }
     return argn;
 }
-
-#undef sh_run
-int sh_run(int argn, char *argv[]) { return sh_run_20120720(sh_getinterp(), argn, argv); }

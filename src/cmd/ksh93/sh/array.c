@@ -37,9 +37,7 @@
 #include "error.h"
 #include "fault.h"
 #include "name.h"
-#include "nvapi.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "stk.h"
 
 #define NUMSIZE 11
@@ -1364,9 +1362,4 @@ void nv_setvec(Namval_t *np, int append, int argc, char *argv[]) {
         nv_putval(np, argv[argc], 0);
     }
     if (!ap && (ap = (struct index_array *)nv_arrayptr(np))) ap->last = array_maxindex(np);
-}
-
-#undef nv_putsub
-Namval_t *nv_putsub(Namval_t *np, char *sp, long size) {
-    return nv_putsub_20120720(np, sp, size & ARRAY_MASK, size & ~ARRAY_MASK);
 }

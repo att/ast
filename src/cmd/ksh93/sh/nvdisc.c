@@ -32,10 +32,8 @@
 #include "error.h"
 #include "fault.h"
 #include "name.h"
-#include "nvapi.h"
 #include "path.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "stk.h"
 #include "variables.h"
 
@@ -1022,7 +1020,7 @@ done:
 // NULL on failure.  For delete NULL means success and the node that cannot be deleted is returned
 // on failure.
 //
-Namval_t *sh_addbuiltin_20120720(Shell_t *shp, const char *path, Shbltin_f bltin, void *extra) {
+Namval_t *sh_addbuiltin(Shell_t *shp, const char *path, Shbltin_f bltin, void *extra) {
     const char *name;
     char *cp;
     Namval_t *np, *nq = NULL;
@@ -1091,11 +1089,6 @@ Namval_t *sh_addbuiltin_20120720(Shell_t *shp, const char *path, Shbltin_f bltin
     }
     if (extra == builtin_delete) return NULL;
     return np;
-}
-
-#undef sh_addbuiltin
-Namval_t *sh_addbuiltin(const char *path, Shbltin_f bltin, void *extra) {
-    return sh_addbuiltin_20120720(sh_getinterp(), path, bltin, extra);
 }
 
 #undef nv_stack
