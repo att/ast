@@ -150,26 +150,26 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
                 struct timeval tmb, *tmp;
                 FD_ZERO(&rd);
                 FD_SET(fd, &rd);
-                if (tm < 0)
+                if (tm < 0) {
                     tmp = NULL;
-                else {
+                } else {
                     tmp = &tmb;
                     tmb.tv_sec = tm / 1000;
                     tmb.tv_usec = (tm % 1000) * 1000;
                 }
                 r = select(fd + 1, &rd, NULL, NULL, tmp);
                 if (r < 0) {
-                    if (errno == EINTR)
+                    if (errno == EINTR) {
                         return -1;
-                    else if (errno == EAGAIN) {
+                    } else if (errno == EAGAIN) {
                         errno = 0;
                         continue;
-                    } else
+                    } else {
                         r = -2;
-                } else
+                    }
+                } else {
                     r = FD_ISSET(fd, &rd) ? 1 : -1;
-            }
-            if (r == -2) {
+                }
             }
 
             if (r > 0) {  // there is data now
