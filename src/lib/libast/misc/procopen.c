@@ -394,15 +394,16 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
     proc->wfd = -1;
     proc->flags = flags;
     sfsync(NULL);
-    if (!envv && !(flags & (PROC_ENVCLEAR | PROC_PARANOID)))
+    if (!envv && !(flags & (PROC_ENVCLEAR | PROC_PARANOID))) {
         envv = environ;
+    }
+#if _use_spawnveg
     else if (environ && envv != (char **)environ &&
              (envv || (flags & PROC_PARANOID) ||
               ((argv && (environ[0][0] != '_')) || environ[0][1] != '='))) {
-#if _use_spawnveg
         if (!(flags & PROC_ORPHAN)) newenv = 1;
-#endif
     }
+#endif
     if (procfd >= 0) {
 #if _pipe_rw
         if (pipe(pio)) goto bad;
