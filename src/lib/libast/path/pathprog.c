@@ -52,6 +52,10 @@
 #include <mach-o/dyld.h>
 #endif
 
+// TODO: Refactor this function into a set of distinct functions based on whether a given feature
+// (e.g., __CYGWIN__) is defined. That's because in practice these capabilities are disjoint; i.e.,
+// only one of them is available for any given platform.
+
 static_fn size_t path_prog(const char *command, char *path, size_t size) {
     ssize_t n;
     char *s;
@@ -104,14 +108,18 @@ static_fn size_t path_prog(const char *command, char *path, size_t size) {
         return (t - path) + n;
     }
 #endif
-    if (command) {
-        s = (char *)command;
-        goto found;
-    }
-    return 0;
+
+    if (!command) return 0;
+    s = (char *)command;
+    goto found;  // yes, this is silly but it silences a compiler warning
+
 found:
     n = strlen(s);
-    if (n < size) memcpy(path, s, n + 1);
+    if (n < size) {
+        memcpy(path, s, n + 1);
+    } else {
+        *path = '\0';  // because the caller might still expect a null-terminated string
+    }
     return n;
 }
 
