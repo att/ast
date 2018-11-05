@@ -30,29 +30,27 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#define STKMTXEND(f1, f2)    \
-    if (f1) SFMTXUNLOCK(f1); \
-    if (f2) SFMTXUNLOCK(f2)
-
 Sfio_t *sfstack(Sfio_t *f1, Sfio_t *f2) {
     int n;
     Sfio_t *rf;
     Sfrsrv_t *rsrv;
     void *mtx;
 
-    if (f1) SFMTXLOCK(f1)
-    if (f2) SFMTXLOCK(f2)
+    SFMTXLOCK(f1)
+    SFMTXLOCK(f2)
 
     if (f1 && (f1->mode & SF_RDWR) != f1->mode && _sfmode(f1, 0, 0) < 0) {
-        STKMTXEND(f1, f2);
+        SFMTXUNLOCK(f1)
+        SFMTXUNLOCK(f2)
         return NULL;
     }
     if (f2 && (f2->mode & SF_RDWR) != f2->mode && _sfmode(f2, 0, 0) < 0) {
-        STKMTXEND(f1, f2);
+        SFMTXUNLOCK(f1)
+        SFMTXUNLOCK(f2)
         return NULL;
     }
     if (!f1) {
-        if (f2) SFMTXUNLOCK(f2)
+        SFMTXUNLOCK(f2)
         return f2;
     }
 
@@ -68,7 +66,8 @@ Sfio_t *sfstack(Sfio_t *f1, Sfio_t *f2) {
         f2->mode &= ~SF_PUSH;
     } else {
         if (f2->push) {
-            STKMTXEND(f1, f2);
+            SFMTXUNLOCK(f1)
+            SFMTXUNLOCK(f2)
             return NULL;
         }
         if (f1->pool && f1->pool != &_Sfpool && f1->pool != f2->pool &&
@@ -111,6 +110,7 @@ Sfio_t *sfstack(Sfio_t *f1, Sfio_t *f2) {
     SFOPEN(f1)
     SFOPEN(f2)
 
-    STKMTXEND(f1, f2);
+    SFMTXUNLOCK(f1)
+    SFMTXUNLOCK(f2)
     return rf;
 }
