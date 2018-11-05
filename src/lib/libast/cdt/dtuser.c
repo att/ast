@@ -24,6 +24,7 @@
 #include <pthread.h>
 
 #include "ast_aso.h"
+#include "cdt.h"
 #include "cdtlib.h"
 
 /* Perform various functions on the user's behalf.

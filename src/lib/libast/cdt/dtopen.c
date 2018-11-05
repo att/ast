@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "cdt.h"
 #include "cdtlib.h"
 
 /* 	Make a new dictionary

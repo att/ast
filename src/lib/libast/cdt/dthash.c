@@ -28,6 +28,7 @@
 
 #include "aso.h"
 #include "ast_assert.h"
+#include "cdt.h"
 #include "cdtlib.h"
 
 /*	Hash table with chaining for collisions.

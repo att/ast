@@ -23,7 +23,7 @@
 
 #include <sys/types.h>
 
-#include "cdtlib.h"
+#include "cdt.h"
 #include "sfio.h"
 
 /* Get statistics for a dictionary

@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "ast_assert.h"
+#include "cdt.h"
 #include "cdtlib.h"
 
 /*	Close a dictionary

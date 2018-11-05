@@ -23,6 +23,7 @@
 
 #include <stddef.h>
 
+#include "cdt.h"
 #include "cdtlib.h"
 
 /*	Change search method.

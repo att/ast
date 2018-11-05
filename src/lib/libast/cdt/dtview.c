@@ -23,7 +23,7 @@
 
 #include <stddef.h>
 
-#include "cdtlib.h"
+#include "cdt.h"
 
 /*	Set a view path from dict to view.
 **

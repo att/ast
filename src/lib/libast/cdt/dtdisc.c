@@ -23,7 +23,7 @@
 
 #include <stdlib.h>
 
-#include "cdtlib.h"
+#include "cdt.h"
 
 /*	Change discipline.
 **	dt :	dictionary

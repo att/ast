@@ -23,6 +23,7 @@
 
 #include <string.h>
 
+#include "cdt.h"
 #include "cdtlib.h"
 
 /*	List, Deque, Stack, Queue.
