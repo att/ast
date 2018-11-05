@@ -45,6 +45,7 @@
 #include <unistd.h>
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "error.h"
 #include "proclib.h"
 #include "sfio.h"
@@ -536,16 +537,20 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
             }
         }
         if (procfd > 1) {
-            if (modify(proc, forked, PROC_fd_dup | PROC_FD_CHILD, pio[0], PROC_ARG_NULL))
+            if (modify(proc, forked, PROC_fd_dup | PROC_FD_CHILD, pio[0], PROC_ARG_NULL)) {
                 goto cleanup;
+            }
             if (modify(proc, forked, PROC_fd_dup | PROC_FD_CHILD, pio[1], 1)) goto cleanup;
             if (modify(proc, forked, PROC_fd_dup, 1, 0)) goto cleanup;
         } else if (procfd >= 0) {
-            if (modify(proc, forked, PROC_fd_dup | PROC_FD_CHILD, pio[!!procfd], !!procfd))
+            assert(procfd == 0 || procfd == 1);
+            if (modify(proc, forked, PROC_fd_dup | PROC_FD_CHILD, pio[procfd], procfd)) {
                 goto cleanup;
-            if (pio[!procfd] != !!procfd &&
-                modify(proc, forked, PROC_fd_dup | PROC_FD_CHILD, pio[!procfd], PROC_ARG_NULL))
+            }
+            if (pio[!procfd] != procfd &&
+                modify(proc, forked, PROC_fd_dup | PROC_FD_CHILD, pio[!procfd], PROC_ARG_NULL)) {
                 goto cleanup;
+            }
         }
         if (modv) {
             for (i = 0; modv[i]; i++) {
