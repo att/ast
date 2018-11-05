@@ -701,24 +701,29 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
             }
 #endif
             switch (procfd) {
-                case 0:
+                case 0: {
                     proc->wfd = pio[1];
                     close(pio[0]);
                     break;
-                default:
-                    proc->wfd = pio[0];
-                    /*FALLTHROUGH*/
-                case 1:
+                }
+                case 1: {
                     proc->rfd = pio[0];
                     close(pio[1]);
                     break;
+                }
+                default: {
+                    proc->wfd = pio[0];
+                    proc->rfd = pio[0];
+                    close(pio[1]);
+                    break;
+                }
             }
             if (proc->rfd > 2) (void)fcntl(proc->rfd, F_SETFD, FD_CLOEXEC);
             if (proc->wfd > 2) (void)fcntl(proc->wfd, F_SETFD, FD_CLOEXEC);
         }
-        if (!proc->pid)
+        if (!proc->pid) {
             proc->pid = getpid();
-        else if (flags & PROC_ORPHAN) {
+        } else if (flags & PROC_ORPHAN) {
             while (waitpid(proc->pid, &i, 0) == -1 && errno == EINTR)
                 ;
             if (read(pop[0], &proc->pid, sizeof(proc->pid)) != sizeof(proc->pid)) goto bad;
