@@ -227,7 +227,7 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
     if (pf) {
         SFMTXLOCK(pf)
         if ((pf->mode & SF_RDWR) != pf->mode && _sfmode(pf, 0, 0) < 0) {
-            if (f) SFMTXUNLOCK(f)
+            SFMTXUNLOCK(f)
             SFMTXUNLOCK(pf)
             return NULL;
         }
@@ -236,8 +236,8 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
 
     /* f already in the same pool with pf */
     if (f == pf || (pf && f->pool == pf->pool && f->pool != &_Sfpool)) {
-        if (f) SFMTXUNLOCK(f)
-        if (pf) SFMTXUNLOCK(pf)
+        SFMTXUNLOCK(f)
+        SFMTXUNLOCK(pf)
         return pf;
     }
 
