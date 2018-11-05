@@ -329,7 +329,8 @@ extern mode_t sh_umask(mode_t);
 extern int sh_waitsafe(void);
 extern ssize_t sh_write(int, const void *, size_t);
 
-extern Namval_t *sh_addbuiltin(Shell_t *, const char *, int (*)(int, char *[], Shbltin_t *), void *);
+extern Namval_t *sh_addbuiltin(Shell_t *, const char *, int (*)(int, char *[], Shbltin_t *),
+                               void *);
 extern int sh_eval(Shell_t *, Sfio_t *, int);
 extern void sh_exit(Shell_t *, int);
 extern Sfio_t *sh_fd2sfio(Shell_t *, int);
