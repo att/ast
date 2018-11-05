@@ -49,13 +49,14 @@
 #include "proclib.h"
 #include "sfio.h"
 #include "sig.h"
-/*
- * not quite ready for _use_spawnveg
- */
 
-#if _use_spawnveg
+//
+// This code is not quite ready for _use_spawnveg.
+//
+// TODO: Fix this, if possible, so it works when spawnveg() is enabled. Otherwise rip out the
+// incomplete support.
+//
 #undef _use_spawnveg
-#endif
 
 #ifndef DEBUG_PROC
 #define DEBUG_PROC 1
@@ -95,8 +96,77 @@ static int setopt(void *a, const void *p, int n, const char *v) {
 
 #endif
 
-#if _use_spawnveg
+#ifdef SIGPIPE
+//
+// Catch but ignore sig. Avoids SIG_IGN being passed to children.
+//
+static void ignoresig(int sig) { signal(sig, ignoresig); }
+#endif  // SIGPIPE
 
+//
+// Do modification op and save previous state for restore().
+//
+static_fn int modify_forked(Proc_t *proc, int op, long arg1, long arg2) {
+    UNUSED(proc);
+
+    switch (op) {
+        case PROC_fd_dup:
+        case PROC_fd_dup | PROC_FD_PARENT:
+        case PROC_fd_dup | PROC_FD_CHILD:
+        case PROC_fd_dup | PROC_FD_PARENT | PROC_FD_CHILD:
+            if (arg1 != arg2) {
+                if (arg2 != PROC_ARG_NULL) {
+                    close(arg2);
+                    if (fcntl(arg1, F_DUPFD, arg2) != arg2) return -1;
+                }
+                if (op & PROC_FD_CHILD) close(arg1);
+            }
+            break;
+        case PROC_fd_ctty:
+            setsid();
+            for (int i = 0; i <= 2; i++) {
+                if (arg1 != i) close(i);
+            }
+            arg2 = -1;
+#ifdef TIOCSCTTY
+            if (ioctl(arg1, TIOCSCTTY, NULL) < 0) return -1;
+#else
+            char *s = ttyname(arg1);
+            if (!s) return -1;
+            arg2 = open(s, O_RDWR);
+            if (arg2 < 0) return -1;
+#endif
+            for (int i = 0; i <= 2; i++) {
+                if (arg1 != i && arg2 != i && fcntl(arg1, F_DUPFD, i) != i) return -1;
+            }
+            if (arg1 > 2) close(arg1);
+            if (arg2 > 2) close(arg2);
+            break;
+        case PROC_sig_dfl:
+            signal(arg1, SIG_DFL);
+            break;
+        case PROC_sig_ign:
+            signal(arg1, SIG_IGN);
+            break;
+        case PROC_sys_pgrp:
+            if (arg1 < 0) {
+                setsid();
+            } else if (arg1 > 0) {
+                if (arg1 == 1) arg1 = 0;
+                if (setpgid(0, arg1) < 0 && arg1 && errno == EPERM) setpgid(0, 0);
+            }
+            break;
+        case PROC_sys_umask:
+            umask(arg1);
+            break;
+        default:
+            return -1;
+    }
+
+    return 0;
+}
+
+#if _use_spawnveg
 typedef struct Fd_s {
     short fd;
     short flag;
@@ -118,149 +188,82 @@ typedef struct Mod_s {
     } arg;
 
 } Modify_t;
+//
+// Do modification op and save previous state for restore().
+//
+static_fn int modify_spawnveg(Proc_t *proc, int op, long arg1, long arg2) {
+    Modify_t *m;
 
-#endif
+    m = calloc(1, sizeof(Modify_t));
+    if (!m) return -1;
 
-#ifdef SIGPIPE
-
-/*
- * catch but ignore sig
- * avoids SIG_IGN being passed to children
- */
-
-static void ignoresig(int sig) { signal(sig, ignoresig); }
-
-#endif
-
-/*
- * do modification op and save previous state for restore()
- */
-
-static int modify(Proc_t *proc, int forked, int op, long arg1, long arg2) {
-    UNUSED(proc);
-
-    if (forked) {
-        int i;
-#ifndef TIOCSCTTY
-        char *s;
-#endif
-
-        switch (op) {
-            case PROC_fd_dup:
-            case PROC_fd_dup | PROC_FD_PARENT:
-            case PROC_fd_dup | PROC_FD_CHILD:
-            case PROC_fd_dup | PROC_FD_PARENT | PROC_FD_CHILD:
-                if (arg1 != arg2) {
-                    if (arg2 != PROC_ARG_NULL) {
-                        close(arg2);
-                        if (fcntl(arg1, F_DUPFD, arg2) != arg2) return -1;
+    m->next = proc->mods;
+    proc->mods = m;
+    switch (m->op = op) {
+        case PROC_fd_dup:
+        case PROC_fd_dup | PROC_FD_PARENT:
+        case PROC_fd_dup | PROC_FD_CHILD:
+        case PROC_fd_dup | PROC_FD_PARENT | PROC_FD_CHILD:
+            m->arg.fd.parent.fd = (short)arg1;
+            m->arg.fd.parent.flag = fcntl(arg1, F_GETFD, 0);
+            if ((m->arg.fd.child.fd = (short)arg2) != arg1) {
+                if (arg2 != PROC_ARG_NULL) {
+                    m->arg.fd.child.flag = fcntl(arg2, F_GETFD, 0);
+                    if ((m->save = fcntl(arg2, F_DUPFD_CLOEXEC, 3)) < 0) {
+                        m->op = 0;
+                        return -1;
                     }
-                    if (op & PROC_FD_CHILD) close(arg1);
-                }
-                break;
-            case PROC_fd_ctty:
-                setsid();
-                for (i = 0; i <= 2; i++)
-                    if (arg1 != i) close(i);
-                arg2 = -1;
-#ifdef TIOCSCTTY
-                if (ioctl(arg1, TIOCSCTTY, NULL) < 0) return -1;
-#else
-                if (!(s = ttyname(arg1))) return -1;
-                if ((arg2 = open(s, O_RDWR)) < 0) return -1;
-#endif
-                for (i = 0; i <= 2; i++)
-                    if (arg1 != i && arg2 != i && fcntl(arg1, F_DUPFD, i) != i) return -1;
-                if (arg1 > 2) close(arg1);
-                if (arg2 > 2) close(arg2);
-                break;
-            case PROC_sig_dfl:
-                signal(arg1, SIG_DFL);
-                break;
-            case PROC_sig_ign:
-                signal(arg1, SIG_IGN);
-                break;
-            case PROC_sys_pgrp:
-                if (arg1 < 0)
-                    setsid();
-                else if (arg1 > 0) {
-                    if (arg1 == 1) arg1 = 0;
-                    if (setpgid(0, arg1) < 0 && arg1 && errno == EPERM) setpgid(0, 0);
-                }
-                break;
-            case PROC_sys_umask:
-                umask(arg1);
-                break;
-            default:
-                return -1;
-        }
-    }
-#if _use_spawnveg
-    else
-#endif
-#if _use_spawnveg
-    {
-        Modify_t *m;
-
-        m = calloc(1, sizeof(Modify_t));
-        if (!m) return -1;
-
-        m->next = proc->mods;
-        proc->mods = m;
-        switch (m->op = op) {
-            case PROC_fd_dup:
-            case PROC_fd_dup | PROC_FD_PARENT:
-            case PROC_fd_dup | PROC_FD_CHILD:
-            case PROC_fd_dup | PROC_FD_PARENT | PROC_FD_CHILD:
-                m->arg.fd.parent.fd = (short)arg1;
-                m->arg.fd.parent.flag = fcntl(arg1, F_GETFD, 0);
-                if ((m->arg.fd.child.fd = (short)arg2) != arg1) {
-                    if (arg2 != PROC_ARG_NULL) {
-                        m->arg.fd.child.flag = fcntl(arg2, F_GETFD, 0);
-                        if ((m->save = fcntl(arg2, F_DUPFD_CLOEXEC, 3)) < 0) {
-                            m->op = 0;
-                            return -1;
-                        }
 #if F_DUPFD_CLOEXEC == F_DUPFD
-                        (void)fcntl(m->save, F_SETFD, FD_CLOEXEC);
+                    (void)fcntl(m->save, F_SETFD, FD_CLOEXEC);
 #endif
-                        close(arg2);
-                        if (fcntl(arg1, F_DUPFD, arg2) != arg2) return -1;
-                        if (op & PROC_FD_CHILD) close(arg1);
-                    } else if (op & PROC_FD_CHILD) {
-                        if (m->arg.fd.parent.flag) break;
-                        (void)fcntl(arg1, F_SETFD, FD_CLOEXEC);
-                    } else if (!m->arg.fd.parent.flag)
-                        break;
-                    else
-                        fcntl(arg1, F_SETFD, 0);
-                    return 0;
-                }
-                break;
-            case PROC_sig_dfl:
-                if ((m->arg.handler = signal(arg1, SIG_DFL)) == SIG_DFL) break;
-                m->save = (short)arg1;
+                    close(arg2);
+                    if (fcntl(arg1, F_DUPFD, arg2) != arg2) return -1;
+                    if (op & PROC_FD_CHILD) close(arg1);
+                } else if (op & PROC_FD_CHILD) {
+                    if (m->arg.fd.parent.flag) break;
+                    (void)fcntl(arg1, F_SETFD, FD_CLOEXEC);
+                } else if (!m->arg.fd.parent.flag)
+                    break;
+                else
+                    fcntl(arg1, F_SETFD, 0);
                 return 0;
-            case PROC_sig_ign:
-                if ((m->arg.handler = signal(arg1, SIG_IGN)) == SIG_IGN) break;
-                m->save = (short)arg1;
-                return 0;
-            case PROC_sys_pgrp:
-                proc->pgrp = arg1;
-                break;
-            case PROC_sys_umask:
-                if ((m->save = (short)umask(arg1)) == arg1) break;
-                return 0;
-            default:
-                proc->mods = m->next;
-                free(m);
-                return -1;
-        }
-        proc->mods = m->next;
-        free(m);
+            }
+            break;
+        case PROC_sig_dfl:
+            if ((m->arg.handler = signal(arg1, SIG_DFL)) == SIG_DFL) break;
+            m->save = (short)arg1;
+            return 0;
+        case PROC_sig_ign:
+            if ((m->arg.handler = signal(arg1, SIG_IGN)) == SIG_IGN) break;
+            m->save = (short)arg1;
+            return 0;
+        case PROC_sys_pgrp:
+            proc->pgrp = arg1;
+            break;
+        case PROC_sys_umask:
+            if ((m->save = (short)umask(arg1)) == arg1) break;
+            return 0;
+        default:
+            proc->mods = m->next;
+            free(m);
+            return -1;
     }
-#endif
+    proc->mods = m->next;
+    free(m);
     return 0;
+}
+#endif  // _use_spawnveg
+
+//
+// Do modification op and save previous state for restore().
+//
+static_fn int modify(Proc_t *proc, int forked, int op, long arg1, long arg2) {
+    if (forked) return modify_forked(proc, op, arg1, arg2);
+#if _use_spawnveg
+    return modify_spawnveg(proc, op, arg1, arg2);
+#else
+    return 0;
+#endif
 }
 
 #if _use_spawnveg
