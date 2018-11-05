@@ -33,6 +33,7 @@
 #include <wchar.h>
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
@@ -315,6 +316,10 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
             bp += c;
             if (ncol) break;
             len -= c;
+            // Coverity Scan, CID#279521, has identified a theoretical path to the next assignment
+            // where `lp` has already been incremented. Which would result in accessing memory whose
+            // content is undefined.
+            assert(lp == cut->list);
             ncol = *++lp;
             skip = !skip;
         } while (ncol != HUGE);
