@@ -79,11 +79,21 @@
 #define PROC_SYS_UMASK(m) PROC_op1(PROC_sys_umask, m, 0)
 
 #define PROC_OP(x) (((x) >> (2 * PROC_ARG_BIT)) & ((1 << PROC_OP_BIT) - 1))
-#define PROC_ARG(x, n)                                                                    \
-    ((n) ? (((x) >> (((n)-1) * PROC_ARG_BIT)) & PROC_ARG_NULL)                            \
-         : (((x) & ~((1 << (2 * PROC_ARG_BIT)) - 1)) == ~((1 << (2 * PROC_ARG_BIT)) - 1)) \
-               ? (-1)                                                                     \
-               : ((x) & ~((1 << (2 * PROC_ARG_BIT)) - 1)))
+//
+// This is the original definition of PROC_ARG. It's hard to read and results in lint warnings since
+// at the moment it is always called with n!=0.
+//
+// #define PROC_ARG(x, n)
+//     ((n) ? (((x) >> (((n)-1) * PROC_ARG_BIT)) & PROC_ARG_NULL)
+//          : (((x) & ~((1 << (2 * PROC_ARG_BIT)) - 1)) == ~((1 << (2 * PROC_ARG_BIT)) - 1))
+//                ? (-1)
+//                : ((x) & ~((1 << (2 * PROC_ARG_BIT)) - 1)))
+//
+static inline int PROC_ARG(long x, long n) {
+    if (n) return (x >> ((n - 1) * PROC_ARG_BIT)) & PROC_ARG_NULL;
+    if ((x & ~((1 << (2 * PROC_ARG_BIT)) - 1)) == ~((1 << (2 * PROC_ARG_BIT)) - 1)) return -1;
+    return x & ~((1 << (2 * PROC_ARG_BIT)) - 1);
+}
 
 typedef struct {
     pid_t pid;  /* process id			*/
