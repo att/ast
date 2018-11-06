@@ -40,10 +40,10 @@
 #define HCLSLOCK(dt, hh, ty, sh) ((sh) == 0 ? 0 : hclslock((dt), (hh), (ty), 1))
 #define HCLSOPEN(dt, hh, ty, sh) ((sh) == 0 ? 0 : hclslock((dt), (hh), (ty), 0))
 
-#define H_TABLE DT_HIBIT                   /* hibit indicates a table	*/
-#define H_NBITS (ssize_t)(DT_NBITS - 1)    /* #bits in a hash value	*/
-#define HTABLE(l) ((l)->_hash & H_TABLE)   /* test for a table	*/
-#define HVALUE(h) (((uint)(h)) & ~H_TABLE) /* get hash value	*/
+#define H_TABLE DT_HIBIT                         /* hibit indicates a table	*/
+#define H_NBITS (ssize_t)(DT_NBITS - 1)          /* #bits in a hash value	*/
+#define HTABLE(l) ((l)->_hash & H_TABLE)         /* test for a table	*/
+#define HVALUE(h) (((uint)(h)) & (DT_ONES >> 1)) /* get hash value	*/
 
 #if 0 /* if needed, remix bad hash values with (lbits*511+rbits) */
 #define LBITS(v) (((uint)(v)) >> 5)
