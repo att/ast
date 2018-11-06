@@ -1596,11 +1596,11 @@ static_fn Rex_t *regcomp_rep(Cenv_t *env, Rex_t *e, int number, int last) {
         switch (regcomp_token(env)) {
             case T_QUES:
                 eat(env);
-                minimal = !(env->flags & REG_MINIMAL);
+                minimal = (env->flags & REG_MINIMAL) == 0;
                 break;
             case T_STAR: /*AST*/
                 eat(env);
-                minimal = !!(env->flags & REG_MINIMAL);
+                minimal = (env->flags & REG_MINIMAL) != 0;
                 break;
         }
     switch (e->type) {
