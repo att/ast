@@ -148,10 +148,14 @@
 #define SFONCE() (_Sfdone ? 0 : vtonce(_Sfonce, _Sfoncef))
 
 // These are safe to use if `f` might be NULL though in that case they are no-ops.
-#define SFMTXLOCK(f) \
-    if (f && (f)->flags & SF_MTSAFE) { sfmutex(f, SFMTX_LOCK); }
-#define SFMTXUNLOCK(f) \
-    if (f && (f)->flags & SF_MTSAFE) { sfmutex(f, SFMTX_UNLOCK); }
+#define SFMTXLOCK(f)                   \
+    if (f && (f)->flags & SF_MTSAFE) { \
+        sfmutex(f, SFMTX_LOCK);        \
+    }
+#define SFMTXUNLOCK(f)                 \
+    if (f && (f)->flags & SF_MTSAFE) { \
+        sfmutex(f, SFMTX_UNLOCK);      \
+    }
 
 #define SFMTXDECL(ff) SFMTXdecl((ff), _mtxf1_);
 #define SFMTXBEGIN(ff, v) SFMTXbegin((ff), _mtxf1_, (v));

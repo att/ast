@@ -1211,9 +1211,7 @@ static const Namdisc_t modedisc = {
 //
 // See https://github.com/att/ast/issues/983
 //
-static_fn void no_shell_context_sh_exit(int exit_val) {
-    sh_exit(sh_getinterp(), exit_val);
-}
+static_fn void no_shell_context_sh_exit(int exit_val) { sh_exit(sh_getinterp(), exit_val); }
 
 //
 // Initialize the shell.
