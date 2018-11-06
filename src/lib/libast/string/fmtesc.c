@@ -80,7 +80,7 @@ char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int fla
     } else if (flags & FMT_SHELL)
         doublequote = 1;
     f = b;
-    escaped = spaced = !!(flags & FMT_ALWAYS);
+    escaped = spaced = (flags & FMT_ALWAYS) != 0;
     mbinit(&q);
     while (s < e) {
         if ((m = mbrlen((char *)s, MB_LEN_MAX, &q.mb_state)) > 1 && (s + m) <= e) {
