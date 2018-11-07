@@ -219,7 +219,10 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
     scan = calloc(1, sizeof(Dllscan_t) + i);
     if (!scan) return NULL;
     scan->tmp = sfstropen();
-    if (!scan->tmp) return NULL;
+    if (!scan->tmp) {
+        free(scan);
+        return NULL;
+    }
     info = dllinfo();
     scan->flags = info->flags;
     if (lib) {
@@ -264,7 +267,7 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
                     s = malloc(t - name + 1);
                     if (!s) goto bad;
                     memcpy(s, name, t - (char *)name);
-                    if (name_duped) free((char *)name);
+                    if (name_duped) free(name);
                     name = (const char *)s;
                     break;
                 }
@@ -313,12 +316,12 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
     scan->sp = scan->sb = (scan->lib ? scan->lib : info->sibling);
     scan->prelen = strlen(info->prefix);
     scan->suflen = strlen(info->suffix);
-    if (name_duped) free((char *)name);
+    if (name_duped) free(name);
     return scan;
 
 bad:
     dllsclose(scan);
-    if (name_duped) free((char *)name);
+    if (name_duped) free(name);
     return NULL;
 }
 
