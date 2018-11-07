@@ -1294,13 +1294,24 @@ retry1:
                     np = 0;
                 }
             }
-            ap = np ? nv_arrayptr(np) : 0;
+            ap = np ? nv_arrayptr(np) : NULL;
             if (type) {
                 if (mp->dotdot) {
-                    Namval_t *nq;
-                    if (ap && (nq = nv_opensub(np))) ap = nv_arrayptr(np = nq);
                     if (ap) {
+                        Namval_t *nq = nv_opensub(np);
+                        if (nq) {
+                            np = nq;
+                            ap = nv_arrayptr(np);
+                        }
+                    }
+                    if (ap) {
+                        Namval_t *old_np = np;
+                        // TODO: Remove this hack when issue #1002 is addressed.
+                        // The nv_putsub() may cause the array to grow and thus be reallocated
+                        // which invalidates the old address. So make sure we're using the correct
+                        // Namarr_t pointer and not one pointing to a possibly freed buffer.
                         np = nv_putsub(np, v, 0, ARRAY_SCAN);
+                        ap = nv_arrayptr(old_np);
                         v = stkptr(stkp, mp->dotdot);
                         dolmax = 1;
                         if (array_assoc(ap)) {
@@ -1310,7 +1321,7 @@ retry1:
                         }
                         if (type == M_SUBNAME) bysub = 1;
                     } else {
-                        if ((int)sh_arith(mp->shp, v)) np = 0;
+                        if ((int)sh_arith(mp->shp, v)) np = NULL;
                     }
                 } else if (ap && (isastchar(mode) || type == M_TREE) && !(ap->flags & ARRAY_SCAN) &&
                            type != M_SIZE) {
