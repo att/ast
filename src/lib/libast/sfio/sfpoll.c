@@ -98,14 +98,13 @@ int sfpoll(Sfio_t **fa, int n, int tm) {
 
     np = -1;
     if (c > 0) {
-        struct pollfd *fds;
-
-        /* construct the poll array */
+        // Construct the poll array.
         for (m = 0, r = 0; r < c; ++r, ++m) {
             f = fa[check[r]];
             if (HASAUXFD(f)) m += 1;
         }
-        fds = malloc(m * sizeof(struct pollfd));
+
+        struct pollfd *fds = malloc(m * sizeof(struct pollfd));
         if (!fds) {
             free(status);
             return -1;
@@ -132,10 +131,12 @@ int sfpoll(Sfio_t **fa, int n, int tm) {
         }
 
         while ((np = SFPOLL(fds, m, tm)) < 0) {
-            if (errno == eintr || errno == EAGAIN)
+            if (errno == eintr || errno == EAGAIN) {
                 errno = 0;
-            else
+            } else {
+                free(fds);
                 goto report;
+            }
         }
         if (np > 0) /* poll succeeded */
             np = c;
