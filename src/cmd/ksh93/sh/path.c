@@ -1186,12 +1186,14 @@ static_fn void exscript(Shell_t *shp, char *path, char *argv[], char *const *env
         n = strlcpy(name + 9, fmtbase((long)getpid(), 10, 0), sizeof(name) - 9);
         if (n >= sizeof(name) - 9) abort();  // this can't happen
         // Create a suid open file with owner equal effective uid.
-        if ((n = open(name, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, S_ISUID | S_IXUSR)) < 0) {
-            goto fail;
-        }
+        n = sh_open(name, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, S_ISUID | S_IXUSR);
+        if (n < 0) goto fail;
         unlink(name);
         // Make sure that file has right owner.
-        if (fstat(n, &statb) < 0 || statb.st_uid != euserid) goto fail;
+        if (fstat(n, &statb) < 0 || statb.st_uid != euserid) {
+            sh_close(n);
+            goto fail;
+        }
         if (n != 10) {
             sh_close(10);
             (void)fcntl(n, F_DUPFD_CLOEXEC, 10);
