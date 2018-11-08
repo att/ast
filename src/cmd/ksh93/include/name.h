@@ -82,7 +82,6 @@ union Value {
 #define ARRAY_SETSUB (64L << ARRAY_BITS)    // set subscript
 #define ARRAY_NOSCOPE (128L << ARRAY_BITS)  // top level scope only
 #define ARRAY_TREE (256L << ARRAY_BITS)     // arrays of compound vars
-#define NV_FARRAY 0x10000000                // fixed sized arrays
 #define NV_ASETSUB 8                        // set subscript
 
 // These flags are used as options to array_get().

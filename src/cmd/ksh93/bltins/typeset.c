@@ -656,10 +656,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             if (shp->nodelist && (len = strlen(name)) && name[len - 1] == '@') {
                 np = *shp->nodelist++;
             } else {
-                np = nv_open(
-                    name, troot,
-                    nvflags | ((nvflags & NV_ASSIGN) ? 0 : NV_ARRAY) |
-                        ((iarray || (nvflags & (NV_REF | NV_NOADD)) == NV_REF) ? NV_FARRAY : 0));
+                np = nv_open(name, troot, nvflags | ((nvflags & NV_ASSIGN) ? 0 : NV_ARRAY));
             }
             if (!np) continue;
             if (nv_isnull(np) && !nv_isarray(np) && nv_isattr(np, NV_NOFREE)) {

@@ -628,7 +628,7 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
         } else if (mp && associative) {
             nv_putsub(np, mp->nvname, 0, ARRAY_SCAN);
         }
-        if (ep == Empty && !(ap && ap->fixed)) ep = 0;
+        if (ep == Empty && !ap) ep = NULL;
         xp = 0;
         if (!ap && nv_isattr(np, NV_INTEGER | NV_LJUST) == NV_LJUST) {
             xp = ep + nv_size(np);

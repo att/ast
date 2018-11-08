@@ -496,8 +496,7 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
     int scan, nofree = nv_isattr(np, NV_NOFREE);
 
     do {
-        int xfree =
-            (ap->fixed || is_associative(ap)) ? 0 : array_isbit(aq->bits, aq->cur, ARRAY_NOFREE);
+        int xfree = is_associative(ap) ? 0 : array_isbit(aq->bits, aq->cur, ARRAY_NOFREE);
         mp = array_find(np, ap, string ? ARRAY_ASSIGN : ARRAY_DELETE);
         scan = ap->flags & ARRAY_SCAN;
         if (mp && mp != np) {
@@ -1069,11 +1068,7 @@ char *nv_endsubscript(Namval_t *np, char *cp, int mode, void *context) {
         Namarr_t *ap = nv_arrayptr(np);
         int scan = 0;
         if (ap) scan = ap->flags & ARRAY_SCAN;
-        if ((mode & NV_ASSIGN) && (cp[1] == '=' || cp[1] == '+')) {
-            mode |= NV_ADD;
-        } else if (ap && cp[1] == '.' && (mode & NV_FARRAY)) {
-            mode |= NV_ADD;
-        }
+        if ((mode & NV_ASSIGN) && (cp[1] == '=' || cp[1] == '+')) mode |= NV_ADD;
         nv_putsub(np, sp, 0,
                   ((mode & NV_ADD) ? ARRAY_ADD : 0) |
                       (cp[1] && (mode & NV_ADD) ? ARRAY_FILL : mode & ARRAY_FILL));
@@ -1140,7 +1135,7 @@ int nv_arraynsub(Namarr_t *ap) { return array_elem(ap); }
 
 union Value *nv_aivec(Namval_t *np, unsigned char **bitp) {
     struct index_array *ap = (struct index_array *)nv_arrayptr(np);
-    if (!ap || is_associative(&ap->namarr) || ap->namarr.fixed) return NULL;
+    if (!ap || is_associative(&ap->namarr)) return NULL;
     if (bitp) *bitp = ap->bits;
     return ap->val;
 }
@@ -1149,7 +1144,7 @@ int nv_aipack(Namarr_t *arp) {
     struct index_array *ap = (struct index_array *)arp;
     int i, j;
 
-    if (!ap || is_associative(&ap->namarr) || ap->namarr.fixed) return -1;
+    if (!ap || is_associative(&ap->namarr)) return -1;
     for (i = j = 0; i < ap->maxi; i++) {
         if (ap->val[i].np) {
             ap->bits[j] = ap->bits[i];
