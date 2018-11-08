@@ -481,7 +481,7 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
                 if (val == NV_ARRAY) {
                     Namarr_t *ap = nv_arrayptr(np);
                     char **xp = 0;
-                    if (ap && array_assoc(ap)) {
+                    if (ap && is_associative(ap)) {
                         if (tp->sh_name[1] != 'A') continue;
                     } else if (tp->sh_name[1] == 'A') {
                         continue;
@@ -489,7 +489,7 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
                     if ((ap && (ap->flags & ARRAY_TREE)) || (!ap && nv_isattr(np, NV_NOFREE))) {
                         if (prefix && *prefix) sfwrite(out, "-C ", 3);
                     }
-                    if (ap && !array_assoc(ap) && (xp = (char **)(ap + 1)) && *xp) {
+                    if (ap && !is_associative(ap) && (xp = (char **)(ap + 1)) && *xp) {
                         ip = nv_namptr(*xp, 0)->nvname;
                     }
                 }
@@ -579,7 +579,7 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
             sfputc(out, '\n');
             tabs = 1;
         }
-        associative = (array_assoc(ap) != 0);
+        associative = (is_associative(ap) != 0);
         if (!associative && array_elem(ap) < nv_aimax(np) + 1) associative = true;
     }
     mp = nv_opensub(np);
@@ -607,13 +607,13 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
                 sfprintf(out, "%s: ", sh_fmtj(fmtq));
             }
         }
-        if (ap && !array_assoc(ap)) scan = ap->flags & ARRAY_SCAN;
+        if (ap && !is_associative(ap)) scan = ap->flags & ARRAY_SCAN;
         if (mp && nv_isarray(mp)) {
             nv_outnode(mp, out, indent, 0);
             if (indent > 0) sfnputc(out, '\t', indent);
             if (nv_arrayptr(mp)) sfputc(out, json ? ']' : ')');
             sfputc(out, indent >= 0 ? '\n' : ' ');
-            if (ap && !array_assoc(ap)) ap->flags |= scan;
+            if (ap && !is_associative(ap)) ap->flags |= scan;
             more = nv_nextsub(np);
             goto skip;
         }
@@ -669,7 +669,7 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
                 fmtq = ep;
             }
         }
-        if (ap && !array_assoc(ap)) ap->flags |= scan;
+        if (ap && !is_associative(ap)) ap->flags |= scan;
         more = nv_nextsub(np);
         if (json_last || (ap && !more)) json = 0;
         c = json ? ',' : '\n';

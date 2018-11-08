@@ -438,13 +438,13 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
         } else if ((ap = nv_arrayptr(nr))) {
             nv_putsub(nr, NULL, 0, ARRAY_SCAN | ARRAY_NOSCOPE);
             do {
-                if (array_assoc(ap)) {
+                if (is_associative(ap)) {
                     cp = (char *)((*ap->fun)(nr, NULL, NV_ANAME));
                 } else {
                     cp = nv_getsub(nr);
                 }
                 nv_putsub(nq, cp, 0, ARRAY_ADD | ARRAY_NOSCOPE);
-                if (array_assoc(ap)) {
+                if (is_associative(ap)) {
                     Namval_t *mr = (Namval_t *)((*ap->fun)(nr, NULL, NV_ACURRENT));
                     Namval_t *mq = (Namval_t *)((*ap->fun)(nq, NULL, NV_ACURRENT));
                     nv_clone(mr, mq, NV_MOVE);

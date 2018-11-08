@@ -1314,7 +1314,7 @@ retry1:
                         ap = nv_arrayptr(old_np);
                         v = stkptr(stkp, mp->dotdot);
                         dolmax = 1;
-                        if (array_assoc(ap)) {
+                        if (is_associative(ap)) {
                             arrmax = strdup(v);
                         } else if ((dolmax = (int)sh_arith(mp->shp, v)) < 0) {
                             dolmax += array_maxindex(np);
@@ -1582,13 +1582,13 @@ skip:
                 }
             } else if (ap) {
                 if (type < 0) {
-                    if (array_assoc(ap)) {
+                    if (is_associative(ap)) {
                         type = -type;
                     } else {
                         type += array_maxindex(np);
                     }
                 }
-                if (array_assoc(ap)) {
+                if (is_associative(ap)) {
                     while (type-- > 0 && (v = 0, nv_nextsub(np))) v = nv_getval(np);
                 } else if (type > 0) {
                     if (nv_putsub(np, NULL, type, ARRAY_SCAN)) {
@@ -1766,7 +1766,7 @@ retry2:
                 } else {
                     v = nv_getval(np);
                 }
-                if (array_assoc(ap)) {
+                if (is_associative(ap)) {
                     if (strcmp(bysub ? v : nv_getsub(np), arrmax) > 0) break;
                 } else {
                     if (nv_aindex(np) > dolmax) break;
