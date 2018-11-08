@@ -67,30 +67,33 @@ struct assoc_array {
     Namval_t *cur;
 };
 
-static_fn Namarr_t *array_scope(Namval_t *np, Namarr_t *ap, int flags) {
+// Clone the index_array pointed to by `aq` and do what? What does the "scope" in the function name
+// imply?
+static_fn struct index_array *array_scope(Namval_t *np, struct index_array *aq, int flags) {
     Shell_t *shp = sh_ptr(np);
-    Namarr_t *aq;
     struct index_array *ar;
-    size_t size = ap->hdr.dsize;
+    size_t size = aq->header.hdr.dsize;
 
-    if (size == 0) size = ap->hdr.disc->dsize;
-    aq = calloc(1, size);
-    if (!aq) return NULL;
-    memcpy(aq, ap, size);
-    aq->hdr.nofree &= ~1;
-    aq->hdr.nofree |= (flags & NV_RDONLY) ? 1 : 0;
-    if (is_associative(aq)) {
-        aq->scope = (void *)dtopen(&_Nvdisc, Dtoset);
-        dtuserdata(aq->scope, shp, 1);
-        dtview((Dt_t *)aq->scope, aq->table);
-        aq->table = (Dt_t *)aq->scope;
-        return aq;
+    if (size == 0) size = aq->header.hdr.disc->dsize;
+    ar = calloc(1, size);
+    assert(ar);
+    memcpy(ar, aq, size);
+    if (flags & NV_RDONLY) {
+        ar->header.hdr.nofree |= 1;
+    } else {
+        ar->header.hdr.nofree &= ~1;
     }
-    aq->scope = (void *)ap;
-    ar = (struct index_array *)aq;
+    if (is_associative(&ar->header)) {
+        ar->header.scope = (void *)dtopen(&_Nvdisc, Dtoset);
+        dtuserdata(ar->header.scope, shp, 1);
+        dtview((Dt_t *)ar->header.scope, ar->header.table);
+        ar->header.table = (Dt_t *)ar->header.scope;
+        return ar;
+    }
+    ar->header.scope = aq;
     memset(ar->val, 0, ar->maxi * sizeof(char *));
     ar->bits = (unsigned char *)&ar->val[ar->maxi];
-    return aq;
+    return ar;
 }
 
 static_fn bool array_unscope(Namval_t *np, Namarr_t *ap) {
@@ -381,8 +384,8 @@ static_fn Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t 
     flg = ap->flags;
     if (flg & ARRAY_NOCLONE) return 0;
     if ((flags & NV_TYPE) && !ap->scope) {
-        ap = array_scope(np, ap, flags);
-        return &ap->hdr;
+        aq = array_scope(np, aq, flags);
+        return &aq->header.hdr;
     }
     ap = (Namarr_t *)nv_clone_disc(fp, 0);
     if (flags & NV_COMVAR) {
