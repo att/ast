@@ -87,7 +87,6 @@ struct Namarray {
     Namfun_t hdr;
     long nelem;                                   // number of elements
     void *(*fun)(Namval_t *, const char *, int);  // associative arrays
-    void *fixed;                                  // for fixed sized arrays
     Dt_t *table;                                  // for subscripts
     void *scope;                                  // non-NULL when scoped
     int flags;

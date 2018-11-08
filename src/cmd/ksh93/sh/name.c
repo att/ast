@@ -291,7 +291,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                 int sub = 0;
                 struct fornod *fp = (struct fornod *)arg->argchn.ap;
                 Shnode_t *tp = fp->fortre;
-                flag |= (flags & (NV_NOSCOPE | NV_STATIC | NV_FARRAY));
+                flag |= (flags & (NV_NOSCOPE | NV_STATIC));
                 if (arg->argflag & ARG_ARRAY) array |= NV_IARRAY;
                 if (arg->argflag & ARG_QUOTED) {
                     cp = sh_mactrim(shp, fp->fornam, -1);
@@ -912,8 +912,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                             if ((n & NV_ADD) && (flags & NV_ARRAY)) n |= ARRAY_FILL;
                             if (flags & NV_ASSIGN) n |= NV_ADD | ARRAY_FILL;
                             table = shp->last_table;
-                            cp = nv_endsubscript(np, sp, n | (flags & (NV_ASSIGN | NV_FARRAY)),
-                                                 np->nvshell);
+                            cp = nv_endsubscript(np, sp, n | (flags & NV_ASSIGN), np->nvshell);
                             shp->last_table = table;
 #if 0
 						if(scan)
