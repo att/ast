@@ -89,7 +89,7 @@ struct Namarray {
     void *(*fun)(Namval_t *, const char *, int);  // associative arrays
     void *fixed;                                  // for fixed sized arrays
     Dt_t *table;                                  // for subscripts
-    void *scope;                                  // non-zerp when scoped
+    void *scope;                                  // non-NULL when scoped
     int flags;
 };
 

@@ -41,7 +41,6 @@
 #include "stk.h"
 
 #define NUMSIZE 11
-#define is_associative(ap) array_assoc((Namarr_t *)(ap))
 #define array_setbit(cp, n, b) (cp[n] |= (b))
 #define array_clrbit(cp, n, b) (cp[n] &= ~(b))
 #define array_isbit(cp, n, b) (cp[n] & (b))
@@ -153,7 +152,7 @@ static_fn struct index_array *array_grow(Namval_t *, struct index_array *, int);
 int array_maxindex(Namval_t *np) {
     struct index_array *ap = (struct index_array *)nv_arrayptr(np);
     int i = ap->maxi;
-    if (is_associative(ap)) return -1;
+    if (is_associative(&ap->header)) return -1;
     while (--i >= 0 && ap->val[i].cp == 0) {
         ;  // empty loop
     }
@@ -169,7 +168,7 @@ static_fn union Value *array_getup(Namval_t *np, Namarr_t *arp, int update) {
     int nofree = 0;
 
     if (!arp) return &np->nvalue;
-    if (is_associative(ap)) {
+    if (is_associative(&ap->header)) {
         Namval_t *mp;
         mp = (Namval_t *)((*arp->fun)(np, NULL, NV_ACURRENT));
         if (mp) {
@@ -200,7 +199,7 @@ bool nv_arrayisset(Namval_t *np, Namarr_t *arp) {
     struct index_array *ap = (struct index_array *)arp;
     union Value *up;
 
-    if (is_associative(ap)) {
+    if (is_associative(&ap->header)) {
         np = nv_opensub(np);
         return np && !nv_isnull(np);
     }
@@ -240,7 +239,7 @@ static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
             nv_putsub(np, NULL, 0, ARRAY_SCAN | ARRAY_NOSCOPE);
             ap->header.flags |= ARRAY_SCAN;
         } else {  // same as array[0]
-            if (is_associative(ap)) {
+            if (is_associative(&ap->header)) {
                 (*ap->header.fun)(np, "0", flag == ARRAY_ASSIGN ? NV_AADD : 0);
             } else {
                 ap->cur = 0;
@@ -248,7 +247,7 @@ static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
         }
     }
     if (nv_isattr(np, NV_NOTSET) == NV_NOTSET) nv_offattr(np, NV_BINARY);
-    if (is_associative(ap)) {
+    if (is_associative(&ap->header)) {
         mp = (Namval_t *)((*arp->fun)(np, NULL, NV_ACURRENT));
         if (!mp) {
             up = (union Value *)&mp;
@@ -880,7 +879,7 @@ bool nv_nextsub(Namval_t *np) {
     struct index_array *aq = 0, *ar = 0;
 
     if (!ap || !(ap->header.flags & ARRAY_SCAN)) return false;
-    if (is_associative(ap)) {
+    if (is_associative(&ap->header)) {
         if ((*ap->header.fun)(np, NULL, NV_ANEXT)) return true;
         ap->header.flags &= ~(ARRAY_SCAN | ARRAY_NOCHILD);
         return false;
@@ -1088,12 +1087,11 @@ char *nv_endsubscript(Namval_t *np, char *cp, int mode, void *context) {
 Namval_t *nv_opensub(Namval_t *np) {
     struct index_array *ap = (struct index_array *)nv_arrayptr(np);
 
-    if (ap) {
-        if (is_associative(ap)) {
-            return (Namval_t *)((*ap->header.fun)(np, NULL, NV_ACURRENT));
-        } else if (array_isbit(ap->bits, ap->cur, ARRAY_CHILD)) {
-            return ap->val[ap->cur].np;
-        }
+    if (!ap) return NULL;
+    if (is_associative(&ap->header)) {
+        return (Namval_t *)((*ap->header.fun)(np, NULL, NV_ACURRENT));
+    } else if (array_isbit(ap->bits, ap->cur, ARRAY_CHILD)) {
+        return ap->val[ap->cur].np;
     }
     return NULL;
 }
@@ -1105,7 +1103,7 @@ char *nv_getsub(Namval_t *np) {
     char *cp = &numbuff[NUMSIZE];
 
     if (!np || !(ap = (struct index_array *)nv_arrayptr(np))) return NULL;
-    if (is_associative(ap)) return (char *)((*ap->header.fun)(np, NULL, NV_ANAME));
+    if (is_associative(&ap->header)) return (char *)((*ap->header.fun)(np, NULL, NV_ANAME));
     if (ap->xp) {
         np = nv_namptr(ap->xp, 0);
         np->nvalue.i16 = ap->cur;
@@ -1338,7 +1336,7 @@ void nv_setvec(Namval_t *np, int append, int argc, char *argv[]) {
 
     if (nv_isarray(np)) {
         ap = (struct index_array *)nv_arrayptr(np);
-        if (ap && is_associative(ap)) {
+        if (ap && is_associative(&ap->header)) {
             errormsg(SH_DICT, ERROR_exit(1), "cannot append index array to associative array %s",
                      nv_name(np));
             __builtin_unreachable();

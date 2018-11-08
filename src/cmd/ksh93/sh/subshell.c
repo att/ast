@@ -266,7 +266,7 @@ Namval_t *sh_assignok(Namval_t *np, int add) {
     if ((ap = nv_arrayptr(np)) && (mp = nv_opensub(np))) {
         shp->last_root = ap->table;
         sh_assignok(mp, add);
-        if (!add || array_assoc(ap)) return np;
+        if (!add || is_associative(ap)) return np;
     }
     for (lp = sp->svar; lp; lp = lp->next) {
         if (lp->node == np) return np;

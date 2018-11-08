@@ -177,7 +177,8 @@ struct argnod;
 #define nv_attr(np) ((np)->nvflag & ~NV_MINIMAL)
 // ... for arrays.
 #define array_elem(ap) ((ap)->nelem)
-#define array_assoc(ap) ((ap)->fun)
+// An array is associative if it has a function pointer else it is a simple indexed array.
+#define is_associative(ap) ((ap)->fun)
 
 extern int array_maxindex(Namval_t *);
 extern int array_isempty(Namval_t *);
