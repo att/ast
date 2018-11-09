@@ -67,7 +67,10 @@ Proc_t proc_default = {.pid = -1};
 
 #if DEBUG_PROC
 
-#include "namval.h"
+typedef struct {
+    const char * const name;
+    int value;
+} Keyval_t;
 
 #define PROC_ENV_OPTIONS "PROC_OPTIONS"
 
@@ -76,7 +79,7 @@ Proc_t proc_default = {.pid = -1};
 #define PROC_OPT_TRACE (1 << 2)
 #define PROC_OPT_VERBOSE (1 << 3)
 
-static const Namval_t options[] = {
+static const Keyval_t options[] = {
     {"debug", PROC_OPT_VERBOSE}, {"environment", PROC_OPT_ENVIRONMENT}, {"exec", PROC_OPT_EXEC},
     {"trace", PROC_OPT_TRACE},   {"verbose", PROC_OPT_VERBOSE},         {NULL, 0}};
 
@@ -88,9 +91,9 @@ static int setopt(void *a, const void *p, int n, const char *v) {
     UNUSED(v);
     if (p) {
         if (n)
-            *((int *)a) |= ((Namval_t *)p)->value;
+            *((int *)a) |= ((Keyval_t *)p)->value;
         else
-            *((int *)a) &= ~((Namval_t *)p)->value;
+            *((int *)a) &= ~((Keyval_t *)p)->value;
     }
     return 0;
 }

@@ -45,10 +45,14 @@
 #include "ast.h"
 #include "ast_regex.h"
 #include "error.h"
-#include "namval.h"
 #include "option.h"
 #include "sfio.h"
 #include "stk.h"
+
+typedef struct {
+    const char * const name;
+    int value;
+} Keyval_t;
 
 /*
  * 2007-03-19 move error_info from _error_info_ to (*_error_infop_)
@@ -112,7 +116,7 @@ static struct State_s {
 #define OPT_TIME 11
 #define OPT_TRACE 12
 
-static const Namval_t options[] = {{"break", OPT_BREAK},     {"catalog", OPT_CATALOG},
+static const Keyval_t options[] = {{"break", OPT_BREAK},     {"catalog", OPT_CATALOG},
                                    {"core", OPT_CORE},       {"count", OPT_COUNT},
                                    {"debug", OPT_TRACE},     {"fd", OPT_FD},
                                    {"library", OPT_LIBRARY}, {"mask", OPT_MASK},
@@ -127,7 +131,7 @@ static_fn int error_setopt(void *a, const void *p, int n, const char *v) {
     UNUSED(a);
     if (!p) return 0;
 
-    switch (((Namval_t *)p)->value) {
+    switch (((Keyval_t *)p)->value) {
         case OPT_BREAK:
         case OPT_CORE:
             if (n) {
@@ -151,7 +155,7 @@ static_fn int error_setopt(void *a, const void *p, int n, const char *v) {
             } else {
                 error_state.breakpoint = 0;
             }
-            if (((Namval_t *)p)->value == OPT_CORE) error_info.core = error_state.breakpoint;
+            if (((Keyval_t *)p)->value == OPT_CORE) error_info.core = error_state.breakpoint;
             break;
         case OPT_CATALOG:
             if (n)

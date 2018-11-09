@@ -33,13 +33,17 @@
 #include <time.h>
 
 #include "ast.h"
-#include "namval.h"
 #include "sfio.h"
 #include "tm.h"
 
+typedef struct {
+    const char * const name;
+    int value;
+} Keyval_t;
+
 #define TM_type (-1)
 
-static const Namval_t options[] = {
+static const Keyval_t options[] = {
     {"adjust", TM_ADJUST}, {"format", TM_DEFAULT}, {"leap", TM_LEAP}, {"subsecond", TM_SUBSECOND},
     {"type", TM_type},     {"utc", TM_UTC},        {NULL, 0}};
 
@@ -133,7 +137,7 @@ static_fn int tmopt(void *a, const void *p, int n, const char *v) {
 
     UNUSED(a);
     if (p) {
-        switch (((Namval_t *)p)->value) {
+        switch (((Keyval_t *)p)->value) {
             case TM_DEFAULT:
                 tm_info.deformat =
                     (n && (n = strlen(v)) > 0 && (n < 2 || v[n - 2] != '%' || v[n - 1] != '?'))
@@ -146,9 +150,9 @@ static_fn int tmopt(void *a, const void *p, int n, const char *v) {
                 break;
             default:
                 if (n)
-                    tm_info.flags |= ((Namval_t *)p)->value;
+                    tm_info.flags |= ((Keyval_t *)p)->value;
                 else
-                    tm_info.flags &= ~((Namval_t *)p)->value;
+                    tm_info.flags &= ~((Keyval_t *)p)->value;
                 break;
         }
     }
