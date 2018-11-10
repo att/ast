@@ -3247,11 +3247,9 @@ int sh_run(Shell_t *shp, int argn, char *argv[]) {
     struct comnod *t = (struct comnod *)stkalloc(shp->stk, sizeof(struct comnod));
     int savtop = stktell(shp->stk);
     char *savptr = stakfreeze(0);
-    Opt_t *op, *np = optctx(0, 0);
     Shbltin_t bltindata;
 
     bltindata = shp->bltindata;
-    op = optctx(np, 0);
     memset(t, 0, sizeof(struct comnod));
     dp =
         (struct dolnod *)stkalloc(shp->stk, (unsigned)sizeof(struct dolnod) +
@@ -3265,7 +3263,6 @@ int sh_run(Shell_t *shp, int argn, char *argv[]) {
             (void *)nv_bfsearch(argv[0], shp->fun_tree, (Namval_t **)&t->comnamq, (char **)0);
     }
     argn = sh_exec(shp, (Shnode_t *)t, sh_isstate(shp, SH_ERREXIT));
-    optctx(op, np);
     shp->bltindata = bltindata;
     if (savptr != stkptr(shp->stk, 0)) {
         stkset(shp->stk, savptr, savtop);

@@ -2,7 +2,6 @@ libast_files += [
     'misc/backtrace.c', 'misc/conformance.c',
     'misc/error.c', 'misc/errorf.c', 'misc/errormsg.c',
     'misc/errorx.c', 'misc/fgetcwd.c', 'misc/glob.c',
-    'misc/optctx.c',
     'misc/optget.c', 'misc/procclose.c', 'misc/procfree.c',
     'misc/procopen.c',
     'misc/sigcrit.c',
