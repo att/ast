@@ -82,9 +82,6 @@ static const char usage[] =
     "[+SEE ALSO?\bhostname\b(1), \bgetconf\b(1), \buname\b(2),"
     "	\bsysconf\b(2), \bsysinfo\b(2)]";
 
-extern long gethostid(void);
-extern int gethostname(char *, size_t);
-
 static const char hosttype[] = HOSTTYPE;
 
 #define OPT_system (1 << 0)
@@ -107,26 +104,12 @@ static const char hosttype[] = HOSTTYPE;
 #define OPT_machine_type (1 << 11)
 #define OPT_base (1 << 12)
 #define OPT_extended_release (1 << 13)
-#define OPT_extra (1 << 14)
 
-#define OPT_TOTAL 15
+#define OPT_TOTAL 14
 
 #define OPT_all (1L << 29)
 #define OPT_total (1L << 30)
 #define OPT_standard ((1 << OPT_STANDARD) - 1)
-
-#ifndef MACHINE
-#if defined(__STDPP__)
-#define MACHINE #(getprd architecture)
-#else
-#define MACHINE ""
-#endif
-#endif
-
-#define extra(m)                                                                    \
-    do {                                                                            \
-        if ((char *)&ut.m[sizeof(ut.m)] > last) last = (char *)&ut.m[sizeof(ut.m)]; \
-    } while (0)
 
 #define output(f, v, u)                                                                    \
     do {                                                                                   \
@@ -205,9 +188,6 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
                 continue;
             case 'v':
                 flags |= OPT_version;
-                continue;
-            case 'x':
-                flags |= OPT_extra;
                 continue;
             case 'A':
                 flags |= OPT_total | ((1L << OPT_TOTAL) - 1);
@@ -351,44 +331,8 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         s = astconf("BASE", NULL, NULL);
 #endif
         output(OPT_base, s, "base_rel");
-        if (flags & OPT_extra) {
-            char *last = (char *)&ut;
-
-            extra(sysname);
-            extra(nodename);
-            extra(release);
-            extra(version);
-            extra(machine);
-#if _mem_idnumber_utsname
-            extra(idnumber);
-#endif
-#if _mem_m_type_utsname
-            extra(m_type);
-#endif
-#if _mem_base_rel_utsname
-            extra(base_rel);
-#endif
-            if (last < ((char *)(&ut + 1))) {
-                s = t = last;
-                while (s < (char *)(&ut + 1)) {
-                    n = *s++;
-                    if (!n) {
-                        if ((s - t) > 1) {
-                            if (sep) {
-                                sfputc(sfstdout, ' ');
-                            } else {
-                                sep = 1;
-                            }
-                            sfputr(sfstdout, t, -1);
-                        }
-                        t = s;
-                    } else if (!isprint(n)) {
-                        break;
-                    }
-                }
-            }
-        }
         if (sep) sfputc(sfstdout, '\n');
     }
+
     return error_info.errors;
 }
