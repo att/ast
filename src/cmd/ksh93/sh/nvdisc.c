@@ -27,6 +27,7 @@
 #include "defs.h"
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "builtins.h"
 #include "cdt.h"
 #include "error.h"
@@ -1116,11 +1117,12 @@ static_fn Namval_t *create_table(Namval_t *np, const void *name, int flags, Namf
 static_fn Namfun_t *clone_table(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     struct table *tp = (struct table *)fp;
     struct table *ntp = (struct table *)nv_clone_disc(fp, 0);
-    Dt_t *oroot = tp->dict, *nroot = dtopen(&_Nvdisc, Dtoset);
+    Dt_t *oroot = tp->dict;
+    Dt_t *nroot = dtopen(&_Nvdisc, Dtoset);
+    assert(nroot);
 
-    if (!nroot) return 0;
     dtuserdata(nroot, dtuserdata(oroot, 0, 0), 1);
-    memcpy((void *)ntp, (void *)fp, sizeof(struct table));
+    memcpy(ntp, fp, sizeof(struct table));
     ntp->dict = nroot;
     ntp->parent = nv_lastdict(mp->nvshell);
     for (np = (Namval_t *)dtfirst(oroot); np; np = (Namval_t *)dtnext(oroot, np)) {
