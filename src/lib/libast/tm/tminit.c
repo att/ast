@@ -37,7 +37,7 @@
 #include "tm.h"
 
 typedef struct {
-    const char * const name;
+    const char *const name;
     int value;
 } Keyval_t;
 

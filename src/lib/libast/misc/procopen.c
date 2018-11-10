@@ -68,7 +68,7 @@ Proc_t proc_default = {.pid = -1};
 #if DEBUG_PROC
 
 typedef struct {
-    const char * const name;
+    const char *const name;
     int value;
 } Keyval_t;
 
