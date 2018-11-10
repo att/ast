@@ -58,7 +58,7 @@
 #define RW_ALL (S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH)
 #define LIBCMD "cmd"
 
-static_fn int canexecute(Shell_t *, char *, int);
+static_fn int can_execute(Shell_t *, char *, bool);
 static_fn void funload(Shell_t *, int, const char *);
 static_fn void exscript(Shell_t *, char *, char *[], char *const *);
 static_fn bool path_chkpaths(Shell_t *, Pathcomp_t *, Pathcomp_t *, Pathcomp_t *, int);
@@ -579,7 +579,7 @@ bool path_search(Shell_t *shp, const char *name, Pathcomp_t **oldpp, int flag) {
     if (strchr(name, '/')) {
         stkseek(shp->stk, PATH_OFFSET);
         sfputr(shp->stk, name, -1);
-        if (canexecute(shp, stkptr(shp->stk, PATH_OFFSET), 0) < 0) {
+        if (can_execute(shp, stkptr(shp->stk, PATH_OFFSET), false) < 0) {
             *stkptr(shp->stk, PATH_OFFSET) = 0;
             return false;
         }
@@ -671,7 +671,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
             return NULL;
         }
         isfun = (oldpp->flags & PATH_FPATH);
-        if (!isfun && *oldpp->name == '.' && oldpp->name[1] == 0 && pwdinfpath()) isfun = 1;
+        if (!isfun && *oldpp->name == '.' && oldpp->name[1] == 0 && pwdinfpath()) isfun = true;
         if (!isfun && !sh_isoption(shp, SH_RESTRICTED)) {
             char *bp;
             Shbltin_f addr;
@@ -764,7 +764,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
         }
         shp->bltin_dir = 0;
         sh_stats(STAT_PATHS);
-        f = canexecute(shp, stkptr(shp->stk, PATH_OFFSET), isfun);
+        f = can_execute(shp, stkptr(shp->stk, PATH_OFFSET), isfun);
         if (isfun && f >= 0 && (cp = strrchr(name, '.'))) {
             *cp = 0;
             if (nv_open(name, sh_subfuntree(shp, 1), NV_NOARRAY | NV_IDENT | NV_NOSCOPE)) f = -1;
@@ -813,13 +813,14 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
 #endif  // S_IEXEC
 #endif  // S_IXUSR
 
-static_fn int canexecute(Shell_t *shp, char *path, int isfun) {
+static_fn int can_execute(Shell_t *shp, char *path, bool isfun) {
     struct stat statb;
     int fd = 0;
 
     path = path_relative(shp, path);
     if (isfun) {
-        if ((fd = open(path, O_RDONLY | O_CLOEXEC, 0)) < 0 || fstat(fd, &statb) < 0) goto err;
+        fd = sh_open(path, O_RDONLY | O_CLOEXEC, 0);
+        if (fd < 0 || fstat(fd, &statb) < 0) goto err;
     } else if (stat(path, &statb) < 0) {
 #if __CYGWIN__
         // Check for .exe or .bat suffix.
@@ -841,11 +842,12 @@ static_fn int canexecute(Shell_t *shp, char *path, int isfun) {
     errno = EPERM;
     if (S_ISDIR(statb.st_mode)) {
         errno = EISDIR;
-    } else if (isfun == 1 || (statb.st_mode & S_IXALL) == S_IXALL || sh_access(path, X_OK) >= 0) {
+    } else if (isfun || (statb.st_mode & S_IXALL) == S_IXALL || sh_access(path, X_OK) >= 0) {
         return fd;
     }
-    if (isfun && fd >= 0) sh_close(fd);
+
 err:
+    if (isfun && fd >= 0) sh_close(fd);
     return -1;
 }
 
