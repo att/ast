@@ -1933,6 +1933,9 @@ static_fn Dt_t *inittree(Shell_t *shp, const struct shtable2 *name_vals) {
             dtinsert(treep, np);
         }
     }
+    // The loop above has to run at least one interation otherwise this leaks memory pointed to by
+    // `np`. Hopefully this assert silences Coverity Scan CID#253829.
+    assert(tp != name_vals);
     return treep;
 }
 
