@@ -30,6 +30,8 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "ast_assert.h"
+#include "sfio.h"
 #include "sfio.h"
 #include "tm.h"
 
@@ -98,6 +100,9 @@ Tm_zone_t *tmzone(const char *name, char **end, const char *type, int *dst) {
         if (name[1] == 'E') fixed.west = -fixed.west;
         fixed.dst = name[0] == 'Z' ? 0 : d ? -d : TM_DST;
         memcpy(fixed.standard = fixed.daylight = off, name, d);
+        // Coverity Scan CID#253802 says `d` could theoretically be as large as 45 at this point.
+        // Which is past the end of `off`. Make sure that doesn't happen.
+        assert(d < sizeof(off));
         off[d] = 0;
         if (end) *end = e;
         if (dst) *dst = 0;
