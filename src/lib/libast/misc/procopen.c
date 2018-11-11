@@ -131,7 +131,6 @@ static_fn int modify_forked(Proc_t *proc, int op, long arg1, long arg2) {
             for (int i = 0; i <= 2; i++) {
                 if (arg1 != i) close(i);
             }
-            arg2 = -1;
 #ifdef TIOCSCTTY
             if (ioctl(arg1, TIOCSCTTY, NULL) < 0) return -1;
 #else
@@ -144,7 +143,9 @@ static_fn int modify_forked(Proc_t *proc, int op, long arg1, long arg2) {
                 if (arg1 != i && arg2 != i && fcntl(arg1, F_DUPFD, i) != i) return -1;
             }
             if (arg1 > 2) close(arg1);
+#ifndef TIOCSCTTY
             if (arg2 > 2) close(arg2);
+#endif
             break;
         case PROC_sig_dfl:
             signal(arg1, SIG_DFL);
