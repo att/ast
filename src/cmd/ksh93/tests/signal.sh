@@ -527,6 +527,5 @@ case "${c.car[0].code}" in
         ;;
     *)
         log_error "expected SI_QUEUE or SI_USER" "SI_QUEUE or SI_USER" "${c.car[0].code}"
-        log_warning "typeset -p \${c.car[0]} = $(typeset -p ${c.car[0]})"
         ;;
 esac

@@ -37,6 +37,7 @@
 #mesondefine CONF_LIBPATH
 #mesondefine _PROC_PROG
 #mesondefine _DARWIN_C_SOURCE
+#mesondefine _WSL_
 
 #mesondefine _ast_sizeof_int
 #mesondefine _ast_sizeof_long

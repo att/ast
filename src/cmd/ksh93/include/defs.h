@@ -360,8 +360,9 @@ extern const Shtable_t shtab_siginfo[];
 
 #define timeofday(p) gettimeofday(p, NULL)
 
-// sigqueue() is not available on macOS.
-#if !_lib_sigqueue
+// sigqueue() may not be available on some platforms (e.g., macOS) or doesn't work on others
+// (e.g., WSL). So provide a fallback that mostly does what we need.
+#if !_lib_sigqueue || _WSL_
 #define sigqueue(sig, action, val) kill(sig, action)
 #endif
 

@@ -3,6 +3,13 @@ system = host_machine.system()
 bash_machtype = cpu + '-unknown-'+ system
 feature_data.set_quoted('BASH_MACHTYPE', bash_machtype)
 
+# On WSL (Windows Subsystem for Linux) some behavior may be different than on
+# a real Linux system. For example, the `sigqueue()` function doesn't work at
+# the time I write this (see https://github.com/Microsoft/WSL/issues/1880).
+# So it's necessary to detect if we're running on that platform.
+wsl_result = run_command('detect_wsl.sh')
+feature_data.set10('_WSL_', wsl_result.returncode() == 0)
+
 # void ptr is larger than int
 feature_data.set10('_more_void_int', ptr_size > int_size)
 
