@@ -32,7 +32,6 @@
 
 #include "ast_assert.h"
 #include "sfio.h"
-#include "sfio.h"
 #include "tm.h"
 
 /*
