@@ -36,6 +36,7 @@
 #include "defs.h"
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "ast_float.h"
 #include "builtins.h"
 #include "error.h"
@@ -964,6 +965,10 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
         }
         case 'B': {
             if (!shp->strbuf2) shp->strbuf2 = sfstropen();
+            // Coverity Scan CID#253849 says there is a theoretical path to this point where
+            // value->s points to an empty string. Which is a problem since the pointer is passed
+            // by fmtbase64() to nv_open() which requires it to be a non-empty string.
+            assert(*value->s);
             fe->size = fmtbase64(shp, shp->strbuf2, value->s, fe->n_str ? fe->t_str : 0,
                                  (fe->flags & SFFMT_ALTER) != 0);
             value->s = sfstruse(shp->strbuf2);
