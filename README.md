@@ -67,6 +67,10 @@ to anyone who wants to modify the source.
 
 Latest results of coverity scan can be viewed [here](https://scan.coverity.com/projects/ksh).
 
+## Test Coverage
+
+Latest test coverage report can be viewed [here](http://situ.im/ast/coveragereport/).
+
 ## Working with the full AST source
 
 Warning: Running test cases through the legacy test script may wipe out your home directory

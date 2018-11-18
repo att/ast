@@ -375,6 +375,18 @@ circumstances it might be advisable to circumvent it with `git push
 
 To install the hook, put it in .git/hooks/pre-push and make it executable.
 
+### Test Coverage
+
+Test coverage report can be generated with these commands:
+
+```
+meson -Db_coverage=true -Dbuild-api-tests=false build
+ninja -C build
+cd build
+meson test -t 2
+ninja coverage-html
+```
+
 ### Coverity Scan
 
 Coverity scans are run everyday on `master` branch. Latest results can be viewed [here](https://scan.coverity.com/projects/ksh).
