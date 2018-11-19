@@ -205,7 +205,6 @@ fi
         (( i++))
     done) == $'0\n0\n1\n1\n2' ]]  || log_error  "DEBUG trap not working"
 
-$SHELL -c 'sleep $(printf "%a" .95)' 2> /dev/null || log_error "sleep doesn't except %a format constants"
 $SHELL -c 'test \( ! -e \)' 2> /dev/null ; [[ $? == 1 ]] || log_error 'test \( ! -e \) not working'
 [[ $(ulimit) == "$(ulimit -fS)" ]] || log_error 'ulimit is not the same as ulimit -fS'
 
