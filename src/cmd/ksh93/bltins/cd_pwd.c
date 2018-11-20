@@ -94,7 +94,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     Shell_t *shp = context->shp;
     int saverrno = 0;
     int rval, i, j;
-    bool fflag = false, pflag = false, xattr = false;
+    bool fflag = false, pflag = false;
     char *oldpwd;
     int dirfd = shp->pwdfd;
     int newdirfd;
@@ -118,10 +118,6 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
             }
             case 'P': {
                 pflag = true;
-                break;
-            }
-            case '@': {
-                xattr = true;
                 break;
             }
             case ':': {
@@ -161,14 +157,6 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     if (!dir || *dir == 0) {
         errormsg(SH_DICT, ERROR_exit(1), argc == 2 ? e_subst + 4 : e_direct);
         __builtin_unreachable();
-    }
-    if (xattr) {
-        if (!shp->strbuf2) shp->strbuf2 = sfstropen();
-        j = sfprintf(shp->strbuf2, "%s", dir);
-        dir = sfstruse(shp->strbuf2);
-        pathcanon(dir, j + 1, 0);
-        sfprintf(shp->strbuf, "/dev/file/xattr@%s//@//", dir);
-        dir = sfstruse(shp->strbuf);
     }
 #if __CYGWIN__
     if (*dir != '/' && (dir[1] != ':'))
@@ -299,11 +287,6 @@ success:
     i = j = (int)strlen(dir);
     // Delete trailing '/'.
     while (--i > 0 && dir[i] == '/') {
-        // //@// exposed here and in pathrelative() -- rats
-        if (i >= 3 && (j - i) == 2 && dir[i - 1] == '@' && dir[i - 2] == '/' && dir[i - 3] == '/') {
-            dir[i + 1] = '/';
-            break;
-        }
         dir[i] = 0;
     }
     nv_putval(pwdnod, dir, NV_RDONLY);
