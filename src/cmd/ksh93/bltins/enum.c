@@ -302,11 +302,12 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
     }
 
     argv += opt_info.index;
-    if (error_info.errors) {
+    argc -= opt_info.index;
+    if (error_info.errors || argc != 1) {
         error(ERROR_USAGE | 2, "%s", optusage(NULL));
         return 1;
     }
-    if (!*argv) sh_outenum(shp, sfstdout, NULL);
+
     while ((cp = *argv++)) {
         np = nv_open(cp, shp->var_tree, NV_VARNAME | NV_NOADD);
         if (!np || !(ap = nv_arrayptr(np)) || ap->fun || (sz = ap->nelem) < 2) {
