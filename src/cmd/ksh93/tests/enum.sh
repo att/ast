@@ -18,8 +18,17 @@
 #                                                                      #
 ########################################################################
 
+# =======
+enum 2>&1 | grep -q Usage || log_error "Running enum without any arguments should show usage info"
+
+# TODO: Moving this line below `for` loop changes output. That's a bug.
+# =======
+_Bool --man 2>&1 | grep -q "_Bool - create an instance of type _Bool" || log_error "Enum types should recognize --man option"
+
+# =======
 enum Color_t=(red green blue orange yellow)
 enum -i Sex_t=(Male Female)
+
 for ((i=0; i < 1000; i++))
 do
     Color_t x
@@ -116,3 +125,16 @@ bool -A a=( [2]=true [4]=false )
 [[ ${#a[@]} == 2 ]] || log_error ' bool -A a should only have two elements'
 
 $SHELL  -uc 'i=1; bool b; ((b=((i==1)?(true):(false)) ));:'  || log_error 'assignment to enum with ?: fails with set -u'
+
+# =======
+actual=$(enum -p _Bool)
+expect=$'enum _Bool=(\n\tfalse\n\ttrue\n)'
+[[ "$actual" = "$expect" ]] || log_error "enum -p does not print enum" "$expect" "$actual"
+
+# =======
+# Convert an indexed array into enum
+foo=(bar baz)
+enum foo
+actual=$(enum -p foo)
+expect=$'enum foo=(\n\tbar\n\tbaz\n)'
+[[ "$actual" = "$expect" ]] || log_error "enum does not convert indexed array to enum" "$expect" "$actual"
