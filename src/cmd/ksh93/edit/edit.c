@@ -196,13 +196,8 @@ int tty_raw(int fd, int echomode) {
     ttyparm.c_lflag &= ~FLUSHO;
 #endif  // FLUSHO
     nttyparm = ttyparm;
-#ifndef u370
     nttyparm.c_iflag &= ~(IGNPAR | PARMRK | INLCR | IGNCR | ICRNL);
     nttyparm.c_iflag |= BRKINT;
-#else   // u370
-    nttyparm.c_iflag &= ~(IGNBRK | PARMRK | INLCR | IGNCR | ICRNL | INPCK);
-    nttyparm.c_iflag |= (BRKINT | IGNPAR);
-#endif  // u370
     if (echo) {
         nttyparm.c_lflag &= ~(ICANON);
     } else {
@@ -291,14 +286,7 @@ void ed_ringbell(void) { write(ERRIO, bellchr, 1); }
 //
 // Send a carriage return line feed to the terminal.
 //
-
 void ed_crlf(Edit_t *ep) {
-#ifdef cray
-    ed_putchar(ep, '\r');
-#endif  // cray
-#ifdef u370
-    ed_putchar(ep, '\r');
-#endif  // u370
     ed_putchar(ep, '\n');
     ed_flush(ep);
 }
