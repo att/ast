@@ -268,12 +268,6 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 tty_cooked(ERRIO);
                 return 0;
             }
-#ifdef u370
-            case cntl('S'):
-            case cntl('Q'): {
-                continue;
-            }
-#endif  // u370
             case '\t': {
                 if ((cur > 0 || ep->ed->e_tabcount) && ep->ed->sh->nextprompt) {
                     if (ep->ed->e_tabcount == 0) {
