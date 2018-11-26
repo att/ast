@@ -45,6 +45,16 @@ expect -re "bye world\r\n" {
 expect_prompt
 
 # ==========
+# `hist echo` finds last echo command
+log_test_entry
+send "hist echo\r"
+send [ctrl D]
+expect -re "bye world\r\n" {
+    puts "hist echo finds last echo command"
+}
+expect_prompt
+
+# ==========
 # hist -N starts N commands back
 # This test also checks for negative indexes.
 log_test_entry
