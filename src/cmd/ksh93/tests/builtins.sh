@@ -532,3 +532,9 @@ shift 1+2
 actual="$1"
 expect=$'message'
 [[ "$actual" = "$expect" ]] || log_error "shift does not work with arithmetic expressions" "$expect" "$actual"
+
+# ==========
+# Chech what happens if history file is unreadable
+touch "$TEST_DIR/unreadable_history"
+chmod 000 "$TEST_DIR/unreadable_history"
+env HISTFILE="$TEST_DIR/unreadable_history" $SHELL -i -c "[[ $(history | wc -l) -eq 0 ]] && exit 0 || exit 1"
