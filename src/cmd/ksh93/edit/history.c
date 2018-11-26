@@ -45,8 +45,6 @@
 #include "stk.h"
 #include "tv.h"
 
-#define stringify(s) #s
-
 //
 // Each command in the history file starts on an even byte is null terminated. The first byte must
 // contain the special character HIST_UNDO and the second byte is the version number.  The sequence
@@ -281,7 +279,7 @@ retry:
 
     char buff[SF_BUFSIZE];
     if (!sh_isstate(shp, SH_INTERACTIVE)) return 1;
-    hp->auditmask = sh_checkaudit(hp, stringify(AUDIT_FILE), buff, sizeof(buff));
+    hp->auditmask = sh_checkaudit(hp, AUDIT_FILE, buff, sizeof(buff));
     if (!hp->auditmask) return 1;
 
     if ((fd = sh_open(buff, O_BINARY | O_WRONLY | O_APPEND | O_CREAT | O_CLOEXEC,
