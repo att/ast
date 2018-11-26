@@ -73,9 +73,6 @@ struct Shbltin_s {
 #define sh_exit(c, n) ((c) ? (*sh_context(c)->shexit)(sh_context(c)->shp, n) : exit(n))
 #define sh_checksig(c) ((c) && sh_context(c)->sigset)
 #if defined(SFIO_VERSION) || defined(_AST_H)
-#define LIB_INIT(c)
-#else  // defined(SFIO_VERSION) || defined(_AST_H)
-#define LIB_INIT(c) ((c) && (sh_context(c)->nosfio = 1))
 #endif  // defined(SFIO_VERSION) || defined(_AST_H)
 #endif  // defined(SH_VERSION) || defined(_SH_PRIVATE)
 
