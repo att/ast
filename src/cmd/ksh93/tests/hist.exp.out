@@ -2,6 +2,7 @@ hist -l lists commands on standard output
 hist -lr lists commands on standard output in reverse order
 hist -ln skips command numbers while listing commands
 hist -s old=new replaces text 'old' with 'new' in command
+hist echo finds last echo command
 hist -N starts N commands back
 hist command triggers ed editor
 hist -p writes history expansion on standard output
