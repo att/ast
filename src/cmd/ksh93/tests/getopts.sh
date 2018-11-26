@@ -1,7 +1,7 @@
 builtin getconf
 
 # =======
-getopts | grep -q "Usage: getopts" || log_error "Running getopts without any parameter should show usage info"
+getopts 2>&1 | grep -q "Usage: getopts" || log_error "Running getopts without any parameter should show usage info"
 
 set -- - foobar
 [[ $# == 2 && $1 == - && $2 == foobar ]] || log_error "set -- - foobar failed"
@@ -132,6 +132,6 @@ Use option 1
 Use option 2
 
 ' baz '--help' 2>&1)
-set -x
+
 [[ "$out" = $'Usage: test [ options ] Use option 1\n   Or: test [ options ] Use option 2' ]] ||
     log_error "getopts shows wrong text for self documenting options"
