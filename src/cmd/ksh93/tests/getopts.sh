@@ -1,4 +1,8 @@
 builtin getconf
+
+# =======
+getopts | grep -q "Usage: getopts" || log_error "Running getopts without any parameter should show usage info"
+
 set -- - foobar
 [[ $# == 2 && $1 == - && $2 == foobar ]] || log_error "set -- - foobar failed"
 set -- -x foobar
