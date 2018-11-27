@@ -727,25 +727,14 @@ typedef struct _sfextern_s {
     }
 
 /* control flags for open() */
-#ifdef O_CREAT
-#define _has_oflags 1
-#else /* for example, research UNIX */
-#define _has_oflags 0
-#define O_CREAT 004
-#define O_TRUNC 010
-#define O_APPEND 020
-#define O_EXCL 040
 
-#ifndef O_RDONLY
-#define O_RDONLY 000
+// See https://github.com/att/ast/issues/921. The code made an attempt to workaround the lack of
+// this prepocessor symbol in the past. If and when we find a situation where that workaround is
+// needed again we will reimplement it in a safer fashion and do the detection at configure rather
+// than compile time.
+#ifndef O_CREAT
+#error "No O_CREAT symbol"
 #endif
-#ifndef O_WRONLY
-#define O_WRONLY 001
-#endif
-#ifndef O_RDWR
-#define O_RDWR 002
-#endif
-#endif /*O_CREAT*/
 
 #ifndef O_BINARY
 #define O_BINARY 0
