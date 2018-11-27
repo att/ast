@@ -107,7 +107,6 @@ Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
     } else {
         if (!file) return NULL;
 
-#if _has_oflags /* open the file */
 #ifdef sysopenatf
         if (cwd == AT_FDCWD)
 #endif
@@ -117,45 +116,6 @@ Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
         else
             while ((fd = sysopenatf(cwd, (char *)file, oflags, SF_CREATMODE)) < 0 && errno == EINTR)
                 errno = 0;
-#endif
-#else
-#ifdef sysopenatf
-        if (cwd == AT_FDCWD)
-#endif
-            while ((fd = sysopenf(file, oflags & O_ACCMODE)) < 0 && errno == EINTR) errno = 0;
-#ifdef sysopenatf
-        else
-            while ((fd = sysopenatf(cwd, file, oflags & O_ACCMODE)) < 0 && errno == EINTR)
-                errno = 0;
-#endif
-        if (fd >= 0) {
-            if ((oflags & (O_CREAT | O_EXCL)) == (O_CREAT | O_EXCL)) {
-                CLOSE(fd); /* error: file already exists */
-                return NULL;
-            }
-            if (oflags & O_TRUNC) /* truncate file */
-            {
-                int tf;
-                while ((tf = syscreatf(file, SF_CREATMODE)) < 0 && errno == EINTR) errno = 0;
-                CLOSE(tf);
-            }
-        } else if (oflags & O_CREAT) {
-            while ((fd = syscreatf(file, SF_CREATMODE)) < 0 && errno == EINTR) errno = 0;
-            if ((oflags & O_ACCMODE) !=
-                O_WRONLY) { /* the file now exists, reopen it for read/write */
-                CLOSE(fd);
-#ifdef sysopenatf
-                if (cwd == AT_FDCWD)
-#endif
-                    while ((fd = sysopenf(file, oflags & O_ACCMODE)) < 0 && errno == EINTR)
-                        errno = 0;
-#ifdef sysopenatf
-                else
-                    while ((fd = sysopenatf(cwd, file, oflags & O_ACCMODE)) < 0 && errno == EINTR)
-                        errno = 0;
-#endif
-            }
-        }
 #endif
         if (fd < 0) return NULL;
 
