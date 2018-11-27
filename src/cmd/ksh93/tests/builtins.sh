@@ -18,6 +18,13 @@
 #                                                                      #
 ########################################################################
 
+# ==========
+for name in $(builtin -l | grep -Ev '(echo|/opt|test|true|false|login|newgrp|\[|:)'); do
+    actual=$($name --this-option-does-not-exist 2>&1)
+    expect="Usage: $name"
+    [[ "$actual" =~ "$expect" ]] || log_error "$name should show usage info on unrecognized options" "$expect" "$actual"
+done
+
 # test shell builtin commands
 : ${foo=bar} || log_error ": failed"
 [[ $foo == bar ]] || log_error ": side effects failed"
