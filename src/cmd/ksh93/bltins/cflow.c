@@ -49,7 +49,7 @@ int b_return(int n, char *argv[], Shbltin_t *context) {
     while ((n = optget(argv, options))) {
         switch (n) {
             case ':': {
-                if (!strmatch(argv[opt_info.index], "[+-]+([0-9])")) {
+                if (!argv[opt_info.index] || !strmatch(argv[opt_info.index], "[+-]+([0-9])")) {
                     errormsg(SH_DICT, 2, "%s", opt_info.arg);
                 }
                 goto done;
