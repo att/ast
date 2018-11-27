@@ -76,6 +76,11 @@ int b_sleep(int argc, char *argv[], Shbltin_t *context) {
             default: { break; }
         }
     }
+    if (error_info.errors) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     argv += opt_info.index;
     cp = *argv;
     if (cp) {
