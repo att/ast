@@ -1,0 +1,4 @@
+echo -n does not print new line
+echo -e interprets escape sequences
+echo -ne does not print new line and interprets escape sequences
+echo -en does not print new line and interprets escape sequences
