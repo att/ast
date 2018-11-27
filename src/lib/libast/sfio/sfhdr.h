@@ -102,7 +102,6 @@
 #define syslseekf lseek
 #define sysmmapf mmap
 #define sysmunmapf munmap
-#define sysopenf open
 #define syspipef pipe
 #define sysreadf read
 #define sysremovef remove

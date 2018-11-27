@@ -39,23 +39,11 @@
 #define AT_FDCWD (-100)
 #endif
 
-#define sysopenatf openat
-
 Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
     int fd, oldfd, oflags, fflags, sflags;
     SFMTXDECL(f)
 
     if (file && *file == '/') cwd = AT_FDCWD;
-#if !defined(sysopenatf)
-    if (cwd != AT_FDCWD) {
-#ifdef ENOTDIR
-        errno = ENOTDIR;
-#else
-        errno = EINVAL;
-#endif
-        return NULL;
-    }
-#endif
 
     /* get the control flags */
     if ((sflags = _sftype(mode, &oflags, &fflags, NULL)) == 0) return NULL;
@@ -107,16 +95,12 @@ Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
     } else {
         if (!file) return NULL;
 
-#ifdef sysopenatf
         if (cwd == AT_FDCWD)
-#endif
-            while ((fd = sysopenf((char *)file, oflags, SF_CREATMODE)) < 0 && errno == EINTR)
+            while ((fd = open((char *)file, oflags, SF_CREATMODE)) < 0 && errno == EINTR)
                 errno = 0;
-#ifdef sysopenatf
         else
-            while ((fd = sysopenatf(cwd, (char *)file, oflags, SF_CREATMODE)) < 0 && errno == EINTR)
+            while ((fd = openat(cwd, (char *)file, oflags, SF_CREATMODE)) < 0 && errno == EINTR)
                 errno = 0;
-#endif
         if (fd < 0) return NULL;
 
         /* we may have to reset the file descriptor to its old value */
