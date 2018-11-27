@@ -1,0 +1,44 @@
+# Test for echo builtin
+set pid [spawn $ksh]
+expect_prompt
+
+# ==========
+log_test_entry
+send "echo -n hello world; echo EOT\r"
+expect "\r\nhello worldEOT\r\n" {
+    puts "echo -n does not print new line"
+}
+expect_prompt
+
+# ==========
+log_test_entry
+send "echo -e 'hello\nworld'\r"
+expect "\r\nhello\r\nworld\r\n" {
+    puts "echo -e interprets escape sequences"
+}
+expect_prompt
+
+# ==========
+log_test_entry
+send "echo -ne 'hello\nworld'; echo EOT\r"
+expect "\r\nhello\r\nworldEOT\r\n" {
+    puts "echo -ne does not print new line and interprets escape sequences"
+}
+expect_prompt
+
+# ==========
+log_test_entry
+send "echo -en 'hello\nworld'; echo EOT\r"
+expect "\r\nhello\r\nworldEOT\r\n" {
+    puts "echo -en does not print new line and interprets escape sequences"
+}
+expect_prompt
+
+# Exit shell with ctrl-d
+log_test_entry
+send [ctrl D]
+catch {expect default exp_continue} output
+log_debug "EOF output: $output"
+
+catch {wait}
+exit 0
