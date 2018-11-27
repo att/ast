@@ -679,6 +679,10 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
                 empty = true;
                 break;
             }
+            case ':': {
+                errormsg(SH_DICT, 2, "%s", opt_info.arg);
+                break;
+            }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
@@ -686,6 +690,12 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
             default: { break; }
         }
     }
+
+    if (error_info.errors) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+
     argv += opt_info.index;
     if (complete) {
         char *name;
