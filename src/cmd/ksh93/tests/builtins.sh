@@ -25,6 +25,13 @@ for name in $(builtin -l | grep -Ev '(echo|/opt|test|true|false|login|newgrp|\[|
     [[ "$actual" =~ "$expect" ]] || log_error "$name should show usage info on unrecognized options" "$expect" "$actual"
 done
 
+# ==========
+for name in $(builtin -l | grep -Ev '(echo|/opt|test|true|false|login|newgrp|hash|type|source|\[|:)'); do
+    actual=$($name --man 2>&1 | head -5 | sed $'s,\x1B\[[0-9;]*[a-zA-Z],,g'  | tr -s '\n ' ' ')
+    expect="NAME $name - "
+    [[ "$actual" =~ "^$expect" ]] || log_error "$name --man should show documentation" "$expect" "$actual"
+done
+
 # test shell builtin commands
 : ${foo=bar} || log_error ": failed"
 [[ $foo == bar ]] || log_error ": side effects failed"
