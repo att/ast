@@ -96,8 +96,7 @@ Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
         if (!file) return NULL;
 
         if (cwd == AT_FDCWD)
-            while ((fd = open((char *)file, oflags, SF_CREATMODE)) < 0 && errno == EINTR)
-                errno = 0;
+            while ((fd = open((char *)file, oflags, SF_CREATMODE)) < 0 && errno == EINTR) errno = 0;
         else
             while ((fd = openat(cwd, (char *)file, oflags, SF_CREATMODE)) < 0 && errno == EINTR)
                 errno = 0;
