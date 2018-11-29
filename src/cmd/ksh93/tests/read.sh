@@ -47,6 +47,7 @@ history | tail -n1 | grep -q "This line should be in history" ||
 IFS=',' read -S a b c <<<'foo,"""title"" data",bar'
 [[ $b == '"title" data' ]] || log_error '"" inside "" not handled correctly with read -S'
 
+# ==========
 #-u fd Read from file descriptor number fd instead of standard input. If fd is p, the co-process
 # input file descriptor is used. The default value is 0.
 echo bar > $TEST_DIR/bar
@@ -54,6 +55,11 @@ exec 9< $TEST_DIR/bar
 read -u9 foo
 [[ $foo = "bar" ]] || log_error "read -u does not work"
 unset foo
+
+# -u without arguments should show an error
+actual=$(read -u 2>&1)
+expected="fd argument expected"
+[[ "$actual" =~ "$expected" ]] || log_error "`read -u` without any arguments should show an error" "$expected" "$actual"
 
 #-t timeout Specify a timeout timeout in seconds when reading from a terminal or pipe.
 (echo -n hello; sleep 1) | read -t0.5 foo
