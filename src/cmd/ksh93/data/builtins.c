@@ -1225,9 +1225,11 @@ const char sh_optread[] =
     "[a?Unset \avar\a and then create an indexed array containing each field in "
     "the line starting at index 0.]"
     "[d]:[delim?Read until delimiter \adelim\a instead of to the end of line.]"
+#if SUPPORT_JSON
     "[m]:[method?Unset \avar\a and read \avar\a as a compound variable in "
     "the specified \amethod\a. Currently only \bjson\b and \bksh\b methods "
     "are supported.]"
+#endif
     "[p]:[prompt?Write \aprompt\a on each line before reading.  In earlier releases "
     "\b-p\b caused the input to come from the current co-process.  Use "
     "\b-u p\b instead.  For backward compatibility, if there is a "

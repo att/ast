@@ -79,6 +79,9 @@ struct Method {
     void *fun;
 };
 
+// Support for json in `read` builtin seems very unstable, so this code is kept disabled.
+// See https://github.com/att/ast/issues/820
+#if SUPPORT_JSON
 static_fn int json2sh(Shell_t *shp, Sfio_t *in, Sfio_t *out) {
     int c, state = 0, lastc = 0, level = 0, line = 1;
     size_t here, offset = stktell(shp->stk);
@@ -196,8 +199,13 @@ static_fn int json2sh(Shell_t *shp, Sfio_t *in, Sfio_t *out) {
     }
     return 0;
 }
+#endif
 
-static struct Method methods[] = {{"json", json2sh}, {"ksh", NULL}, {NULL, NULL}};
+static struct Method methods[] = {
+#if SUPPORT_JSON
+    {"json", json2sh},
+#endif
+    {"ksh", NULL}, {NULL, NULL}};
 
 int b_read(int argc, char *argv[], Shbltin_t *context) {
     Sfdouble_t sec;
@@ -265,11 +273,13 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                 }
                 break;
             }
+#if SUPPORT_JSON
             case 'm': {
                 method = opt_info.arg;
                 flags |= C_FLAG;
                 break;
             }
+#endif
             case 'n':
             case 'N': {
                 flags &= ((1 << D_FLAG) - 1);
