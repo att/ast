@@ -1102,6 +1102,8 @@ const char sh_optprintf[] =
     "command.  Values given as digits are interpreted the same way "
     "they are by the \btouch\b command.]"
     "[+%Z?Output a byte whose value is \b0\b.]"
+    "[+%Q?Convert number of seconds to readable time.]"
+    "[+%p?Convert number to hexadecimal.]"
     "\fextra\f"
     "}"
     "[+?The format modifier flag \bL\b can precede the width and/or precision "
