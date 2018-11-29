@@ -255,7 +255,23 @@ fi
 
 [[ $(printf '%q\n') == '' ]] || log_error 'printf "%q" with missing arguments'
 
+# ==========
+# printf "%Q" converts seconds to readable time
+actual=$(printf "%Q" 66)
+expected="1m06s"
+[[ "$actual" = "$expected" ]] || log_error "printf %Q does not convert seconds to minutes" "$expected" "$actual"
 
+actual=$(printf "%Q" 3660)
+expected="1h01m"
+[[ "$actual" = "$expected" ]] || log_error "printf %Q does not convert seconds to hours" "$expected" "$actual"
+
+# ==========
+# printf "%p" converts to hexadecimal number
+actual=$(printf "%p" 16)
+expected="0x10"
+[[ "$actual" = "$expected" ]] || log_error "printf %p does not convert to hexadecimal" "$expected" "$actual"
+
+# ==========
 if [[ $($SHELL -c $'printf \'%2$s %1$s\n\' world hello') != 'hello world' ]]
 then
     log_error 'printf %2$s %1$s not working'
