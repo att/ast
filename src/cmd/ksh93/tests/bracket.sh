@@ -230,6 +230,8 @@ then
     log_error '3 > 4'
 fi
 
+[[ 3 -lt 4 ]] || log_error "-lt does not work"
+
 if [[ 3x > 4x ]]
 then
     log_error '3x < 4x'
@@ -318,6 +320,22 @@ then
     [[ -L "$file" ]] || log_error '-L not working'
     [[ -L "$file"/ ]] && log_error '-L with file/ not working'
 fi
+
+# ==========
+[[ -c /dev/null ]] || log_error "-c fails to detect character devices"
+
+# ==========
+# TODO: How to test for block devices ?
+# [[ -b /dev/sda ]] || log_error "-b fails to detect block devices"
+
+# ==========
+touch "$TEST_DIR/this_file_has_sticky_bit_set"
+chmod +t "$TEST_DIR/this_file_has_sticky_bit_set"
+[[ -k "$TEST_DIR/this_file_has_sticky_bit_set" ]] || log_error "-k fails to detect sticky bit"
+
+# ==========
+mkfifo "$TEST_DIR/this_is_a_pipe"
+[[ -p "$TEST_DIR/this_is_a_pipe" ]] || "-p fails to detect pipes"
 
 $SHELL -c 't=1234567890; [[ $t == @({10}(\d)) ]]' 2> /dev/null || log_error ' @({10}(\d)) pattern not working'
 $SHELL -c '[[ att_ == ~(E)(att|cus)_.* ]]' 2> /dev/null || log_error ' ~(E)(att|cus)_* pattern not working'
@@ -454,6 +472,17 @@ x=10
 
 ([[ x -eq 10 ]]) 2> /dev/null || log_error 'x -eq 10 fails in [[...]] with x=10'
 
+# ==========
 # POSIX specifies that on error, test builtin should always return value > 1
 test 123 -eq 123x 2>/dev/null
 [[ $? -ge 2 ]] || log_error 'test builtin should return value greater than 1 on error'
+
+# ==========
+# Running test without any arguments should return 1
+test
+[[ $? -eq 1 ]] || log_error "test builtin should return 1 if expression is missing"
+
+# ==========
+# This is not required by POSIX and this behavior seems incompatible with external `test` builtin
+# but since `ksh` supports it, we should test it.
+test 4/2 -eq 3-1 || log_error "Arithmetic expressions should work inside test builtin"
