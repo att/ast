@@ -205,7 +205,8 @@ static struct Method methods[] = {
 #if SUPPORT_JSON
     {"json", json2sh},
 #endif
-    {"ksh", NULL}, {NULL, NULL}};
+    {"ksh", NULL},
+    {NULL, NULL}};
 
 int b_read(int argc, char *argv[], Shbltin_t *context) {
     Sfdouble_t sec;
