@@ -110,6 +110,41 @@ fi
 mkdir -p $TEST_DIR/a/b/c 2>/dev/null || log_error  "mkdir -p failed"
 $SHELL -c "cd $TEST_DIR/a/b; cd c" || log_error "initial script relative cd fails"
 
+#   trap - trap signals and conditions
+
+# ==========
+# -a append the current trap setting to the specified action.
+trap false SIGHUP
+trap -a true SIGHUP
+actual=$(trap -p SIGHUP)
+expect="true;false"
+[[ "$actual" = "$expect" ]] || log_error "trap -a does not append to trap settings" "$expect" "$actual"
+trap - SIGHUP
+
+# ==========
+# -p Causes the current traps to be output in a format that can be
+#    processed as input to the shell to recreate the current traps
+trap : SIGHUP
+trap : EXIT
+actual=$(trap -p)
+expect=$'trap -- : HUP\ntrap -- : EXIT'
+[[ "$actual" == "$expect" ]] || log_error "trap -p fails to print traps" "$expect" "$actual"
+trap - SIGHUP EXIT
+
+# ==========
+# -l Output the list of signals and their numbers to standard
+#    output.
+# Check only a subset of signals.
+expect=$'HUP\nINT\nQUIT\nILL\nTRAP\nIOT'
+actual=$(trap -l | cut -d ')' -f2 | cut -d ' ' -f2)
+[[ "$actual" =~ "$expect" ]] || log_error "trap -l does not list signals" "$expect" "$actual"
+
+# ==========
+actual=$(trap -a -p 2>&1)
+expect="trap -a and -p are mutually exclusive"
+[[ "$actual" =~ "$expect" ]] || log_error "Mixing trap -a and -p should give an error"
+
+# ==========
 # The `| sort` is because ksh doesn't guarantee the order of the output of the `trap` command.
 expect="trap -- 'print TERM' TERM trap -- 'print USR1' USR1"
 actual=$(echo $($SHELL -c 'trap "print TERM" TERM; trap "print USR1" USR1; trap' | sort) )
