@@ -77,7 +77,8 @@ all_tests = [
     # Test non-special builtins; i.e., those that have to be enabled explicitly.
     ['b_chmod'],
     # These are interactive tests to be run via the `expect` utility.
-    ['echo.exp'], ['emacs.exp'], ['hist.exp'], ['jobs.exp'], ['read.exp'], ['set.exp'], ['vi.exp'],
+    ['echo.exp'], ['emacs.exp'], ['hist.exp'], ['jobs.exp'], ['read.exp'], ['set.exp'], ['test.exp'],
+    ['vi.exp'],
     # The following are tests that must be run serially after all other tests that might be run in
     # parallel. For example, the `special-dev-paths` test opens network connections on fixed TCP/IP
     # port numbers and thus cannot be run in parallel with itself (shcomp and non-shcomp variants).
