@@ -33,7 +33,7 @@
 #ifndef SH_VERSION
 #define Shell_t void
 #endif
-#ifndef NV_DEFAULT
+#ifndef _NVAL_H
 #define Namval_t void
 #endif
 

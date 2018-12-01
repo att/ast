@@ -1946,7 +1946,7 @@ static_fn int scanfilter(Dt_t *dict, void *arg, void *data) {
             return 0;
         }
     }
-    if (!np->nvalue.cp && !np->nvfun && !nv_isattr(np, ~NV_DEFAULT)) return 0;
+    if (!np->nvalue.cp && !np->nvfun && !np->nvflag) return 0;
     if (sp->scanfn) {
         if (nv_isarray(np)) nv_putsub(np, NULL, 0L, 0);
         (*sp->scanfn)(np, sp->scandata);
