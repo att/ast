@@ -103,13 +103,12 @@ struct Namdecl {
 #define NV_DEFAULT 0
 // This defines the attributes for an attributed name-value pair node.
 struct Namval {
-    Dtlink_t nvlink;  // space for cdt links
-    char *nvname;     // pointer to name of the node
+    Dtlink_t nvlink;        // space for cdt links
+    char *nvname;           // pointer to name of the node
+    unsigned short nvflag;  // attributes
 #if _ast_sizeof_pointer >= 8
-    unsigned short nvflag;  // attributes
-    uint32_t nvsize;        // size or base
+    uint32_t nvsize;  // size or base
 #else
-    unsigned short nvflag;  // attributes
     unsigned short nvsize;  // size or base
 #endif
 #ifdef _NV_PRIVATE
@@ -127,29 +126,31 @@ struct Namval {
 #define NV_MINSZ (sizeof(struct Namval) - sizeof(Dtlink_t) - sizeof(char *))
 #define nv_namptr(p, n) ((Namval_t *)((char *)(p) + (n)*NV_MINSZ - sizeof(Dtlink_t)))
 
-// The following attributes are for internal use.
-#define NV_NOFREE 0x200       // don't free the space when releasing value
-#define NV_ARRAY 0x400        // node is an array
-#define NV_REF 0x4000         // reference bit
-#define NV_TABLE 0x800        // node is a dictionary table
-#define NV_IMPORT 0x1000      // value imported from environment
-#define NV_MINIMAL NV_IMPORT  // node does not contain all fields
+// Namval attribute bits for use with nv_isattr(), nv_onattr(), nv_offattr(), etc. These affect how
+// a namval behaves although not all of them affect the value. Some, such as NV_NOFREE, don't affect
+// the interpretation of the value but do affect how the namval node behaves.
+//
+// For the moment we are limited to 16 bits since the namval->nvflag is an unsigned short.
+#define NV_RDONLY (1 << 0)   // readonly bit -- does not affect the value
+#define NV_INTEGER (1 << 1)  // integer attribute
+#define NV_LTOU (1 << 2)     // convert to uppercase
+#define NV_UTOL (1 << 3)     // convert to lowercase
+#define NV_ZFILL (1 << 4)    // right justify and fill with leading zeros
+#define NV_RJUST (1 << 5)    // right justify and blank fill
+#define NV_LJUST (1 << 6)    // left justify and blank fill
+#define NV_xxx (1 << 7)      // unused
+#define NV_BINARY (1 << 8)   // fixed size data buffer
+#define NV_NOFREE (1 << 9)   // don't free the space when releasing value
+#define NV_ARRAY (1 << 10)   // node is an array
+#define NV_TABLE (1 << 11)   // node is a dictionary table
+#define NV_IMPORT (1 << 12)  // value imported from environment
+#define NV_EXPORT (1 << 13)  // export bit -- does not affect the value
+#define NV_REF (1 << 14)     // reference bit
+#define NV_TAGGED (1 << 15)  // user tagged (typeset -t ...) -- does not affect the value
 
-#define NV_INTEGER 0x2  // integer attribute
-// The following attributes are valid only when NV_INTEGER is off.
-#define NV_LTOU 0x4                    // convert to uppercase
-#define NV_UTOL 0x8                    // convert to lowercase
-#define NV_ZFILL 0x10                  // right justify and fill with leading zeros
-#define NV_RJUST 0x20                  // right justify and blank fill
-#define NV_LJUST 0x40                  // left justify and blank fill
-#define NV_BINARY 0x100                // fixed size data buffer
-#define NV_RAW NV_LJUST                // used only with NV_BINARY
+#define NV_RAW (NV_LJUST)              // used only with NV_BINARY
 #define NV_HOST (NV_RJUST | NV_LJUST)  // map to host filename
-
-// The following attributes do not effect the value.
-#define NV_RDONLY 0x1     // readonly bit
-#define NV_EXPORT 0x2000  // export bit
-#define NV_TAGGED 0x8000  // user define tag bit
+#define NV_MINIMAL NV_IMPORT           // node does not contain all fields
 
 // The following are used with NV_INTEGER.
 #define NV_SHORT (NV_RJUST)                // when integers are not long
@@ -159,7 +160,7 @@ struct Namval {
 #define NV_EXPNOTE (NV_LJUST)              // for scientific notation
 #define NV_HEXFLOAT (NV_LTOU)              // for C99 base16 float notation
 
-// Options for nv_open.
+// Options for nv_open().
 #define NV_APPEND 0x10000    // append value
 #define NV_MOVE 0x8000000    // for use with nv_clone
 #define NV_ADD 8             // add node if not found
@@ -183,12 +184,12 @@ struct Namval {
 // Numeric types.
 #define NV_INT16P (NV_LJUST | NV_SHORT | NV_INTEGER)
 #define NV_INT16 (NV_SHORT | NV_INTEGER)
-#define NV_UINT16 (NV_UNSIGN | NV_SHORT | NV_INTEGER)
-#define NV_UINT16P (NV_LJUSTNV_UNSIGN | NV_SHORT | NV_INTEGER)
 #define NV_INT32 (NV_INTEGER)
-#define NV_UNT32 (NV_UNSIGN | NV_INTEGER)
 #define NV_INT64 (NV_LONG | NV_INTEGER)
-#define NV_UINT64 (NV_UNSIGN | NV_LONG | NV_INTEGER)
+#define NV_UINT16 (NV_UNSIGN | NV_SHORT | NV_INTEGER)
+// #define NV_UINT16P (NV_LJUST | NV_UNSIGN | NV_SHORT | NV_INTEGER)
+// #define NV_UINT32 (NV_UNSIGN | NV_INTEGER)
+// #define NV_UINT64 (NV_UNSIGN | NV_LONG | NV_INTEGER)
 #define NV_FLOAT (NV_SHORT | NV_DOUBLE)
 #define NV_LDOUBLE (NV_LONG | NV_DOUBLE)
 
