@@ -23,12 +23,6 @@
 #ifndef _NAME_H
 #define _NAME_H 1
 
-#define _NV_PRIVATE                                     \
-    Namfun_t *nvfun;    /* pointer to trap functions */ \
-    union Value nvalue; /* value field */               \
-    void *nvshell;      /* shell pointer */             \
-    char *nvenv;        /* pointer to environment name */
-
 #include "ast.h"
 #include "cdt.h"
 

@@ -40,14 +40,9 @@ typedef struct Shell_s Shell_t;
 #include "ast.h"
 #include "cdt.h"
 #include "fault.h"
+#include "name.h"
 #include "shcmd.h"
 #include "stk.h"
-
-#ifdef _SH_PRIVATE
-#include "name.h"
-#else
-#include "nval.h"
-#endif  // _SH_PRIVATE
 
 // Options.
 #if __STDC_VERSION__ >= 199901L

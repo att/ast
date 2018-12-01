@@ -31,6 +31,7 @@
 
 #include "ast.h"
 #include "cdt.h"
+#include "name.h"
 #include "option.h"
 
 // For compatibility with old hash library.
@@ -99,7 +100,7 @@ struct Namdecl {
     void *optinfof;
 };
 
-// This defines the attributes for an attributed name-value pair node.
+// This defines the attributes for a name-value node.
 struct Namval {
     Dtlink_t nvlink;        // space for cdt links
     char *nvname;           // pointer to name of the node
@@ -109,14 +110,10 @@ struct Namval {
 #else
     unsigned short nvsize;  // size or base
 #endif
-#ifdef _NV_PRIVATE
-    _NV_PRIVATE
-#else
-    Namfun_t *nvfun;
-    char *nvalue;
-    void *nvshell;
-    char *nvprivate;
-#endif  // _NV_PRIVATE
+    Namfun_t *nvfun;    // pointer to trap functions
+    union Value nvalue; // value field
+    void *nvshell;      // shell pointer
+    char *nvenv;        // pointer to environment name
 };
 
 #define NV_CLASS ".sh.type"
