@@ -161,21 +161,21 @@ struct Namval {
 #define NV_HEXFLOAT (NV_LTOU)              // for C99 base16 float notation
 
 // Options for nv_open().
-#define NV_APPEND 0x10000    // append value
-#define NV_MOVE 0x8000000    // for use with nv_clone
-#define NV_ADD 8             // add node if not found
-#define NV_ASSIGN NV_NOFREE  // assignment is possible
 #define NV_NOASSIGN 0        // backward compatibility
-#define NV_NOARRAY 0x200000  // array name not possible
-#define NV_IARRAY 0x400000   // for indexed array
-#define NV_NOREF NV_REF      // don't follow reference
-#define NV_IDENT 0x80        // name must be identifier
-#define NV_VARNAME 0x20000   // name must be ?(.)id*(.id)
-#define NV_NOADD 0x40000     // do not add node
-#define NV_NOSCOPE 0x80000   // look only in current scope
-#define NV_NOFAIL 0x100000   // return 0 on failure, no msg
-#define NV_NODISC NV_IDENT   // ignore disciplines
+#define NV_ADD (1 << 3)      // add node if not found
+#define NV_IDENT (1 << 7)    // name must be identifier
+#define NV_APPEND (1 << 16)  // append value
+#define NV_VARNAME (1 << 17)  // name must be ?(.)id*(.id)
+#define NV_NOADD (1 << 18)    // do not add node
+#define NV_NOSCOPE (1 << 19)  // look only in current scope
+#define NV_NOFAIL (1 << 20)   // return 0 on failure, no msg
+#define NV_NOARRAY (1 << 21)  // array name not possible
+#define NV_IARRAY (1 << 22)   // for indexed array
+#define NV_MOVE (1 << 27)     // for use with nv_clone()
 
+#define NV_NODISC NV_IDENT   // ignore disciplines
+#define NV_ASSIGN NV_NOFREE  // assignment is possible
+#define NV_NOREF NV_REF      // don't follow reference
 #define NV_FUNCT NV_IDENT     // option for nv_create
 #define NV_BLTINOPT NV_ZFILL  // mark builtins in libcmd
 
