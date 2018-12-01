@@ -475,12 +475,10 @@ endargs:
             sfputc(stkp, '.');
         }
         sfputr(stkp, tdata.prefix, 0);
-        tdata.tp = nv_open(stkptr(stkp, offset), tdata.sh->var_tree,
-                           NV_VARNAME | NV_NOARRAY | NV_NOASSIGN);
+        tdata.tp = nv_open(stkptr(stkp, offset), tdata.sh->var_tree, NV_VARNAME | NV_NOARRAY);
         if (!tdata.tp && off) {
             *stkptr(stkp, off) = 0;
-            tdata.tp = nv_open(stkptr(stkp, offset), tdata.sh->var_tree,
-                               NV_VARNAME | NV_NOARRAY | NV_NOASSIGN);
+            tdata.tp = nv_open(stkptr(stkp, offset), tdata.sh->var_tree, NV_VARNAME | NV_NOARRAY);
         }
         stkseek(stkp, offset);
         if (!tdata.tp) {

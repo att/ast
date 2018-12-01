@@ -1170,7 +1170,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
         }
 #endif  // SHOPT_COSHELL
         if (iop->iovname) {
-            np = nv_open(iop->iovname, shp->var_tree, NV_NOASSIGN | NV_VARNAME);
+            np = nv_open(iop->iovname, shp->var_tree, NV_VARNAME);
             if (nv_isattr(np, NV_RDONLY)) {
                 errormsg(SH_DICT, ERROR_exit(1), e_readonly, nv_name(np));
                 __builtin_unreachable();
@@ -1209,8 +1209,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                         number = strchr(fname, '}');
                         if (number) {
                             *number = 0;
-                            np = nv_open(fname + 1, shp->var_tree,
-                                         NV_NOASSIGN | NV_VARNAME | NV_NOFAIL);
+                            np = nv_open(fname + 1, shp->var_tree, NV_VARNAME | NV_NOFAIL);
                             *number++ = '}';
                         }
                         if (!np) {
