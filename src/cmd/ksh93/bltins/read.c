@@ -903,7 +903,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
             }
             if (name) {
                 nv_close(np);
-                np = nv_open(name, shp->var_tree, NV_NOASSIGN | NV_VARNAME);
+                np = nv_open(name, shp->var_tree, NV_VARNAME);
                 name = *++names;
             } else {
                 np = 0;

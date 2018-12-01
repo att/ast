@@ -161,7 +161,6 @@ struct Namval {
 #define NV_HEXFLOAT (NV_LTOU)              // for C99 base16 float notation
 
 // Options for nv_open().
-#define NV_NOASSIGN 0        // backward compatibility
 #define NV_ADD (1 << 3)      // add node if not found
 #define NV_IDENT (1 << 7)    // name must be identifier
 #define NV_APPEND (1 << 16)  // append value

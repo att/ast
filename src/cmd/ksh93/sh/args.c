@@ -255,7 +255,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
         f = *opt_info.option == '-' && (opt_info.num || opt_info.arg);
         switch (n) {
             case 'A': {
-                np = nv_open(opt_info.arg, shp->var_tree, NV_NOASSIGN | NV_ARRAY | NV_VARNAME);
+                np = nv_open(opt_info.arg, shp->var_tree, NV_ARRAY | NV_VARNAME);
                 if (f) unsetnp = 1;
                 continue;
             }

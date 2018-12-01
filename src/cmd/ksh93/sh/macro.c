@@ -1229,7 +1229,7 @@ retry1:
                 }
                 goto nosub;
             }
-            flag |= NV_NOASSIGN | NV_VARNAME | NV_NOADD;
+            flag |= NV_VARNAME | NV_NOADD;
             if (c == '=' || c == '?' || (c == ':' && ((d = fcpeek(0)) == '=' || d == '?'))) {
                 if (c == '=' || (c == ':' && d == '=')) flag |= NV_ASSIGN;
                 flag &= ~NV_NOADD;
@@ -2369,7 +2369,7 @@ static_fn void tilde_expand2(Shell_t *shp, int offset) {
     static int beenhere = 0;
 
     strcpy(shtilde, ".sh.tilde");
-    np = nv_open(shtilde, shp->fun_tree, NV_VARNAME | NV_NOARRAY | NV_NOASSIGN | NV_NOFAIL);
+    np = nv_open(shtilde, shp->fun_tree, NV_VARNAME | NV_NOARRAY | NV_NOFAIL);
     if (np && !beenhere) {
         beenhere = 1;
         sh_addbuiltin(shp, shtilde, sh_btilde, 0);

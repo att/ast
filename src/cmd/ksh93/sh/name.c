@@ -1317,8 +1317,7 @@ skip:
                         np = mp;
                     } else if (!is_associative(ap) &&
                                (mp = nv_open(cp, shp->var_tree,
-                                             NV_NOFAIL | NV_VARNAME | NV_NOARRAY | NV_NOASSIGN |
-                                                 NV_NOADD)) &&
+                                             NV_NOFAIL | NV_VARNAME | NV_NOARRAY | NV_NOADD)) &&
                                nv_isvtree(np)) {
                         ap->flags |= ARRAY_TREE;
                         nv_putsub(np, NULL, nv_aindex(np), ARRAY_ADD);

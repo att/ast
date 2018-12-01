@@ -711,8 +711,7 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
     Dt_t *root = wp->root ? wp->root : wp->shp->var_base;
 
     if (*name != '.' || vname[strlen(vname) - 1] == ']') mode = NV_ARRAY;
-    if (!(np = nv_open(vname, root,
-                       mode | NV_VARNAME | NV_NOADD | NV_NOASSIGN | NV_NOFAIL | wp->noscope))) {
+    if (!(np = nv_open(vname, root, mode | NV_VARNAME | NV_NOADD | NV_NOFAIL | wp->noscope))) {
         wp->shp->last_table = last_table;
         wp->flags &= ~NV_COMVAR;
         return;
@@ -876,8 +875,7 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
             if (nextcp) {
                 if (outfile) {
                     *nextcp = 0;
-                    np = nv_open(arg, wp->root,
-                                 NV_VARNAME | NV_NOADD | NV_NOASSIGN | NV_NOFAIL | wp->noscope);
+                    np = nv_open(arg, wp->root, NV_VARNAME | NV_NOADD | NV_NOFAIL | wp->noscope);
                     if (!np || (nv_isarray(np) && (!(tp = nv_opensub(np)) || !nv_isvtree(tp)))) {
                         *nextcp = '.';
                         continue;
@@ -915,7 +913,7 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
                        strncmp(arg, argv[1], l = strlen(arg)) == 0 && argv[1][l] == '[') {
                 int k = 1;
                 Namarr_t *aq = 0;
-                np = nv_open(arg, wp->root, NV_VARNAME | NV_NOADD | NV_NOASSIGN | wp->noscope);
+                np = nv_open(arg, wp->root, NV_VARNAME | NV_NOADD | wp->noscope);
                 if (!np) continue;
                 if ((wp->array = nv_isarray(np)) && (aq = nv_arrayptr(np))) k = array_elem(aq);
                 if (wp->indent > 0) sfnputc(outfile, '\t', wp->indent);
@@ -1068,13 +1066,13 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
             Dt_t *dp = shp->var_tree;
             Namval_t *mq;
             if (strlen(cp) <= len) continue;
-            nq = nv_open(cp, walk.root, NV_VARNAME | NV_NOADD | NV_NOASSIGN | NV_NOFAIL);
+            nq = nv_open(cp, walk.root, NV_VARNAME | NV_NOADD | NV_NOFAIL);
             if (!nq && (flags & NV_MOVE)) nq = nv_search(cp, walk.root, NV_NOADD);
             stkseek(shp->stk, 0);
             sfputr(shp->stk, xpname, -1);
             sfputr(shp->stk, cp + len, 0);
             shp->var_tree = save_tree;
-            mq = nv_open(stkptr(shp->stk, 0), last_root, NV_VARNAME | NV_NOASSIGN | NV_NOFAIL);
+            mq = nv_open(stkptr(shp->stk, 0), last_root, NV_VARNAME | NV_NOFAIL);
             shp->var_tree = dp;
             if (nq && mq) {
                 struct nvdir *dp = (struct nvdir *)dir;
@@ -1173,9 +1171,8 @@ static_fn void put_tree(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
         Shell_t *shp = sh_ptr(np);
         Namval_t *last_table = shp->last_table;
         Dt_t *last_root = shp->last_root;
-        Namval_t *mp = val ? nv_open(val, shp->var_tree,
-                                     NV_VARNAME | NV_NOADD | NV_NOASSIGN | NV_ARRAY | NV_NOFAIL)
-                           : 0;
+        Namval_t *mp =
+            val ? nv_open(val, shp->var_tree, NV_VARNAME | NV_NOADD | NV_ARRAY | NV_NOFAIL) : 0;
         if (mp && nv_isvtree(mp)) {
             shp->prev_table = shp->last_table;
             shp->prev_root = shp->last_root;

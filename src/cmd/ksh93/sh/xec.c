@@ -1822,8 +1822,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 args = sh_argbuild(shp, &argn, tp, 0);
                 nargs = argn;
             }
-            np = nv_open(t->for_.fornam, shp->var_tree,
-                         NV_NOASSIGN | NV_NOARRAY | NV_VARNAME | NV_NOREF);
+            np = nv_open(t->for_.fornam, shp->var_tree, NV_NOARRAY | NV_VARNAME | NV_NOREF);
             nameref = nv_isref(np) != 0;
             shp->st.loopcnt++;
             cp = *args;
@@ -2166,7 +2165,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             if (t->tre.tretyp == TNSPACE) {
                 Namval_t *oldnspace = NULL;
                 int offset = stktell(stkp);
-                int flag = NV_NOASSIGN | NV_NOARRAY | NV_VARNAME;
+                int flag = NV_NOARRAY | NV_VARNAME;
                 char *sp, *xp;
                 sfputc(stkp, '.');
                 sfputr(stkp, fname, 0);
@@ -2197,14 +2196,13 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 if (shp->prefix) {
                     cp = shp->prefix;
                     shp->prefix = 0;
-                    npv = nv_open(cp, shp->var_tree, NV_NOASSIGN | NV_NOARRAY | NV_VARNAME);
+                    npv = nv_open(cp, shp->var_tree, NV_NOARRAY | NV_VARNAME);
                     shp->prefix = cp;
                     cp = fname;
                 } else {
                     sfwrite(stkp, fname, cp++ - fname);
                     sfputc(stkp, 0);
-                    npv = nv_open(stkptr(stkp, offset), shp->var_tree,
-                                  NV_NOASSIGN | NV_NOARRAY | NV_VARNAME);
+                    npv = nv_open(stkptr(stkp, offset), shp->var_tree, NV_NOARRAY | NV_VARNAME);
                 }
                 offset = stktell(stkp);
                 sfprintf(stkp, "%s.%s%c", nv_name(npv), cp, 0);
@@ -2217,8 +2215,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 np = sh_fsearch(shp, fname, NV_ADD | HASH_NOSCOPE);
             }
             if (!np) {
-                np = nv_open(fname, sh_subfuntree(shp, 1),
-                             NV_NOASSIGN | NV_NOARRAY | NV_VARNAME | NV_NOSCOPE);
+                np = nv_open(fname, sh_subfuntree(shp, 1), NV_NOARRAY | NV_VARNAME | NV_NOSCOPE);
             }
             if (npv) {
                 if (!shp->mktype) cp = nv_setdisc(npv, cp, np, (Namfun_t *)npv);

@@ -388,7 +388,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
     Dt_t *nsdict = (shp->namespace ? nv_dict(shp->namespace) : 0);
     Dt_t *root = shp->var_tree;
 
-    assign = assign ? NV_ASSIGN : NV_NOASSIGN;
+    assign = assign ? NV_ASSIGN : 0;
     lvalue->nosub = 0;
     if (nosub < 0 && lvalue->ovalue) return (Namval_t *)lvalue->ovalue;
     lvalue->ovalue = 0;
@@ -698,11 +698,10 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                             goto skip2;
                         }
                         if (shp->namref_root && !(lvalue->emode & ARITH_COMP))
-                            np = nv_open(
-                                *ptr, shp->namref_root,
-                                NV_NOREF | NV_NOASSIGN | NV_VARNAME | NV_NOSCOPE | NV_NOADD | dot);
+                            np = nv_open(*ptr, shp->namref_root,
+                                         NV_NOREF | NV_VARNAME | NV_NOSCOPE | NV_NOADD | dot);
                         if (!np) {
-                            np = nv_open(*ptr, root, NV_NOREF | NV_NOASSIGN | NV_VARNAME | dot);
+                            np = nv_open(*ptr, root, NV_NOREF | NV_VARNAME | dot);
                         }
                         if (!np || Varsubscript) {
                             np = NULL;

@@ -978,8 +978,7 @@ Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last)
     if (last) *last = cp;
     c = *cp;
     *cp = 0;
-    nq = nv_open(stkptr(shp->stk, offset), shp->var_tree,
-                 NV_VARNAME | NV_NOASSIGN | NV_NOADD | NV_NOFAIL);
+    nq = nv_open(stkptr(shp->stk, offset), shp->var_tree, NV_VARNAME | NV_NOADD | NV_NOFAIL);
     *cp = c;
     if (!nq) {
         np = 0;
