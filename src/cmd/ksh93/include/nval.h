@@ -99,8 +99,6 @@ struct Namdecl {
     void *optinfof;
 };
 
-// Attributes of name-value node attribute flags.
-#define NV_DEFAULT 0
 // This defines the attributes for an attributed name-value pair node.
 struct Namval {
     Dtlink_t nvlink;        // space for cdt links
