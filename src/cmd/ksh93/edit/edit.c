@@ -941,7 +941,7 @@ int ed_internal(const char *src, genchar *dest) {
     int c;
     wchar_t *dp = (wchar_t *)dest;
 
-    if (dest == (genchar *)roundof((void *)cp - NULL, sizeof(genchar))) {
+    if (dest == (genchar *)roundof((ptrdiff_t)cp, sizeof(genchar))) {
         genchar buffer[MAXLINE];
         c = ed_internal(src, buffer);
         ed_gencpy((genchar *)dp, buffer);
@@ -991,8 +991,8 @@ int ed_external(const genchar *src, char *dest) {
 // Copy <sp> to <dp>.
 //
 void ed_gencpy(genchar *dp, const genchar *sp) {
-    dp = (genchar *)roundof((void *)dp - NULL, sizeof(genchar));
-    sp = (const genchar *)roundof((void *)sp - NULL, sizeof(genchar));
+    dp = (genchar *)roundof((ptrdiff_t)dp, sizeof(genchar));
+    sp = (const genchar *)roundof((ptrdiff_t)sp, sizeof(genchar));
     while ((*dp++ = *sp++)) {
         ;  // empty loop
     }
@@ -1002,8 +1002,8 @@ void ed_gencpy(genchar *dp, const genchar *sp) {
 // Copy at most <n> items from <sp> to <dp>.
 //
 void ed_genncpy(genchar *dp, const genchar *sp, int n) {
-    dp = (genchar *)roundof((void *)dp - NULL, sizeof(genchar));
-    sp = (const genchar *)roundof((void *)sp - NULL, sizeof(genchar));
+    dp = (genchar *)roundof((ptrdiff_t)dp, sizeof(genchar));
+    sp = (const genchar *)roundof((ptrdiff_t)sp, sizeof(genchar));
     while (n-- > 0 && (*dp++ = *sp++)) {
         ;  // empty loop
     }
@@ -1015,7 +1015,7 @@ void ed_genncpy(genchar *dp, const genchar *sp, int n) {
 int ed_genlen(const genchar *str) {
     const genchar *sp;
 
-    sp = (const genchar *)roundof((void *)str - NULL, sizeof(genchar));
+    sp = (const genchar *)roundof((ptrdiff_t)str, sizeof(genchar));
     while (*sp++) {
         ;  // empty loop
     }

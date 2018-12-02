@@ -44,5 +44,5 @@ __attribute__((unused)) static unsigned int hashint(Dt_t *dt, void *o, Dtdisc_t 
     UNUSED(dt);
     UNUSED(disc);
 
-    return (unsigned int)((void *)o - NULL);
+    return (unsigned int)((ptrdiff_t)o);
 }
