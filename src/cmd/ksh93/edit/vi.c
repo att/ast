@@ -198,7 +198,7 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
 
     // Initialize some things.
     virtual = (genchar *)shbuf;
-    virtual = (genchar *)roundof((ptrdiff_t)virtual, sizeof(genchar));
+    virtual = (genchar *)roundof((ptrdiff_t) virtual, sizeof(genchar));
     shbuf[i + 1] = 0;
     i = ed_internal(shbuf, virtual) - 1;
     globals = Globals;
