@@ -133,7 +133,55 @@ fi
 
 # ==========
 # -H A hard limit is set or displayed.
-# TODO: How to test this ?
+# `ulimit -aH` should show all hard limits
+actual="$(ulimit -aH)"
+expect="address space limit (Kibytes)  (-M)  $(ulimit -HM)
+core file size (blocks)        (-c)  $(ulimit -Hc)
+cpu time (seconds)             (-t)  $(ulimit -Ht)
+data size (Kibytes)            (-d)  $(ulimit -Hd)
+file size (blocks)             (-f)  $(ulimit -Hf)
+locks                          (-x)  $(ulimit -Hx)
+locked address space (Kibytes) (-l)  $(ulimit -Hl)
+message queue size (Kibytes)   (-q)  $(ulimit -Hq)
+nice                           (-e)  $(ulimit -He)
+nofile                         (-n)  $(ulimit -Hn)
+nproc                          (-u)  $(ulimit -Hu)
+pipe buffer size (bytes)       (-p)  $(ulimit -Hp)
+max memory size (Kibytes)      (-m)  $(ulimit -Hm)
+rtprio                         (-r)  $(ulimit -Hr)
+socket buffer size (bytes)     (-b)  $(ulimit -Hb)
+sigpend                        (-i)  $(ulimit -Hi)
+stack size (Kibytes)           (-s)  $(ulimit -Hs)
+swap size (Kibytes)            (-w)  $(ulimit -Hw)
+threads                        (-T)  $(ulimit -HT)
+process size (Kibytes)         (-v)  $(ulimit -Hv)"
+
+[[ "$actual" = "$expect" ]] || log_error "ulimit -aH failed" "$expect" "$actual"
+
+# ==========
+# `ulimit -a` should show all soft limits
+actual="$(ulimit -a)"
+expect="address space limit (Kibytes)  (-M)  $(ulimit -M)
+core file size (blocks)        (-c)  $(ulimit -c)
+cpu time (seconds)             (-t)  $(ulimit -t)
+data size (Kibytes)            (-d)  $(ulimit -d)
+file size (blocks)             (-f)  $(ulimit -f)
+locks                          (-x)  $(ulimit -x)
+locked address space (Kibytes) (-l)  $(ulimit -l)
+message queue size (Kibytes)   (-q)  $(ulimit -q)
+nice                           (-e)  $(ulimit -e)
+nofile                         (-n)  $(ulimit -n)
+nproc                          (-u)  $(ulimit -u)
+pipe buffer size (bytes)       (-p)  $(ulimit -p)
+max memory size (Kibytes)      (-m)  $(ulimit -m)
+rtprio                         (-r)  $(ulimit -r)
+socket buffer size (bytes)     (-b)  $(ulimit -b)
+sigpend                        (-i)  $(ulimit -i)
+stack size (Kibytes)           (-s)  $(ulimit -s)
+swap size (Kibytes)            (-w)  $(ulimit -w)
+threads                        (-T)  $(ulimit -T)
+process size (Kibytes)         (-v)  $(ulimit -v)"
+[[ "$actual" = "$expect" ]] || log_error "ulimit -a failed" "$expect" "$actual"
 
 # ==========
 # -S A soft limit is set or displayed.
@@ -141,3 +189,9 @@ ulimit -S -d 1024
 expect=1024
 actual=$(ulimit -S -d)
 [[ "$actual" = "$expect" ]] || log_error "setting ulimit -S -d failed" "$expect" "$actual"
+
+# ==========
+# Setting a very high limit should fail
+actual=$(ulimit -n 102410241024 2>&1)
+expect="limit exceeded"
+[[ "$actual" =~ "$expect" ]] || log_error "ulimit -n with very high limit should fail" "$expect" "$actual"
