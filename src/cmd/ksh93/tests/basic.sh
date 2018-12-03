@@ -29,35 +29,8 @@ expect='version'
 [[ "$actual" == *${expect}* ]] || log_error "failed to get version string" "*${expect}*" "$actual"
 
 # test basic file operations like redirection, pipes, file expansion
-set -- \
-    go+r    0000    \
-    go-r    0044    \
-    ug=r    0330    \
-    go+w    0000    \
-    go-w    0022    \
-    ug=w    0550    \
-    go+x    0000    \
-    go-x    0011    \
-    ug=x    0660    \
-    go-rx    0055    \
-    uo-wx    0303    \
-    ug-rw    0660    \
-    o=    0007
-while (( $# >= 2 ))
-do
-    umask 0
-    umask $1
-    expect=$2
-    actual=$(umask)
-    [[ $actual == $expect ]] || log_error "umask 0; umask $1 failed" "$expect" "$actual"
-    shift 2
-done
 
 umask u=rwx,go=rx || log_error "umask u=rws,go=rx failed"
-if [[ $(umask -S) != u=rwx,g=rx,o=rx ]]
-then
-    log_error 'umask -S incorrect'
-fi
 
 pwd=$PWD
 [[ $SHELL != /* ]] && SHELL=$pwd/$SHELL
