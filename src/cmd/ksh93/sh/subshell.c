@@ -338,7 +338,7 @@ static_fn void nv_restore(struct subshell *sp) {
             nv_offattr(np, NV_IDENT);
             flags |= NV_NOFREE;
         }
-        mp->nvflag = np->nvflag | (flags & NV_MINIMAL);
+        nv_setattr(mp, np->nvflag | (flags & NV_MINIMAL));
         if (nv_cover(mp)) {
             nv_putval(mp, nv_getval(np), np->nvflag | NV_NOFREE | NV_RDONLY);
         } else {

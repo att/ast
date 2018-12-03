@@ -785,7 +785,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                 n = np->nvflag;
                 np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), (Shbltin_f)np->nvalue.bfp,
                                    nv_context(np));
-                np->nvflag = n;
+                nv_setattr(np, n);
             }
         }
         if (!pp || f >= 0) break;

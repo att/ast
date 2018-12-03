@@ -228,7 +228,7 @@ static_fn void put_chtype(Namval_t *np, const void *val, int flag, Namfun_t *fp)
             nv_onattr(np, NV_NOFREE);
         }
         np->nvsize = mp->nvsize;
-        np->nvflag = mp->nvflag & ~NV_RDONLY;
+        nv_setattr(np, mp->nvflag & ~NV_RDONLY);
     }
 }
 
@@ -294,7 +294,7 @@ static_fn int fixnode(Namtype_t *dp, Namtype_t *pp, int i, struct Namref *nrp, i
         }
         nq->nvalue.nrp->root = pp->sh->last_root;
         nq->nvalue.nrp->table = pp->np;
-        nq->nvflag = NV_REF | NV_NOFREE | NV_MINIMAL;
+        nv_setattr(nq, NV_REF | NV_NOFREE | NV_MINIMAL);
         return 1;
     }
     if (nq->nvalue.cp || nq->nvfun) {
@@ -978,7 +978,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
             nq = nv_namptr(pp->nodes, 0);
             nq->nvfun = 0;
             nv_putval(nq, (val ? val : 0), nv_isattr(np, ~(NV_IMPORT | NV_EXPORT | NV_ARRAY)));
-            nq->nvflag = np->nvflag | NV_NOFREE | NV_MINIMAL;
+            nv_setattr(nq, np->nvflag | NV_NOFREE | NV_MINIMAL);
             goto skip;
         }
         if (qp) {
@@ -1032,7 +1032,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
         n = cp - name;
         *cp++ = 0;
         nq->nvsize = np->nvsize;
-        nq->nvflag = (np->nvflag & ~(NV_IMPORT | NV_EXPORT)) | NV_NOFREE | NV_MINIMAL;
+        nv_setattr(nq, (np->nvflag & ~(NV_IMPORT | NV_EXPORT)) | NV_NOFREE | NV_MINIMAL);
         dp = (Namtype_t *)nv_hasdisc(np, &type_disc);
         if (dp) {
             int r, kfirst = k;
@@ -1054,7 +1054,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                 nq->nvname = cp;
                 nq->nvshell = mp->nvshell;
                 dsize = nv_datasize(nr, &offset);
-                nq->nvflag = nr->nvflag;
+                nv_setattr(nq, nr->nvflag);
                 if (nv_hasdisc(nr, &type_disc)) clone_all_disc(nr, nq, NV_RDONLY);
                 if (nr->nvalue.cp) {
                     Namchld_t *xp = (Namchld_t *)nv_hasdisc(nr, &chtype_disc);
@@ -1403,7 +1403,7 @@ Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *
             tp = nv_open(stkptr(shp->stk, offset), shp->var_tree, NV_VARNAME);
             stkseek(shp->stk, r);
             clone_all_disc(tp, nq, NV_RDONLY);
-            nq->nvflag = tp->nvflag | NV_MINIMAL | NV_NOFREE;
+            nv_setattr(nq, tp->nvflag | NV_MINIMAL | NV_NOFREE);
             nq->nvsize = tp->nvsize;
             dp = (Namtype_t *)nv_hasdisc(nq, &type_disc);
             if (dp) dp->strsize = -dp->strsize;
@@ -1425,7 +1425,7 @@ Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *
                     if (nr->nvalue.cp >= dp->data && nr->nvalue.cp < (char *)pp + pp->fun.dsize) {
                         nq->nvalue.cp = sp + (nr->nvalue.cp - dp->data);
                     }
-                    nq->nvflag = nr->nvflag;
+                    nv_setattr(nq, nr->nvflag);
                     nq->nvsize = nr->nvsize;
                 }
             }

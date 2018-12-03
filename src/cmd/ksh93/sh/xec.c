@@ -645,7 +645,7 @@ static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Na
     nv_putval(SH_NAMENOD, cp, NV_NOFREE);
     memcpy(node, L_ARGNOD, sizeof(*node));
     L_ARGNOD->nvalue.nrp = nr;
-    L_ARGNOD->nvflag = NV_REF | NV_NOFREE;
+    nv_setattr(L_ARGNOD, NV_REF | NV_NOFREE);
     L_ARGNOD->nvfun = NULL;
     L_ARGNOD->nvenv = NULL;
     if (ap && nr->sub) {
@@ -659,7 +659,7 @@ static_fn void unset_instance(Namval_t *nq, Namval_t *node, struct Namref *nr, l
     UNUSED(nq);
 
     L_ARGNOD->nvalue.nrp = node->nvalue.nrp;
-    L_ARGNOD->nvflag = node->nvflag;
+    nv_setattr(L_ARGNOD, node->nvflag);
     L_ARGNOD->nvfun = node->nvfun;
     if (nr->sub) {
         nv_putsub(nr->np, nr->sub, 0, mode);
@@ -2642,7 +2642,7 @@ static_fn void local_exports(Namval_t *np, void *data) {
     if (cp && (mp = nv_search(nv_name(np), shp->var_tree, NV_ADD | HASH_NOSCOPE)) &&
         nv_isnull(mp)) {
         nv_putval(mp, cp, 0);
-        mp->nvflag = np->nvflag;
+        nv_setattr(mp, np->nvflag);
     }
 }
 
@@ -2666,7 +2666,7 @@ Sfdouble_t sh_mathfun(Shell_t *shp, void *fp, int nargs, Sfdouble_t *arg) {
     memcpy(&node, SH_VALNOD, sizeof(node));
     SH_VALNOD->nvfun = 0;
     SH_VALNOD->nvenv = 0;
-    SH_VALNOD->nvflag = NV_LDOUBLE | NV_NOFREE;
+    nv_setattr(SH_VALNOD, NV_LDOUBLE | NV_NOFREE);
     SH_VALNOD->nvalue.ldp = 0;
     for (i = 0; i < nargs; i++) {
         *nr++ = mp = nv_namptr(shp->mathnodes, i);
@@ -2679,7 +2679,7 @@ Sfdouble_t sh_mathfun(Shell_t *shp, void *fp, int nargs, Sfdouble_t *arg) {
     sh_funscope(shp, 1, argv, 0, &funenv, 0);
     while ((mp = *nr++)) mp->nvalue.ldp = 0;
     SH_VALNOD->nvfun = node.nvfun;
-    SH_VALNOD->nvflag = node.nvflag;
+    nv_setattr(SH_VALNOD, node.nvflag);
     SH_VALNOD->nvenv = node.nvenv;
     SH_VALNOD->nvalue.ldp = node.nvalue.ldp;
     return d;

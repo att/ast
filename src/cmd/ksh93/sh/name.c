@@ -55,7 +55,7 @@
 static const char *EmptyStr = "";
 
 static char *savesub = NULL;
-static Namval_t NullNode;
+static Namval_t NullNode = {.nvname = ".deleted"};
 static Dt_t *Refdict;
 static Dtdisc_t _Refdisc = {.key = offsetof(struct Namref, np),
                             .size = sizeof(struct Namval_t *),
@@ -412,7 +412,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                             int nvflag = np->nvflag;
                             int nvsize = np->nvsize;
                             _nv_unset(np, NV_EXPORT);
-                            np->nvflag = nvflag;
+                            nv_setattr(np, nvflag);
                             np->nvsize = nvsize;
                         } else {
                             ap->nelem++;
@@ -521,14 +521,14 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                     nr.np = np;
                     nr.root = shp->last_root;
                     nr.table = shp->last_table;
-                    L_ARGNOD->nvflag = NV_REF | NV_NOFREE;
+                    nv_setattr(L_ARGNOD, NV_REF | NV_NOFREE);
                     L_ARGNOD->nvfun = 0;
                 }
                 sh_exec(shp, tp, sh_isstate(shp, SH_ERREXIT));
                 if (nq && nv_type(nq)) nv_checkrequired(nq);
                 if (shp->prefix) {
                     L_ARGNOD->nvalue.nrp = node.nvalue.nrp;
-                    L_ARGNOD->nvflag = node.nvflag;
+                    nv_setattr(L_ARGNOD, node.nvflag);
                     L_ARGNOD->nvfun = node.nvfun;
                 }
                 shp->prefix = prefix;
@@ -600,7 +600,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
             shp->prefix = 0;
             if (nr.np == np) {
                 L_ARGNOD->nvalue.nrp = node.nvalue.nrp;
-                L_ARGNOD->nvflag = node.nvflag;
+                nv_setattr(L_ARGNOD, node.nvflag);
                 L_ARGNOD->nvfun = node.nvfun;
             }
         }
@@ -2558,7 +2558,7 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
     }
     do {
         nv_setsize(np, oldsize);
-        np->nvflag = oldatts;
+        nv_setattr(np, oldatts);
         sp = nv_getval(np);
         if (sp) {
             if (nv_isattr(np, NV_ZFILL)) {
@@ -2991,8 +2991,10 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
     np->nvalue.nrp->table = last_table;
     nv_onattr(np, NV_REF | NV_NOFREE);
     if (!Refdict) {
-        NullNode.nvname = ".deleted";
-        NullNode.nvflag = NV_RDONLY;
+        // Note that this initialization of the NullNode singleton is predicated on the Refdict
+        // singleton. Normally singletons should only ever be initialized once. But this is an
+        // unusual use case.
+        nv_setattr(&NullNode, NV_RDONLY);
         NullNode.nvshell = nq->nvshell;
         Refdict = dtopen(&_Refdisc, Dtobag);
     }

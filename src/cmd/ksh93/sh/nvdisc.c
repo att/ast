@@ -814,7 +814,9 @@ int nv_clone(Namval_t *np, Namval_t *mp, int flags) {
     }
     if (flags & NV_APPEND) return 1;
     if (nv_size(mp) == size) nv_setsize(mp, nv_size(np));
-    if (mp->nvflag == flag) mp->nvflag = (np->nvflag & ~(NV_MINIMAL)) | (mp->nvflag & NV_MINIMAL);
+    if (mp->nvflag == flag) {
+        nv_setattr(mp, (np->nvflag & ~(NV_MINIMAL)) | (mp->nvflag & NV_MINIMAL));
+    }
     if (nv_isattr(np, NV_EXPORT)) mp->nvflag |= (np->nvflag & NV_MINIMAL);
     if (mp->nvalue.cp == val && !nv_isattr(np, NV_INTEGER)) {
         if (np->nvalue.cp && np->nvalue.cp != Empty && (flags & NV_COMVAR) && !(flags & NV_MOVE)) {
@@ -837,9 +839,9 @@ int nv_clone(Namval_t *np, Namval_t *mp, int flags) {
             mp->nvenv = np->nvenv;
             if (nv_isattr(np, NV_MINIMAL)) {
                 np->nvenv = 0;
-                np->nvflag = NV_EXPORT;
+                nv_setattr(np, NV_EXPORT);
             } else {
-                np->nvflag = 0;
+                nv_setattr(np, 0);
             }
         } else {
             np->nvflag &= NV_MINIMAL;
@@ -891,12 +893,12 @@ Namval_t *nv_mkclone(Namval_t *mp) {
     Namval_t *np;
     Namfun_t *dp;
     np = calloc(1, sizeof(Namval_t));
-    np->nvflag = mp->nvflag;
+    nv_setattr(np, mp->nvflag);
     np->nvsize = mp->nvsize;
     np->nvname = mp->nvname;
     np->nvshell = mp->nvshell;
     np->nvalue.np = mp;
-    np->nvflag = mp->nvflag;
+    nv_setattr(np, mp->nvflag);
     dp = calloc(1, sizeof(Namfun_t));
     dp->disc = &clone_disc;
     nv_stack(np, dp);
