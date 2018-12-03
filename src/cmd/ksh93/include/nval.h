@@ -188,12 +188,29 @@ struct Namval {
 #define NV_FLOAT (NV_SHORT | NV_DOUBLE)
 #define NV_LDOUBLE (NV_LONG | NV_DOUBLE)
 
-// Name-value pair macros.
-#define nv_isattr(np, f) ((np)->nvflag & (f))
-#define nv_onattr(n, f) ((n)->nvflag |= (f))
-#define nv_offattr(n, f) ((n)->nvflag &= ~(f))
-#define nv_setattr(n, f) ((n)->nvflag = (f))
-#define nv_isarray(np) (nv_isattr((np), NV_ARRAY))
+// Name-value attribute test or modification routines. These used to be macros. They are now static
+// inline functions rather than macros to facilitate instrumentation while still being fast. In
+// particular validating the nvflag value; both current and new. Variants such as nv_isnull() are
+// not static inline functions because they do more work and were historically extern functions.
+static inline int nv_isattr(Namval_t *np, unsigned int nvflag) {
+    return np->nvflag & nvflag;
+}
+
+static inline void nv_onattr(Namval_t *np, unsigned int nvflag) {
+    np->nvflag |= nvflag;
+}
+
+static inline void nv_offattr(Namval_t *np, unsigned int nvflag) {
+    np->nvflag &= ~nvflag;
+}
+
+static inline void nv_setattr(Namval_t *np, unsigned int nvflag) {
+    np->nvflag = nvflag;
+}
+
+static inline bool nv_isarray(Namval_t *np) {
+    return nv_isattr(np, NV_ARRAY) == NV_ARRAY;
+}
 
 // The following are operations for associative arrays.
 #define NV_AINIT 1     // initialize
