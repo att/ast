@@ -185,10 +185,10 @@ process size (Kibytes)         (-v)  $(ulimit -v)"
 
 # ==========
 # -S A soft limit is set or displayed.
-ulimit -S -d 1024
-expect=1024
-actual=$(ulimit -S -d)
-[[ "$actual" = "$expect" ]] || log_error "setting ulimit -S -d failed" "$expect" "$actual"
+ulimit -S -n 512
+expect=512
+actual=$(ulimit -S -n)
+[[ "$actual" = "$expect" ]] || log_error "setting ulimit -S -n failed" "$expect" "$actual"
 
 # ==========
 # Setting a very high limit should fail
