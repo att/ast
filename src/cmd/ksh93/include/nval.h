@@ -147,6 +147,7 @@ struct Namval {
 #define NV_RAW (NV_LJUST)              // used only with NV_BINARY
 #define NV_HOST (NV_RJUST | NV_LJUST)  // map to host filename
 #define NV_MINIMAL NV_IMPORT           // node does not contain all fields
+#define NV_BLTINOPT NV_ZFILL           // mark builtins in `shtab_builtins[]` that are optional
 
 // The following are used with NV_INTEGER.
 #define NV_SHORT (NV_RJUST)                // when integers are not long
@@ -172,7 +173,6 @@ struct Namval {
 #define NV_ASSIGN NV_NOFREE   // assignment is possible
 #define NV_NOREF NV_REF       // don't follow reference
 #define NV_FUNCT NV_IDENT     // option for nv_create
-#define NV_BLTINOPT NV_ZFILL  // mark builtins in libcmd
 
 #define NV_PUBLIC (~(NV_NOSCOPE | NV_ASSIGN | NV_IDENT | NV_VARNAME | NV_NOADD))
 
