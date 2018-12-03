@@ -28,6 +28,7 @@
 #define _NVAL_H 1
 
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "ast.h"
 #include "cdt.h"
@@ -155,8 +156,7 @@ struct Namval {
 #define NV_EXPNOTE (NV_LJUST)              // for scientific notation
 #define NV_HEXFLOAT (NV_LTOU)              // for C99 base16 float notation
 
-// Options for nv_open().
-#define NV_ADD (1 << 3)       // add node if not found
+// Options for nv_open(), nv_search(), etc.
 #define NV_IDENT (1 << 7)     // name must be identifier
 #define NV_APPEND (1 << 16)   // append value
 #define NV_VARNAME (1 << 17)  // name must be ?(.)id*(.id)
@@ -165,6 +165,7 @@ struct Namval {
 #define NV_NOFAIL (1 << 20)   // return 0 on failure, no msg
 #define NV_NOARRAY (1 << 21)  // array name not possible
 #define NV_IARRAY (1 << 22)   // for indexed array
+#define NV_ADD (1 << 23)      // add node if not found
 #define NV_MOVE (1 << 27)     // for use with nv_clone()
 
 #define NV_NODISC NV_IDENT    // ignore disciplines
