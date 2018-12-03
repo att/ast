@@ -486,10 +486,6 @@ fi
 TESTDIRSYMLINK="$TEST_DIR/testdirsymlink"
 ln -s "$TEST_DIR" "$TEST_DIR/testdirsymlink"
 
-# TODO: cd -@
-# Change into the hidden attribute directory of directory which may also be a file. CDPATH is
-# ignored. Hidden attribute directories are file system and operating system specific.
-
 cd -L "$TESTDIRSYMLINK"
 actual="$(pwd)"
 expected="$TEST_DIR/testdirsymlink"
