@@ -134,7 +134,7 @@ struct Namval {
 #define NV_ZFILL (1 << 4)    // right justify and fill with leading zeros
 #define NV_RJUST (1 << 5)    // right justify and blank fill
 #define NV_LJUST (1 << 6)    // left justify and blank fill
-#define NV_xxx (1 << 7)      // unused
+#define NV_MISC  (1 << 7)    // this is overloaded to mean many things
 #define NV_BINARY (1 << 8)   // fixed size data buffer
 #define NV_NOFREE (1 << 9)   // don't free the space when releasing value
 #define NV_ARRAY (1 << 10)   // node is an array
@@ -148,6 +148,8 @@ struct Namval {
 #define NV_HOST (NV_RJUST | NV_LJUST)  // map to host filename
 #define NV_MINIMAL NV_IMPORT           // node does not contain all fields
 #define NV_BLTINOPT NV_ZFILL           // mark builtins in `shtab_builtins[]` that are optional
+#define NV_NODISC NV_MISC              // ignore disciplines
+#define NV_CLONED NV_MISC              // the value is cloned from an outer scope and thus can't be freed
 
 // The following are used with NV_INTEGER.
 #define NV_SHORT (NV_RJUST)                // when integers are not long
@@ -157,8 +159,7 @@ struct Namval {
 #define NV_EXPNOTE (NV_LJUST)              // for scientific notation
 #define NV_HEXFLOAT (NV_LTOU)              // for C99 base16 float notation
 
-// Options for nv_open(), nv_search(), etc.
-#define NV_IDENT (1 << 7)     // name must be identifier
+// Options for nv_open(), nv_search(), sh_setlist(), etc.
 #define NV_APPEND (1 << 16)   // append value
 #define NV_VARNAME (1 << 17)  // name must be ?(.)id*(.id)
 #define NV_NOADD (1 << 18)    // do not add node
@@ -169,10 +170,10 @@ struct Namval {
 #define NV_ADD (1 << 23)      // add node if not found
 #define NV_MOVE (1 << 27)     // for use with nv_clone()
 
-#define NV_NODISC NV_IDENT    // ignore disciplines
 #define NV_ASSIGN NV_NOFREE   // assignment is possible
 #define NV_NOREF NV_REF       // don't follow reference
 #define NV_FUNCT NV_IDENT     // option for nv_create
+#define NV_IDENT NV_MISC      // name must be identifier
 
 #define NV_PUBLIC (~(NV_NOSCOPE | NV_ASSIGN | NV_IDENT | NV_VARNAME | NV_NOADD))
 

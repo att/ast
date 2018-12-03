@@ -301,7 +301,7 @@ Namval_t *sh_assignok(Namval_t *np, int add) {
     save = shp->subshell;
     shp->subshell = 0;
     mp->nvname = np->nvname;
-    if (nv_isattr(np, NV_NOFREE)) nv_onattr(mp, NV_IDENT);
+    if (nv_isattr(np, NV_NOFREE)) nv_onattr(mp, NV_CLONED);
     nv_clone(np, mp, (add ? (nv_isnull(np) ? 0 : NV_NOFREE) | NV_ARRAY : NV_MOVE));
     shp->subshell = save;
     return np;
@@ -334,8 +334,8 @@ static_fn void nv_restore(struct subshell *sp) {
         nv_setsize(mp, nv_size(np));
         if (!(flags & NV_MINIMAL)) mp->nvenv = nv_isnull(mp) ? 0 : np->nvenv;
         if (!nofree) mp->nvfun = np->nvfun;
-        if (nv_isattr(np, NV_IDENT)) {
-            nv_offattr(np, NV_IDENT);
+        if (nv_isattr(np, NV_CLONED)) {
+            nv_offattr(np, NV_CLONED);
             flags |= NV_NOFREE;
         }
         nv_setattr(mp, np->nvflag | (flags & NV_MINIMAL));
