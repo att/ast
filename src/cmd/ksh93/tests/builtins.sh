@@ -586,3 +586,55 @@ env HISTFILE="$TEST_DIR/unreadable_history" $SHELL -i -c "[[ $(history | wc -l) 
 touch "$TEST_DIR/corrupted_history"
 echo "sa;lfjsa;fj;sajfjs;fjdf" > "$TEST_DIR/corrupted_history"
 env HISTFILE="$TEST_DIR/corrupted_history" $SHELL -i -c "[[ $(history | wc -l) -eq 0 ]] && exit 0 || exit 1"
+
+# ==========
+# umask - get or set the file creation mask
+set -- \
+    go+r    0000    \
+    go-r    0044    \
+    ug=r    0330    \
+    go+w    0000    \
+    go-w    0022    \
+    ug=w    0550    \
+    go+x    0000    \
+    go-x    0011    \
+    ug=x    0660    \
+    go-rx    0055    \
+    uo-wx    0303    \
+    ug-rw    0660    \
+    o=    0007
+while (( $# >= 2 ))
+do
+    umask 0
+    umask $1
+    expect=$2
+    actual=$(umask)
+    [[ $actual == $expect ]] || log_error "umask 0; umask $1 failed" "$expect" "$actual"
+    shift 2
+done
+
+umask u=rwx,go=rx || log_error "umask u=rws,go=rx failed"
+
+# ==========
+#  -S Causes the file creation mask to be written or treated as a
+#     symbolic value rather than an octal number.
+actual=$(umask -S)
+expect="u=rwx,g=rx,o=rx"
+[[ "$actual" = "$expect" ]] || log_error 'umask -S incorrect' "$expect" "$actual"
+
+# ==========
+# -p Write the file creation mask in a format that can be use for
+#    re-input.
+actual=$(umask -p)
+expect="umask 0022"
+[[ "$actual" = "$expect" ]] || log_error "umask -p failed" "$expect" "$actual"
+
+# ==========
+actual=$(umask 999 2>&1)
+expect="umask: 999: bad number"
+[[ "$actual" =~ "$expect" ]] || log_error "umask fails to detect invalid octal numbers" "$expect" "$actual"
+
+# ==========
+actual=$(umask foo 2>&1)
+expect="umask: foo: bad format"
+[[ "$actual" =~ "$expect" ]] || log_error "umask fails to detect invalid format" "$expect" "$actual"
