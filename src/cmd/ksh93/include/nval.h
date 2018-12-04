@@ -175,8 +175,6 @@ struct Namval {
 #define NV_FUNCT NV_IDENT    // option for nv_create
 #define NV_IDENT NV_MISC     // name must be identifier
 
-#define NV_PUBLIC (~(NV_NOSCOPE | NV_ASSIGN | NV_IDENT | NV_VARNAME | NV_NOADD))
-
 // Numeric types.
 #define NV_INT16P (NV_LJUST | NV_SHORT | NV_INTEGER)
 #define NV_INT16 (NV_SHORT | NV_INTEGER)
