@@ -223,7 +223,7 @@ static_fn void check_typedef(Lex_t *lp, struct comnod *tp) {
     if (cp) {
         Namval_t *mp = (Namval_t *)tp->comnamp, *bp;
         bp = sh_addbuiltin(lp->sh, cp, b_typeset, NULL);
-        nv_onattr(bp, nv_isattr(mp, NV_PUBLIC));
+        nv_onattr(bp, mp->nvflag);
     }
 }
 

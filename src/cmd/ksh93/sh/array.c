@@ -1269,7 +1269,7 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
                 Namval_t *mp = 0;
                 ap->cur = 0;
                 if (sp == (char *)np) return 0;
-                type = nv_isattr(np, NV_PUBLIC & ~(NV_ARRAY | NV_CHILD | NV_MINIMAL));
+                type = nv_isattr(np, ~(NV_NOFREE | NV_ARRAY | NV_CHILD | NV_MINIMAL));
                 if (mode) {
                     mode = NV_ADD | HASH_NOSCOPE;
                 } else if (ap->namarr.flags & ARRAY_NOSCOPE) {

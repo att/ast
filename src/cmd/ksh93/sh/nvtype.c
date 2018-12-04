@@ -807,7 +807,7 @@ void nv_addtype(Namval_t *np, const char *optstr, void *op, size_t optsz) {
         nv_delete(bp, shp->fun_tree, 0);
     }
     bp = sh_addbuiltin(shp, name, (Shbltin_f)mp->nvalue.bfp, (void *)cp);
-    nv_onattr(bp, nv_isattr(mp, NV_PUBLIC));
+    nv_onattr(bp, mp->nvflag);
     nv_onattr(np, NV_RDONLY);
 }
 
