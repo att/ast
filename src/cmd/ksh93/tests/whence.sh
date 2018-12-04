@@ -55,7 +55,9 @@ unalias sample_alias
 [[ $(whence -v true) = "true is a shell builtin" ]] || log_error "whence -v does not recognize builtins"
 
 # Undefined function
-# TODO: In what situations an undefined function is searched ?
+actual=$(whence -v this_function_does_not_exit 2>&1)
+expect="whence: this_function_does_not_exit: not found"
+[[ "$actual" =~ "$expect" ]] || log_error "whence -v fails to detect undefined functions" "$expect" "$actual"
 
 # Function
 function sample_function {
@@ -64,9 +66,38 @@ function sample_function {
 [[ $(whence -v sample_function) = "sample_function is a function" ]] || log_error "whence -v does not recognize functions"
 unset -f sample_function
 
+
 # Tracked alias
 [[ $(whence -v cat) =~ "cat is a tracked alias" ]] || log_error "whence -v does not recognize tracked aliases"
 
 # Program
 # TODO: On first invocation all external programs become tracked aliases (even if set +h is set).
 # How to test this ?
+
+# ==========
+# -t Output only the type for each command. This option is kept for bash compatibility.
+actual=$(whence -t if)
+expect="keyword"
+[[ "$actual"  = "$expect" ]] || log_error "whence -t does not recognize keywords" "$expect" "$actual"
+
+alias sample_alias=cat
+actual=$(whence -t sample_alias)
+expect="alias"
+[[ "$actual" = "$expect" ]] || log_error "whence -v does not recognize aliases" "$expect" "$actual"
+unalias sample_alias
+
+actual=$(whence -t true)
+expect="builtin"
+[[ "$actual"  = "$expect" ]] || log_error "whence -t does not recognize builtins" "$expect" "$actual"
+
+function sample_function {
+    :
+}
+actual=$(whence -t sample_function)
+expect="function"
+[[ "$actual" = "$expect" ]] || log_error "whence -t does not recognize functions" "$expect" "$actual"
+unset -f sample_function
+
+actual=$(whence -t ls)
+expect="file"
+[[ "$actual"  = "$expect" ]] || log_error "whence -t does not recognize files" "$expect" "$actual"
