@@ -7,9 +7,13 @@ PATH=$NO_BUILTINS_PATH
 
 # ==========
 # -a Displays all uses for each name rather than the first.
+# TODO: There is one known bug about `whence -a`.
+# https://github.com/att/ast/issues/954
 actual=$(whence -a sleep)
-[[ $actual =~ "sleep is a shell builtin" ]] || log_error "whence -a should recognize shell builtins"
-[[ $actual =~ "bin/sleep" ]] || log_error "whence -a should recognize commands in PATH"
+expect="sleep is a shell builtin"
+[[ "$actual" =~ "$expect" ]] || log_error "whence -a should recognize shell builtins" "$expect" "$actual"
+expect="bin/sleep"
+[[ "$actual" =~ "$expect" ]] || log_error "whence -a should recognize commands in PATH" "$expect" "$actual"
 # [[ $actual =~ "sleep is an undefined function" ]] || log_error "whence -a should recognize undefined functions"
 
 
@@ -18,41 +22,54 @@ actual=$(whence -a sleep)
 function cat {
     :
 }
-[[ $(whence -f cat) =~ "bin/cat" ]] || log_error "whence -f should ignore functions"
+actual=$(whence -f cat)
+expect="bin/cat"
+[[ "$actual" =~ "$expect" ]] || log_error "whence -f should ignore functions" "$expect" "$actual"
 unset -f cat
 
 # ==========
 # -p Do not check to see if name is a reserved word, a built-in, an alias, or a function. This turns
 #    off the -v option.
 builtin cat
-[[ $(whence -p cat) =~ "bin/cat" ]] || log_error "whence -p should search in PATH"
+actual=$(whence -p cat)
+expect="bin/cat"
+[[ "$actual" =~ "$expect" ]] || log_error "whence -p should search in PATH" "$expect" "$actual"
 builtin -d cat
 
 # ==========
 # -q Quiet mode. Returns 0 if all arguments are built-ins, functions, or are programs found on the
 #    path.
-actual=$(whence -q cat)
-[[ $? -eq 0 ]] || log_error "whence -q fails to find cat command"
-[[ ${#actual} -eq 0 ]] || log_error "whence -q should have empty output"
+out=$(whence -q cat)
+actual=$?
+expect=0
+[[ "$actual" -eq "$expect" ]] || log_error "whence -q fails to find cat command" "$expect" "$actual"
+actual="$out"
+expect=""
+[[ ${#actual} -eq 0 ]] || log_error "whence -q should have empty output" "$expect" "$actual"
 
 whence -q no-such-command &&
-    log_error "whence -q of non-existent command should report failure status"
+    log_error "whence -q for non-existent command should exit with non-zero status"
 
 # ==========
 # -v For each name you specify, the shell displays a line that indicates if that name is one of the
 #    following:
 
 # Reserved word
-[[ $(whence -v if) = "if is a keyword" ]] || log_error "whence -v does not recognize keywords"
+actual=$(whence -v if)
+expect="if is a keyword"
+[[ "$actual" = "$expect" ]] || log_error "whence -v does not recognize keywords" "$expect" "$actual"
 
 # Alias
 alias sample_alias=cat
-[[ $(whence -v sample_alias) = "sample_alias is an alias for cat" ]] ||
-    log_error "whence -v does not recognize aliases"
+actual=$(whence -v sample_alias)
+expect="sample_alias is an alias for cat"
+[[ "$actual" = "$expect" ]] || log_error "whence -v does not recognize aliases" "$expect" "$actual"
 unalias sample_alias
 
 # Built-in
-[[ $(whence -v true) = "true is a shell builtin" ]] || log_error "whence -v does not recognize builtins"
+actual=$(whence -v true)
+expect="true is a shell builtin"
+[[ "$actual" = "$expect" ]] || log_error "whence -v does not recognize builtins" "$expect" "$actual"
 
 # Undefined function
 actual=$(whence -v this_function_does_not_exit 2>&1)
@@ -63,12 +80,16 @@ expect="whence: this_function_does_not_exit: not found"
 function sample_function {
     :
 }
-[[ $(whence -v sample_function) = "sample_function is a function" ]] || log_error "whence -v does not recognize functions"
+actual=$(whence -v sample_function)
+expect="sample_function is a function"
+[[ "$actual" = "$expect" ]] || log_error "whence -v does not recognize functions" "$expect" "$actual"
 unset -f sample_function
 
 
 # Tracked alias
-[[ $(whence -v cat) =~ "cat is a tracked alias" ]] || log_error "whence -v does not recognize tracked aliases"
+actual=$(whence -v cat)
+expect="cat is a tracked alias"
+[[ "$actual" =~ "$expect" ]] || log_error "whence -v does not recognize tracked aliases" "$expect" "$actual"
 
 # Program
 # TODO: On first invocation all external programs become tracked aliases (even if set +h is set).
