@@ -329,9 +329,9 @@ fi
 # [[ -b /dev/sda ]] || log_error "-b fails to detect block devices"
 
 # ==========
-touch "$TEST_DIR/this_file_has_sticky_bit_set"
-chmod +t "$TEST_DIR/this_file_has_sticky_bit_set"
-[[ -k "$TEST_DIR/this_file_has_sticky_bit_set" ]] || log_error "-k fails to detect sticky bit"
+mkdir "$TEST_DIR/this_dir_has_sticky_bit_set"
+chmod +t "$TEST_DIR/this_dir_has_sticky_bit_set"
+[[ -k "$TEST_DIR/this_dir_has_sticky_bit_set" ]] || log_error "-k fails to detect sticky bit"
 
 # ==========
 mkfifo "$TEST_DIR/this_is_a_pipe"
