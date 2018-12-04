@@ -134,7 +134,7 @@ struct Namval {
 #define NV_ZFILL (1 << 4)    // right justify and fill with leading zeros
 #define NV_RJUST (1 << 5)    // right justify and blank fill
 #define NV_LJUST (1 << 6)    // left justify and blank fill
-#define NV_MISC  (1 << 7)    // this is overloaded to mean many things
+#define NV_MISC (1 << 7)     // this is overloaded to mean many things
 #define NV_BINARY (1 << 8)   // fixed size data buffer
 #define NV_NOFREE (1 << 9)   // don't free the space when releasing value
 #define NV_ARRAY (1 << 10)   // node is an array
@@ -149,7 +149,7 @@ struct Namval {
 #define NV_MINIMAL NV_IMPORT           // node does not contain all fields
 #define NV_BLTINOPT NV_ZFILL           // mark builtins in `shtab_builtins[]` that are optional
 #define NV_NODISC NV_MISC              // ignore disciplines
-#define NV_CLONED NV_MISC              // the value is cloned from an outer scope and thus can't be freed
+#define NV_CLONED NV_MISC  // the value is cloned from an outer scope and thus can't be freed
 
 // The following are used with NV_INTEGER.
 #define NV_SHORT (NV_RJUST)                // when integers are not long
@@ -170,10 +170,10 @@ struct Namval {
 #define NV_ADD (1 << 23)      // add node if not found
 #define NV_MOVE (1 << 27)     // for use with nv_clone()
 
-#define NV_ASSIGN NV_NOFREE   // assignment is possible
-#define NV_NOREF NV_REF       // don't follow reference
-#define NV_FUNCT NV_IDENT     // option for nv_create
-#define NV_IDENT NV_MISC      // name must be identifier
+#define NV_ASSIGN NV_NOFREE  // assignment is possible
+#define NV_NOREF NV_REF      // don't follow reference
+#define NV_FUNCT NV_IDENT    // option for nv_create
+#define NV_IDENT NV_MISC     // name must be identifier
 
 #define NV_PUBLIC (~(NV_NOSCOPE | NV_ASSIGN | NV_IDENT | NV_VARNAME | NV_NOADD))
 
@@ -193,25 +193,15 @@ struct Namval {
 // inline functions rather than macros to facilitate instrumentation while still being fast. In
 // particular validating the nvflag value; both current and new. Variants such as nv_isnull() are
 // not static inline functions because they do more work and were historically extern functions.
-static inline int nv_isattr(Namval_t *np, unsigned int nvflag) {
-    return np->nvflag & nvflag;
-}
+static inline int nv_isattr(Namval_t *np, unsigned int nvflag) { return np->nvflag & nvflag; }
 
-static inline void nv_onattr(Namval_t *np, unsigned int nvflag) {
-    np->nvflag |= nvflag;
-}
+static inline void nv_onattr(Namval_t *np, unsigned int nvflag) { np->nvflag |= nvflag; }
 
-static inline void nv_offattr(Namval_t *np, unsigned int nvflag) {
-    np->nvflag &= ~nvflag;
-}
+static inline void nv_offattr(Namval_t *np, unsigned int nvflag) { np->nvflag &= ~nvflag; }
 
-static inline void nv_setattr(Namval_t *np, unsigned int nvflag) {
-    np->nvflag = nvflag;
-}
+static inline void nv_setattr(Namval_t *np, unsigned int nvflag) { np->nvflag = nvflag; }
 
-static inline bool nv_isarray(Namval_t *np) {
-    return nv_isattr(np, NV_ARRAY) == NV_ARRAY;
-}
+static inline bool nv_isarray(Namval_t *np) { return nv_isattr(np, NV_ARRAY) == NV_ARRAY; }
 
 // The following are operations for associative arrays.
 #define NV_AINIT 1     // initialize
