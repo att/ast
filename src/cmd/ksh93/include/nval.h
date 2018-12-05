@@ -171,9 +171,9 @@ struct Namval {
 #define NV_MOVE (1 << 27)     // for use with nv_clone()
 #define NV_ASSIGN (1 << 28)   // assignment is allowed
 
-#define NV_NOREF NV_REF      // don't follow reference
-#define NV_FUNCT NV_IDENT    // option for nv_create
-#define NV_IDENT NV_MISC     // name must be identifier
+#define NV_NOREF NV_REF    // don't follow reference
+#define NV_FUNCT NV_IDENT  // option for nv_create
+#define NV_IDENT NV_MISC   // name must be identifier
 
 // Numeric types.
 #define NV_INT16P (NV_LJUST | NV_SHORT | NV_INTEGER)
