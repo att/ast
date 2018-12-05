@@ -57,6 +57,7 @@ expect_prompt
 # fg should put last stopped process in foreground
 log_test_entry
 send "fg\r"
+sleep 0.1
 send "hello world\r\n"
 send [ctrl D]
 expect -re "\r\nhello world\r\n" {
@@ -65,12 +66,18 @@ expect -re "\r\nhello world\r\n" {
 expect_prompt
 
 # ======
-# There should be a warning if shell attempts exit with stopped processes
+# There should be a warning if shell attempts exit with stopped processes.
+# The signal delivery timing (especially on platforms like Windows Subsystem for Linux, WSL) might
+# result in the next prompt being issued before the "Stopped" message and a second prompt being
+# displayed. So we might need to increment the prompt counter.
 log_test_entry
 send "cat\r"
 sleep 0.5
 send [ctrl Z]
 expect -re ".*Stopped.*cat\r\n"
+if {[string match "\r\nKSH PROMPT:*" $expect_out(buffer)]} {
+    incr prompt_counter
+}
 expect_prompt
 
 # Try to exit shell
