@@ -65,7 +65,7 @@ default_timeout = 30
 # TODO: Fix and add `leaks` to this list (see issue #403).
 all_tests = [
     ['alias'], ['append'], ['arith'], ['arrays'], ['arrays2'], ['attributes'],
-    ['basic', 90], ['bracket'], ['builtins'], ['case'], ['command'], ['comvar'],
+    ['basic', 90], ['bracket'], ['builtins'], ['case'], ['cat'], ['command'], ['comvar'],
     ['comvario'], ['coprocess', 50], ['cubetype'], ['directoryfd'], ['enum'],
     ['exit'], ['expand'], ['functions'], ['glob'], ['grep'], ['getopts'], ['heredoc'], ['ifs'],
     ['io'], ['jobs'], ['leaks'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
