@@ -19,14 +19,26 @@
 ########################################################################
 
 # ==========
-for name in $(builtin -l | grep -Ev '(echo|/opt|test|true|false|login|newgrp|\[|:)'); do
+for name in $(builtin -l | grep -Ev '(echo|test|true|false|login|newgrp|uname|getconf|\[|:)'); do
+    # Extract builtin name from /opt path
+    if [[ "$name" =~ "/opt" ]];
+    then
+        name="${name##*/}"
+    fi
+
     actual=$($name --this-option-does-not-exist 2>&1)
     expect="Usage: $name"
     [[ "$actual" =~ "$expect" ]] || log_error "$name should show usage info on unrecognized options" "$expect" "$actual"
 done
 
 # ==========
-for name in $(builtin -l | grep -Ev '(echo|/opt|test|true|false|login|newgrp|hash|type|source|\[|:)'); do
+for name in $(builtin -l | grep -Ev '(echo|test|true|false|login|newgrp|hash|type|source|\[|:)'); do
+    # Extract builtin name from /opt path
+    if [[ "$name" =~ "/opt" ]];
+    then
+        name="${name##*/}"
+    fi
+
     actual=$($name --man 2>&1 | head -5 | sed $'s,\x1B\[[0-9;]*[a-zA-Z],,g'  | tr -s '\n ' ' ')
     expect="NAME $name - "
     [[ "$actual" =~ "^$expect" ]] || log_error "$name --man should show documentation" "$expect" "$actual"
