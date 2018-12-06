@@ -489,8 +489,8 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
             }
         }
         if (sferror(sfstdout)) break;
-        cp = *argv++;
-    } while (cp);
+        ;
+    } while ((cp = *argv++));
     if (sfsync(sfstdout)) error(ERROR_system(0), "write error");
     if (flags & d_FLAG) sfopen(sfstdout, NULL, "w");
     return error_info.errors;
