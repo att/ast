@@ -80,6 +80,8 @@ static const char usage[] =
 
     "[+SEE ALSO?\bcp\b(1), \bgetconf\b(1), \bpr\b(1)]";
 
+static char *stdin_argv[] = {"-", NULL};
+
 #define RUBOUT 0177
 
 /* control flags */
@@ -461,10 +463,9 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
         dovcat = 1;
     }
     if (flags & d_FLAG) sfopen(sfstdout, NULL, "wt");
-    cp = *argv;
-    if (cp) argv++;
-    do {
-        if (!cp || !strcmp(cp, "-")) {
+    if (!*argv) argv = stdin_argv;
+    for (cp = *argv; cp; cp = *++argv) {
+        if (!strcmp(cp, "-")) {
             fp = sfstdin;
             if (flags & D_FLAG) sfopen(fp, NULL, mode);
         } else if (!(fp = sfopen(NULL, cp, mode))) {
@@ -489,8 +490,7 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
             }
         }
         if (sferror(sfstdout)) break;
-        cp = *argv++;
-    } while (cp);
+    }
     if (sfsync(sfstdout)) error(ERROR_system(0), "write error");
     if (flags & d_FLAG) sfopen(sfstdout, NULL, "w");
     return error_info.errors;
