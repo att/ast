@@ -650,3 +650,8 @@ expect="umask: 999: bad number"
 actual=$(umask foo 2>&1)
 expect="umask: foo: bad format"
 [[ "$actual" =~ "$expect" ]] || log_error "umask fails to detect invalid format" "$expect" "$actual"
+
+# ==========
+actual=$(logname)
+expect=$(command logname)
+[[ "$actual" = "$expect" ]] || log_error "logname failed" "$expect" "$actual"
