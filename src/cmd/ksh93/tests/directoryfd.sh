@@ -36,8 +36,6 @@
 #
 # Copyright (c) 2013, Roland Mainz. All rights reserved.
 #
-log_info 'TODO: Reenable the commented out tests below if and when mkdir/rmdir/cat builtins are enabled.'
-
 if [[ ! -d /proc ]]
 then
     log_warning "Skipping this test since the system does not have a /proc directory"
@@ -81,11 +79,11 @@ function test_dirfd_basics1
             cmd='{ print -n "foo2_" >[dirfd]/test1 ; dfd=$dirfd $SHELL -c "print appendix2 >>/dev/fd/\$dfd/test1" ; } {dirfd}<"./tmp"; cat tmp/test1'
             stdoutpattern='foo2_appendix2'
         )
-#        (
-#            testname='createdir1_redirect'
-#            cmd='redirect {dirfd}<"./tmp" ; mkdir [dirfd]/test1 ; print "foo2" >tmp/test1/a ; cat [dirfd]/test1/a ; rm tmp/test1/a ; rmdir [dirfd]/test1'
-#            stdoutpattern='foo2'
-#        )
+        (
+            testname='createdir1_redirect'
+            cmd='redirect {dirfd}<"./tmp" ; mkdir [dirfd]/test1 ; print "foo2" >tmp/test1/a ; cat [dirfd]/test1/a ; rm tmp/test1/a ; rmdir [dirfd]/test1'
+            stdoutpattern='foo2'
+        )
         (
             testname='createdir1_cmdgroup'
             cmd='{ mkdir [dirfd]/test1 ; print "foo3" >tmp/test1/a ; cat [dirfd]/test1/a ; rm tmp/test1/a ; rmdir [dirfd]/test1 ; } {dirfd}<"tmp" ;'
