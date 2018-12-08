@@ -203,23 +203,22 @@ then
 fi
 
 
-log_info 'TODO: Skipping test "builtin replaces standard input pipe"'
-#cat > $TEST_DIR/script <<\!
-#if [[ -p /dev/fd/0 ]]
-#then
-#    builtin cat
-#    cat - > /dev/null
-#    [[ -p /dev/fd/0 ]] && print ok
-#else    print no
-#fi
+cat > $TEST_DIR/script <<\!
+if [[ -p /dev/fd/0 ]]
+then
+    builtin cat
+    cat - > /dev/null
+    [[ -p /dev/fd/0 ]] && print ok
+else    print no
+fi
 
-#!
-#chmod +x $TEST_DIR/script
-#case $( (print) | $TEST_DIR/script;:) in
-#ok)    ;;
-#no)    log_error "[[ -p /dev/fd/0 ]] fails for standard input pipe" ;;
-#*)    log_error "builtin replaces standard input pipe" ;;
-#esac
+!
+chmod +x $TEST_DIR/script
+case $( (print) | $TEST_DIR/script;:) in
+ok)    ;;
+no)    log_error "[[ -p /dev/fd/0 ]] fails for standard input pipe" ;;
+*)    log_error "builtin replaces standard input pipe" ;;
+esac
 print 'print $0' > $TEST_DIR/script
 print ". $TEST_DIR/script" > $TEST_DIR/scriptx
 chmod +x $TEST_DIR/scriptx
