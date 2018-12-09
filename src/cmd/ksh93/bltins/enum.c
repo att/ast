@@ -152,7 +152,7 @@ static_fn void put_enum(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
     int n;
     if (!val && !(flags & NV_INTEGER)) {
         nv_putv(np, val, flags, fp);
-        nv_disc(np, &ep->hdr, NV_POP);
+        nv_disc(np, &ep->hdr, DISC_OP_POP);
         if (!ep->hdr.nofree) free(ep);
         return;
     }
@@ -356,7 +356,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
         ep->hdr.disc = &ENUM_disc;
         ep->hdr.type = tp;
         nv_onattr(tp, NV_RDONLY);
-        nv_disc(tp, &ep->hdr, NV_FIRST);
+        nv_disc(tp, &ep->hdr, DISC_OP_FIRST);
         memset(&optdisc, 0, sizeof(optdisc));
         optdisc.opt.infof = enuminfo;
         optdisc.np = tp;

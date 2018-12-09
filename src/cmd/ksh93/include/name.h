@@ -189,7 +189,6 @@ extern bool nv_unsetnotify(Namval_t *, char **);
 extern struct argnod *nv_onlist(struct argnod *, const char *);
 extern void nv_optimize(Namval_t *);
 extern void nv_unref(Namval_t *);
-extern void _nv_unset(Namval_t *, int);
 extern bool nv_hasget(Namval_t *);
 extern void nv_chkrequired(Namval_t *);
 extern int nv_clone(Namval_t *, Namval_t *, int);

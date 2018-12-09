@@ -379,7 +379,7 @@ void bash_init(Shell_t *shp, int mode) {
         const Namdisc_t *dp = nv_discfun(NV_DCRESTRICT);
         Namfun_t *fp = calloc(dp->dsize, 1);
         fp->disc = dp;
-        nv_disc(np, fp, 0);
+        nv_disc(np, fp, DISC_NOOP);
     }
 
     // Open GLOBIGNORE node.
@@ -388,7 +388,7 @@ void bash_init(Shell_t *shp, int mode) {
         const Namdisc_t *dp = &SH_GLOBIGNORE_disc;
         Namfun_t *fp = calloc(dp->dsize, 1);
         fp->disc = dp;
-        nv_disc(np, fp, 0);
+        nv_disc(np, fp, DISC_NOOP);
     }
 
     np = nv_open("BASH_EXECUTION_STRING", shp->var_tree, 0);

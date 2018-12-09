@@ -256,7 +256,7 @@ static_fn void put_optindex(Namval_t *np, const void *val, int flags, Namfun_t *
     Shell_t *shp = sh_ptr(np);
     shp->st.opterror = shp->st.optchar = 0;
     nv_putv(np, val, flags, fp);
-    if (!val) nv_disc(np, fp, NV_POP);
+    if (!val) nv_disc(np, fp, DISC_OP_POP);
 }
 
 static_fn Sfdouble_t nget_optindex(Namval_t *np, Namfun_t *fp) {
@@ -720,7 +720,7 @@ static_fn void match2d(Shell_t *shp, struct match *mp) {
     int i;
     Namarr_t *ap;
 
-    nv_disc(SH_MATCHNOD, &mp->hdr, NV_POP);
+    nv_disc(SH_MATCHNOD, &mp->hdr, DISC_OP_POP);
     np = nv_namptr(mp->nodes, 0);
     for (i = 0; i < mp->nmatch; i++) {
         np->nvname = mp->names + 3 * i;
@@ -757,7 +757,7 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
         np = nv_namptr(mp->nodes, 0);
         if (mp->index == 0) match2d(shp, mp);
         for (i = 0; i < mp->nmatch; i++) {
-            nv_disc(np, &mp->hdr, NV_LAST);
+            nv_disc(np, &mp->hdr, DISC_OP_LAST);
             nv_putsub(np, NULL, mp->index, 0);
             for (x = mp->index; x >= 0; x--) {
                 n = i + x * mp->nmatch;
@@ -796,7 +796,7 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
         }
         mp->nodes = (char *)calloc(mp->nmatch * (NV_MINSZ + sizeof(void *) + 3), 1);
         mp->names = mp->nodes + mp->nmatch * (NV_MINSZ + sizeof(void *));
-        nv_disc(SH_MATCHNOD, &mp->hdr, NV_LAST);
+        nv_disc(SH_MATCHNOD, &mp->hdr, DISC_OP_LAST);
         for (i = nmatch; --i >= 0;) {
             if (match[2 * i] >= 0) nv_putsub(SH_MATCHNOD, Empty, i, ARRAY_ADD);
         }
@@ -2045,7 +2045,7 @@ static_fn void put_trans(Namval_t *np, const void *vp, int flags, Namfun_t *fp) 
         val = stakptr(offset);
     } else {
         nv_putv(np, val, flags, fp);
-        nv_disc(np, fp, NV_POP);
+        nv_disc(np, fp, DISC_OP_POP);
         if (!(fp->nofree & 1)) free(fp);
         stakseek(offset);
         return;
@@ -2071,7 +2071,7 @@ Namfun_t *nv_mapchar(Namval_t *np, const char *name) {
     if (low && strcmp(name, e_toupper)) n += strlen(name) + 1;
     if (mp) {
         if (strcmp(name, mp->name) == 0) return &mp->hdr;
-        nv_disc(np, &mp->hdr, NV_POP);
+        nv_disc(np, &mp->hdr, DISC_OP_POP);
         if (!(mp->hdr.nofree & 1)) free(mp);
     }
     mp = calloc(1, sizeof(struct Mapchar) + n);

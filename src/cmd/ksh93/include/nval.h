@@ -211,11 +211,25 @@ static inline bool nv_isarray(Namval_t *np) { return nv_isattr(np, NV_ARRAY) == 
 #define NV_ACURRENT 7  // return current subscript Namval_t*
 #define NV_ASETSUB 8   // set current subscript
 
-// The following are for nv_disc.
-#define NV_FIRST 1
-#define NV_LAST 2
-#define NV_POP 3
-#define NV_CLONE 4
+// The following symbols are for use with nv_disc(). We start with the arbitrary value 113 to help
+// ensure that calling `nv_disc()` with an unexpected op value (especially zero) will fail.
+enum {
+    DISC_OP_NOOP_val = 1,  // ??? (this used to be the magic `0` constant used by four callers)
+    DISC_OP_FIRST_val,     // Move or push <fp> to top of the stack or delete top
+    DISC_OP_LAST_val,      // Move or push <fp> to bottom of stack or delete last
+    DISC_OP_POP_val,       // Delete <fp> from top of the stack
+    DISC_OP_CLONE_val      // Replace <fp> with a copy created my malloc() and return it
+};
+
+typedef struct {
+    int val;
+} Nvdisc_op_t;
+
+const Nvdisc_op_t DISC_OP_NOOP;
+const Nvdisc_op_t DISC_OP_FIRST;
+const Nvdisc_op_t DISC_OP_LAST;
+const Nvdisc_op_t DISC_OP_POP;
+const Nvdisc_op_t DISC_OP_CLONE;
 
 // The following are operations for nv_putsub().
 #define ARRAY_BITS 22
@@ -268,7 +282,7 @@ extern int nv_settype(Namval_t *, Namval_t *, int);
 extern void nv_setvec(Namval_t *, int, int, char *[]);
 extern void nv_setvtree(Namval_t *);
 extern int nv_setsize(Namval_t *, int);
-extern Namfun_t *nv_disc(Namval_t *, Namfun_t *, int);
+extern Namfun_t *nv_disc(Namval_t *, Namfun_t *, Nvdisc_op_t);
 extern void nv_unset(Namval_t *); /*obsolete */
 extern void _nv_unset(Namval_t *, int);
 extern Namval_t *nv_search(const char *, Dt_t *, int);
@@ -281,6 +295,6 @@ extern const Namdisc_t *nv_discfun(int);
 
 #define nv_unset(np) _nv_unset(np, 0)
 #define nv_size(np) nv_setsize((np), -1)
-#define nv_stack(np, nf) nv_disc(np, nf, 0)
+#define nv_stack(np, nf) nv_disc(np, nf, DISC_OP_NOOP)
 
 #endif  // _NVAL_H
