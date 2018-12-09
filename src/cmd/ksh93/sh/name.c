@@ -2577,9 +2577,9 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
             mp = nv_opensub(np);
             if (mp) {
                 if (trans) {
-                    nv_disc(np, &ap->hdr, NV_POP);
+                    nv_disc(np, &ap->hdr, DISC_OP_POP);
                     nv_clone(np, mp, 0);
-                    nv_disc(np, &ap->hdr, NV_FIRST);
+                    nv_disc(np, &ap->hdr, DISC_OP_FIRST);
                     nv_offattr(mp, NV_ARRAY);
                 }
                 nv_newattr(mp, newatts & ~NV_ARRAY, size);

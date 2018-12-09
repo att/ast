@@ -40,6 +40,12 @@
 
 static_fn void assign(Namval_t *, const void *, int, Namfun_t *);
 
+const Nvdisc_op_t DISC_OP_NOOP = {DISC_OP_NOOP_val};
+const Nvdisc_op_t DISC_OP_FIRST = {DISC_OP_FIRST_val};
+const Nvdisc_op_t DISC_OP_LAST = {DISC_OP_LAST_val};
+const Nvdisc_op_t DISC_OP_POP = {DISC_OP_POP_val};
+const Nvdisc_op_t DISC_OP_CLONE = {DISC_OP_CLONE_val};
+
 int nv_compare(Dt_t *dict, void *sp, void *dp, Dtdisc_t *disc) {
     UNUSED(dict);
     UNUSED(disc);
@@ -126,7 +132,7 @@ void nv_putv(Namval_t *np, const void *value, int flags, Namfun_t *nfp) {
         fpnext = fp->next;
         if (!fp->disc || !fp->disc->putval) {
             if (!value && (!(ap = nv_arrayptr(np)) || ap->nelem == 0)) {
-                if (fp->disc || !(fp->nofree & 1)) nv_disc(np, fp, NV_POP);
+                if (fp->disc || !(fp->nofree & 1)) nv_disc(np, fp, DISC_OP_POP);
                 if (!(fp->nofree & 1)) free(fp);
             }
             continue;
@@ -300,7 +306,7 @@ static_fn void assign(Namval_t *np, const void *val, int flags, Namfun_t *handle
         block(bp, type);
         if (!nv_isattr(np, NV_MINIMAL)) pp = (Namval_t *)np->nvenv;
         nv_putv(np, val, flags, handle);
-        if (!nv_isarray(np) || array_isempty(np)) nv_disc(np, handle, NV_POP);
+        if (!nv_isarray(np) || array_isempty(np)) nv_disc(np, handle, DISC_OP_POP);
         if (shp->subshell) goto done;
         if (pp && nv_isarray(pp)) goto done;
         if (nv_isarray(np) && !array_isempty(np)) goto done;
@@ -536,7 +542,7 @@ static_fn void putdisc(Namval_t *np, const void *val, int flag, Namfun_t *fp) {
                 free(mp);
             }
         }
-        nv_disc(np, fp, NV_POP);
+        nv_disc(np, fp, DISC_OP_POP);
         if (!(fp->nofree & 1)) free(fp);
     }
 }
@@ -582,59 +588,61 @@ bool nv_adddisc(Namval_t *np, const char **names, Namval_t **funs) {
 }
 
 //
-// push, pop, clne, or reorder disciplines onto node <np>.
-// mode can be one of
-//    NV_FIRST:  Move or push <fp> to top of the stack or delete top
-//    NV_LAST:	 Move or push <fp> to bottom of stack or delete last
-//    NV_POP:	 Delete <fp> from top of the stack
-//    NV_CLONE:  Replace fp with a copy created my malloc() and return it
+// Push, pop, clone, or reorder disciplines onto node <np>.
+// <op> can be one of
+//    DISC_OP_NOOP:   ???
+//    DISC_OP_FIRST:  Move or push <fp> to top of the stack or delete top.
+//    DISC_OP_LAST:   Move or push <fp> to bottom of stack or delete last.
+//    DISC_OP_POP:    Delete <fp> from top of the stack.
+//    DISC_OP_CLONE:  Replace <fp> with a copy created my malloc() and return it.
 //
-Namfun_t *nv_disc(Namval_t *np, Namfun_t *fp, int mode) {
+Namfun_t *nv_disc(Namval_t *np, Namfun_t *fp, Nvdisc_op_t op) {
     Shell_t *shp = sh_ptr(np);
     Namfun_t *lp, **lpp;
 
-    if (nv_isref(np)) return 0;
-    if (mode == NV_CLONE && !fp) return 0;
+    if (nv_isref(np)) return NULL;
+    if (op.val == DISC_OP_CLONE_val && !fp) return NULL;
+
     if (fp) {
         fp->subshell = shp->subshell;
         if ((lp = np->nvfun) == fp) {
-            if (mode == NV_CLONE) {
+            if (op.val == DISC_OP_CLONE_val) {
                 lp = nv_clone_disc(fp, 0);
                 np->nvfun = lp;
                 return lp;
             }
-            if (mode == NV_FIRST || mode == 0) return fp;
+            if (op.val == DISC_OP_FIRST_val || op.val == DISC_OP_NOOP_val) return fp;
             np->nvfun = lp->next;
-            if (mode == NV_POP) return fp;
-            if (mode == NV_LAST && (lp->next == 0 || lp->next->disc == 0)) return fp;
+            if (op.val == DISC_OP_POP_val) return fp;
+            if (op.val == DISC_OP_LAST_val && (lp->next == 0 || lp->next->disc == 0)) return fp;
         }
         // See if <fp> is on the list already.
         lpp = &np->nvfun;
         if (lp) {
             while (lp->next && lp->next->disc) {
                 if (lp->next == fp) {
-                    if (mode == NV_LAST && fp->next == 0) return fp;
-                    if (mode == NV_CLONE) {
+                    if (op.val == DISC_OP_LAST_val && fp->next == 0) return fp;
+                    if (op.val == DISC_OP_CLONE_val) {
                         fp = nv_clone_disc(fp, 0);
                         lp->next = fp;
                         return fp;
                     }
                     lp->next = fp->next;
-                    if (mode == NV_POP) return fp;
-                    if (mode != NV_LAST) break;
+                    if (op.val == DISC_OP_POP_val) return fp;
+                    if (op.val != DISC_OP_LAST_val) break;
                 }
                 lp = lp->next;
             }
-            if (mode == NV_LAST && lp->disc) lpp = &lp->next;
+            if (op.val == DISC_OP_LAST_val && lp->disc) lpp = &lp->next;
         }
-        if (mode == NV_POP) return 0;
+        if (op.val == DISC_OP_POP_val) return NULL;
         // Push.
         nv_offattr(np, NV_NODISC);
-        if (mode == NV_LAST) {
+        if (op.val == DISC_OP_LAST_val) {
             if (lp && !lp->disc) {
                 fp->next = lp;
             } else {
-                fp->next = 0;
+                fp->next = NULL;
             }
         } else {
             if ((fp->nofree & 1) && *lpp) fp = nv_clone_disc(fp, 0);
@@ -642,9 +650,9 @@ Namfun_t *nv_disc(Namval_t *np, Namfun_t *fp, int mode) {
         }
         *lpp = fp;
     } else {
-        if (mode == NV_FIRST) {
+        if (op.val == DISC_OP_FIRST_val) {
             return np->nvfun;
-        } else if (mode == NV_LAST) {
+        } else if (op.val == DISC_OP_LAST_val) {
             for (lp = np->nvfun; lp; fp = lp, lp = lp->next) {
                 ;  // empty loop
             }
@@ -1093,9 +1101,6 @@ Namval_t *sh_addbuiltin(Shell_t *shp, const char *path, Shbltin_f bltin, void *e
     return np;
 }
 
-#undef nv_stack
-extern Namfun_t *nv_stack(Namval_t *np, Namfun_t *fp) { return nv_disc(np, fp, 0); }
-
 struct table {
     Namfun_t fun;
     Namval_t *parent;
@@ -1263,7 +1268,7 @@ Namval_t *nv_mount(Namval_t *np, const char *name, Dt_t *dict) {
     tp->dict = dict;
     tp->parent = pp;
     tp->fun.disc = &table_disc;
-    nv_disc(mp, &tp->fun, NV_FIRST);
+    nv_disc(mp, &tp->fun, DISC_OP_FIRST);
     return mp;
 }
 

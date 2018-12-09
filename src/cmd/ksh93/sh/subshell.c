@@ -326,7 +326,7 @@ static_fn void nv_restore(struct subshell *sp) {
         if (nv_isattr(mp, NV_MINIMAL) && !nv_isattr(np, NV_EXPORT)) flags |= NV_MINIMAL;
         if (nv_isarray(mp)) nv_putsub(mp, NULL, 0, ARRAY_SCAN);
         nofree = mp->nvfun ? mp->nvfun->nofree : 0;
-        _nv_unset(mp, NV_RDONLY | NV_CLONE);
+        _nv_unset(mp, NV_RDONLY);
         if (nv_isarray(np)) {
             nv_clone(np, mp, NV_MOVE);
             goto skip;

@@ -100,7 +100,7 @@ static_fn bool array_unscope(Namval_t *np, Namarr_t *ap) {
 
     if (!ap->scope) return false;
     if (is_associative(ap)) (*ap->fun)(np, NULL, NV_AFREE);
-    fp = nv_disc(np, (Namfun_t *)ap, NV_POP);
+    fp = nv_disc(np, (Namfun_t *)ap, DISC_OP_POP);
     if (fp && !(fp->nofree & 1)) free(fp);
     nv_delete(np, NULL, 0);
     return true;
@@ -580,7 +580,7 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
             _nv_unset(nv_namptr(aq->xp, 0), NV_RDONLY);
             free(aq->xp);
         }
-        if ((nfp = nv_disc(np, (Namfun_t *)ap, NV_POP)) && !(nfp->nofree & 1)) {
+        if ((nfp = nv_disc(np, (Namfun_t *)ap, DISC_OP_POP)) && !(nfp->nofree & 1)) {
             ap = 0;
             free(nfp);
         }
@@ -602,14 +602,14 @@ static const Namdisc_t array_disc = {.dsize = sizeof(Namarr_t),
                                      .clonef = array_clone};
 
 static_fn void array_copytree(Namval_t *np, Namval_t *mp) {
-    Namfun_t *fp = nv_disc(np, NULL, NV_POP);
+    Namfun_t *fp = nv_disc(np, NULL, DISC_OP_POP);
     nv_offattr(np, NV_ARRAY);
     nv_clone(np, mp, 0);
     if (np->nvalue.cp && !nv_isattr(np, NV_NOFREE)) free(np->nvalue.sp);
     np->nvalue.cp = 0;
     np->nvalue.up = &mp->nvalue;
     fp->nofree &= ~1;
-    nv_disc(np, (Namfun_t *)fp, NV_FIRST);
+    nv_disc(np, (Namfun_t *)fp, DISC_OP_FIRST);
     fp->nofree |= 1;
     nv_onattr(np, NV_ARRAY);
     mp->nvenv = (char *)np;
@@ -687,7 +687,7 @@ static_fn struct index_array *array_grow(Namval_t *np, struct index_array *arp, 
         ap->namarr.nelem = i;
         ap->namarr.flags = flags;
         ap->namarr.hdr.disc = &array_disc;
-        nv_disc(np, (Namfun_t *)ap, NV_FIRST);
+        nv_disc(np, (Namfun_t *)ap, DISC_OP_FIRST);
         nv_onattr(np, NV_ARRAY);
         if (mp) {
             array_copytree(np, mp);
@@ -853,7 +853,7 @@ Namval_t *nv_arraychild(Namval_t *np, Namval_t *nq, int c) {
     }
     nq->nvenv = (char *)np;
     nq->nvshell = np->nvshell;
-    if ((fp = nq->nvfun) && fp->disc && fp->disc->setdisc && (fp = nv_disc(nq, fp, NV_POP))) {
+    if ((fp = nq->nvfun) && fp->disc && fp->disc->setdisc && (fp = nv_disc(nq, fp, DISC_OP_POP))) {
         free(fp);
     }
     if (!ap->fun) {
@@ -1189,7 +1189,7 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
                 ap->cur = 0;
                 ap->pos = 0;
                 ap->namarr.hdr.disc = &array_disc;
-                nv_disc(np, (Namfun_t *)ap, NV_FIRST);
+                nv_disc(np, (Namfun_t *)ap, DISC_OP_FIRST);
                 ap->namarr.hdr.dsize = sizeof(struct assoc_array);
                 ap->namarr.hdr.nofree &= ~1;
             }

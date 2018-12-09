@@ -512,7 +512,7 @@ static_fn struct Level *init_level(Shell_t *shp, int level) {
     shp->last_root = nv_dict(DOTSHNOD);
     nv_putval(SH_LEVELNOD, (char *)&lp->maxlevel, NV_INT16);
     lp->hdr.disc = &level_disc;
-    nv_disc(SH_LEVELNOD, &lp->hdr, NV_FIRST);
+    nv_disc(SH_LEVELNOD, &lp->hdr, DISC_OP_FIRST);
     return lp;
 }
 
