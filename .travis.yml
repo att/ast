@@ -91,5 +91,6 @@ script:
     - docker run -v $TRAVIS_BUILD_DIR:/source ${DISTRO_TYPE} bash -c "set -e;
         ${INSTALL_REQUIREMENTS};
         useradd --create-home test;
+        echo \"/tmp/ksh_auditfile;\$(id -u test)\" > /etc/ksh_audit;
         chown -R test /source;
         sudo -u test /source/scripts/build-on-docker.sh '${DISTRO_TYPE}'"
