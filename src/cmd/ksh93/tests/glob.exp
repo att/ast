@@ -1,0 +1,22 @@
+# Tests for globbing
+set pid [spawn $ksh]
+expect_prompt
+
+# ==========
+# If `FIGNORE` is set, `.` and `..` should be ignored
+# https://github.com/att/ast/issues/11
+log_test_entry
+send "FIGNORE=foo; mkdir -p bar/baz; cd bar; echo *\r"
+expect -re "\r\nbaz\r\n" {
+    puts "`.` and `..` are ignored if `FIGNORE` is set"
+}
+expect_prompt
+
+# Exit shell with ctrl-d
+log_test_entry
+send [ctrl D]
+catch {expect default exp_continue} output
+log_debug "EOF output: $output"
+
+catch {wait}
+exit 0
