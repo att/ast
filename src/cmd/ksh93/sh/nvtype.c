@@ -650,7 +650,7 @@ static_fn int typeinfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
     }
     if (strcmp(str, "other") == 0) {
         Nambfun_t *bp;
-        bp = (Nambfun_t *)nv_hasdisc(np, nv_discfun(NV_DCADD));
+        bp = (Nambfun_t *)nv_hasdisc(np, nv_discfun(DISCFUN_ADD));
         if (bp) {
             for (i = 0; i < bp->num; i++) {
                 if (nv_isattr(bp->bltins[i], NV_OPTGET)) {
@@ -1003,7 +1003,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                     }
                 }
             }
-            bfp = (Nambfun_t *)nv_hasdisc(np, nv_discfun(NV_DCADD));
+            bfp = (Nambfun_t *)nv_hasdisc(np, nv_discfun(DISCFUN_ADD));
             if (bfp) {
                 for (j = 0; j < bfp->num; j++) {
                     pp->names[nd++] = (char *)bfp->bnames[j];
