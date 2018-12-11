@@ -437,6 +437,11 @@ skip:
             }
             if (restore2) *restore2 = gp->gl_delim;
             while ((name = (*gp->gl_dirnext)(gp, dirf)) && !*gp->gl_intr) {
+                // If FIGNORE is set, ignore `.` and `..`.
+                // https://github.com/att/ast/issues/11
+                if (gp->gl_fignore && (!strcmp(name, ".") || !strcmp(name, ".."))) {
+                    continue;
+                }
                 notdir = (gp->gl_status & GLOB_NOTDIR);
                 if (notdir) gp->gl_status &= ~GLOB_NOTDIR;
                 if (ire && !regexec(ire, name, 0, NULL, 0)) continue;
