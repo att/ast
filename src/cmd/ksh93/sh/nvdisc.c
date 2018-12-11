@@ -1272,10 +1272,10 @@ Namval_t *nv_mount(Namval_t *np, const char *name, Dt_t *dict) {
     return mp;
 }
 
-const Namdisc_t *nv_discfun(int which) {
-    if (which == NV_DCADD) return &Nv_bdisc;
-    if (which == NV_DCRESTRICT) return &RESTRICTED_disc;
-    return NULL;
+const Namdisc_t *nv_discfun(Nvdiscfun_op_t op) {
+    if (op == DISCFUN_ADD) return &Nv_bdisc;
+    if (op == DISCFUN_RESTRICT) return &RESTRICTED_disc;
+    abort();
 }
 
 bool nv_hasget(Namval_t *np) {

@@ -237,9 +237,13 @@ const Nvdisc_op_t DISC_OP_CLONE;
 #define ARRAY_SCAN (2L << ARRAY_BITS)   // For ${array[@]}
 #define ARRAY_UNDEF (4L << ARRAY_BITS)  // For ${array}
 
-// These  are disciplines provided by the library for use with nv_discfun.
-#define NV_DCADD 0       // used to add named disciplines
-#define NV_DCRESTRICT 1  // variable that are restricted in rsh
+// These symbols are passed to `nv_discfun()` to cause it to return a set of disciplines that
+// implement a specific policy. We start with the arbitrary value 19 to help ensure that calling
+// `nv_discfun()` with an unexpected op value will fail.
+typedef enum {
+    DISCFUN_ADD = 19,  // for vars that have named shell level disciplines (e.g., var.get() {...})
+    DISCFUN_RESTRICT   // for vars that cannot be modified in a restricted shell
+} Nvdiscfun_op_t;
 
 // Prototype for array interface.
 extern Namarr_t *nv_arrayptr(Namval_t *);
@@ -291,7 +295,7 @@ extern Namval_t *nv_type(Namval_t *);
 // Note that the third parameter should be a pointer to a Optdisc_t or a structure where that type
 // is the first member.
 extern void nv_addtype(Namval_t *, const char *, void *, size_t);
-extern const Namdisc_t *nv_discfun(int);
+extern const Namdisc_t *nv_discfun(Nvdiscfun_op_t);
 
 #define nv_unset(np) _nv_unset(np, 0)
 #define nv_size(np) nv_setsize((np), -1)

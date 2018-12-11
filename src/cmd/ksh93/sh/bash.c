@@ -376,7 +376,7 @@ void bash_init(Shell_t *shp, int mode) {
     // Restrict BASH_ENV.
     np = nv_open("BASH_ENV", shp->var_tree, 0);
     if (np) {
-        const Namdisc_t *dp = nv_discfun(NV_DCRESTRICT);
+        const Namdisc_t *dp = nv_discfun(DISCFUN_RESTRICT);
         Namfun_t *fp = calloc(dp->dsize, 1);
         fp->disc = dp;
         nv_disc(np, fp, DISC_NOOP);
