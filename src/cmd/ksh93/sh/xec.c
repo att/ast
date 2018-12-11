@@ -1099,7 +1099,10 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                                     (fd != shp->pwdfd))
                                     sh_close(fd);
                         }
-                        if (argn) shp->exitval = (*shp->bltinfun)(argn, com, (void *)bp);
+                        if (argn) {
+                            shp->exitval = (*shp->bltinfun)(argn, com, (void *)bp);
+                            sfsync(NULL);
+                        }
                         if (error_info.flags & ERROR_INTERACTIVE) tty_check(ERRIO);
                         ((Shnode_t *)t)->com.comstate = shp->bltindata.data;
                         bp->data = (void *)save_data;
@@ -1122,6 +1125,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         }
                         if (shp->bltinfun && (error_info.flags & ERROR_NOTIFY)) {
                             (*shp->bltinfun)(-2, com, (void *)bp);
+                            sfsync(NULL);
                         }
                         // Failure on special built-ins fatal.
                         if (jmpval <= SH_JMPCMD && (!nv_isattr(np, BLT_SPC) || command)) {
