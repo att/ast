@@ -1465,6 +1465,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                         sh_iosave(shp, fn, indx, tname ? fname : (trunc ? Empty : 0));
                     }
                 } else if (!vex && flag != 3 && sh_subsavefd(fn)) {
+                    // TODO: Truncation flag is not passed here. Is there a bug here ?
                     sh_iosave(shp, fn, indx | IOSUBSHELL, tname ? fname : 0);
                 }
             }
