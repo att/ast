@@ -586,3 +586,11 @@ export TMPF
 [[ -n "$($SHELL -c 'echo $(<$TMPF)' <&-)" ]] || log_error "Closing stdin causes failure when reading file through \$(<)"
 [[ -n "$($SHELL -c "$SHELL -c 'echo \$(<$TMPF) >&2' >&-" 2>&1)" ]] || log_error "Closing stdout causes failure when reading file through \$(<)"
 [[ -n "$($SHELL -c 'echo $(<$TMPF)' 2>&-)" ]]  || log_error "Closing stderr causes failure when reading file through \$(<)"
+
+# ==========
+# https://github.com/att/ast/issues/9
+echo foo bar > baz
+$SHELL -c 'echo xxx 1<>; baz'
+actual=$(cat baz)
+expect="xxx"
+[[ "$actual" = "$expect" ]] || log_error "<>; does not truncate files" "$expect" "$actual"
