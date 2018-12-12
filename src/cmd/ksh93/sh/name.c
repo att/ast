@@ -1112,8 +1112,10 @@ void nv_delete(Namval_t *np, Dt_t *root, int flags) {
                 ((flags & NV_FUNCTION) || !nv_subsaved(np, flags & NV_TABLE))) {
                 Namarr_t *ap;
                 if (nv_isarray(np) && np->nvfun && (ap = nv_arrayptr(np)) && is_associative(ap)) {
-                    while (nv_associative(np, 0, NV_ANEXT)) nv_associative(np, 0, NV_ADELETE);
-                    nv_associative(np, 0, NV_AFREE);
+                    while (nv_associative(np, 0, ASSOC_OP_NEXT)) {
+                        nv_associative(np, 0, ASSOC_OP_DELETE);
+                    }
+                    nv_associative(np, 0, ASSOC_OP_FREE);
                     free(np->nvfun);
                 }
                 free(np);

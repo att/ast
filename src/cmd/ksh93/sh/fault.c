@@ -512,7 +512,7 @@ static_fn void array_notify(Namval_t *np, void *data) {
     Namarr_t *ap = nv_arrayptr(np);
     UNUSED(data);
 
-    if (ap && ap->fun) (*ap->fun)(np, 0, NV_AFREE);
+    if (ap && ap->fun) (*ap->fun)(np, 0, ASSOC_OP_FREE);
 }
 
 //

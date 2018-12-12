@@ -49,6 +49,17 @@
 #define ARRAY_NOFREE 2
 #define ARRAY_UNSET 4
 
+// Constants for the `nv_associative()` "op" parameter.
+const Nvassoc_op_t ASSOC_OP_INIT = {ASSOC_OP_INIT_val};
+const Nvassoc_op_t ASSOC_OP_FREE = {ASSOC_OP_FREE_val};
+const Nvassoc_op_t ASSOC_OP_NEXT = {ASSOC_OP_NEXT_val};
+const Nvassoc_op_t ASSOC_OP_NAME = {ASSOC_OP_NAME_val};
+const Nvassoc_op_t ASSOC_OP_DELETE = {ASSOC_OP_DELETE_val};
+const Nvassoc_op_t ASSOC_OP_ADD = {ASSOC_OP_ADD_val};
+const Nvassoc_op_t ASSOC_OP_ADD2 = {ASSOC_OP_ADD2_val};
+const Nvassoc_op_t ASSOC_OP_CURRENT = {ASSOC_OP_CURRENT_val};
+const Nvassoc_op_t ASSOC_OP_SETSUB = {ASSOC_OP_SETSUB_val};
+
 struct index_array {
     Namarr_t namarr;
     void *xp;             // if set, subscripts will be converted
@@ -99,7 +110,7 @@ static_fn bool array_unscope(Namval_t *np, Namarr_t *ap) {
     Namfun_t *fp;
 
     if (!ap->scope) return false;
-    if (is_associative(ap)) (*ap->fun)(np, NULL, NV_AFREE);
+    if (is_associative(ap)) (*ap->fun)(np, NULL, ASSOC_OP_FREE);
     fp = nv_disc(np, (Namfun_t *)ap, DISC_OP_POP);
     if (fp && !(fp->nofree & 1)) free(fp);
     nv_delete(np, NULL, 0);
@@ -170,12 +181,12 @@ static_fn union Value *array_getup(Namval_t *np, Namarr_t *arp, int update) {
     if (!arp) return &np->nvalue;
     if (is_associative(&ap->namarr)) {
         Namval_t *mp;
-        mp = (Namval_t *)((*arp->fun)(np, NULL, NV_ACURRENT));
+        mp = (Namval_t *)((*arp->fun)(np, NULL, ASSOC_OP_CURRENT));
         if (mp) {
             nofree = nv_isattr(mp, NV_NOFREE);
             up = &(mp->nvalue);  // parens are to silence false positive from cppcheck
         } else {
-            return (union Value *)((*arp->fun)(np, NULL, 0));
+            return (union Value *)((*arp->fun)(np, NULL, ASSOC_OP_ADD2));
         }
     } else {
         if (ap->cur >= ap->maxi) {
@@ -240,7 +251,7 @@ static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
             ap->namarr.flags |= ARRAY_SCAN;
         } else {  // same as array[0]
             if (is_associative(&ap->namarr)) {
-                (*ap->namarr.fun)(np, "0", flag == ARRAY_ASSIGN ? NV_AADD : 0);
+                (*ap->namarr.fun)(np, "0", flag == ARRAY_ASSIGN ? ASSOC_OP_ADD : ASSOC_OP_ADD2);
             } else {
                 ap->cur = 0;
             }
@@ -248,7 +259,7 @@ static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
     }
     if (nv_isattr(np, NV_NOTSET) == NV_NOTSET) nv_offattr(np, NV_BINARY);
     if (is_associative(&ap->namarr)) {
-        mp = (Namval_t *)((*arp->fun)(np, NULL, NV_ACURRENT));
+        mp = (Namval_t *)((*arp->fun)(np, NULL, ASSOC_OP_CURRENT));
         if (!mp) {
             up = (union Value *)&mp;
         } else if (nv_isarray(mp)) {
@@ -409,7 +420,7 @@ static_fn Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t 
     ar = (struct index_array *)ap;
     if (!is_associative(ap)) ar->bits = (unsigned char *)&ar->val[ar->maxi];
     if (!nv_putsub(np, NULL, 0, ARRAY_SCAN | ((flags & NV_COMVAR) ? 0 : ARRAY_NOSCOPE))) {
-        if (ap->fun) (*ap->fun)(np, (char *)np, 0);
+        if (ap->fun) (*ap->fun)(np, (char *)np, ASSOC_OP_ADD2);
         skipped = 1;
         goto skip;
     }
@@ -520,7 +531,7 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
         if (!string) {
             if (mp) {
                 if (is_associative(ap)) {
-                    (*ap->fun)(np, NULL, NV_ADELETE);
+                    (*ap->fun)(np, NULL, ASSOC_OP_DELETE);
                     np->nvalue.cp = 0;
                 } else {
                     if (mp != np) {
@@ -538,7 +549,7 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
             }
             if (array_elem(ap) == 0 && (ap->flags & ARRAY_SCAN)) {
                 if (is_associative(ap)) {
-                    (*ap->fun)(np, NULL, NV_AFREE);
+                    (*ap->fun)(np, NULL, ASSOC_OP_FREE);
                 } else if (ap->table) {
                     dtclose(ap->table);
                     ap->table = 0;
@@ -737,7 +748,8 @@ Namarr_t *nv_arrayptr(Namval_t *np) {
 // Verify that argument is an indexed array and convert to associative, freeing
 // relevant storage.
 //
-static_fn Namarr_t *nv_changearray(Namval_t *np, void *(*fun)(Namval_t *, const char *, int)) {
+static_fn Namarr_t *nv_changearray(Namval_t *np,
+                                   void *(*fun)(Namval_t *, const char *, Nvassoc_op_t)) {
     Namarr_t *ap;
     char numbuff[NUMSIZE + 1];
     unsigned dot, digit, n;
@@ -750,7 +762,7 @@ static_fn Namarr_t *nv_changearray(Namval_t *np, void *(*fun)(Namval_t *, const 
 
     nv_stack(np, &ap->hdr);
     save_ap = (struct index_array *)nv_stack(np, 0);
-    ap = (Namarr_t *)((*fun)(np, NULL, NV_AINIT));
+    ap = (Namarr_t *)((*fun)(np, NULL, ASSOC_OP_INIT));
     ap->nelem = 0;
     ap->flags = 0;
     ap->fun = fun;
@@ -767,7 +779,7 @@ static_fn Namarr_t *nv_changearray(Namval_t *np, void *(*fun)(Namval_t *, const 
                 }
             }
             nv_putsub(np, string_index, 0, ARRAY_ADD);
-            up = (union Value *)((*ap->fun)(np, NULL, 0));
+            up = (union Value *)((*ap->fun)(np, NULL, ASSOC_OP_ADD2));
             up->cp = save_ap->val[dot].cp;
             save_ap->val[dot].cp = 0;
         }
@@ -781,7 +793,7 @@ static_fn Namarr_t *nv_changearray(Namval_t *np, void *(*fun)(Namval_t *, const 
 // Set the associative array processing method for node <np> to <fun>.
 // The array pointer is returned if sucessful.
 //
-Namarr_t *nv_setarray(Namval_t *np, void *(*fun)(Namval_t *, const char *, int)) {
+Namarr_t *nv_setarray(Namval_t *np, void *(*fun)(Namval_t *, const char *, Nvassoc_op_t)) {
     Namarr_t *ap;
     int flags = 0;
 
@@ -805,7 +817,7 @@ Namarr_t *nv_setarray(Namval_t *np, void *(*fun)(Namval_t *, const char *, int))
     Namfun_t *fp = nv_isvtree(np);
     char *value = fp ? NULL : nv_getval(np);
 
-    ap = (Namarr_t *)((*fun)(np, NULL, NV_AINIT));
+    ap = (Namarr_t *)((*fun)(np, NULL, ASSOC_OP_INIT));
     if (!ap) return NULL;
 
     // Check for preexisting initialization and save.
@@ -817,7 +829,7 @@ Namarr_t *nv_setarray(Namval_t *np, void *(*fun)(Namval_t *, const char *, int))
         if (value) {
             nv_putval(np, value, 0);
         } else {
-            Namval_t *mp = (Namval_t *)((*fun)(np, NULL, NV_ACURRENT));
+            Namval_t *mp = (Namval_t *)((*fun)(np, NULL, ASSOC_OP_CURRENT));
             array_copytree(np, mp);
         }
     }
@@ -879,7 +891,7 @@ bool nv_nextsub(Namval_t *np) {
 
     if (!ap || !(ap->namarr.flags & ARRAY_SCAN)) return false;
     if (is_associative(&ap->namarr)) {
-        if ((*ap->namarr.fun)(np, NULL, NV_ANEXT)) return true;
+        if ((*ap->namarr.fun)(np, NULL, ASSOC_OP_NEXT)) return true;
         ap->namarr.flags &= ~(ARRAY_SCAN | ARRAY_NOCHILD);
         return false;
     }
@@ -1022,16 +1034,16 @@ Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
     ap->namarr.flags |= (flags & (ARRAY_SCAN | ARRAY_NOCHILD | ARRAY_UNDEF | ARRAY_NOSCOPE));
     if (sp) {
         if (flags & ARRAY_SETSUB) {
-            (*ap->namarr.fun)(np, sp, NV_ASETSUB);
+            (*ap->namarr.fun)(np, sp, ASSOC_OP_SETSUB);
             return np;
         }
-        (*ap->namarr.fun)(np, sp, (flags & ARRAY_ADD) ? NV_AADD : 0);
-        if (!(flags & (ARRAY_SCAN | ARRAY_ADD)) && !(*ap->namarr.fun)(np, NULL, NV_ACURRENT))
+        (*ap->namarr.fun)(np, sp, (flags & ARRAY_ADD) ? ASSOC_OP_ADD : ASSOC_OP_ADD2);
+        if (!(flags & (ARRAY_SCAN | ARRAY_ADD)) && !(*ap->namarr.fun)(np, NULL, ASSOC_OP_CURRENT))
             np = NULL;
     } else if (flags & ARRAY_SCAN) {
-        (*ap->namarr.fun)(np, (char *)np, 0);
+        (*ap->namarr.fun)(np, (char *)np, ASSOC_OP_ADD2);
     } else if (flags & ARRAY_UNDEF) {
-        (*ap->namarr.fun)(np, "", 0);
+        (*ap->namarr.fun)(np, "", ASSOC_OP_ADD2);
     }
     if ((flags & ARRAY_SCAN) && !nv_nextsub(np)) np = NULL;
     return np;
@@ -1084,7 +1096,7 @@ Namval_t *nv_opensub(Namval_t *np) {
 
     if (!ap) return NULL;
     if (is_associative(&ap->namarr)) {
-        return (Namval_t *)((*ap->namarr.fun)(np, NULL, NV_ACURRENT));
+        return (Namval_t *)((*ap->namarr.fun)(np, NULL, ASSOC_OP_CURRENT));
     } else if (array_isbit(ap->bits, ap->cur, ARRAY_CHILD)) {
         return ap->val[ap->cur].np;
     }
@@ -1098,7 +1110,7 @@ char *nv_getsub(Namval_t *np) {
     char *cp = &numbuff[NUMSIZE];
 
     if (!np || !(ap = (struct index_array *)nv_arrayptr(np))) return NULL;
-    if (is_associative(&ap->namarr)) return (char *)((*ap->namarr.fun)(np, NULL, NV_ANAME));
+    if (is_associative(&ap->namarr)) return (char *)((*ap->namarr.fun)(np, NULL, ASSOC_OP_NAME));
     if (ap->xp) {
         np = nv_namptr(ap->xp, 0);
         np->nvalue.i16 = ap->cur;
@@ -1175,13 +1187,13 @@ int nv_aimax(Namval_t *np) {
 //
 // This is the default implementation for associative arrays.
 //
-void *nv_associative(Namval_t *np, const char *sp, int mode) {
+void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
     Shell_t *shp = sh_ptr(np);
     struct assoc_array *ap = (struct assoc_array *)nv_arrayptr(np);
     int type;
 
-    switch (mode) {
-        case NV_AINIT: {
+    switch (op.val) {
+        case ASSOC_OP_INIT_val: {
             ap = (struct assoc_array *)calloc(1, sizeof(struct assoc_array));
             if (ap) {
                 ap->namarr.table = dtopen(&_Nvdisc, Dtoset);
@@ -1195,7 +1207,7 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
             }
             return (void *)ap;
         }
-        case NV_ADELETE: {
+        case ASSOC_OP_DELETE_val: {
             if (ap->cur) {
                 Dt_t *scope = ap->namarr.scope;
                 if (!scope || scope == ap->namarr.table || !nv_search(ap->cur->nvname, scope, 0)) {
@@ -1207,7 +1219,7 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
             }
             return (void *)ap;
         }
-        case NV_AFREE: {
+        case ASSOC_OP_FREE_val: {
             ap->pos = 0;
             if (ap->namarr.scope) {
                 ap->namarr.table = dtview(ap->namarr.table, NULL);
@@ -1215,14 +1227,14 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
                 ap->namarr.scope = 0;
             } else {
                 if (ap->namarr.nelem == 0 && (ap->cur = nv_search("0", ap->namarr.table, 0))) {
-                    nv_associative(np, NULL, NV_ADELETE);
+                    nv_associative(np, NULL, ASSOC_OP_DELETE);
                 }
                 dtclose(ap->namarr.table);
                 ap->namarr.table = 0;
             }
             return (void *)ap;
         }
-        case NV_ANEXT: {
+        case ASSOC_OP_NEXT_val: {
             if (!ap->pos) {
                 if ((ap->namarr.flags & ARRAY_NOSCOPE) && ap->namarr.scope &&
                     dtvnext(ap->namarr.table)) {
@@ -1249,44 +1261,46 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
             }
             return NULL;
         }
-        case NV_ASETSUB: {
+        case ASSOC_OP_SETSUB_val: {
             ap->cur = (Namval_t *)sp;
             return (void *)ap->cur;
         }
-        case NV_ACURRENT: {
+        case ASSOC_OP_CURRENT_val: {
             if (ap->cur) ap->cur->nvenv = (char *)np;
             return (void *)ap->cur;
         }
-        case NV_ANAME: {
+        case ASSOC_OP_NAME_val: {
             if (ap->cur) {
                 if (!shp->instance && nv_isnull(ap->cur)) return NULL;
                 return (void *)ap->cur->nvname;
             }
             return NULL;
         }
-        default: {
+        case ASSOC_OP_ADD_val:
+        case ASSOC_OP_ADD2_val: {
             if (sp) {
                 Namval_t *mp = 0;
                 ap->cur = 0;
                 if (sp == (char *)np) return 0;
                 type = nv_isattr(np, ~(NV_NOFREE | NV_ARRAY | NV_CHILD | NV_MINIMAL));
-                if (mode) {
+                int mode = 0;
+                if (op.val == ASSOC_OP_ADD_val) {
                     mode = NV_ADD | HASH_NOSCOPE;
                 } else if (ap->namarr.flags & ARRAY_NOSCOPE) {
                     mode = HASH_NOSCOPE;
                 }
-                if (*sp == 0 && sh_isoption(shp, SH_XTRACE) && (mode & NV_ADD)) {
+                if (*sp == 0 && sh_isoption(shp, SH_XTRACE) && op.val == ASSOC_OP_ADD_val) {
                     errormsg(SH_DICT, ERROR_warn(0), "adding empty subscript");
                 }
                 if (shp->subshell && (mp = nv_search(sp, ap->namarr.table, 0)) && nv_isnull(mp)) {
                     ap->cur = mp;
                 }
                 if ((mp || (mp = nv_search(sp, ap->namarr.table, mode))) && nv_isnull(mp) &&
-                    (mode & NV_ADD)) {
+                    op.val == ASSOC_OP_ADD_val) {
                     mp->nvshell = np->nvshell;
                     nv_onattr(mp, type);
                     mp->nvenv = (char *)np;
-                    if ((mode & NV_ADD) && nv_type(np)) nv_arraychild(np, mp, 0);
+                    if (op.val == ASSOC_OP_ADD_val && nv_type(np)) nv_arraychild(np, mp, 0);
                     if (shp->subshell) sh_assignok(np, 1);
                     if (type & NV_INTEGER) {
                         nv_onattr(mp, NV_NOTSET);
@@ -1317,6 +1331,9 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
             }
             if (ap->cur) return &ap->cur->nvalue;
             return &ap->cur;
+        }
+        default: {
+            abort();
         }
     }
 }

@@ -114,13 +114,39 @@ struct Nambfun {
     Namval_t *bltins[1];
 };
 
+// The following constants define operations on associative arrays performed by `nv_associative()`.
+enum {
+    ASSOC_OP_INIT_val = 1,  // initialize
+    ASSOC_OP_FREE_val,      // free array
+    ASSOC_OP_NEXT_val,      // advance to next subscript
+    ASSOC_OP_NAME_val,      // return subscript name
+    ASSOC_OP_DELETE_val,    // delete current subscript
+    ASSOC_OP_ADD_val,       // add subscript if not found
+    ASSOC_OP_ADD2_val,      // ??? (this used to be the constant zero passed to nv_associative())
+    ASSOC_OP_CURRENT_val,   // return current subscript Namval_t*
+    ASSOC_OP_SETSUB_val,    // set current subscript
+};
+
+typedef struct {
+    int val;
+} Nvassoc_op_t;
+const Nvassoc_op_t ASSOC_OP_INIT;
+const Nvassoc_op_t ASSOC_OP_FREE;
+const Nvassoc_op_t ASSOC_OP_NEXT;
+const Nvassoc_op_t ASSOC_OP_NAME;
+const Nvassoc_op_t ASSOC_OP_DELETE;
+const Nvassoc_op_t ASSOC_OP_ADD;
+const Nvassoc_op_t ASSOC_OP_ADD2;
+const Nvassoc_op_t ASSOC_OP_CURRENT;
+const Nvassoc_op_t ASSOC_OP_SETSUB;
+
 // This is an array template header.
 struct Namarray {
     Namfun_t hdr;
-    long nelem;                                   // number of elements
-    void *(*fun)(Namval_t *, const char *, int);  // associative arrays
-    Dt_t *table;                                  // for subscripts
-    void *scope;                                  // non-NULL when scoped
+    long nelem;                                            // number of elements
+    void *(*fun)(Namval_t *, const char *, Nvassoc_op_t);  // associative array ops
+    Dt_t *table;                                           // for subscripts
+    void *scope;                                           // non-NULL when scoped
     int flags;
 };
 
@@ -251,16 +277,6 @@ const Nvdisc_op_t DISC_OP_LAST;
 const Nvdisc_op_t DISC_OP_POP;
 const Nvdisc_op_t DISC_OP_CLONE;
 
-// The following are operations for associative arrays.
-#define NV_AINIT 1     // initialize
-#define NV_AFREE 2     // free array
-#define NV_ANEXT 3     // advance to next subscript
-#define NV_ANAME 4     // return subscript name
-#define NV_ADELETE 5   // delete current subscript
-#define NV_AADD 6      // add subscript if not found
-#define NV_ACURRENT 7  // return current subscript Namval_t*
-#define NV_ASETSUB 8   // set current subscript
-
 // The following are operations for nv_putsub().
 #define ARRAY_BITS 22
 #define ARRAY_ADD (1L << ARRAY_BITS)    // add subscript if not found
@@ -277,9 +293,9 @@ typedef enum {
 
 // Prototype for array interface.
 extern Namarr_t *nv_arrayptr(Namval_t *);
-extern Namarr_t *nv_setarray(Namval_t *, void *(*)(Namval_t *, const char *, int));
+extern Namarr_t *nv_setarray(Namval_t *, void *(*)(Namval_t *, const char *, Nvassoc_op_t));
 extern int nv_arraynsub(Namarr_t *);
-extern void *nv_associative(Namval_t *, const char *, int);
+extern void *nv_associative(Namval_t *, const char *, Nvassoc_op_t);
 extern int nv_aindex(Namval_t *);
 extern bool nv_nextsub(Namval_t *);
 extern char *nv_getsub(Namval_t *);
@@ -347,7 +363,6 @@ extern const Namdisc_t *nv_discfun(Nvdiscfun_op_t);
 #define ARRAY_SETSUB (64L << ARRAY_BITS)    // set subscript
 #define ARRAY_NOSCOPE (128L << ARRAY_BITS)  // top level scope only
 #define ARRAY_TREE (256L << ARRAY_BITS)     // arrays of compound vars
-#define NV_ASETSUB 8                        // set subscript
 
 // These flags are used as options to array_get().
 #define ARRAY_ASSIGN 0
