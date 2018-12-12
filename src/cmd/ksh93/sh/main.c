@@ -506,11 +506,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
         if (!t) continue;
 
         execflags = sh_state(SH_ERREXIT) | sh_state(SH_INTERACTIVE);
-        // The last command may not have to fork.
-        if (!sh_isstate(shp, SH_PROFILE) && sh_isoption(shp, SH_CFLAG) &&
-            (fno < 0 || !(shp->fdstatus[fno] & (IOTTY | IONOSEEK))) && !sfreserve(iop, 0, 0)) {
-            execflags |= sh_state(SH_NOFORK);
-        }
+
         shp->st.execbrk = 0;
         sh_exec(shp, t, execflags);
         if (shp->forked) {
