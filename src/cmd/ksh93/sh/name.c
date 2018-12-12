@@ -3082,38 +3082,6 @@ void nv_unref(Namval_t *np) {
     }
 }
 
-//
-// These following are for binary compatibility with the old hash library. They will be removed
-// someday.
-//
-
-#undef hashscope
-
-Dt_t *hashscope(Dt_t *root) { return dtvnext(root); }
-
-#undef hashfree
-
-Dt_t *hashfree(Dt_t *root) {
-    Dt_t *dp = dtvnext(root);
-    dtclose(root);
-    return dp;
-}
-
-#undef hashname
-
-char *hashname(void *obj) {
-    Namval_t *np = (Namval_t *)obj;
-    return np->nvname;
-}
-
-#undef hashlook
-
-void *hashlook(Dt_t *root, const char *name, int mode, int size) {
-    UNUSED(size);
-
-    return nv_search(name, root, mode);
-}
-
 char *nv_name(Namval_t *np) {
     Shell_t *shp = sh_ptr(np);
     Namval_t *table = 0;

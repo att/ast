@@ -36,11 +36,9 @@
 #include "option.h"
 
 // For compatibility with old hash library.
-#define Hashtab_t Dt_t
 #define HASH_BUCKET 1
 #define HASH_NOSCOPE 2
 #define HASH_SCOPE 4
-#define hashscope(x) dtvnext(x)
 
 typedef struct Namval Namval_t;
 typedef struct Namfun Namfun_t;
