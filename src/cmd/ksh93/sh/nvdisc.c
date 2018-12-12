@@ -186,7 +186,9 @@ static_fn struct blocked *block_info(Namval_t *np, struct blocked *pp) {
     void *sub = 0;
     int isub = 0;
 
-    if (nv_isarray(np) && (isub = nv_aindex(np)) < 0) sub = nv_associative(np, NULL, NV_ACURRENT);
+    if (nv_isarray(np) && (isub = nv_aindex(np)) < 0) {
+        sub = nv_associative(np, NULL, ASSOC_OP_CURRENT);
+    }
     for (bp = blist; bp; bp = bp->next) {
         if (bp->np == np && bp->sub == sub && bp->isub == isub) return bp;
     }
