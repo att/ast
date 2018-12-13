@@ -52,6 +52,36 @@ static_fn char *get_pathtemp_dir() {
     return NULL;
 }
 
+#if !has_dev_fd
+//
+// Construct a unique temp pathname based on a file name prefix and the current pid. This should
+// only be used if a psuedo-unique path is required that does not represent an actual file. In the
+// latter case the `ast_temp_file()` function should be used.
+//
+// This is currently predicated on the `has_dev_fd` build time symbol because it is only needed if
+// that is false.
+//
+char *ast_temp_path(const char *prefix) {
+    const char *dir = get_pathtemp_dir();
+    if (!dir) return NULL;
+
+    char pid[10];
+    (void)snprintf(pid, sizeof(pid), "%d", getpid());
+
+    int dir_len = strlen(dir);
+    int prefix_len = strlen(prefix);
+
+    char *template = malloc(dir_len + prefix_len + strlen(pid) + 2);
+    assert(template);
+    strcpy(template, dir);
+    if (dir_len && dir[dir_len - 1] != '/') strcat(template, "/");
+    strcat(template, prefix);
+    if (prefix_len && prefix[prefix_len - 1] != '.') strcat(template, ".");
+    strcat(template, pid);
+    return template;
+}
+#endif  // !has_dev_fd
+
 //
 // Create a temp file, open it, and return the dynamically constructed pathname and open fd.
 //
@@ -70,6 +100,8 @@ static_fn char *get_pathtemp_dir() {
 //   The `fd` parameter will be updated to the file descriptor open on the file.
 //
 char *ast_temp_file(const char *dir, const char *prefix, int *fd, int open_flags) {
+    assert(fd);
+
     if (!dir) dir = get_pathtemp_dir();
     if (!dir) return NULL;
     int dir_len = strlen(dir);
@@ -88,21 +120,10 @@ char *ast_temp_file(const char *dir, const char *prefix, int *fd, int open_flags
     if (prefix_len && prefix[prefix_len - 1] != '.') strcat(template, ".");
     strcat(template, TEMPLATE);
 
-    if (fd) {
-        *fd = mkostemp(template, open_flags);
-        if (*fd == -1) {
-            free(template);
-            return NULL;
-        }
-    } else {
-        // Only construct a unique file name from the template. Don't create and open a file.
-        // This should only be used if the caller is going to use the name to create something
-        // other than a file; e.g., a named fifo.
-#ifndef __clang_analyzer__
-        // cppcheck-suppress  mktempCalled
-        char *tp = mktemp(template);
-        assert(tp);
-#endif
+    *fd = mkostemp(template, open_flags);
+    if (*fd == -1) {
+        free(template);
+        return NULL;
     }
 
     return template;

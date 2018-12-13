@@ -238,6 +238,7 @@ extern size_t pathposix(const char *, char *, size_t);
 extern size_t pathprog(const char *, char *, size_t);
 extern char *pathshell(void);
 extern int pathstat(const char *, struct stat *);
+extern char *ast_temp_path(const char *prefix);
 extern char *ast_temp_file(const char *dir, const char *prefix, int *fd, int open_flags);
 extern char *sh_setenviron(const char *);
 extern char *strcopy(char *, const char *);
