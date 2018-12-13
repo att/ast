@@ -25,7 +25,7 @@
 #ifndef _PATH_H
 #define _PATH_H 1
 
-#include "nval.h"
+#include "name.h"
 #include "shell.h"
 
 #if !SHOPT_SPAWN && _use_spawnveg
