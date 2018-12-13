@@ -382,7 +382,6 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
     char *sub = 0, *cp = (char *)np;
     Namval_t *mp;
     Shell_t *shp = lvalue->shp;
-    int flags = HASH_NOSCOPE | HASH_SCOPE | HASH_BUCKET;
     int c = 0, nosub = lvalue->nosub;
     Dt_t *sdict = (shp->st.real_fun ? shp->st.real_fun->sdict : 0);
     Dt_t *nsdict = (shp->namespace ? nv_dict(shp->namespace) : 0);
@@ -422,19 +421,20 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
             flag = 0;
         }
         cp = (char *)np;
-    } else if (assign == NV_ASSIGN && nv_isnull(np) && !nv_isattr(np, ~(NV_MINIMAL | NV_NOFREE))) {
-        flags |= NV_ADD;
     }
-    if ((lvalue->emode & ARITH_COMP) && dtvnext(root) &&
-        ((sdict && (mp = nv_search(cp, sdict, flags & ~NV_ADD))) ||
-         (mp = nv_search(cp, root, flags & ~(NV_ADD))) ||
-         (nsdict && (mp = nv_search(cp, nsdict, flags & ~(NV_ADD | HASH_NOSCOPE))))))
-        np = mp;
+
+    if ((lvalue->emode & ARITH_COMP) && dtvnext(root)) {
+        mp = nv_search(cp, sdict ? sdict : root, HASH_NOSCOPE | HASH_SCOPE | HASH_BUCKET);
+        if (!mp && nsdict) mp = nv_search(cp, nsdict, HASH_SCOPE | HASH_BUCKET);
+        if (mp) np = mp;
+    }
+
     while (nv_isref(np)) {
         sub = nv_refsub(np);
         np = nv_refnode(np);
         if (sub) nv_putsub(np, sub, 0, assign == NV_ASSIGN ? ARRAY_ADD : 0);
     }
+
     if (!nosub && flag) {
         int hasdot = 0;
         cp = (char *)&lvalue->expr[flag];
