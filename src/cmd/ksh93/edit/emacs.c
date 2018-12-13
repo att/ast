@@ -60,6 +60,7 @@
 #include <setjmp.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 
 #include "ast.h"
 #include "defs.h"
