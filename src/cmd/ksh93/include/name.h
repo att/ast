@@ -256,8 +256,7 @@ static inline void nv_setattr(Namval_t *np, unsigned int nvflag) { np->nvflag = 
 
 static inline bool nv_isarray(Namval_t *np) { return nv_isattr(np, NV_ARRAY) == NV_ARRAY; }
 
-// The following symbols are for use with nv_disc(). We start with the arbitrary value 113 to help
-// ensure that calling `nv_disc()` with an unexpected op value (especially zero) will fail.
+// The following symbols are for use with nv_disc().
 enum {
     DISC_OP_NOOP_val = 1,  // ??? (this used to be the magic `0` constant used by four callers)
     DISC_OP_FIRST_val,     // Move or push <fp> to top of the stack or delete top
