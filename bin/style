@@ -16,14 +16,16 @@
 IFS=$'\n'
 
 # This is the minimum clang-format version we require. It is possible that
-# older versions will produce results consistent with the latest version
-# (8.0.0 as I write this). But we know that version 3.8.0 that is included in
+# older versions will produce results consistent with the latest stable version
+# (7.0.0 as I write this). But we know that version 3.8.0 that is included in
 # some distros (e.g., OpenSuse 42) does not produce compatible results.
 #
 # Requiring a compatible minimum version avoids pointless thrashing of the
 # code style due to some people running this script on systems with a version
-# of clang-format that is too old.
-typeset -r MIN_CFORMAT_VER=8.0.0
+# of clang-format that is too old. Note that version 6.0.1 produces the same
+# result as 7.0.0, the current stable release, so make that the minimum.
+typeset -r MIN_CFORMAT_VER=6.0.1
+typeset -r MAX_CFORMAT_VER=7.0.0
 
 typeset all=no
 typeset git_clang_format=no
@@ -62,6 +64,13 @@ then
     then
         echo
         echo "ERROR: clang-format version $cformat_ver less than min required $MIN_CFORMAT_VER"
+        echo
+        exit 1
+    fi
+    if [[ $(semver $cformat_ver) -gt $(semver $MAX_CFORMAT_VER) ]]
+    then
+        echo
+        echo "ERROR: clang-format version $cformat_ver greater than max allowed $MAX_CFORMAT_VER"
         echo
         exit 1
     fi

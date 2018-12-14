@@ -126,9 +126,7 @@ int b_readonly(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
     if (error_info.errors) {
@@ -187,9 +185,7 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
     if (error_info.errors) {
@@ -408,9 +404,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
                 opt_info.disc = 0;
                 return 2;
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
 endargs:
@@ -996,9 +990,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
     argv += opt_info.index;
@@ -1178,9 +1170,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
     argv += opt_info.index;

@@ -389,9 +389,7 @@ static_fn int sh_tclear(Shell_t *shp, Shnode_t *t) {
             if (t->tre.tretyp & TBINARY) n += xec_p_arg(shp, &(t->lst.lstrit->arg), 0);
             return n;
         }
-        default: {
-            return 0;
-        }
+        default: { return 0; }
     }
 }
 
@@ -450,9 +448,7 @@ static_fn void out_pattern(Sfio_t *iop, const char *cp, int n) {
                 sfputc(iop, '\\');
                 break;
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
         sfputc(iop, c);
     } while (*cp++);
@@ -2380,9 +2376,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             if (!skipexitset) exitset(shp);
             break;
         }
-        default: {
-            break;
-        }
+        default: { break; }
     }
 
     if (procsub && *procsub) {

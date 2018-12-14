@@ -283,9 +283,7 @@ again:
                                             endc = fmt.form;
                                             break;
                                         }
-                                        default: {
-                                            break;
-                                        }
+                                        default: { break; }
                                     }
                             } else {
                                 format = "%d";
@@ -345,9 +343,7 @@ again:
                 }
                 return count;
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
 
@@ -392,9 +388,7 @@ endloop1:
                     case '}': {
                         if (--brace < 0) goto endloop2;
                     }
-                    default: {
-                        break;
-                    }
+                    default: { break; }
                 }
             }
         }

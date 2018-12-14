@@ -91,9 +91,7 @@ static Sfdouble_t local_nextafter(int type_1, Sfdouble_t arg_1, int type_2, Sfdo
         case 3: {
             return nextafterl(arg_1, arg_2);
         }
-        default: {
-            return 0;
-        }
+        default: { return 0; }
     }
 }
 
@@ -110,9 +108,7 @@ static Sfdouble_t local_nexttoward(int type_1, Sfdouble_t arg_1, int type_2, Sfd
         case 3: {
             return nexttowardl(arg_1, arg_2);
         }
-        default: {
-            return 0;
-        }
+        default: { return 0; }
     }
 }
 

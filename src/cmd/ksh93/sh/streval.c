@@ -119,9 +119,7 @@ static inline int getop(int c) {
         case '~': {
             return A_TILDE;
         }
-        default: {
-            return A_REG;
-        }
+        default: { return A_REG; }
     }
 }
 
@@ -652,9 +650,7 @@ static_fn int gettok(vars_t *vp) {
                     op--;
                 }
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
         return op;
     }

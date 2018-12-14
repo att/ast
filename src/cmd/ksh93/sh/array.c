@@ -1332,9 +1332,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
             if (ap->cur) return &ap->cur->nvalue;
             return &ap->cur;
         }
-        default: {
-            abort();
-        }
+        default: { abort(); }
     }
 }
 

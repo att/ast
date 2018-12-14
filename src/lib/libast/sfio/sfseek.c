@@ -265,8 +265,6 @@ char *sfstrseek(Sfio_t *f, Sfoff_t p, int type) {
             f->_next = f->_data + f->_size + p;
             return (char *)f->_next;
         }
-        default: {
-            abort();
-        }
+        default: { abort(); }
     }
 }

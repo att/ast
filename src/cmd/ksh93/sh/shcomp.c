@@ -105,9 +105,7 @@ int main(int argc, char *argv[]) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
     shp->shcomp = 1;

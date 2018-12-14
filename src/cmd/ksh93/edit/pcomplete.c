@@ -286,9 +286,7 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
                 sfputr(tmp, str, '\n');
                 break;
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
     if (comp->wordlist || comp->globpat) {
@@ -689,9 +687,7 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
 

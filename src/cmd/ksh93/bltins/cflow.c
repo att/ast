@@ -58,9 +58,7 @@ int b_return(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
 
@@ -104,9 +102,7 @@ int b_break(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
 

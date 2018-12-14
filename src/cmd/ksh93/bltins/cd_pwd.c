@@ -128,9 +128,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
 
@@ -330,9 +328,7 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: {
-                break;
-            }
+            default: { break; }
         }
     }
 

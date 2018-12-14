@@ -914,9 +914,7 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
                     ed_ungetchar(ep->ed, cntl('E'));
                     return -1;
                 }
-                default: {
-                    ed_ungetchar(ep->ed, i);
-                }
+                default: { ed_ungetchar(ep->ed, i); }
             }
             i = '_';
         }
