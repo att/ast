@@ -66,7 +66,6 @@ union Value {
     struct pathcomp *pathcomp;
 };
 
-
 // For compatibility with old hash library.
 #define HASH_BUCKET 1
 #define HASH_NOSCOPE 2

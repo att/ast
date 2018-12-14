@@ -319,7 +319,9 @@ Sfio_t *sh_iostream(Shell_t *shp, int fd, int fn) {
             case 2: {
                 return sfstderr;
             }
-            default: { return NULL; }
+            default: {
+                return NULL;
+            }
         }
     }
     if (status & IOREAD) {
@@ -2258,7 +2260,9 @@ static_fn int io_prompt(Shell_t *shp, Sfio_t *iop, int flag) {
             cp = nv_getval(sh_scoped(shp, PS3NOD));
             break;
         }
-        default: { goto done; }
+        default: {
+            goto done;
+        }
     }
     if (cp) sfputr(sfstderr, cp, -1);
 
@@ -2622,7 +2626,9 @@ int sh_fcntl(int fd, int op, ...) {
                 shp->fdstatus[fd] &= ~IOCLEX;
             }
         }
-        default: { break; }
+        default: {
+            break;
+        }
     }
 
     return newfd;

@@ -296,7 +296,9 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
                 error(2, "%s", opt_info.arg);
                 break;
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
         break;
     }

@@ -99,7 +99,9 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
     }
     if (argc == 0) return flags ? 0 : opt_info.index;
@@ -156,7 +158,9 @@ int b_whence(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
     }
     argv += opt_info.index;

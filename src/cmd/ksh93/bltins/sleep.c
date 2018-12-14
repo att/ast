@@ -73,7 +73,9 @@ int b_sleep(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
     }
     if (error_info.errors) {
@@ -113,7 +115,9 @@ int b_sleep(int argc, char *argv[], Shbltin_t *context) {
                         case 's': {
                             goto skip;
                         }
-                        default: { break; }
+                        default: {
+                            break;
+                        }
                     }
                 } else {
                     pp = sfprints("exact %s", cp);

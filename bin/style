@@ -21,9 +21,9 @@ IFS=$'\n'
 # some distros (e.g., OpenSuse 42) does not produce compatible results.
 #
 # Requiring a compatible minimum version avoids pointless thrashing of the
-# code style due to some people running this script on systems with too old
-# versions of clang-format.
-typeset -r MIN_CFORMAT_VER=6.0.1
+# code style due to some people running this script on systems with a version
+# of clang-format that is too old.
+typeset -r MIN_CFORMAT_VER=8.0.0
 
 typeset all=no
 typeset git_clang_format=no

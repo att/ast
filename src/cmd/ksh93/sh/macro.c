@@ -395,7 +395,9 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
                     }
                 }
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
         cp = fcseek(0);
     }
@@ -801,7 +803,9 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                 }
                 break;
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
     }
 done:
@@ -1426,7 +1430,9 @@ retry1:
         case S_EOF: {
             fcseek(-1);
         }
-        default: { goto nosub; }
+        default: {
+            goto nosub;
+        }
     }
     if (type) {
         c = fcmbget(&LEN);
@@ -2557,7 +2563,9 @@ static_fn char *special(Shell_t *shp, int c) {
             }
             return shp->st.cmdname;
         }
-        default: { break; }
+        default: {
+            break;
+        }
     }
     return NULL;
 }

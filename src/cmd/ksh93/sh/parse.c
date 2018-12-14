@@ -125,7 +125,9 @@ static_fn unsigned long writedefs(Lex_t *lexp, struct argnod *arglist, int line,
             case 'l': {
                 break;
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
         while ((argp = argp->argnxt.ap)) {
             if ((n = *(cp = argp->argval)) != '-' && n != '+') break;
@@ -401,7 +403,9 @@ Shnode_t *sh_dolparen(Lex_t *lp) {
             t = sh_cmd(lp, RBRACE, SH_NL | SH_EMPTY);
             break;
         }
-        default: { break; }
+        default: {
+            break;
+        }
     }
     lp->comsub = 0;
     if (!sp && (sp = fcfile())) {
@@ -562,7 +566,9 @@ static_fn Shnode_t *term(Lex_t *lexp, int flag) {
                     tt->lst.lstlef->tre.tretyp |= FPIN | FPCL;
                     break;
                 }
-                default: { tt = makeparent(lexp, TSETIO | FPIN | FPCL, tt); }
+                default: {
+                    tt = makeparent(lexp, TSETIO | FPIN | FPCL, tt);
+                }
             }
             t = makelist(lexp, TFIL, t, tt);
             t->tre.tretyp |= showme;
@@ -1643,7 +1649,9 @@ static_fn struct ionod *inout(Lex_t *lexp, struct ionod *lastio, int flag) {
             }
             break;
         }
-        default: { return lastio; }
+        default: {
+            return lastio;
+        }
     }
     lexp->digits = 0;
     iop = (struct ionod *)stkalloc(stkp, sizeof(struct ionod));
@@ -1896,7 +1904,9 @@ static_fn Shnode_t *test_primary(Lex_t *lexp) {
             }
             break;
         }
-        default: { return 0; }
+        default: {
+            return 0;
+        }
     }
     skipnl(lexp, 0);
     return t;

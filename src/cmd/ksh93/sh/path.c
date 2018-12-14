@@ -238,7 +238,9 @@ char *path_pwd(Shell_t *shp) {
                 }
                 break;
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
         if (cp && *cp == '/' && test_inode(cp, e_dot)) break;
     }

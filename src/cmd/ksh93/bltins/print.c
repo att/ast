@@ -304,7 +304,9 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
     }
 
@@ -471,7 +473,9 @@ static_fn char strformat(char *s) {
                 *t = 0;
                 return t - b;
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
         *t++ = c;
     }
@@ -791,7 +795,9 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                                     fe->flags |= SFFMT_ZERO;
                                     break;
                                 }
-                                default: { break; }
+                                default: {
+                                    break;
+                                }
                             }
                         }
                         format = *fp;
@@ -1025,7 +1031,9 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
             fe->size = -1;
             break;
         }
-        default: { break; }
+        default: {
+            break;
+        }
     }
     return 0;
 }
@@ -1115,7 +1123,9 @@ static_fn int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
                     }
                 }
                 // FALLTHRU
-                default: { cp--; }
+                default: {
+                    cp--;
+                }
             }
         }
         sfputc(shp->stk, c);

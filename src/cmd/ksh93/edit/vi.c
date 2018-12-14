@@ -1188,7 +1188,9 @@ static_fn int mvcursor(Vi_t *vp, int motion) {
                     }
                     goto find_b;
                 }
-                default: { return 0; }
+                default: {
+                    return 0;
+                }
             }
         }
         case 't':    // find up to new char forward
@@ -1248,7 +1250,9 @@ static_fn int mvcursor(Vi_t *vp, int motion) {
             if (tcur_virt == cur_virt) return 0;
             return 1;
         }
-        default: { return 0; }
+        default: {
+            return 0;
+        }
     }
     cur_virt = tcur_virt;
 
@@ -1960,7 +1964,9 @@ addin:
             }
             return GOOD;
         }
-        default: { return BAD; }
+        default: {
+            return BAD;
+        }
     }
     refresh(vp, CONTROL);
     return GOOD;

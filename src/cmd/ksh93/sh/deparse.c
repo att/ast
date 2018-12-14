@@ -315,7 +315,9 @@ static_fn void p_tree(const Shnode_t *t, int tflags) {
             }
             if (!(tflags & NO_BRACKET)) p_keyword("]]", END);
         }
-        default: { break; }
+        default: {
+            break;
+        }
     }
 
     while (begin_line && here_doc) {

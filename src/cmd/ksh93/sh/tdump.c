@@ -119,7 +119,9 @@ static_fn int dump_p_tree(const Shnode_t *t) {
             if ((t->tre.tretyp & TBINARY)) return dump_p_arg(&(t->lst.lstrit->arg));
             return 0;
         }
-        default: { return -1; }
+        default: {
+            return -1;
+        }
     }
 }
 

@@ -887,7 +887,9 @@ int sh_lex(Lex_t *lp) {
                         if (n == S_DIG) break;
                         goto dolerr;
                     }
-                    default: { goto dolerr; }
+                    default: {
+                        goto dolerr;
+                    }
                 }
                 break;
             }
@@ -1193,7 +1195,9 @@ int sh_lex(Lex_t *lp) {
                 if (n == '=' && c == '+' && mode == ST_NAME) continue;
                 break;
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
         lp->comp_assign = 0;
         if (mode == ST_NAME) {
@@ -1551,7 +1555,9 @@ static_fn int comsub(Lex_t *lp, int endtok) {
                     if (c > 0) fcseek(-LEN);
                 }
                 // FALLTHRU
-                default: { lp->lex.reservok = 1; }
+                default: {
+                    lp->lex.reservok = 1;
+                }
             }
         }
     }
@@ -1809,7 +1815,9 @@ static_fn int here_copy(Lex_t *lp, struct ionod *iop) {
                 special++;
                 break;
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
         n = 0;
     }
@@ -1869,7 +1877,9 @@ static_fn char *fmttoken(Lex_t *lp, int sym, char *tok) {
                 sym = ';';
                 break;
             }
-            default: { sym = 0; }
+            default: {
+                sym = 0;
+            }
         }
         tok[n++] = sym;
     }
@@ -2117,7 +2127,9 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
                 }
                 break;
             }
-            default: { break; }
+            default: {
+                break;
+            }
         }
         if (mbwide()) {
             do {
