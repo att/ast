@@ -639,7 +639,7 @@ static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Na
     }
     shp->instance = 0;
     if (shp->var_tree != shp->var_base &&
-        !nv_search((char *)nq, nr->root, HASH_BUCKET | HASH_NOSCOPE)) {
+        !nv_search((char *)nq, nr->root, HASH_BUCKET | NV_NOSCOPE)) {
         nr->root = shp->namespace ? nv_dict(shp->namespace) : shp->var_base;
     }
     nv_putval(SH_NAMENOD, cp, NV_NOFREE);
@@ -701,8 +701,8 @@ static_fn Namval_t *enter_namespace(Shell_t *shp, Namval_t *nsp) {
     if (onsp) {
         oroot = nv_dict(onsp);
         if (!nsp) {
-            path = nv_search(PATHNOD->nvname, oroot, HASH_NOSCOPE);
-            fpath = nv_search(FPATHNOD->nvname, oroot, HASH_NOSCOPE);
+            path = nv_search(PATHNOD->nvname, oroot, NV_NOSCOPE);
+            fpath = nv_search(FPATHNOD->nvname, oroot, NV_NOSCOPE);
         }
         if (shp->var_tree == oroot) {
             shp->var_tree = shp->var_tree->view;
@@ -720,11 +720,11 @@ static_fn Namval_t *enter_namespace(Shell_t *shp, Namval_t *nsp) {
         }
     }
     shp->namespace = nsp;
-    if (path && (path = nv_search(PATHNOD->nvname, shp->var_tree, HASH_NOSCOPE)) &&
+    if (path && (path = nv_search(PATHNOD->nvname, shp->var_tree, NV_NOSCOPE)) &&
         (val = nv_getval(path))) {
         nv_putval(path, val, NV_RDONLY);
     }
-    if (fpath && (fpath = nv_search(FPATHNOD->nvname, shp->var_tree, HASH_NOSCOPE)) &&
+    if (fpath && (fpath = nv_search(FPATHNOD->nvname, shp->var_tree, NV_NOSCOPE)) &&
         (val = nv_getval(fpath))) {
         nv_putval(fpath, val, NV_RDONLY);
     }
@@ -1223,7 +1223,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             if (shp->namespace) {
                                 np = sh_fsearch(shp, com0, 0);
                             } else {
-                                np = nv_search(com0, shp->fun_tree, HASH_NOSCOPE);
+                                np = nv_search(com0, shp->fun_tree, NV_NOSCOPE);
                             }
                         }
 
@@ -1271,7 +1271,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                                     }
                                 }
                                 *ep = 0;
-                                namespace = nv_search(cp - 1, shp->var_base, HASH_NOSCOPE);
+                                namespace = nv_search(cp - 1, shp->var_base, NV_NOSCOPE);
                                 *ep = '.';
                             }
                         }
@@ -2216,7 +2216,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 __builtin_unreachable();
             }
             if (shp->namespace && !shp->prefix && *fname != '.') {
-                np = sh_fsearch(shp, fname, NV_ADD | HASH_NOSCOPE);
+                np = sh_fsearch(shp, fname, NV_ADD | NV_NOSCOPE);
             }
             if (!np) {
                 np = nv_open(fname, sh_subfuntree(shp, 1), NV_NOARRAY | NV_VARNAME | NV_NOSCOPE);
@@ -2643,7 +2643,7 @@ static_fn void local_exports(Namval_t *np, void *data) {
 
     if (nv_isarray(np)) nv_putsub(np, NULL, 0, 0);
     cp = nv_getval(np);
-    if (cp && (mp = nv_search(nv_name(np), shp->var_tree, NV_ADD | HASH_NOSCOPE)) &&
+    if (cp && (mp = nv_search(nv_name(np), shp->var_tree, NV_ADD | NV_NOSCOPE)) &&
         nv_isnull(mp)) {
         nv_putval(mp, cp, 0);
         nv_setattr(mp, np->nvflag);
@@ -3111,7 +3111,7 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
             if (nref) {
                 shp->last_root = 0;
                 for (r = 0; args[r]; r++) {
-                    np = nv_search(args[r], shp->var_tree, HASH_NOSCOPE | NV_ADD);
+                    np = nv_search(args[r], shp->var_tree, NV_NOSCOPE | NV_ADD);
                     if (np && *nref) {
                         nq = *nref++;
                         np->nvalue.nrp = calloc(1, sizeof(struct Namref));

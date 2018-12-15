@@ -599,7 +599,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                         __builtin_unreachable();
                     }
                     if (shp->namespace) {
-                        np = sh_fsearch(shp, name, NV_ADD | HASH_NOSCOPE);
+                        np = sh_fsearch(shp, name, NV_ADD | NV_NOSCOPE);
                     } else {
                         np = nv_open(name, sh_subfuntree(shp, 1),
                                      NV_NOARRAY | NV_IDENT | NV_NOSCOPE);
@@ -610,7 +610,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                         name = sfstruse(shp->strbuf);
                     }
                     np = 0;
-                    if (shp->namespace) np = sh_fsearch(shp, name, HASH_NOSCOPE);
+                    if (shp->namespace) np = sh_fsearch(shp, name, NV_NOSCOPE);
                     if (!np) {
                         np = nv_search(name, troot, 0);
                         if (np) {
@@ -1196,7 +1196,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
         np = 0;
         if (jmpval == 0) {
             if (shp->namespace && troot != shp->var_tree) {
-                np = sh_fsearch(shp, name, nflag ? HASH_NOSCOPE : 0);
+                np = sh_fsearch(shp, name, nflag ? NV_NOSCOPE : 0);
             }
             if (!np) np = nv_open(name, troot, NV_NOADD | nflag);
         } else {
@@ -1235,7 +1235,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
 #if 0
             // Causes unsetting local variable to expose global.
             else if(shp->var_tree == troot && shp->var_tree != shp->var_base &&
-                    nv_search((char*)np, shp->var_tree, HASH_BUCKET | HASH_NOSCOPE)) {
+                    nv_search((char*)np, shp->var_tree, HASH_BUCKET | NV_NOSCOPE)) {
                     nv_delete(np,shp->var_tree,0);
             }
 #endif

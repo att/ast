@@ -921,7 +921,7 @@ Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
 
     Namval_t *np;
     Dt_t *dp = 0;
-    if (mode & HASH_NOSCOPE) dp = dtview(root, 0);
+    if (mode & NV_NOSCOPE) dp = dtview(root, 0);
     if (mode & HASH_BUCKET) {
         Namval_t *mp = (void *)name;
         if (!(np = dtsearch(root, mp)) && (mode & NV_ADD)) name = nv_name(mp);
@@ -930,12 +930,12 @@ Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
         np = dtmatch(root, (void *)name);
     }
 #if SHOPT_COSHELL
-    if (shp->inpool) mode |= HASH_NOSCOPE;
+    if (shp->inpool) mode |= NV_NOSCOPE;
 #endif  // SHOPT_COSHELL
     if (!np && (mode & NV_ADD)) {
-        if (shp->namespace && !(mode & HASH_NOSCOPE) && root == shp->var_tree) {
+        if (shp->namespace && !(mode & NV_NOSCOPE) && root == shp->var_tree) {
             root = nv_dict(shp->namespace);
-        } else if (!dp && !(mode & HASH_NOSCOPE)) {
+        } else if (!dp && !(mode & NV_NOSCOPE)) {
             Dt_t *next;
             while ((next = dtvnext(root))) root = next;
         }

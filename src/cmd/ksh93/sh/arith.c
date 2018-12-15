@@ -424,7 +424,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
     }
 
     if ((lvalue->emode & ARITH_COMP) && dtvnext(root)) {
-        mp = nv_search(cp, sdict ? sdict : root, HASH_NOSCOPE | HASH_BUCKET);
+        mp = nv_search(cp, sdict ? sdict : root, NV_NOSCOPE | HASH_BUCKET);
         if (!mp && nsdict) mp = nv_search(cp, nsdict, HASH_BUCKET);
         if (mp) np = mp;
     }

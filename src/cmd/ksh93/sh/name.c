@@ -729,7 +729,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                 isref = 0;
                 dp->last = cp;
                 mode = (c == '.' || (flags & NV_NOADD)) ? add : NV_ADD;
-                if (level++ || ((flags & NV_NOSCOPE) && c != '.')) mode |= HASH_NOSCOPE;
+                if (level++ || ((flags & NV_NOSCOPE) && c != '.')) mode |= NV_NOSCOPE;
                 np = 0;
                 if (top) {
                     struct Ufunction *rp;
@@ -769,7 +769,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                             np = 0;
                         }
                         if (!np || shp->var_tree->walk != root) {
-                            np = nv_search(name, root, HASH_NOSCOPE | NV_ADD);
+                            np = nv_search(name, root, NV_NOSCOPE | NV_ADD);
                         }
                     }
                 }
@@ -899,7 +899,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                     if (c == '[' || (c == '.' && nv_isarray(np))) {
                         int n = 0;
                         sub = 0;
-                        mode &= ~HASH_NOSCOPE;
+                        mode &= ~NV_NOSCOPE;
                         if (c == '[') {
                             Namval_t *table;
                             n = mode | nv_isarray(np);
@@ -1180,7 +1180,7 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
         }
     } else if (!(flags & (NV_IDENT | NV_VARNAME | NV_ASSIGN))) {
         long mode = ((flags & NV_NOADD) ? 0 : NV_ADD);
-        if (flags & NV_NOSCOPE) mode |= HASH_NOSCOPE;
+        if (flags & NV_NOSCOPE) mode |= NV_NOSCOPE;
         np = nv_search(name, root, mode);
         if (np && !(flags & NV_REF)) {
             while (nv_isref(np)) {
@@ -1234,7 +1234,7 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
     nvcache.ok = 1;
 #if SHOPT_BASH
     if (root == shp->fun_tree && sh_isoption(shp, SH_BASH)) {
-        c = ((flags & NV_NOSCOPE) ? HASH_NOSCOPE : 0) | ((flags & NV_NOADD) ? 0 : NV_ADD);
+        c = ((flags & NV_NOSCOPE) ? NV_NOSCOPE : 0) | ((flags & NV_NOADD) ? 0 : NV_ADD);
         np = nv_search(name, root, c);
         cp = Empty;
     } else
@@ -1274,7 +1274,7 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
 nocache:
     nvcache.ok = 0;
     if (fname) {
-        c = ((flags & NV_NOSCOPE) ? HASH_NOSCOPE : 0) | ((flags & NV_NOADD) ? 0 : NV_ADD);
+        c = ((flags & NV_NOSCOPE) ? NV_NOSCOPE : 0) | ((flags & NV_NOADD) ? 0 : NV_ADD);
         *fname = '.';
         np = nv_search(name, funroot, c);
         *fname = 0;

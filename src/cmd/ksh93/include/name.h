@@ -66,10 +66,6 @@ union Value {
     struct pathcomp *pathcomp;
 };
 
-// For compatibility with old hash library.
-#define HASH_BUCKET 1
-#define HASH_NOSCOPE 2
-
 typedef struct Namval Namval_t;
 typedef struct Namfun Namfun_t;
 typedef struct Namdisc Namdisc_t;
@@ -224,6 +220,9 @@ struct Namval {
 #define NV_ADD (1 << 23)      // add node if not found
 #define NV_MOVE (1 << 27)     // for use with nv_clone()
 #define NV_ASSIGN (1 << 28)   // assignment is allowed
+
+// For compatibility with old hash library.
+#define HASH_BUCKET 1
 
 #define NV_NOREF NV_REF    // don't follow reference
 #define NV_FUNCT NV_IDENT  // option for nv_create

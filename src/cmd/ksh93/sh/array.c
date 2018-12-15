@@ -1285,9 +1285,9 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                 type = nv_isattr(np, ~(NV_NOFREE | NV_ARRAY | NV_CHILD | NV_MINIMAL));
                 int mode = 0;
                 if (op.val == ASSOC_OP_ADD_val) {
-                    mode = NV_ADD | HASH_NOSCOPE;
+                    mode = NV_ADD | NV_NOSCOPE;
                 } else if (ap->namarr.flags & ARRAY_NOSCOPE) {
-                    mode = HASH_NOSCOPE;
+                    mode = NV_NOSCOPE;
                 }
                 if (*sp == 0 && sh_isoption(shp, SH_XTRACE) && op.val == ASSOC_OP_ADD_val) {
                     errormsg(SH_DICT, ERROR_warn(0), "adding empty subscript");
@@ -1318,7 +1318,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                     ap->pos = mp = (Namval_t *)dtprev(ap->namarr.table, &fake);
                     ap->nextpos = (Namval_t *)dtnext(ap->namarr.table, mp);
                 } else if (!mp && *sp && mode == 0) {
-                    mp = nv_search(sp, ap->namarr.table, NV_ADD | HASH_NOSCOPE);
+                    mp = nv_search(sp, ap->namarr.table, NV_ADD | NV_NOSCOPE);
                     if (!mp->nvalue.cp) mp->nvsize |= 1;
                 }
                 np = mp;
