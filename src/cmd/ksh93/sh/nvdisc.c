@@ -668,7 +668,7 @@ Namfun_t *nv_disc(Namval_t *np, Namfun_t *fp, Nvdisc_op_t op) {
 //
 // Returns discipline pointer if discipline with specified functions is on the discipline stack.
 //
-Namfun_t *nv_hasdisc(Namval_t *np, const Namdisc_t *dp) {
+Namfun_t *nv_hasdisc(const Namval_t *np, const Namdisc_t *dp) {
     Namfun_t *fp;
 
     for (fp = np->nvfun; fp; fp = fp->next) {
@@ -918,20 +918,16 @@ Namval_t *nv_mkclone(Namval_t *mp) {
 
 Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
     Shell_t *shp = sh_getinterp();
+    Dt_t *dp = NULL;
 
-    Namval_t *np;
-    Dt_t *dp = 0;
-    if (mode & NV_NOSCOPE) dp = dtview(root, 0);
-    if (mode & HASH_BUCKET) {
-        Namval_t *mp = (void *)name;
-        if (!(np = dtsearch(root, mp)) && (mode & NV_ADD)) name = nv_name(mp);
-    } else {
-        if (*name == '.' && root == shp->var_tree && !dp) root = shp->var_base;
-        np = dtmatch(root, (void *)name);
-    }
 #if SHOPT_COSHELL
     if (shp->inpool) mode |= NV_NOSCOPE;
 #endif  // SHOPT_COSHELL
+
+    if (mode & NV_NOSCOPE) dp = dtview(root, 0);
+    if (*name == '.' && root == shp->var_tree && !dp) root = shp->var_base;
+
+    Namval_t *np = dtmatch(root, (void *)name);
     if (!np && (mode & NV_ADD)) {
         if (shp->namespace && !(mode & NV_NOSCOPE) && root == shp->var_tree) {
             root = nv_dict(shp->namespace);
@@ -940,7 +936,36 @@ Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
             while ((next = dtvnext(root))) root = next;
         }
         np = (Namval_t *)dtinsert(root, newnode(name));
-        np->nvshell = sh_getinterp();
+        np->nvshell = shp;
+    }
+    if (dp) dtview(root, dp);
+    return np;
+}
+
+// This is a variant of nv_search() that takes an existing Namval_t* rather than a char* to the var
+// name of interest.
+Namval_t *nv_search_namval(const Namval_t *mp, Dt_t *root, int mode) {
+    Shell_t *shp = sh_getinterp();
+    Dt_t *dp = NULL;
+    const char *name = NULL;
+
+#if SHOPT_COSHELL
+    if (shp->inpool) mode |= NV_NOSCOPE;
+#endif  // SHOPT_COSHELL
+
+    if (mode & NV_NOSCOPE) dp = dtview(root, 0);
+
+    Namval_t *np = dtsearch(root, mp);
+    if (!np && (mode & NV_ADD)) {
+        name = nv_name(mp);
+        if (shp->namespace && !(mode & NV_NOSCOPE) && root == shp->var_tree) {
+            root = nv_dict(shp->namespace);
+        } else if (!dp && !(mode & NV_NOSCOPE)) {
+            Dt_t *next;
+            while ((next = dtvnext(root))) root = next;
+        }
+        np = (Namval_t *)dtinsert(root, newnode(name));
+        np->nvshell = shp;
     }
     if (dp) dtview(root, dp);
     return np;
@@ -1218,10 +1243,10 @@ static const Namdisc_t table_disc = {.dsize = sizeof(struct table),
                                      .clonef = clone_table,
                                      .nextf = next_table};
 
-Namval_t *nv_parent(Namval_t *np) {
+Namval_t *nv_parent(const Namval_t *np) {
     struct table *tp = (struct table *)nv_hasdisc(np, &table_disc);
     if (tp) return tp->parent;
-    return 0;
+    return NULL;
 }
 
 Dt_t *nv_dict(Namval_t *np) {
@@ -1241,7 +1266,7 @@ Dt_t *nv_dict(Namval_t *np) {
     return shp->var_tree;
 }
 
-bool nv_istable(Namval_t *np) { return nv_hasdisc(np, &table_disc) != 0; }
+bool nv_istable(const Namval_t *np) { return nv_hasdisc(np, &table_disc) != 0; }
 
 //
 // Create a mountable name-value pair tree.

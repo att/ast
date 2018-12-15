@@ -192,7 +192,7 @@ size_t nv_datasize(Namval_t *np, size_t *offset) {
     return s;
 }
 
-static_fn char *name_chtype(Namval_t *np, Namfun_t *fp) {
+static_fn char *name_chtype(const Namval_t *np, Namfun_t *fp) {
     Namchld_t *pp = (Namchld_t *)fp;
     Shell_t *shp = pp->ptype->sh;
     char *cp, *sub;

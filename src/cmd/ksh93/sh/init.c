@@ -870,7 +870,7 @@ static_fn char *get_match(Namval_t *np, Namfun_t *fp) {
     return mp->rval[i];
 }
 
-static_fn char *name_match(Namval_t *np, Namfun_t *fp) {
+static_fn char *name_match(const Namval_t *np, Namfun_t *fp) {
     UNUSED(fp);
     Shell_t *shp = sh_ptr(np);
     int sub = nv_aindex(SH_MATCHNOD);
@@ -973,7 +973,7 @@ static const Namdisc_t OPTIONS_disc = {
 
 #define MAX_MATH_ARGS 3
 
-static_fn char *name_math(Namval_t *np, Namfun_t *fp) {
+static_fn char *name_math(const Namval_t *np, Namfun_t *fp) {
     UNUSED(fp);
     Shell_t *shp = sh_ptr(np);
     sfprintf(shp->strbuf, ".sh.math.%s", np->nvname);
@@ -1619,7 +1619,7 @@ static_fn Namfun_t *clone_svar(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
 static const Namdisc_t svar_disc = {
     .dsize = 0, .createf = create_svar, .clonef = clone_svar, .nextf = next_svar};
 
-static_fn char *name_svar(Namval_t *np, Namfun_t *fp) {
+static_fn char *name_svar(const Namval_t *np, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     Namval_t *mp = *(Namval_t **)(fp + 1);
     sfprintf(shp->strbuf, ".sh.%s.%s", mp->nvname, np->nvname);

@@ -199,7 +199,7 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
     // Hacks to handle hash -r | --.
     if (argv[1] && argv[1][0] == '-') {
         if (argv[1][1] == 'r' && argv[1][2] == 0) {
-            Namval_t *np = nv_search((char *)PATHNOD, tdata.sh->var_tree, HASH_BUCKET);
+            Namval_t *np = nv_search_namval(PATHNOD, tdata.sh->var_tree, 0);
             nv_putval(np, nv_getval(np), NV_RDONLY);
             argv++;
             if (!argv[1]) return 0;
@@ -1235,7 +1235,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
 #if 0
             // Causes unsetting local variable to expose global.
             else if(shp->var_tree == troot && shp->var_tree != shp->var_base &&
-                    nv_search((char*)np, shp->var_tree, HASH_BUCKET | NV_NOSCOPE)) {
+                    nv_search_namval(np, shp->var_tree, NV_NOSCOPE)) {
                     nv_delete(np,shp->var_tree,0);
             }
 #endif

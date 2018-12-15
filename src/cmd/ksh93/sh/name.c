@@ -745,7 +745,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                         if (shp->var_tree->walk == shp->var_base ||
                             (shp->var_tree->walk != shp->var_tree && shp->namespace &&
                              nv_dict(shp->namespace) == shp->var_tree->walk)) {
-                            if (!(nq = nv_search((char *)np, shp->var_base, HASH_BUCKET))) nq = np;
+                            if (!(nq = nv_search_namval(np, shp->var_base, 0))) nq = np;
                             shp->last_root = shp->var_tree->walk;
                             if ((flags & NV_NOSCOPE) && *cp != '.') {
                                 if (mode == 0) {
@@ -1333,7 +1333,7 @@ skip:
                 nv_putval(np, cp, c);
             }
             if (isref) {
-                if (nv_search((char *)np, shp->var_base, HASH_BUCKET)) {
+                if (nv_search_namval(np, shp->var_base, 0)) {
                     shp->last_root = shp->var_base;
                 }
                 nv_setref(np, NULL, NV_VARNAME);
@@ -2930,7 +2930,7 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
             __builtin_unreachable();
         }
         // Bind to earlier scope, or add to global scope.
-        if (!(hp = dtvnext(hp)) || (nq = nv_search((char *)np, hp, NV_ADD | HASH_BUCKET)) == np) {
+        if (!(hp = dtvnext(hp)) || (nq = nv_search_namval(np, hp, NV_ADD)) == np) {
             errormsg(SH_DICT, ERROR_exit(1), e_selfref, nv_name(np));
             __builtin_unreachable();
         }
@@ -3084,7 +3084,7 @@ void nv_unref(Namval_t *np) {
     }
 }
 
-char *nv_name(Namval_t *np) {
+char *nv_name(const Namval_t *np) {
     Shell_t *shp = sh_ptr(np);
     Namval_t *table = 0;
     Namfun_t *fp = 0;
@@ -3128,6 +3128,12 @@ char *nv_name(Namval_t *np) {
                 return (*fp->disc->namef)(np, fp);
             }
     }
+    // The `if (!np->nvname) goto skip;` above means we can reach this juncture with `np->nvname`
+    // being the NULL pointer. Tell the compiler and lint tools this can't happen via an assert.
+    //
+    // TODO: Rewrite this code to avoid the need for the "goto" above and this explicit suppression
+    // of a logic warning.
+    assert(np->nvname);
     if (!(table = shp->last_table) || *np->nvname == '.' || table == shp->namespace ||
         np == table) {
         return np->nvname;

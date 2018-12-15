@@ -84,7 +84,7 @@ struct Namdisc {
     char *(*setdisc)(Namval_t *, const void *, Namval_t *, Namfun_t *);
     Namval_t *(*createf)(Namval_t *, const void *, int, Namfun_t *);
     Namfun_t *(*clonef)(Namval_t *, Namval_t *, int, Namfun_t *);
-    char *(*namef)(Namval_t *, Namfun_t *);
+    char *(*namef)(const Namval_t *, Namfun_t *);
     Namval_t *(*nextf)(Namval_t *, Dt_t *, Namfun_t *);
     Namval_t *(*typef)(Namval_t *, Namfun_t *);
     int (*readf)(Namval_t *, Sfio_t *, int, Namfun_t *);
@@ -221,9 +221,6 @@ struct Namval {
 #define NV_MOVE (1 << 27)     // for use with nv_clone()
 #define NV_ASSIGN (1 << 28)   // assignment is allowed
 
-// For compatibility with old hash library.
-#define HASH_BUCKET 1
-
 #define NV_NOREF NV_REF    // don't follow reference
 #define NV_FUNCT NV_IDENT  // option for nv_create
 #define NV_IDENT NV_MISC   // name must be identifier
@@ -244,7 +241,7 @@ struct Namval {
 // inline functions rather than macros to facilitate instrumentation while still being fast. In
 // particular validating the nvflag value; both current and new. Variants such as nv_isnull() are
 // not static inline functions because they do more work and were historically extern functions.
-static inline int nv_isattr(Namval_t *np, unsigned int nvflag) { return np->nvflag & nvflag; }
+static inline int nv_isattr(const Namval_t *np, unsigned int nvflag) { return np->nvflag & nvflag; }
 
 static inline void nv_onattr(Namval_t *np, unsigned int nvflag) { np->nvflag |= nvflag; }
 
@@ -310,7 +307,7 @@ extern Sfdouble_t nv_getn(Namval_t *, Namfun_t *);
 extern Sfdouble_t nv_getnum(Namval_t *);
 extern char *nv_getv(Namval_t *, Namfun_t *);
 extern char *nv_getval(Namval_t *);
-extern Namfun_t *nv_hasdisc(Namval_t *, const Namdisc_t *);
+extern Namfun_t *nv_hasdisc(const Namval_t *, const Namdisc_t *);
 extern int nv_isnull(Namval_t *);
 extern Namfun_t *nv_isvtree(Namval_t *);
 extern Namval_t *nv_lastdict(void *);
@@ -332,7 +329,8 @@ extern Namfun_t *nv_disc(Namval_t *, Namfun_t *, Nvdisc_op_t);
 extern void nv_unset(Namval_t *); /*obsolete */
 extern void _nv_unset(Namval_t *, int);
 extern Namval_t *nv_search(const char *, Dt_t *, int);
-extern char *nv_name(Namval_t *);
+extern Namval_t *nv_search_namval(const Namval_t *, Dt_t *, int);
+extern char *nv_name(const Namval_t *);
 extern Namval_t *nv_type(Namval_t *);
 // Note that the third parameter should be a pointer to a Optdisc_t or a structure where that type
 // is the first member.
@@ -485,7 +483,7 @@ extern Namval_t *nv_bfsearch(const char *, Dt_t *, Namval_t **, char **);
 extern Namval_t *nv_mkclone(Namval_t *);
 extern Namval_t *nv_mktype(Namval_t **, int);
 extern Namval_t *nv_addnode(Namval_t *, int);
-extern Namval_t *nv_parent(Namval_t *);
+extern Namval_t *nv_parent(const Namval_t *);
 extern char *nv_getbuf(size_t);
 extern Namval_t *nv_mount(Namval_t *, const char *name, Dt_t *);
 extern Namval_t *nv_arraychild(Namval_t *, Namval_t *, int);
@@ -495,7 +493,7 @@ extern bool nv_subsaved(Namval_t *, int);
 extern void nv_typename(Namval_t *, Sfio_t *);
 extern void nv_newtype(Namval_t *);
 extern Namval_t *nv_typeparent(Namval_t *);
-extern bool nv_istable(Namval_t *);
+extern bool nv_istable(const Namval_t *);
 extern size_t nv_datasize(Namval_t *, size_t *);
 extern Namfun_t *nv_mapchar(Namval_t *, const char *);
 extern void nv_checkrequired(Namval_t *);

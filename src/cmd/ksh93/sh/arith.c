@@ -420,12 +420,11 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
         } else {
             flag = 0;
         }
-        cp = (char *)np;
     }
 
     if ((lvalue->emode & ARITH_COMP) && dtvnext(root)) {
-        mp = nv_search(cp, sdict ? sdict : root, NV_NOSCOPE | HASH_BUCKET);
-        if (!mp && nsdict) mp = nv_search(cp, nsdict, HASH_BUCKET);
+        mp = nv_search_namval(np, sdict ? sdict : root, NV_NOSCOPE);
+        if (!mp && nsdict) mp = nv_search_namval(np, nsdict, 0);
         if (mp) np = mp;
     }
 

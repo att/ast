@@ -638,8 +638,7 @@ static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Na
         if (sp) nr->sub = strdup(sp);
     }
     shp->instance = 0;
-    if (shp->var_tree != shp->var_base &&
-        !nv_search((char *)nq, nr->root, HASH_BUCKET | NV_NOSCOPE)) {
+    if (shp->var_tree != shp->var_base && !nv_search_namval(nq, nr->root, NV_NOSCOPE)) {
         nr->root = shp->namespace ? nv_dict(shp->namespace) : shp->var_base;
     }
     nv_putval(SH_NAMENOD, cp, NV_NOFREE);
@@ -2643,8 +2642,7 @@ static_fn void local_exports(Namval_t *np, void *data) {
 
     if (nv_isarray(np)) nv_putsub(np, NULL, 0, 0);
     cp = nv_getval(np);
-    if (cp && (mp = nv_search(nv_name(np), shp->var_tree, NV_ADD | NV_NOSCOPE)) &&
-        nv_isnull(mp)) {
+    if (cp && (mp = nv_search(nv_name(np), shp->var_tree, NV_ADD | NV_NOSCOPE)) && nv_isnull(mp)) {
         nv_putval(mp, cp, 0);
         nv_setattr(mp, np->nvflag);
     }
