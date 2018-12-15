@@ -513,7 +513,7 @@ int ed_macro(Edit_t *ep, int i) {
     } else {
         ep->e_macro[2] = 0;
     }
-    if (isalnum(i) && (np = nv_search(ep->e_macro, ep->sh->alias_tree, HASH_SCOPE)) &&
+    if (isalnum(i) && (np = nv_search(ep->e_macro, ep->sh->alias_tree, 0)) &&
         (out = nv_getval(np))) {
         // Copy to buff in internal representation.
         int c = 0;

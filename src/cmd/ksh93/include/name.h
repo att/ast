@@ -69,7 +69,6 @@ union Value {
 // For compatibility with old hash library.
 #define HASH_BUCKET 1
 #define HASH_NOSCOPE 2
-#define HASH_SCOPE 4
 
 typedef struct Namval Namval_t;
 typedef struct Namfun Namfun_t;
