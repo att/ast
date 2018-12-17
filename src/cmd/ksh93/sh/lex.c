@@ -1416,8 +1416,8 @@ breakloop:
             // Check for aliases.
             Namval_t *np;
             if (!lp->lex.incase && !assignment && fcpeek(0) != LPAREN &&
-                (np = nv_search(state, shp->alias_tree, 0)) &&
-                !nv_isattr(np, NV_NOEXPAND) && (lp->aliasok != 2 || nv_isattr(np, BLT_DCL)) &&
+                (np = nv_search(state, shp->alias_tree, 0)) && !nv_isattr(np, NV_NOEXPAND) &&
+                (lp->aliasok != 2 || nv_isattr(np, BLT_DCL)) &&
                 (!sh_isstate(lp->sh, SH_NOALIAS) || nv_isattr(np, NV_NOFREE)) &&
                 (state = nv_getval(np))) {
                 setupalias(lp, state, np);
