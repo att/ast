@@ -361,13 +361,6 @@ TST=(
     ( CMD='cat $TEST_DIR/buf | read v; print $v'        LIM=4*1024    )
 )
 
-if $bin_cat /dev/fd/3 3</dev/null >/dev/null 2>&1 || whence mkfifo > /dev/null
-then
-    T=${#TST[@]}
-    TST[T].CMD='$cat <(print foo)'
-    TST[T].EXP=3
-fi
-
 # Prime the two data files to 512 bytes each
 # $TEST_DIR/lin has newlines every 16 bytes and $TEST_DIR/buf has no newlines
 # the outer loop doubles the file size at top
@@ -549,13 +542,15 @@ err() { return $1; }
 ( err 12 ) & pid=$!
 : $($bin_date)
 wait $pid
-[[ $? == 12 ]] || log_error 'exit status from subshells not being preserved'
+actual=$?
+expect=12
+[[ $actual -eq $expect ]] ||
+    log_error 'exit status from subshells not being preserved' "$expect" "$actual"
 
-if $bin_cat /dev/fd/3 3</dev/null >/dev/null 2>&1 || whence mkfifo > /dev/null
-then
-    x="$(sed 's/^/Hello /' <(print "Fred" | sort))"
-    [[ $x == 'Hello Fred' ]] || log_error  "process substitution of pipeline in command substitution not working"
-fi
+actual="$(sed 's/^/Hello /' <(print "Fred" | sort))"
+expect="Hello Fred"
+[[ $actual == $expect ]] ||
+    log_error  "process subst of pipeline in cmd subst not working" "$expect" "$actual"
 
 {
 $SHELL <<- \EOF
