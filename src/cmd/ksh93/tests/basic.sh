@@ -371,32 +371,37 @@ foo()
 foo
 kill $pids
 
-[[ $( (trap 'print alarm' ALRM; sleep 4) & sleep 2; kill -ALRM $!; sleep 2; wait) == alarm ]] || log_error 'ALRM signal not working'
+actual=$( (trap 'print alarm' ALRM; sleep 4) & sleep 2; kill -ALRM $!; sleep 2; wait)
+expect=alarm
+[[ $actual == $expect ]] || log_error 'ALRM signal not working' "$expect" "$actual"
 
-[[ $($SHELL -c 'trap "" HUP; $SHELL -c "(sleep 2;kill -HUP $$)& sleep 4;print done"') != done ]] && log_error 'ignored traps not being ignored'
+actual=$($SHELL -c 'trap "" HUP; $SHELL -c "(sleep 2; kill -HUP $$) & sleep 4; print done"')
+expect=done
+[[ $actual == $expect ]] || log_error 'ignored traps not being ignored' "$expect" "$actual"
 
-[[ $($SHELL -c 'o=foobar; for x in foo bar; do (o=save);print $o;done' 2> /dev/null ) == $'foobar\nfoobar' ]] || log_error 'for loop optimization subshell bug'
+actual=$($SHELL -c 'o=foobar; for x in foo bar; do (o=save); print $o; done')
+expect=$'foobar\nfoobar'
+[[ $actual == $expect ]] || log_error 'for loop optimization subshell bug' "$expect" "$actual"
 
-command exec 3<> /dev/null
-if $bin_cat /dev/fd/3 >/dev/null 2>&1
-then
-    exec 3>&-
+actual=$($SHELL -c 'cat <(print foo)')
+expect=foo
+[[ $actual == $expect ]] || log_error 'process substitution not working' "$expect" "$actual"
 
-    [[ $($SHELL -c 'cat <(print foo)' 2> /dev/null) == foo ]] || log_error 'process substitution not working'
-
-    [[ $($SHELL -c  $'tee >(grep \'1$\' > '$TEST_DIR/scriptx$') > /dev/null <<-  \!!!
+actual=$($SHELL -c $'tee >(grep \'1$\' > '$TEST_DIR/scriptx$') > /dev/null <<- \!!!
 	line0
 	line1
 	line2
 	!!!
     wait
-    cat '$TEST_DIR/scriptx 2> /dev/null)  == line1 ]] || log_error '>() process substitution fails'
-    > $TEST_DIR/scriptx
+    cat '$TEST_DIR/scriptx)
+expect=line1
+[[ $actual == $expect ]] || log_error '>() process substitution fails' "$expect" "$actual"
+> $TEST_DIR/scriptx
 
-    [[ $($SHELL -c  $'
+actual=$($SHELL -c $'
     for i in 1
     do
-    tee >(grep \'1$\' > '$TEST_DIR/scriptx$') > /dev/null  <<-  \!!!
+    tee >(grep \'1$\' > '$TEST_DIR/scriptx$') > /dev/null  <<- \!!!
 	line0
 	line1
 	line2
@@ -404,57 +409,74 @@ then
     done
 
     wait
-    cat '$TEST_DIR/scriptx 2>> /dev/null) == line1 ]] || log_error '>() process substitution fails in for loop'
+    cat '$TEST_DIR/scriptx)
+expect=line1
+[[ $actual == $expect ]] ||
+    log_error '>() process substitution fails in for loop' "$expect" "$actual"
 
-    [[ $({ $SHELL -c 'cat <(for i in x y z; do print $i; done)';} 2> /dev/null) == $'x\ny\nz' ]] ||
-        log_error 'process substitution of compound commands not working'
+actual=$( { $SHELL -c 'cat <(for i in x y z; do print $i; done)'; } )
+expect=$'x\ny\nz'
+[[ $actual == $expect ]] || log_error 'process substitution of compound commands not working'
 
-    for tee in "$(whence tee)" $bin_tee
-    do
+for tee in "$(whence tee)" $bin_tee
+do
     print xxx > $TEST_DIR/file
-        $tee  >(sleep 1;cat > $TEST_DIR/file) <<< "hello" > /dev/null
-        [[ $(< $TEST_DIR/file) != hello ]] && log_error "process substitution does not wait for >() to complete with $tee"
-        print yyy > $TEST_DIR/file2
-        $tee >(cat > $TEST_DIR/file) >(sleep 1;cat > $TEST_DIR/file2) <<< "hello" > /dev/null
-        [[ $(< $TEST_DIR/file2) != hello ]] && log_error "process substitution does not wait for second of two >() to complete with $tee"
-        print xxx > $TEST_DIR/file
-        $tee  >(sleep 1;cat > $TEST_DIR/file) >(cat > $TEST_DIR/file2) <<< "hello" > /dev/null
-        [[ $(< $TEST_DIR/file) != hello ]] && log_error "process substitution does not wait for first of two >() to complete with $tee"
-    done
+    $tee  >(sleep 1;cat > $TEST_DIR/file) <<< "hello" > /dev/null
+    [[ $(< $TEST_DIR/file) == hello ]] ||
+        log_error "process substitution does not wait for >() to complete with $tee"
+    print yyy > $TEST_DIR/file2
+    $tee >(cat > $TEST_DIR/file) >(sleep 1;cat > $TEST_DIR/file2) <<< "hello" > /dev/null
+    [[ $(< $TEST_DIR/file2) == hello ]] ||
+        log_error "process substitution does not wait for second of two >() to complete with $tee"
+    print xxx > $TEST_DIR/file
+    $tee  >(sleep 1;cat > $TEST_DIR/file) >(cat > $TEST_DIR/file2) <<< "hello" > /dev/null
+    [[ $(< $TEST_DIR/file) == hello ]] ||
+        log_error "process substitution does not wait for first of two >() to complete with $tee"
+done
 
-    if [[ $(print <(print foo) & sleep .5; kill $! 2>/dev/null) == /dev/fd* ]]
+if [[ -d /dev/fd ]]
+then
+    if [[ $(print <(print foo) & sleep .5; kill $! 2>/dev/null) == /dev/fd/* ]]
     then
         expect='/dev/fd/+(\d) v=bam /dev/fd/+(\d)'
         actual=$( print <(print foo) v=bam <(print bar))
         [[ $actual == $expect ]] ||
-            log_error 'assignments after command substitution not treated as arguments' "$expect" "$actual"
+            log_error 'assignments after command subst not treated as arguments' "$expect" "$actual"
     fi
-
-    {
-        producer() {
-            for ((i = 0; i < 20000; i++ ))
-            do
-                print xxxxx${i}xxxxx
-            done
-        }
-        consumer() {
-            while read var
-            do
-                print ${var}
-            done < ${1}
-        }
-        consumer <(producer) > /dev/null
-    } &
-    pid=$!
-
-    # On most systems a five second timeout is adequate. On my WSL (Windows Subsystem for Linux) VM
-    # This test takes six seconds. Hence the ten second read timeout.
-    (read -t 10 -u 9 x && exit 0; kill -HUP $pid) 2> /dev/null  &
-    wait $pid || log_error "process substitution hangs"
-    print -u 9 exit
-    empty_fifos
 fi
 
+# ========
+# Producer/consumer test involving process substitution.
+{
+    producer() {
+        for ((i = 0; i < 20000; i++ ))
+        do
+            print xxxxx${i}xxxxx
+        done
+    }
+    consumer() {
+        while read var
+        do
+            print ${var}
+        done < ${1}
+    }
+    consumer <(producer) > /dev/null
+} &
+pid=$!
+
+# On most systems a five second timeout is adequate. On my WSL (Windows Subsystem for Linux) VM
+# This test takes six seconds. Hence the ten second read timeout.
+(read -t 10 -u 9 x && exit 0; kill -HUP $pid) 2> /dev/null &
+wait $pid || log_error "process substitution hangs"
+print -u 9 exit
+wait
+# TODO: Figure out why `empty_fifos` breaks the "set -o pipefail" test below.
+# Specifically, why does doing a `read -u8` or `read -u9` cause a problem.
+# For the moment we'll just assume the fifos are empty since anything else represents a bug.
+#
+# empty_fifos
+
+# ========
 [[ $($SHELL -cr 'command -p :' 2>&1) == *restricted* ]]  || log_error 'command -p not restricted'
 print cat >  $TEST_DIR/scriptx
 chmod +x $TEST_DIR/scriptx
