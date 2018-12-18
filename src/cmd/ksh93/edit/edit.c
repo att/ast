@@ -272,7 +272,7 @@ int ed_window(void) {
 //
 void ed_flush(Edit_t *ep) {
     int n = ep->e_outptr - ep->e_outbase;
-    int fd = ERRIO;
+    int fd = STDERR_FILENO;
 
     if (n <= 0) return;
     write(fd, ep->e_outbase, (unsigned)n);
@@ -282,7 +282,7 @@ void ed_flush(Edit_t *ep) {
 //
 // Send the bell character ^G to the terminal.
 //
-void ed_ringbell(void) { write(ERRIO, bellchr, 1); }
+void ed_ringbell(void) { write(STDERR_FILENO, bellchr, 1); }
 
 //
 // Send a carriage return line feed to the terminal.

@@ -194,7 +194,9 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
     shbuf[reedit] = 0;
 
     // Set raw mode.
-    if (tty_raw(ERRIO, 0) < 0) return reedit ? reedit : ed_read(context, fd, shbuf, nchar, 0);
+    if (tty_raw(STDERR_FILENO, 0) < 0) {
+        return reedit ? reedit : ed_read(context, fd, shbuf, nchar, 0);
+    }
     i = last_virt - 1;
 
     // Initialize some things.
@@ -246,7 +248,7 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
             sync_cursor(vp);
         }
         virtual[0] = '\0';
-        tty_cooked(ERRIO);
+        tty_cooked(STDERR_FILENO);
 
         if (i == UEOF) return 0;    // EOF
         if (i == UINTR) return -1;  // interrupt
@@ -263,7 +265,7 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
     vigetline(vp, APPEND);
     if (vp->ed->e_multiline) cursor(vp, last_phys);
     // Add a new line if user typed unescaped \n to cause the shell to process the line.
-    tty_cooked(ERRIO);
+    tty_cooked(STDERR_FILENO);
     if (ed->e_nlist) {
         ed->e_nlist = 0;
         stkset(ed->sh->stk, ed->e_stkptr, ed->e_stkoff);

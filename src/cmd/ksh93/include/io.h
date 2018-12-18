@@ -29,9 +29,6 @@
 #define IOBSIZE (SF_BUFSIZE * _ast_sizeof_pointer)
 #define IOMAXTRY 20
 
-// Used for output of shell errors.
-#define ERRIO 2
-
 #define IOREAD 001
 #define IOWRITE 002
 #define IODUP 004

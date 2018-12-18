@@ -2306,15 +2306,15 @@ static_fn void sftrack(Sfio_t *sp, int flag, void *data) {
 #ifdef DEBUG
     if (flag == SF_READ || flag == SF_WRITE) {
         char *z = fmtbase((long)getpid(), 0, 0);
-        write(ERRIO, z, strlen(z));
-        write(ERRIO, ": ", 2);
-        write(ERRIO, "attempt to ", 11);
+        write(STDERR_FILENO, z, strlen(z));
+        write(STDERR_FILENO, ": ", 2);
+        write(STDERR_FILENO, "attempt to ", 11);
         if (flag == SF_READ) {
-            write(ERRIO, "read from", 9);
+            write(STDERR_FILENO, "read from", 9);
         } else {
-            write(ERRIO, "write to", 8);
+            write(STDERR_FILENO, "write to", 8);
         }
-        write(ERRIO, " locked stream\n", 15);
+        write(STDERR_FILENO, " locked stream\n", 15);
         return;
     }
 #endif

@@ -139,7 +139,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
         // Decide whether shell is interactive.
         if (!sh_isoption(shp, SH_INTERACTIVE) && !sh_isoption(shp, SH_TFLAG) &&
             !sh_isoption(shp, SH_CFLAG) && sh_isoption(shp, SH_SFLAG) && tty_check(0) &&
-            tty_check(ERRIO)) {
+            tty_check(STDERR_FILENO)) {
             sh_onoption(shp, SH_INTERACTIVE);
         }
         if (sh_isoption(shp, SH_INTERACTIVE)) {
