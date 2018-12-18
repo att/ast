@@ -92,8 +92,8 @@ struct test {
 };
 
 static_fn char *nxtarg(struct test *, int);
-static_fn int eval_expr(struct test *, int);
-static_fn int eval_e3(struct test *);
+static_fn int eval_expr(Shell_t *shp, struct test *, int);
+static_fn int eval_e3(Shell_t *shp, struct test *);
 
 static_fn int test_strmatch(Shell_t *shp, const char *str, const char *pat) {
     int match[2 * (MATCH_MAX + 1)], n;
@@ -223,7 +223,7 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
         default: { break; }
     }
     tdata.ac = argc;
-    result = !eval_expr(&tdata, 0);
+    result = !eval_expr(shp, &tdata, 0);
 
 done:
     sh_popcontext(shp, &buff);
@@ -236,11 +236,11 @@ done:
 // Flag is 1 when in parenthesis.
 // Flag is 2 when evaluating -a.
 //
-static_fn int eval_expr(struct test *tp, int flag) {
+static_fn int eval_expr(Shell_t *shp, struct test *tp, int flag) {
     int r;
     char *p;
 
-    r = eval_e3(tp);
+    r = eval_e3(shp, tp);
     while (tp->ap < tp->ac) {
         p = nxtarg(tp, 0);
         // Check for -o and -a.
@@ -254,10 +254,10 @@ static_fn int eval_expr(struct test *tp, int flag) {
                     tp->ap--;
                     break;
                 }
-                r |= eval_expr(tp, 3);
+                r |= eval_expr(shp, tp, 3);
                 continue;
             } else if (*p == 'a') {
-                r &= eval_expr(tp, 2);
+                r &= eval_expr(shp, tp, 2);
                 continue;
             }
         }
@@ -280,15 +280,15 @@ static_fn char *nxtarg(struct test *tp, int mt) {
     return tp->av[tp->ap++];
 }
 
-static_fn int eval_e3(struct test *tp) {
+static_fn int eval_e3(Shell_t *shp, struct test *tp) {
     char *arg, *cp;
     int op;
     char *binop;
 
     arg = nxtarg(tp, 0);
-    if (c_eq(arg, '!')) return !eval_e3(tp);
+    if (c_eq(arg, '!')) return !eval_e3(shp, tp);
     if (c_eq(arg, '(')) {
-        op = eval_expr(tp, 1);
+        op = eval_expr(shp, tp, 1);
         cp = nxtarg(tp, 0);
         if (!cp || !c_eq(cp, ')')) {
             errormsg(SH_DICT, ERROR_exit(2), e_missing, "')'");
@@ -301,11 +301,14 @@ static_fn int eval_e3(struct test *tp) {
     if (c2_eq(arg, '-', 't')) {
         if (cp) {
             op = strtol(cp, &binop, 10);
-            return *binop ? 0 : tty_check(op);
+            if (*binop) return 0;
+            if (shp->subshell && op == STDOUT_FILENO) return 0;
+            return tty_check(op);
         }
         // Test -t with no arguments.
         tp->ap--;
-        return tty_check(1);
+        if (shp->subshell) return 0;
+        return tty_check(STDOUT_FILENO);
     }
     if (*arg == '-' && arg[2] == 0) {
         op = arg[1];
@@ -441,7 +444,9 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
         case 't': {
             char *last;
             op = strtol(arg, &last, 10);
-            return *last ? 0 : tty_check(op);
+            if (*last) return 0;
+            if (shp->subshell && op == STDOUT_FILENO) return 0;
+            return tty_check(op);
         }
         case 'v':
         case 'R': {

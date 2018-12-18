@@ -421,28 +421,33 @@ expect=$'x\ny\nz'
 for tee in "$(whence tee)" $bin_tee
 do
     print xxx > $TEST_DIR/file
-    $tee  >(sleep 1;cat > $TEST_DIR/file) <<< "hello" > /dev/null
-    [[ $(< $TEST_DIR/file) == hello ]] ||
-        log_error "process substitution does not wait for >() to complete with $tee"
+    $tee  >(sleep 1; cat > $TEST_DIR/file) <<< "hello" > /dev/null
+    actual=$(< $TEST_DIR/file)
+    expect=hello
+    [[ $actual == $expect ]] ||
+        log_error "process substitution does not wait for >() to complete with $tee" "$expect" "$actual"
+
     print yyy > $TEST_DIR/file2
-    $tee >(cat > $TEST_DIR/file) >(sleep 1;cat > $TEST_DIR/file2) <<< "hello" > /dev/null
-    [[ $(< $TEST_DIR/file2) == hello ]] ||
-        log_error "process substitution does not wait for second of two >() to complete with $tee"
+    $tee >(cat > $TEST_DIR/file) >(sleep 1; cat > $TEST_DIR/file2) <<< "hello" > /dev/null
+    actual=$(< $TEST_DIR/file2)
+    expect=hello
+    [[ $actual == $expect ]] ||
+        log_error "process substitution does not wait for second of two >() to complete with $tee" "$expect" "$actual"
+
     print xxx > $TEST_DIR/file
-    $tee  >(sleep 1;cat > $TEST_DIR/file) >(cat > $TEST_DIR/file2) <<< "hello" > /dev/null
-    [[ $(< $TEST_DIR/file) == hello ]] ||
-        log_error "process substitution does not wait for first of two >() to complete with $tee"
+    $tee  >(sleep 1; cat > $TEST_DIR/file) >(cat > $TEST_DIR/file2) <<< "hello" > /dev/null
+    actual=$(< $TEST_DIR/file)
+    expect=hello
+    [[ $actual == $expect ]] ||
+        log_error "process substitution does not wait for first of two >() to complete with $tee" "$expect" "$actual"
 done
 
-if [[ -d /dev/fd ]]
+if [[ $HAS_DEV_FD == yes ]]
 then
-    if [[ $(print <(print foo) & sleep .5; kill $! 2>/dev/null) == /dev/fd/* ]]
-    then
-        expect='/dev/fd/+(\d) v=bam /dev/fd/+(\d)'
-        actual=$( print <(print foo) v=bam <(print bar))
-        [[ $actual == $expect ]] ||
-            log_error 'assignments after command subst not treated as arguments' "$expect" "$actual"
-    fi
+    expect='/dev/fd/+(\d) v=bam /dev/fd/+(\d)'
+    actual=$( print <(print foo) v=bam <(print bar))
+    [[ $actual == $expect ]] ||
+        log_error 'assignments after command substitution not treated as arguments' "$expect" "$actual"
 fi
 
 # ========

@@ -1,2 +1,4 @@
 stdin is a terminal device
 stdout is a terminal device
+-t1 in comsub works correctly
+-t1 in comsub with exec >/dev/tty works correctly

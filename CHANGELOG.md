@@ -43,6 +43,8 @@ None at this time.
 
 ## Notable fixes and improvements
 
+- Doing `[ -t1 ]` inside a command substitution behaves correctly
+  (issue #1079).
 - The project now passes its unit tests when built with malloc debugging
   enabled (i.e., `meson test --setup=malloc`).
 - Changes to the project are now validated by running unit tests on the Travis

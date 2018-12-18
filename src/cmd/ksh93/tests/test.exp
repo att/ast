@@ -19,6 +19,28 @@ expect "\r\nPASS\r\n" {
 }
 expect_prompt
 
+# ==========
+# Verify that constructs like `[ -t 1 ]` behave sensibly even inside a command substitution.
+
+# This is the simple case that doesn't do any redirection of stdout within the command
+# substitution. Thus the [ -t 1 ] test should be false.
+send {v=$(echo begin; [ -t 1 ] && echo -t1 is true; echo end); echo "v=:$v:"}
+send "\r"
+expect "\r\nv=:begin\r\nend:\r\n" {
+    puts "-t1 in comsub works correctly"
+}
+expect_prompt
+
+# This is the more complex case that does redirect stdout within the command substitution to the
+# actual tty. Thus the [ -t 1 ] test should be true.
+send {v=$(echo begin; exec >/dev/tty; [ -t 1 ] && echo -t1 is true; echo end); echo "v=:$v:"}
+send "\r"
+expect "\r\n-t1 is true\r\nend\r\nv=:begin:\r\n" {
+    puts "-t1 in comsub with exec >/dev/tty works correctly"
+}
+expect_prompt
+
+# ==========
 # Exit shell with ctrl-d
 log_test_entry
 send [ctrl D]

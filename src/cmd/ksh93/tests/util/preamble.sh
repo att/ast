@@ -86,6 +86,19 @@ function empty_fifos {
 alias empty_fifos='empty_fifos $LINENO'
 
 #
+# Verify that /dev/fd is functional. Note that on some systems (e.g., FreeBSD) there is a stub
+# /dev/fd that only supports 0, 1, and 2. On such systems a special pseudo-filesystem may need to
+# be mounted or a custom kernel built to get full /dev/fd support.
+#
+# Note that we can't do the straightforward `[[ -p /dev/fd/8 ]]` because such paths are
+# special-cased by ksh and work even if the system doesn't support /dev/fd. But there may be tests
+# where we need to know if those paths are recognized by the OS.
+#
+HAS_DEV_FD=no
+[[ $(print /dev/fd/*) == *' /dev/fd/8 '* ]] && HAS_DEV_FD=yes
+readonly HAS_DEV_FD
+
+#
 # Platforms like OpenBSD have `jot` instead of `seq`. For the simple case of emitting ints from one
 # to n they are equivalent. And that should be the only use of `seq` in unit tests.
 #
