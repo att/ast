@@ -1879,6 +1879,11 @@ void sh_iorestore(Shell_t *shp, int last, int jmpval) {
     int savestr, flag = (last & IOSUBSHELL);
 
     last &= ~IOSUBSHELL;
+
+    // There was an issue with truncating files (See `ftruncate` below) that was caused by
+    // out of sync streams. So to be safe, sync all streams before restoring file descriptors.
+    sfsync(NULL);
+
     for (fd = shp->topfd - 1; fd >= last; fd--) {
         if (!flag && filemap[fd].subshell) continue;
         savestr = filemap[fd].save_fd & IOSAVESTRING;
