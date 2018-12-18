@@ -594,3 +594,11 @@ $SHELL -c 'echo xxx 1<>; baz'
 actual=$(cat baz)
 expect="xxx"
 [[ "$actual" = "$expect" ]] || log_error "<>; does not truncate files" "$expect" "$actual"
+
+# ==========
+# https://github.com/att/ast/issues/61
+seq 10 > $TEST_DIR/foo
+$SHELL -c '1<>; $TEST_DIR/foo >#5'
+actual=$(cat $TEST_DIR/foo)
+expect=$'1\n2\n3\n4'
+[[ "$actual" = "$expect" ]] || log_error "Failed to truncate file" "$expect" "$actual"
