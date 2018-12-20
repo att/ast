@@ -1150,7 +1150,7 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
     Shell_t *shp = sh_getinterp();
     char *cp = (char *)name;
     int c;
-    Namval_t *np = 0;
+    Namval_t *np = NULL;
     Namfun_t fun;
     int append = 0;
     const char *msg = e_varname;
@@ -1159,10 +1159,12 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
     Dt_t *funroot;
     struct Cache_entry *xp;
 
+    // It's not clear why these two assignments are required before the check for non-empty name.
+    shp->openmatch = NULL;
+    shp->last_table = NULL;
+    if (!name || !*name) return NULL;
+
     memset(&fun, 0, sizeof(fun));
-    shp->openmatch = 0;
-    shp->last_table = 0;
-    if (!name) return 0;
     sh_stats(STAT_NVOPEN);
     if (!root) root = shp->var_tree;
     shp->last_root = root;

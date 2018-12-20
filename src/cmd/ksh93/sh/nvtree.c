@@ -1171,8 +1171,8 @@ static_fn void put_tree(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
         Shell_t *shp = sh_ptr(np);
         Namval_t *last_table = shp->last_table;
         Dt_t *last_root = shp->last_root;
-        Namval_t *mp =
-            val ? nv_open(val, shp->var_tree, NV_VARNAME | NV_NOADD | NV_ARRAY | NV_NOFAIL) : 0;
+        // Note that val may be non-NULL but point to an empty string which will cause mp == NULL;
+        Namval_t *mp = nv_open(val, shp->var_tree, NV_VARNAME | NV_NOADD | NV_ARRAY | NV_NOFAIL);
         if (mp && nv_isvtree(mp)) {
             shp->prev_table = shp->last_table;
             shp->prev_root = shp->last_root;
