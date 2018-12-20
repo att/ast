@@ -124,15 +124,15 @@ enum {
 typedef struct {
     int val;
 } Nvassoc_op_t;
-const Nvassoc_op_t ASSOC_OP_INIT;
-const Nvassoc_op_t ASSOC_OP_FREE;
-const Nvassoc_op_t ASSOC_OP_NEXT;
-const Nvassoc_op_t ASSOC_OP_NAME;
-const Nvassoc_op_t ASSOC_OP_DELETE;
-const Nvassoc_op_t ASSOC_OP_ADD;
-const Nvassoc_op_t ASSOC_OP_ADD2;
-const Nvassoc_op_t ASSOC_OP_CURRENT;
-const Nvassoc_op_t ASSOC_OP_SETSUB;
+extern const Nvassoc_op_t ASSOC_OP_INIT;
+extern const Nvassoc_op_t ASSOC_OP_FREE;
+extern const Nvassoc_op_t ASSOC_OP_NEXT;
+extern const Nvassoc_op_t ASSOC_OP_NAME;
+extern const Nvassoc_op_t ASSOC_OP_DELETE;
+extern const Nvassoc_op_t ASSOC_OP_ADD;
+extern const Nvassoc_op_t ASSOC_OP_ADD2;
+extern const Nvassoc_op_t ASSOC_OP_CURRENT;
+extern const Nvassoc_op_t ASSOC_OP_SETSUB;
 
 // This is an array template header.
 struct Namarray {
@@ -264,11 +264,11 @@ typedef struct {
     int val;
 } Nvdisc_op_t;
 
-const Nvdisc_op_t DISC_OP_NOOP;
-const Nvdisc_op_t DISC_OP_FIRST;
-const Nvdisc_op_t DISC_OP_LAST;
-const Nvdisc_op_t DISC_OP_POP;
-const Nvdisc_op_t DISC_OP_CLONE;
+extern const Nvdisc_op_t DISC_OP_NOOP;
+extern const Nvdisc_op_t DISC_OP_FIRST;
+extern const Nvdisc_op_t DISC_OP_LAST;
+extern const Nvdisc_op_t DISC_OP_POP;
+extern const Nvdisc_op_t DISC_OP_CLONE;
 
 // The following are operations for nv_putsub().
 #define ARRAY_BITS 22
