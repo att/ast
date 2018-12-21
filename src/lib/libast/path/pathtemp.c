@@ -54,31 +54,38 @@ static_fn char *get_pathtemp_dir() {
 
 #if !has_dev_fd
 //
-// Construct a unique temp pathname based on a file name prefix and the current pid. This should
-// only be used if a psuedo-unique path is required that does not represent an actual file. In the
-// latter case the `ast_temp_file()` function should be used.
+// Construct a unique temp pathname based on a file name prefix, the current pid, and a monotonic
+// counter. This should only be used if a psuedo-unique path is required that does not represent an
+// actual file. In the latter case the `ast_temp_file()` function should be used.
 //
 // This is currently predicated on the `has_dev_fd` build time symbol because it is only needed if
 // that is false.
 //
+static unsigned int temp_path_counter = 0;
+
 char *ast_temp_path(const char *prefix) {
     const char *dir = get_pathtemp_dir();
     if (!dir) return NULL;
 
-    char pid[10];
-    (void)snprintf(pid, sizeof(pid), "%d", getpid());
-
     int dir_len = strlen(dir);
     int prefix_len = strlen(prefix);
 
-    char *template = malloc(dir_len + prefix_len + strlen(pid) + 2);
-    assert(template);
-    strcpy(template, dir);
-    if (dir_len && dir[dir_len - 1] != '/') strcat(template, "/");
-    strcat(template, prefix);
-    if (prefix_len && prefix[prefix_len - 1] != '.') strcat(template, ".");
-    strcat(template, pid);
-    return template;
+    while (true) {
+        char uuid[20];
+        int uuid_len = snprintf(uuid, sizeof(uuid), "%d.%d", getpid(), ++temp_path_counter);
+        assert(uuid_len != -1 && uuid_len < sizeof(uuid));
+
+        char *template = malloc(dir_len + prefix_len + uuid_len + 2);
+        assert(template);
+        strcpy(template, dir);
+        if (dir_len && dir[dir_len - 1] != '/') strcat(template, "/");
+        strcat(template, prefix);
+        if (prefix_len && prefix[prefix_len - 1] != '.') strcat(template, ".");
+        strcat(template, uuid);
+
+        struct stat statbuf;
+        if (stat(template, &statbuf) == -1) return template;
+    }
 }
 #endif  // !has_dev_fd
 
