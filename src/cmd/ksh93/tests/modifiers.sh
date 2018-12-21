@@ -94,3 +94,22 @@ do
         fi
     done
 done
+
+# ==========
+# https://github.com/att/ast/issues/70
+cat > $TEST_DIR/modifier-in-loop.sh <<EOF
+unset -v var
+for i in 1 2 3 4 5; do
+        case \${var+s} in
+        ( s )   echo set; unset -v var;;
+        ( '' )  echo unset; var=;;
+        esac
+done
+EOF
+
+chmod u+x $TEST_DIR/modifier-in-loop.sh
+
+actual=$($TEST_DIR/modifier-in-loop.sh)
+expect=$'unset\nset\nunset\nset\nunset'
+
+[[ "$actual" = "$expect" ]] || log_error '${var+s} expansion fails in loops' "$expect" "$actual"
