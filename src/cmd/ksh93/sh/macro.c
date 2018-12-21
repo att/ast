@@ -1379,7 +1379,7 @@ retry1:
                         if (ap) {
                             v = nv_arrayisset(np, ap) ? (char *)"x" : 0;
                         } else {
-                            v = nv_isnull(np) ? 0 : (char *)"x";
+                            v = nv_getval(np);
                         }
                     } else {
                         v = nv_getval(np);
