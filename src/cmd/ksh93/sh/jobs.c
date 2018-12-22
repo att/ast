@@ -408,9 +408,13 @@ bool job_reap(int sig) {
         flags = WUNTRACED | wcontinued;
     }
     oerrno = errno;
+
+    // Save tty wait state
+    int was_ttywait_on = sh_isstate(shp, SH_TTYWAIT);
+
     while (1) {
         if (!(flags & WNOHANG) && !shp->intrap && job.pwlist) {
-            sh_onstate(shp, SH_TTYWAIT);
+            if (!was_ttywait_on) sh_onstate(shp, SH_TTYWAIT);
         }
 #if SHOPT_COSHELL
         if (cojobs) {
@@ -434,7 +438,7 @@ bool job_reap(int sig) {
         }
 #endif  // SHOPT_COSHELL
         pid = waitpid((pid_t)-1, &wstat, flags);
-        sh_offstate(shp, SH_TTYWAIT);
+        if (!was_ttywait_on) sh_offstate(shp, SH_TTYWAIT);
 #if SHOPT_COSHELL
     cojob:
 #endif  // SHOPT_COSHELL
@@ -569,6 +573,9 @@ bool job_reap(int sig) {
             if (pw != pwfg) job_unpost(shp, pw, 1);
         }
     }
+
+    if (!was_ttywait_on) sh_offstate(shp, SH_TTYWAIT);
+
     if (errno == ECHILD) {
         errno = oerrno;
         job.numbjob = 0;
