@@ -65,17 +65,25 @@
 // value (4 versus 16). That results in an adjacent dynamically allocated buffer header being
 // corrupted. See issue #805.
 #define STK_ALIGN 16
+
 // This used to be defined this way:
 //     #define STK_FSIZE (1024 * sizeof(char *))
 // However, that means the size varies by a factor of two depending on whether pointers are 32 or 64
 // bits in length. It's also pretty arbitrary. There is a bug somewhere in the code since values
 // less than 1024 cause ASAN to report use-after-free errors. And a value of 2048 causes one unit
-// test to fail due to a corrupted sfio string. So use the system page size if possible else 4096.
-#ifdef NBPG
+// test to fail due to a corrupted sfio string. And larger values (e.g., 16KiB) cause other
+// failures. Something is either really wrong with how this value is used or the specific value
+// interacts unexpectedly with callers of this code. See issue #1088.
+//
+// So use the system page size if defined else 4096.
+#if defined(PAGE_SIZE)
+#define STK_FSIZE PAGE_SIZE
+#elif defined(NBPG)
 #define STK_FSIZE NBPG
 #else
 #define STK_FSIZE 4096
 #endif
+
 #define STK_HDRSIZE (sizeof(Sfio_t) + sizeof(Sfdisc_t))
 
 typedef char *(*_stk_overflow_)(int);
