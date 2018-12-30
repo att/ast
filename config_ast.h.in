@@ -245,4 +245,12 @@ int eaccess(const char *pathname, int mode);
 #if !_lib_mkostemp
 int mkostemp(char *template, int oflags);
 #endif
+
+// This is useful for printing debugging messages that are tagged with useful
+// information such as the current file, line number, function name, and
+// duration since the previous debug message. You must pass a format string
+// even if it is the empty, "", string.
+extern void _dprintf(const char *fname, int lineno, const char *funcname, const char *fmt, ...);
+#define DPRINTF(fmt, ...) _dprintf(__FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
+
 #endif
