@@ -602,3 +602,13 @@ $SHELL -c '1<>; $TEST_DIR/foo >#5'
 actual=$(cat $TEST_DIR/foo)
 expect=$'1\n2\n3\n4'
 [[ "$actual" = "$expect" ]] || log_error "Failed to truncate file" "$expect" "$actual"
+
+# ==========
+# https://github.com/att/ast/issues/1091
+# Detecting EOF when reading from a fifo may fail on platforms like macOS unless our feature
+# test for the correct behavior of poll() detects that it is broken.
+mkfifo io_fifo_poll
+(print abc; sleep 2; print ABC) >io_fifo_poll &
+expect=$'abc\nABC'
+actual=$( $SHELL -c 'while read foo; do echo "$foo"; done' <io_fifo_poll )
+[[ "$actual" = "$expect" ]] || log_error "fifo I/O failed" "$expect" "$actual"

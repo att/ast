@@ -23,6 +23,7 @@
 
 #include <errno.h>
 #include <poll.h>
+#include <stdbool.h>
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
@@ -40,6 +41,48 @@
 
 #define STREAM_PEEK 001
 #define SOCKET_PEEK 002
+
+#if _lib_poll  // platform appears to have a working poll() implementation
+
+// Use poll() to detect if input is available or we're at EOF.
+static_fn int _sfpkrd_poll(int fd, long tm) {
+    struct pollfd po;
+    po.fd = fd;
+    po.events = POLLIN;
+    po.revents = 0;
+
+    while (true) {
+        int r = poll(&po, 1, tm);
+        if (r != -1) return (po.revents & POLLIN) ? 1 : -1;
+        if (errno == EINTR) return -2;
+        if (errno != EAGAIN) abort(); // can't happen unless something is horribly wrong
+    }
+}
+
+#else  // _lib_poll
+
+// Use select() to detect if input is available or we're at EOF.
+static_fn int _sfpkrd_poll(int fd, long tm) {
+    while (true) {
+        struct timeval tmb, *tmp;
+        if (tm < 0) {
+            tmp = NULL;
+        } else {
+            tmb.tv_sec = tm / 1000;
+            tmb.tv_usec = (tm % 1000) * 1000;
+            tmp = &tmb;
+        }
+        fd_set rd;
+        FD_ZERO(&rd);
+        FD_SET(fd, &rd);
+        int r = select(fd + 1, &rd, NULL, NULL, tmp);
+        if (r != -1) return FD_ISSET(fd, &rd) ? 1 : -1;
+        if (errno == EINTR) return -2;
+        if (errno != EAGAIN) abort(); // can't happen unless something is horribly wrong
+    }
+}
+
+#endif  // _lib_poll
 
 //
 // Args:
@@ -118,69 +161,19 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
 
         if (ntry == 1) break;
 
-        /* poll or select to see if data is present.  */
-        while (tm >= 0 || action > 0 ||
-               /* block until there is data before peeking again */
-               ((t & STREAM_PEEK) && rc >= 0) ||
-               /* let select be interrupted instead of recv which autoresumes */
-               (t & SOCKET_PEEK)) {
-            r = -2;
-            if (r == -2) {
-                struct pollfd po;
-                po.fd = fd;
-                po.events = POLLIN;
-                po.revents = 0;
-
-                if ((r = SFPOLL(&po, 1, tm)) < 0) {
-                    if (errno == EINTR)
-                        return -1;
-                    else if (errno == EAGAIN) {
-                        errno = 0;
-                        continue;
-                    } else
-                        r = -2;
-                } else
-                    r = (po.revents & POLLIN) ? 1 : -1;
-            }
-            if (r == -2) {
-#if _hpux_threads && vt_threaded
-#define fd_set int
-#endif
-                fd_set rd;
-                struct timeval tmb, *tmp;
-                FD_ZERO(&rd);
-                FD_SET(fd, &rd);
-                if (tm < 0) {
-                    tmp = NULL;
-                } else {
-                    tmp = &tmb;
-                    tmb.tv_sec = tm / 1000;
-                    tmb.tv_usec = (tm % 1000) * 1000;
-                }
-                r = select(fd + 1, &rd, NULL, NULL, tmp);
-                if (r < 0) {
-                    if (errno == EINTR) {
-                        return -1;
-                    } else if (errno == EAGAIN) {
-                        errno = 0;
-                        continue;
-                    } else {
-                        r = -2;
-                    }
-                } else {
-                    r = FD_ISSET(fd, &rd) ? 1 : -1;
-                }
-            }
-
+        // Poll or select to see if data is present.
+        if (tm >= 0 || action > 0 ||
+            // Block until there is data before peeking again.
+            ((t & STREAM_PEEK) && rc >= 0) ||
+            // Let select be interrupted instead of recv which autoresumes.
+            (t & SOCKET_PEEK)) {
+            r = _sfpkrd_poll(fd, tm);
+            if (r == -2) return -1;             // EINTR
+            if (r == -1 && tm >= 0) return -1;  // timeout exceeded
             if (r > 0) {  // there is data now
                 if (action <= 0 && rc < 0) return sysreadf(fd, buf, n);
-                r = -1;
-            } else if (tm >= 0) {  // timeout exceeded
-                return -1;
-            } else {
-                r = -1;
             }
-            break;
+            r = -1;
         }
 
         if (!(t & SOCKET_PEEK)) continue;
