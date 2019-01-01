@@ -34,9 +34,6 @@
 
 #include "defs.h"
 
-#define sleep ______sleep
-#undef sleep
-
 #include "builtins.h"
 #include "error.h"
 #include "fault.h"
@@ -44,10 +41,6 @@
 #include "sfio.h"
 #include "tmx.h"
 #include "tv.h"
-
-#if _lib_poll_notimer
-#undef _lib_poll
-#endif  // _lib_poll_notimer
 
 int b_sleep(int argc, char *argv[], Shbltin_t *context) {
     char *cp;

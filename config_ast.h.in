@@ -113,7 +113,6 @@
 #mesondefine _lib_pathposix
 #mesondefine _lib_pipe2
 #mesondefine _lib_poll
-#mesondefine _lib_poll_notimer
 #mesondefine _lib_posix_spawn
 #mesondefine _lib_posix_spawnattr_setfchdir
 #mesondefine _lib_posix_spawnattr_setsid

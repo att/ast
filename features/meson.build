@@ -140,9 +140,15 @@ if prog_result.returncode() == 0
     feature_data.set('_PROC_PROG', prog_output)
 endif
 
+poll_feature_file = files('poll.c')
+poll_feature_result = cc.run(poll_feature_file,
+                             name: 'poll() exists and is worth using',
+                             args: feature_test_args)
+feature_data.set10('_lib_poll', poll_feature_result.returncode() == 0)
+
 posix_spawn_feature_file = files('posix_spawn.c')
 posix_spawn_feature_result = cc.run(posix_spawn_feature_file,
-                                    name: 'posix_spawn exists and it works and its worth using',
+                                    name: 'posix_spawn() exists and is worth using',
                                     args: feature_test_args)
 feature_data.set10('_lib_posix_spawn', posix_spawn_feature_result.returncode() == 0)
 
