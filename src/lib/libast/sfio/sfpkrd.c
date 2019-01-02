@@ -39,8 +39,12 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#define STREAM_PEEK 001
-#define SOCKET_PEEK 002
+#define SOCKET_PEEK (1 << 0)
+#if _stream_peek
+#define STREAM_PEEK (1 << 1)
+#else  // _stream_peek
+#define STREAM_PEEK 0
+#endif  // _stream_peek
 
 #if _lib_poll  // platform appears to have a working poll() implementation
 
@@ -103,58 +107,35 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
     if (rc < 0 && tm < 0 && action <= 0) return sysreadf(fd, buf, n);
 
     t = (action > 0 || rc >= 0) ? (STREAM_PEEK | SOCKET_PEEK) : 0;
-#if !_stream_peek
-    t &= ~STREAM_PEEK;
-#endif
 
     for (ntry = 0; ntry < 2; ++ntry) {
         r = -1;
+
 #if _stream_peek
         if ((t & STREAM_PEEK) && (ntry == 1 || tm < 0)) {
-#ifdef __sun
-            /*
-             * I_PEEK on stdin can hang rsh+ksh on solaris
-             * this kludge will have to do until sun^H^H^Horacle fixes I_PEEK/rsh
-             */
-            static int stream_peek;
-            if (stream_peek == 0) /* this will be done just once */
-            {
-                char *e;
-                stream_peek = (getenv("LOGNAME") == 0 && getenv("MAIL") == 0 &&
-                               ((e = getenv("LANG")) == 0 || strcmp(e, "C") == 0) &&
-                               ((e = getenv("PATH")) == 0 || strncmp(e, "/usr/bin:", 9) == 0))
-                                  ? -1
-                                  : 1;
-            }
-            if (stream_peek < 0)
-                t &= ~STREAM_PEEK;
-            else
-#endif
-            {
-                struct strpeek pbuf;
-                pbuf.flags = 0;
-                pbuf.ctlbuf.maxlen = -1;
-                pbuf.ctlbuf.len = 0;
-                pbuf.ctlbuf.buf = NULL;
-                pbuf.databuf.maxlen = n;
-                pbuf.databuf.buf = buf;
-                pbuf.databuf.len = 0;
+            struct strpeek pbuf;
+            pbuf.flags = 0;
+            pbuf.ctlbuf.maxlen = -1;
+            pbuf.ctlbuf.len = 0;
+            pbuf.ctlbuf.buf = NULL;
+            pbuf.databuf.maxlen = n;
+            pbuf.databuf.buf = buf;
+            pbuf.databuf.len = 0;
 
-                if ((r = ioctl(fd, I_PEEK, &pbuf)) < 0) {
-                    if (errno == EINTR) return -1;
-                    t &= ~STREAM_PEEK;
-                } else {
-                    t &= ~SOCKET_PEEK;
-                    if (r > 0 && (r = pbuf.databuf.len) <= 0) {
-                        if (action <= 0) /* read past eof */
-                            r = sysreadf(fd, buf, 1);
-                        return r;
-                    }
-                    if (r == 0)
-                        r = -1;
-                    else if (r > 0)
-                        break;
+            if ((r = ioctl(fd, I_PEEK, &pbuf)) < 0) {
+                if (errno == EINTR) return -1;
+                t &= ~STREAM_PEEK;
+            } else {
+                t &= ~SOCKET_PEEK;
+                if (r > 0 && (r = pbuf.databuf.len) <= 0) {
+                    if (action <= 0) /* read past eof */
+                        r = sysreadf(fd, buf, 1);
+                    return r;
                 }
+                if (r == 0)
+                    r = -1;
+                else if (r > 0)
+                    break;
             }
         }
 #endif /* stream_peek */
