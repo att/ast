@@ -100,13 +100,17 @@ static Sfdouble_t local_nexttoward(int type_1, Sfdouble_t arg_1, int type_2, Sfd
 
     switch (type_1) {
         case 1: {
-            return nexttowardf((float)arg_1, arg_2);
+            return nexttowardf(arg_1, arg_2);
         }
         case 2: {
-            return nexttoward((double)arg_1, arg_2);
+            return nexttoward(arg_1, arg_2);
         }
         case 3: {
+#if _lib_nexttowardl
             return nexttowardl(arg_1, arg_2);
+#else
+            return nexttoward(arg_1, arg_2);
+#endif
         }
         default: { return 0; }
     }
@@ -121,6 +125,36 @@ static Sfdouble_t local_y0(Sfdouble_t a1) { return y0(a1); }
 static Sfdouble_t local_y1(Sfdouble_t a1) { return y1(a1); }
 
 static Sfdouble_t local_yn(Sfdouble_t a1, Sfdouble_t a2) { return yn(a1, a2); }
+
+#if !_lib_expm1l
+static Sfdouble_t local_expm1(Sfdouble_t a1) { return expm1(a1); }
+#define expm1l local_expm1
+#endif
+
+#if !_lib_lgammal
+static Sfdouble_t local_lgamma(Sfdouble_t a1) { return lgamma(a1); }
+#define lgammal local_lgamma
+#endif
+
+#if !_lib_log1pl
+static Sfdouble_t local_log1p(Sfdouble_t a1) { return log1p(a1); }
+#define log1pl local_log1p
+#endif
+
+#if !_lib_log2l
+static Sfdouble_t local_log2(Sfdouble_t a1) { return log2(a1); }
+#define log2l local_log2
+#endif
+
+#if !_lib_remainderl
+static Sfdouble_t local_remainder(Sfdouble_t a1, Sfdouble_t a2) { return remainder(a1, a2); }
+#define remainderl local_remainder
+#endif
+
+#if !_lib_tgammal
+static Sfdouble_t local_tgamma(Sfdouble_t a1) { return tgamma(a1); }
+#define tgammal local_tgamma
+#endif
 
 //
 // the first byte is a three-digit octal number <mask><return><argc>:
