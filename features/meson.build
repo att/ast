@@ -93,6 +93,24 @@ feature_data.set10('_lib_pipe2',
 feature_data.set10('_lib_syncfs',
     cc.has_function('syncfs', prefix: '#include <unistd.h>', args: feature_test_args))
 
+# https://github.com/att/ast/issues/1096
+# These math functions are not available on NetBSD
+feature_data.set10('_lib_nexttowardl',
+    cc.has_function('nexttowardl', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+feature_data.set10('_lib_expm1l',
+    cc.has_function('expm1l', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+feature_data.set10('_lib_log1pl',
+    cc.has_function('log1pl', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+feature_data.set10('_lib_remainderl',
+    cc.has_function('remainderl', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+feature_data.set10('_lib_log2l',
+    cc.has_function('log2l', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+feature_data.set10('_lib_tgammal',
+    cc.has_function('tgammal', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+feature_data.set10('_lib_lgammal',
+    cc.has_function('lgammal', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+
+
 socketpair_shutdown_feature_file = files('socketpair_shutdown.c')
 socketpair_shutdown_feature_result = cc.run(
     socketpair_shutdown_feature_file,
