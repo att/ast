@@ -147,7 +147,11 @@ const struct mathtab shtab_math[] = {{"\001acos", (Math_f)acosl},
                                      {"\001erfc", (Math_f)erfcl},
                                      {"\001exp", (Math_f)expl},
                                      {"\001exp2", (Math_f)exp2l},
+#if _lib_expm1l
                                      {"\001expm1", (Math_f)expm1l},
+#else
+                                     {"\001expm1", (Math_f)expm1},
+#endif
                                      {"\001fabs", (Math_f)fabsl},
                                      {"\001abs", (Math_f)fabsl},
                                      {"\002fdim", (Math_f)fdiml},
@@ -181,14 +185,22 @@ const struct mathtab shtab_math[] = {{"\001acos", (Math_f)acosl},
                                      {"\001lgamma", (Math_f)lgammal},
                                      {"\001log", (Math_f)logl},
                                      {"\001log10", (Math_f)log10l},
+#if _lib_log1pl
                                      {"\001log1p", (Math_f)log1pl},
+#else
+                                     {"\001log1p", (Math_f)log1p},
+#endif
                                      {"\001log2", (Math_f)log2l},
                                      {"\001logb", (Math_f)logbl},
                                      {"\001nearbyint", (Math_f)nearbyintl},
                                      {"\102nextafter", (Math_f)local_nextafter},
                                      {"\102nexttoward", (Math_f)local_nexttoward},
                                      {"\002pow", (Math_f)powl},
+#if _lib_remainderl
                                      {"\002remainder", (Math_f)remainderl},
+#else
+                                     {"\002remainder", (Math_f)remainder},
+#endif
                                      {"\001rint", (Math_f)rintl},
                                      {"\001round", (Math_f)roundl},
                                      {"\002scalbn", (Math_f)scalbnl},

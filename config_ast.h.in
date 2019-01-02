@@ -141,6 +141,9 @@
 #mesondefine _lib_utimensat
 #mesondefine _lib_wcrtomb
 #mesondefine _lib_wcscpy
+#mesondefine _lib_expm1l
+#mesondefine _lib_log1pl
+#mesondefine _lib_remainderl
 
 #mesondefine _mem_base_rel_utsname
 #mesondefine _mem_d_fileno_dirent

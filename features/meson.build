@@ -93,6 +93,16 @@ feature_data.set10('_lib_pipe2',
 feature_data.set10('_lib_syncfs',
     cc.has_function('syncfs', prefix: '#include <unistd.h>', args: feature_test_args))
 
+# https://github.com/att/ast/issues/1096
+# These math functions are not available on NetBSD
+feature_data.set10('_lib_expm1l',
+    cc.has_function('expm1l', prefix: '#include <math.h>', args: feature_test_args))
+feature_data.set10('_lib_log1pl',
+    cc.has_function('log1pl', prefix: '#include <math.h>', args: feature_test_args))
+feature_data.set10('_lib_remainderl',
+    cc.has_function('remainderl', prefix: '#include <math.h>', args: feature_test_args))
+
+
 socketpair_shutdown_feature_file = files('socketpair_shutdown.c')
 socketpair_shutdown_feature_result = cc.run(
     socketpair_shutdown_feature_file,
