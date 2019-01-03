@@ -114,6 +114,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     sh_sigaction(SIGHUP, SIG_UNBLOCK);
 
     shp = sh_init(ac, av, userinit);
+    set_debug_filename(av[0]);
     time(&mailtime);
     rshflag = sh_isoption(shp, SH_RESTRICTED);
     if (rshflag) sh_offoption(shp, SH_RESTRICTED);
@@ -308,6 +309,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     } else {
         fdin = shp->infd;
     }
+
     if (sh_isoption(shp, SH_INTERACTIVE)) sh_onstate(shp, SH_INTERACTIVE);
     nv_putval(IFSNOD, (char *)e_sptbnl, NV_RDONLY);
     exfile(shp, iop, fdin);

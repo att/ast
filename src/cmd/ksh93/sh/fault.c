@@ -63,12 +63,13 @@ static int cursig = -1;
 // stderr then terminates the process with prejudice. The primary purpose is to
 // help ensure we get some useful info when the shell dies due to dereferencing
 // an invalid address.
-void handle_sigsegv(int signo, siginfo_t *info, void *context) {
+extern int b_print(int argc, char *argv[], Shbltin_t *context);
+static_fn void handle_sigsegv(int signo, siginfo_t *info, void *context) {
     UNUSED(signo);
     UNUSED(info);
     UNUSED(context);
 
-    dump_backtrace(100, 0);
+    dump_backtrace(0);
     abort();
 }
 
@@ -120,7 +121,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
         kill(getpid(), sig);
     }
     if (sig == SIGSEGV) {
-        dump_backtrace(100, 0);
+        dump_backtrace(0);
         // The preceding call should call `abort()` which means this shouldn't be reached but
         // be paranoid.
         sh_signal(sig, (sh_sigfun_t)(SIG_DFL));

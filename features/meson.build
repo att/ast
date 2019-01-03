@@ -167,6 +167,16 @@ else
     feature_data.set_quoted('_pth_ed', 'ed')
 endif
 
+atos = find_program('atos', required: false)
+if atos.found()
+    feature_data.set_quoted('_pth_atos', atos.path())
+endif
+
+addr2line = find_program('addr2line', required: false)
+if addr2line.found()
+    feature_data.set_quoted('_pth_addr2line', addr2line.path())
+endif
+
 has_dev_fd = run_command('sh', '-c', 'ls /dev/fd/9 9<&0')
 feature_data.set10('has_dev_fd', has_dev_fd.returncode() == 0)
 

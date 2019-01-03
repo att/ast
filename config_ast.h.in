@@ -55,6 +55,8 @@
 #mesondefine _more_long_int
 #mesondefine _more_void_int
 #mesondefine _wchar_t_is_int
+#mesondefine _pth_addr2line
+#mesondefine _pth_atos
 #mesondefine _pth_ed
 #mesondefine _pipe_rw
 #mesondefine _ptr_bits

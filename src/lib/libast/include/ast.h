@@ -204,7 +204,8 @@ extern ssize_t base64decode(const void *, size_t, void **, void *, size_t);
 extern int chresc(const char *, char **);
 extern int chrexp(const char *, char **, int *, int);
 extern char *conformance(const char *, size_t);
-extern void dump_backtrace(int max_frames, int skip_levels);
+extern void set_debug_filename(const char *pathname);
+extern void dump_backtrace(int max_frames);
 extern char *fmtbase(intmax_t, int, int);
 #define fmtbasell(a, b, c) fmtbase(a, b, c) /* until 2014-01-01 */
 extern char *fmtbuf(size_t);
