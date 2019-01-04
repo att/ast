@@ -359,7 +359,7 @@ static_fn void job_waitsafe(int sig, siginfo_t *info, void *context) {
 bool job_reap(int sig) {
     Shell_t *shp = sh_getinterp();
     pid_t pid;
-    struct process *pw;
+    struct process *pw = NULL;
     struct process *px;
     int flags;
     struct jobsave *jp;
@@ -583,6 +583,7 @@ bool job_reap(int sig) {
     }
     if (sh_isoption(shp, SH_NOTIFY) && sh_isstate(shp, SH_TTYWAIT)) {
         outfile = sfstderr;
+        assert(pw);
         job_list(pw, JOB_NFLAG | JOB_NLFLAG);
         job_unpost(shp, pw, 1);
         sfsync(sfstderr);
