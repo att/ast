@@ -45,15 +45,23 @@ char *fmtre(const char *as) {
     Stack_t *p;
     char *x;
     int n;
-    int end;
+    int end = 1;
     char *buf;
     Stack_t stack[32];
 
-    end = 1;
-    c = 2 * strlen(s) + 1;
+    int slen = strlen(s);
+    c = 2 * slen + 1;
     t = buf = fmtbuf(c);
+    if (slen == 0) {
+        *buf = 0;
+        return buf;
+    }
     p = stack;
-    if (*s != '*' || *(s + 1) == '(' || (*(s + 1) == '-' && *(s + 2) == '(')) {
+    if (s[0] != '*') {
+        *t++ = '^';
+    } else if (slen >= 2 && s[1] == '(') {
+        *t++ = '^';
+    } else if (slen >= 3 && s[1] == '-' && s[2] == '(') {
         *t++ = '^';
     } else {
         s++;
