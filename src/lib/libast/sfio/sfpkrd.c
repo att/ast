@@ -59,7 +59,7 @@ static_fn int _sfpkrd_poll(int fd, long tm) {
         int r = poll(&po, 1, tm);
         if (r != -1) return (po.revents & POLLIN) ? 1 : -1;
         if (errno == EINTR) return -2;
-        if (errno != EAGAIN) abort(); // can't happen unless something is horribly wrong
+        if (errno != EAGAIN) abort();  // can't happen unless something is horribly wrong
     }
 }
 
@@ -82,7 +82,7 @@ static_fn int _sfpkrd_poll(int fd, long tm) {
         int r = select(fd + 1, &rd, NULL, NULL, tmp);
         if (r != -1) return FD_ISSET(fd, &rd) ? 1 : -1;
         if (errno == EINTR) return -2;
-        if (errno != EAGAIN) abort(); // can't happen unless something is horribly wrong
+        if (errno != EAGAIN) abort();  // can't happen unless something is horribly wrong
     }
 }
 
@@ -151,7 +151,7 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
             r = _sfpkrd_poll(fd, tm);
             if (r == -2) return -1;             // EINTR
             if (r == -1 && tm >= 0) return -1;  // timeout exceeded
-            if (r > 0) {  // there is data now
+            if (r > 0) {                        // there is data now
                 if (action <= 0 && rc < 0) return sysreadf(fd, buf, n);
             }
             r = -1;
