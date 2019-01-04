@@ -33,6 +33,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <termios.h>
+#include <unistd.h>
 
 #include "defs.h"
 
@@ -40,7 +41,6 @@
 #include "edit.h"
 #include "fault.h"
 #include "history.h"
-#include "io.h"
 #include "sfio.h"
 #include "stk.h"
 #include "terminal.h"

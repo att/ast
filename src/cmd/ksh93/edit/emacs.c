@@ -61,13 +61,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include "ast.h"
 #include "defs.h"
 #include "edit.h"
 #include "fault.h"
 #include "history.h"
-#include "io.h"
 #include "stak.h"
 #include "terminal.h"
 

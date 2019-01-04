@@ -4,11 +4,13 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <dlfcn.h>
+#include <fcntl.h>
+#include <inttypes.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -84,18 +86,23 @@ void run_addr2lines_prog(int n_frames, char *path, const char **argv) {
     sigemptyset(&sigchld_mask);
     sigaddset(&sigchld_mask, SIGCHLD);
     sigprocmask(SIG_BLOCK, &sigchld_mask, &omask);
+
     pid_t pid = fork();
     if (pid == 0) {
+        // Setup stdin, stdout, stderr.
         close(0);
-        open("/dev/null", O_RDONLY);
+        // cppcheck-suppress leakReturnValNotUsed
+        (void)open("/dev/null", O_RDONLY);
         dup2(fds[1], 1);
         close(2);
-        open("/dev/null", O_WRONLY);
+        // cppcheck-suppress leakReturnValNotUsed
+        (void)open("/dev/null", O_WRONLY);
+        // Run the program we hope will give us detailed info about each address.
         execv(path, (char *const *)argv);
     }
     close(fds[1]);
 
-    char atos_data[64 * 1024];
+    static char atos_data[64 * 1024];
     int len = 0;
     int n = 0;
     do {

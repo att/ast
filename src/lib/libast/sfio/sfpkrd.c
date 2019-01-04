@@ -22,17 +22,14 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
-#include <poll.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <sys/select.h>
 #include <sys/socket.h>
-#include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
-#include <unistd.h>
 
 #include "sfhdr.h"
-#include "vthread.h"
 
 /*	Read/Peek a record from an unseekable device
 **
@@ -47,6 +44,7 @@
 #endif  // _stream_peek
 
 #if _lib_poll  // platform appears to have a working poll() implementation
+#include <poll.h>
 
 // Use poll() to detect if input is available or we're at EOF.
 static_fn int _sfpkrd_poll(int fd, long tm) {
