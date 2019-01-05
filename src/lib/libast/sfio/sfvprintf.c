@@ -1358,6 +1358,7 @@ done:
     else
         f->next += n;
 
+    va_end(oargs);
     SFOPEN(f)
     SFMTXRETURN(f, n_output)
 }
