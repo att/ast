@@ -33,6 +33,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <locale.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -709,18 +710,52 @@ static_fn void optget_initdict(void) {
     }
 }
 
+char *optget_subinit(char *s, Optpass_t *p, bool is_name) {
+    for (; *s == '\a' || *s == '\b' || *s == '\v' || *s == ' '; s++) {
+        ;  // empty body
+    }
+
+    if (*s == '\f') {
+        if (*(s + 1) == '?' && *(s + 2) == '\f') return s;
+        char *e;
+        s = optget_expand(s + 1, NULL, &e, state.xp, p->id);
+    }
+
+    char *t;
+    for (t = s; *t && *t != ' ' && *t != ']'; t++) {
+        ;  // empty body
+    }
+    if (t > s) {
+        char *u = t;
+        if (*(t - 1) == '\a' || *(t - 1) == '\b' || *(t - 1) == '\v') t--;
+        if (t > s) {
+            while (*u == ' ' || *u == '\\') u++;
+            if (*u == '-' || *u == ']') {
+                if (is_name) {
+                    p->id = optget_save(s, t - s, 0, 0, 0, 0);
+                } else {
+                    int a = strlen(p->id);
+                    int n = t - s;
+                    if (a <= n || strncmp(p->id + a - n, s, n) || *(p->id + a - n - 1) != ':') {
+                        p->id = optget_save(p->id, strlen(p->id), "::", 2, s, t - s);
+                    }
+                }
+            }
+        }
+    }
+
+    return s;
+}
+
 /*
  * initialize the attributes for pass p from opt string s
  */
 
 static_fn int optget_init(char *s, Optpass_t *p) {
     char *t;
-    char *u;
     int c;
     int a;
     int n;
-    char *e;
-    int l;
 
 #if _BLD_DEBUG
     error(-2, "optget debug localized=%lu:%lu xp=%p", state.localized, ast.locale.serial, state.xp);
@@ -817,34 +852,12 @@ static_fn int optget_init(char *s, Optpass_t *p) {
                 while (isspace(*s)) s++;
                 if (*s++ == '[') {
                     if (*s++ != '-') {
-                        l = 0;
-                        if ((!strncmp(s - 1, "+NAME?", 6) && (s += 5)) ||
-                            (!strncmp(s - 1, "+LIBRARY?", 9) && (s += 8) && (l = 1)) ||
-                            (!strncmp(s - 1, "+PLUGIN?", 8) && (s += 7) && (l = 1))) {
-                            for (; *s == '\a' || *s == '\b' || *s == '\v' || *s == ' '; s++)
-                                ;
-                            if (*s == '\f') {
-                                if (*(s + 1) == '?' && *(s + 2) == '\f') break;
-                                s = optget_expand(s + 1, NULL, &e, state.xp, p->id);
-                            }
-                            for (t = s; *t && *t != ' ' && *t != ']'; t++)
-                                ;
-                            if (t > s) {
-                                u = t;
-                                if (*(t - 1) == '\a' || *(t - 1) == '\b' || *(t - 1) == '\v') t--;
-                                if (t > s) {
-                                    while (*u == ' ' || *u == '\\') u++;
-                                    if (*u == '-' || *u == ']') {
-                                        if (!l)
-                                            p->id = optget_save(s, t - s, 0, 0, 0, 0);
-                                        else if ((a = strlen(p->id)) <= (n = t - s) ||
-                                                 strncmp(p->id + a - n, s, n) ||
-                                                 *(p->id + a - n - 1) != ':')
-                                            p->id = optget_save(p->id, strlen(p->id), "::", 2, s,
-                                                                t - s);
-                                    }
-                                }
-                            }
+                        if (!strncmp(s - 1, "+NAME?", 6)) {
+                            s = optget_subinit(s + 5, p, true);
+                        } else if (!strncmp(s - 1, "+LIBRARY?", 9)) {
+                            s = optget_subinit(s + 8, p, false);
+                        } else if (!strncmp(s - 1, "+PLUGIN?", 8)) {
+                            s = optget_subinit(s + 7, p, false);
                         }
                         break;
                     }
