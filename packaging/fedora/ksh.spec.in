@@ -46,7 +46,15 @@ with "sh" (the Bourne Shell).
 %meson_install
 # Allow switching between different ksh implementations (for e.g. mksh) through alternatives.
 mv %{buildroot}/%{_bindir}/ksh %{buildroot}/%{_bindir}/ksh93
-mv %{buildroot}/%{_mandir}/man1/ksh.1.gz %{buildroot}/%{_mandir}/man1/ksh93.1.gz
+# http://mesonbuild.com/Release-notes-for-0-49-0.html#manpages-are-no-longer-compressed-implicitly
+# meson 0.49 does not compress man pages
+if [[ -e  %{buildroot}/%{_mandir}/man1/ksh.1.gz ]]
+then
+    mv %{buildroot}/%{_mandir}/man1/ksh.1.gz %{buildroot}/%{_mandir}/man1/ksh93.1.gz
+else
+    mv %{buildroot}/%{_mandir}/man1/ksh.1 %{buildroot}/%{_mandir}/man1/ksh93.1
+fi
+
 install -p -D -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/binfmt.d/kshcomp.conf
 install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/kshrc
 install -p -D -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/skel/.kshrc
