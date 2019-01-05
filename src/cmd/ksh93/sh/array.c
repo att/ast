@@ -117,8 +117,8 @@ static_fn bool array_unscope(Namval_t *np, Namarr_t *ap) {
     return true;
 }
 
-static_fn void array_syncsub(Namarr_t *ap, Namarr_t *aq) {
-    ((struct index_array *)ap)->cur = ((struct index_array *)aq)->cur;
+static_fn void array_syncsub(Namarr_t *aq, Namarr_t *ap) {
+    ((struct index_array *)aq)->cur = ((struct index_array *)ap)->cur;
 }
 
 static_fn bool array_covered(Namval_t *np, struct index_array *ap) {
