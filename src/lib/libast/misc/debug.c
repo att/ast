@@ -110,8 +110,12 @@ void run_addr2lines_prog(int n_frames, char *path, const char **argv) {
         len += n;
     } while (n != 0 && len < sizeof(atos_data));
 
+    // We ignore the return value because a) it should be impossible for this to fail and b) there
+    // isn't anything we can do if it does fail. This is solely to reap the process so we don't
+    // accumulate a lot of zombies.
     int status;
-    waitpid(pid, &status, 0);
+    (void)waitpid(pid, &status, 0);
+
     sigprocmask(SIG_SETMASK, &omask, NULL);
 
     if (len == sizeof(atos_data)) return;
