@@ -47,11 +47,3 @@ char *fmtbase(intmax_t n, int b, int p) {
     sfsprintf(buf, z, p ? "%#..*I*u" : "%..*I*u", b, sizeof(n), n);
     return buf;
 }
-
-#if __OBSOLETE__ < 20140101
-
-#undef fmtbasell
-
-char *fmtbasell(intmax_t n, int b, int p) { return fmtbase(n, b, p); }
-
-#endif
