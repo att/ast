@@ -299,6 +299,7 @@ static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
             sfprintf(shp->strbuf, "%d", ap->cur);
             cp = sfstruse(shp->strbuf);
             mp = nv_search(cp, ap->namarr.table, NV_ADD);
+            assert(mp);  // it is theoretically possible for that nv_search() to fail
             mp->nvenv = (char *)np;
             nv_arraychild(np, mp, 0);
         }
