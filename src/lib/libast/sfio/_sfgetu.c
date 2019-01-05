@@ -27,6 +27,6 @@
  * for backwards compatibility with pre-threaded sfgetl() inline
  */
 Sfulong_t _sfgetu(Sfio_t *f) {
-    sfungetc(f, (unsigned char)_SF_(f)->val);
+    sfungetc(f, (unsigned char)f->val);
     return sfgetu(f);
 }

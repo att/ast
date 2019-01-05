@@ -466,7 +466,6 @@
     { symbol: ["Sfulong_t", "private", "\"sfhdr.h\"", "public"] },
     { symbol: ["Sfwalk_f", "private", "\"sfhdr.h\"", "public"] },
     { symbol: ["Sfwrite_f", "private", "\"sfhdr.h\"", "public"] },
-    { symbol: ["_SF_", "private", "\"sfhdr.h\"", "public"] },
     { symbol: ["_Sfi", "private", "\"sfhdr.h\"", "public"] },
     { symbol: ["_Sfmaxr", "private", "\"sfhdr.h\"", "public"] },
     { symbol: ["__sf_clrerr", "private", "\"sfhdr.h\"", "public"] },

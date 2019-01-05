@@ -306,16 +306,10 @@ extern ssize_t sfmaxr(ssize_t, int);
 #define SF_U3 (SF_U2 * SF_U1)
 #define SF_U4 (SF_U3 * SF_U1)
 
-#if __cplusplus
-#define _SF_(f) (f)
-#else
-#define _SF_(f) ((Sfio_t *)(f))
-#endif
-
-#define __sf_putd(f, v) (_sfputd(_SF_(f), (Sfdouble_t)(v)))
-#define __sf_putl(f, v) (_sfputl(_SF_(f), (Sflong_t)(v)))
-#define __sf_putu(f, v) (_sfputu(_SF_(f), (Sfulong_t)(v)))
-#define __sf_putm(f, v, m) (_sfputm(_SF_(f), (Sfulong_t)(v), (Sfulong_t)(m)))
+#define __sf_putd(f, v) (_sfputd(f, (Sfdouble_t)(v)))
+#define __sf_putl(f, v) (_sfputl(f, (Sflong_t)(v)))
+#define __sf_putu(f, v) (_sfputu(f, (Sfulong_t)(v)))
+#define __sf_putm(f, v, m) (_sfputm(f, (Sfulong_t)(v), (Sfulong_t)(m)))
 
 static inline int __sf_putc(Sfio_t *f, int c) {
     if (f->_next >= f->_endw) return _sfflsbuf(f, (unsigned char)c);
@@ -339,12 +333,12 @@ static inline int __sf_getc(Sfio_t *f) {
          : (Sfulong_t)(v) < SF_U2 ? 2 \
                                   : (Sfulong_t)(v) < SF_U3 ? 3 : (Sfulong_t)(v) < SF_U4 ? 4 : 5)
 
-#define __sf_fileno(f) (_SF_(f)->_file)
-#define __sf_eof(f) (_SF_(f)->_flags & SF_EOF)
-#define __sf_error(f) (_SF_(f)->_flags & SF_ERROR)
-#define __sf_clrerr(f) (_SF_(f)->_flags &= ~(SF_ERROR | SF_EOF))
-#define __sf_stacked(f) (_SF_(f)->_push != NULL)
-#define __sf_value(f) (_SF_(f)->_val)
+#define __sf_fileno(f) (f->_file)
+#define __sf_eof(f) (f->_flags & SF_EOF)
+#define __sf_error(f) (f->_flags & SF_ERROR)
+#define __sf_clrerr(f) (f->_flags &= ~(SF_ERROR | SF_EOF))
+#define __sf_stacked(f) (f->_push != NULL)
+#define __sf_value(f) (f->_val)
 #define __sf_slen() (_Sfi)
 #define __sf_maxr(n, s) ((s) ? ((_Sfi = _Sfmaxr), (_Sfmaxr = (n)), _Sfi) : _Sfmaxr)
 
