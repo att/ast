@@ -1492,7 +1492,8 @@ done:
                 ? (tm_data.days[tm->tm_mon] + (tm->tm_mon == 1 && tmisleapyear(tm->tm_year)))
                 : 1;
         tmfix(tm);
-        if ((tm->tm_wday == 0 && (j = 1)) || (tm->tm_wday == 6 && (j = 2))) {
+        if (tm->tm_wday == 0 || tm->tm_wday == 6) {
+            j = tm->tm_wday == 0 ? 1 : 2;
             if ((tm->tm_mday + j) >
                 (tm_data.days[tm->tm_mon] + (tm->tm_mon == 1 && tmisleapyear(tm->tm_year))))
                 j -= 3;

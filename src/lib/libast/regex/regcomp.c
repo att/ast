@@ -1427,9 +1427,11 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                                              !strcasecmp((char *)tc->nam, (char *)cc->nam)
                                          ? tc
                                          : cc;
-                                if (c == 'l' || (c == 'L' && !(c = 0))) {
+                                if (c == 'l' || c == 'L') {
+                                    if (c == 'L') c = 0;
                                     ce->typ = COLL_range_lc;
-                                } else if (c == 'u' || (c == 'U' && !(c = 0))) {
+                                } else if (c == 'u' || c == 'U') {
+                                    if (c == 'U') c = 0;
                                     ce->typ = COLL_range_uc;
                                 } else {
                                     ce->typ = COLL_range;

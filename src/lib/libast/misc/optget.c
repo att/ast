@@ -1537,7 +1537,8 @@ again:
                     return s + 1;
             }
     }
-    if (c == '+' || (c == '-' && (bump = 3)) || (c != ' ' && level > 1)) {
+    if (c == '+' || c == '-' || (c != ' ' && level > 1)) {
+        if (c == '-') bump = 3;
         s = optget_skip(t = s + 1, '?', 0, 0, 1, level, 0, version);
         if (c == '-' && (*t == '?' || isdigit(*t) || (*s == '?' && *(s + 1) == '\n'))) {
             if ((c = *s) != '?') return optget_skip(s, 0, 0, 0, 1, level, 1, version);
