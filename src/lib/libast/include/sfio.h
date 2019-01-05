@@ -320,8 +320,13 @@ extern ssize_t sfmaxr(ssize_t, int);
 #define __sf_putc(f, c)                                                               \
     (_SF_(f)->_next >= _SF_(f)->_endw ? _sfflsbuf(_SF_(f), (int)((unsigned char)(c))) \
                                       : (int)(*_SF_(f)->_next++ = (unsigned char)(c)))
-#define __sf_getc(f) \
-    (_SF_(f)->_next >= _SF_(f)->_endr ? _sffilbuf(_SF_(f), 0) : (int)(*_SF_(f)->_next++))
+
+static inline int __sf_getc(Sfio_t *f) {
+    if (f->_next >= f->_endr) return _sffilbuf(f, 0);
+    int c = (int)*f->_next;
+    f->_next += 1;
+    return c;
+}
 
 #define __sf_dlen(v) (_sfdlen((Sfdouble_t)(v)))
 #define __sf_llen(v) (_sfllen((Sflong_t)(v)))
