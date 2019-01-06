@@ -1047,6 +1047,14 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
     memset(&fake, 0, sizeof(fake));
     fake.nvname = nv_name(np);
 
+    // Something is wrong with the block of code I commented out. If event==NULL and action!=NULL
+    // then we fall thru to the `sfputr()` call which requires event!=NULL. Coverity CID#253657.
+    //
+    // In practice at the time I wrote this comment this is never called with event==NULL. The only
+    // path to here currently is from the `nv_setdisc()` in the `case TFUN:` block in `sh_exec()`.
+    // AFAICT that will never pass a NULL event pointer.
+    assert(event);
+#if 0
     if (!event) {
         if (!action) {
             mp = (Namval_t *)dtprev(shp->fun_tree, &fake);
@@ -1054,6 +1062,7 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
         }
         getname = 1;
     }
+#endif
     sfputr(shp->stk, fake.nvname, '.');
     sfputr(shp->stk, event, 0);
     name = stkptr(shp->stk, off);
@@ -1064,8 +1073,8 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
     return action ? (char *)action : "";
 }
 
-static const Namdisc_t SH_MATH_disc = {0,    NULL, get_math, NULL, setdisc_any, create_math,
-                                       NULL, NULL, NULL,     NULL, NULL,        NULL};
+static const Namdisc_t SH_MATH_disc = {
+    .dsize = 0, .getval = get_math, .setdisc = setdisc_any, .createf = create_math};
 
 #if SHOPT_COSHELL
 static const Namdisc_t SH_JOBPOOL_disc = {.dsize = 0, .setdisc = setdisc_any};
