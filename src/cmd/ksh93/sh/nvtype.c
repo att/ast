@@ -278,8 +278,8 @@ static_fn Namval_t *findref(void *nodes, int n) {
     return NULL;
 }
 
-static_fn int fixnode(Namtype_t *dp, Namtype_t *pp, int i, struct Namref *nrp, int flag) {
-    Namval_t *nq = nv_namptr(dp->nodes, i);
+static_fn int fixnode(Namtype_t *np1, Namtype_t *np2, int i, struct Namref *nrp, int flag) {
+    Namval_t *nq = nv_namptr(np1->nodes, i);
     Namfun_t *fp;
 
     fp = nv_hasdisc(nq, &chtype_disc);
@@ -288,19 +288,19 @@ static_fn int fixnode(Namtype_t *dp, Namtype_t *pp, int i, struct Namref *nrp, i
         nq->nvalue.nrp = nrp++;
         nv_setsize(nq, 0);
         if (strchr(nq->nvname, '.')) {
-            nq->nvalue.nrp->np = findref(dp->nodes, i);
+            nq->nvalue.nrp->np = findref(np1->nodes, i);
         } else {
-            nq->nvalue.nrp->np = nv_namptr(pp->childfun.ttype->nodes, i);
+            nq->nvalue.nrp->np = nv_namptr(np2->childfun.ttype->nodes, i);
         }
-        nq->nvalue.nrp->root = pp->sh->last_root;
-        nq->nvalue.nrp->table = pp->np;
+        nq->nvalue.nrp->root = np2->sh->last_root;
+        nq->nvalue.nrp->table = np2->np;
         nv_setattr(nq, NV_REF | NV_NOFREE | NV_MINIMAL);
         return 1;
     }
     if (nq->nvalue.cp || nq->nvfun) {
         const char *data = nq->nvalue.cp;
         if (nq->nvfun) {
-            Namval_t *np = nv_namptr(pp->nodes, i);
+            Namval_t *np = nv_namptr(np2->nodes, i);
             if (nv_isarray(nq)) nq->nvalue.cp = 0;
             nq->nvfun = 0;
             if (nv_isarray(nq) && ((flag & NV_IARRAY) || nv_type(np))) {
@@ -315,15 +315,15 @@ static_fn int fixnode(Namtype_t *dp, Namtype_t *pp, int i, struct Namref *nrp, i
             if (fp) nv_disc(np, fp, DISC_OP_LAST);
         }
 #if 0
-		if(nq->nvalue.cp >=  pp->data && nq->nvalue.cp < (char*)pp +pp->fun.dsize)
-			nq->nvalue.cp = dp->data + (nq->nvalue.cp-pp->data);
+		if(nq->nvalue.cp >=  np2->data && nq->nvalue.cp < (char*)np2 +np2->fun.dsize)
+			nq->nvalue.cp = np1->data + (nq->nvalue.cp-np2->data);
 #else
-        if (data >= pp->data && data < (char *)pp + pp->fun.dsize) {
-            nq->nvalue.cp = dp->data + (data - pp->data);
+        if (data >= np2->data && data < (char *)np2 + np2->fun.dsize) {
+            nq->nvalue.cp = np1->data + (data - np2->data);
         }
 #endif
-        else if (!nq->nvfun && pp->childfun.ttype != pp->childfun.ptype) {
-            Namval_t *nr = nv_namptr(pp->childfun.ttype->nodes, i);
+        else if (!nq->nvfun && np2->childfun.ttype != np2->childfun.ptype) {
+            Namval_t *nr = nv_namptr(np2->childfun.ttype->nodes, i);
             if (nr->nvalue.cp != nq->nvalue.cp) {
                 i = nv_size(nq);
                 if (i) {
@@ -341,7 +341,7 @@ static_fn int fixnode(Namtype_t *dp, Namtype_t *pp, int i, struct Namref *nrp, i
             nv_offattr(nq, NV_NOFREE);
         }
     }
-    if (fp) nv_disc(nq, &dp->childfun.fun, DISC_OP_LAST);
+    if (fp) nv_disc(nq, &np1->childfun.fun, DISC_OP_LAST);
     return 0;
 }
 
