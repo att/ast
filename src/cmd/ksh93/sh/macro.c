@@ -2017,7 +2017,6 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
     nv_putval(np, mp->ifsp, NV_RDONLY);
     mp->ifsp = nv_getval(np);
     stkset(stkp, savptr, savtop);
-    newlines = 0;
     // Read command substitution output and put on stack or here-doc.
     sfpool(sp, NULL, SF_WRITE);
     sfset(sp, SF_WRITE | SF_PUBLIC | SF_SHARE, 0);
@@ -2031,14 +2030,16 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
     if (foff > IOBSIZE) sfsetbuf(sp, NULL, SF_UNBOUND);
     spid = mp->shp->spid;
     mp->shp->spid = 0;
-    while ((str = (char *)sfreserve(sp, SF_UNBOUND, 0)) && (c = bufsize = sfvalue(sp)) > 0) {
+    newlines = 0;
+    while (true) {
+        str = sfreserve(sp, SF_UNBOUND, 0);
+        if (!str) break;
+        c = bufsize = sfvalue(sp);
+        if (c <= 0) break;
+
         // Delay appending trailing new-lines.
         for (nextnewlines = 0; c > 0 && str[c - 1] == '\n'; c--, nextnewlines++) {
             ;  // empty loop
-        }
-        if (c < 0) {
-            newlines += nextnewlines;
-            continue;
         }
         if (newlines > 0) {
             if (mp->sp) {
