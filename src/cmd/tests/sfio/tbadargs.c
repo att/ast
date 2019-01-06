@@ -67,7 +67,6 @@ void main_varargs(int argc, char **argv, ...) {
     CALL(sfnew(0, 0, 0, 0, 0));
     CALL(sfnputc(0, 0, 0));
     CALL(sfopen(0, 0, 0));
-    CALL(sfpoll(0, 0, 0));
     CALL(sfpool(0, 0, 0));
     CALL(sfpopen(0, 0, 0));
     CALL(sfprintf(0, 0));
