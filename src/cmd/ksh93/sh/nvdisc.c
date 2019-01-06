@@ -63,7 +63,7 @@ char *nv_getv(Namval_t *np, Namfun_t *nfp) {
     char *cp;
 
     if ((fp = nfp) != NULL && !nv_local) fp = nfp = nfp->next;
-    nv_local = 0;
+    nv_local = false;
     for (; fp; fp = fp->next) {
         if (!fp->disc || (!fp->disc->getnum && !fp->disc->getval)) continue;
         if (!nv_isattr(np, NV_NODISC) || fp == (Namfun_t *)nv_arrayptr(np)) break;
@@ -74,7 +74,7 @@ char *nv_getv(Namval_t *np, Namfun_t *nfp) {
         sfprintf(shp->strbuf, "%.*Lg", 12, (*fp->disc->getnum)(np, fp));
         cp = sfstruse(shp->strbuf);
     } else {
-        nv_local = 1;
+        nv_local = true;
         cp = nv_getval(np);
     }
     return cp;
@@ -90,7 +90,7 @@ Sfdouble_t nv_getn(Namval_t *np, Namfun_t *nfp) {
     char *str;
 
     if ((fp = nfp) != NULL && !nv_local) fp = nfp = nfp->next;
-    nv_local = 0;
+    nv_local = false;
     for (; fp; fp = fp->next) {
         if (!fp->disc || (!fp->disc->getnum && !fp->disc->getval)) continue;
         if (!fp->disc->getnum && nv_isattr(np, NV_INTEGER)) continue;
@@ -99,7 +99,7 @@ Sfdouble_t nv_getn(Namval_t *np, Namfun_t *nfp) {
     if (fp && fp->disc && fp->disc->getnum) {
         d = (*fp->disc->getnum)(np, fp);
     } else if (nv_isattr(np, NV_INTEGER)) {
-        nv_local = 1;
+        nv_local = true;
         d = nv_getnum(np);
     } else {
         if (fp && fp->disc && fp->disc->getval) {
@@ -126,7 +126,7 @@ void nv_putv(Namval_t *np, const void *value, int flags, Namfun_t *nfp) {
     Namarr_t *ap;
 
     if ((fp = nfp) != NULL && !nv_local) fp = nfp = nfp->next;
-    nv_local = 0;
+    nv_local = false;
     if (flags & NV_NODISC) fp = 0;
     for (; fp; fp = fpnext) {
         fpnext = fp->next;
@@ -143,7 +143,7 @@ void nv_putv(Namval_t *np, const void *value, int flags, Namfun_t *nfp) {
     if (fp && fp->disc->putval) {
         (*fp->disc->putval)(np, value, flags, fp);
     } else {
-        nv_local = 1;
+        nv_local = true;
         if (value) {
             nv_putval(np, value, flags);
         } else {
@@ -157,7 +157,6 @@ void nv_putv(Namval_t *np, const void *value, int flags, Namfun_t *nfp) {
 #define APPEND 2
 #define UNASSIGN 3
 #define LOOKUPN 4
-#define BLOCKED ((Namval_t *)&nv_local)
 
 struct vardisc {
     Namfun_t fun;

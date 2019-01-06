@@ -501,7 +501,7 @@ extern void nv_checkrequired(Namval_t *);
 extern const Namdisc_t RESTRICTED_disc;
 extern const Namdisc_t ENUM_disc;
 extern const Namdisc_t OPTIMIZE_disc;
-extern char nv_local;
+extern bool nv_local;
 extern Dtdisc_t _Nvdisc;
 extern const char *nv_discnames[];
 extern const char e_subscript[];

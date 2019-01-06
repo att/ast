@@ -723,7 +723,7 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
     if (*name == '.') {
         if (nv_isattr(np, NV_BINARY) || nv_type(np)) return;
         if (fp && np->nvalue.cp && np->nvalue.cp != Empty) {
-            nv_local = 1;
+            nv_local = true;
             fp = 0;
         }
         if (fp) return;

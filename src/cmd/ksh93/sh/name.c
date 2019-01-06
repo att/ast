@@ -101,7 +101,7 @@ struct Namcache {
 };
 static struct Namcache nvcache;
 
-char nv_local = 0;
+bool nv_local = false;
 
 #if (SFIO_VERSION <= 20010201L)
 #define _data data
@@ -879,7 +879,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                 shp->last_root = root;
                 if (*cp && cp[1] == '.') cp++;
                 if (c == '.' && (cp[1] == 0 || cp[1] == '=' || cp[1] == '+')) {
-                    nv_local = 1;
+                    nv_local = true;
                     if (np) nv_onattr(np, nofree);
                     return np;
                 }
@@ -1378,7 +1378,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
     union Value *up;
     int size = 0;
     int dot = INT_MAX;  // make sure if used before set bad things happen
-    int was_local = nv_local;
+    bool was_local = nv_local;
 
     if ((flags & NV_APPEND) && nv_isnull(np) && shp->var_tree->view) {
         Namval_t *mp = nv_search(np->nvname, shp->var_tree->view, 0);
@@ -1394,7 +1394,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
     if (np->nvfun && np->nvfun->disc && !(flags & NV_NODISC) && !nv_isref(np)) {
         // This function contains disc.
         if (!nv_local) {
-            nv_local = 1;
+            nv_local = true;
             nv_putv(np, sp, flags, np->nvfun);
             if (sp && ((flags & NV_EXPORT) || nv_isattr(np, NV_EXPORT))) sh_envput(shp->env, np);
             return;
@@ -1402,7 +1402,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
         // Called from disc, assign the actual value.
     }
     flags &= ~NV_NODISC;
-    nv_local = 0;
+    nv_local = false;
     if (nv_isattr(np, NV_NOTSET) == NV_NOTSET) nv_offattr(np, NV_BINARY);
     if (flags & (NV_NOREF | NV_NOFREE)) {
         if (np->nvalue.cp && np->nvalue.cp != sp && !nv_isattr(np, NV_NOFREE)) {
@@ -2155,14 +2155,14 @@ void _nv_unset(Namval_t *np, int flags) {
         // This function contains disc.
         if (!nv_local) {
             Dt_t *last_root = shp->last_root;
-            nv_local = 1;
+            nv_local = true;
             nv_putv(np, NULL, flags, np->nvfun);
-            nv_local = 0;
+            nv_local = false;
             shp->last_root = last_root;
             return;
         }
         // Called from disc, assign the actual value.
-        nv_local = 0;
+        nv_local = false;
     }
     if (nv_isattr(np, NV_INT16P | NV_DOUBLE) == NV_INT16) {
         np->nvalue.cp = nv_isarray(np) ? Empty : 0;
@@ -2332,10 +2332,10 @@ char *nv_getval(Namval_t *np) {
     }
     if (np->nvfun && np->nvfun->disc) {
         if (!nv_local) {
-            nv_local = 1;
+            nv_local = true;
             return nv_getv(np, np->nvfun);
         }
-        nv_local = 0;
+        nv_local = false;
     }
     numeric = (nv_isattr(np, NV_INTEGER) != 0);
     if (numeric) {
@@ -2444,10 +2444,10 @@ Sfdouble_t nv_getnum(Namval_t *np) {
     }
     if (np->nvfun && np->nvfun->disc) {
         if (!nv_local) {
-            nv_local = 1;
+            nv_local = true;
             return nv_getn(np, np->nvfun);
         }
-        nv_local = 0;
+        nv_local = false;
     }
     if (nv_isref(np)) {
         str = nv_refsub(np);

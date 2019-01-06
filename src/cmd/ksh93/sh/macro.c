@@ -1208,7 +1208,7 @@ retry1:
                 // ${x.} or ${x..}.
                 if (fcpeek(-3) == '.') {
                     stkseek(stkp, stktell(stkp) - 2);
-                    nv_local = 1;
+                    nv_local = true;
                 } else {
                     stkseek(stkp, stktell(stkp) - 1);
                     type = M_TREE;
