@@ -79,12 +79,15 @@ typedef struct _dtlib_s {
          ? 0                             \
          : (*(dt)->disc->eventf)((dt), DT_ERROR, (void *)(mesg), (dt)->disc))
 
-/* announce completion of an operation of type (ty) on some object (ob) in dictionary (dt) */
-#define DTANNOUNCE(dt, ob, ty)                                                          \
-    (((ob) && ((ty)&DT_TOANNOUNCE) && ((dt)->data->type & DT_ANNOUNCE) && (dt)->disc && \
-      (dt)->disc->eventf)                                                               \
-         ? (*(dt)->disc->eventf)((dt), DT_ANNOUNCE | (ty), (ob), (dt)->disc)            \
-         : 0)
+// Announce completion of an operation of type <type> on some object <object> in dictionary <dt>.
+static inline void DTANNOUNCE(Dt_t *dt, void *object, int type) {
+    if (!object) return;
+    if (!(type & DT_TOANNOUNCE)) return;
+    if (!(dt->data->type & DT_ANNOUNCE)) return;
+    if (!dt->disc) return;
+    if (!dt->disc->eventf) return;
+    (*dt->disc->eventf)(dt, DT_ANNOUNCE | type, object, dt->disc);
+}
 
 /* short-hands for fields in Dtlink_t.
 ** note that __hash is used as a hash value
