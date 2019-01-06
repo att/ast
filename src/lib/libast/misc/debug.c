@@ -226,7 +226,7 @@ void dump_backtrace(int max_frames) {
 
     char **details = addrs2info(n_frames, callstack);
 
-    write(2, header_msg, sizeof(header_msg));
+    write(2, header_msg, sizeof(header_msg) - 1);
     for (int i = 1; i < n_frames; i++) {
         char text[512];
         int n;
