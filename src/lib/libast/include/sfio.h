@@ -209,7 +209,6 @@ extern Sfio_t *sfswap(Sfio_t *, Sfio_t *);
 extern Sfio_t *sftmp(size_t);
 extern int sfwalk(Sfwalk_f, void *, int);
 extern int sfpurge(Sfio_t *);
-extern int sfpoll(Sfio_t **, int, int);
 extern void *sfreserve(Sfio_t *, ssize_t, int);
 extern int sfresize(Sfio_t *, Sfoff_t);
 extern int sfsync(Sfio_t *);

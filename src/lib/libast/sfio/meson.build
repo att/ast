@@ -8,7 +8,7 @@ libast_files += [
     'sfio/_sfgetu.c', 'sfio/sfgetu.c', 'sfio/sfgetwc.c', 'sfio/_sfllen.c',
     'sfio/sfllen.c', 'sfio/sfmode.c', 'sfio/sfmove.c', 'sfio/sfmutex.c',
     'sfio/sfnew.c', 'sfio/sfnotify.c', 'sfio/sfnputc.c', 'sfio/_sfopen.c',
-    'sfio/sfopen.c', 'sfio/sfpeek.c', 'sfio/sfpkrd.c', 'sfio/sfpoll.c',
+    'sfio/sfopen.c', 'sfio/sfpeek.c', 'sfio/sfpkrd.c',
     'sfio/sfpool.c', 'sfio/sfpopen.c', 'sfio/sfprintf.c', 'sfio/sfprints.c',
     'sfio/sfpurge.c', 'sfio/_sfputc.c', 'sfio/_sfputd.c', 'sfio/sfputd.c',
     'sfio/_sfputl.c', 'sfio/sfputl.c', 'sfio/_sfputm.c', 'sfio/sfputm.c',
