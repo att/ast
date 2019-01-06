@@ -853,10 +853,12 @@ Namval_t *nv_arraychild(Namval_t *np, Namval_t *nq, int c) {
     }
     if (!(up = array_getup(np, ap, 0))) return NULL;
     np->nvalue.cp = up->cp;
-    if ((tp = nv_type(np)) || c) {
+    tp = nv_type(np);
+    if (tp || c) {
         ap->flags |= ARRAY_NOCLONE;
         nq->nvenv = (char *)np;
         if (c == 't') {
+            assert(tp);
             nv_clone(tp, nq, 0);
         } else {
             nv_clone(np, nq, NV_NODISC);
