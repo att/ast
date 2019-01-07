@@ -256,11 +256,13 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 }
                 break;
             }
+#if SUPPORT_JSON
             case 'j': {
                 fmttype = "json";
                 // TODO: Should this FALL THRU?
             }
             // FALLTHRU
+#endif
             case 'v': {
                 if (argc < 0) {
                     vname = nv_open(opt_info.arg, shp->var_tree, NV_VARNAME | NV_NOARRAY);
@@ -537,6 +539,7 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
     Namval_t *np = nv_open(string, shp->var_tree, NV_VARNAME | NV_NOADD);
     Namarr_t *ap;
     static union types_t number;
+    UNUSED(fmt);
 
     if (!np || nv_isnull(np)) {
         if (sh_isoption(shp, SH_NOUNSET)) {
@@ -611,15 +614,20 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
 
     Namval_t *nspace = shp->namespace;
     if (alt == 1 && nv_isvtree(np)) nv_onattr(np, NV_EXPORT);
+#if SUPPORT_JSON
     if (fmt && strncmp(fmt, "json", 4) == 0) nv_onattr(np, NV_JSON);
+#endif
     if (*string == '.') shp->namespace = 0;
     cp = nv_getval(np);
     if (*string == '.') shp->namespace = nspace;
     if (alt == 1) {
         nv_offattr(np, NV_EXPORT);
-    } else if (fmt && strncmp(fmt, "json", 4) == 0) {
+    }
+#if SUPPORT_JSON
+    else if (fmt && strncmp(fmt, "json", 4) == 0) {
         nv_offattr(np, NV_JSON);
     }
+#endif
 
     if (!cp) return 0;
     size = strlen(cp);

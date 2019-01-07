@@ -689,10 +689,12 @@ c.c=()
 exp=$'(\n\ttypeset -C -a c\n)'
 [[ $(print -v c) == "$exp" ]] || log_error 'setting compound array c.c=() does not preserve -C attribute'
 
-compound xx=(this=that integer x=5)
-exp=$'{\n\t"this": "that",\n\t"x": 5\n}'
-[[ $(print -j xx) == "$exp" ]] || log_error "got $(print -j xx)" expected "$exp"
-
-compound y=(foo=bar;compound x=(lef=one right=2);integer z=5)
-exp=$'{\n\t"foo": "bar",\n\t"x": {\n\t\t"lef": "one",\n\t\t"right": "2"\n\t},\n\t"z": 5\n}'
-[[ $(print -j y) == "$exp" ]] || log_error "got $(print -j y)" expected "$exp"
+# These tests were disabled as we don't build with json support by default
+# https://github.com/att/ast/issues/820
+# compound xx=(this=that integer x=5)
+# exp=$'{\n\t"this": "that",\n\t"x": 5\n}'
+# [[ $(print -j xx) == "$exp" ]] || log_error "got $(print -j xx)" expected "$exp"
+#
+# compound y=(foo=bar;compound x=(lef=one right=2);integer z=5)
+# exp=$'{\n\t"foo": "bar",\n\t"x": {\n\t\t"lef": "one",\n\t\t"right": "2"\n\t},\n\t"z": 5\n}'
+# [[ $(print -j y) == "$exp" ]] || log_error "got $(print -j y)" expected "$exp"
