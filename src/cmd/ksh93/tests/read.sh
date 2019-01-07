@@ -11,6 +11,12 @@ bar baz
 !
 [[ $foo[0] = "bar" ]] && [[ $foo[1] == "baz" ]] || log_error "read -A does not create indexed arrays"
 
+# -a is an alias for -A
+read -a foo<<!
+bar baz
+!
+[[ $foo[0] = "bar" ]] && [[ $foo[1] == "baz" ]] || log_error "read -a does not create indexed arrays"
+
 #-C Unset var and read var as a compound variable. Equivalent to -aksh
 read -C foo<<!
 ( foo1=bar1 foo2=bar2 )
