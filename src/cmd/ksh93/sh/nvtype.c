@@ -1496,7 +1496,7 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
     Namval_t node, *mp, *tp;
     Dt_t *dp;
     char *cp, *sp, *xp, nvtype[sizeof(NV_CLASS)];
-    Sfio_t *iop = 0;
+    Sfio_t *iop = NULL;
     int n = 0, indent = 0;
     cp = shp->prefix;
     if (cp) {
@@ -1552,23 +1552,26 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
             } else {
                 sfprintf(out, "\tfunction %s", cp);
             }
-            xp = NULL;
             if (!mp->nvalue.ip) continue;
             if (mp->nvalue.rp->hoffset < 0) continue;
 
+            xp = NULL;
             if (nv_isattr(mp, NV_FTMP)) {
                 iop = shp->heredocs;
             } else if ((xp = mp->nvalue.rp->fname)) {
                 iop = sfopen(iop, xp, "r");
             } else if (shp->gd->hist_ptr) {
                 iop = (shp->gd->hist_ptr)->histfp;
+            } else {
+                abort();
             }
-            if (iop && sfseek(iop, (Sfoff_t)mp->nvalue.rp->hoffset, SEEK_SET) >= 0) {
+
+            if (sfseek(iop, (Sfoff_t)mp->nvalue.rp->hoffset, SEEK_SET) >= 0) {
                 sfmove(iop, out, nv_size(mp), -1);
             } else {
-                assert(iop);
                 sfputc(iop, '\n');
             }
+
             if (xp) sfclose(iop);
             if (nv_isattr(mp, NV_STATICF | NV_TAGGED)) {
                 if (indent) sfnputc(out, '\t', indent);
@@ -1578,7 +1581,7 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
                 if (mp->nvalue.rp->help) sfprintf(out, "h '%s'", mp->nvalue.rp->help);
                 sfprintf(out, " %s\n", cp);
             }
-            iop = 0;
+            iop = NULL;
         }
         if (indent) sfnputc(out, '\t', indent);
         sfwrite(out, ")\n", 2);
