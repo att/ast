@@ -6838,7 +6838,7 @@ option is specified, the directory name corresponding to file descriptor
 .IR fd
 is outputted.
 .TP
-\f3read\fP \*(OK \f3\-ACSprsv\^\fP \*(CK \*(OK \f3\-d\fP \f2delim\^\fP\*(CK \*(OK \f3\-n\fP \f2n\^\fP\*(CK \*(OK \f3\-N\fP \f2n\^\fP\*(CK \*(OK \f3\-m\fP \f2method\^\fP\*(CK \*(OK \f3\-t\fP \f2timeout\^\fP\*(CK \*(OK \f3\-u\fP \f2unit\^\fP\*(CK \*(OK \f2vname\f3?\f2prompt\^\f1 \*(CK \*(OK \f2vname\^\fP .\|.\|. \*(CK
+\f3read\fP \*(OK \f3\-AaCSprsv\^\fP \*(CK \*(OK \f3\-d\fP \f2delim\^\fP\*(CK \*(OK \f3\-n\fP \f2n\^\fP\*(CK \*(OK \f3\-N\fP \f2n\^\fP\*(CK \*(OK \f3\-m\fP \f2method\^\fP\*(CK \*(OK \f3\-t\fP \f2timeout\^\fP\*(CK \*(OK \f3\-u\fP \f2unit\^\fP\*(CK \*(OK \f2vname\f3?\f2prompt\^\f1 \*(CK \*(OK \f2vname\^\fP .\|.\|. \*(CK
 The shell input mechanism.
 One line is read and
 is broken up into fields using the characters in
@@ -6903,6 +6903,9 @@ option causes the variable
 to be unset and each field that is read to be stored in
 successive elements of the indexed array
 .IR vname.
+.B \-a
+is an alias for
+.B \-A.
 The
 .B \-m
 option reads a compound variable with the read method defined by
