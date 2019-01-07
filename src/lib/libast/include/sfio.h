@@ -301,14 +301,6 @@ extern Sfoff_t sfsize(Sfio_t *);
 #define __sf_putu(f, v) (_sfputu(f, (Sfulong_t)(v)))
 #define __sf_putm(f, v, m) (_sfputm(f, (Sfulong_t)(v), (Sfulong_t)(m)))
 
-#define __sf_dlen(v) (_sfdlen((Sfdouble_t)(v)))
-#define __sf_llen(v) (_sfllen((Sflong_t)(v)))
-#define __sf_ulen(v)                  \
-    ((Sfulong_t)(v) < SF_U1           \
-         ? 1                          \
-         : (Sfulong_t)(v) < SF_U2 ? 2 \
-                                  : (Sfulong_t)(v) < SF_U3 ? 3 : (Sfulong_t)(v) < SF_U4 ? 4 : 5)
-
 #define sfputd(f, v) (__sf_putd((f), (v)))
 #define sfputl(f, v) (__sf_putl((f), (v)))
 #define sfputu(f, v) (__sf_putu((f), (v)))
@@ -327,10 +319,6 @@ static inline int sfgetc(Sfio_t *f) {
     f->_next += 1;
     return c;
 }
-
-#define sfdlen(v) (__sf_dlen(v))
-#define sfllen(v) (__sf_llen(v))
-#define sfulen(v) (__sf_ulen(v))
 
 static inline int sffileno(Sfio_t *f) { return f->_file; }
 static inline int sfeof(Sfio_t *f) { return f->_flags & SF_EOF; }

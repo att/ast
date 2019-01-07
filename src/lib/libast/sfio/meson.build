@@ -1,12 +1,12 @@
 libast_files += [
     'sfio/sfclose.c', 'sfio/sfclrlock.c', 'sfio/sfcvt.c',
-    'sfio/sfdisc.c', 'sfio/_sfdlen.c', 'sfio/sfdlen.c', 'sfio/sfecvt.c',
+    'sfio/sfdisc.c', 'sfio/sfecvt.c',
     'sfio/sfexcept.c', 'sfio/sfextern.c',
     'sfio/sffcvt.c', 'sfio/sffilbuf.c', 'sfio/sfflsbuf.c',
     'sfio/sfgetd.c', 'sfio/_sfgetl2.c', 'sfio/_sfgetl.c',
     'sfio/sfgetl.c', 'sfio/sfgetm.c', 'sfio/sfgetr.c', 'sfio/_sfgetu2.c',
-    'sfio/_sfgetu.c', 'sfio/sfgetu.c', 'sfio/sfgetwc.c', 'sfio/_sfllen.c',
-    'sfio/sfllen.c', 'sfio/sfmode.c', 'sfio/sfmove.c', 'sfio/sfmutex.c',
+    'sfio/_sfgetu.c', 'sfio/sfgetu.c', 'sfio/sfgetwc.c',
+    'sfio/sfmode.c', 'sfio/sfmove.c', 'sfio/sfmutex.c',
     'sfio/sfnew.c', 'sfio/sfnotify.c', 'sfio/sfnputc.c', 'sfio/_sfopen.c',
     'sfio/sfopen.c', 'sfio/sfpeek.c', 'sfio/sfpkrd.c', 'sfio/sfpoll.c',
     'sfio/sfpool.c', 'sfio/sfpopen.c', 'sfio/sfprintf.c', 'sfio/sfprints.c',
@@ -18,7 +18,7 @@ libast_files += [
     'sfio/sfset.c', 'sfio/sfsetfd.c', 'sfio/sfsize.c', 'sfio/sfsk.c',
     'sfio/sfstack.c', 'sfio/sfstrtod.c',
     'sfio/sfswap.c', 'sfio/sfsync.c', 'sfio/sftable.c', 'sfio/sftell.c',
-    'sfio/sftmp.c', 'sfio/_sfulen.c', 'sfio/sfungetc.c',
+    'sfio/sftmp.c', 'sfio/sfungetc.c',
     'sfio/sfvprintf.c', 'sfio/sfvscanf.c', 'sfio/sfwalk.c', 'sfio/sfwr.c',
     'sfio/sfwrite.c'
 ]
