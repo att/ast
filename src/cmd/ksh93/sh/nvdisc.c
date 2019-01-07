@@ -883,6 +883,14 @@ static_fn Sfdouble_t clone_getn(Namval_t *np, Namfun_t *handle) {
     return np->nvalue.np ? nv_getnum(np->nvalue.np) : 0;
 }
 
+// TODO: Figure out if this function can be removed else fix it.
+//
+// Coverity CID#253864 points out that the `if (val)` test implies that `val` might be NULL in the
+// call to `nvputval()` which will cause the NULL to be dereferenced. I instrumented the code and
+// this is never called (at least as a consequence of any unit test).
+//
+// Either the `if (val)` is never false or the `nv_putval()` should also be predicated on it being
+// non-NULL.
 static_fn void clone_putv(Namval_t *np, const void *val, int flags, Namfun_t *handle) {
     UNUSED(handle);
     Shell_t *shp = sh_ptr(np);
@@ -890,7 +898,8 @@ static_fn void clone_putv(Namval_t *np, const void *val, int flags, Namfun_t *ha
     Namval_t *mp = np->nvalue.np;
     if (!shp->subshell) free(dp);
     if (val) nv_clone(mp, np, NV_NOFREE);
-    np->nvalue.cp = 0;
+    np->nvalue.cp = NULL;
+    assert(val);
     nv_putval(np, val, flags);
 }
 
