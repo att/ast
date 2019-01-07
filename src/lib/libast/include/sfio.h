@@ -283,7 +283,6 @@ extern int _sfulen(Sfulong_t);
 
 /* miscellaneous function analogues of fast in-line functions */
 extern Sfoff_t sfsize(Sfio_t *);
-extern ssize_t sfvalue(Sfio_t *);
 extern ssize_t sfslen(void);
 extern ssize_t sfmaxr(ssize_t, int);
 
@@ -312,7 +311,6 @@ extern ssize_t sfmaxr(ssize_t, int);
          : (Sfulong_t)(v) < SF_U2 ? 2 \
                                   : (Sfulong_t)(v) < SF_U3 ? 3 : (Sfulong_t)(v) < SF_U4 ? 4 : 5)
 
-#define __sf_value(f) (f->_val)
 #define __sf_slen() (_Sfi)
 #define __sf_maxr(n, s) ((s) ? ((_Sfi = _Sfmaxr), (_Sfmaxr = (n)), _Sfi) : _Sfmaxr)
 
@@ -344,7 +342,7 @@ static inline int sfeof(Sfio_t *f) { return f->_flags & SF_EOF; }
 static inline int sferror(Sfio_t *f) { return f->_flags & SF_ERROR; }
 static inline void sfclrerr(Sfio_t *f) { f->_flags &= ~(SF_ERROR | SF_EOF); }
 static inline int sfstacked(Sfio_t *f) { return f->_push != NULL; }
-#define sfvalue(f) (__sf_value(f))
+static inline ssize_t sfvalue(Sfio_t *f) { return f->_val; }
 #define sfslen() (__sf_slen())
 #define sfmaxr(n, s) (__sf_maxr(n, s))
 
