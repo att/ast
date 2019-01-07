@@ -238,6 +238,11 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
     }
     while ((r = optget(argv, sh_optread))) {
         switch (r) {
+            case 'a': {
+                // `read -a` is an alias for `read -A`
+                flags |= A_FLAG;
+                break;
+            }
             case 'A': {
                 flags |= A_FLAG;
                 break;
