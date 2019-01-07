@@ -318,8 +318,8 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                             (shp->gd->hist_ptr && fd == sffileno(shp->gd->hist_ptr->histfp)))) {
                     break;
                 }
+                break;
             }
-            // FALLTHRU
             case 'v': {
                 flags |= V_FLAG;
                 break;
