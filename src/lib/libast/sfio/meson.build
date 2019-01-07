@@ -1,5 +1,5 @@
 libast_files += [
-    'sfio/sfclose.c', 'sfio/_sfclrerr.c', 'sfio/sfclrlock.c', 'sfio/sfcvt.c',
+    'sfio/sfclose.c', 'sfio/sfclrlock.c', 'sfio/sfcvt.c',
     'sfio/sfdisc.c', 'sfio/_sfdlen.c', 'sfio/sfdlen.c', 'sfio/sfecvt.c',
     'sfio/sfexcept.c', 'sfio/sfextern.c',
     'sfio/sffcvt.c', 'sfio/sffilbuf.c', 'sfio/sfflsbuf.c',
