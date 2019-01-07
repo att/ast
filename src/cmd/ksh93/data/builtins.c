@@ -1033,8 +1033,10 @@ const char sh_optprint[] =
     "[f]:[format?Write the \astring\a arguments using the format string "
     "\aformat\a and do not append a new-line.  See \bprintf\b for "
     "details on how to specify \aformat\a.]"
+#if SUPPORT_JSON
     "[j?Treat each \astring\a as a variable name and write the value in JSON "
     "format.  Only valid for compound variables Cannot be used with \b-f\b.]"
+#endif
     "[p?Write to the current co-process instead of standard output.  Obsolete, use "
     "\b-u p\b instead.]"
     "[r?Do not process \b\\\b sequences in each \astring\a operand as described "
@@ -1086,8 +1088,11 @@ const char sh_optprintf[] =
     " suitable as a field in a \b.csv\b format file.]"
     "[+%B?Treat the argument as a variable name and output the value "
     "without converting it to a string.  This is most useful for "
-    "variables of type \b-b\b.  The \bB\b can be preceded by "
+    "variables of type \b-b\b. "
+#if SUPPORT_JSON
+    "The \bB\b can be preceded by "
     " \b(json)\b to output variables in JSON format.]"
+#endif
     "[+%H?Output \astring\a with characters \b<\b, \b&\b, \b>\b, "
     "\b\"\b, and non-printable characters properly escaped for "
     "use in HTML and XML documents.  The alternate flag \b#\b "
