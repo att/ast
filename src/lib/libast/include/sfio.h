@@ -288,7 +288,6 @@ extern Sfoff_t sfsize(Sfio_t *);
 extern int sfclrerr(Sfio_t *);
 extern int sfeof(Sfio_t *);
 extern int sferror(Sfio_t *);
-extern int sffileno(Sfio_t *);
 extern int sfstacked(Sfio_t *);
 extern ssize_t sfvalue(Sfio_t *);
 extern ssize_t sfslen(void);
@@ -333,7 +332,6 @@ static inline int __sf_getc(Sfio_t *f) {
          : (Sfulong_t)(v) < SF_U2 ? 2 \
                                   : (Sfulong_t)(v) < SF_U3 ? 3 : (Sfulong_t)(v) < SF_U4 ? 4 : 5)
 
-#define __sf_fileno(f) (f->_file)
 #define __sf_eof(f) (f->_flags & SF_EOF)
 #define __sf_error(f) (f->_flags & SF_ERROR)
 #define __sf_clrerr(f) (f->_flags &= ~(SF_ERROR | SF_EOF))
@@ -354,7 +352,7 @@ static inline int __sf_getc(Sfio_t *f) {
 #define sfllen(v) (__sf_llen(v))
 #define sfulen(v) (__sf_ulen(v))
 
-#define sffileno(f) (__sf_fileno(f))
+static inline int sffileno(Sfio_t *f) { return f->_file; }
 #define sfeof(f) (__sf_eof(f))
 #define sferror(f) (__sf_error(f))
 #define sfclrerr(f) (__sf_clrerr(f))

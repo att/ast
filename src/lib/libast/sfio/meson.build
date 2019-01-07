@@ -2,7 +2,7 @@ libast_files += [
     'sfio/sfclose.c', 'sfio/_sfclrerr.c', 'sfio/sfclrlock.c', 'sfio/sfcvt.c',
     'sfio/sfdisc.c', 'sfio/_sfdlen.c', 'sfio/sfdlen.c', 'sfio/sfecvt.c',
     'sfio/_sfeof.c', 'sfio/_sferror.c', 'sfio/sfexcept.c', 'sfio/sfextern.c',
-    'sfio/sffcvt.c', 'sfio/sffilbuf.c', 'sfio/_sffileno.c', 'sfio/sfflsbuf.c',
+    'sfio/sffcvt.c', 'sfio/sffilbuf.c', 'sfio/sfflsbuf.c',
     'sfio/_sfgetc.c', 'sfio/sfgetd.c', 'sfio/_sfgetl2.c', 'sfio/_sfgetl.c',
     'sfio/sfgetl.c', 'sfio/sfgetm.c', 'sfio/sfgetr.c', 'sfio/_sfgetu2.c',
     'sfio/_sfgetu.c', 'sfio/sfgetu.c', 'sfio/sfgetwc.c', 'sfio/_sfllen.c',
