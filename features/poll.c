@@ -16,8 +16,15 @@ void sig_handler(int sig) {
     exit(1);
 }
 
+void cleanup_fifo() {
+    unlink(FIFO_FNAME);
+}
+
 int main() {
     if (mkfifo(FIFO_FNAME, 0600) == -1) exit(2);
+
+    // Cleanup fifo at exit
+    atexit(cleanup_fifo);
 
     if (fork() == 0) {
         // Child process. Open the fifo and write a single byte into it.
