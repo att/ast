@@ -36,10 +36,26 @@
 
 static char *lc_inf = "inf", *uc_inf = "INF";
 static char *lc_nan = "nan", *uc_nan = "NAN";
-static char *Zero = "0";
-#define SF_INF ((_Sfi = 3), strlcpy(buf, (format & SFFMT_UPPER) ? uc_inf : lc_inf, size), buf)
-#define SF_NAN ((_Sfi = 3), strlcpy(buf, (format & SFFMT_UPPER) ? uc_nan : lc_nan, size), buf)
-#define SF_ZERO ((_Sfi = 1), strlcpy(buf, Zero, size), buf)
+
+static inline char *SF_INF(char *buf, int format, size_t size) {
+    _Sfi = 3;
+    strlcpy(buf, (format & SFFMT_UPPER) ? uc_inf : lc_inf, size);
+    return buf;
+}
+
+static inline char *SF_NAN(char *buf, int format, size_t size) {
+    _Sfi = 3;
+    strlcpy(buf, (format & SFFMT_UPPER) ? uc_nan : lc_nan, size);
+    return buf;
+}
+
+static inline char *SF_ZERO(char *buf, int format, size_t size) {
+    UNUSED(format);
+    _Sfi = 1;
+    strlcpy(buf, "0", size);
+    return buf;
+}
+
 #define SF_INTPART (SF_IDIGITS / 2)
 
 #if ULONG_DIG && ULONG_DIG < (DBL_DIG - 1)
@@ -89,12 +105,12 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
 
         if (isnanl(f)) {
             if (signbit(f)) *sign = 1;
-            return SF_NAN;
+            return SF_NAN(buf, format, size);
         }
         n = isinf(f);
         if (n) {
             if (signbit(f)) *sign = 1;
-            return SF_INF;
+            return SF_INF(buf, format, size);
         }
 #if _c99_in_the_wild
         if (signbit(f)) {
@@ -103,11 +119,11 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
         }
         switch (fpclassify(f)) {
             case FP_INFINITE:
-                return SF_INF;
+                return SF_INF(buf, format, size);
             case FP_NAN:
-                return SF_NAN;
+                return SF_NAN(buf, format, size);
             case FP_ZERO:
-                return SF_ZERO;
+                return SF_ZERO(buf, format, size);
         }
 #else
         if (signbit(f)) {
@@ -115,8 +131,8 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
             *sign = 1;
         }
 #endif
-        if (f < LDBL_MIN) return SF_ZERO;
-        if (f > LDBL_MAX) return SF_INF;
+        if (f < LDBL_MIN) return SF_ZERO(buf, format, size);
+        if (f > LDBL_MAX) return SF_INF(buf, format, size);
 
         if (format & SFFMT_AFORMAT) {
             Sfdouble_t g;
@@ -149,7 +165,7 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
                     v -= 1;
                 else {
                     f *= _Sfneg10[v];
-                    if ((n += (1 << v)) >= SF_IDIGITS) return SF_INF;
+                    if ((n += (1 << v)) >= SF_IDIGITS) return SF_INF(buf, format, size);
                 }
             } while (f >= (Sfdouble_t)CVT_LDBL_MAXINT);
         } else if (f > 0.0 && f < 0.1) { /* scale to avoid excessive multiply by 10 below */
@@ -157,7 +173,7 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
             do {
                 if (f <= _Sfneg10[v]) {
                     f *= _Sfpos10[v];
-                    if ((n += (1 << v)) >= SF_IDIGITS) return SF_INF;
+                    if ((n += (1 << v)) >= SF_IDIGITS) return SF_INF(buf, format, size);
                 } else if (--v < 0)
                     break;
             } while (f < 0.1);
@@ -172,7 +188,7 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
             sfucvt(v, sp, n, ep, CVT_LDBL_INT, unsigned CVT_LDBL_INT);
 
             n = b - sp;
-            if ((*decpt += (int)n) >= SF_IDIGITS) return SF_INF;
+            if ((*decpt += (int)n) >= SF_IDIGITS) return SF_INF(buf, format, size);
             b = sp;
             sp = buf + SF_INTPART;
         } else
@@ -230,12 +246,12 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
 
         if (isnan(f)) {
             if (signbit(f)) *sign = 1;
-            return SF_NAN;
+            return SF_NAN(buf, format, size);
         }
         n = isinf(f);
         if (n) {
             if (signbit(f)) *sign = 1;
-            return SF_INF;
+            return SF_INF(buf, format, size);
         }
 #if _c99_in_the_wild
         if (signbit(f)) {
@@ -244,11 +260,11 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
         }
         switch (fpclassify(f)) {
             case FP_INFINITE:
-                return SF_INF;
+                return SF_INF(buf, format, size);
             case FP_NAN:
-                return SF_NAN;
+                return SF_NAN(buf, format, size);
             case FP_ZERO:
-                return SF_ZERO;
+                return SF_ZERO(buf, format, size);
         }
 #else
         if (signbit(f)) {
@@ -256,8 +272,8 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
             *sign = 1;
         }
 #endif
-        if (f < DBL_MIN) return SF_ZERO;
-        if (f > DBL_MAX) return SF_INF;
+        if (f < DBL_MIN) return SF_ZERO(buf, format, size);
+        if (f > DBL_MAX) return SF_INF(buf, format, size);
 
         if (format & SFFMT_AFORMAT) {
             double g;
@@ -289,7 +305,7 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
                     v -= 1;
                 else {
                     f *= _Sfneg10[v];
-                    if ((n += (1 << v)) >= SF_IDIGITS) return SF_INF;
+                    if ((n += (1 << v)) >= SF_IDIGITS) return SF_INF(buf, format, size);
                 }
             } while (f >= (double)CVT_DBL_MAXINT);
         } else if (f > 0.0 && f < 1e-8) { /* scale to avoid excessive multiply by 10 below */
@@ -297,7 +313,7 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
             do {
                 if (f <= _Sfneg10[v]) {
                     f *= _Sfpos10[v];
-                    if ((n += (1 << v)) >= SF_IDIGITS) return SF_INF;
+                    if ((n += (1 << v)) >= SF_IDIGITS) return SF_INF(buf, format, size);
                 } else if (--v < 0)
                     break;
             } while (f < 0.1);
@@ -312,7 +328,7 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
             sfucvt(v, sp, n, ep, CVT_DBL_INT, unsigned CVT_DBL_INT);
 
             n = b - sp;
-            if ((*decpt += (int)n) >= SF_IDIGITS) return SF_INF;
+            if ((*decpt += (int)n) >= SF_IDIGITS) return SF_INF(buf, format, size);
             b = sp;
             sp = buf + SF_INTPART;
         } else
