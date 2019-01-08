@@ -41,6 +41,7 @@
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "error.h"
 #include "fault.h"
 #include "fcin.h"
@@ -320,8 +321,8 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
 }
 
 //
-// iop is not null when the input is a string.
-// fdin is the input file descriptor.
+// <iop> is not null when the input is a string.
+// <fno> is the input file descriptor.
 //
 static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
     time_t curtime;
@@ -473,11 +474,14 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
         if (tdone || !sfreserve(iop, 0, 0)) {
         eof_or_error:
             if (sh_isstate(shp, SH_INTERACTIVE) && !sferror(iop)) {
-                if (--maxtry > 0 && sh_isoption(shp, SH_IGNOREEOF) && !sferror(sfstderr) &&
-                    (shp->fdstatus[fno] & IOTTY)) {
-                    sfclrerr(iop);
-                    errormsg(SH_DICT, 0, e_logout);
-                    continue;
+                if (--maxtry > 0 && sh_isoption(shp, SH_IGNOREEOF) && !sferror(sfstderr)) {
+                    // It is theoretically possible for fno == -1 at this point. That would be bad.
+                    assert(fno >= 0);
+                    if ((shp->fdstatus[fno] & IOTTY)) {
+                        sfclrerr(iop);
+                        errormsg(SH_DICT, 0, e_logout);
+                        continue;
+                    }
                 } else if (job_close(shp) < 0) {
                     continue;
                 }
