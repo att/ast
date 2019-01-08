@@ -49,6 +49,7 @@ static_fn void hist_subst(Shell_t *shp, const char *, int fd, char *);
 // Builtin `hist`.
 //
 int b_hist(int argc, char *argv[], Shbltin_t *context) {
+    UNUSED(argc);
     History_t *hp;
     char *arg;
     int flag, fdo;
@@ -56,12 +57,13 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     Sfio_t *outfile;
     char *fname;
     int range[2], incr, index2, indx = -1;
-    char *edit = 0;     // name of editor
-    char *replace = 0;  // replace old=new
-    int lflag = 0, nflag = 0, rflag = 0;
+    char *edit = NULL;     // name of editor
+    char *replace = NULL;  // replace old=new
+    int lflag = 0;
+    int nflag = 0;
+    int rflag = 0;
     int pflag = 0;
     Histloc_t location;
-    UNUSED(argc);
 
     if (!sh_histinit((void *)shp)) {
         errormsg(SH_DICT, ERROR_system(1), e_histopen);
@@ -132,7 +134,10 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
             } else {
                 pflag = 1;
             }
-            if (replace) free(replace);
+            if (replace) {
+                free(replace);
+                replace = NULL;
+            }
             argv++;
         }
         return pflag;
