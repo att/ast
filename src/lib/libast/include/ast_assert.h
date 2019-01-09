@@ -17,7 +17,8 @@
 
 #else  // NDEBUG
 
-#define assert(e) if (!(e)) __assert(#e, __FILE__, __LINE__)
+#define assert(e) \
+    if (!(e)) __assert(#e, __FILE__, __LINE__)
 __attribute__((noreturn)) static inline void __assert(const char *e, const char *file, int line) {
     (void)fprintf(stderr, "%s:%d: failed assertion '%s'\n", file, line, e), (void)fflush(stderr);
     (void)fflush(stderr);
