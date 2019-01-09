@@ -407,30 +407,6 @@ SELECT				POSIX	SC 1 FU
 SEMAPHORES			POSIX	SC 1 CDFUW
 SEM_NSEMS_MAX			POSIX	SC 1 LMU	256
 SEM_VALUE_MAX			POSIX	SC 1 LMU	32767
-SH				AST	CS 1 MU		sh{
-	ifs=$IFS
-	IFS=:
-	set '' `$CONF_getconf PATH 2>/dev/null` /bin /usr/bin /sbin /usr/sbin
-	shift
-	path=$*
-	IFS=$ifs
-	for s in ksh ksh93 sh
-	do	for d in $path
-		do	if	test -x $d/$s
-			then	case $s in
-				ksh)	case `$d/$s '--?-author' 2>&1` in
-					*'David Korn'*) ;;
-					*)		continue ;;
-					esac
-					;;
-				esac
-				echo '"'$d/$s'"'
-				exit
-			fi
-		done
-	done
-	echo '"/bin/sh"'
-}
 SHARED_MEMORY_OBJECTS		POSIX	SC 1 CDFUW
 SHELL				POSIX	SC 1 FUVW
 SHM				XOPEN	SC 1 FSUW
