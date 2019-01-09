@@ -19,6 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/types.h>
+
 #include "sfio.h"
 #include "terror.h"
 
