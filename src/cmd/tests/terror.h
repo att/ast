@@ -48,23 +48,18 @@
 #define TIMEOUT 0 /* timeout in minutes */
 #endif
 
-extern __attribute__((noreturn)) void tsterror(char *, ...);
-extern void tstinfo(char *, ...);
-extern void tstwarn(char *, ...);
-extern void tstsuccess(char *, ...);
-
 static int Tstall;
 static int Tstchild;
 static int Tstline;
 static int Tsttimeout = TIMEOUT;
 static char Tstfile[256][256];
 
-#define terror (Tstline = __LINE__), tsterror
-#define tinfo (Tstline = __LINE__), tstinfo
-#define tmesg (Tstline = __LINE__), tstwarn
-#define tpause (Tstline = __LINE__), tstpause
-#define tsuccess (Tstline = __LINE__), tstsuccess
-#define twarn (Tstline = __LINE__), tstwarn
+#define terror(...) do { (Tstline = __LINE__), tsterror(__VA_ARGS__); } while (0)
+#define tinfo(...) do { (Tstline = __LINE__), tstinfo(__VA_ARGS__); } while (0)
+#define tmesg(...) do { (Tstline = __LINE__), tstwarn(__VA_ARGS__); } while (0)
+#define tpause(...) do { (Tstline = __LINE__), tstpause(__VA_ARGS__); } while (0)
+#define tsuccess(...) do { (Tstline = __LINE__), tstsuccess(__VA_ARGS__); } while (0)
+#define twarn(...) do { (Tstline = __LINE__), tstwarn(__VA_ARGS__); } while (0)
 
 #define tchild() ((Tstline = __LINE__), tstchild(argv))
 #define topts() ((Tstline = __LINE__), tstopts(argv))
