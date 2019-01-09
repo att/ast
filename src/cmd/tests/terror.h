@@ -54,12 +54,30 @@ static int Tstline;
 static int Tsttimeout = TIMEOUT;
 static char Tstfile[256][256];
 
-#define terror(...) do { (Tstline = __LINE__), tsterror(__VA_ARGS__); } while (0)
-#define tinfo(...) do { (Tstline = __LINE__), tstinfo(__VA_ARGS__); } while (0)
-#define tmesg(...) do { (Tstline = __LINE__), tstwarn(__VA_ARGS__); } while (0)
-#define tpause(...) do { (Tstline = __LINE__), tstpause(__VA_ARGS__); } while (0)
-#define tsuccess(...) do { (Tstline = __LINE__), tstsuccess(__VA_ARGS__); } while (0)
-#define twarn(...) do { (Tstline = __LINE__), tstwarn(__VA_ARGS__); } while (0)
+#define terror(...)                                  \
+    do {                                             \
+        (Tstline = __LINE__), tsterror(__VA_ARGS__); \
+    } while (0)
+#define tinfo(...)                                  \
+    do {                                            \
+        (Tstline = __LINE__), tstinfo(__VA_ARGS__); \
+    } while (0)
+#define tmesg(...)                                  \
+    do {                                            \
+        (Tstline = __LINE__), tstwarn(__VA_ARGS__); \
+    } while (0)
+#define tpause(...)                                  \
+    do {                                             \
+        (Tstline = __LINE__), tstpause(__VA_ARGS__); \
+    } while (0)
+#define tsuccess(...)                                  \
+    do {                                               \
+        (Tstline = __LINE__), tstsuccess(__VA_ARGS__); \
+    } while (0)
+#define twarn(...)                                  \
+    do {                                            \
+        (Tstline = __LINE__), tstwarn(__VA_ARGS__); \
+    } while (0)
 
 #define tchild() ((Tstline = __LINE__), tstchild(argv))
 #define topts() ((Tstline = __LINE__), tstopts(argv))
