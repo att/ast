@@ -407,9 +407,6 @@ SELECT				POSIX	SC 1 FU
 SEMAPHORES			POSIX	SC 1 CDFUW
 SEM_NSEMS_MAX			POSIX	SC 1 LMU	256
 SEM_VALUE_MAX			POSIX	SC 1 LMU	32767
-SF_BUFSIZE			AST	XX 1 MUX	sh{
-	sed -e '/[ 	]*#[ 	]*define[ 	][ 	]*SF_BUFSIZE[ 	]/!d' -e 's/^[^0-9]*//' -e 's/[^0-9]*$//' $PACKAGEROOT/src/lib/libast/include/sfio.h
-}
 SH				AST	CS 1 MU		sh{
 	ifs=$IFS
 	IFS=:
