@@ -7,16 +7,23 @@
 #define _AST_ASSERT_H 1
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #undef assert
 
 #ifdef NDEBUG
+
 #define assert(e) ((void)0)
+
 #else  // NDEBUG
-#define assert(e) ((void)((e) ? ((void)0) : __assert(#e, __FILE__, __LINE__)))
-#define __assert(e, file, line)                                                                    \
-    ((void)fprintf(stderr, "%s:%d: failed assertion '%s'\n", file, line, e), (void)fflush(stderr), \
-     abort())
+
+#define assert(e) if (!(e)) __assert(#e, __FILE__, __LINE__)
+__attribute__((noreturn)) static inline void __assert(const char *e, const char *file, int line) {
+    (void)fprintf(stderr, "%s:%d: failed assertion '%s'\n", file, line, e), (void)fflush(stderr);
+    (void)fflush(stderr);
+    abort();
+}
+
 #endif  // NDEBUG
 
 #endif  // _AST_ASSERT_H
