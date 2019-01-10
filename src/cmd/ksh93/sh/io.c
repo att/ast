@@ -728,7 +728,7 @@ int sh_pipe(int pv[]) {
 //
 // Create a real pipe when pipe() is socketpair.
 //
-int sh_rpipe(int pv[]) {
+void sh_rpipe(int pv[]) {
     Shell_t *shp = sh_getinterp();
     int fd[2];
 
@@ -742,7 +742,6 @@ int sh_rpipe(int pv[]) {
     if (pv[1] <= 2) pv[1] = sh_iomovefd(shp, pv[1]);
     sh_subsavefd(pv[0]);
     sh_subsavefd(pv[1]);
-    return 0;
 }
 
 #if SHOPT_COSHELL

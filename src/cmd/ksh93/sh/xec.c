@@ -133,7 +133,7 @@ static_fn void fifo_check(void *handle) {
 //
 static int subpipe[3], subdup, tsetio, usepipe;
 
-static_fn bool iousepipe(Shell_t *shp) {
+static_fn void iousepipe(Shell_t *shp) {
     int i;
     int fd = sffileno(sfstdout);
     if (!sh_iovalidfd(shp, fd)) abort();
@@ -141,12 +141,12 @@ static_fn bool iousepipe(Shell_t *shp) {
         usepipe++;
         sh_iounpipe(shp);
     }
-    if (sh_rpipe(subpipe) < 0) return false;
+    sh_rpipe(subpipe);
     usepipe++;
     if (shp->comsub != 1) {
         subpipe[2] = sh_fcntl(subpipe[1], F_DUPFD, 10);
         sh_close(subpipe[1]);
-        return true;
+        return;
     }
     subpipe[2] = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10);
     if (!sh_iovalidfd(shp, subpipe[2])) abort();
@@ -166,7 +166,6 @@ static_fn bool iousepipe(Shell_t *shp) {
             }
         }
     }
-    return true;
 }
 
 void sh_iounpipe(Shell_t *shp) {
@@ -738,7 +737,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
     if (sh_isoption(shp, SH_NOEXEC)) return shp->exitval;
 
     Stk_t *stkp = shp->stk;
-    int unpipe = 0;
     int type = flags;
     char *com0 = 0;
     int errorflg = (type & sh_state(SH_ERREXIT)) | OPTIMIZE;
@@ -1309,17 +1307,24 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             pid_t parent;
             int no_fork, jobid;
             int pipes[3];
+#if SHOPT_SPAWN
+            bool unpipe = false;
+#endif
+
 #if SHOPT_COSHELL
             if (shp->inpool) {
                 sh_exec(shp, t->fork.forktre, 0);
                 break;
             }
-#endif /* SHOPT_COSHELL */
+#endif  // SHOPT_COSHELL
             if (shp->subshell) {
                 sh_subtmpfile(shp);
                 if ((type & (FAMP | TFORK)) == (FAMP | TFORK)) {
                     if (shp->comsub && !(shp->fdstatus[1] & IONOSEEK)) {
-                        unpipe = iousepipe(shp);
+                        iousepipe(shp);
+#if SHOPT_SPAWN
+                        unpipe = true;
+#endif  // SHOPT_SPAWN
                     }
                     sh_subfork();
                 }
@@ -1359,8 +1364,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     pipes[2] = 0;
                     coproc_init(shp, pipes);
                 }
-#if SHOPT_SPAWN
 
+#if SHOPT_SPAWN
                 if (com) {
                     parent = sh_ntfork(shp, t, com, &jobid, ntflag);
                 } else {
@@ -1368,7 +1373,9 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 }
 
                 if (parent < 0) {
+#if SHOPT_SPAWN
                     if (shp->comsub == 1 && usepipe && unpipe) sh_iounpipe(shp);
+#endif  // SHOPT_SPAWN
                     break;
                 }
 #else   // SHOPT_SPAWN
@@ -1593,7 +1600,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     }
                     if (type || !sh_isoption(shp, SH_PIPEFAIL)) shp->exitval = type;
                 }
-                if (shp->comsub == 1 && usepipe && unpipe) sh_iounpipe(shp);
                 shp->pipepid = 0;
                 shp->st.ioset = 0;
                 if (simple && was_errexit) {

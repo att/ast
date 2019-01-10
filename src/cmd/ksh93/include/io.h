@@ -56,7 +56,7 @@ extern void sh_ioinit(Shell_t *);
 extern int sh_iomovefd(Shell_t *, int);
 extern int sh_iorenumber(Shell_t *, int, int);
 extern void sh_pclose(int[]);
-extern int sh_rpipe(int[]);
+extern void sh_rpipe(int[]);
 extern void sh_iorestore(Shell_t *, int, int);
 #if !_AST_no_spawnveg
 extern void sh_vexrestore(Shell_t *, int);
