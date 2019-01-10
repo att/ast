@@ -1,4 +1,0 @@
-This directory used to contain C modules that provided external,
-standalone, versions of the commands found in AST libcmd. It now contains
-only the unit tests. Tests which need to be converted to shell scripts
-as found in the src/cmd/ksh93/tests directory.
