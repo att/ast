@@ -92,12 +92,6 @@ static void *timeout = NULL;
 static_fn int (*fdnotify)(int, int);
 
 #if _pipe_socketpair && !_stream_peek
-#ifndef SHUT_RD
-#define SHUT_RD 0
-#endif
-#ifndef SHUT_WR
-#define SHUT_WR 1
-#endif
 #if _socketpair_shutdown_mode
 #undef pipe
 #define pipe(v)                                                                                    \
