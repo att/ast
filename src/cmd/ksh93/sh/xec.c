@@ -1595,7 +1595,18 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     }
                     if (type || !sh_isoption(shp, SH_PIPEFAIL)) shp->exitval = type;
                 }
+#if 1
+                // See https://github.com/att/ast/pull/1113. It should be impossible for `unpipe` to
+                // be true when we reach this juncture. Thus there is no reason to call
+                // `sh_iounpipe()`. We're making this conditional and leaving the original statement
+                // for context.
+                //
+                // TODO: Remove all the code covered by this `#if 1...#else...#endif` once we're
+                // confident the analysis is correct.
+                if (shp->comsub == 1 && usepipe) assert(!unpipe);
+#else
                 if (shp->comsub == 1 && usepipe && unpipe) sh_iounpipe(shp);
+#endif
                 shp->pipepid = 0;
                 shp->st.ioset = 0;
                 if (simple && was_errexit) {
