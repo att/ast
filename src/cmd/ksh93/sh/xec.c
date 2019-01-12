@@ -729,6 +729,97 @@ static_fn Namval_t *enter_namespace(Shell_t *shp, Namval_t *nsp) {
     return onsp;
 }
 
+__attribute__((noreturn)) static_fn void forked_child(Shell_t *shp, const Shnode_t *t, int flags,
+                                                      int type, bool no_fork, char *com0,
+                                                      char **com, pid_t parent, int topfd) {
+    // This is the FORKED branch (child) of execute.
+    volatile int jmpval;
+    struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+    struct ionod *iop;
+    int rewrite = 0;
+    if (no_fork) sh_sigreset(shp, 2);
+    sh_pushcontext(shp, buffp, SH_JMPEXIT);
+    jmpval = sigsetjmp(buffp->buff, 0);
+    if (jmpval) goto done;
+    if ((type & FINT) && !sh_isstate(shp, SH_MONITOR)) {
+        // Default std input for &.
+        sh_signal(SIGINT, (sh_sigfun_t)(SIG_IGN));
+        sh_signal(SIGQUIT, (sh_sigfun_t)(SIG_IGN));
+        shp->sigflag[SIGINT] = SH_SIGOFF;
+        shp->sigflag[SIGQUIT] = SH_SIGOFF;
+        if (!shp->st.ioset) {
+            if (sh_close(0) >= 0) sh_open(e_devnull, O_RDONLY, 0);
+        }
+    }
+    sh_offstate(shp, SH_MONITOR);
+    // Pipe in or out.
+    if ((type & FAMP) && sh_isoption(shp, SH_BGNICE)) nice(4);
+
+#if !has_dev_fd
+    if (shp->fifo && (type & (FPIN | FPOU))) {
+        int fn, fd = (type & FPIN) ? 0 : 1;
+        void *fifo_timer = sh_timeradd(500, 1, fifo_check, (void *)shp);
+        fn = sh_open(shp->fifo, fd ? O_WRONLY : O_RDONLY);
+        timerdel(fifo_timer);
+        sh_iorenumber(shp, fn, fd);
+        sh_close(fn);
+        sh_delay(.001);
+        unlink(shp->fifo);
+        free(shp->fifo);
+        shp->fifo = 0;
+        type &= ~(FPIN | FPOU);
+    }
+#endif  // !has_dev_fd
+    if (type & FPIN) {
+        sh_iorenumber(shp, shp->inpipe[0], 0);
+        if (!(type & FPOU) || (type & FCOOP)) sh_close(shp->inpipe[1]);
+    }
+    if (type & FPOU) {
+        sh_iorenumber(shp, shp->outpipe[1], 1);
+        sh_pclose(shp->outpipe);
+    }
+    if ((type & COMMSK) != TCOM) {
+        error_info.line = t->fork.forkline - shp->st.firstline;
+    }
+    if (shp->topfd) sh_iounsave(shp);
+    topfd = shp->topfd;
+    if (com0 && (iop = t->tre.treio)) {
+        for (; iop; iop = iop->ionxt) {
+            if (iop->iofile & IOREWRITE) rewrite = 1;
+        }
+    }
+    sh_redirect(shp, t->tre.treio, 1 | IOUSEVEX);
+    if (rewrite) {
+        job_lock();
+        while ((parent = fork()) < 0) _sh_fork(shp, parent, 0, NULL);
+        if (parent) {
+            job.toclear = 0;
+            job_post(shp, parent, 0);
+            job_wait(parent);
+            sh_iorestore(shp, topfd, SH_JMPCMD);
+#ifdef SPAWN_cwd
+            if (shp->vexp->cur > vexi) sh_vexrestore(shp, vexi);
+#endif
+            sh_done(shp, (shp->exitval & SH_EXITSIG) ? (shp->exitval & SH_EXITMASK) : 0);
+        }
+        job_unlock();
+    }
+    if ((type & COMMSK) != TCOM) {
+        // Don't clear job table for out pipes so that jobs comand can be used in a
+        // pipeline.
+        if (!no_fork && !(type & FPOU)) job_clear(shp);
+        sh_exec(shp, t->fork.forktre, flags | sh_state(SH_NOFORK) | sh_state(SH_FORKED));
+    } else if (com0) {
+        sh_offoption(shp, SH_ERREXIT);
+        sh_freeup(shp);
+        path_exec(shp, com0, com, t->com.comset);
+    }
+done:
+    sh_popcontext(shp, buffp);
+    if (jmpval > SH_JMPEXIT) siglongjmp(*shp->jmplist, jmpval);
+    sh_done(shp, 0);
+}
+
 int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
     sh_sigcheck(shp);
 
@@ -1305,7 +1396,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
         // FALLTHRU
         case TFORK: {
             pid_t parent;
-            int no_fork, jobid;
+            bool no_fork;
+            int jobid;
             int pipes[3];
 #if SHOPT_SPAWN
             bool unpipe = false;
@@ -1386,148 +1478,59 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
         skip:
 #endif /* SHOPT_COSHELL */
             job.parent = parent;
-            if (job.parent) {
-                // This is the parent branch of fork. It may or may not wait for the child.
-                if (pipejob == 2) {
-                    pipejob = 1;
-                    nlock--;
-                    job_unlock();
+            if (!job.parent) {
+                forked_child(shp, t, flags, type, no_fork, com0, com, parent, topfd);
+                __builtin_unreachable();
+            }
+            // This is the parent branch of fork. It may or may not wait for the child.
+            if (pipejob == 2) {
+                pipejob = 1;
+                nlock--;
+                job_unlock();
+            }
+            if (shp->subshell) shp->spid = parent;
+            if (type & FPCL) sh_close(shp->inpipe[0]);
+            if (type & (FCOOP | FAMP)) {
+                shp->bckpid = parent;
+            } else if (!(type & (FAMP | FPOU))) {
+                if (!sh_isoption(shp, SH_MONITOR)) {
+                    if (!(shp->sigflag[SIGINT] & (SH_SIGFAULT | SH_SIGOFF))) {
+                        sh_sigtrap(shp, SIGINT);
+                    }
+                    shp->trapnote |= SH_SIGIGNORE;
                 }
-                if (shp->subshell) shp->spid = parent;
-                if (type & FPCL) sh_close(shp->inpipe[0]);
-                if (type & (FCOOP | FAMP)) {
-                    shp->bckpid = parent;
-                } else if (!(type & (FAMP | FPOU))) {
-                    if (!sh_isoption(shp, SH_MONITOR)) {
-                        if (!(shp->sigflag[SIGINT] & (SH_SIGFAULT | SH_SIGOFF))) {
-                            sh_sigtrap(shp, SIGINT);
-                        }
-                        shp->trapnote |= SH_SIGIGNORE;
-                    }
-                    if (shp->pipepid) {
-                        shp->pipepid = parent;
-                    } else {
-                        job_wait(parent);
-                        if (parent == shp->spid) shp->spid = 0;
-                    }
-                    if (shp->topfd > topfd) sh_iorestore(shp, topfd, 0);
+                if (shp->pipepid) {
+                    shp->pipepid = parent;
+                } else {
+                    job_wait(parent);
+                    if (parent == shp->spid) shp->spid = 0;
+                }
+                if (shp->topfd > topfd) sh_iorestore(shp, topfd, 0);
 #ifdef SPAWN_cwd
-                    if (shp->vexp->cur > vexi) sh_vexrestore(shp, vexi);
+                if (shp->vexp->cur > vexi) sh_vexrestore(shp, vexi);
 #endif
-                    if (usepipe && tsetio && subdup) sh_iounpipe(shp);
-                    if (!sh_isoption(shp, SH_MONITOR)) {
-                        shp->trapnote &= ~SH_SIGIGNORE;
-                        if (shp->exitval == (SH_EXITSIG | SIGINT)) kill(getpid(), SIGINT);
-                    }
+                if (usepipe && tsetio && subdup) sh_iounpipe(shp);
+                if (!sh_isoption(shp, SH_MONITOR)) {
+                    shp->trapnote &= ~SH_SIGIGNORE;
+                    if (shp->exitval == (SH_EXITSIG | SIGINT)) kill(getpid(), SIGINT);
                 }
-                if (type & FAMP) {
-                    if (sh_isstate(shp, SH_PROFILE) || sh_isstate(shp, SH_INTERACTIVE)) {
-                        /* print job number */
+            }
+            if (type & FAMP) {
+                if (sh_isstate(shp, SH_PROFILE) || sh_isstate(shp, SH_INTERACTIVE)) {
+                    /* print job number */
 #ifdef JOBS
 #if SHOPT_COSHELL
-                        sfprintf(sfstderr, "[%d]\t%s\n", jobid, sh_pid2str(shp, parent));
+                    sfprintf(sfstderr, "[%d]\t%s\n", jobid, sh_pid2str(shp, parent));
 #else
-                        sfprintf(sfstderr, "[%d]\t%d\n", jobid, parent);
+                    sfprintf(sfstderr, "[%d]\t%d\n", jobid, parent);
 #endif  // SHOPT_COSHELL
 #else   // JOBS
-                        sfprintf(sfstderr, "%d\n", parent);
+                    sfprintf(sfstderr, "%d\n", parent);
 #endif  // JOBS
-                    }
                 }
-                break;
-            } else {
-                // This is the FORKED branch (child) of execute.
-                volatile int jmpval;
-                struct checkpt *buffp =
-                    (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
-                struct ionod *iop;
-                int rewrite = 0;
-                if (no_fork) sh_sigreset(shp, 2);
-                sh_pushcontext(shp, buffp, SH_JMPEXIT);
-                jmpval = sigsetjmp(buffp->buff, 0);
-                if (jmpval) goto done;
-                if ((type & FINT) && !sh_isstate(shp, SH_MONITOR)) {
-                    // Default std input for &.
-                    sh_signal(SIGINT, (sh_sigfun_t)(SIG_IGN));
-                    sh_signal(SIGQUIT, (sh_sigfun_t)(SIG_IGN));
-                    shp->sigflag[SIGINT] = SH_SIGOFF;
-                    shp->sigflag[SIGQUIT] = SH_SIGOFF;
-                    if (!shp->st.ioset) {
-                        if (sh_close(0) >= 0) sh_open(e_devnull, O_RDONLY, 0);
-                    }
-                }
-                sh_offstate(shp, SH_MONITOR);
-                // Pipe in or out.
-                if ((type & FAMP) && sh_isoption(shp, SH_BGNICE)) nice(4);
-
-#if !has_dev_fd
-                if (shp->fifo && (type & (FPIN | FPOU))) {
-                    int fn, fd = (type & FPIN) ? 0 : 1;
-                    void *fifo_timer = sh_timeradd(500, 1, fifo_check, (void *)shp);
-                    fn = sh_open(shp->fifo, fd ? O_WRONLY : O_RDONLY);
-                    timerdel(fifo_timer);
-                    sh_iorenumber(shp, fn, fd);
-                    sh_close(fn);
-                    sh_delay(.001);
-                    unlink(shp->fifo);
-                    free(shp->fifo);
-                    shp->fifo = 0;
-                    type &= ~(FPIN | FPOU);
-                }
-#endif  // !has_dev_fd
-                if (type & FPIN) {
-                    sh_iorenumber(shp, shp->inpipe[0], 0);
-                    if (!(type & FPOU) || (type & FCOOP)) sh_close(shp->inpipe[1]);
-                }
-                if (type & FPOU) {
-                    sh_iorenumber(shp, shp->outpipe[1], 1);
-                    sh_pclose(shp->outpipe);
-                }
-                if ((type & COMMSK) != TCOM) {
-                    error_info.line = t->fork.forkline - shp->st.firstline;
-                }
-                if (shp->topfd) sh_iounsave(shp);
-                topfd = shp->topfd;
-                if (com0 && (iop = t->tre.treio)) {
-                    for (; iop; iop = iop->ionxt) {
-                        if (iop->iofile & IOREWRITE) rewrite = 1;
-                    }
-                }
-                sh_redirect(shp, t->tre.treio, 1 | IOUSEVEX);
-                if (rewrite) {
-                    job_lock();
-                    while ((parent = fork()) < 0) _sh_fork(shp, parent, 0, NULL);
-                    if (parent) {
-                        job.toclear = 0;
-                        job_post(shp, parent, 0);
-                        job_wait(parent);
-                        sh_iorestore(shp, topfd, SH_JMPCMD);
-#ifdef SPAWN_cwd
-                        if (shp->vexp->cur > vexi) sh_vexrestore(shp, vexi);
-#endif
-                        sh_done(shp,
-                                (shp->exitval & SH_EXITSIG) ? (shp->exitval & SH_EXITMASK) : 0);
-                    }
-                    job_unlock();
-                }
-                if ((type & COMMSK) != TCOM) {
-                    // Don't clear job table for out pipes so that jobs comand can be used in a
-                    // pipeline.
-                    if (!no_fork && !(type & FPOU)) job_clear(shp);
-                    sh_exec(shp, t->fork.forktre,
-                            flags | sh_state(SH_NOFORK) | sh_state(SH_FORKED));
-                } else if (com0) {
-                    sh_offoption(shp, SH_ERREXIT);
-                    sh_freeup(shp);
-                    path_exec(shp, com0, com, t->com.comset);
-                }
-            done:
-                sh_popcontext(shp, buffp);
-                if (jmpval > SH_JMPEXIT) siglongjmp(*shp->jmplist, jmpval);
-                sh_done(shp, 0);
             }
+            break;
         }
-        // FALLTHRU
         case TSETIO: {
             // Don't create a new process, just save and restore io-streams.
             pid_t pid;
