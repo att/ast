@@ -344,10 +344,12 @@ __attribute__((unused)) static void asointr(int sig) {
             break;
         case SIGBUS:
             write(2, "\tFAILED with SIGBUS\n", 20);
-            break;
+            dump_backtrace(0);
+            abort();
         case SIGSEGV:
             write(2, "\tFAILED with SIGSEGV\n", 21);
-            break;
+            dump_backtrace(0);
+            abort();
     }
     texit(sig);
 }
