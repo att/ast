@@ -92,3 +92,136 @@ None at this time.
 - Fixes backported from Red Hat Fedora and Enterprise Linux (RHEL) distros
   (issue #172).
 - Fixes backported from Solaris (issue #122).
+
+## Other significant changes taken from ksh93v-:
+
+Last stable release was `ksh93u+`. ksh x.y.z is based on `ksh93v-` which was last beta
+release that came out from AT&T Bell Labs. It had number of notable changes that are
+listed below. Entries are directly taken from `src/cmd/ksh93/RELEASE` file (with minor
+spelling fixes):
+
+- 14-12-02  The requirement that unquoted { and } must match inside string with
+	  ${name op string} has been removed (at least for now).
+- 14-09-24 +When listing jobs, the shell now shows the directory that the job
+	  was started from when it was not started from the current working
+	  directory.
+- 14-07-11 +Added -t flag and -P flag to whence and type for bash compatibility.
+- 14-07-11 +Added -p flag to alias to output aliases for re-input.
+- 14-06-30 +The variable COMP_WORDBREAKS for programmable completion.
+- 14-06-25 +The -D and -E options have been added to the complete builtin.
+- 14-06-19 +The -l flag to trap and the -p flag to umask were added as in bash.
+- 14-06-16 +Added parameter expansion operator ${$parameter} for variables and
+	  positional parameters.
+- 14-06-06  Added -a option to read which is equivalent to -A.
+- 14-06-05 +Added -n option to builtin to disable builtins.
+- 14-05-25 +Replaced the -p option for read with -p prompt.  For backward
+	  compatibility, if a coprocess is running and prompt begins with -
+	  or is a valid variable name, -p causes the read from a pipe.
+- 14-05-25 +Modified the -u option for read and print so that it accepts the
+	  option argument p to indicate the coprocess file descriptor.
+- 14-01-10  [[...]] now supports hexadecimal constants with arithmetic operators.
+- 13-12-05  If cd is invoked with no arguments and HOME is unset, it attempts to
+	  find the home directory and use that.  Otherwise an error occurs.
+- 13-11-14 +Added -f fd option to pwd to display the directory corresponding to
+	  file descriptor fd.
+- 13-10-08  The shell arithmetic now recognized suffices f,F, l, and L for
+	  floating point constants.
+- 13-10-07  The shell now prints an error message on standard error when a
+	  job specified with %job does not exist.
+- 13-09-13 +The signal .sh.value variable is now a compound variable with the name
+	  value.q for sending a signal with -q and value.Q for sending a value
+	  with -Q.
+- 13-09-10 +A -Q option was added to kill to pass integers as large as pointers.
+	  The -q option now only accepts integers as large as typeset -i.
+- 13-09-09  Qualified print format "%([no]unicode)q" added to prefer \u[...]
+	  over \w[...] and override LC_OPTIONS=unicode.
+- 13-09-04 +\w[hex] locale-specific code point literals have been added.
+- 13-09-04 +The float(f) math function was added.
+- 13-09-04  kill -q can now pass numbers as large as typeset -li and
+	  .sh.sig.value is typeset -i rather than a compound variable.
+- 13-09-04  kill -q yields the processor and returns 2 when siqueue fails with
+	  EAGAIN and yield.
+- 13-08-26 +Added 12 math constants such as E, PI, and SQRT2.
+- 13-08-19 +The variable .sh.pwdfd which expands to the file descriptor number
+	  corresponding to $PWD has been added.
+- 13-08-11 +namespace was modified so that namespace names can be a compound
+	  variable rather than just an identifier and namespace are no
+	  longer nested.
+- 13-08-07  typeset -p (and print -v) now display the short attribute for
+	  typeset -sF and typeset -sE.
+- 13-08-06 +You can now use the redirection <& {n} which is the same as <& $n.
+- 13-07-24  The _ variable is now set as a reference to the type inside
+	  discipline functions for non-type variables in the type.
+- 13-07-22  The .sh.sig variable has been modified to treat .sh.value as a
+	  compound variable containing int and ptr.
+- 13-07-18  Assignments of the type name=(...) to array variables now preserve
+	  the array type and the variable type if any.
+- 13-07-18  If a PATH ends in ., and you are in the current directory and this
+	  directory is in FPATH, ksh now treats this as a function directory.
+- 13-07-17  ${!.sh.sig@]} now expands to all the .sh.sig. variables.
+- 13-07-08  When using kill -q to send a signal, a CONT signal is not sent to
+	  wake the process if it is sleeping after sending the signal.
+- 13-06-21  A -f nn option has been added to cd to change to a directory
+	  relative to a file descriptor of an open directory.  cd -f nn
+	  is equivalent to cd ~{nn}.
+- 13-06-06  In accordance with the standard set -u now causes failures for
+	  unset positional parameters.
+- 13-05-29  ksh93 now intercepts the `LC_TIME` variable.
+- 13-05-29  namespace commands are no longer allowed inside function definitions
+	  and now generate a syntax error.
+- 13-05-10  With print -v for with nested compound variables, the output contains
+	  typeset -C for sub-variables that are compound assignments.
+- 13-05-08  Added a ksh -n options that suggests that x=$((expr)) be replaced by
+	  ((x=expr))>
+- 13-05-01 +Increased to maximum number of enumeration elements from 32K to
+	  2G.
+- 13-04-25 +The -K option has been added to set to sort indexed arrays of
+	  compound elements based on a list of keys.
+- 13-04-18  Added serialization to processing of CHLD traps.
+- 13-04-15  ksh now waits for background jobs started in functions contained
+	  in command substitution.
+- 13-04-08 +ksh now sets .sh.sig.pid and .sh.sig.status for CHLD traps.  The
+	  .sh.sig.status can be one of exited, killed, dumped, stopped or
+	  continued.
+- 13-04-08 +The CHLD trap is now triggered with STOP and CONT signals.
+- 13-04-03 +Functions that are used in brace group command substitution ${ ... }
+	  can assign the result to .sh.value instead of writing to standard
+	  out with the same result, but faster.
+- 13-03-27 +The variable .sh.sig containing siginfo information is no set during
+	  a SIGCHLD trap.
+- 13-03-12  Empty fields and empty arrays as type elements are not displayed
+	  when expanding a type instance.
+- 13-03-11  The trap command now blocks signals that have traps until the
+	  trap command completes.
+- 13-03-11  Signals that have traps that occur while processing a trap are
+	  deferred until the trap command completes.
+- 13-02-08 +The -p option was added to enum to display the values that are
+	  valid for the enum.
+- 13-02-07 +A preset alias named bool which is an alias for an enum
+	  named `_Bool` which has values true and false has been added.
+- 13-02-24  Increased the maximum level of recursion for evaluating variables
+	  inside arithmetic expressions from 9 to 1024.
+- 13-01-17 +User define math functions introduced on 10-03-24 now allow passing
+	  arrays as arguments.
+- 13-01-10 +ksh now treats ESC-O-letter the same as ESC-[-letter in vi and emacs
+	  edit modes.
+- 12-10-09 +read -d '' now reads up to a NUL byte.
+- 12-10-04  libcmd builtins are statically linked into ksh93 and by default are
+	  bound to the path /opt/ast/bin whether this path exists or not.
+	  Changing the .sh.op_astbin variable changes the binding.
+- 12-10-01 +Added the variable `SH_OPTIONS` which consists of name=value pairs.
+	  For defined options it assigned value to the variable .sh.op_name.
+- 12-10-02 +Add the variable .sh.op_astbin to define the directory where several
+	  shell builtins will be bound.
+- 12-09-10 +Added ~{fd} expansion where fd is the number of an open file or
+	  a variable whose value is the number of an open file.
+- 12-08-30  For an associative array A, $((A[sub])) no longer cause subscript sub
+	  to be created.
+- 12-08-20  typeset -H foo no longer un-sets foo when foo has been exported to
+	  the shell.
+- 12-07-12 +Added -q option was added to kill to send queued signals on systems
+	  that support sigqueue().
+- 12-07-12 +Added -p option to builtin to output builtins in a format that can
+	  be used to re-input.
+- 12-07-02 +The -a option was added to trap to cause the current setting to be
+	  appended to the new trap setting rather than replacing it.
