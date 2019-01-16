@@ -42,3 +42,14 @@ wait $pid1
 (( $? == 1 )) || log_error "wait not saving exit value"
 wait $pid2
 (( $? == 127 )) || log_error "subshell job known to parent"
+
+# ======
+# jobs builtin prints working directory for a job if it does not match current working directory
+cat &
+# Change working directory
+cd
+actual=$(jobs)
+expect="(pwd: $OLDPWD)"
+[[ "$actual" =~ "$expect" ]] || log_error "jobs builtin does not list correct working directory"
+kill -15 $!
+cd $OLDPWD

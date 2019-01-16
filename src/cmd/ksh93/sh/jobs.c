@@ -989,7 +989,7 @@ int job_list(struct process *pw, int flag) {
                     tilde = "~";
                     dir += len;
                 }
-                sfprintf(outfile, "  (Working directory: %s%s)\n", tilde, dir);
+                sfprintf(outfile, "  (pwd: %s%s)\n", tilde, dir);
                 dir = 0;
             }
         } else {
