@@ -985,11 +985,11 @@ int job_list(struct process *pw, int flag) {
             if (dir) {
                 char *tilde = "";
                 assert(home != NULL);
-                if ((!strncmp(dir, home, len) && dir[len] == '/') || dir[len] == 0) {
+                if (!strncmp(dir, home, len) && (dir[len] == '/' || dir[len] == 0)) {
                     tilde = "~";
                     dir += len;
                 }
-                sfprintf(outfile, "  (wd: %s%s)\n", tilde, dir);
+                sfprintf(outfile, "  (Working directory: %s%s)\n", tilde, dir);
                 dir = 0;
             }
         } else {
