@@ -95,6 +95,16 @@ static_fn pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char
 #else
     UNUSED(shp);
 #endif
+
+    // Ensure stdin, stdout, stderr are open in the child process.
+    // See https://github.com/att/ast/issues/1117.
+    for (int fd = 0; fd < 3; ++fd) {
+        errno = 0;
+        if (fcntl(fd, F_GETFD, NULL) == -1 || errno == EBADF) {
+            open("/dev/null", O_RDWR);
+        }
+    }
+
     return execve(path, argv, envp);
 }
 

@@ -325,7 +325,15 @@ print $expect >; s1/s2/x
 actual=$(< dir1/dir2/x)
 [[ $actual == $expect ]] || log_error "symlink in conditional redirect wrong" "$expect" "$actual"
 
-$SHELL -c "$SHELL -c ': 3>&1' 1>&- 2>/dev/null" && log_error 'closed standard output not passed to subshell'
+# See https://github.com/att/ast/issues/1117. It used to be you could close any of stdin, stdout,
+# or stderr and that closed fd would be passed to a child process. That behavior is extremely
+# dangerous. So we now verify that closing one of those fd actually results in it being open on
+# /dev/null in the child process.
+#
+# TODO: Figure out how to verify the fd is actually open on /dev/null in a portable manner.
+$SHELL -c "$SHELL -c ': 3>&1' 1>&- 2>/dev/null" ||
+    log_error 'closed standard output passed to subshell'
+
 [[ $(cat  <<- \EOF | $SHELL
 	do_it_all()
 	{

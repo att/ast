@@ -19,8 +19,20 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <fcntl.h>
 #include <stddef.h>
 
 #include "shell.h"
 
-int main(int argc, char *argv[]) { return sh_main(argc, argv, NULL); }
+int main(int argc, char *argv[]) {
+    // Ensure stdin, stdout, stderr are open. See https://github.com/att/ast/issues/1117.
+    for (int fd = 0; fd < 3; ++fd) {
+        errno = 0;
+        if (fcntl(fd, F_GETFD, NULL) == -1 || errno == EBADF) {
+            open("/dev/null", O_RDWR);
+        }
+    }
+
+    return sh_main(argc, argv, NULL);
+}
