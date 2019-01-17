@@ -893,6 +893,17 @@ bad:
                     break;
             }
         }
+
+        // Ensure stdin, stdout, stderr are open in the child process.
+        // See https://github.com/att/ast/issues/1117.
+        for (int fd = 0; fd < 3; ++fd) {
+            errno = 0;
+            if (fcntl(fd, F_GETFD, NULL) == -1 || errno == EBADF) {
+                err = posix_spawn_file_actions_addopen(&fx, fd, "/dev/null", O_RDWR, 0);
+                if (err) goto bad;
+            }
+        }
+
         if (err = posix_spawn(&pid, path, &fx, &ax, argv, envv ? envv : environ)) goto bad;
         posix_spawnattr_destroy(&ax);
         posix_spawn_file_actions_destroy(&fx);

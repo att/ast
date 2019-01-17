@@ -56,6 +56,9 @@ None at this time.
 
 ## Other significant changes
 
+- You can no longer run an external command with stdin, stdout, or stderr
+  closed. If you attempt to do so (e.g., `a_cmd <&-`) it will be opened on
+  /dev/null in the child process (issue #1117).
 - Vi raw mode is now the default and cannot be disabled. Note that this was
   true at least as far back as ksh93u+. The difference is that now it's no
   longer even theoretically possible to even build with that feature disabled.
