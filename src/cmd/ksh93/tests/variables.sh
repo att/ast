@@ -826,3 +826,8 @@ actual="${.sh.file}"
 # Due to backward compatibility concerns any major release can have maximum yyyy.99.99 releases
 # i.e. minor versions and patches can not go above number 99.
 [[ $((.sh.version)) -ge 20170000 ]] && [[ $((.sh.version)) -le 20990000 ]] || log_error "Version string is set incorrectly to $((.sh.version))"
+
+# `.sh.pwdfd` variable points to file descriptor of current working directory
+actual="$(pwd -f ${.sh.pwdfd})"
+expect="$PWD"
+[[ "$actual" = "$expect" ]] || log_error ".sh.pwdfd should point to fd of current working directory"
