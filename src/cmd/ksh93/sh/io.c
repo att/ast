@@ -92,22 +92,33 @@ static void *timeout = NULL;
 static_fn int (*fdnotify)(int, int);
 
 #if _pipe_socketpair && !_stream_peek
+
+// Emulate `pipe()` via `socketpair()`.
+#undef pipe
+#define pipe _io_socketpair
+
 #if _socketpair_shutdown_mode
-#undef pipe
-#define pipe(v)                                                                                    \
-    ((socketpair(AF_UNIX, SOCK_STREAM, 0, v) < 0 || shutdown((v)[1], SHUT_RD) < 0 ||               \
-      fchmod((v)[1], S_IWUSR) < 0 || shutdown((v)[0], SHUT_WR) < 0 || fchmod((v)[0], S_IRUSR) < 0) \
-         ? (-1)                                                                                    \
-         : 0)
-#else
-#undef pipe
-#define pipe(v)                                                                      \
-    ((socketpair(AF_UNIX, SOCK_STREAM, 0, v) < 0 || shutdown((v)[1], SHUT_RD) < 0 || \
-      shutdown((v)[0], SHUT_WR) < 0)                                                 \
-         ? (-1)                                                                      \
-         : 0)
-#endif
-#endif
+
+static_fn int _io_socketpair(int fd[2]) {
+    if (socketpair(AF_UNIX, SOCK_STREAM, 0, fd) == -1) return -1;
+    if (shutdown(fd[1], SHUT_RD) == -1) return -1;
+    if (fchmod(fd[1], S_IWUSR) == -1) return -1;
+    if (shutdown(fd[0], SHUT_WR) == -1) return -1;
+    if (fchmod(fd[0], S_IRUSR) == -1) return -1;
+    return 0;
+}
+
+#else  // _socketpair_shutdown_mode
+
+static_fn int _io_socketpair(int fd[2]) {
+    if (socketpair(AF_UNIX, SOCK_STREAM, 0, fd) == -1) return -1;
+    if (shutdown(fd[1], SHUT_RD) == -1) return -1;
+    if (shutdown(fd[0], SHUT_WR) == -1) return -1;
+    return 0;
+}
+
+#endif  // _socketpair_shutdown_mode
+#endif  // _pipe_socketpair && !_stream_peek
 
 struct fdsave {
     int orig_fd;  /* original file descriptor */
