@@ -1,6 +1,7 @@
 // This contains functions useful for debugging. For example, `dump_backtrace()` to write a basic
 // stack dump to stderr. Or the function that implements the `DPRINTF()` macro.
 //
+#define NO_MALLOC_WRAPPERS 1
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <dlfcn.h>
@@ -52,8 +53,8 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     uint64_t ds = time_delta / 1000000000;
     uint64_t dms = (time_delta % 1000000000) / 1000000;
     char buf[512];
-    int n = snprintf(buf, sizeof(buf), "### %3" PRIu64 ".%03" PRIu64 " %4d %-12s %15s() ", ds, dms,
-                     lineno, strrchr(fname, '/') + 1, funcname);
+    int n = snprintf(buf, sizeof(buf), "### %d %3" PRIu64 ".%03" PRIu64 " %4d %-12s %15s() ",
+                     getpid(), ds, dms, lineno, strrchr(fname, '/') + 1, funcname);
     (void)vsnprintf(buf + n, sizeof(buf) - n, fmt, ap);
     n = strlen(buf);
     assert(n < sizeof(buf));
@@ -69,12 +70,72 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     va_end(ap);
 }
 
+// Run external command `lsof -p $$` and redirect its output to stderr.
+void run_lsof() {
+    sigset_t sigchld_mask, omask;
+    sigemptyset(&sigchld_mask);
+    sigaddset(&sigchld_mask, SIGCHLD);
+    sigprocmask(SIG_BLOCK, &sigchld_mask, &omask);
+
+    DPRINTF("Running lsof...");
+    static char pid_str[20];
+    snprintf(pid_str, sizeof(pid_str), "%d", getpid());
+
+    pid_t pid = fork();
+    if (pid == 0) {
+        // Setup stdin, stdout, stderr. In this case we want the stdout of lsof
+        // to go to our stderr so it is interleaved with DPRINTF() and other
+        // diagnostic output.
+        dup2(2, 1);
+        // Run the program we hope will give us detailed info about each address.
+        execlp("lsof", "lsof", "-p", pid_str, NULL);
+    }
+
+    // We ignore the return value because a) it should be impossible for this to fail and b) there
+    // isn't anything we can do if it does fail. This is solely to reap the process so we don't
+    // accumulate a lot of zombies.
+    int status;
+    (void)waitpid(pid, &status, 0);
+
+    sigprocmask(SIG_SETMASK, &omask, NULL);
+}
+
 #if _hdr_execinfo
 
 // The platform provides the minimum support required for us to emit a backtrace. Whether we can
 // provide information at the file+line_number level or just sym_name+offset depends on whether we
 // detected a program like `atos` or `addr2line` that we can invoke for more detailed information.
 static char *info[MAX_FRAMES];
+
+#if 0  // TODO: enable or remove in the future
+// This is a cache of addresses already translated by `atos` or `addr2line`.
+// This helps a lot when calling `dump_backtrace()` more than once because
+// converting addresses to file and line numbers is very expensive.
+#define CACHE_SIZE 1000
+struct addr_info {
+    void *p;
+    char *info;
+};
+static struct addr_info cached_addrs[CACHE_SIZE] = { {NULL, NULL} };
+int cached_addrs_size = 0;
+
+static void add_cached_addr(void *p, const char *info) {
+    if (cached_addrs_size == CACHE_SIZE) return;  // cache is full
+    // It's slightly dangerous to call strdup() since we may be dumping a
+    // backtrace in a signal context where calling malloc() may hang. But we
+    // don't have much choice short of statically allocating buffers at build
+    // time and wasting a lot of space.
+    cached_addrs[++cached_addrs_size].p = p;
+    cached_addrs[cached_addrs_size].info = strdup(info);
+}
+
+static const char *find_cached_addr(void *p) {
+    for (int i = 0; i < cached_addrs_size; ++i) {
+        if (cached_addrs[i].p == p) return cached_addrs[i].info;
+    }
+    return NULL;
+}
+#endif  // if 0
 
 // Run an external command such as `atos` or `addr2line`, collect its output, and split it into
 // lines. Each line has an entry in the `info[]` array above.
@@ -204,8 +265,6 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
 #endif  // _pth_addr2line
 #endif  // _pth_atos
 
-#define header_msg "### Function backtrace:\n"
-
 // Write a backtrace to stderr. This can be called from anyplace in the code where you would like to
 // understand the call sequence leading to that point in the code. It is also called automatically
 // when a SIGSEGV is received. Pass a value of zero for `max_frames` to dump the maximum number of
@@ -225,11 +284,13 @@ void dump_backtrace(int max_frames) {
     if (callstack[n_frames - 1] == (void *)0x1) --n_frames;
 
     char **details = addrs2info(n_frames, callstack);
+    char text[512];
+    int n;
 
-    write(2, header_msg, sizeof(header_msg) - 1);
+    n = snprintf(text, sizeof(text), "### %d Function backtrace:\n", getpid());
+    write(2, text, n);
+
     for (int i = 1; i < n_frames; i++) {
-        char text[512];
-        int n;
         if (details[i]) {
             n = snprintf(text, sizeof(text), "%-3d %s\n", i, details[i]);
         } else {
