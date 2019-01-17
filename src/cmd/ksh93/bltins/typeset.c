@@ -69,7 +69,6 @@ struct tdata {
     char *help;
     char aflag;
     bool pflag;
-    bool cflag;
     int argnum;
     int scanmask;
     Dt_t *scanroot;
@@ -292,10 +291,6 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
                 flag |= NV_BINARY;
                 break;
             }
-            case 'c': {
-                tdata.cflag = true;
-            }
-            // FALLTHRU
             case 'm': {
                 flag |= NV_MOVE;
                 break;
@@ -732,7 +727,6 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                 }
             }
             if (flag & NV_MOVE) {
-                if (tp->cflag) flag &= ~NV_MOVE;
                 nv_rename(np, flag);
                 nv_close(np);
                 continue;
