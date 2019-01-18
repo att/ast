@@ -1059,9 +1059,6 @@ function f
 }
 [[ $(f) == "'0 1 2'" ]] 2> /dev/null || log_error '0 value for variable in arithmetic expression inside function with set -u fails'
 
-integer -u u=123
-(( u.MAX < (1<<31) ))  && log_error '$((i.MAX)) not workng when i is unsigned int'
-
 [[ $(( (2**32) << 67 )) == 0 ]] || log_error 'left shift count 67 is non-zero'
 
 [[ 0x123 -eq 0x122+0x1 ]] || log_error "[[...]] does not support math operations on hexadecimal numbers"
