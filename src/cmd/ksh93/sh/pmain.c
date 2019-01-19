@@ -23,6 +23,4 @@
 
 #include "shell.h"
 
-int main(int argc, char *argv[]) {
-    return sh_main(argc, argv, NULL);
-}
+int main(int argc, char *argv[]) { return sh_main(argc, argv, NULL); }

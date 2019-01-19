@@ -271,9 +271,7 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
 #endif  // _pth_atos
 
 // Given a single address return info about it; e.g., function name, file name, line number.
-const char *addr2info(void *addr) {
-    return addrs2info(1, &addr)[0];
-}
+const char *addr2info(void *addr) { return addrs2info(1, &addr)[0]; }
 
 // Write a backtrace to stderr. This can be called from anyplace in the code where you would like to
 // understand the call sequence leading to that point in the code. It is also called automatically
