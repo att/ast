@@ -152,7 +152,6 @@ static_fn void iousepipe(Shell_t *shp) {
     if (!sh_iovalidfd(shp, subpipe[2])) abort();
     shp->fdstatus[subpipe[2]] = shp->fdstatus[1];
     close(fd);
-    // cppcheck-suppress deallocuse // it's okay to use fd in the fcntl() even though it is closed
     fcntl(subpipe[1], F_DUPFD, fd);
     shp->fdstatus[1] = shp->fdstatus[subpipe[1]] & ~IOCLEX;
     sh_close(subpipe[1]);
@@ -181,7 +180,6 @@ void sh_iounpipe(Shell_t *shp) {
         goto done;
     }
     close(fd);
-    // cppcheck-suppress deallocuse // it's okay to use fd in the fcntl() even though it is closed
     fcntl(subpipe[2], F_DUPFD, fd);
     shp->fdstatus[1] = shp->fdstatus[subpipe[2]];
     if (subdup) {

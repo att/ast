@@ -19,6 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+
 #include "shell.h"
 
 int main(int argc, char *argv[]) {
