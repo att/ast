@@ -21,22 +21,6 @@
 
 #include "shell.h"
 
-#if defined(__sun) && _lib_memcntl && defined(MHA_MAPSIZE_STACK) && defined(MC_HAT_ADVISE)
-#include <sys/mman.h>
-#else
-#undef _lib_memcntl
-#endif
-
-typedef int (*Shnote_f)(int, long, int);
-
 int main(int argc, char *argv[]) {
-#if _lib_memcntl
-    // Advise larger stack size.
-    struct memcntl_mha mha;
-    mha.mha_cmd = MHA_MAPSIZE_STACK;
-    mha.mha_flags = 0;
-    mha.mha_pagesize = 64 * 1024;
-    (void)memcntl(NULL, 0, MC_HAT_ADVISE, (caddr_t)&mha, 0, 0);
-#endif
-    return sh_main(argc, argv, (Shinit_f)0);
+    return sh_main(argc, argv, NULL);
 }
