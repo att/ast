@@ -59,6 +59,12 @@ fi
 readonly test_script=$test_name.sh
 export BUILD_DIR=$PWD
 
+if [[ ! -f $test_path ]]
+then
+    print -u2 "No such test script: $test_path"
+    exit 1
+fi
+
 #
 # Create a temp dir and make it the CWD for the unit test. It will be removed by the unit test
 # postscript if there are no test failures.
