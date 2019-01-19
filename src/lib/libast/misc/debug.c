@@ -86,6 +86,9 @@ void run_lsof() {
         // Setup stdin, stdout, stderr. In this case we want the stdout of lsof
         // to go to our stderr so it is interleaved with DPRINTF() and other
         // diagnostic output.
+        close(0);
+        // cppcheck-suppress leakReturnValNotUsed
+        (void)open("/dev/null", O_RDONLY);
         dup2(2, 1);
         // Run the program we hope will give us detailed info about each address.
         execlp("lsof", "lsof", "-p", pid_str, NULL);
@@ -152,12 +155,13 @@ void run_addr2lines_prog(int n_frames, char *path, const char **argv) {
     if (pid == 0) {
         // Setup stdin, stdout, stderr.
         close(0);
-        // cppcheck-suppress leakReturnValNotUsed
-        (void)open("/dev/null", O_RDONLY);
-        dup2(fds[1], 1);
         close(2);
+        dup2(fds[1], 1);
         // cppcheck-suppress leakReturnValNotUsed
-        (void)open("/dev/null", O_WRONLY);
+        (void)open("/dev/null", O_RDONLY);  // stdin
+        // cppcheck-suppress leakReturnValNotUsed
+        (void)open("/dev/null", O_RDONLY);  // stderr
+
         // Run the program we hope will give us detailed info about each address.
         execv(path, (char *const *)argv);
     }
@@ -165,17 +169,18 @@ void run_addr2lines_prog(int n_frames, char *path, const char **argv) {
 
     static char atos_data[64 * 1024];
     int len = 0;
-    int n = 0;
+    int n;
     do {
         n = read(fds[0], atos_data + len, sizeof(atos_data) - len);
         len += n;
-    } while (n != 0 && len < sizeof(atos_data));
+    } while (n > 0 && len < sizeof(atos_data));
 
     // We ignore the return value because a) it should be impossible for this to fail and b) there
     // isn't anything we can do if it does fail. This is solely to reap the process so we don't
     // accumulate a lot of zombies.
     int status;
     (void)waitpid(pid, &status, 0);
+    close(fds[0]);
 
     sigprocmask(SIG_SETMASK, &omask, NULL);
 
@@ -206,7 +211,7 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
     const char *argv[MAX_FRAMES + 4];
     // Sixteen hex digits is enough for 64 bit addrs. The extra three chars are for the `0x` prefix
     // from the "%p" format specifier and the terminating null byte.
-    char argv_addrs[20 * MAX_FRAMES];  // 20 digits per addr max which is enough for 64 bit addrs
+    char argv_addrs[20 * MAX_FRAMES];  // 20 digits per addr + whitespace is enough for 64 bit addrs
     argv[0] = _pth_atos;
     argv[1] = "-p";
     static char pid_str[20];
@@ -264,6 +269,11 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
 
 #endif  // _pth_addr2line
 #endif  // _pth_atos
+
+// Given a single address return info about it; e.g., function name, file name, line number.
+const char *addr2info(void *addr) {
+    return addrs2info(1, &addr)[0];
+}
 
 // Write a backtrace to stderr. This can be called from anyplace in the code where you would like to
 // understand the call sequence leading to that point in the code. It is also called automatically

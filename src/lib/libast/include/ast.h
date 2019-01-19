@@ -205,6 +205,7 @@ extern int chresc(const char *, char **);
 extern int chrexp(const char *, char **, int *, int);
 extern char *conformance(const char *, size_t);
 extern void set_debug_filename(const char *pathname);
+extern const char *addr2info(void *p);
 extern void dump_backtrace(int max_frames);
 extern void run_lsof();
 extern char *fmtbase(intmax_t, int, int);
