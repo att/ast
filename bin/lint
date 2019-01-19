@@ -212,8 +212,15 @@ then
         cp ../.oclint .
     fi
 
+    # Include `-D_FORTIFY_SOURCE=0` because we don't want constant expressions
+    # introduced by the use of macro implementations of functions like
+    # `snprintf()` to cause spurious warnings when security fortification is
+    # in effect. Since we're just doing static analysis the run-time checks
+    # introduced by the indirections the _FORTIFY_SOURCE mechanism introduces
+    # serve no purpose.
     oclint -p "${PWD}" -enable-clang-static-analyzer ${enable_global_analysis} \
         -extra-arg="-D_OCLINT_" \
+        -extra-arg="-D_FORTIFY_SOURCE=0" \
         -extra-arg="-isystem" -extra-arg="${system_hdrs}" "${c_files[@]}" 2>&1 |
         sed -e 's,^\.\./,,'
 fi
