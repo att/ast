@@ -79,9 +79,9 @@
 #define NV_BLTPFSH NV_ARRAY
 
 extern int nice(int);
-#if SHOPT_SPAWN
+#if USE_SPAWN
 static_fn pid_t sh_ntfork(Shell_t *, const Shnode_t *, char *[], int *, int);
-#endif  // SHOPT_SPAWN
+#endif  // USE_SPAWN
 
 static_fn void sh_funct(Shell_t *, Namval_t *, int, char *[], struct argnod *, int);
 static_fn void coproc_init(Shell_t *, int pipes[]);
@@ -90,9 +90,9 @@ static void *timeout;
 static char nlock;
 static char pipejob;
 static int restorefd;
-#if SPAWN_cwd
+#if USE_SPAWN
 static int restorevex;
-#endif  // SPAWN_cwd
+#endif
 
 struct funenv {
     Namval_t *node;
@@ -100,7 +100,7 @@ struct funenv {
     Namval_t **nref;
 };
 
-#if SHOPT_SPAWN
+#if USE_SPAWN
 static_fn int io_usevex(struct ionod *iop) {
     struct ionod *first = iop;
     for (; iop; iop = iop->ionxt) {
@@ -108,7 +108,7 @@ static_fn int io_usevex(struct ionod *iop) {
     }
     return IOUSEVEX;
 }
-#endif  // SHOPT_SPAWN
+#endif  // USE_SPAWN
 #if 1
 #undef IOUSEVEX
 #define IOUSEVEX 0
@@ -729,7 +729,11 @@ static_fn Namval_t *enter_namespace(Shell_t *shp, Namval_t *nsp) {
 
 __attribute__((noreturn)) static_fn void forked_child(Shell_t *shp, const Shnode_t *t, int flags,
                                                       int type, bool no_fork, char *com0,
-                                                      char **com, pid_t parent, int topfd) {
+                                                      char **com, pid_t parent, int topfd,
+                                                      int vexi) {
+#if !USE_SPAWN
+    UNUSED(vexi);
+#endif
     // This is the FORKED branch (child) of execute.
     volatile int jmpval;
     struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
@@ -795,7 +799,7 @@ __attribute__((noreturn)) static_fn void forked_child(Shell_t *shp, const Shnode
             job_post(shp, parent, 0);
             job_wait(parent);
             sh_iorestore(shp, topfd, SH_JMPCMD);
-#ifdef SPAWN_cwd
+#if USE_SPAWN
             if (shp->vexp->cur > vexi) sh_vexrestore(shp, vexi);
 #endif
             sh_done(shp, (shp->exitval & SH_EXITSIG) ? (shp->exitval & SH_EXITMASK) : 0);
@@ -832,7 +836,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
     int execflg = (type & sh_state(SH_NOFORK));
     int execflg2 = (type & sh_state(SH_FORKED));
     int mainloop = (type & sh_state(SH_INTERACTIVE));
-#if SHOPT_SPAWN
+#if USE_SPAWN
     int ntflag = (type & sh_state(SH_NTFORK));
 #else
     int ntflag = 0;
@@ -842,8 +846,10 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
     char *cp = 0, **com = 0, *comn;
     int argn;
     int skipexitset = 0;
-#ifdef SPAWN_cwd
+#if USE_SPAWN
     int vexi = shp->vexp->cur;
+#else
+    int vexi = 0;
 #endif
     pid_t *procsub = 0;
     volatile int was_interactive = 0;
@@ -881,7 +887,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             type &= (COMMSK | COMSCAN);
             sh_stats(STAT_SCMDS);
             error_info.line = t->com.comline - shp->st.firstline;
-#ifdef SPAWN_cwd
+#if USE_SPAWN
             spawnvex_add(shp->vex, SPAWN_frame, 0, 0, 0);
 #endif
             com = sh_argbuild(shp, &argn, &(t->com), OPTIMIZE);
@@ -1218,7 +1224,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             jmpval = 0;
                         }
                     }
-#ifdef SPAWN_cwd
+#if USE_SPAWN
                     if (np != SYSEXEC && shp->vex->cur) {
 #if 1
                         spawnvex_apply(shp->vex, 0, SPAWN_RESET | SPAWN_FRAME);
@@ -1280,7 +1286,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     if ((shp->topfd > topfd) && !(shp->subshell && np == SYSEXEC)) {
                         sh_iorestore(shp, topfd, jmpval);
                     }
-#ifdef SPAWN_cwd
+#if USE_SPAWN
                     if (shp->vexp->cur > vexi) sh_vexrestore(shp, vexi);
 #endif
                     shp->redir0 = 0;
@@ -1365,7 +1371,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         sh_funct(shp, np, argn, com, t->com.comset, (flags & ~OPTIMIZE_FLAG));
                     }
                     enter_namespace(shp, namespace);
-#ifdef SPAWN_cwd
+#if USE_SPAWN
                     spawnvex_apply(shp->vex, 0, SPAWN_RESET | SPAWN_FRAME);
                     if (shp->vexp->cur > vexi) sh_vexrestore(shp, vexi);
 #endif
@@ -1383,7 +1389,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     goto setexit;
                 }
             } else if (!io) {
-#ifdef SPAWN_cwd
+#if USE_SPAWN
                 spawnvex_apply(shp->vex, 0, SPAWN_RESET | SPAWN_FRAME);
 #endif
             setexit:
@@ -1397,7 +1403,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             bool no_fork;
             int jobid;
             int pipes[3];
-#if SHOPT_SPAWN
+#if USE_SPAWN
             bool unpipe = false;
 #endif
 
@@ -1412,9 +1418,9 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 if ((type & (FAMP | TFORK)) == (FAMP | TFORK)) {
                     if (shp->comsub && !(shp->fdstatus[1] & IONOSEEK)) {
                         iousepipe(shp);
-#if SHOPT_SPAWN
+#if USE_SPAWN
                         unpipe = true;
-#endif  // SHOPT_SPAWN
+#endif  // USE_SPAWN
                     }
                     sh_subfork();
                 }
@@ -1447,7 +1453,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 }
                 nv_getval(RANDNOD);
                 restorefd = shp->topfd;
-#ifdef SPAWN_cwd
+#if USE_SPAWN
                 restorevex = shp->vexp->cur;
 #endif
                 if (type & FCOOP) {
@@ -1455,7 +1461,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     coproc_init(shp, pipes);
                 }
 
-#if SHOPT_SPAWN
+#if USE_SPAWN
                 if (com) {
                     parent = sh_ntfork(shp, t, com, &jobid, ntflag);
                 } else {
@@ -1463,21 +1469,21 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 }
 
                 if (parent < 0) {
-#if SHOPT_SPAWN
+#if USE_SPAWN
                     if (shp->comsub == 1 && usepipe && unpipe) sh_iounpipe(shp);
-#endif  // SHOPT_SPAWN
+#endif  // USE_SPAWN
                     break;
                 }
-#else   // SHOPT_SPAWN
+#else   // USE_SPAWN
                 parent = sh_fork(shp, type, &jobid);
-#endif  // SHOPT_SPAWN
+#endif  // USE_SPAWN
             }
 #if SHOPT_COSHELL
         skip:
 #endif /* SHOPT_COSHELL */
             job.parent = parent;
             if (!job.parent) {
-                forked_child(shp, t, flags, type, no_fork, com0, com, parent, topfd);
+                forked_child(shp, t, flags, type, no_fork, com0, com, parent, topfd, vexi);
                 __builtin_unreachable();
             }
             // This is the parent branch of fork. It may or may not wait for the child.
@@ -1504,7 +1510,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     if (parent == shp->spid) shp->spid = 0;
                 }
                 if (shp->topfd > topfd) sh_iorestore(shp, topfd, 0);
-#ifdef SPAWN_cwd
+#if USE_SPAWN
                 if (shp->vexp->cur > vexi) sh_vexrestore(shp, vexi);
 #endif
                 if (usepipe && tsetio && subdup) sh_iounpipe(shp);
@@ -1584,7 +1590,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             }
             sh_popcontext(shp, buffp);
             sh_iorestore(shp, buffp->topfd, jmpval);
-#ifdef SPAWN_cwd
+#if USE_SPAWN
             if (shp->vexp->cur > vexi) sh_vexrestore(shp, buffp->vexi);
 #endif
             if (buffp->olist) free_list(buffp->olist);
@@ -2555,7 +2561,7 @@ pid_t _sh_fork(Shell_t *shp, pid_t parent, int flags, int *jobid) {
         if (jobid) *jobid = myjob;
         if (shp->comsub == 1 && usepipe) {
             if (!tsetio || !subdup) {
-#ifdef SPAWN_cwd
+#if USE_SPAWN
                 if (shp->vexp->cur > restorevex) sh_vexrestore(shp, restorevex);
 #endif
                 if (shp->topfd > restorefd) sh_iorestore(shp, restorefd, 0);
@@ -2622,12 +2628,12 @@ pid_t sh_fork(Shell_t *shp, int flags, int *jobid) {
         ;  // empty loop
     }
     sh_stats(STAT_FORKS);
-#ifdef SPAWN_cwd
+#if USE_SPAWN
     if (parent == 0 && shp->vex) {
         spawnvex_apply(shp->vex, 0, 0);
         spawnvex_apply(shp->vexp, 0, SPAWN_RESET);
     }
-#endif  // SPAWN_cwd
+#endif  // USE_SPAWN
     sigprocmask(SIG_SETMASK, &oset, NULL);
     job_fork(parent);
     return parent;
@@ -2837,7 +2843,7 @@ static_fn void coproc_init(Shell_t *shp, int pipes[]) {
     shp->fdptrs[shp->coutpipe] = &shp->coutpipe;
 }
 
-#if SHOPT_SPAWN
+#if USE_SPAWN
 
 static_fn void sigreset(Shell_t *shp, int mode) {
     char *trap;
@@ -2852,7 +2858,9 @@ static_fn void sigreset(Shell_t *shp, int mode) {
         if (sig == SIGCHLD) continue;
         if (shp->sigflag[sig] & SH_SIGOFF) return;
         trap = shp->st.trapcom[sig];
-        if (trap && *trap == 0) sh_signal(sig, mode ? (sh_sigfun_t)sh_fault : SIG_IGN);
+        if (trap && *trap == 0) {
+            sh_signal(sig, mode ? (sh_sigfun_t)sh_fault : (sh_sigfun_t)(SIG_IGN));
+        }
     }
 }
 
@@ -2879,8 +2887,8 @@ static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jo
     jmpval = sigsetjmp(buffp->buff, 0);
     if (jmpval == 0) {
         if ((otype & FINT) && !sh_isstate(shp, SH_MONITOR)) {
-            sh_signal(SIGQUIT, SIG_IGN);
-            sh_signal(SIGINT, SIG_IGN);
+            sh_signal(SIGQUIT, (sh_sigfun_t)(SIG_IGN));
+            sh_signal(SIGINT, (sh_sigfun_t)(SIG_IGN));
         }
         spawnpid = -1;
         if (t->com.comio) {
@@ -2987,7 +2995,7 @@ static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jo
     }
     if (t->com.comio && (jmpval || spawnpid <= 0)) {
         sh_iorestore(shp, buffp->topfd, jmpval);
-#ifdef SPAWN_cwd
+#if USE_SPAWN
         if (shp->vexp->cur > buffp->vexi) sh_vexrestore(shp, buffp->vexi);
 #endif
     }
@@ -3011,7 +3019,7 @@ static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jo
     return spawnpid;
 }
 
-#endif  // SHOPT_SPAWN
+#endif  // USE_SPAWN
 
 //
 // This routine is used to execute the given function <fun> in a new scope. If <fun> is NULL, then

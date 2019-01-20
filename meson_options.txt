@@ -1,3 +1,10 @@
+# We don't use posix_spawn() by default due to a race condition involving
+# setting the terminal foreground process group. If you want to risk failures
+# due to that scenario build with `meson -Duse-spawn=true`.
+#
+# See https://github.com/att/ast/issues/468.
+option('use-spawn', type : 'boolean', value : false)
+
 # This build symbol used to be named SHOPT_TIMEOUT. It was renamed when it
 # stopped being used to conditionally compile segments of code. It defines
 # the default, and maximum, read timeout value (see the `TMOUT` shell var).

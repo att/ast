@@ -9,6 +9,6 @@ libast_files += [
     'misc/fts.c', 'misc/vmbusy.c', 'misc/fallbacks.c'
 ]
 
-if not shared_c_args.contains('-D_AST_no_spawnveg=1')
+if shared_c_args.contains('-DUSE_SPAWN=1')
     libast_files += [ 'misc/spawnvex.c' ]
 endif

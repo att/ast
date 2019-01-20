@@ -87,14 +87,13 @@ static_fn bool onstdpath(Shell_t *shp, const char *name) {
 static_fn pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char *const envp[],
                               int spawn) {
     UNUSED(spawn);
-#ifdef SPAWN_cwd
+#if USE_SPAWN
     if (shp->vex->cur) {
         spawnvex_apply(shp->vex, 0, 0);
         spawnvex_apply(shp->vexp, 0, SPAWN_RESET);
     }
-#else
+#else   // USE_SPAWN
     UNUSED(shp);
-#endif
 
     // Ensure stdin, stdout, stderr are open in the child process.
     // See https://github.com/att/ast/issues/1117.
@@ -104,11 +103,12 @@ static_fn pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char
             open("/dev/null", O_RDWR);
         }
     }
+#endif  // USE_SPAWN
 
     return execve(path, argv, envp);
 }
 
-#if _AST_no_spawnveg
+#if !USE_SPAWN
 static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char *const envp[],
                           pid_t pgid) {
     UNUSED(shp);
@@ -119,15 +119,18 @@ static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], ch
 
     abort();
 }
-#else
+
+#else  // USE_SPAWN
+
 static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char *const envp[],
                           pid_t pgid) {
+    UNUSED(pgid);
     pid_t pid;
 
 #ifdef SIGTSTP
     if (job.jobcontrol) {
-        sh_signal(SIGTTIN, SIG_DFL);
-        sh_signal(SIGTTOU, SIG_DFL);
+        sh_signal(SIGTTIN, (sh_sigfun_t)(SIG_DFL));
+        sh_signal(SIGTTOU, (sh_sigfun_t)(SIG_DFL));
     }
 #endif  // SIGTSTP
 
@@ -146,14 +149,14 @@ static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], ch
 
 #ifdef SIGTSTP
     if (job.jobcontrol) {
-        sh_signal(SIGTTIN, SIG_IGN);
-        sh_signal(SIGTTOU, SIG_IGN);
+        sh_signal(SIGTTIN, (sh_sigfun_t)(SIG_IGN));
+        sh_signal(SIGTTOU, (sh_sigfun_t)(SIG_IGN));
     }
 #endif  // SIGTSTP
 
     return pid;
 }
-#endif  // SPAWN_cwd
+#endif  // USE_SPAWN
 
 //
 // Used with command -x to run the command in multiple passes. Spawn is non-zero when invoked via
@@ -948,8 +951,9 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
     }
 }
 
-#ifdef SPAWN_cwd
+#if USE_SPAWN
 static_fn int vexexec(void *ptr, uintmax_t fd1, uintmax_t fd2) {
+    UNUSED(fd1);
     char *devfd;
     int fd = -1;
     Spawnvex_noexec_t *ep = (Spawnvex_noexec_t *)ptr;
@@ -978,7 +982,7 @@ static_fn int vexexec(void *ptr, uintmax_t fd1, uintmax_t fd2) {
     execve(shp->gd->shpath, &argv[-1], ep->envv);
     return errno;
 }
-#endif  // SPAWN_cwd
+#endif  // USE_SPAWN
 
 pid_t path_spawn(Shell_t *shp, const char *opath, char **argv, char **envp, Pathcomp_t *libpath,
                  int spawn) {
@@ -990,12 +994,12 @@ pid_t path_spawn(Shell_t *shp, const char *opath, char **argv, char **envp, Path
     size_t r;
     pid_t pid = -1;
 
-#ifdef SPAWN_cwd
+#if USE_SPAWN
     if (spawn > 1) {
         spawnvex_add(shp->vex, SPAWN_pgrp, spawn >> 1, 0, 0);
     }
     spawnvex_add(shp->vex, SPAWN_noexec, 0, vexexec, (void *)shp);
-#endif  // SPAWN_cwd
+#endif  // USE_SPAWN
     // Leave room for inserting _= pathname in environment.
     envp--;
     // Save original pathname.
@@ -1097,14 +1101,14 @@ retry:
                     pid = fork();
                     if (pid > 0) return pid;
                 } while (_sh_fork(shp, pid, 0, NULL) < 0);
-#ifdef SPAWN_cwd
+#if USE_SPAWN
                 if (shp->vex) {
                     spawnvex_apply(shp->vex, 0, 0);
 #if 0
 				spawnvex_apply(shp->vexp,0,SPAWN_RESET);
 #endif
                 }
-#endif /* SPAWN_cwd */
+#endif  // USE_SPAWN
                 ((struct checkpt *)shp->jmplist)->mode = SH_JMPEXIT;
             }
             exscript(shp, path, argv, envp);

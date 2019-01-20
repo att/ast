@@ -954,7 +954,7 @@ static_fn char *io_usename(Shell_t *shp, char *name, int *perm, int fno, int mod
     return tname;
 }
 
-#ifdef SPAWN_cwd
+#if USE_SPAWN
 //
 // Restore sfstderr and close file descriptors.
 //
@@ -1014,6 +1014,7 @@ static_fn void iovex_stdstream(Shell_t *shp, int fn) {
 // Restore stream in parent.
 //
 static_fn int iovex_stream(void *context, uintmax_t origfd, uintmax_t fd2) {
+    UNUSED(fd2);
     Shell_t *shp = (Shell_t *)context;
     Sfio_t *sp, *sporig = shp->sftable[origfd];
 
@@ -1103,7 +1104,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
     int isstring = shp->subshell ? (sfset(sfstdout, 0, 0) & SF_STRING) : 0;
     int herestring = (flag & IOHERESTRING);
     int vex = (flag & IOUSEVEX);
-#ifdef SPAWN_cwd
+#if USE_SPAWN
     Spawnvex_t *vp = shp->vexp;
     Spawnvex_t *vc = shp->vex;
 #endif
@@ -1113,7 +1114,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
     if (flag == 2) clexec = 1;
     if (iop) traceon = sh_trace(shp, NULL, 0);
 
-#ifdef SPAWN_cwd
+#if USE_SPAWN
     if (vex) indx = vp->cur;
 #endif
 
@@ -1219,7 +1220,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     } else {
                         dupfd = strtol(fname, &number, 10);
                     }
-#ifdef SPAWN_cwd
+#if USE_SPAWN
                     if (vex && (f = spawnvex_get(vc, dupfd, 0)) >= 0) dupfd = f;
 #endif
                     if (*number == '-') {
@@ -1286,7 +1287,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     shp->sftable[fd] = sfnew(NULL, cp, r, -1, SF_READ | SF_STRING);
                     shp->fdstatus[fd] = shp->fdstatus[dupfd];
                 } else if (vex && toclose >= 0) {
-#ifdef SPAWN_cwd
+#if USE_SPAWN
                     indx = spawnvex_add(vp, dupfd, -1, 0, 0);
                     spawnvex_add(vc, dupfd, -1, 0, 0);
 #endif
@@ -1474,7 +1475,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     // someone debugging a problem in the future finds it helpful.
                     //
                     //   if (flag < 2) {
-                    // #ifdef SPAWN_cwd
+                    // #if USE_SPAWN
                     //     sh_vexsave(shp, fn, (iof & IODOC) ? -1 : -2, 0, 0);
                     // #endif
                     //   } else if (!(iof & IODOC)) {
@@ -1540,7 +1541,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     }
                     if (fx != fd) shp->fdstatus[fx] = status;
 #endif
-#ifdef SPAWN_cwd
+#if USE_SPAWN
                     if (fn <= 2) iovex_stdstream(shp, fn);
 #endif
                 } else if (vex) {
@@ -1550,7 +1551,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                         close(fn);
                     }
 
-#ifdef SPAWN_cwd
+#if USE_SPAWN
                     Spawnvex_f fun = NULL;
                     if (trunc) {
                         fun = iovex_trunc;
@@ -1793,7 +1794,7 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
     }
 }
 
-#ifdef SPAWN_cwd
+#if USE_SPAWN
 void sh_vexsave(Shell_t *shp, int fn, int fd, Spawnvex_f vexfun, void *arg) {
     Spawnvex_t *vp = shp->vexp;
     Spawnvex_t *vc = shp->vex;

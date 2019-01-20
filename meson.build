@@ -159,7 +159,7 @@ endif
 
 shared_c_args = [
     '-DUSAGE_LICENSE=""',
-    '-D_AST_no_spawnveg=1',
+    '-DUSE_SPAWN=' + '@0@'.format(get_option('use-spawn').to_int()),
 ]
 
 ptr_size = cc.sizeof('void*')
