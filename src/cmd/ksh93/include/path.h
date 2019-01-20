@@ -28,10 +28,6 @@
 #include "name.h"
 #include "shell.h"
 
-#if !SHOPT_SPAWN && _use_spawnveg
-#error -D_use_spawnveg requires -DSHOPT_SPAWN
-#endif  // !SHOPT_SPAWN && _use_spawnveg
-
 #define PATH_PATH 0001
 #define PATH_FPATH 0002
 #define PATH_CDPATH 0004

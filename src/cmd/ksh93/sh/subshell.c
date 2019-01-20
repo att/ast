@@ -458,7 +458,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     struct sh_scoped savst;
     struct dolnod *argsav = 0;
     int argcnt;
-#ifdef SPAWN_cwd
+#if USE_SPAWN
     Spawnvex_t *vp;
 #endif
 
@@ -746,9 +746,9 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     subshell_data = sp->prev;
     if (!argsav || argsav->dolrefcnt == argcnt) sh_argfree(shp, argsav, 0);
     if (shp->topfd != buff.topfd) sh_iorestore(shp, buff.topfd | IOSUBSHELL, jmpval);
-#ifdef SPAWN_cwd
+#if USE_SPAWN
     if ((vp = (Spawnvex_t *)shp->vexp) && vp->cur) sh_vexrestore(shp, buff.vexi);
-#endif  // SPAWN_cwd
+#endif
     if (sp->sig) {
         if (sp->prev) {
             sp->prev->sig = sp->sig;

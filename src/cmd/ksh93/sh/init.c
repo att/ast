@@ -1303,7 +1303,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     }
     *SHLVL->nvalue.ip += 1;
     nv_offattr(SHLVL, NV_IMPORT);
-#if SHOPT_SPAWN
+#if USE_SPAWN
     {
         // Try to find the pathname for this interpreter.
         // Try using environment variable _ or argv[0].
@@ -1412,7 +1412,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     //
     error_info.id = strdup(shp->st.dolv[0]);  // error_info.id is $0
     shp->jmpbuffer = (void *)&shp->checkbase;
-#ifdef SPAWN_cwd
+#if USE_SPAWN
     shp->vex = spawnvex_open(0);
     shp->vexp = spawnvex_open(0);
 #endif

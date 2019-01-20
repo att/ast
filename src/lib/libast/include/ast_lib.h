@@ -12,9 +12,6 @@
 
 #define _fd_self_dir_fmt "/proc/self/fd/%d%s%s"
 #define _fd_pid_dir_fmt "/proc/%d/fd/%d%s%s"
-#if !_AST_no_spawnveg
-#define _use_spawnveg 1
-#endif
 
 // https://github.com/att/ast/issues/370
 #define _UNIV_DEFAULT "ucb"

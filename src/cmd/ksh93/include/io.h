@@ -58,10 +58,10 @@ extern int sh_iorenumber(Shell_t *, int, int);
 extern void sh_pclose(int[]);
 extern void sh_rpipe(int[]);
 extern void sh_iorestore(Shell_t *, int, int);
-#if !_AST_no_spawnveg
+#if USE_SPAWN
 extern void sh_vexrestore(Shell_t *, int);
 extern void sh_vexsave(Shell_t *, int, int, Spawnvex_f, void *);
-#endif
+#endif  // USE_SPAWN
 extern Sfio_t *sh_iostream(Shell_t *, int, int);
 extern int sh_redirect(Shell_t *, struct ionod *, int);
 extern void sh_iosave(Shell_t *, int, int, char *);

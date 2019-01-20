@@ -244,10 +244,10 @@ struct Shell_s {
     char **argaddr;
     void *optlist;
     siginfo_ll_t **siginfo;
-#if !_AST_no_spawnveg
+#if USE_SPAWN
     Spawnvex_t *vex;
     Spawnvex_t *vexp;
-#endif
+#endif  // USE_SPAWN
     struct sh_scoped global;
     struct checkpt checkbase;
     Shinit_f userinit;

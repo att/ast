@@ -45,7 +45,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#if !_AST_no_spawnveg
+#if USE_SPAWN
 typedef struct Spawnvex_s {
     unsigned int cur;
     int io;
@@ -104,7 +104,7 @@ extern int spawnvex_apply(Spawnvex_t *, int, int);
 extern intmax_t spawnvex_get(Spawnvex_t *, int, int);
 extern int spawnvex_close(Spawnvex_t *);
 
-#endif
+#endif  // USE_SPAWN
 
 extern char *fgetcwd(int, char *, size_t);
 extern char *resolvepath(const char *, char *, size_t);
