@@ -114,23 +114,6 @@ static const struct Mathconst Mtable[] = {
     {"PI_4", M_PI_4l}, {"SQRT2", M_SQRT2l}, {"SQRT1_2", M_SQRT1_2l},
     {"", 0.0}};
 
-typedef struct Intconst_s {
-    const char *name;
-    short ss;
-    unsigned short us;
-    int si;
-    unsigned int ui;
-    Sflong_t sl;
-    Sfulong_t ul;
-} Intconst_t;
-
-typedef struct Fltconst_s {
-    const char *name;
-    float f;
-    double d;
-    Sfdouble_t l;
-} Fltconst_t;
-
 static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
     int flag = lvalue->flag;
     char *sub = 0, *cp = (char *)np;
