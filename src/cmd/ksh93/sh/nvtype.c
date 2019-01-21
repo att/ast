@@ -485,10 +485,6 @@ static_fn Namval_t *create_type(Namval_t *np, const void *vp, int flag, Namfun_t
     Namval_t *nq = NULL;
 
     if (!name) return dp->parent;
-    if (*name == '_' && name[1] == '_' && (name[2] == '.' || name[2] == 0)) {
-        fp->last = (char *)&name[2];
-        return dp->parent;
-    }
     while ((n = *cp++) && n != '=' && n != '+' && n != '[') {
         if (n == '.') r = (cp - 1) - name;
     }
