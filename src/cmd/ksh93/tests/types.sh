@@ -882,16 +882,6 @@ p_t -A c.p
 c.p[2]=(fd=0 events=( bool pollin=true))
 [[ ${c.p[2].events.pollin} == true ]] || log_error 'c.p[2]=(fd=0 events=( bool pollin=true)) does not set pollin to true'
 
-typeset -T xx_t=(
-    integer i=2
-    function printi { print -r -- ${_.i}.${_.__.i} ;}
-)
-typeset -T yy_t=( integer i=3; xx_t x)
-yy_t y
-[[ $(y.x.printi) == 2.3 ]] || log_error 'discipline function with nested type using _.__ not working as command substitution'
-[[ ${y.x.printi} == 2.3 ]] || log_error 'discipline function with nested type us
-ing _.__ not working as ${var.function}'
-
 typeset -T pp_t=( integer fd ;
       function pinit { print $(( _.fd=$1 )) ;}
 )
