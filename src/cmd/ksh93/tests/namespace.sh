@@ -122,17 +122,6 @@ namespace a.b
 .a.b.x_t var
 [[ $(var.pi) == 10 ]] || print -u2 'discipline functions for types in namespace not working'
 
-namespace com.foo.test1
-{
-    typeset -T x_t=(
-        integer i=9
-        function pr { printf "%d/%d\n" _.i _.__.j ; }
-    )
-    typeset -T y_t=( x_t x ; integer j=5 )
-}
-.com.foo.test1.y_t v
-[[ $(v.x.pr) == 9/5 ]] || log_error  '_.__ not working with nested types in a namespace'
-
 namespace a.b
 {
     function f1 { print OK ; }
