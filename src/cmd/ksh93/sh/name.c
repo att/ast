@@ -661,15 +661,6 @@ static_fn char *stack_extend(Shell_t *shp, const char *cname, char *cp, int n) {
     return name;
 }
 
-static_fn Namval_t *nv_parentnode(Namval_t *np) {
-    Namval_t *mp = np;
-    if (nv_istable(np)) return nv_parent(np);
-    mp = nv_typeparent(np);
-    if (mp) return mp;
-    if ((mp = (Namval_t *)np->nvenv) && !nv_isattr(np, NV_EXPORT)) return mp;
-    return np;
-}
-
 Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
     Shell_t *shp = sh_getinterp();
     char *sub = 0, *cp = (char *)name, *sp, *xp;
@@ -1047,22 +1038,6 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                 cp++;
                 break;
             }
-            case '_': {
-                if (cp[1] == '_' && (cp[2] == 0 || cp[2] == '.') && shp->oldnp) {
-                    cp += 2;
-                    dp->last = cp;
-                    nvcache.ok = 0;
-                    shp->oldnp = np = nv_parentnode(shp->oldnp);
-                    if (*cp == 0) return np;
-                    sp = nv_name(np);
-                    c = strlen(sp);
-                    dp->nofree |= 1;
-                    name = copystack(shp, (const char *)sp, cp, NULL);
-                    cp = (char *)name + c + 1;
-                    break;
-                }
-            }
-            // FALLTHRU
             default: {
                 shp->oldnp = np ? nq : qp;
                 qp = 0;
