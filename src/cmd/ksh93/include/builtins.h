@@ -23,17 +23,18 @@
 #include "option.h"
 #include "shtable.h"
 
-#define SYSLOGIN (shgd->bltin_cmds)
+#define SYSLOGIN (shgd->bltin_cmds + 0)
 #define SYSEXEC (shgd->bltin_cmds + 1)
 #define SYSSET (shgd->bltin_cmds + 2)
+// #define SYSCOLON (shgd->bltin_cmds + 3)
 #define SYSTRUE (shgd->bltin_cmds + 4)
 #define SYSCOMMAND (shgd->bltin_cmds + 5)
-#define SYSCD (shgd->bltin_cmds + 6)
+// #define SYSCD (shgd->bltin_cmds + 6)
 #define SYSBREAK (shgd->bltin_cmds + 7)
 #define SYSCONT (shgd->bltin_cmds + 8)
 #define SYSTYPESET (shgd->bltin_cmds + 9)
 #define SYSTEST (shgd->bltin_cmds + 10)
-#define SYSBRACKET (shgd->bltin_cmds + 11)
+// #define SYSBRACKET (shgd->bltin_cmds + 11)
 #define SYSLET (shgd->bltin_cmds + 12)
 #define SYSEXPORT (shgd->bltin_cmds + 13)
 #define SYSDOT (shgd->bltin_cmds + 14)
@@ -42,7 +43,7 @@
 #if SHOPT_BASH
 #define SYSLOCAL (shgd->bltin_cmds + 17)
 #else
-#define SYSLOCAL 0
+#define SYSLOCAL NULL
 #endif
 
 // Entry point for shell special builtins.

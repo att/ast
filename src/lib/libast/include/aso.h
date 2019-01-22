@@ -22,7 +22,7 @@
 #ifndef _ASO_H
 #define _ASO_H 1
 
-#define ASO_VERSION 20130501L
+// #define ASO_VERSION 20130501L
 
 #include <sched.h>
 

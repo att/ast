@@ -158,7 +158,6 @@ struct shared {
 #define SH_POSIX 46
 #define SH_MULTILINE 47
 
-#define SH_NOPROFILE 78
 #define SH_NOUSRPROFILE 79
 #define SH_LOGIN_SHELL 67
 #define SH_COMMANDLINE 0x100
@@ -345,7 +344,7 @@ extern const char e_dict[];
 #define STAT_NVHITS 7
 #define STAT_NVOPEN 8
 #define STAT_PATHS 9
-#define STAT_SVFUNCT 10
+// #define STAT_SVFUNCT 10
 #define STAT_SCMDS 11
 #define STAT_SPAWN 12
 #define STAT_SUBSHELL 13

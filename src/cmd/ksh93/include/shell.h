@@ -91,7 +91,7 @@ typedef union Shnode_u Shnode_t;
 #define SH_DICTIONARY 30
 #define SH_PIPEFAIL 32
 #define SH_GLOBSTARS 33
-#define SH_XARGS 34
+// #define SH_XARGS 34
 #define SH_RC 35
 #define SH_SHOWME 36
 #define SH_LETOCTAL 37

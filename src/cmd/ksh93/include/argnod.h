@@ -99,7 +99,6 @@ struct argnod {
 // Legal argument flags.
 #define ARG_RAW 0x1       // string needs no processing
 #define ARG_MAKE 0x2      // bit set during argument expansion
-#define ARG_COMSUB 0x2    // command sub
 #define ARG_MAC 0x4       // string needs macro expansion
 #define ARG_EXP 0x8       // string needs file expansion
 #define ARG_ASSIGN 0x10   // argument is an assignment

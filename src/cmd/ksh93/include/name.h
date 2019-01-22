@@ -347,7 +347,6 @@ extern const Namdisc_t *nv_discfun(Nvdiscfun_op_t);
 #else
 #define ARRAY_MAX (1UL << ARRAY_BITS)  // maximum number of elements in an array
 #endif
-#define ARRAY_MASK ((1UL << ARRAY_BITS) - 1)  // for backward compatibility
 
 // Number of elements to grow when array bound exceeded.  Must be a power of 2.
 #define ARRAY_INCR 32

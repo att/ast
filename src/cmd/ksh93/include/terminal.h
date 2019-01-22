@@ -52,7 +52,6 @@
 #endif  // LNEW_PENDIN
 #ifndef ECHOCTL
 #ifndef VEOL
-#define RAWONLY 1
 #endif  // !VEOL
 #endif  // !ECHOCTL
 

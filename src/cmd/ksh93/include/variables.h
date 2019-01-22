@@ -87,7 +87,7 @@
 #define SH_STATS (shgd->bltin_nodes + 61)
 #define SH_MATHNOD (shgd->bltin_nodes + 62)
 #define SH_JOBPOOL (shgd->bltin_nodes + 63)
-#define SH_PGRP (shgd->bltin_nodes + 64)
+// #define SH_PGRP (shgd->bltin_nodes + 64)
 #define SH_PWDFD (shgd->bltin_nodes + 65)
 #define SH_SIG (shgd->bltin_nodes + 66)
 #define SH_ASTBIN (shgd->bltin_nodes + 67)
@@ -100,6 +100,6 @@
 #define COMP_KEY (shgd->bltin_nodes + 74)
 #define COMPREPLY (shgd->bltin_nodes + 75)
 #define COMP_WORDBREAKS (shgd->bltin_nodes + 76)
-#define COMP_TAB (shgd->bltin_nodes + 77)
+// #define COMP_TYPE (shgd->bltin_nodes + 77)
 
 #endif  // _VARIABLES_H

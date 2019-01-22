@@ -52,7 +52,7 @@
 
 #define EXIT_BITS 8 /* # exit status bits	*/
 
-#define EXIT_USAGE 2      /* usage exit code	*/
+// #define EXIT_USAGE 2      /* usage exit code	*/
 #define EXIT_QUIT 255     /* parent should quit	*/
 #define EXIT_NOTFOUND 127 /* command not found	*/
 #define EXIT_NOEXEC 126   /* other exec error	*/
@@ -100,14 +100,10 @@
 #define PATH_PHYSICAL 0x001
 #define PATH_DOTDOT 0x002
 #define PATH_EXISTS 0x004
-#define PATH_DEV 0x008
 #define PATH_ABSOLUTE 0x010 /* NOTE: shared with pathaccess() below */
-#define PATH_CANON 0x020
-#define PATH_DROP_HEAD_SLASH2 0x040
-#define PATH_DROP_TAIL_SLASH 0x080
-#define PATH_EXCEPT_LAST 0x100
+
 #define PATH_VERIFIED(n) (((n)&0xfffff) << 12)
-#define PATH_GET_VERIFIED(n) (((n) >> 12) & 0xfffff)
+// #define PATH_GET_VERIFIED(n) (((n) >> 12) & 0xfffff)
 
 /*
  * pathaccess() flags
@@ -118,13 +114,6 @@
 #define PATH_EXECUTE 0x01
 #define PATH_REGULAR 0x08
 /* NOTE: PATH_ABSOLUTE shared with pathcanon() above */
-
-/*
- * touch() flags
- */
-
-#define PATH_TOUCH_CREATE 01
-#define PATH_TOUCH_VERBATIM 02
 
 /*
  * strgrpmatch() flags
@@ -310,7 +299,6 @@ extern unsigned long plugin_version(void);
 
 #define CC_bel 0007  // BEL character
 #define CC_esc 0033  // ESC character
-#define CC_sub 0032  // SUB character
 #define CC_vt 0013   // VT character
 
 // If running under the oclint tool try to suppress some platform specific warnings.
