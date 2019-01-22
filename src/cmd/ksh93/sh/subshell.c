@@ -53,6 +53,10 @@
 #include "shnodes.h"
 #include "variables.h"
 
+#if USE_SPAWN
+#include "ast_sys.h"
+#endif
+
 #ifndef PIPE_BUF
 #define PIPE_BUF 512
 #endif
@@ -99,8 +103,8 @@ static struct subshell {
     pid_t cpid;
     int coutpipe;
     int cpipe;
-    int nofork;
     int subdup;
+    bool nofork;
     char subshare;
     char comsub;
 #if SHOPT_COSHELL
@@ -579,7 +583,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
             if (sfswap(iop, sfstdout) != sfstdout) abort();
             sfset(sfstdout, SF_READ, 0);
             shp->fdstatus[1] = IOWRITE;
-            sp->nofork = sh_state(SH_NOFORK);
+            sp->nofork = sh_isstate(shp, SH_NOFORK);
             if (!sp->nofork) sh_onstate(shp, SH_NOFORK);
             flags |= sh_state(SH_NOFORK);
         } else if (sp->prev) {
