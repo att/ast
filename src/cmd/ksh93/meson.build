@@ -75,7 +75,7 @@ all_tests = [
     ['subshell', 100], ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
     ['ulimit'], ['variables'], ['vartree1'], ['vartree2'], ['whence'],
     # Test non-special builtins; i.e., those that have to be enabled explicitly.
-    ['b_chmod'],
+    ['chmod'],
     # These are interactive tests to be run via the `expect` utility.
     ['echo.exp'], ['emacs.exp'], ['glob.exp'], ['hist.exp'], ['jobs.exp'], ['read.exp'], ['set.exp'],
     ['test.exp'], ['vi.exp'],
