@@ -351,9 +351,6 @@
 #endif /*FIOCLEX*/
 #endif /*F_SETFD*/
 
-#ifndef F_DUPFD_CLOEXEC
-#define F_DUPFD_CLOEXEC F_DUPFD
-#endif
 #ifndef O_CLOEXEC
 #define O_CLOEXEC 0
 #endif

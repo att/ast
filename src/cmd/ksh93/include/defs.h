@@ -127,11 +127,6 @@ struct shared {
 #include "shell.h"
 #include "shtable.h"
 
-#if !defined(F_DUPFD_CLOEXEC)
-#undef F_DUPFD_CLOEXEC
-#define F_DUPFD_CLOEXEC (-99)
-#endif
-
 // Error exits from various parts of shell.
 #define exitset(shp) (shp->savexit = shp->exitval)
 
