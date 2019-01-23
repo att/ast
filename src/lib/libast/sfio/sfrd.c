@@ -22,11 +22,11 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
-#include <stdio.h>
 #include <string.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include "sfhdr.h"
 

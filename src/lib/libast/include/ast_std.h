@@ -109,14 +109,6 @@ extern _Ast_info_t _ast_info;
 typedef int (*Qsortcmp_f)(const void *, const void *);
 typedef int (*Qsortcmp_r_f)(const void *, const void *, void *);
 
-#if !defined(remove)
-extern int remove(const char *);
-#endif
-
-#if !defined(rename)
-extern int rename(const char *, const char *);
-#endif
-
 /* and now introducing prototypes botched by the standard(s) */
 
 extern char *translate(const char *, const char *, const char *, const char *);

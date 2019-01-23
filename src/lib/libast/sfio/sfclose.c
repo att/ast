@@ -23,6 +23,7 @@
 
 #include <errno.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "ast_assert.h"
 #include "sfhdr.h"

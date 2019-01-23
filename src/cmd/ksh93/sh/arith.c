@@ -26,7 +26,6 @@
 
 #include <ctype.h>
 #include <errno.h>
-#include <float.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -36,7 +35,6 @@
 #include "defs.h"
 
 #include "ast.h"
-#include "ast_float.h"
 #include "builtins.h"
 #include "cdt.h"
 #include "error.h"
