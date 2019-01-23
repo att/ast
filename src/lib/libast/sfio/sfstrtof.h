@@ -109,12 +109,6 @@
 #define S2F_exp_2_max (LDBL_MAX_EXP)
 #endif
 
-#if - S2F_exp_10_min < S2F_exp_10_max
-#define S2F_exp_10_abs (-S2F_exp_10_min)
-#else
-#define S2F_exp_10_abs S2F_exp_10_max
-#endif
-
 #define S2F_batch _ast_flt_unsigned_max_t
 
 #undef ERR /* who co-opted this namespace? */

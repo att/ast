@@ -94,15 +94,12 @@
 #define sfoff_t off_t
 #define sfstat_t struct stat
 #define sysclosef close
-#define syscreatf creat
 #define sysdupf dup
 #define sysfcntlf fcntl
 #define sysfstatf fstat
-#define sysftruncatef ftruncate
 #define syslseekf lseek
 #define sysmmapf mmap
 #define sysmunmapf munmap
-#define syspipef pipe
 #define sysreadf read
 #define sysremovef remove
 #define sysstatf stat
@@ -234,7 +231,7 @@
 #define SF_JUSTSEEK 00000040   /* just did a sfseek			*/
 #define SF_PRIVATE 00000100    /* private stream to Sfio, no mutex	*/
 #define SF_ENDING 00000200     /* no re-io on interrupts at closing	*/
-#define SF_WIDE 00000400       /* in wide mode - stdio only		*/
+// #define SF_WIDE 00000400       /* in wide mode - stdio only		*/
 #define SF_PUTR 00001000       /* in sfputr()				*/
 
 /* "bits" flags that must be cleared in sfclrlock */
@@ -495,7 +492,7 @@ struct _fmtpos_s {
      (pr = ft->precis), (bs = ft->base))
 
 /* format flags&types, must coexist with those in sfio.h */
-#define SFFMT_FORBIDDEN 000077777777 /* for sfio.h only		*/
+// #define SFFMT_FORBIDDEN 000077777777 /* for sfio.h only		*/
 #define SFFMT_EFORMAT 001000000000   /* sfcvt converting %e		*/
 #define SFFMT_MINUS 002000000000     /* minus sign			*/
 #define SFFMT_AFORMAT 004000000000   /* sfcvt converting %a		*/
@@ -750,7 +747,6 @@ typedef struct _sfextern_s {
 
 /* floating point to ascii conversion */
 #define SF_MAXEXP10 6
-#define SF_MAXPOW10 (1 << SF_MAXEXP10)
 #if !_ast_fltmax_double
 #define SF_FDIGITS 1024       /* max allowed fractional digits */
 #define SF_IDIGITS (8 * 1024) /* max number of digits in int part */
@@ -772,7 +768,6 @@ typedef struct _sfextern_s {
 #define _Sfcv36 (_Sftable.sf_cv36)
 #define _Sfcv64 (_Sftable.sf_cv64)
 #define _Sftype (_Sftable.sf_type)
-#define _Sfieee (&_Sftable.sf_ieee)
 #define _Sffinf (_Sftable.sf_ieee.fltinf)
 #define _Sfdinf (_Sftable.sf_ieee.dblinf)
 #define _Sflinf (_Sftable.sf_ieee.ldblinf)

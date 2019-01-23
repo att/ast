@@ -29,10 +29,6 @@
 
 #include "ast.h"
 
-#define SFDCEVENT(a, b, n) ((((a) - 'A' + 1) << 11) ^ (((b) - 'A' + 1) << 6) ^ (n))
-
-#define SFSK_DISCARD SFDCEVENT('S', 'K', 1)
-
 /*
  * %(...) printf support
  */
