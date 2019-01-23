@@ -162,7 +162,7 @@ ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
 
             for (;;) {
                 f->data = (uchar *)mmap((caddr_t)0, (size_t)r, (PROT_READ | PROT_WRITE),
-                                            MAP_PRIVATE, f->file, (sfoff_t)f->here);
+                                        MAP_PRIVATE, f->file, (sfoff_t)f->here);
                 if (f->data && (caddr_t)f->data != (caddr_t)(-1))
                     break;
                 else {

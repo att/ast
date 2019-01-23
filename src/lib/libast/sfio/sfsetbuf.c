@@ -306,8 +306,7 @@ void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
                 f->here = -1;
 
 #if O_TEXT /* no memory mapping with O_TEXT because read()/write() alter data stream */
-            if (okmmap && f->here >= 0 && (fcntl((int)f->file, F_GETFL, 0) & O_TEXT))
-                okmmap = 0;
+            if (okmmap && f->here >= 0 && (fcntl((int)f->file, F_GETFL, 0) & O_TEXT)) okmmap = 0;
 #endif
         }
 

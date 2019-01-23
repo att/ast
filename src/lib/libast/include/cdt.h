@@ -31,9 +31,9 @@
 #include "ast_std.h"
 
 /* commonly used integers */
-#define DT_ZERO ((unsigned int)0)           /* all zero bits	*/
-#define DT_ONES (~DT_ZERO)                  /* all one bits	*/
-#define DT_HIBIT (~(DT_ONES >> 1))          /* highest 1 bit	*/
+#define DT_ZERO ((unsigned int)0)  /* all zero bits	*/
+#define DT_ONES (~DT_ZERO)         /* all one bits	*/
+#define DT_HIBIT (~(DT_ONES >> 1)) /* highest 1 bit	*/
 // #define DT_LOBIT ((unsigned int)1)          /* lowest 1 bit	*/
 #define DT_NBITS (sizeof(unsigned int) * 8) /* #bits	*/
 

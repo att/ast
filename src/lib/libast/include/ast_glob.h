@@ -115,10 +115,10 @@ struct _glob_ {
 #define GLOB_NOTDIR 0x0001 /* last gl_dirnext() not a dir	*/
 
 /* gl_type return */
-#define GLOB_DEV 1      /* exists but not DIR EXE REG	*/
-#define GLOB_DIR 2      /* directory			*/
-#define GLOB_EXE 3      /* executable regular file	*/
-#define GLOB_REG 4      /* regular file			*/
+#define GLOB_DEV 1 /* exists but not DIR EXE REG	*/
+#define GLOB_DIR 2 /* directory			*/
+#define GLOB_EXE 3 /* executable regular file	*/
+#define GLOB_REG 4 /* regular file			*/
 
 /* error return values */
 #define GLOB_ABORTED 1

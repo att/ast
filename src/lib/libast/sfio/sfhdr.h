@@ -220,7 +220,7 @@
 #define SF_PRIVATE 00000100    /* private stream to Sfio, no mutex	*/
 #define SF_ENDING 00000200     /* no re-io on interrupts at closing	*/
 // #define SF_WIDE 00000400       /* in wide mode - stdio only		*/
-#define SF_PUTR 00001000       /* in sfputr()				*/
+#define SF_PUTR 00001000 /* in sfputr()				*/
 
 /* "bits" flags that must be cleared in sfclrlock */
 #define SF_TMPBITS 00170000
@@ -438,10 +438,10 @@ struct _fmtpos_s {
 
 /* format flags&types, must coexist with those in sfio.h */
 // #define SFFMT_FORBIDDEN 000077777777 /* for sfio.h only		*/
-#define SFFMT_EFORMAT 001000000000   /* sfcvt converting %e		*/
-#define SFFMT_MINUS 002000000000     /* minus sign			*/
-#define SFFMT_AFORMAT 004000000000   /* sfcvt converting %a		*/
-#define SFFMT_UPPER 010000000000     /* sfcvt converting upper	*/
+#define SFFMT_EFORMAT 001000000000 /* sfcvt converting %e		*/
+#define SFFMT_MINUS 002000000000   /* minus sign			*/
+#define SFFMT_AFORMAT 004000000000 /* sfcvt converting %a		*/
+#define SFFMT_UPPER 010000000000   /* sfcvt converting upper	*/
 
 #define SFFMT_TYPES                                                                        \
     (SFFMT_SHORT | SFFMT_SSHORT | SFFMT_LONG | SFFMT_LLONG | SFFMT_LDOUBLE | SFFMT_IFLAG | \
@@ -536,13 +536,13 @@ typedef struct _sfextern_s {
 #define SFMMSEQOFF(f, a, s)
 #endif
 
-#define SFMUNMAP(f, a, s)                   \
+#define SFMUNMAP(f, a, s)               \
     (munmap((caddr_t)(a), (size_t)(s)), \
      ((f)->endb = (f)->endr = (f)->endw = (f)->next = (f)->data = NULL))
 
 /* safe closing function */
-#define CLOSE(f)                                              \
-    {                                                         \
+#define CLOSE(f)                                          \
+    {                                                     \
         while (close(f) < 0 && errno == EINTR) errno = 0; \
     }
 
