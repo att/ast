@@ -561,7 +561,7 @@ static_fn void chkmail(Shell_t *shp, char *files) {
         do {
             // See if time has been modified since last checked and the access
             // time <= the modification time.
-            if (stat(cp, &statb) >= 0 && statb.st_mtime >= mailtime &&
+            if (sh_stat(cp, &statb) >= 0 && statb.st_mtime >= mailtime &&
                 statb.st_atime <= statb.st_mtime) {
                 // Check for directory.
                 if (!arglist && S_ISDIR(statb.st_mode)) {

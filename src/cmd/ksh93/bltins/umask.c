@@ -94,19 +94,20 @@ int b_umask(int argc, char *argv[], Shbltin_t *context) {
             }
         } else {
             char *cp = mask;
-            flag = umask(0);
+            flag = sh_umask(0);
             c = strperm(cp, &cp, ~flag & 0777);
             if (*cp) {
-                umask(flag);
+                sh_umask(flag);
                 errormsg(SH_DICT, ERROR_exit(1), e_format, mask);
                 __builtin_unreachable();
             }
             flag = (~c & 0777);
         }
-        umask(flag);
+        sh_umask(flag);
     } else {
         char *prefix = pflag ? "umask " : "";
-        umask(flag = umask(0));
+        flag = sh_umask(0);
+        sh_umask(flag);
         if (sflag) {
             sfprintf(sfstdout, "%s%s\n", prefix, fmtperm(~flag & 0777));
         } else {

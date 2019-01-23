@@ -1991,7 +1991,7 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
                 if (sp) {
                     num = sftell(sp);
                 } else {
-                    num = lseek(fd, (off_t)0, SEEK_CUR);
+                    num = sh_seek(fd, (off_t)0, SEEK_CUR);
                 }
                 goto out_offset;
             }

@@ -687,5 +687,5 @@ static_fn int test_stat(const char *name, struct stat *buff) {
         return -1;
     }
     if (sh_isdevfd(name)) return fstat((int)strtol(name + 8, (char **)0, 10), buff);
-    return stat(name, buff);
+    return sh_stat(name, buff);
 }

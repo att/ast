@@ -739,7 +739,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     if (sp->shpwdfd >= 0) {
         if (shp->pwdfd >= 0) sh_close(shp->pwdfd);
         shp->pwdfd = sp->shpwdfd;
-        fchdir(shp->pwdfd);
+        sh_fchdir(shp->pwdfd);
     }
     shp->subshare = sp->subshare;
     shp->subdup = sp->subdup;

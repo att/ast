@@ -569,7 +569,7 @@ int ed_read(void *context, int fd, char *buff, int size, int reedit) {
         struct utimbuf utimes;
         if (errno == 0 && !ep->e_tty) {
             ep->e_tty = ttyname(fd);
-            if (ep->e_tty && stat(ep->e_tty, &statb) >= 0) {
+            if (ep->e_tty && sh_stat(ep->e_tty, &statb) >= 0) {
                 ep->e_tty_ino = statb.st_ino;
                 ep->e_tty_dev = statb.st_dev;
             }

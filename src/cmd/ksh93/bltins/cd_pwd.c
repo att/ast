@@ -217,7 +217,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         newdirfd = sh_diropenat(shp, dirfd, path_relative(shp, stakptr(PATH_OFFSET)));
         if (newdirfd >= 0) {
             // chdir for directories on HSM/tapeworms may take minutes.
-            rval = fchdir(newdirfd);
+            rval = sh_fchdir(newdirfd);
             if (rval >= 0) {
                 if (shp->pwdfd >= 0) sh_close(shp->pwdfd);
                 shp->pwdfd = newdirfd;
@@ -228,7 +228,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
 #if O_SEARCH
             rval = newdirfd;
 #else
-            rval = chdir(path_relative(shp, stakptr(PATH_OFFSET)));
+            rval = sh_chdir(path_relative(shp, stakptr(PATH_OFFSET)));
             if (rval >= 0 && shp->pwdfd >= 0) {
                 sh_close(shp->pwdfd);
                 shp->pwdfd = AT_FDCWD;
@@ -242,7 +242,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         rval = newdirfd = sh_diropenat(shp, shp->pwdfd, dir);
         if (newdirfd >= 0) {
             // chdir for directories on HSM/tapeworms may take minutes.
-            rval = fchdir(newdirfd);
+            rval = sh_fchdir(newdirfd);
             if (rval >= 0) {
                 if (shp->pwdfd >= 0) sh_close(shp->pwdfd);
                 shp->pwdfd = newdirfd;
@@ -251,7 +251,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
             sh_close(newdirfd);
         }
 #if !O_SEARCH
-        else if (chdir(dir) >= 0 && shp->pwdfd >= 0) {
+        else if (sh_chdir(dir) >= 0 && shp->pwdfd >= 0) {
             sh_close(shp->pwdfd);
             shp->pwdfd = AT_FDCWD;
         }

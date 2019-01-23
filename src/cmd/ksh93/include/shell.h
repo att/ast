@@ -342,51 +342,6 @@ extern int sh_trap(Shell_t *, const char *, int);
 //
 extern Shell_t sh;
 
-#if _lib_lseek64
-#undef stat64
-#define stat64(a, b) sh_stat(a, b)
-#else
-#undef stat
-#define stat(a, b) sh_stat(a, b)
-#endif
-#ifndef _shio_h
-#undef chdir
-#define chdir(a) sh_chdir(a)
-#undef fchdir
-#define fchdir(a) sh_fchdir(a)
-#ifndef HIST_MAX
-#if _lib_lseek64
-#undef open64
-#define open64 sh_open
-#undef lseek64
-#define lseek64(a, b, c) sh_seek(a, b, c)
-#else
-#undef open
-#define open sh_open
-#undef lseek
-#define lseek(a, b, c) sh_seek(a, b, c)
-#endif
-#endif
-#ifndef _SH_PRIVATE
-#undef close
-#define close(a) sh_close(a)
-#undef exit
-#define exit(a) sh_exit(sh_getinterp(), a)
-#undef fcntl
-#define fcntl(a, b, c) sh_fcntl(a, b, c)
-#undef pipe
-#define pipe(a) sh_pipe(a)
-#undef read
-#define read(a, b, c) sh_read(a, b, c)
-#undef write
-#define write(a, b, c) sh_write(a, b, c)
-#undef umask
-#define umask(a) sh_umask(a)
-#undef dup
-#define dup sh_dup
-#endif  // !_SH_PRIVATE
-#endif  // !_shio_h
-
 #define SH_SIGSET 4
 #define SH_EXITSIG 0400               // signal exit bit
 #define SH_EXITMASK (SH_EXITSIG - 1)  // normal exit status bits

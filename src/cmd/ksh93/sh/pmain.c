@@ -23,7 +23,7 @@
 #include <fcntl.h>
 #include <stddef.h>
 
-#include "shell.h"
+extern int sh_main(int, char **, void *);
 
 int main(int argc, char *argv[]) {
     // Ensure stdin, stdout, stderr are open. See https://github.com/att/ast/issues/1117.

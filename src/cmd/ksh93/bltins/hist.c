@@ -293,9 +293,9 @@ static_fn void hist_subst(Shell_t *shp, const char *command, int fd, char *repla
     while (*++newp != '=') {
         ;  // skip to '='
     }
-    size = lseek(fd, (off_t)0, SEEK_END);
+    size = sh_seek(fd, (off_t)0, SEEK_END);
     if (size < 0) return;
-    lseek(fd, (off_t)0, SEEK_SET);
+    sh_seek(fd, (off_t)0, SEEK_SET);
     c = (int)size;
     string = stakalloc(c + 1);
     if (read(fd, string, c) != c) return;

@@ -1446,7 +1446,7 @@ Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *
 
 static_fn void put_stat(Namval_t *np, const void *val, int flag, Namfun_t *nfp) {
     if (val) {
-        if (stat(val, (struct stat *)np->nvalue.cp) < 0)
+        if (sh_stat(val, (struct stat *)np->nvalue.cp) < 0)
             sfprintf(sfstderr, "stat of %s failed\n", val);
         return;
     }

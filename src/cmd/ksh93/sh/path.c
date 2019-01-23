@@ -100,7 +100,7 @@ static_fn pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char
     for (int fd = 0; fd < 3; ++fd) {
         errno = 0;
         if (fcntl(fd, F_GETFD, NULL) == -1 || errno == EBADF) {
-            open("/dev/null", O_RDWR);
+            sh_open("/dev/null", O_RDWR);
         }
     }
 #endif  // USE_SPAWN
@@ -298,7 +298,7 @@ static_fn char *path_lib(Shell_t *shp, Pathcomp_t *pp, char *path) {
     } else {
         path = ".";
     }
-    r = stat(path, &statb);
+    r = sh_stat(path, &statb);
     if (last) *last = '/';
     if (r < 0) return NULL;
 
@@ -342,7 +342,7 @@ static_fn void path_checkdup(Shell_t *shp, Pathcomp_t *pp) {
     int flag = 0;
     struct stat statb;
 
-    if (stat(name, &statb) < 0 || !S_ISDIR(statb.st_mode)) {
+    if (sh_stat(name, &statb) < 0 || !S_ISDIR(statb.st_mode)) {
         pp->flags |= PATH_SKIP;
         pp->dev = *name == '/';
         return;
@@ -834,7 +834,7 @@ static_fn int can_execute(Shell_t *shp, char *path, bool isfun) {
     if (isfun) {
         fd = sh_open(path, O_RDONLY | O_CLOEXEC, 0);
         if (fd < 0 || fstat(fd, &statb) < 0) goto err;
-    } else if (stat(path, &statb) < 0) {
+    } else if (sh_stat(path, &statb) < 0) {
 #if __CYGWIN__
         // Check for .exe or .bat suffix.
         char *cp;
@@ -1117,7 +1117,7 @@ retry:
         // FALLTHRU
         case EACCES: {
             struct stat statb;
-            if (stat(path, &statb) >= 0) {
+            if (sh_stat(path, &statb) >= 0) {
                 if (S_ISDIR(statb.st_mode)) errno = EISDIR;
 #ifdef S_ISSOCK
                 if (S_ISSOCK(statb.st_mode)) exscript(shp, path, argv, envp);
@@ -1190,7 +1190,7 @@ static_fn void exscript(Shell_t *shp, char *path, char *argv[], char *const *env
     struct stat statb;
     int err = 0;
 
-    if ((n = open(path, O_RDONLY | O_CLOEXEC, 0)) >= 0) {
+    if ((n = sh_open(path, O_RDONLY | O_CLOEXEC, 0)) >= 0) {
         // Move <n> if n=0,1,2.
         n = sh_iomovefd(shp, n);
         if (fstat(n, &statb) >= 0 && !(statb.st_mode & (S_ISUID | S_ISGID))) goto openok;
@@ -1240,7 +1240,7 @@ static_fn void exscript(Shell_t *shp, char *path, char *argv[], char *const *env
 
 fail:
     // The following code is just for compatibility.
-    n = open(path, O_RDONLY | O_CLOEXEC, 0);
+    n = sh_open(path, O_RDONLY | O_CLOEXEC, 0);
     if (n == -1) {
         errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, path);
         __builtin_unreachable();
@@ -1347,7 +1347,7 @@ static_fn bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, P
     stkseek(shp->stk, offset + pp->len);
     if (pp->len == 1 && *stkptr(shp->stk, offset) == '/') stkseek(shp->stk, offset);
     sfputr(shp->stk, "/.paths", -1);
-    fd = open(stkptr(shp->stk, offset), O_RDONLY | O_CLOEXEC);
+    fd = sh_open(stkptr(shp->stk, offset), O_RDONLY | O_CLOEXEC);
     if (fd >= 0) {
         if (fstat(fd, &statb) == -1) abort();  // it should be impossible for this to fail
         n = statb.st_size;
@@ -1482,7 +1482,7 @@ void path_newdir(Shell_t *shp, Pathcomp_t *first) {
             pp->next = next->next;
             if (--next->refcount <= 0) free(next);
         }
-        if (stat(pp->name, &statb) < 0 || !S_ISDIR(statb.st_mode)) {
+        if (sh_stat(pp->name, &statb) < 0 || !S_ISDIR(statb.st_mode)) {
             pp->dev = 0;
             pp->ino = 0;
             continue;

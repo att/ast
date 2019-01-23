@@ -676,7 +676,7 @@ static_fn Sfio_t *openstream(Shell_t *shp, struct ionod *iop, int *save) {
     if (fd == 0) fd = savein;
     sp = sfnew(NULL, NULL, SF_UNBOUND, fd, SF_READ);
     close(0);
-    if (open(e_devnull, O_RDONLY | O_CLOEXEC) != 0) abort();
+    if (sh_open(e_devnull, O_RDONLY | O_CLOEXEC) != 0) abort();
     shp->offsets[0] = -1;
     shp->offsets[1] = 0;
     *save = savein;
@@ -1243,7 +1243,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     if (execflg && !was_nofork) sh_offstate(shp, SH_NOFORK);
                     if (!(nv_isattr(np, BLT_ENV))) {
 #ifdef O_SEARCH
-                        while ((fchdir(shp->pwdfd) < 0) && errno == EINTR) errno = 0;
+                        while ((sh_fchdir(shp->pwdfd) < 0) && errno == EINTR) errno = 0;
 #else
                         if (shp->pwd || (shp->pwdfd >= 0)) {
                             struct stat stata;

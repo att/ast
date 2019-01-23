@@ -636,7 +636,7 @@ int sh_open(const char *path, int flags, ...) {
         int nfd = -1;
         if (flags & O_CREAT) {
             struct stat st;
-            if (stat(path, &st) >= 0) nfd = open(path, flags, st.st_mode);
+            if (sh_stat(path, &st) >= 0) nfd = open(path, flags, st.st_mode);
         } else {
             nfd = open(path, flags);
         }
@@ -1354,7 +1354,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                         io_op[2] = '|';
                     else if (sh_isoption(shp, SH_NOCLOBBER)) {
                         struct stat sb;
-                        if (stat(fname, &sb) >= 0) {
+                        if (sh_stat(fname, &sb) >= 0) {
                             if (S_ISREG(sb.st_mode)) {
                                 errno = EEXIST;
                                 errormsg(SH_DICT, ERROR_system(1), e_exists, fname);
@@ -2162,7 +2162,7 @@ int sh_iocheckfd(Shell_t *shp, int fd, int fn) {
         static ino_t null_ino;
         static dev_t null_dev;
         shp->sftable[fd] = 0;
-        if (null_ino == 0 && stat(e_devnull, &statb) >= 0) {
+        if (null_ino == 0 && sh_stat(e_devnull, &statb) >= 0) {
             null_ino = statb.st_ino;
             null_dev = statb.st_dev;
         }
@@ -2633,7 +2633,6 @@ int sh_fcntl(int fd, int op, ...) {
     return newfd;
 }
 
-#undef umask
 mode_t sh_umask(mode_t m) {
     Shell_t *shp = sh_getinterp();
     shp->mask = m;
