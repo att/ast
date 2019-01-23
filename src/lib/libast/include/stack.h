@@ -52,18 +52,6 @@ struct stacktable /* stack information		*/
     STACKPOS position;         /* current stack position	*/
 };
 
-/*
- * map old names to new
- */
-
-#define mkstack stackalloc
-#define rmstack stackfree
-#define clrstack stackclear
-#define getstack stackget
-#define pushstack stackpush
-#define popstack stackpop
-#define posstack stacktell
-
 extern STACK stackalloc(int, void *);
 extern void stackfree(STACK);
 extern void stackclear(STACK);
