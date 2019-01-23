@@ -22,7 +22,7 @@
 #ifndef _VTHREAD_H
 #define _VTHREAD_H 1
 
-#define VTHREAD_VERSION 20001201L
+// #define VTHREAD_VERSION 20001201L
 
 /*	Header for the Vthread library.
 **	Note that the macro vt_threaded may be defined
@@ -63,14 +63,6 @@ typedef pthread_attr_t _vtattr_t;
 #ifndef vt_threaded
 #define vt_threaded 0
 #endif
-
-/* common attributes for various structures */
-#define VT_RUNNING 000000001   /* thread is running		*/
-#define VT_SUSPENDED 000000002 /* thread is suspended		*/
-#define VT_WAITED 000000004    /* thread has been waited	*/
-#define VT_FREE 000010000      /* object can be freed		*/
-#define VT_INIT 000020000      /* object was initialized	*/
-#define VT_BITS 000030007      /* bits that we care about	*/
 
 /* directives for vtset() */
 #define VT_STACK 1 /* set stack size		*/
