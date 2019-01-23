@@ -1822,12 +1822,11 @@ void regfree(regex_t *p) {
     Env_t *env;
 
     if (p && (env = p->env)) {
-#if _REG_subcomp
         if (env->sub) {
             regsubfree(p);
             p->re_sub = 0;
         }
-#endif
+
         p->env = 0;
         if (--env->refs <= 0 && !(env->disc->re_flags & REG_NOFREE)) {
             drop(env->disc, env->rex);

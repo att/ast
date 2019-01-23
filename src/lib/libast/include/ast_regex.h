@@ -93,7 +93,6 @@
 #define REG_SUB_WRITE 0x00000080  /* internal no-op		*/
 #define REG_SUB_LAST 0x00000100   /* last substitution option	*/
 #define REG_SUB_FULL 0x00000200   /* fully delimited		*/
-#define REG_SUB_USER 0x00001000   /* first user flag bit		*/
 
 /* regex error codes */
 
@@ -186,18 +185,6 @@ extern int regexec(const regex_t *, const char *, size_t, regmatch_t *, regflags
 extern void regfree(regex_t *);
 
 /* nonstandard hooks */
-
-#define _REG_cache 1   /* have regcache()			*/
-#define _REG_class 1   /* have regclass()			*/
-#define _REG_collate 1 /* have regcollate(), regclass()	*/
-#define _REG_comb 1    /* have regcomb()			*/
-#define _REG_dup 1     /* have regdup()			*/
-#define _REG_fatal 1   /* have regfatal(), regfatalpat()	*/
-#define _REG_ncomp 1   /* have regncomp()			*/
-#define _REG_nexec 1   /* have regnexec()			*/
-#define _REG_rexec 1   /* have regrexec(), regrecord()		*/
-#define _REG_stat 1    /* have regstat()			*/
-#define _REG_subcomp 1 /* have regsubcomp()               */
 
 extern regclass_t regclass(const char *, char **);
 extern int regaddclass(const char *, regclass_t);
