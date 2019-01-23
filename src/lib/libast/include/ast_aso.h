@@ -126,7 +126,6 @@
 #include <atomic.h>
 
 #define _ASO_INTRINSIC 1
-#define _REQ_atomic 1
 
 #define asocas8(p, o, n) atomic_cas_8(p, o, n)
 #define asoadd8(p, n) (atomic_add_8_nv(p, n) - (n))
@@ -161,7 +160,6 @@
 #include <atomic.h>
 
 #define _ASO_INTRINSIC 1
-#define _REQ_atomic 1
 
 #define asocas8(p, o, n) atomic_cas_8(p, o, n)
 #define asoadd8(p, n) (atomic_add_8_nv(p, n) - (n))
