@@ -82,7 +82,6 @@ int sigcritical(int op) {
     if (op > 0) {
         if (!level++) {
             region = op;
-            if (op & SIG_REG_SET) level--;
             sigemptyset(&nmask);
             for (i = 0; i < elementsof(signals); i++)
                 if (op & signals[i].op) sigaddset(&nmask, signals[i].sig);

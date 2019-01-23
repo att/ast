@@ -61,10 +61,11 @@
 */
 
 /* the below is for protecting the application from SIGPIPE */
+#include <signal.h>
 #include <sys/wait.h>
 
 #include "sig.h"
-#define Sfsignal_f Sig_handler_t
+
 static int _Sfsigp = 0; /* # of streams needing SIGPIPE protection */
 
 /* done at exiting time */
@@ -195,7 +196,7 @@ int _sfpopen(Sfio_t *f, int fd, int pid, int stdio) {
 
 #ifdef SIGPIPE /* protect from broken pipe signal */
     if (p->sigp) {
-        Sfsignal_f handler;
+        sig_t handler;
 
         (void)vtmtxlock(_Sfmutex);
         if ((handler = signal(SIGPIPE, ignoresig)) != SIG_DFL && handler != ignoresig)
@@ -230,12 +231,12 @@ int _sfpclose(Sfio_t *f) {
         status = status == -1 ? EXIT_QUIT
                               : WIFSIGNALED(status) ? EXIT_TERM(WTERMSIG(status))
                                                     : EXIT_CODE(WEXITSTATUS(status));
-        sigcritical(0);
+        sigcritical(SIG_REG_POP);
 
 #ifdef SIGPIPE
         (void)vtmtxlock(_Sfmutex);
         if (p->sigp && (_Sfsigp -= 1) <= 0) {
-            Sfsignal_f handler;
+            sig_t handler;
             if ((handler = signal(SIGPIPE, SIG_DFL)) != SIG_DFL && handler != ignoresig)
                 signal(SIGPIPE, handler); /* honor user handler */
             _Sfsigp = 0;

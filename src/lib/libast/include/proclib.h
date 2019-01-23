@@ -29,23 +29,22 @@
 #define _PROCLIB_H 1
 
 #include <errno.h>
+#include <signal.h>
 #include <sys/wait.h>
 
 #include "ast.h"
-
-#include "sig.h"
 
 typedef sigset_t Sig_mask_t;
 
 struct Mods_s;
 
-#define _PROC_PRIVATE_                                      \
-    struct Mod_s *mods;    /* process modification state	*/ \
-    long flags;            /* original PROC_* flags	*/      \
-    Sig_mask_t mask;       /* original blocked sig mask	*/  \
-    Sig_handler_t sigchld; /* PROC_FOREGROUND SIG_DFL	*/    \
-    Sig_handler_t sigint;  /* PROC_FOREGROUND SIG_IGN	*/    \
-    Sig_handler_t sigquit; /* PROC_FOREGROUND SIG_IGN	*/
+#define _PROC_PRIVATE_                                   \
+    struct Mod_s *mods; /* process modification state	*/ \
+    long flags;         /* original PROC_* flags	*/      \
+    Sig_mask_t mask;    /* original blocked sig mask	*/  \
+    sig_t sigchld;      /* PROC_FOREGROUND SIG_DFL	*/    \
+    sig_t sigint;       /* PROC_FOREGROUND SIG_IGN	*/    \
+    sig_t sigquit;      /* PROC_FOREGROUND SIG_IGN	*/
 
 #include "proc.h"
 

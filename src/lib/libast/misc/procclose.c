@@ -63,7 +63,7 @@ int procclose(Proc_t *p) {
                 ;
             if (pid != p->pid && (flags & WNOHANG)) status = 0;
             if (!(p->flags & PROC_FOREGROUND))
-                sigcritical(0);
+                sigcritical(SIG_REG_POP);
             else {
                 if (p->sigint != SIG_IGN) signal(SIGINT, p->sigint);
                 if (p->sigquit != SIG_IGN) signal(SIGQUIT, p->sigquit);

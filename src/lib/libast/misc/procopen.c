@@ -188,7 +188,7 @@ typedef struct Mod_s {
             Fd_t child;
         } fd;
 
-        Sig_handler_t handler;
+        sig_t handler;
 
     } arg;
 
@@ -446,7 +446,7 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
         if ((flags & PROC_ORPHAN) && pipe(pop)) goto bad;
         proc->pid = fork();
         if (!(flags & PROC_FOREGROUND))
-            sigcritical(0);
+            sigcritical(SIG_REG_POP);
         else if (!proc->pid) {
             if (proc->sigint != SIG_IGN) {
                 proc->sigint = SIG_DFL;
@@ -703,7 +703,7 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
         if (procfd >= 0) {
 #ifdef SIGPIPE
             if ((flags & (PROC_WRITE | PROC_IGNORE)) == (PROC_WRITE | PROC_IGNORE)) {
-                Sig_handler_t handler;
+                sig_t handler;
 
                 if ((handler = signal(SIGPIPE, ignoresig)) != SIG_DFL && handler != ignoresig)
                     signal(SIGPIPE, handler);

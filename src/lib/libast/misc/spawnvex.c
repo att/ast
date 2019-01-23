@@ -589,7 +589,7 @@ bad:
         if (pid == -1)
             n = errno;
         else if (!pid) {
-            if (!(flags & SPAWN_FOREGROUND)) sigcritical(0);
+            if (!(flags & SPAWN_FOREGROUND)) sigcritical(SIG_REG_POP);
             if (vex && (n = spawnvex_apply(vex, 0, SPAWN_FRAME | SPAWN_NOCALL)))
                 errno = n;
             else {
@@ -645,7 +645,7 @@ bad:
             }
             close(msg[0]);
         }
-        if (!(flags & SPAWN_FOREGROUND)) sigcritical(0);
+        if (!(flags & SPAWN_FOREGROUND)) sigcritical(SIG_REG_POP);
         if (pid != -1 && vex) VEXINIT(vex);
         errno = n;
         return pid;
