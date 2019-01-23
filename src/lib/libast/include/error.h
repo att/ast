@@ -55,7 +55,6 @@
          : (char *)(m))
 #endif
 
-#define ERROR_INFO 0              /* info message -- no err_id	*/
 #define ERROR_WARNING 1           /* warning message		*/
 #define ERROR_ERROR 2             /* error message -- no err_exit	*/
 #define ERROR_FATAL 3             /* error message with err_exit	*/
@@ -79,7 +78,7 @@
 #define ERROR_FREE 0x0010 /* free context on pop		*/
 #define ERROR_POP 0x0020  /* pop context			*/
 #define ERROR_PUSH 0x0040 /* push context			*/
-#define ERROR_SET 0x0080  /* set context			*/
+// #define ERROR_SET 0x0080  /* set context			*/
 
 #ifdef ECONNRESET
 #define ERROR_PIPE(e) ((e) == EPIPE || (e) == ECONNRESET || (e) == EIO)

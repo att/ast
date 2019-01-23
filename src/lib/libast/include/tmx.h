@@ -10,7 +10,7 @@
 #include "tm.h"
 #include "tv.h"
 
-#define TMX_MAXDATE "2554-07-21+23:34:33.709551614 UTC"
+// #define TMX_MAXDATE "2554-07-21+23:34:33.709551614 UTC"
 #define TMX_MAXYEAR 2554
 #define TMX_MAXSEC ((Time_t)18446744073)
 #define TMX_MAXNSEC 709551614
@@ -26,7 +26,6 @@ typedef uint32_t Tmxnsec_t;
 
 #define TMX_NOTIME ((Time_t)(-1))
 #define TMX_NOW tmxgettime()
-#define TMX_MAXTIME tmxsns(TMX_MAXSEC, TMX_MAXNSEC)
 
 #define tmx2tv(t, v) ((v)->tv_nsec = tmxnsec(t), (v)->tv_sec = tmxsec(t))
 #define tv2tmx(v) tmxsns((v)->tv_sec, (v)->tv_nsec)

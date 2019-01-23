@@ -66,25 +66,24 @@ typedef struct Spawnvex_noexec_s {
 
 typedef int (*Spawnvex_f)(void *, uintmax_t, uintmax_t);
 
-#define SPAWN_BACKGROUND 0x00001
+// #define SPAWN_BACKGROUND 0x00001
 #define SPAWN_CLEANUP 0x00002
-#define SPAWN_DAEMON 0x00004
+// #define SPAWN_DAEMON 0x00004
 #define SPAWN_DEBUG 0x00008
 #define SPAWN_EXEC 0x00010
 #define SPAWN_FLUSH 0x00020
 #define SPAWN_FOREGROUND 0x00040
 #define SPAWN_FRAME 0x00100
 #define SPAWN_NOCALL 0x00200
-#define SPAWN_ORPHAN 0x00400
-#define SPAWN_OVERLAY 0x00800
-#define SPAWN_READ 0x01000
+// #define SPAWN_ORPHAN 0x00400
+// #define SPAWN_OVERLAY 0x00800
+// #define SPAWN_READ 0x01000
 #define SPAWN_RESET 0x02000
 #define SPAWN_UNDO 0x08000
-#define SPAWN_WRITE 0x10000
-#define SPAWN_ZOMBIE 0x20000
+// #define SPAWN_WRITE 0x10000
+// #define SPAWN_ZOMBIE 0x20000
 
 #define SPAWN_noop (-1)
-
 #define SPAWN_cwd (-2)
 #define SPAWN_frame (-3)
 #define SPAWN_noexec (-4)

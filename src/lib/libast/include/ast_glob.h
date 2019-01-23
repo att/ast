@@ -115,7 +115,6 @@ struct _glob_ {
 #define GLOB_NOTDIR 0x0001 /* last gl_dirnext() not a dir	*/
 
 /* gl_type return */
-#define GLOB_NOTFOUND 0 /* does not exist		*/
 #define GLOB_DEV 1      /* exists but not DIR EXE REG	*/
 #define GLOB_DIR 2      /* directory			*/
 #define GLOB_EXE 3      /* executable regular file	*/
@@ -127,7 +126,6 @@ struct _glob_ {
 #define GLOB_NOSPACE 3
 #define GLOB_INTR 4
 #define GLOB_APPERR 5
-#define GLOB_NOSYS 6
 
 extern int ast_glob(const char *, int, int (*)(const char *, int), glob_t *);
 

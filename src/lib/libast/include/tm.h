@@ -28,8 +28,6 @@
 #ifndef _TM_H
 #define _TM_H 1
 
-#define TM_VERSION 20070319L
-
 #include "ast.h"
 #include "times.h"
 
@@ -88,7 +86,7 @@
 #define TM_ERA_DATE 112
 #define TM_ERA_TIME 113
 #define TM_ERA_DEFAULT 114
-#define TM_ERA_YEAR 115
+// #define TM_ERA_YEAR 115
 #define TM_ORDINALS 116
 #define TM_FINAL 126
 #define TM_WORK 129

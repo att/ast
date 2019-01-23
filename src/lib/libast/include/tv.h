@@ -9,7 +9,6 @@
 
 #include "ast.h"
 
-#define TV_NSEC_IGNORE (1000000000L)
 #define TV_TOUCH_RETAIN ((Tv_t *)1)
 
 typedef struct Tv_s {

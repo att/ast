@@ -415,6 +415,7 @@ int spawnvex_apply(Spawnvex_t *vex, int cur, int flags) {
                 err = 0;
                 switch (op) {
                     case SPAWN_noop:
+                        break;
                     case SPAWN_frame:
                         break;
                     case SPAWN_cwd:
@@ -682,6 +683,7 @@ pid_t spawnvex(const char *path, char *const argv[], char *const envv[], Spawnve
             if (op & 1) i += 2;
             switch (op /= 2) {
                 case SPAWN_noop:
+                    break;
                 case SPAWN_noexec:
                     break;
                 case SPAWN_frame:
@@ -839,7 +841,9 @@ bad:
             if (op & 1) i += 2;
             switch (op /= 2) {
                 case SPAWN_noop:
+                    break;
                 case SPAWN_noexec:
+                    break;
                 case SPAWN_frame:
                     break;
 #if _lib_posix_spawnattr_setfchdir

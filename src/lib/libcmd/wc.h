@@ -36,7 +36,7 @@
 #define WC_WORDS 0x02
 #define WC_CHARS 0x04
 #define WC_MBYTE 0x08
-#define WC_INVAL 0x10
+// #define WC_INVAL 0x10
 #define WC_LONGEST 0x20
 #define WC_QUIET 0x40
 #define WC_NOUTF8 0x80

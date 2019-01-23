@@ -31,8 +31,8 @@
 #define X_ITYPE(m) ((m)&X_IFMT)
 
 #define X_IFMT 0170000
-#define X_IFWHT 0160000
-#define X_IFDOOR 0150000
+// #define X_IFWHT 0160000
+// #define X_IFDOOR 0150000
 #define X_IFSOCK 0140000
 #define X_IFLNK 0120000
 #define X_IFCTG 0110000
@@ -55,9 +55,5 @@
 #define X_IROTH 0000004
 #define X_IWOTH 0000002
 #define X_IXOTH 0000001
-
-#define X_IRWXU (X_IRUSR | X_IWUSR | X_IXUSR)
-#define X_IRWXG (X_IRGRP | X_IWGRP | X_IXGRP)
-#define X_IRWXO (X_IROTH | X_IWOTH | X_IXOTH)
 
 #endif  // _MODECANON_H
