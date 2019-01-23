@@ -77,7 +77,6 @@
 #define S2F_nan _Sffnan
 #define S2F_min (FLT_MIN)
 #define S2F_max (FLT_MAX)
-#define S2F_exp_10_min (FLT_MIN_10_EXP)
 #define S2F_exp_10_max (FLT_MAX_10_EXP)
 #define S2F_exp_2_min (FLT_MIN_EXP)
 #define S2F_exp_2_max (FLT_MAX_EXP)
@@ -90,7 +89,6 @@
 #define S2F_nan _Sfdnan
 #define S2F_min (DBL_MIN)
 #define S2F_max (DBL_MAX)
-#define S2F_exp_10_min (DBL_MIN_10_EXP)
 #define S2F_exp_10_max (DBL_MAX_10_EXP)
 #define S2F_exp_2_min (DBL_MIN_EXP)
 #define S2F_exp_2_max (DBL_MAX_EXP)
@@ -103,7 +101,6 @@
 #define S2F_nan _Sflnan
 #define S2F_min (LDBL_MIN)
 #define S2F_max (LDBL_MAX)
-#define S2F_exp_10_min (LDBL_MIN_10_EXP)
 #define S2F_exp_10_max (LDBL_MAX_10_EXP)
 #define S2F_exp_2_min (LDBL_MIN_EXP)
 #define S2F_exp_2_max (LDBL_MAX_EXP)
