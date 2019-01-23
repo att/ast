@@ -37,7 +37,6 @@
 
 #include <sys/stat.h>
 
-#include "ast_mode.h"
 #include "modex.h"
 
 int strperm(const char *aexpr, char **e, int perm) {
@@ -115,7 +114,7 @@ int strperm(const char *aexpr, char **e, int perm) {
                             case 'l':
                                 if (perm & S_IXGRP) {
                                     if (e) *e = expr - 1;
-                                    return perm & S_IPERM;
+                                    return perm & ALLPERMS;
                                 }
                                 typ |= S_ISGID;
                                 continue;
@@ -213,7 +212,7 @@ int strperm(const char *aexpr, char **e, int perm) {
                                         }
                                         perm |= typ;
                                     }
-                                    return perm & S_IPERM;
+                                    return perm & ALLPERMS;
                                 }
                                 num = (num << 3) | (c - '0');
                                 if (!who && (op == '+' || op == '-'))

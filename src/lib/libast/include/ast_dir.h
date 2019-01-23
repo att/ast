@@ -47,9 +47,6 @@
 #define D_NAMLEN(d) (strlen((d)->d_name))
 #endif
 
-#define D_RECSIZ(d, n) \
-    (sizeof(*(d)) - sizeof((d)->d_name) + ((n) + sizeof(char *)) & ~(sizeof(char *) - 1))
-
 /*
  * NOTE: 2003-03-27 mac osx bug symlink==DT_REG bug discovered;
  *	 the kernel *and* all directories must be fixed, so d_type

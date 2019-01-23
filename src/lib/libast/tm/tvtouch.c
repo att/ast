@@ -37,10 +37,6 @@
 
 #include "tv.h"
 
-#if _lib_utimensat
-#include "ast_mode.h"
-#endif
-
 // NOTE: These symbols aren't actually available to any code calling tvtouch() since they are not
 // defined in any header that such code could include. See the NOTE below.
 //
@@ -76,7 +72,7 @@ int tvtouch(const char *path, const Tv_t *av, const Tv_t *mv, const Tv_t *cv, in
 
     if (!cv && av == TV_TOUCH_RETAIN && mv == TV_TOUCH_RETAIN) {
         struct stat st;
-        if (!stat(path, &st) && !chmod(path, st.st_mode & S_IPERM)) {
+        if (!stat(path, &st) && !chmod(path, st.st_mode & ALLPERMS)) {
             // We were asked to retain existing timestamps but the file doesn't seem to exist. So do
             // nothing and report success.
             //
