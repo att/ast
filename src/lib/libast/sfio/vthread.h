@@ -64,25 +64,9 @@ typedef pthread_attr_t _vtattr_t;
 #define vt_threaded 0
 #endif
 
-/* directives for vtset() */
-#define VT_STACK 1 /* set stack size		*/
-
 typedef struct _vtmutex_s Vtmutex_t;
 typedef struct _vtonce_s Vtonce_t;
 typedef struct _vthread_s Vthread_t;
-
-#ifndef EINVAL
-#define EINVAL 22
-#endif
-#ifndef EBUSY
-#define EBUSY 16
-#endif
-#ifndef EDEADLK
-#define EDEADLK 45
-#endif
-#ifndef EPERM
-#define EPERM 1
-#endif
 
 extern Vthread_t *vtopen(Vthread_t *, int);
 extern int vtclose(Vthread_t *);
