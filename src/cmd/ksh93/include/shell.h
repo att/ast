@@ -96,14 +96,6 @@ typedef union Shnode_u Shnode_t;
 #define SH_SHOWME 36
 #define SH_LETOCTAL 37
 
-//
-// Passed as flags to builtins in Nambltin_t struct when BLT_OPTIM is on.
-//
-#define SH_BEGIN_OPTIM 0x1
-#define SH_END_OPTIM 0x2
-
-// The following type is used for error messages.
-
 // Error messages.
 extern const char e_defpath[];
 extern const char e_found[];

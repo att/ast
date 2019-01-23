@@ -315,7 +315,9 @@ static_fn int xec_p_comarg(Shell_t *shp, struct comnod *com) {
         bp->vnode = com->comnamq;
         bp->ptr = nv_context(np);
         bp->data = com->comstate;
-        bp->flags = SH_END_OPTIM;
+        // Was bp->flags = SH_END_OPTIM but no builtin actually uses the flags structure member
+        // and it's companion symbols, SH_BEGIN_OPTIM, isn't used anywhere.
+        bp->flags = 0;
         ((Shbltin_f)funptr(np))(0, (char **)0, bp);
         bp->ptr = save_ptr;
         bp->data = save_data;
