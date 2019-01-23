@@ -44,7 +44,6 @@
 
 #include "argnod.h"
 #include "ast.h"
-#include "ast_lib.h"
 #include "cdt.h"
 #include "error.h"
 #include "fault.h"

@@ -134,6 +134,21 @@ else
     feature_data.set('MAX_SIGNUM', '64')
 endif
 
+feature_data.set10('_mem_d_fileno_dirent',
+    cc.has_member('struct dirent', 'd_fileno', prefix: '#include <dirent.h>',
+                  args: feature_test_args))
+feature_data.set10('_mem_d_ino_dirent',
+    cc.has_member('struct dirent', 'd_ino', prefix: '#include <dirent.h>',
+                  args: feature_test_args))
+feature_data.set10('_mem_d_reclen_dirent',
+    cc.has_member('struct dirent', 'd_reclen', prefix: '#include <dirent.h>',
+                  args: feature_test_args))
+feature_data.set10('_mem_d_type_dirent',
+    cc.has_member('struct dirent', 'd_type', prefix: '#include <dirent.h>',
+                  args: feature_test_args))
+feature_data.set10('_mem_d_namlen_dirent',
+    cc.has_member('struct dirent', 'd_namlen', prefix: '#include <dirent.h>',
+                  args: feature_test_args))
 
 if cc.has_member('struct stat', 'st_mtim', prefix: '#include <sys/stat.h>',
                  args: feature_test_args)

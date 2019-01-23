@@ -35,7 +35,6 @@
 
 #include "ast_fcntl.h"
 #include "ast_getopt.h" /* <stdlib.h> does this */
-#include "ast_lib.h"
 #include "ast_sys.h"
 
 /*

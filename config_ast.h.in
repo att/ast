@@ -23,6 +23,9 @@
 #define _CONFIG_AST_H 1
 
 #define _GNU_SOURCE 1
+#define _UNIV_DEFAULT "ucb"  // https://github.com/att/ast/issues/370
+#define _fd_self_dir_fmt "/proc/self/fd/%d%s%s"
+#define _fd_pid_dir_fmt "/proc/%d/fd/%d%s%s"
 
 // These are atypical platform symbols with respect to how they are
 // determined. They are either hardcoded or not determined via the usual
@@ -150,16 +153,16 @@
 #mesondefine _lib_tgammal
 #mesondefine _lib_lgammal
 
-#mesondefine _mem_base_rel_utsname
 #mesondefine _mem_d_fileno_dirent
 #mesondefine _mem_d_ino_dirent
 #mesondefine _mem_d_namlen_dirent
-#mesondefine _mem_d_off_dirent
-#mesondefine _mem_d_reclen_direct
 #mesondefine _mem_d_reclen_dirent
 #mesondefine _mem_d_type_dirent
+
+#mesondefine _mem_base_rel_utsname
 #mesondefine _mem_idnumber_utsname
 #mesondefine _mem_m_type_utsname
+
 #mesondefine _mem_pgroup_inheritance
 
 #mesondefine _sys_filio
