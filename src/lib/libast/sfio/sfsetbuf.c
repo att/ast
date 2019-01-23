@@ -176,7 +176,7 @@ void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
     int sf_malloc, oflags, init, okmmap, local;
     ssize_t bufsize, blksz;
     Sfdisc_t *disc;
-    sfstat_t st;
+    struct stat st;
     uchar *obuf = NULL;
     ssize_t osize = 0;
     SFMTXDECL(f)
@@ -292,7 +292,7 @@ void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
         }
 
         /* get file descriptor status */
-        if (sysfstatf((int)f->file, &st) < 0)
+        if (fstat(f->file, &st) < 0)
             f->here = -1;
         else {
 #if _stat_blksize /* preferred io block size */
@@ -306,7 +306,7 @@ void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
                 f->here = -1;
 
 #if O_TEXT /* no memory mapping with O_TEXT because read()/write() alter data stream */
-            if (okmmap && f->here >= 0 && (sysfcntlf((int)f->file, F_GETFL, 0) & O_TEXT))
+            if (okmmap && f->here >= 0 && (fcntl((int)f->file, F_GETFL, 0) & O_TEXT))
                 okmmap = 0;
 #endif
         }
@@ -344,7 +344,7 @@ void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
                         dev = (int)st.st_dev;
                         ino = (int)st.st_ino;
                         if (!null_checked) {
-                            if (sysstatf(DEVNULL, &st) < 0)
+                            if (stat(DEVNULL, &st) < 0)
                                 null_checked = -1;
                             else {
                                 null_checked = 1;

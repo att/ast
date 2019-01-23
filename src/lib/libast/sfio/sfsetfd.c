@@ -36,11 +36,12 @@ static_fn int _sfdup(int fd, int newfd) {
     int dupfd;
 
 #ifdef F_DUPFD /* the simple case */
-    while ((dupfd = sysfcntlf(fd, F_DUPFD, newfd)) < 0 && errno == EINTR) errno = 0;
+    while ((dupfd = fcntl(fd, F_DUPFD, newfd)) < 0 && errno == EINTR) errno = 0;
     return dupfd;
 
 #else /* do it the hard way */
-    if ((dupfd = sysdupf(fd)) < 0 || dupfd >= newfd) return dupfd;
+    dupfd = dup(fd);
+    if (dupfd < 0 || dupfd >= newfd) return dupfd;
 
     /* dup() succeeded but didn't get the right number, recurse */
     newfd = _sfdup(fd, newfd);

@@ -92,18 +92,6 @@
 #define _lib_wcrtomb 1
 
 #define sfoff_t off_t
-#define sfstat_t struct stat
-#define sysclosef close
-#define sysdupf dup
-#define sysfcntlf fcntl
-#define sysfstatf fstat
-#define syslseekf lseek
-#define sysmmapf mmap
-#define sysmunmapf munmap
-#define sysreadf read
-#define sysremovef remove
-#define sysstatf stat
-#define syswritef write
 
 #include "ast_float.h"
 
@@ -592,13 +580,13 @@ typedef struct _sfextern_s {
 #endif
 
 #define SFMUNMAP(f, a, s)                   \
-    (sysmunmapf((caddr_t)(a), (size_t)(s)), \
+    (munmap((caddr_t)(a), (size_t)(s)), \
      ((f)->endb = (f)->endr = (f)->endw = (f)->next = (f)->data = NULL))
 
 /* safe closing function */
 #define CLOSE(f)                                              \
     {                                                         \
-        while (sysclosef(f) < 0 && errno == EINTR) errno = 0; \
+        while (close(f) < 0 && errno == EINTR) errno = 0; \
     }
 
 /* the bottomless bit bucket */

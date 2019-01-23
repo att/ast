@@ -60,7 +60,7 @@ ssize_t sfread(Sfio_t *f, void *buf, size_t n) {
         f->mode &= ~SF_PEEK;
         if (f->mode & SF_PKRD) { /* actually read the data now */
             f->mode &= ~SF_PKRD;
-            if (n > 0) n = (r = sysreadf(f->file, f->data, n)) < 0 ? 0 : r;
+            if (n > 0) n = (r = read(f->file, f->data, n)) < 0 ? 0 : r;
             f->endb = f->data + n;
             f->here += n;
         }

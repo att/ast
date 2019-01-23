@@ -63,8 +63,8 @@ Sfoff_t sfsize(Sfio_t *f) {
                 if (SFSK(f, f->here, SEEK_SET, disc) != f->here)
                     f->here = SFSK(f, (Sfoff_t)0, SEEK_CUR, disc);
             } else {
-                sfstat_t st;
-                if (sysfstatf(f->file, &st) < 0)
+                struct stat st;
+                if (fstat(f->file, &st) < 0)
                     f->extent = -1;
                 else if ((f->extent = st.st_size) < f->here)
                     f->here = SFSK(f, (Sfoff_t)0, SEEK_CUR, disc);

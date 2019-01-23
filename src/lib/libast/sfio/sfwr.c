@@ -91,7 +91,8 @@ static_fn ssize_t sfoutput(Sfio_t *f, char *buf, size_t n) {
                 buf = endbuf;
                 n = s = 0;
             }
-            if ((wr = syswritef(f->file, wbuf, buf - wbuf)) > 0) {
+            wr = write(f->file, wbuf, buf - wbuf);
+            if (wr > 0) {
                 w += wr;
                 f->bits &= ~SF_HOLE;
             }
@@ -180,7 +181,8 @@ ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
                 if ((w = sfoutput(f, (char *)buf, n)) <= 0) goto do_write;
             } else {
             do_write:
-                if ((w = syswritef(f->file, buf, n)) > 0) f->bits &= ~SF_HOLE;
+                w = write(f->file, buf, n);
+                if (w > 0) f->bits &= ~SF_HOLE;
             }
 
             if (errno == 0) errno = oerrno;

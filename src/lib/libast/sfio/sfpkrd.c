@@ -102,7 +102,7 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
     int ntry, t;
     char *buf = (char *)argbuf, *endbuf;
 
-    if (rc < 0 && tm < 0 && action <= 0) return sysreadf(fd, buf, n);
+    if (rc < 0 && tm < 0 && action <= 0) return read(fd, buf, n);
 
     t = (action > 0 || rc >= 0) ? (STREAM_PEEK | SOCKET_PEEK) : 0;
 
@@ -127,7 +127,7 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
                 t &= ~SOCKET_PEEK;
                 if (r > 0 && (r = pbuf.databuf.len) <= 0) {
                     if (action <= 0) /* read past eof */
-                        r = sysreadf(fd, buf, 1);
+                        r = read(fd, buf, 1);
                     return r;
                 }
                 if (r == 0)
@@ -150,7 +150,7 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
             if (r == -2) return -1;             // EINTR
             if (r == -1 && tm >= 0) return -1;  // timeout exceeded
             if (r > 0) {                        // there is data now
-                if (action <= 0 && rc < 0) return sysreadf(fd, buf, n);
+                if (action <= 0 && rc < 0) return read(fd, buf, n);
             }
             r = -1;
         }
@@ -170,7 +170,7 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
                 break;
             else /* read past eof */
             {
-                if (action <= 0) r = sysreadf(fd, buf, 1);
+                if (action <= 0) r = read(fd, buf, 1);
                 return r;
             }
         }
@@ -182,7 +182,7 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
         // Number of records read at a time.
         if ((action = action ? -action : 1) > (int)n) action = n;
         r = 0;
-        while ((t = sysreadf(fd, buf, action)) > 0) {
+        while ((t = read(fd, buf, action)) > 0) {
             r += t;
             for (endbuf = buf + t; buf < endbuf;)
                 if (*buf++ == rc) action -= 1;
@@ -203,7 +203,7 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
     }
 
     /* advance */
-    if (action <= 0) r = sysreadf(fd, buf, r);
+    if (action <= 0) r = read(fd, buf, r);
 
     return r;
 }

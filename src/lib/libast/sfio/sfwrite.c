@@ -57,12 +57,15 @@ ssize_t sfwrite(Sfio_t *f, const void *buf, size_t n) {
             ssize_t r;
 
             for (w = n; w > 0;) {
-                if ((r = w) > sizeof(buf)) r = sizeof(buf);
-                if ((r = sysreadf(f->file, buf, r)) <= 0) {
+                r = w;
+                if (r > sizeof(buf)) r = sizeof(buf);
+                r = read(f->file, buf, r);
+                if (r <= 0) {
                     n -= w;
                     break;
-                } else
+                } else {
                     w -= r;
+                }
             }
 
             f->mode &= ~SF_PKRD;

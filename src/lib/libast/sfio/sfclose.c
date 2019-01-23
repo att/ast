@@ -110,7 +110,7 @@ int sfclose(Sfio_t *f) {
     /* zap the file descriptor */
     if (_Sfnotify) (*_Sfnotify)(f, SF_CLOSING, (void *)((long)f->file));
     if (f->file >= 0 && !(f->flags & SF_STRING)) {
-        while (sysclosef(f->file) < 0) {
+        while (close(f->file) < 0) {
             if (errno == EINTR)
                 errno = 0;
             else {

@@ -83,7 +83,7 @@ static_fn int _tmprmfile(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
             if (_Sfnotify) (*_Sfnotify)(f, SF_CLOSING, f->file);
             CLOSE(f->file);
             f->file = -1;
-            while (sysremovef(ff->name) < 0 && errno == EINTR) errno = 0;
+            while (remove(ff->name) < 0 && errno == EINTR) errno = 0;
 
             free(ff);
         }
@@ -125,7 +125,7 @@ static_fn int _rmtmp(Sfio_t *f, char *file) {
 #else /* can remove now */
     UNUSED(f);
 
-    while (sysremovef(file) < 0 && errno == EINTR) errno = 0;
+    while (remove(file) < 0 && errno == EINTR) errno = 0;
 #endif
 
     return 0;
