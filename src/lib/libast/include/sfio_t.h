@@ -131,10 +131,9 @@
      (f)->getr = 0       /* getr		*/  \
     )
 
-/* expose next stream inside discipline function; state saved in int f */
-#define SFDCNEXT(sp, f) (((f) = (sp)->bits & SF_DCDOWN), (sp)->bits |= SF_DCDOWN)
-
-/* restore SFDCNEXT() state from int f */
-#define SFDCPREV(sp, f) ((f) ? (0) : ((sp)->bits &= ~SF_DCDOWN))
+// Expose next stream inside discipline function; state saved in int f.
+// #define SFDCNEXT(sp, f) (((f) = (sp)->bits & SF_DCDOWN), (sp)->bits |= SF_DCDOWN)
+// Restore SFDCNEXT() state from int f.
+// #define SFDCPREV(sp, f) ((f) ? (0) : ((sp)->bits &= ~SF_DCDOWN))
 
 #endif  // _SFIO_T_H

@@ -89,7 +89,6 @@ struct _sffmt_s {
 
     void *none; /* unused for now			*/
 };
-#define sffmtversion(fe, type) ((type) ? ((fe)->version = SFIO_VERSION) : (fe)->version)
 
 #define SFFMT_SSHORT 000000010 /* 'hh' flag, char			*/
 #define SFFMT_TFLAG 000000020  /* 't' flag, ptrdiff_t			*/
@@ -330,9 +329,9 @@ extern char *sfstrseek(Sfio_t *, Sfoff_t, int);
 #define sfstrclose(f) sfclose(f)
 #define sfstrsize(f) ((f)->_size)
 #define sfstrtell(f) ((f)->_next - (f)->_data)
-#define sfstrpend(f) ((f)->_size - sfstrtell())
 #define sfstrbase(f) ((char *)(f)->_data)
 #define sfstruse(f) (sfputc((f), 0) < 0 ? NULL : (char *)((f)->_next = (f)->_data))
+// #define sfstrpend(f) ((f)->_size - sfstrtell())
 
 #define sfstrrsrv(f, n)                                                     \
     (sfreserve((f), (n), SF_WRITE | SF_LOCKR), sfwrite((f), (f)->_next, 0), \

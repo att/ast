@@ -201,15 +201,6 @@
 
 #endif /*vt_threaded*/
 
-/* functions for polling readiness of streams */
-
-#define SFPOLL(pfd, n, tm) poll((pfd), (ulong)(n), (tm))
-
-/* to test for executable access mode of a file */
-#ifndef X_OK
-#define X_OK 01
-#endif
-
 /* Private flags in the "bits" field */
 #define SF_MMAP 00000001       /* in memory mapping mode		*/
 #define SF_BOTH 00000002       /* both read/write			*/
@@ -225,10 +216,6 @@
 /* "bits" flags that must be cleared in sfclrlock */
 #define SF_TMPBITS 00170000
 #define SF_DCDOWN 00010000 /* recurse down the discipline stack	*/
-
-#define SF_WCFORMAT 00020000 /* wchar_t formatting - stdio only	*/
-#define SFWCSET(f) ((f)->bits |= SF_WCFORMAT)
-#define SFWCGET(f, v) (((v) = (f)->bits & SF_WCFORMAT), ((f)->bits &= ~SF_WCFORMAT))
 
 #define SF_MVSIZE 00040000 /* f->size was reset in sfmove()	*/
 #define SFMVSET(f)                \
