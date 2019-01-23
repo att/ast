@@ -67,7 +67,7 @@
 /* short-hand for common stream types */
 #define SF_RDWR (SF_READ | SF_WRITE)
 #define SF_RDSTR (SF_READ | SF_STRING)
-#define SF_WRSTR (SF_WRITE | SF_STRING)
+// #define SF_WRSTR (SF_WRITE | SF_STRING)
 #define SF_RDWRSTR (SF_RDWR | SF_STRING)
 
 /* for static initialization of an Sfio_t structure */
