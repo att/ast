@@ -47,12 +47,6 @@
 #define D_NAMLEN(d) (strlen((d)->d_name))
 #endif
 
-#if _mem_d_reclen_dirent
-#define D_RECLEN(d) ((d)->d_reclen)
-#else
-#define D_RECLEN(d) D_RECSIZ(d, D_NAMLEN(d))
-#endif
-
 #define D_RECSIZ(d, n) \
     (sizeof(*(d)) - sizeof((d)->d_name) + ((n) + sizeof(char *)) & ~(sizeof(char *) - 1))
 

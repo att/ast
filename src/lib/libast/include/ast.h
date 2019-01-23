@@ -58,21 +58,7 @@
 #define EXIT_NOEXEC 126   /* other exec error	*/
 
 #define EXIT_CODE(x) ((x) & ((1 << EXIT_BITS) - 1))
-#define EXIT_CORE(x) (EXIT_CODE(x) | (1 << EXIT_BITS) | (1 << (EXIT_BITS - 1)))
 #define EXIT_TERM(x) (EXIT_CODE(x) | (1 << EXIT_BITS))
-
-/*
- * NOTE: for compatibility the following work for EXIT_BITS={7,8}
- */
-
-#define EXIT_STATUS(x) (((x) & ((1 << (EXIT_BITS - 2)) - 1)) ? (x) : EXIT_CODE((x) >> EXIT_BITS))
-
-#define EXITED_CORE(x)                                            \
-    (((x) & ((1 << EXIT_BITS) | (1 << (EXIT_BITS - 1)))) ==       \
-         ((1 << EXIT_BITS) | (1 << (EXIT_BITS - 1))) ||           \
-     ((x) & ((1 << (EXIT_BITS - 1)) | (1 << (EXIT_BITS - 2)))) == \
-         ((1 << (EXIT_BITS - 1)) | (1 << (EXIT_BITS - 2))))
-#define EXITED_TERM(x) ((x) & ((1 << EXIT_BITS) | (1 << (EXIT_BITS - 1))))
 
 /*
  * astconflist() flags
@@ -152,10 +138,6 @@
 #define mbwide() (MB_CUR_MAX > 1)
 #define mbwidth(w) (ast.mb_width ? (*ast.mb_width)(w) : 1)
 #define mbxfrm(t, f, n) strxfrm((char *)(t), (char *)(f), n)
-#define mbalpha(w) (ast.mb_alpha ? (*ast.mb_alpha)(w) : isalpha((w)&0xff))
-
-#define mbsrtowcs(w, s, n, q) (*ast._ast_mbsrtowcs)((s), (w), (n), (mbstate_t *)(q))
-#define wcsrtombs(s, w, n, q) (*ast._ast_wcsrtombs)((s), (w), (n), (mbstate_t *)(q))
 
 /* the converse does not always hold! */
 #define utf32invalid(u)                                              \

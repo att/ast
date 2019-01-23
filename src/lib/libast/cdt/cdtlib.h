@@ -108,10 +108,10 @@ static inline void DTANNOUNCE(Dt_t *dt, void *object, int type) {
 
 #define RROTATE(x, y) (rrotate(x, y), (x) = (y))
 #define LROTATE(x, y) (lrotate(x, y), (x) = (y))
-#define RRSHIFT(x, t) \
-    ((t) = (x)->_left->_left, (x)->_left->_left = (t)->_rght, (t)->_rght = (x), (x) = (t))
 #define LLSHIFT(x, t) \
     ((t) = (x)->_rght->_rght, (x)->_rght->_rght = (t)->_left, (t)->_left = (x), (x) = (t))
+// #define RRSHIFT(x, t)
+//     ((t) = (x)->_left->_left, (x)->_left->_left = (t)->_rght, (t)->_rght = (x), (x) = (t))
 
 extern Dtlink_t *_dtmake(Dt_t *, void *, int);
 extern void _dtfree(Dt_t *, Dtlink_t *, int);
