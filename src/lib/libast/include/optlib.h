@@ -48,7 +48,6 @@
 #define OPT_cache_optional 0x008
 #define OPT_cache_string 0x010
 
-#define OPT_CACHE 128
 #define OPT_FLAGS "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 struct Optdisc_s;

@@ -27,8 +27,6 @@
 #endif
 #endif
 
-#define _ast_O_LOCAL 020000000000 /* ast extension up to 020000000000 */
-
 #ifndef O_BINARY
 #define O_BINARY 0  // not implemented
 #endif

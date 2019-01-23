@@ -33,8 +33,6 @@
 
 #define OPT_VERSION 20070319L
 
-#define OPT_USER (1L << 16) /* first user flag bit		*/
-
 struct Opt_s;
 struct Optdisc_s;
 
