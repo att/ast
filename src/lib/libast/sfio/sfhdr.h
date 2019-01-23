@@ -277,50 +277,7 @@
 #define ushort unsigned short
 #endif
 
-/* macros do determine stream types from sfstat_t data */
-#ifndef S_IFDIR
-#define S_IFDIR 0
-#endif
-#ifndef S_IFREG
-#define S_IFREG 0
-#endif
-#ifndef S_IFCHR
-#define S_IFCHR 0
-#endif
-#ifndef S_IFIFO
-#define S_IFIFO 0
-#endif
-#ifndef S_ISOCK
-#define S_ISOCK 0
-#endif
-
-#ifndef S_IFMT
-#define S_IFMT (S_IFDIR | S_IFREG | S_IFCHR | S_IFIFO | S_ISOCK)
-#endif
-
-#ifndef S_ISDIR
-#define S_ISDIR(m) (((m)&S_IFMT) == S_IFDIR)
-#endif
-#ifndef S_ISREG
-#define S_ISREG(m) (((m)&S_IFMT) == S_IFREG)
-#endif
-#ifndef S_ISCHR
-#define S_ISCHR(m) (((m)&S_IFMT) == S_IFCHR)
-#endif
-
-#ifndef S_ISFIFO
-#if S_IFIFO
-#define S_ISFIFO(m) (((m)&S_IFMT) == S_IFIFO)
-#else
-#define S_ISFIFO(m) (0)
-#endif
-#endif
-
-#ifdef S_IRUSR
 #define SF_CREATMODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)
-#else
-#define SF_CREATMODE 0666
-#endif
 
 /* set close-on-exec */
 #ifdef F_SETFD
