@@ -146,7 +146,7 @@ struct Error_info_s /* error state			*/
 
     ERROR_CONTEXT /* top of context stack		*/
 
-    Error_context_t empty; /* empty context stack element	*/
+        Error_context_t empty; /* empty context stack element	*/
 
     unsigned long time; /* debug time trace		*/
 

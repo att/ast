@@ -55,7 +55,7 @@
 // character set.  It can understand version 0 format files.
 //
 #define HIST_MAX (sizeof(int) * HIST_BSIZE)
-#define HIST_LINE 32               // typical length for history line
+#define HIST_LINE 32  // typical length for history line
 #define HIST_MARKSZ 6
 #define HIST_RECENT 600
 #define HIST_UNDO 0201   // invalidate previous command
