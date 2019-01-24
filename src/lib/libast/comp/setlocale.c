@@ -50,7 +50,7 @@
 size_t ast_mbrchar(wchar_t *w, const char *s, size_t n, Mbstate_t *q) {
     size_t m;
 
-    m = (*ast._ast_mbrtowc)(w, s, n, (mbstate_t *)q);
+    m = mbrtowc(w, s, n, (mbstate_t *)q);
     if (m == (size_t)(-1) || m == (size_t)(-2)) {
         q->mb_errno = m == (size_t)(-2) ? E2BIG : EILSEQ;
         m = 1;
@@ -76,8 +76,6 @@ static_fn void init_ast_struct() {
     ast.locale.serial++;
     if (ast.locale.serial == 1) {
         // Initializations that only need to be done once.
-        ast._ast_mbrtowc = mbrtowc;
-        ast._ast_wcrtomb = wcrtomb;
         ast.mb_alpha = (Isw_f)iswalpha;
         ast.mb_width = wcwidth;
     }

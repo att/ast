@@ -248,7 +248,7 @@ extern char **environ;
 
 #define mbinit(q) (void)memset(q, 0, sizeof(*q))
 #define mberrno(q) ((q)->mb_errno)
-#define mbconv(s, w, q) (*ast._ast_wcrtomb)((s), (w), (mbstate_t *)(q))
+#define mbconv(s, w, q) wcrtomb((s), (w), (mbstate_t *)(q))
 
 // This function used to be defined as a macro:
 //   #define mbchar(w, s, n, q) (((s) += ast_mbrchar((wchar_t *)(w), (char *)(s), (n), (q))), *(w))

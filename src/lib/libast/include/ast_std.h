@@ -85,9 +85,6 @@ typedef struct {
 
     iconv_t mb_uc2wc;
     iconv_t mb_wc2uc;
-
-    size_t (*_ast_mbrtowc)(wchar_t *, const char *, size_t, mbstate_t *);
-    size_t (*_ast_wcrtomb)(char *, wchar_t, mbstate_t *);
 } _Ast_info_t;
 
 extern _Ast_info_t _ast_info;
