@@ -173,7 +173,7 @@ static_fn Rex_t *regcomp_node(Cenv_t *env, int type, int lo, int hi, size_t extr
 
     DEBUG_CODE(0x0800, sfprintf(sfstdout, "%s:%d regcomp_node(%d,%d,%d,%u)\n", file, line, type, lo,
                                 hi, sizeof(Rex_t) + extra));
-    e = (Rex_t *)alloc(env->disc, 0, sizeof(Rex_t) + extra);
+    e = regalloc(env->disc, 0, sizeof(Rex_t) + extra);
     if (e) {
         memset(e, 0, sizeof(Rex_t) + extra);
         e->type = type;
@@ -201,7 +201,7 @@ static_fn void regcomp_triedrop(regdisc_t *disc, Trie_node_t *e) {
     if (e) {
         regcomp_triedrop(disc, e->son);
         regcomp_triedrop(disc, e->sib);
-        alloc(disc, e, 0);
+        (void)regalloc(disc, e, 0);
     }
 }
 
@@ -235,7 +235,7 @@ void drop(regdisc_t *disc, Rex_t *e) {
                     break;
             }
             x = e->next;
-            alloc(disc, e, 0);
+            (void)regalloc(disc, e, 0);
             e = x;
         } while (e);
 }
@@ -1661,7 +1661,7 @@ static_fn int regcomp_isstring(Rex_t *e) {
 static_fn Trie_node_t *regcomp_trienode(Cenv_t *env, int c) {
     Trie_node_t *t;
 
-    t = (Trie_node_t *)alloc(env->disc, 0, sizeof(Trie_node_t));
+    t = regalloc(env->disc, 0, sizeof(Trie_node_t));
     if (t) {
         memset(t, 0, sizeof(Trie_node_t));
         t->c = c;
@@ -2711,11 +2711,11 @@ static_fn int regcomp_special(Cenv_t *env, regex_t *p) {
                 m = t->re.trie.max;
                 l = env->stats.k;
             }
-            if (!(q = (size_t *)alloc(env->disc, 0, (n + 1) * sizeof(size_t)))) return 1;
+            if (!(q = regalloc(env->disc, 0, (n + 1) * sizeof(size_t)))) return 1;
             if (!(a = regcomp_node(env, REX_BM, 0, 0,
                                    n * (sizeof(Bm_mask_t *) + (UCHAR_MAX + 1) * sizeof(Bm_mask_t)) +
                                        (UCHAR_MAX + n + 2) * sizeof(size_t)))) {
-                alloc(env->disc, q, 0);
+                (void)regalloc(env->disc, q, 0);
                 return 1;
             }
             a->flags = y->flags;
@@ -2814,7 +2814,7 @@ static_fn int regcomp_special(Cenv_t *env, regex_t *p) {
                 sfprintf(sfstderr, "\n");
             }
 #endif
-            alloc(env->disc, q, 0);
+            (void)regalloc(env->disc, q, 0);
             a->next = e;
             p->env->rex = a;
             return 0;
@@ -2896,7 +2896,7 @@ int regcomp(regex_t *p, const char *pattern, regflags_t flags) {
         lc_ctype_serial = ast.locale.serial;
     }
 again:
-    if (!(p->env = (Env_t *)alloc(disc, 0, sizeof(Env_t)))) return fatal(disc, REG_ESPACE, pattern);
+    if (!(p->env = regalloc(disc, 0, sizeof(Env_t)))) return fatal(disc, REG_ESPACE, pattern);
     memset(p->env, 0, sizeof(*p->env));
     if (!(p->env->mst = stkopen(STK_SMALL | STK_NULL))) return fatal(disc, REG_ESPACE, pattern);
     memset(&env, 0, sizeof(env));

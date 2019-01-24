@@ -177,11 +177,12 @@ struct regex_s {
     regsub_t *re_sub;         /* regsubcomp() data		*/
 };
 
-#define reginit(disc) (memset(disc, 0, sizeof(*(disc))), (disc)->re_version = REG_VERSION)
+// #define reginit(disc) (memset(disc, 0, sizeof(*(disc))), (disc)->re_version = REG_VERSION)
 
 extern int regcomp(regex_t *, const char *, regflags_t);
 extern size_t regerror(int, const regex_t *, char *, size_t);
 extern int regexec(const regex_t *, const char *, size_t, regmatch_t *, regflags_t);
+extern void *regalloc(regdisc_t *, void *, size_t);
 extern void regfree(regex_t *);
 
 /* nonstandard hooks */

@@ -1833,7 +1833,7 @@ void regfree(regex_t *p) {
             if (env->pos) vecclose(env->pos);
             if (env->bestpos) vecclose(env->bestpos);
             if (env->mst) stkclose(env->mst);
-            alloc(env->disc, env, 0);
+            (void)regalloc(env->disc, env, 0);
         }
     }
 }

@@ -224,7 +224,7 @@ State_t state = {
  *	free(p)		alloc(p,0)
  */
 
-void *alloc(regdisc_t *disc, void *p, size_t n) {
+void *regalloc(regdisc_t *disc, void *p, size_t n) {
     if (disc->re_resizef) {
         if (!n && (disc->re_flags & REG_NOFREE)) return 0;
         return (*disc->re_resizef)(disc->re_resizehandle, p, n);
