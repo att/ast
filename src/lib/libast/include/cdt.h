@@ -103,10 +103,10 @@ struct _dtdisc_s {
     Dtevent_f eventf;   /* to process events		*/
 };
 
-#define DTDISC(dc, ky, sz, lk, mkf, frf, cmpf, hshf, memf, evf)                                  \
-    ((dc)->key = (int)(ky), (dc)->size = (int)(sz), (dc)->link = (int)(lk), (dc)->makef = (mkf), \
-     (dc)->freef = (frf), (dc)->comparf = (cmpf), (dc)->hashf = (hshf), (dc)->memoryf = (memf),  \
-     (dc)->eventf = (evf))
+// #define DTDISC(dc, ky, sz, lk, mkf, frf, cmpf, hshf, memf, evf)
+//     ((dc)->key = (int)(ky), (dc)->size = (int)(sz), (dc)->link = (int)(lk), (dc)->makef = (mkf),
+//      (dc)->freef = (frf), (dc)->comparf = (cmpf), (dc)->hashf = (hshf), (dc)->memoryf = (memf),
+//      (dc)->eventf = (evf))
 
 #ifdef offsetof
 #define DTOFFSET(struct_s, member) offsetof(struct_s, member)
@@ -259,8 +259,8 @@ extern Dt_t *dtopen(Dtdisc_t *, Dtmethod_t *);
     ((dc)->hashf ? (*(dc)->hashf)((dt), (ky), (dc)) : dtstrhash(0, (char *)(ky), (int)(dc)->size))
 
 #define dtvnext(d) (_DT(d)->view)
-#define dtvcount(d) (_DT(d)->nview)
-#define dtvhere(d) (_DT(d)->walk)
+// #define dtvcount(d) (_DT(d)->nview)
+// #define dtvhere(d) (_DT(d)->walk)
 
 #define dtlink(d, e) (((Dtlink_t *)(e))->rh.__rght)
 #define dtobj(d, e) _DTOBJ(_DT(d)->disc, (e))
@@ -278,8 +278,8 @@ extern Dt_t *dtopen(Dtdisc_t *, Dtmethod_t *);
 #define dtappend(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_APPEND)
 #define dtdelete(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_DELETE)
 #define dtremove(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_REMOVE)
-#define dtattach(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_ATTACH)
-#define dtdetach(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_DETACH)
+// #define dtattach(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_ATTACH)
+// #define dtdetach(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_DETACH)
 #define dtclear(d) (*(_DT(d)->searchf))((d), (void *)(0), DT_CLEAR)
 
 #define dtstart(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_START)
@@ -291,9 +291,5 @@ extern Dt_t *dtopen(Dtdisc_t *, Dtmethod_t *);
 #define dtrestore(d, l) (Dtlink_t *)(*(_DT(d)->searchf))((d), (void *)(l), DT_RESTORE)
 
 #define dtsize(d) (ssize_t) (*(_DT(d)->searchf))((d), (void *)(0), DT_STAT)
-
-/* this is for backward compatibility - will be removed someday */
-#define DT_prime 17109811 /* 2#00000001 00000101 00010011 00110011 */
-#define dtcharhash(h, c) (((unsigned int)(h) + (unsigned int)(c)) * DT_prime)
 
 #endif  // _CDT_H
