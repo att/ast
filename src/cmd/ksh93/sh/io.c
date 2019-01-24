@@ -42,7 +42,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define _shio_h 1
 #include "defs.h"
 
 #include "argnod.h"

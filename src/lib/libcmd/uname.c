@@ -41,8 +41,6 @@
 #include "sfio.h"
 #include "shcmd.h"
 
-#define MAXHOSTNAME 64
-
 static const char usage[] =
     "[-?\n@(#)$Id: uname (AT&T Research) 2007-04-19 $\n]" USAGE_LICENSE
     "[+NAME?uname - identify the current system ]"

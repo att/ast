@@ -123,8 +123,6 @@ static Ctype_t ctype[] = {
     {NULL, 0, Is_wc_13, NULL, 0},      {NULL, 0, Is_wc_14, NULL, 0},
     {NULL, 0, Is_wc_15, NULL, 0},      {NULL, 0, Is_wc_16, NULL, 0},
 
-#define WTYPES 16
-
 };
 
 static int Is_wc_1(int c) { return iswctype(c, ctype[CTYPES + 0].wtype); }

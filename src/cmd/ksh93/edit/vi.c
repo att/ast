@@ -45,12 +45,6 @@
 #include "stk.h"
 #include "terminal.h"
 
-#ifdef ECHOCTL
-#define echoctl ECHOCTL
-#else  // ECHOCTL
-#define echoctl 0
-#endif  // ECHOCTL
-
 #define MAXCHAR MAXLINE - 2  // max char per line
 
 #define gencpy(a, b) ed_gencpy(a, b)
@@ -106,7 +100,6 @@ typedef struct _vi_ {
 #undef putchar
 #define putchar(c) ed_putchar(vp->ed, c)
 
-#define crallowed editb.e_crlf
 #define cur_virt editb.e_cur     // current virtual column
 #define cur_phys editb.e_pcur    // current phys column cursor is at
 #define curhline editb.e_hline   // current history line

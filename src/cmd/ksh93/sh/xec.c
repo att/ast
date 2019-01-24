@@ -76,7 +76,6 @@
 #endif
 
 #define SH_NTFORK SH_TIMING
-#define NV_BLTPFSH NV_ARRAY
 
 extern int nice(int);
 #if USE_SPAWN

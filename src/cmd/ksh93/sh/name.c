@@ -103,10 +103,6 @@ static struct Namcache nvcache;
 
 bool nv_local = false;
 
-#if (SFIO_VERSION <= 20010201L)
-#define _data data
-#endif
-
 // ======== name value pair routines ========
 
 #include "builtins.h"

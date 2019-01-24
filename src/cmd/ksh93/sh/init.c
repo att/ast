@@ -178,12 +178,6 @@ static_fn void env_init(Shell_t *);
 static_fn Init_t *nv_init(Shell_t *);
 static_fn Dt_t *inittree(Shell_t *, const struct shtable2 *);
 
-#ifdef __CYGWIN__
-#define EXE "?(.exe)"
-#else
-#define EXE
-#endif
-
 //
 // Invalidate all path name bindings.
 //
@@ -839,8 +833,6 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
         mp->lastsub[0] = mp->lastsub[1] = -1;
     }
 }
-
-#define array_scan(np) ((nv_arrayptr(np)->flags & ARRAY_SCAN))
 
 static_fn char *get_match(Namval_t *np, Namfun_t *fp) {
     struct match *mp = (struct match *)fp;

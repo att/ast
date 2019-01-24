@@ -42,7 +42,6 @@
 
 #define N_CONCUR ((N_PROC / 2) * 2) /* #players, must be even	*/
 #define N_OBJ 20000                 /* total number of objects	*/
-#define MEMSIZE (N_OBJ * 2 * sizeof(Obj_t) + sizeof(void *) * 1024 * 1024)
 
 #define CDT_DATA 1 /* data section of dictionary	*/
 typedef struct _cdtdata_s {

@@ -37,7 +37,7 @@
 
 #define PAD '='
 
-#define B64_UC 3
+// #define B64_UC 3
 #define B64_EC 4
 #define B64_CHUNK 15
 #define B64_PAD 64

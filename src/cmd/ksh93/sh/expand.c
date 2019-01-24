@@ -56,8 +56,6 @@ static_fn int scantree(Shell_t *, Dt_t *, const char *, struct argnod **);
 #define GLOB_AUGMENTED 0
 #endif
 
-#define GLOB_RESCAN 1
-
 #if GLOB_VERSION >= 20010916L
 static_fn char *nextdir(glob_t *gp, char *dir) {
     Shell_t *shp = sh_getinterp();

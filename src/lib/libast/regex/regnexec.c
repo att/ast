@@ -205,7 +205,6 @@ typedef struct {
 #define stkold(s, p) stkset(s, (p)->base, (p)->offset)
 
 #define stkframe(s) (*((Stk_frame_t **)stktop(s) - 1))
-#define stkdata(s, t) ((t *)stkframe(s)->data)
 #define stkpop(s) stkold(s, &(stkframe(s)->pos))
 
 static_fn void *stkpush(Stk_t *sp, size_t size) {

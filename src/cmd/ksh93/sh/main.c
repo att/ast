@@ -58,8 +58,6 @@
 #include "terminal.h"
 #include "variables.h"
 
-#define CMD_LENGTH 64
-
 // These routines are referenced by this module.
 static_fn void exfile(Shell_t *, Sfio_t *, int);
 static_fn void chkmail(Shell_t *shp, char *);

@@ -69,11 +69,6 @@
 #define YEAR (1L << 19)
 #define ZONE (1L << 20)
 
-#define FFMT "%s%s%s%s%s%s%s|"
-#define FLAGS(f)                                                                                 \
-    (f & EXACT) ? "|EXACT" : "", (f & LAST) ? "|LAST" : "", (f & THIS) ? "|THIS" : "",           \
-        (f & NEXT) ? "|NEXT" : "", (f & ORDINAL) ? "|ORDINAL" : "", (f & FINAL) ? "|FINAL" : "", \
-        (f & WORK) ? "|WORK" : ""
 /*
  * parse cron range into set
  * return: -1:error 0:* 1:some

@@ -36,7 +36,6 @@
 #include "shnodes.h"
 #include "shtable.h"
 
-#define HUGE_INT (((unsigned)-1) >> 1)
 #define BEGIN 0
 #define MIDDLE 1
 #define END 2

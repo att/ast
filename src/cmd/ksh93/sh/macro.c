@@ -60,9 +60,6 @@
 #include "streval.h"
 #include "variables.h"
 
-#undef isascii
-#define isacii(c) ((c) <= UCHAR_MAX)
-
 #if __CYGWIN__
 static int Skip;
 #endif  //__CYGWIN__

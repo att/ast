@@ -55,7 +55,6 @@
 #include "test.h"
 #include "variables.h"
 
-#define RW_ALL (S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH)
 #define LIBCMD "cmd"
 
 static_fn int can_execute(Shell_t *, char *, bool);
