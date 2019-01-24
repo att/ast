@@ -34,7 +34,7 @@
 
 #include "option.h"
 
-#define ERROR_debug(n) (-(n))
+// #define ERROR_debug(n) (-(n))
 #define ERROR_exit(n) ((n) + ERROR_ERROR)
 #define ERROR_system(n) (((n) + ERROR_ERROR) | ERROR_SYSTEM)
 #define ERROR_usage(n) (((n) + ERROR_ERROR) | ERROR_USAGE)
