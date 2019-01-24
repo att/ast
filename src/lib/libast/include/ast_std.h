@@ -56,9 +56,6 @@ extern char *strerror(int);
 
 #define AST_MESSAGE_SET 3 /* see <mc.h> mcindex()		*/
 
-#undef strcoll
-#define strcoll _ast_info.collate
-
 typedef struct Mbstate_s {
     mbstate_t mb_state;
     int mb_errno;
@@ -75,8 +72,6 @@ typedef struct {
 
     int tmp_int;
     wchar_t tmp_wchar;
-
-    int (*collate)(const char *, const char *);
 
     int (*mb_width)(wchar_t);
 

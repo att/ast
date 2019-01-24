@@ -78,7 +78,6 @@ static_fn void init_ast_struct() {
         // Initializations that only need to be done once.
         ast._ast_mbrtowc = mbrtowc;
         ast._ast_wcrtomb = wcrtomb;
-        ast.collate = strcoll;
         ast.mb_alpha = (Isw_f)iswalpha;
         ast.mb_width = wcwidth;
     }
