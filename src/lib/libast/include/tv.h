@@ -1,4 +1,3 @@
-/* : : generated from tv by iffe version 2013-11-14 : : */
 /*
  * AT&T Research
  *
@@ -30,13 +29,13 @@ typedef struct Tv_s {
 #define ST_CTIME_NSEC_SET(st, n) (ST_CTIME_NSEC_GET(st) = (n))
 #define ST_MTIME_NSEC_SET(st, n) (ST_MTIME_NSEC_GET(st) = (n))
 
-#define tvgetatime(t, s) ((t)->tv_nsec = ST_ATIME_NSEC_GET(s), (t)->tv_sec = (s)->st_atime)
-#define tvgetmtime(t, s) ((t)->tv_nsec = ST_MTIME_NSEC_GET(s), (t)->tv_sec = (s)->st_mtime)
-#define tvgetctime(t, s) ((t)->tv_nsec = ST_CTIME_NSEC_GET(s), (t)->tv_sec = (s)->st_ctime)
+// #define tvgetatime(t, s) ((t)->tv_nsec = ST_ATIME_NSEC_GET(s), (t)->tv_sec = (s)->st_atime)
+// #define tvgetmtime(t, s) ((t)->tv_nsec = ST_MTIME_NSEC_GET(s), (t)->tv_sec = (s)->st_mtime)
+// #define tvgetctime(t, s) ((t)->tv_nsec = ST_CTIME_NSEC_GET(s), (t)->tv_sec = (s)->st_ctime)
 
-#define tvsetatime(t, s) (ST_ATIME_NSEC_SET(s, (t)->tv_nsec), (s)->st_atime = (t)->tv_sec)
-#define tvsetmtime(t, s) (ST_MTIME_NSEC_SET(s, (t)->tv_nsec), (s)->st_mtime = (t)->tv_sec)
-#define tvsetctime(t, s) (ST_CTIME_NSEC_SET(s, (t)->tv_nsec), (s)->st_ctime = (t)->tv_sec)
+// #define tvsetatime(t, s) (ST_ATIME_NSEC_SET(s, (t)->tv_nsec), (s)->st_atime = (t)->tv_sec)
+// #define tvsetmtime(t, s) (ST_MTIME_NSEC_SET(s, (t)->tv_nsec), (s)->st_mtime = (t)->tv_sec)
+// #define tvsetctime(t, s) (ST_CTIME_NSEC_SET(s, (t)->tv_nsec), (s)->st_ctime = (t)->tv_sec)
 
 extern void tvgettime(Tv_t *);
 extern int tvtouch(const char *, const Tv_t *, const Tv_t *, const Tv_t *, int);

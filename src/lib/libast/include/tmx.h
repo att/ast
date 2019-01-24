@@ -25,18 +25,18 @@ typedef uint32_t Tmxnsec_t;
 #define TMX_NOTIME ((Time_t)(-1))
 #define TMX_NOW tmxgettime()
 
-#define tmx2tv(t, v) ((v)->tv_nsec = tmxnsec(t), (v)->tv_sec = tmxsec(t))
-#define tv2tmx(v) tmxsns((v)->tv_sec, (v)->tv_nsec)
+// #define tmx2tv(t, v) ((v)->tv_nsec = tmxnsec(t), (v)->tv_sec = tmxsec(t))
+// #define tv2tmx(v) tmxsns((v)->tv_sec, (v)->tv_nsec)
 
 #define tmxclock(p) tmxsns(((p) ? *(p) : time(NULL)), 0)
 
 #define tmxgetatime(s) tmxsns((s)->st_atime, ST_ATIME_NSEC_GET(s))
-#define tmxgetctime(s) tmxsns((s)->st_ctime, ST_CTIME_NSEC_GET(s))
 #define tmxgetmtime(s) tmxsns((s)->st_mtime, ST_MTIME_NSEC_GET(s))
+// #define tmxgetctime(s) tmxsns((s)->st_ctime, ST_CTIME_NSEC_GET(s))
 
-#define tmxsetatime(s, t) ((s)->st_atime = tmxsec(t), ST_ATIME_NSEC_SET(s, tmxnsec(t)))
-#define tmxsetctime(s, t) ((s)->st_ctime = tmxsec(t), ST_CTIME_NSEC_SET(s, tmxnsec(t)))
-#define tmxsetmtime(s, t) ((s)->st_mtime = tmxsec(t), ST_MTIME_NSEC_SET(s, tmxnsec(t)))
+// #define tmxsetatime(s, t) ((s)->st_atime = tmxsec(t), ST_ATIME_NSEC_SET(s, tmxnsec(t)))
+// #define tmxsetctime(s, t) ((s)->st_ctime = tmxsec(t), ST_CTIME_NSEC_SET(s, tmxnsec(t)))
+// #define tmxsetmtime(s, t) ((s)->st_mtime = tmxsec(t), ST_MTIME_NSEC_SET(s, tmxnsec(t)))
 
 extern Time_t tmxdate(const char *, char **, Time_t);
 extern char *tmxfmt(char *, size_t, const char *, Time_t);
