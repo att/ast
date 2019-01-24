@@ -59,46 +59,7 @@
 //
 #undef _use_spawnveg
 
-#ifndef DEBUG_PROC
-#define DEBUG_PROC 1
-#endif
-
 Proc_t proc_default = {.pid = -1};
-
-#if DEBUG_PROC
-
-typedef struct {
-    const char *const name;
-    int value;
-} Keyval_t;
-
-#define PROC_ENV_OPTIONS "PROC_OPTIONS"
-
-#define PROC_OPT_ENVIRONMENT (1 << 0)
-#define PROC_OPT_EXEC (1 << 1)
-#define PROC_OPT_TRACE (1 << 2)
-#define PROC_OPT_VERBOSE (1 << 3)
-
-static const Keyval_t options[] = {
-    {"debug", PROC_OPT_VERBOSE}, {"environment", PROC_OPT_ENVIRONMENT}, {"exec", PROC_OPT_EXEC},
-    {"trace", PROC_OPT_TRACE},   {"verbose", PROC_OPT_VERBOSE},         {NULL, 0}};
-
-/*
- * called by stropt() to set options
- */
-
-static int setopt(void *a, const void *p, int n, const char *v) {
-    UNUSED(v);
-    if (p) {
-        if (n)
-            *((int *)a) |= ((Keyval_t *)p)->value;
-        else
-            *((int *)a) &= ~((Keyval_t *)p)->value;
-    }
-    return 0;
-}
-
-#endif
 
 #ifdef SIGPIPE
 //
@@ -360,9 +321,6 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
 #if _use_spawnveg
     int newenv = 0;
 #endif
-#if DEBUG_PROC
-    int debug = PROC_OPT_EXEC;
-#endif
 
     if (!argv && (flags & (PROC_ORPHAN | PROC_OVERLAY))) {
         errno = ENOEXEC;
@@ -479,17 +437,6 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
                 _exit(EXIT_NOEXEC);
             }
         }
-#if DEBUG_PROC
-        stropt(getenv(PROC_ENV_OPTIONS), options, sizeof(*options), setopt, &debug);
-        if (debug & PROC_OPT_TRACE) {
-            if (!fork()) {
-                sfsprintf(path, sizeof(path), "%d", getppid());
-                execlp("trace", "trace", "-p", path, NULL);
-                _exit(EXIT_NOTFOUND);
-            }
-            sleep(2);
-        }
-#endif
         if (flags & PROC_DAEMON) {
 #ifdef SIGHUP
             modify(proc, forked, PROC_sig_ign, SIGHUP, 0);
@@ -601,19 +548,6 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
                 if (!sh_setenviron(*p++)) goto cleanup;
         p = argv;
         if (forked && !p) return proc;
-#if DEBUG_PROC
-        if (!(debug & PROC_OPT_EXEC) || (debug & PROC_OPT_VERBOSE)) {
-            if ((debug & PROC_OPT_ENVIRONMENT) && (p = environ))
-                while (*p) sfprintf(sfstderr, "%s\n", *p++);
-            sfprintf(sfstderr, "+ %s", cmd ? path : "sh");
-            if ((p = argv) && *p)
-                while (*++p) sfprintf(sfstderr, " %s", *p);
-            sfprintf(sfstderr, "\n");
-            sfsync(sfstderr);
-            if (!(debug & PROC_OPT_EXEC)) _exit(0);
-            p = argv;
-        }
-#endif
         if (cmd) {
             strcpy(env + 2, path);
             if (forked || (flags & PROC_OVERLAY)) execve(path, p, environ);

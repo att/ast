@@ -13,7 +13,6 @@ libast_files += [
     'string/strcopy.c', 'string/strelapsed.c', 'string/stresc.c',
     'string/strlcat.c', 'string/strlcpy.c',
     'string/strmatch.c',
-    'string/stropt.c',
     'string/strperm.c',
     'string/strsort.c',
     'string/strton.c', 'string/strtonll.c',

@@ -135,7 +135,6 @@ struct Error_info_s /* error state			*/
     int clear;      /* default clear ERROR_* flags	*/
     int core;       /* level>=core -> core dump	*/
     int indent;     /* debug trace indent level	*/
-    int init;       /* initialized			*/
     int last_errno; /* last reported errno		*/
     int mask;       /* multi level debug trace mask	*/
     int set;        /* default set ERROR_* flags	*/
@@ -147,7 +146,7 @@ struct Error_info_s /* error state			*/
 
     ERROR_CONTEXT /* top of context stack		*/
 
-        Error_context_t empty; /* empty context stack element	*/
+    Error_context_t empty; /* empty context stack element	*/
 
     unsigned long time; /* debug time trace		*/
 

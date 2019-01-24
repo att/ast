@@ -49,11 +49,6 @@
 #include "sfio.h"
 #include "stk.h"
 
-typedef struct {
-    const char *const name;
-    int value;
-} Keyval_t;
-
 /*
  * 2007-03-19 move error_info from _error_info_ to (*_error_infop_)
  *	      to allow future Error_info_t growth
@@ -66,7 +61,6 @@ Error_info_t _error_info_ = {
     0,                            // clear
     0,                            // core
     0,                            // indent
-    0,                            // init
     0,                            // last_errno
     0,                            // mask
     0,                            // set
@@ -115,115 +109,6 @@ static struct State_s {
 #define OPT_SYSTEM 10
 #define OPT_TIME 11
 #define OPT_TRACE 12
-
-static const Keyval_t options[] = {{"break", OPT_BREAK},     {"catalog", OPT_CATALOG},
-                                   {"core", OPT_CORE},       {"count", OPT_COUNT},
-                                   {"debug", OPT_TRACE},     {"fd", OPT_FD},
-                                   {"library", OPT_LIBRARY}, {"mask", OPT_MASK},
-                                   {"match", OPT_MATCH},     {"prefix", OPT_PREFIX},
-                                   {"system", OPT_SYSTEM},   {"time", OPT_TIME},
-                                   {"trace", OPT_TRACE},     {NULL, 0}};
-
-/*
- * called by stropt() to set options
- */
-static_fn int error_setopt(void *a, const void *p, int n, const char *v) {
-    UNUSED(a);
-    if (!p) return 0;
-
-    switch (((Keyval_t *)p)->value) {
-        case OPT_BREAK:
-        case OPT_CORE:
-            if (n) {
-                switch (*v) {
-                    case 'e':
-                    case 'E':
-                        error_state.breakpoint = ERROR_ERROR;
-                        break;
-                    case 'f':
-                    case 'F':
-                        error_state.breakpoint = ERROR_FATAL;
-                        break;
-                    case 'p':
-                    case 'P':
-                        error_state.breakpoint = ERROR_PANIC;
-                        break;
-                    default:
-                        error_state.breakpoint = strtol(v, NULL, 0);
-                        break;
-                }
-            } else {
-                error_state.breakpoint = 0;
-            }
-            if (((Keyval_t *)p)->value == OPT_CORE) error_info.core = error_state.breakpoint;
-            break;
-        case OPT_CATALOG:
-            if (n)
-                error_info.set |= ERROR_CATALOG;
-            else
-                error_info.clear |= ERROR_CATALOG;
-            break;
-        case OPT_COUNT:
-            if (n)
-                error_state.count = strtol(v, NULL, 0);
-            else
-                error_state.count = 0;
-            break;
-        case OPT_FD:
-            error_info.fd = n ? strtol(v, NULL, 0) : -1;
-            break;
-        case OPT_LIBRARY:
-            if (n)
-                error_info.set |= ERROR_LIBRARY;
-            else
-                error_info.clear |= ERROR_LIBRARY;
-            break;
-        case OPT_MASK:
-            if (n)
-                error_info.mask = strtol(v, NULL, 0);
-            else
-                error_info.mask = 0;
-            break;
-        case OPT_MATCH:
-            if (error_state.match) regfree(error_state.match);
-            if (n) {
-                if ((error_state.match || (error_state.match = calloc(1, sizeof(regex_t)))) &&
-                    regcomp(error_state.match, v, REG_EXTENDED | REG_LENIENT)) {
-                    free(error_state.match);
-                    error_state.match = 0;
-                }
-            } else if (error_state.match) {
-                free(error_state.match);
-                error_state.match = 0;
-            }
-            break;
-        case OPT_PREFIX:
-            if (n)
-                error_state.prefix = strdup(v);
-            else if (error_state.prefix) {
-                free(error_state.prefix);
-                error_state.prefix = 0;
-            }
-            break;
-        case OPT_SYSTEM:
-            if (n)
-                error_info.set |= ERROR_SYSTEM;
-            else
-                error_info.clear |= ERROR_SYSTEM;
-            break;
-        case OPT_TIME:
-            error_info.time = n ? 1 : 0;
-            break;
-        case OPT_TRACE:
-            if (n)
-                error_info.trace = -strtol(v, NULL, 0);
-            else
-                error_info.trace = 0;
-            break;
-    }
-
-    return 0;
-}
 
 /*
  * print a name with optional delimiter, converting unprintable chars
@@ -284,7 +169,6 @@ void error_break(void) {
         s = sfgetr(error_state.tty, '\n', 1);
         if (s) {
             if (!strcmp(s, "q") || !strcmp(s, "quit")) exit(0);
-            stropt(s, options, sizeof(*options), error_setopt, NULL);
         }
     }
 }
@@ -313,10 +197,6 @@ void errorv(const char *id, int level, va_list ap) {
     unsigned long d;
     struct tms us;
 
-    if (!error_info.init) {
-        error_info.init = 1;
-        stropt(getenv("ERROR_OPTIONS"), options, sizeof(*options), error_setopt, NULL);
-    }
     if (level > 0) {
         flags = level & ~ERROR_LEVEL;
         level &= ERROR_LEVEL;

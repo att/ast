@@ -221,8 +221,6 @@ extern int strexp(char *, int);
 extern int strgrpmatch(const char *, const char *, ssize_t *, int, int);
 extern int strngrpmatch(const char *, size_t, const char *, ssize_t *, int, int);
 extern int strmatch(const char *, const char *);
-extern int stropt(const char *, const void *, int, int (*)(void *, const void *, int, const char *),
-                  void *);
 extern int strperm(const char *, char **, int);
 extern void strsort(char **, int, Strcmp_f);
 extern void strsort_r(char **, size_t, Strcmp_context_f, void *);

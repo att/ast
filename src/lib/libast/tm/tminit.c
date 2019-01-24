@@ -36,17 +36,6 @@
 #include "sfio.h"
 #include "tm.h"
 
-typedef struct {
-    const char *const name;
-    int value;
-} Keyval_t;
-
-#define TM_type (-1)
-
-static const Keyval_t options[] = {
-    {"adjust", TM_ADJUST}, {"format", TM_DEFAULT}, {"leap", TM_LEAP}, {"subsecond", TM_SUBSECOND},
-    {"type", TM_type},     {"utc", TM_UTC},        {NULL, 0}};
-
 /*
  * 2007-03-19 move tm_info from _tm_info_ to (*_tm_infop_)
  *	      to allow future Tm_info_t growth
@@ -57,7 +46,7 @@ Tm_info_t _tm_info_ = {.flags = 0};
 Tm_info_t *_tm_infop_ = &_tm_info_;
 
 static char TZ[256];
-static char *TE[2];
+static char *ZZ[2];
 
 struct tm *tmlocaltime(const time_t *t) {
     struct tm *r;
@@ -66,7 +55,7 @@ struct tm *tmlocaltime(const time_t *t) {
 
     if (TZ[0]) {
         if (!environ || !*environ)
-            environ = TE;
+            environ = ZZ;
         else
             e = environ[0];
         environ[0] = TZ;
@@ -129,37 +118,6 @@ static_fn int tzwest(time_t *clock, int *isdst) {
 }
 
 /*
- * stropt() option handler
- */
-
-static_fn int tmopt(void *a, const void *p, int n, const char *v) {
-    Tm_zone_t *zp;
-
-    UNUSED(a);
-    if (p) {
-        switch (((Keyval_t *)p)->value) {
-            case TM_DEFAULT:
-                tm_info.deformat =
-                    (n && (n = strlen(v)) > 0 && (n < 2 || v[n - 2] != '%' || v[n - 1] != '?'))
-                        ? strdup(v)
-                        : tm_info.format[TM_DEFAULT];
-                break;
-            case TM_type:
-                tm_info.local->type =
-                    (n && *v) ? ((zp = tmtype(v, NULL)) ? zp->type : strdup(v)) : 0;
-                break;
-            default:
-                if (n)
-                    tm_info.flags |= ((Keyval_t *)p)->value;
-                else
-                    tm_info.flags &= ~((Keyval_t *)p)->value;
-                break;
-        }
-    }
-    return 0;
-}
-
-/*
  * initialize the local timezone
  */
 
@@ -185,7 +143,7 @@ static_fn void tmlocal(void) {
         if (s) {
             sfsprintf(TZ, sizeof(TZ), "TZ=%s", s);
             if (!environ || !*environ)
-                environ = TE;
+                environ = ZZ;
             else
                 e = environ[0];
             environ[0] = TZ;
@@ -319,12 +277,6 @@ static_fn void tmlocal(void) {
         if (!local.standard) local.standard = "";
         if (!local.daylight) local.daylight = "";
     }
-
-    /*
-     * set the options
-     */
-
-    stropt(getenv("TM_OPTIONS"), options, sizeof(*options), tmopt, NULL);
 
     /*
      * the time zone type is probably related to the locale
