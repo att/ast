@@ -24,7 +24,6 @@
 #include <sys/types.h>
 
 // IWYU pragma: no_include "sfhdr.h"
-#include "sfdisc.h"
 #include "sfio.h"
 #include "terror.h"
 

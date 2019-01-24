@@ -22,7 +22,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "sfdisc.h"
 #include "sfio.h"
 #include "terror.h"
 

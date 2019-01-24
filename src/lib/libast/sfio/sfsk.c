@@ -26,8 +26,6 @@
 
 #include "sfhdr.h"
 
-#include "sfdisc.h"
-
 /*	Seek function that knows discipline
 **
 **	Written by Kiem-Phong Vo.

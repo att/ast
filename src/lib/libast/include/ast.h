@@ -28,6 +28,7 @@
 #ifndef _AST_H
 #define _AST_H 1
 
+#include <string.h>
 #include <sys/stat.h>
 
 #ifndef _AST_STD_H
@@ -187,7 +188,6 @@ extern char *fmtesc(const char *);
 extern char *fmtesq(const char *, const char *);
 extern char *fmtident(const char *);
 extern char *fmtfmt(const char *);
-extern char *fmtgid(int);
 extern char *fmtint(intmax_t, int);
 extern char *fmtmatch(const char *);
 extern char *fmtmode(int, int);
@@ -204,7 +204,6 @@ extern char *pathcanon(char *, size_t, int);
 extern char *pathcat(const char *, int, const char *, const char *, char *, size_t);
 extern int pathexists(char *, int);
 extern int pathgetlink(const char *, char *, int);
-extern int pathinclude(const char *);
 extern size_t pathnative(const char *, char *, size_t);
 extern char *pathpath(const char *, const char *, int, char *, size_t);
 extern size_t pathposix(const char *, char *, size_t);

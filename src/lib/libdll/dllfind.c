@@ -35,7 +35,7 @@
 // if name contains a directory prefix then library search is limited to the dir and siblings
 //
 
-extern void *dllfind(const char *lib, const char *ver, int flags, char *path, size_t size) {
+void *dllfind(const char *lib, const char *ver, int flags, char *path, size_t size) {
     char *id;
     void *dll;
     id = error_info.id;

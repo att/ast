@@ -23,8 +23,6 @@
 
 #include "sfhdr.h"
 
-#include "sfdisc.h"
-
 /*	Invoke event handlers for a stream
 **
 **	Written by Kiem-Phong Vo.

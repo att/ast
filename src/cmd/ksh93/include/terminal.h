@@ -67,7 +67,6 @@
 // For example, U+FFFF or U+FFFE.
 #define MARKER 0xdfff  // must be an invalid character
 
-extern int tty_alt(int);
 extern void tty_cooked(int);
 extern int tty_get(int, struct termios *);
 extern int tty_raw(int, int);

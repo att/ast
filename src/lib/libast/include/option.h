@@ -76,6 +76,5 @@ extern int optget(char **, const char *);
 extern char *opthelp(const char *, const char *);
 extern char *optusage(const char *);
 extern int optstr(const char *, const char *);
-extern Opt_t *optctx(Opt_t *, Opt_t *);
 
 #endif  // _OPTION_H

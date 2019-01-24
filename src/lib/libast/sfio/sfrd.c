@@ -30,8 +30,6 @@
 
 #include "sfhdr.h"
 
-#include "sfdisc.h"
-
 /*	Internal function to do a hard read.
 **	This knows about discipline and memory mapping, peek read.
 **

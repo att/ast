@@ -304,7 +304,6 @@ extern Shell_t *sh_init(int, char *[], Shinit_f);
 extern Sfio_t *sh_iogetiop(int, int);
 extern int sh_main(int, char *[], Shinit_f);
 extern int sh_open(const char *, int, ...);
-extern int sh_openmax(void);
 extern void *sh_parse(Shell_t *, Sfio_t *, int);
 extern int sh_pipe(int[]);
 extern ssize_t sh_read(int, void *, size_t);

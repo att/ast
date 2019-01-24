@@ -27,8 +27,6 @@
 
 #include "sfhdr.h"
 
-#include "sfdisc.h"
-
 /*	Function to handle io exceptions.
 **	Written by Kiem-Phong Vo
 */

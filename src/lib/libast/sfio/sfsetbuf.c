@@ -35,7 +35,6 @@
 
 #include "ast.h"
 #include "ast_fcntl.h"
-#include "sfdisc.h"
 
 #undef getpagesize
 

@@ -72,7 +72,6 @@ extern void sh_iounsave(Shell_t *);
 extern void sh_iounpipe(Shell_t *);
 extern int sh_chkopen(const char *);
 extern int sh_ioaccess(int, int);
-extern int sh_devtofd(const char *);
 extern bool sh_isdevfd(const char *);
 extern bool sh_source(Shell_t *, Sfio_t *, const char *);
 

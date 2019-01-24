@@ -25,6 +25,5 @@
 #include "cdt.h"
 
 extern Dt_t *dtnew(Dtdisc_t *, Dtmethod_t *);
-extern Dt_t *_dtnew(Dtdisc_t *, Dtmethod_t *, unsigned long);
 
 #endif  // _DT_H

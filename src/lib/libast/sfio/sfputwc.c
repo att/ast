@@ -27,7 +27,6 @@
 
 #include "ast.h"
 #include "ast_std.h"
-#include "sfdisc.h"
 
 /*	Write out a rune (wide char) as a multibyte char on f.
 **

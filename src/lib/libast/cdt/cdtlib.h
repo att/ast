@@ -115,6 +115,5 @@ static inline void DTANNOUNCE(Dt_t *dt, void *object, int type) {
 
 extern Dtlink_t *_dtmake(Dt_t *, void *, int);
 extern void _dtfree(Dt_t *, Dtlink_t *, int);
-extern int _dtlock(Dt_t *, int);
 
 #endif  // _CDTLIB_H

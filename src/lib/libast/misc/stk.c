@@ -45,7 +45,6 @@
 
 #include "ast.h"
 #include "ast_assert.h"
-#include "sfdisc.h"
 #include "sfio.h"
 #include "stk.h"
 

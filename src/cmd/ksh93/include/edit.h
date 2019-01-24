@@ -223,7 +223,6 @@ extern int ed_external(const genchar *, char *);
 extern void ed_gencpy(genchar *, const genchar *);
 extern void ed_genncpy(genchar *, const genchar *, int);
 extern int ed_genlen(const genchar *);
-extern int ed_setwidth(const char *);
 extern int ed_histgen(Edit_t *, const char *);
 extern void ed_histlist(Edit_t *, int);
 

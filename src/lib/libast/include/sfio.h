@@ -234,7 +234,6 @@ extern char *sfprints(const char *, ...);
 extern ssize_t sfaprints(char **, const char *, ...);
 extern ssize_t sfsprintf(char *, size_t, const char *, ...);
 extern ssize_t sfvsprintf(char *, size_t, const char *, va_list);
-extern ssize_t sfvasprints(char **, const char *, va_list);
 extern int sfvprintf(Sfio_t *, const char *, va_list);
 extern int sfscanf(Sfio_t *, const char *, ...);
 extern int sfsscanf(const char *, const char *, ...);
@@ -253,9 +252,6 @@ extern Sfoff_t sfsk(Sfio_t *, Sfoff_t, int, Sfdisc_t *);
 extern ssize_t sfpkrd(int, void *, size_t, int, long, int);
 
 /* portable handling of primitive types */
-extern int sfdlen(Sfdouble_t);
-extern int sfllen(Sflong_t);
-extern int sfulen(Sfulong_t);
 
 extern int sfputd(Sfio_t *, Sfdouble_t);
 extern int sfputl(Sfio_t *, Sflong_t);
@@ -274,10 +270,6 @@ extern int _sfputm(Sfio_t *, Sfulong_t, Sfulong_t);
 extern int _sfflsbuf(Sfio_t *, int);
 
 extern int _sffilbuf(Sfio_t *, int);
-
-extern int _sfdlen(Sfdouble_t);
-extern int _sfllen(Sflong_t);
-extern int _sfulen(Sfulong_t);
 
 /* miscellaneous function analogues of fast in-line functions */
 extern Sfoff_t sfsize(Sfio_t *);

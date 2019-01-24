@@ -27,6 +27,7 @@
 #define _CDT_H 1
 
 #include <pthread.h>
+#include <string.h>
 
 #include "ast_std.h"
 

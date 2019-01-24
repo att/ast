@@ -40,7 +40,6 @@
 #include "error.h"
 #include "fault.h"
 #include "name.h"
-#include "sfdisc.h"
 #include "sfio.h"
 #include "stk.h"
 #include "tv.h"

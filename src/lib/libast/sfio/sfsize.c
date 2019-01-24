@@ -27,8 +27,6 @@
 
 #include "sfhdr.h"
 
-#include "sfdisc.h"
-
 /*	Get the size of a stream.
 **
 **	Written by Kiem-Phong Vo.

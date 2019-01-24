@@ -34,7 +34,6 @@
 #include <stdbool.h>
 
 #include "ast_fcntl.h"
-#include "ast_getopt.h" /* <stdlib.h> does this */
 #include "ast_sys.h"
 
 /*

@@ -26,8 +26,6 @@
 
 #include "sfhdr.h"
 
-#include "sfdisc.h"
-
 /*	Push back one byte to a given SF_READ stream
 **
 **	Written by Kiem-Phong Vo.

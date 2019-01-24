@@ -45,7 +45,6 @@
 #define sh_envput(e, p) env_change()
 #define env_delete(e, p) env_change()
 
-extern void init_globals();
 extern char *sh_getenv(const char *);
 extern char *sh_setenviron(const char *);
 
@@ -277,7 +276,6 @@ extern bool sh_trace(Shell_t *, char *[], int);
 extern void sh_trim(char *);
 extern int sh_type(const char *);
 extern void sh_unscope(Shell_t *);
-extern int sh_whence(char **, int);
 #if SHOPT_COSHELL
 extern bool sh_coaddfile(Shell_t *, char *);
 extern int sh_copipe(Shell_t *, int[], int);

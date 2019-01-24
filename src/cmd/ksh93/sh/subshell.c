@@ -48,7 +48,6 @@
 #include "jobs.h"
 #include "name.h"
 #include "path.h"
-#include "sfdisc.h"
 #include "sfio.h"
 #include "shnodes.h"
 #include "variables.h"

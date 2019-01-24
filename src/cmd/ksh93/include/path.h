@@ -85,7 +85,6 @@ extern bool path_search(Shell_t *, const char *, Pathcomp_t **, int);
 extern char *path_relative(Shell_t *, const char *);
 extern int path_complete(Shell_t *, const char *, const char *, struct argnod **);
 extern int path_generate(Shell_t *, struct argnod *, struct argnod **);
-extern int path_xattr(Shell_t *, const char *, char *);
 
 // Builtin/plugin routines.
 extern int sh_addlib(Shell_t *, void *, char *, Pathcomp_t *);
