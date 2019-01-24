@@ -56,7 +56,6 @@ static_fn int scantree(Shell_t *, Dt_t *, const char *, struct argnod **);
 #define GLOB_AUGMENTED 0
 #endif
 
-#if GLOB_VERSION >= 20010916L
 static_fn char *nextdir(glob_t *gp, char *dir) {
     Shell_t *shp = sh_getinterp();
     Pathcomp_t *pp = (Pathcomp_t *)gp->gl_handle;
@@ -69,7 +68,6 @@ static_fn char *nextdir(glob_t *gp, char *dir) {
     if (pp) return pp->name;
     return NULL;
 }
-#endif
 
 int path_expand(Shell_t *shp, const char *pattern, struct argnod **arghead) {
     glob_t gdata;
@@ -98,9 +96,7 @@ int path_expand(Shell_t *shp, const char *pattern, struct argnod **arghead) {
     if (sh_isstate(shp, SH_COMPLETE)) {
         extra += scantree(shp, shp->alias_tree, pattern, arghead);
         extra += scantree(shp, shp->fun_tree, pattern, arghead);
-#if GLOB_VERSION >= 20010916L
         gp->gl_nextdir = nextdir;
-#endif
         flags |= GLOB_COMPLETE;
         flags &= ~GLOB_NOCHECK;
     }

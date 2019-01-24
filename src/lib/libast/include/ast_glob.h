@@ -25,7 +25,7 @@
 #ifndef _GLOB_H
 #define _GLOB_H 1
 
-#define GLOB_VERSION 20060717L
+// #define GLOB_VERSION 20060717L
 
 #include <dirent.h>
 #include <stdlib.h>
