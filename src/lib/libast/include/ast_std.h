@@ -86,7 +86,6 @@ typedef struct {
 
     int (*mb_alpha)(wchar_t);
 
-    int pwd;
     int byte_max;
 
     iconv_t mb_uc2wc;
