@@ -73,16 +73,10 @@ typedef struct {
         bool is_utf8;  // true if current locale uses UTF-8 for its encoding
     } locale;
 
-    long tmp_long;
-    size_t tmp_size;
-    short tmp_short;
-    char tmp_char;
+    int tmp_int;
     wchar_t tmp_wchar;
 
     int (*collate)(const char *, const char *);
-
-    int tmp_int;
-    void *tmp_pointer;
 
     int (*mb_width)(wchar_t);
 
@@ -99,15 +93,10 @@ typedef struct {
     iconv_t mb_wc2uc;
 
     size_t (*_ast_mbrtowc)(wchar_t *, const char *, size_t, mbstate_t *);
-    size_t (*_ast_mbsrtowcs)(wchar_t *, const char **, size_t, mbstate_t *);
     size_t (*_ast_wcrtomb)(char *, wchar_t, mbstate_t *);
-    size_t (*_ast_wcsrtombs)(char *, const wchar_t **, size_t, mbstate_t *);
 } _Ast_info_t;
 
 extern _Ast_info_t _ast_info;
-
-typedef int (*Qsortcmp_f)(const void *, const void *);
-typedef int (*Qsortcmp_r_f)(const void *, const void *, void *);
 
 /* and now introducing prototypes botched by the standard(s) */
 
