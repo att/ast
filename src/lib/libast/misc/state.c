@@ -21,12 +21,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <fcntl.h>
-#include <string.h>
-
 #include "ast.h"
 #include "config_ast.h"
-
-#undef strcmp
 
 _Ast_info_t _ast_info = {.id = "libast", .version = 20130624};

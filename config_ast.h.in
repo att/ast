@@ -143,7 +143,6 @@
 #mesondefine _lib_universe
 #mesondefine _lib_utime
 #mesondefine _lib_utimensat
-#mesondefine _lib_wcrtomb
 #mesondefine _lib_wcscpy
 #mesondefine _lib_nexttowardl
 #mesondefine _lib_expm1l

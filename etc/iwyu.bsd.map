@@ -517,7 +517,16 @@
     { symbol: ["sfvprintf", "private", "\"sfhdr.h\"", "public"] },
     { symbol: ["sfvscanf", "private", "\"sfhdr.h\"", "public"] },
     { symbol: ["sfwrite", "private", "\"sfhdr.h\"", "public"] },
+    { symbol: ["Sfdisc_t", "private", "\"sfhdr.h\"", "public"] },
+    { symbol: ["sfdisc", "private", "\"sfhdr.h\"", "public"] },
+    { symbol: ["SF_RDWR", "private", "\"sfhdr.h\"", "public"] },
+    { symbol: ["SF_RDSTR", "private", "\"sfhdr.h\"", "public"] },
+    { symbol: ["SF_RDWRSTR", "private", "\"sfhdr.h\"", "public"] },
+    { symbol: ["SF_INIT", "private", "\"sfhdr.h\"", "public"] },
+    { symbol: ["SF_DCDOWN", "private", "\"sfhdr.h\"", "public"] },
+    { symbol: ["SFNEW", "private", "\"sfhdr.h\"", "public"] },
+    { symbol: ["SFCLEAR", "private", "\"sfhdr.h\"", "public"] },
 
-    { symbol: ["Sfdisc_t", "private", "\"sfdisc.h\"", "public"] },
-    { symbol: ["sfdisc", "private", "\"sfdisc.h\"", "public"] },
+    { symbol: ["Sfdisc_t", "private", "\"sfio.h\"", "public"] },
+    { symbol: ["sfdisc", "private", "\"sfio.h\"", "public"] },
 ]

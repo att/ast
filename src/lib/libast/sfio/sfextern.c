@@ -24,6 +24,7 @@
 #include <stddef.h>
 
 #include "sfhdr.h"
+#include "sfhdr.h"
 #include "vthread.h"
 
 /*	External variables and functions used only by Sfio

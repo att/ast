@@ -87,10 +87,6 @@
 #include "ast.h"
 #include "ast_tty.h"
 
-/* ast always provides multibyte handling */
-#undef _lib_wcrtomb
-#define _lib_wcrtomb 1
-
 #define sfoff_t off_t
 
 #include "ast_float.h"

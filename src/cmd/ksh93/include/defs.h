@@ -378,6 +378,7 @@ extern const Shtable_t shtab_siginfo[];
 static inline int getdecimal() {
     struct lconv *lp;
     lp = localeconv();
+    // cppcheck-suppress identicalInnerCondition
     if (lp && lp->decimal_point && *lp->decimal_point) return *lp->decimal_point;
     return '.';
 }

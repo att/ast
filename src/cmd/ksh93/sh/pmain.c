@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
     for (int fd = 0; fd < 3; ++fd) {
         errno = 0;
         if (fcntl(fd, F_GETFD, NULL) == -1 || errno == EBADF) {
+            // cppcheck-suppress leakReturnValNotUsed
             open("/dev/null", O_RDWR);
         }
     }
