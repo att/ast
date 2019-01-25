@@ -341,7 +341,6 @@ extern int sh_trap(Shell_t *, const char *, int);
 //
 extern Shell_t sh;
 
-#define SH_SIGSET 4
 #define SH_EXITSIG 0400               // signal exit bit
 #define SH_EXITMASK (SH_EXITSIG - 1)  // normal exit status bits
 
