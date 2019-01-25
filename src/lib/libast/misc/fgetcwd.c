@@ -148,6 +148,7 @@ char *fgetcwd(int fd, char *buf, size_t len) {
         fd = dd;
 #ifdef D_FILENO
         if (par->st_dev == cur->st_dev) {
+            // cppcheck-suppress readdirCalled
             while ((entry = readdir(dirp))) {
                 if (D_FILENO(entry) == cur->st_ino) {
                     namlen = D_NAMLEN(entry);
@@ -163,6 +164,7 @@ char *fgetcwd(int fd, char *buf, size_t len) {
         }
 #endif
         do {
+            // cppcheck-suppress readdirCalled
             if (!(entry = readdir(dirp))) ERROR(ENOENT)
         } while (fstatat(fd, entry->d_name, &tstst, AT_SYMLINK_NOFOLLOW) ||
                  tstst.st_ino != cur->st_ino || tstst.st_dev != cur->st_dev);

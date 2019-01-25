@@ -60,6 +60,7 @@ struct tm *tmlocaltime(const time_t *t) {
             e = environ[0];
         environ[0] = TZ;
     }
+    // cppcheck-suppress localtimeCalled
     r = localtime(t);
     if (TZ[0]) {
         if (environ != v)
@@ -88,6 +89,7 @@ static_fn int tzwest(time_t *clock, int *isdst) {
      * convert to GMT assuming local time
      */
 
+    // cppcheck-suppress gmtimeCalled
     if (!(tp = gmtime(clock))) {
         /*
          * some systems return 0 for negative time_t
@@ -95,6 +97,7 @@ static_fn int tzwest(time_t *clock, int *isdst) {
 
         epoch = 0;
         clock = &epoch;
+        // cppcheck-suppress gmtimeCalled
         tp = gmtime(clock);
     }
     n = tp->tm_yday;
