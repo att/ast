@@ -1214,18 +1214,21 @@ function foo
 bar=bam
 foo
 
-function gosleep
-{
-    $bin_sleep 4
+# ========
+function gosleep {
+    $bin_sleep 1
 }
-x=$(
-    (sleep 2; pid=; ps | grep sleep | read pid extra; [[ $pid ]] && kill -- $pid) &
+actual=$(
+    (sleep 0.5; ps | grep '[s]leep 1' | read pid extra; [[ $pid ]] && kill -- $pid) &
     gosleep 2> /dev/null
     print ok
 )
-[[ $x == ok ]] || log_error 'TERM signal sent to last process of function kills the script'
+expect=ok
+[[ $actual == $expect ]] ||
+    log_error 'TERM signal sent to last process of function kills the script' "$expect" "$actual"
 
-# verify that $0 does not change with functions defined as fun()
+# ========
+# Verify that $0 does not change with functions defined as fun().
 func1()
 {
     [[ $0 == "$dol0" ]] || log_error "\$0 changed in func1() to $0"
