@@ -28,6 +28,8 @@
 
 #include <termios.h>
 
+#include "defs.h"
+
 #define SEARCHSIZE 80
 #define STRIP 0377
 #define LOOKAHEAD 80

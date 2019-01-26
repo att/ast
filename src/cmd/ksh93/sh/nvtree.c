@@ -31,11 +31,10 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "defs.h"
-
 #include "argnod.h"
 #include "ast_assert.h"
 #include "cdt.h"
+#include "defs.h"
 #include "fault.h"
 #include "lexstates.h"
 #include "name.h"

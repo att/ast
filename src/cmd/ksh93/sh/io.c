@@ -42,12 +42,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "defs.h"
-
 #include "argnod.h"
 #include "ast.h"
 #include "ast_regex.h"
 #include "builtins.h"
+#include "defs.h"
 #include "edit.h"
 #include "error.h"
 #include "fault.h"

@@ -28,9 +28,8 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "defs.h"
-
 #include "argnod.h"
+#include "defs.h"
 #include "fault.h"
 #include "sfio.h"
 #include "shnodes.h"

@@ -22,8 +22,7 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "defs.h"  // IWYU pragma: keep
-
+#include "defs.h"
 #include "shtable.h"
 #include "test.h"
 

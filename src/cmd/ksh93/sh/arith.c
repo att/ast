@@ -32,11 +32,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "defs.h"
-
 #include "ast.h"
 #include "builtins.h"
 #include "cdt.h"
+#include "defs.h"
 #include "error.h"
 #include "fault.h"
 #include "lexstates.h"

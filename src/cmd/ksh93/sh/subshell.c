@@ -36,12 +36,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "defs.h"
-
 #include "argnod.h"
 #include "ast.h"
 #include "ast_fcntl.h"
 #include "cdt.h"
+#include "defs.h"
 #include "error.h"
 #include "fault.h"
 #include "io.h"

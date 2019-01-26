@@ -26,11 +26,10 @@
 #include <limits.h>
 #include <string.h>
 
-#include "defs.h"
-
 #include "argnod.h"
 #include "ast.h"
 #include "cdt.h"
+#include "defs.h"
 #include "edit.h"
 #include "fault.h"
 #include "history.h"

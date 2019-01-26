@@ -21,10 +21,9 @@
 
 #include <stddef.h>
 
-#include "defs.h"
-
 #include "argnod.h"
 #include "builtins.h"
+#include "defs.h"
 #include "name.h"
 #include "shtable.h"
 #include "variables.h"  // IWYU pragma: keep

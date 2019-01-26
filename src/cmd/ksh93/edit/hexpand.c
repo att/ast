@@ -36,9 +36,8 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "defs.h"
-
 #include "edit.h"
+#include "defs.h"
 #include "error.h"
 #include "fault.h"
 #include "history.h"

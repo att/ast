@@ -22,9 +22,8 @@
 #include <signal.h>
 #include <stddef.h>
 
-#include "defs.h"
-
 #include "cmdext.h"
+#include "defs.h"
 #include "name.h"
 #include "shtable.h"
 #include "version.h"

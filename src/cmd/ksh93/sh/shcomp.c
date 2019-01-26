@@ -28,9 +28,8 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "defs.h"
-
 #include "argnod.h"
+#include "defs.h"
 #include "error.h"
 #include "fault.h"
 #include "name.h"

@@ -33,10 +33,9 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "defs.h"
-
 #include "ast.h"
 #include "ast_float.h"
+#include "defs.h"
 #include "error.h"
 #include "fault.h"
 #include "name.h"

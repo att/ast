@@ -34,9 +34,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "defs.h"
-
 #include "ast.h"
+#include "defs.h"
 #include "edit.h"
 #include "fault.h"
 #include "history.h"

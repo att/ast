@@ -27,9 +27,8 @@
 #include <stddef.h>
 #include <sys/types.h>
 
-#include "defs.h"
-
 #include "cdt.h"
+#include "defs.h"
 #include "fault.h"
 #include "jobs.h"
 #include "name.h"

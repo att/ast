@@ -30,10 +30,9 @@
 
 #include <stdlib.h>
 
-#include "defs.h"
-
 #include "ast.h"
 #include "builtins.h"
+#include "defs.h"
 #include "error.h"
 #include "fault.h"
 #include "option.h"

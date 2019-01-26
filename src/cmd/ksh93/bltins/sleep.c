@@ -32,9 +32,8 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "defs.h"
-
 #include "builtins.h"
+#include "defs.h"
 #include "error.h"
 #include "fault.h"
 #include "option.h"

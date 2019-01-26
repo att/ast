@@ -20,7 +20,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "defs.h"
-
 #include "name.h"
 #include "shtable.h"
 

@@ -33,12 +33,11 @@
 #include <sys/types.h>
 #include <termios.h>
 
-#include "defs.h"
-
 #include "ast.h"
 #include "ast_assert.h"
 #include "builtins.h"
 #include "cdt.h"
+#include "defs.h"
 #include "edit.h"
 #include "error.h"
 #include "fault.h"

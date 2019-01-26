@@ -29,12 +29,11 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "defs.h"
-
 #include "argnod.h"
 #include "ast.h"
 #include "builtins.h"
 #include "cdt.h"
+#include "defs.h"
 #include "edit.h"
 #include "error.h"
 #include "fault.h"

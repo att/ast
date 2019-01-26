@@ -29,11 +29,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-// WARNING: Normally every ksh source module should normally begin with:
-//   #include "defs.h"
-// However, including that header in this module alters its behavior and breaks a unit test.
-//
-// TODO: Figure out why including that header changes the behavior of this code since it shouldn't.
 #include "ast.h"
 #include "error.h"
 #include "option.h"

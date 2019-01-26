@@ -42,12 +42,11 @@
 #include <sys/types.h>
 #include <wctype.h>
 
-#include "defs.h"
-
 #include "argnod.h"
 #include "ast.h"
 #include "builtins.h"
 #include "cdt.h"
+#include "defs.h"
 #include "dlldefs.h"
 #include "error.h"
 #include "fault.h"

@@ -36,13 +36,12 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "defs.h"
-
 #include "argnod.h"
 #include "ast.h"
 #include "ast_fcntl.h"
 #include "ast_sys.h"
 #include "builtins.h"
+#include "defs.h"
 #include "error.h"
 #include "fault.h"
 #include "name.h"

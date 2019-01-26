@@ -33,9 +33,8 @@
 #include <wctype.h>
 #endif
 
-#include "defs.h"
-
 #include "ast.h"
+#include "defs.h"
 #include "error.h"
 #include "fault.h"
 #include "lexstates.h"
