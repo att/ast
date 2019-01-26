@@ -30,10 +30,6 @@
 // lex.c. But if we include it in that module IWYU complains it isn't needed.
 #include <ctype.h>
 
-// Signal to the other public headers that they should expose private behavior used when building
-// the `ksh` command. Otherwise the assumption is they're being included to build a plugin.
-#define _SH_PRIVATE 1
-
 #include "argnod.h"
 #include "fault.h"
 #include "history.h"
@@ -44,6 +40,15 @@
 #define Env_t void
 #define sh_envput(e, p) env_change()
 #define env_delete(e, p) env_change()
+
+union Shnode_u;
+typedef union Shnode_u Shnode_t;
+
+// Shell options.
+typedef uint_fast64_t Shopt_t_data_t;
+typedef struct {
+    Shopt_t_data_t v[(256 / 8) / sizeof(Shopt_t_data_t)];
+} Shopt_t;
 
 extern char *sh_getenv(const char *);
 extern char *sh_setenviron(const char *);
@@ -302,9 +307,6 @@ extern void *const builtin_disable;
 #define on_option(s, x) ((void)((s)->v[((x)&WMASK) / WBITS] |= (1ULL << ((x) % WBITS))))
 #define off_option(s, x) ((void)((s)->v[((x)&WMASK) / WBITS] &= ~(1ULL << ((x) % WBITS))))
 
-#undef sh_isoption
-#undef sh_onoption
-#undef sh_offoption
 #define sh_isoption(shp, x) is_option(&(shp)->options, (x))
 #define sh_onoption(shp, x) on_option(&(shp)->options, (x))
 #define sh_offoption(shp, x) off_option(&(shp)->options, (x))
@@ -316,10 +318,12 @@ extern void *const builtin_disable;
 #define sh_getstate(shp) ((shp)->st.states)
 #define sh_setstate(shp, x) ((shp)->st.states = (x))
 
+#if 0
 #define sh_sigcheck(shp)                                           \
     do {                                                           \
         if (shp->trapnote & SH_SIGSET) sh_exit((shp), SH_EXITSIG); \
     } while (0)
+#endif
 
 extern int32_t sh_mailchk;
 extern const char e_dict[];

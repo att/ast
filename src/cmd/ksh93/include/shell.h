@@ -31,33 +31,22 @@
 
 #define SH_VERSION 20120720
 
-// Bit of a chicken and egg problem here. If we've already included fault.h then this typedef
-// already exists and depending on the compiler defining it here may cause a warning or an error.
-#ifndef _FAULT_H
+// Bit of a chicken and egg problem here. If we've already included fault.h or shcmd.h then this
+// typedef already exists and depending on the compiler defining it here may cause a warning or an
+// error.
+#if !defined(_FAULT_H) && !defined(_SHCMD_H)
 typedef struct Shell_s Shell_t;
 #endif
 
 #include "ast.h"
 #include "cdt.h"
+#include "defs.h"
 #include "fault.h"
 #include "name.h"
 #include "shcmd.h"
 #include "stk.h"
 
-// Options.
-#if __STDC_VERSION__ >= 199901L
-typedef uint_fast64_t Shopt_t_data_t;
-#else
-typedef unsigned int Shopt_t_data_t;
-#endif
-typedef struct {
-    Shopt_t_data_t v[(256 / 8) / sizeof(Shopt_t_data_t)];
-} Shopt_t;
-
 typedef void (*Shinit_f)(Shell_t *, int);
-
-union Shnode_u;
-typedef union Shnode_u Shnode_t;
 
 #define SH_CFLAG 0
 #define SH_HISTORY 1      // used also as a state
@@ -135,7 +124,7 @@ struct Shell_s {
     short subshell;          // set for virtual subshell
     Stk_t *stk;              // stack poiter
     int pwdfd;               // file descriptor for pwd
-#ifdef _SH_PRIVATE
+    // Everything below this line is private and should not be touched by a plugin.
     struct shared *gd;    // global data
     struct sh_scoped st;  // scoped information
     Sfio_t *heredocs;     // current here-doc temp file
@@ -274,7 +263,6 @@ struct Shell_s {
     char exittrap;
     char errtrap;
     char end_fn;
-#endif  // _SH_PRIVATE
 };
 
 // Flags for sh_parse.
@@ -323,9 +311,6 @@ extern Sfio_t *sh_fd2sfio(Shell_t *, int);
 extern int sh_fun(Shell_t *, Namval_t *, Namval_t *, char *[]);
 extern int sh_funscope(Shell_t *, int, char *[], int (*)(void *), void *, int);
 extern Shscope_t *sh_getscope(Shell_t *, int, int);
-extern void sh_offoption(Shell_t *, int);
-extern bool sh_isoption(Shell_t *, int);
-extern void sh_onoption(Shell_t *, int);
 extern void sh_menu(Shell_t *, Sfio_t *, int, char *[]);
 extern Sfio_t *sh_pathopen(Shell_t *, const char *);
 extern int sh_reinit(Shell_t *, char *[]);

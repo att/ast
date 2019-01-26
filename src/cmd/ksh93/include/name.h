@@ -66,7 +66,9 @@ union Value {
     struct pathcomp *pathcomp;
 };
 
+#ifndef _SHCMD_H
 typedef struct Namval Namval_t;
+#endif
 typedef struct Namfun Namfun_t;
 typedef struct Namdisc Namdisc_t;
 typedef struct Nambfun Nambfun_t;

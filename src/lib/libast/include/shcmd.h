@@ -19,23 +19,24 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * ksh builtin command api
- */
+//
+// Ksh builtin command API header.
+//
 #ifndef _SHCMD_H
 #define _SHCMD_H 1
+
+// To avoid circular dependencies and the need to carefully order the includes...
+#if !defined(_NAME_H)
+typedef struct Namval Namval_t;  // from #include "name.h"
+#endif
+#if !defined(_SHELL_H) && !defined(_FAULT_H)
+typedef struct Shell_s Shell_t;  // from #include "shell.h"
+#endif
 
 #define SH_PLUGIN_VERSION 20111111L
 
 // #define SHLIB(m)
 //     unsigned long plugin_version(void) { return SH_PLUGIN_VERSION; }
-
-#ifndef SH_VERSION
-#define Shell_t void
-#endif
-#ifndef _NVAL_H
-#define Namval_t void
-#endif
 
 struct Shbltin_s {
     Shell_t *shp;
@@ -57,17 +58,9 @@ struct Shbltin_s {
 typedef struct Shbltin_s Shbltin_t;
 typedef int (*Shbltin_f)(int, char **, Shbltin_t *);
 
-#if defined(SH_VERSION) || defined(_SH_PRIVATE)
-#undef Shell_t
-#undef Namval_t
-#else  // defined(SH_VERSION) || defined(_SH_PRIVATE)
-#define sh_context(c) ((Shbltin_t *)(c))
-#define sh_run(c, ac, av) ((c) ? (*sh_context(c)->shrun)(sh_context(c)->shp, ac, av) : -1)
-#define sh_exit(c, n) ((c) ? (*sh_context(c)->shexit)(sh_context(c)->shp, n) : exit(n))
-#define sh_checksig(c) ((c) && sh_context(c)->sigset)
-#if defined(SFIO_VERSION) || defined(_AST_H)
-#endif  // defined(SFIO_VERSION) || defined(_AST_H)
-#endif  // defined(SH_VERSION) || defined(_SH_PRIVATE)
+#define bltin_run(c, ac, av) (c ? (*c->shrun)(c->shp, ac, av) : -1)
+#define bltin_exit(c, n) (c ? (*c->shexit)(c->shp, n) : exit(n))
+#define bltin_checksig(c) (c && c->sigset)
 
 extern int cmdinit(int, char **, Shbltin_t *, int);
 

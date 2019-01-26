@@ -25,8 +25,6 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "defs.h"
-
 #include <ctype.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -48,6 +46,7 @@
 #include "ast_fcntl.h"
 #include "builtins.h"
 #include "cdt.h"
+#include "defs.h"
 #include "edit.h"
 #include "error.h"
 #include "fault.h"
@@ -2088,14 +2087,3 @@ Namfun_t *nv_mapchar(Namval_t *np, const char *name) {
     mp->hdr.disc = &TRANS_disc;
     return &mp->hdr;
 }
-
-#if 0
-Shell_t *sh_ptr(Namval_t *np)
-{
-	if(np->nvshell) {
-            return((Shell_t*)np->nvshell);
-        }
-	sfprintf(sfstderr,"no nvshell np=%s\n",nv_name(np));
-	return sh_getinterp();
-}
-#endif

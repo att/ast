@@ -35,11 +35,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "defs.h"
-
 #include "ast.h"
 #include "ast_aso.h"
 #include "ast_assert.h"
+#include "defs.h"
 #include "error.h"
 #include "fault.h"
 #include "fcin.h"
@@ -765,4 +764,8 @@ sh_sigfun_t sh_signal(int sig, sh_sigfun_t func) {
     sigaction(sig, &sigin, &sigout);
     sh_sigaction(sig, SIG_UNBLOCK);
     return sigout.sa_sigaction;
+}
+
+void sh_sigcheck(Shell_t *shp) {
+    if (shp->trapnote & SH_SIGSET) sh_exit((shp), SH_EXITSIG);
 }

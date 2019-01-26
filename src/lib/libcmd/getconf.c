@@ -389,7 +389,7 @@ found:
      */
 
     oargv[0] = cmd;
-    n = sh_run(context, argc, oargv);
+    n = bltin_run(context, argc, oargv);
     if (n >= EXIT_NOEXEC) error(ERROR_SYSTEM | 2, "%s: exec error [%d]", cmd, n);
     return n;
 }

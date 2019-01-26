@@ -122,7 +122,7 @@ typedef struct siginfo_ll siginfo_ll_t;
 
 // Bit of a chicken and egg problem here. If we've already included shell.h then this typedef
 // already exists and depending on the compiler defining it here may cause a warning or an error.
-#ifndef _SHELL_H
+#if !defined(_SHELL_H) && !defined(_SHCMD_H)
 typedef struct Shell_s Shell_t;
 #endif
 

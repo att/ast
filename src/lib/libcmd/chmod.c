@@ -256,7 +256,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
         error(ERROR_system(1), "%s: not found", *argv);
         __builtin_unreachable();
     }
-    while (!sh_checksig(context) && (ent = fts_read(fts))) {
+    while (!bltin_checksig(context) && (ent = fts_read(fts))) {
         switch (ent->fts_info) {
             case FTS_SL:
             case FTS_SLNONE:
