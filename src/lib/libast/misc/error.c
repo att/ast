@@ -97,19 +97,6 @@ static struct State_s {
 
 #define ERROR_CATALOG (ERROR_LIBRARY << 1)
 
-#define OPT_BREAK 1
-#define OPT_CATALOG 2
-#define OPT_CORE 3
-#define OPT_COUNT 4
-#define OPT_FD 5
-#define OPT_LIBRARY 6
-#define OPT_MASK 7
-#define OPT_MATCH 8
-#define OPT_PREFIX 9
-#define OPT_SYSTEM 10
-#define OPT_TIME 11
-#define OPT_TRACE 12
-
 /*
  * print a name with optional delimiter, converting unprintable chars
  */
