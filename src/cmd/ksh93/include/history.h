@@ -27,15 +27,41 @@
 #define HIST_CHAR '!'
 #define HIST_VERSION 1  // history file format version no.
 
+//
+// Each command in the history file starts on an even byte is null terminated. The first byte must
+// contain the special character HIST_UNDO and the second byte is the version number.  The sequence
+// HIST_UNDO 0, following a command, nullifies the previous command. A six byte sequence starting
+// with HIST_CMDNO is used to store the command number so that it is not necessary to read the file
+// from beginning to end to get to the last block of commands.  This format of this sequence is
+// different in version 1 then in version 0.  Version 1 allows commands to use the full 8 bit
+// character set.  It can understand version 0 format files.
+//
+#define HIST_MAX (sizeof(int) * HIST_BSIZE)
+#define HIST_LINE 32  // typical length for history line
+#define HIST_MARKSZ 6
+#define HIST_RECENT 600
+#define HIST_UNDO 0201   // invalidate previous command
+#define HIST_CMDNO 0202  // next 3 bytes give command number
+#define HIST_BSIZE 4096  // size of history file buffer
+#define HIST_DFLT 512    // default size of history list
+
 typedef struct {
     Sfdisc_t histdisc;  // discipline for history
     Sfio_t *histfp;     // history file stream pointer
     char *histname;     // name of history file
     int32_t histind;    // current command number index
     int histsize;       // number of accessible history lines
-#ifdef _HIST_PRIVATE
-    _HIST_PRIVATE
-#endif  // _HIST_PRIVATE
+    void *histshell;
+    off_t histcnt;                 // offset into history file
+    off_t histmarker;              // offset of last command marker
+    int histflush;                 // set if flushed outside of hflush()
+    int histmask;                  // power of two mask for histcnt
+    char histbuff[HIST_BSIZE + 1]; // history file buffer
+    int histwfail;
+    Sfio_t *auditfp;
+    char *tty;
+    int auditmask;
+    off_t histcmds[2];  // offset for recent commands, must be last
 } History_t;
 
 typedef struct {
