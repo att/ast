@@ -78,7 +78,6 @@
 #mesondefine _hdr_execinfo
 #mesondefine _hdr_filio
 #mesondefine _hdr_float
-#mesondefine _hdr_jioctl
 #mesondefine _hdr_mach_o_dyld
 #mesondefine _hdr_malloc
 #mesondefine _hdr_math
@@ -163,7 +162,6 @@
 #mesondefine _mem_pgroup_inheritance
 
 #mesondefine _sys_filio
-#mesondefine _sys_jioctl
 #mesondefine _sys_ldr
 #mesondefine _sys_pstat
 #mesondefine _sys_ptem

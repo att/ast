@@ -31,28 +31,12 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-#define sleep ______sleep
-
 #if defined(TIOCGWINSZ)
 #if _sys_stream && _sys_ptem
 #include <sys/ptem.h>
 #include <sys/stream.h>
 #endif
-#else
-#if !defined(TIOCGSIZE) && !defined(TIOCGWINSZ)
-#if _hdr_jioctl
-#define jwinsize winsize
-#include <jioctl.h>
-#else
-#if _sys_jioctl
-#define jwinsize winsize
-#include <sys/jioctl.h>
 #endif
-#endif
-#endif
-#endif
-
-#undef sleep
 
 static_fn int ttctl(int, int, void *);
 
