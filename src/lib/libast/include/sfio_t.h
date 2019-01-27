@@ -30,34 +30,6 @@
 **	Written by Kiem-Phong Vo
 */
 
-/* the parts of Sfio_t private to sfio functions */
-#define _SFIO_PRIVATE                                        \
-    Sfoff_t extent;         /* current file	size		*/         \
-    Sfoff_t here;           /* current physical location	*/  \
-    unsigned char ngetr;    /* sfgetr count			*/             \
-    unsigned char tiny[1];  /* for unbuffered read stream	*/ \
-    unsigned short bits;    /* private flags		*/             \
-    unsigned int mode;      /* current io mode		*/           \
-    struct _sfdisc_s *disc; /* discipline			*/               \
-    struct _sfpool_s *pool; /* the pool containing this	*/   \
-    struct _sfrsrv_s *rsrv; /* reserved buffer		*/           \
-    struct _sfproc_s *proc; /* coprocess id, etc.		*/        \
-    void *mutex;            /* mutex for thread-safety	*/    \
-    void *stdio;            /* stdio FILE if any		*/         \
-    Sfoff_t lpos;           /* last seek position		*/        \
-    size_t iosz;            /* preferred size for I/O	*/     \
-    size_t blksz;           /* preferred block size		*/      \
-    int getr;               /* the last sfgetr separator 	*/
-#if 0                       // WTF
-    _SFIO_PRIVATE_PAD
-
-#if _ast_sizeof_pointer == 8
-#define _SFIO_PRIVATE_PAD int pad;
-#else
-#define _SFIO_PRIVATE_PAD
-#endif
-#endif
-
 #include "sfio.h"
 
 /* mode bit to indicate that the structure hasn't been initialized */

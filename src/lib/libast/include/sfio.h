@@ -31,14 +31,12 @@
 #include <stdio.h>
 #include <sys/types.h>
 
+#include "ast_std.h"
+
 #define SFIO_VERSION 20090915L
 
 typedef struct _sfio_s Sfio_t;
 typedef struct _sfdisc_s Sfdisc_t;
-
-#if defined(_AST_STD_H) || defined(_SFIO_PRIVATE)
-#include "ast_std.h"
-#endif
 
 /* Sfoff_t should be large enough for largest file address */
 #define Sfoff_t int64_t
