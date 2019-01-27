@@ -29,6 +29,12 @@
 #ifndef _REGLIB_H
 #define _REGLIB_H 1
 
+#include <ctype.h>
+#include <errno.h>
+#include <stdio.h>
+#include <wchar.h>
+#include <wctype.h>
+
 #define REG_VERSION_EXEC 20020509L
 #define REG_VERSION_MAP 20030916L /* regdisc_t.re_map	*/
 
@@ -40,25 +46,10 @@
 #define fatal _reg_fatal
 #define state _reg_state
 
-typedef struct regsubop_s {
-    int op;  /* REG_SUB_LOWER,REG_SUB_UPPER	*/
-    int off; /* re_rhs or match[] offset	*/
-    int len; /* re_rhs len or len==0 match[]	*/
-} regsubop_t;
-
-#define _REG_SUB_PRIVATE_                    \
-    char *re_cur;       /* re_buf cursor		*/ \
-    char *re_end;       /* re_buf end			*/   \
-    regsubop_t *re_ops; /* rhs ops			*/      \
-    char re_rhs[1];     /* substitution rhs		*/
-
 #include "ast.h"
 #include "ast_regex.h"
 #include "cdt.h"
 #include "stk.h"
-
-#include <ctype.h>
-#include <errno.h>
 
 #if _BLD_DEBUG && !defined(_AST_REGEX_DEBUG)
 #define _AST_REGEX_DEBUG 1
@@ -176,10 +167,6 @@ typedef struct regsubop_s {
 #define setadd(p, c) bitset((p)->bits, c)
 #define setclr(p, c) bitclr((p)->bits, c)
 #define settst(p, c) bittst((p)->bits, c)
-
-#include <stdio.h>
-#include <wchar.h>
-#include <wctype.h>
 
 // TODO: Should this be `iswalnum()`? If not then this should have a comment that states why it is
 // limited to just ASCII.

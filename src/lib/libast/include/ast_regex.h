@@ -139,14 +139,21 @@ typedef struct regmatch_s {
     regoff_t rm_eo; /* offset of end		*/
 } regmatch_t;
 
+typedef struct regsubop_s {
+    int op;  /* REG_SUB_LOWER,REG_SUB_UPPER	*/
+    int off; /* re_rhs or match[] offset	*/
+    int len; /* re_rhs len or len==0 match[]	*/
+} regsubop_t;
+
 typedef struct regsub_s {
-    regflags_t re_flags; /* regsubcomp() flags		*/
-    char *re_buf;        /* regsubexec() output buffer	*/
-    size_t re_len;       /* re_buf length		*/
-    int re_min;          /* regsubcomp() min matches	*/
-#ifdef _REG_SUB_PRIVATE_
-    _REG_SUB_PRIVATE_
-#endif
+    regflags_t re_flags;  // regsubcomp() flags
+    char *re_buf;         // regsubexec() output buffer
+    size_t re_len;        // re_buf length
+    int re_min;           // regsubcomp() min matches
+    char *re_cur;         // re_buf cursor
+    char *re_end;         // re_buf end
+    regsubop_t *re_ops;   // rhs ops
+    char re_rhs[1];       // substitution rhs
 } regsub_t;
 
 struct regdisc_s {
