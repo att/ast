@@ -24,13 +24,14 @@
 #ifndef _def_dll_dll
 #define _def_dll_dll 1
 
-#if defined(__MVS__) && !defined(__SUSV3)
-#define __SUSV3 1
-#endif
+#include <fts.h>
 
 #if _hdr_dlfcn
 #include <dlfcn.h>
 #endif
+
+#include "ast.h"
+#include "cdt.h"
 
 #define RTLD_PARENT 0
 
@@ -46,9 +47,9 @@ typedef struct Dllinfo_s {
     char *suffix;    // library name suffix
     char *env;       // library path env var
     int flags;       // DLL_INFO_* flags
-#ifdef _DLLINFO_PRIVATE_
-    _DLLINFO_PRIVATE_
-#endif
+    char *sib[3];
+    char sibbuf[64];
+    char envbuf[64];
 } Dllinfo_t;
 
 typedef struct Dllnames_s {
@@ -64,16 +65,34 @@ typedef struct Dllnames_s {
 typedef struct Dllent_s {
     char *path;
     char *name;
-#ifdef _DLLENT_PRIVATE_
-    _DLLENT_PRIVATE_
-#endif
 } Dllent_t;
 
+typedef struct Uniq_s {
+    Dtlink_t link;
+    char name[1];
+} Uniq_t;
+
 typedef struct Dllscan_s {
-    void *pad;
-#ifdef _DLLSCAN_PRIVATE_
-    _DLLSCAN_PRIVATE_
-#endif
+    Dllent_t entry;
+    Uniq_t *uniq;
+    int flags;
+    Dt_t *dict;
+    Dtdisc_t disc;
+    FTS *fts;
+    FTSENT *ent;
+    Sfio_t *tmp;
+    char **sb;
+    char **sp;
+    char *pb;
+    char *pp;
+    char *pe;
+    int off;
+    int prelen;
+    int suflen;
+    char **lib;
+    char nam[64];
+    char pat[64];
+    char buf[64];
 } Dllscan_t;
 
 extern Dllinfo_t *dllinfo(void);

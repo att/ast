@@ -33,49 +33,15 @@
 
 #include <fts.h>  // OpenBSD and possibly others require the above includes first
 
+#include "ast.h"
 #include "ast_errorf.h"
+#include "cdt.h"
+#include "dlldefs.h"
 #include "sfio.h"
-
-#define _DLLINFO_PRIVATE_ \
-    char *sib[3];         \
-    char sibbuf[64];      \
-    char envbuf[64];
-
-#define _DLLSCAN_PRIVATE_ \
-    Dllent_t entry;       \
-    Uniq_t *uniq;         \
-    int flags;            \
-    Dt_t *dict;           \
-    Dtdisc_t disc;        \
-    FTS *fts;             \
-    FTSENT *ent;          \
-    Sfio_t *tmp;          \
-    char **sb;            \
-    char **sp;            \
-    char *pb;             \
-    char *pp;             \
-    char *pe;             \
-    int off;              \
-    int prelen;           \
-    int suflen;           \
-    char **lib;           \
-    char nam[64];         \
-    char pat[64];         \
-    char buf[64];
 
 #define DLL_MATCH_DONE 0x8000
 #define DLL_MATCH_NAME 0x4000
 #define DLL_MATCH_VERSION 0x2000
-
-#include "ast.h"
-#include "cdt.h"
-
-typedef struct Uniq_s {
-    Dtlink_t link;
-    char name[1];
-} Uniq_t;
-
-#include "dlldefs.h"
 
 static char *bin = "bin";
 static char *lib = "lib";
