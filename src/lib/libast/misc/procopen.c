@@ -47,7 +47,7 @@
 #include "ast.h"
 #include "ast_assert.h"
 #include "error.h"
-#include "proclib.h"
+#include "proc.h"
 #include "sfio.h"
 #include "sig.h"
 
@@ -316,7 +316,7 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
     int pio[2];
     int pop[2];
 #if defined(SIGCHLD)
-    Sig_mask_t mask;
+    sigset_t mask;
 #endif
 #if _use_spawnveg
     int newenv = 0;

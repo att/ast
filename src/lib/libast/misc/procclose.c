@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 #include "ast.h"
-#include "proclib.h"
+#include "proc.h"
 #include "sig.h"
 
 int procclose(Proc_t *p) {

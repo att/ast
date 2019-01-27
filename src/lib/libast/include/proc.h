@@ -25,6 +25,7 @@
 #ifndef _PROC_H
 #define _PROC_H 1
 
+#include <signal.h>
 #include "ast.h"
 
 #define PROC_ARGMOD (1 << 0)      /* argv[-1],argv[0] can be modified	*/
@@ -95,18 +96,22 @@ static inline int PROC_ARG(long x, long n) {
     return x & ~((1 << (2 * PROC_ARG_BIT)) - 1);
 }
 
+struct Mods_s;
+
 typedef struct {
-    pid_t pid;  /* process id			*/
-    pid_t pgrp; /* process group id		*/
-    int rfd;    /* read fd if applicable	*/
-    int wfd;    /* write fd if applicable	*/
-
-#ifdef _PROC_PRIVATE_
-    _PROC_PRIVATE_
-#endif
-
+    pid_t pid;           // process id
+    pid_t pgrp;          // process group id
+    int rfd;             // read fd if applicable
+    int wfd;             // write fd if applicable
+    struct Mod_s *mods;  // process modification state
+    long flags;          // original PROC_* flags
+    sigset_t mask;       // original blocked sig mask
+    sig_t sigchld;       // PROC_FOREGROUND SIG_DFL
+    sig_t sigint;        // PROC_FOREGROUND SIG_IGN
+    sig_t sigquit;       // PROC_FOREGROUND SIG_IGN
 } Proc_t;
 
+extern Proc_t proc_default;  // first proc
 extern int procclose(Proc_t *);
 extern int procfree(Proc_t *);
 extern Proc_t *procopen(const char *, char **, char **, long *, int);

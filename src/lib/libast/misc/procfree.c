@@ -30,7 +30,7 @@
 
 #include <stdlib.h>
 
-#include "proclib.h"
+#include "proc.h"
 
 int procfree(Proc_t *p) {
     if (!p) return -1;
