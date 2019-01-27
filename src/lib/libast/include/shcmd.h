@@ -58,8 +58,12 @@ struct Shbltin_s {
 typedef struct Shbltin_s Shbltin_t;
 typedef int (*Shbltin_f)(int, char **, Shbltin_t *);
 
-#define bltin_run(c, ac, av) (c ? (*c->shrun)(c->shp, ac, av) : -1)
+// The following symbols used to have a `sh_` prefix and were meant to mask the functions of the
+// same name when used in a builtin (e.g., code in src/lib/libcmd). That has been changed because
+// that sort or redirection obfuscates what is actually happening and makes reasoning about the
+// code harder.
 #define bltin_exit(c, n) (c ? (*c->shexit)(c->shp, n) : exit(n))
+#define bltin_run(c, ac, av) (c ? (*c->shrun)(c->shp, ac, av) : -1)
 #define bltin_checksig(c) (c && c->sigset)
 
 extern int cmdinit(int, char **, Shbltin_t *, int);
