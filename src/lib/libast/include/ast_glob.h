@@ -30,6 +30,9 @@
 #include <dirent.h>
 #include <stdlib.h>
 
+#include "ast_regex.h"
+#include "stak.h"
+
 struct stat;
 
 struct _glob_;
@@ -37,6 +40,7 @@ struct _globlist_;
 
 typedef struct _glob_ glob_t;
 typedef struct _globlist_ globlist_t;
+typedef int (*GL_error_f)(const char *, int);
 
 struct _globlist_ {
     globlist_t *gl_next;
@@ -82,11 +86,22 @@ struct _glob_ {
     unsigned long gl_version;
     unsigned short gl_extra;
 
-#ifdef _GLOB_PRIVATE_
-    _GLOB_PRIVATE_
-#else
-    char *gl_pad[23];
-#endif
+    GL_error_f gl_errfn;
+    int gl_error;
+    char *gl_nextpath;
+    globlist_t *gl_rescan;
+    globlist_t *gl_match;
+    Stak_t *gl_stak;
+    int re_flags;
+    int re_first;
+    regex_t *gl_ignore;
+    regex_t *gl_ignorei;
+    regex_t re_ignore;
+    regex_t re_ignorei;
+    unsigned long gl_starstar;
+    char *gl_opt;
+    char *gl_pat;
+    char *gl_pad[4];
 };
 
 /* standard interface */

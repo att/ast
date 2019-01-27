@@ -35,6 +35,7 @@
 #include <sys/stat.h>
 
 #include "ast.h"
+#include "ast_glob.h"
 #include "ast_regex.h"
 #include "sfio.h"
 #include "stak.h"
@@ -47,28 +48,6 @@
 #define MATCH_META 4
 
 #define MATCHPATH(g) (offsetof(globlist_t, gl_path) + (g)->gl_extra)
-
-typedef int (*GL_error_f)(const char *, int);
-
-#define _GLOB_PRIVATE_         \
-    GL_error_f gl_errfn;       \
-    int gl_error;              \
-    char *gl_nextpath;         \
-    globlist_t *gl_rescan;     \
-    globlist_t *gl_match;      \
-    Stak_t *gl_stak;           \
-    int re_flags;              \
-    int re_first;              \
-    regex_t *gl_ignore;        \
-    regex_t *gl_ignorei;       \
-    regex_t re_ignore;         \
-    regex_t re_ignorei;        \
-    unsigned long gl_starstar; \
-    char *gl_opt;              \
-    char *gl_pat;              \
-    char *gl_pad[4];
-
-#include "ast_glob.h"
 
 /*
  * default gl_diropen
