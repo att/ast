@@ -73,8 +73,8 @@ typedef struct {
     wchar_t tmp_wchar;
 
     uint32_t env_serial;
-    uint32_t mb_sync;
-    uint32_t version;
+    // TODO: Remove this struct member.
+    uint32_t version;  // this exists solely for the benefit of astconf_print()
 
     int byte_max;
 
