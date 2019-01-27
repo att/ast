@@ -1,40 +1,5 @@
-/* : : generated from sys by iffe version 2013-11-14 : : */
 #ifndef _AST_SYS_H
 #define _AST_SYS_H 1
-#if __mips == 2 && !defined(_NO_LARGEFILE64_SOURCE)
-#define _NO_LARGEFILE64_SOURCE 1
-#endif
-#if !defined(_NO_LARGEFILE64_SOURCE)
-#if !defined(_LARGEFILE64_SOURCE)
-#define _LARGEFILE64_SOURCE 1
-#endif
-#if !defined(_LARGEFILE_SOURCE)
-#define _LARGEFILE_SOURCE 1
-#endif
-#if !defined(_LARGE_FILE_API)
-#define _LARGE_FILE_API 1
-#endif
-#else
-#undef _LARGEFILE64_SOURCE
-#undef _LARGEFILE_SOURCE
-#undef _LARGE_FILE_API
-#undef _typ_ino64_t
-#undef _typ_struct_dirent64
-#undef _lib_creat64
-#undef _lib_fstat64
-#undef _lib_fstatvfs64
-#undef _lib_ftruncate64
-#undef _lib_lstat64
-#undef _lib_mmap64
-#undef _lib_open64
-#undef _lib_opendir64
-#undef _lib_rewinddir64
-#undef _lib_seekdir64
-#undef _lib_telldir64
-#undef _lib_closedir64
-#undef _lib_statvfs64
-#undef _lib_truncate64
-#endif
 #include <fcntl.h>
 #include <inttypes.h>
 #include <limits.h>
@@ -46,12 +11,21 @@
 #include <unistd.h>
 
 #if USE_SPAWN
+
+union _Spawnvex_u;
+typedef union _Spawnvex_u Spawnvex_u;
+
 typedef struct Spawnvex_s {
     unsigned int cur;
     int io;
-#ifdef _SPAWNVEX_PRIVATE_
-    _SPAWNVEX_PRIVATE_
-#endif
+    unsigned int max;
+    unsigned int set;
+    unsigned int flags;
+    unsigned int frame;
+    pid_t pgrp;
+    int debug;
+    int noexec;
+    Spawnvex_u *op;
 } Spawnvex_t;
 
 typedef struct Spawnvex_noexec_s {

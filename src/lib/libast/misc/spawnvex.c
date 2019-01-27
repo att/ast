@@ -30,19 +30,6 @@
 
 #include <sys/wait.h>
 
-#define _SPAWNVEX_PRIVATE_ \
-    unsigned int max;      \
-    unsigned int set;      \
-    unsigned int flags;    \
-    unsigned int frame;    \
-    pid_t pgrp;            \
-    int debug;             \
-    int noexec;            \
-    Spawnvex_u *op;
-
-union _Spawnvex_u;
-typedef union _Spawnvex_u Spawnvex_u;
-
 #include "ast.h"
 #include "error.h"
 #include "sig.h"
