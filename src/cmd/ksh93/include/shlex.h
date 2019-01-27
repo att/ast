@@ -32,6 +32,43 @@
 #include "shnodes.h"
 #include "shtable.h"
 
+struct lexdata {
+    char nocopy;
+    char paren;
+    char dolparen;
+    char nest;
+    char docword;
+    char nested_tilde;
+    char *docend;
+    char noarg;
+    char balance;
+    char warn;
+    char message;
+    char arith;
+    char *first;
+    int level;
+    int lastc;
+    int lex_max;
+    int *lex_match;
+    int lex_state;
+    int docextra;
+    off_t kiaoff;
+};
+
+//
+// This structure allows for arbitrary depth nesting of (...), {...}, [...].
+//
+struct lexstate {
+    char incase;       // 1 for case pattern, 2 after case
+    char intest;       // 1 inside [[...]]
+    char testop1;      // 1 when unary test op legal
+    char testop2;      // 1 when binary test op legal
+    char reservok;     // >0 for reserved word legal
+    char skipword;     // next word can't be reserved
+    char last_quote;   // last multi-line quote character
+    char nestedbrace;  // ${var op {...}}
+};
+
 typedef struct _shlex_ {
     Shell_t *sh;            // pointer to the interpreter
     struct argnod *arg;     // current word
@@ -62,9 +99,8 @@ typedef struct _shlex_ {
     off_t kiabegin;         // offset of first entry
     char *scriptname;       // name of script file
     Dt_t *entity_tree;      // for entity ids
-#ifdef _SHLEX_PRIVATE
-    _SHLEX_PRIVATE
-#endif
+    struct lexdata lexd;
+    struct lexstate lex;
 } Lex_t;
 
 // Symbols for parsing.

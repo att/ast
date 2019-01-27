@@ -45,6 +45,7 @@
 #include "lexstates.h"
 #include "name.h"
 #include "sfio.h"
+#include "shlex.h"
 #include "shnodes.h"
 #include "shtable.h"
 #include "stk.h"
@@ -53,49 +54,6 @@
 #define TEST_RE 3
 #define SYNBAD 3       // exit value for syntax errors
 #define STACK_ARRAY 3  // size of depth match stack growth
-
-//
-// This structure allows for arbitrary depth nesting of (...), {...}, [...].
-//
-struct lexstate {
-    char incase;       // 1 for case pattern, 2 after case
-    char intest;       // 1 inside [[...]]
-    char testop1;      // 1 when unary test op legal
-    char testop2;      // 1 when binary test op legal
-    char reservok;     // >0 for reserved word legal
-    char skipword;     // next word can't be reserved
-    char last_quote;   // last multi-line quote character
-    char nestedbrace;  // ${var op {...}}
-};
-
-struct lexdata {
-    char nocopy;
-    char paren;
-    char dolparen;
-    char nest;
-    char docword;
-    char nested_tilde;
-    char *docend;
-    char noarg;
-    char balance;
-    char warn;
-    char message;
-    char arith;
-    char *first;
-    int level;
-    int lastc;
-    int lex_max;
-    int *lex_match;
-    int lex_state;
-    int docextra;
-    off_t kiaoff;
-};
-
-#define _SHLEX_PRIVATE   \
-    struct lexdata lexd; \
-    struct lexstate lex;
-
-#include "shlex.h"
 
 #define oldmode(lp) (lp->lexd.lastc >> CHAR_BIT)
 #define endchar(lp) (lp->lexd.lastc & 0xff)
