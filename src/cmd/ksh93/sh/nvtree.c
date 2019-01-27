@@ -79,7 +79,7 @@ static_fn int read_tree(Namval_t *np, Sfio_t *in, int n, Namfun_t *dp) {
         goto done;
     }
     iop = in;
-    while ((c = sfgetc(iop)) && isblank(c)) {
+    while ((c = sfgetc(iop)) && iswblank(c)) {
         ;  // empty loop
     }
     sfungetc(iop, c);

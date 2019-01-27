@@ -271,11 +271,6 @@ static inline wchar_t mbchar(wchar_t *w, char **s, size_t n, Mbstate_t *q) {
 
 extern unsigned long plugin_version(void);
 
-/* This is a workaround for issue discussed in https://github.com/att/ast/pull/107 */
-#include <wctype.h>
-#undef iswalpha
-#define iswalpha(w) (_ast_info.mb_alpha ? (*_ast_info.mb_alpha)(w) : isalpha(w))
-
 #define CC_bel 0007  // BEL character
 #define CC_esc 0033  // ESC character
 #define CC_vt 0013   // VT character

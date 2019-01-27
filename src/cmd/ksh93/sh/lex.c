@@ -2198,7 +2198,7 @@ static_fn int alias_exceptf(Sfio_t *iop, int type, Sfdisc_t *handle)
     if (ap->nextc) {
         // If last character is a blank, then next work can be alias.
         int c = fcpeek(-1);
-        if (isblank(c)) lp->aliasok = 1;
+        if (iswblank(c)) lp->aliasok = 1;
         *ap->buf = ap->nextc;
         ap->nextc = 0;
         sfsetbuf(iop, ap->buf, 1);

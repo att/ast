@@ -131,7 +131,7 @@ static_fn int json2sh(Shell_t *shp, Sfio_t *in, Sfio_t *out) {
             if (c == ' ' || c == '\t') continue;
             if (c == ':') {
                 int len;
-                while ((c = sfgetc(in)) && isblank(c)) {
+                while ((c = sfgetc(in)) && iswblank(c)) {
                     ;  // empty loop
                 }
                 sfungetc(in, c);
@@ -149,7 +149,7 @@ static_fn int json2sh(Shell_t *shp, Sfio_t *in, Sfio_t *out) {
                 }
                 start = stkptr(shp->stk, offset);
                 here = stktell(shp->stk);
-                if (isname && !isalpha(*(start + 1)) && c != '_') isname = false;
+                if (isname && !iswalpha(*(start + 1)) && c != '_') isname = false;
                 len = here - offset - 2;
                 if (!isname) {
                     char *sp;

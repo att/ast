@@ -76,7 +76,6 @@ static_fn void init_ast_struct() {
     ast.locale.serial++;
     if (ast.locale.serial == 1) {
         // Initializations that only need to be done once.
-        ast.mb_alpha = (Isw_f)iswalpha;
         ast.mb_width = wcwidth;
     }
 

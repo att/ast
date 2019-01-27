@@ -78,8 +78,6 @@ typedef struct {
     uint32_t mb_sync;
     uint32_t version;
 
-    int (*mb_alpha)(wchar_t);
-
     int byte_max;
 
     iconv_t mb_uc2wc;
