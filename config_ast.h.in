@@ -137,8 +137,6 @@
 #mesondefine _lib_sync
 #mesondefine _lib_syncfs
 #mesondefine _lib_sysinfo
-#mesondefine _lib_towlower
-#mesondefine _lib_towupper
 #mesondefine _lib_truncate64
 #mesondefine _lib_universe
 #mesondefine _lib_utime

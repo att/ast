@@ -177,32 +177,12 @@ typedef struct regsubop_s {
 #define setclr(p, c) bitclr((p)->bits, c)
 #define settst(p, c) bittst((p)->bits, c)
 
-#include <stdio.h> /* because <wchar.h> includes it and we generate it */
+#include <stdio.h>
 #include <wchar.h>
 #include <wctype.h>
 
-#if !defined(iswblank)
-#define _need_iswblank 1
-#define iswblank(x) _reg_iswblank(x)
-extern int _reg_iswblank(wint_t);
-#endif
-
-#if !defined(towupper) && !_lib_towupper
-#define towupper(x) toupper(x)
-#endif
-
-#if !defined(towlower) && !_lib_towlower
-#define towlower(x) tolower(x)
-#endif
-
-#ifndef iswblank
-#define iswblank(x) ((x) == ' ' || (x) == '\t')
-#endif
-
-#ifndef iswgraph
-#define iswgraph(x) (iswprint(x) && !iswblank(x))
-#endif
-
+// TODO: Should this be `iswalnum()`? If not then this should have a comment that states why it is
+// limited to just ASCII.
 #define isword(x) (isalnum(x) || (x) == '_')
 
 /*
