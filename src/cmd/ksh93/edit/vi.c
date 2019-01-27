@@ -1453,7 +1453,7 @@ static_fn void replace(Vi_t *vp, int c, int increment) {
     }
     cur_window = cur_phys - vp->first_wind;
     if (vp->ocur_virt == INVALID || !is_print(c) || !is_print(virtual[cur_virt]) ||
-        !is_print(vp->o_v_char) || !iswascii(c) || mbwidth(vp->o_v_char) > 1 ||
+        !is_print(vp->o_v_char) || !iswascii(c) || wcwidth(vp->o_v_char) > 1 ||
         !iswascii(virtual[cur_virt]) ||
         ((increment && (cur_window == w_size - 1)) || !is_print(virtual[cur_virt + 1]))) {
         // Must use standard refresh routine.
@@ -1632,7 +1632,7 @@ static_fn void sync_cursor(Vi_t *vp) {
     for (; v <= last_virt; ++p, ++v) {
         int d;
         c = virtual[v];
-        if ((d = mbwidth(c)) > 1) {
+        if ((d = wcwidth(c)) > 1) {
             if (v != cur_virt) p += (d - 1);
         } else if (!iswprint(c)) {
             if (c == '\t') {

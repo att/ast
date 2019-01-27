@@ -707,7 +707,7 @@ loop_fmt:
                             if ((size >= 0 && n >= size) || (size < 0 && *wsp == 0)) break;
                             if ((n_s = mbconv(buf, *wsp, &mbs)) <= 0) break;
                             if (wc) {
-                                n_w = mbwidth(*wsp);
+                                n_w = wcwidth(*wsp);
                                 if (n_w > 0) {
                                     if (precis >= 0 && (w + n_w) > precis) break;
                                     w += n_w;
@@ -726,7 +726,7 @@ loop_fmt:
                             osp = ssp;
                             n = mbchar(&tw, &osp, MB_LEN_MAX, &mbs);
                             if (!n) break;
-                            n_w = mbwidth(n);
+                            n_w = wcwidth(n);
                             if (n_w > 0) {
                                 if (precis >= 0 && (w + n_w) > precis) break;
                                 w += n_w;
@@ -756,7 +756,7 @@ loop_fmt:
                             SFMBCLR(&mbs);
                             wsp = (wchar_t *)sp;
                             while (n < 0) {
-                                n += mbwidth(*wsp);
+                                n += wcwidth(*wsp);
                                 wsp++;
                                 w--;
                             }
@@ -771,7 +771,7 @@ loop_fmt:
                                     sp = ssp;
                                     break;
                                 }
-                                n += mbwidth(k);
+                                n += wcwidth(k);
                             }
                             v -= (sp - osp);
                         } else {
@@ -832,7 +832,7 @@ loop_fmt:
                     if (flags & SFFMT_LONG) {
                         SFMBCLR(&mbs);
                         if ((n_s = mbconv(buf, *wsp++, &mbs)) <= 0) break;
-                        if (wc) n_s = mbwidth(*(wsp - 1));
+                        if (wc) n_s = wcwidth(*(wsp - 1));
                         n = width - precis * n_s; /* padding amount */
                     } else if (flags & SFFMT_ALTER) {
                         n_s = chr2str(buf, *sp++);

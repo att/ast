@@ -137,7 +137,6 @@
  * multibyte macros
  */
 #define mbwide() (MB_CUR_MAX > 1)
-#define mbwidth(w) (ast.mb_width ? (*ast.mb_width)(w) : 1)
 #define mbxfrm(t, f, n) strxfrm((char *)(t), (char *)(f), n)
 
 /* the converse does not always hold! */

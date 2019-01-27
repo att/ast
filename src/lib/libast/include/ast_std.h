@@ -72,8 +72,6 @@ typedef struct {
     int tmp_int;
     wchar_t tmp_wchar;
 
-    int (*mb_width)(wchar_t);
-
     uint32_t env_serial;
     uint32_t mb_sync;
     uint32_t version;

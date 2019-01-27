@@ -1763,7 +1763,7 @@ static_fn int ja_size(char *str, int size, int type) {
     while (*cp) {
         oldn = n;
         w = mb1char(cp);
-        if ((outsize = mbwidth(w)) < 0) outsize = 0;
+        if ((outsize = wcwidth(w)) < 0) outsize = 0;
         size -= outsize;
         c = cp - oldcp;
         n += (c - outsize);

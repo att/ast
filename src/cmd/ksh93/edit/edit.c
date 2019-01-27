@@ -419,7 +419,7 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
                         } else if (!is_print(c)) {
                             ep->e_crlf = 0;
                         }
-                        if ((qwid = last - prev) > 1) qlen += qwid - mbwidth(c);
+                        if ((qwid = last - prev) > 1) qlen += qwid - wcwidth(c);
                         while (prev < last && pp < ppmax) *pp++ = *prev++;
                     }
                     break;
@@ -899,7 +899,7 @@ int ed_virt_to_phys(Edit_t *ep, genchar *virt, genchar *phys, int cur, int voff,
     for (r = poff; *sp; sp++) {
         c = *sp;
         if (curp == sp) r = dp - phys;
-        d = mbwidth((wchar_t)c);
+        d = wcwidth((wchar_t)c);
         if (d == 1 && is_cntrl(c)) d = -1;
         if (d > 1) {
             // Multiple width character put in place holders.

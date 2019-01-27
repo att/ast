@@ -74,10 +74,6 @@ static_fn bool is_us_ascii_codeset() {
 //
 static_fn void init_ast_struct() {
     ast.locale.serial++;
-    if (ast.locale.serial == 1) {
-        // Initializations that only need to be done once.
-        ast.mb_width = wcwidth;
-    }
 
     if (ast.mb_uc2wc != (iconv_t)-1) {
         if (ast.mb_uc2wc) iconv_close(ast.mb_uc2wc);
