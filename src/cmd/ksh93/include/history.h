@@ -52,11 +52,11 @@ typedef struct {
     int32_t histind;    // current command number index
     int histsize;       // number of accessible history lines
     void *histshell;
-    off_t histcnt;                 // offset into history file
-    off_t histmarker;              // offset of last command marker
-    int histflush;                 // set if flushed outside of hflush()
-    int histmask;                  // power of two mask for histcnt
-    char histbuff[HIST_BSIZE + 1]; // history file buffer
+    off_t histcnt;                  // offset into history file
+    off_t histmarker;               // offset of last command marker
+    int histflush;                  // set if flushed outside of hflush()
+    int histmask;                   // power of two mask for histcnt
+    char histbuff[HIST_BSIZE + 1];  // history file buffer
     int histwfail;
     Sfio_t *auditfp;
     char *tty;
