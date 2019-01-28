@@ -34,7 +34,7 @@ tmain() {
     int n, decimal, thousand;
     struct lconv *lv;
 
-    setlocale(LC_ALL, "");
+    ast_setlocale(LC_ALL, "");
 
     if (!(lv = localeconv())) texit(0);
 

@@ -113,7 +113,7 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
      * persistent setlocale() return values
      */
 
-    if ((s = setlocale(LC_CTYPE, NULL)) != matchstate.locale) {
+    if ((s = ast_setlocale(LC_CTYPE, NULL)) != matchstate.locale) {
         matchstate.locale = s;
         regex_flushcache();
     }

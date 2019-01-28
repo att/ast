@@ -762,7 +762,7 @@ static_fn int optget_init(char *s, Optpass_t *p) {
 #endif
     if (!state.localized || state.localized != ast.locale.serial) {
         state.localized = ast.locale.serial;
-        setlocale(LC_ALL, "");
+        ast_setlocale(LC_ALL, "");
     }
     if (!state.xp) {
         state.xp = sfstropen();

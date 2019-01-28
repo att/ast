@@ -95,7 +95,7 @@ static_fn void init_ast_struct() {
 // some internal state. Most notably increment a locale generation counter. This makes it cheap for
 // any code that caches info based on the current locale to know when its cache is out of date.
 //
-char *_ast_setlocale(int category, const char *locale) {
+char *ast_setlocale(int category, const char *locale) {
     char *rv = setlocale(category, locale);
     if (locale) init_ast_struct();
     return rv;

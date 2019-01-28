@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
     Optdisc_t disc;
 
     error_info.id = "opt";
-    setlocale(LC_ALL, "");
+    ast_setlocale(LC_ALL, "");
     error(-1, "test");
     extra = 0;
     ext = 0;

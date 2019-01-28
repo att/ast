@@ -368,7 +368,7 @@ static_fn void put_lang(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
 
     if (!sh_isstate(shp, SH_INIT) && (type >= 0 || type == LC_ALL || type == LC_ALL)) {
         char *r;
-        r = setlocale(type, val ? val : "");
+        r = ast_setlocale(type, val ? val : "");
         if (!r && val) {
             if (!sh_isstate(shp, SH_INIT) || shp->login_sh == 0) {
                 errormsg(SH_DICT, 0, e_badlocale, val);

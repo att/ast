@@ -47,11 +47,7 @@
 #endif
 #include <wchar.h>
 
-#undef setlocale
-#define setlocale _ast_setlocale
-
-extern char *setlocale(int, const char *);
-extern char *strerror(int);
+extern char *ast_setlocale(int, const char *);
 
 #define AST_MESSAGE_SET 3 /* see <mc.h> mcindex()		*/
 
