@@ -34,10 +34,6 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#ifndef AT_FDCWD
-#define AT_FDCWD (-100)
-#endif
-
 Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
     int fd, oldfd, oflags, fflags, sflags;
     SFMTXDECL(f)
