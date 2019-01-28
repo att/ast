@@ -34,7 +34,6 @@
 #include "sfhdr.h"
 
 #include "ast.h"
-#include "ast_fcntl.h"
 
 #undef getpagesize
 

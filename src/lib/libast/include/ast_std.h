@@ -33,7 +33,6 @@
 #include <iconv.h>
 #include <stdbool.h>
 
-#include "ast_fcntl.h"
 #include "ast_sys.h"
 
 /*

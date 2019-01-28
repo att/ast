@@ -25,7 +25,6 @@
 #include <fcntl.h>
 #include <string.h>
 
-#include "ast_fcntl.h"
 #include "sfhdr.h"
 
 /*	Open a file/string for IO.
