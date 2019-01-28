@@ -22,7 +22,7 @@
 #include <locale.h>
 #include <string.h>
 
-#include "ast_std.h"
+#include "ast.h"
 #include "sfio.h"
 #include "terror.h"
 

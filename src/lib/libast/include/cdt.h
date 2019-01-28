@@ -29,7 +29,7 @@
 #include <pthread.h>
 #include <string.h>
 
-#include "ast_std.h"
+#include "ast.h"
 
 /* commonly used integers */
 #define DT_ZERO ((unsigned int)0)  /* all zero bits	*/

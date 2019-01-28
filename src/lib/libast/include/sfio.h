@@ -31,8 +31,6 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-#include "ast_std.h"
-
 #define SFIO_VERSION 20090915L
 
 typedef struct _sfio_s Sfio_t;

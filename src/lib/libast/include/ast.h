@@ -22,26 +22,18 @@
 /*
  * Advanced Software Technology Library
  * AT&T Research
- *
- * std + posix + ast
  */
 #ifndef _AST_H
 #define _AST_H 1
 
+#include <iconv.h>
+#include <stdbool.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <wchar.h>
 
-#ifndef _AST_STD_H
-#include "ast_std.h"
-#endif
-
-#ifndef _SFIO_H
+#include "ast_sys.h"
 #include "sfio.h"
-#endif
-
-#ifndef ast
-#define ast _ast_info
-#endif
 
 #ifndef PATH_MAX
 #define PATH_MAX 1024
@@ -154,6 +146,36 @@
 #define getconf(x) strtol(astconf((x), NULL, NULL), NULL, 0)
 #define roundof(x, y) (((x) + ((y)-1)) & ~((y)-1))
 
+typedef struct Mbstate_s {
+    mbstate_t mb_state;
+    int mb_errno;
+} Mbstate_t;
+
+typedef struct {
+    char *id;
+
+    struct {
+        uint32_t serial;
+        uint32_t set;
+        bool is_utf8;  // true if current locale uses UTF-8 for its encoding
+    } locale;
+
+    int tmp_int;
+    wchar_t tmp_wchar;
+
+    uint32_t env_serial;
+    // TODO: Remove this struct member.
+    uint32_t version;  // this exists solely for the benefit of astconf_print()
+
+    int byte_max;
+
+    iconv_t mb_uc2wc;
+    iconv_t mb_wc2uc;
+} _Ast_info_t;
+
+extern _Ast_info_t _ast_info;
+#define ast _ast_info
+
 typedef int (*Ast_confdisc_f)(const char *, const char *, const char *);
 typedef int (*Strcmp_context_f)(const char *, const char *, void *);
 typedef int (*Strcmp_f)(const char *, const char *);
@@ -164,6 +186,7 @@ typedef int (*Strcmp_f)(const char *, const char *);
 struct Vmdisc_s;
 #endif
 
+extern char *ast_setlocale(int, const char *);
 extern char *astgetconf(const char *, const char *, const char *, int, Error_f);
 extern char *astconf(const char *, const char *, const char *);
 extern Ast_confdisc_f astconfdisc(Ast_confdisc_f);
@@ -236,12 +259,14 @@ extern ssize_t utf32stowcs(wchar_t *, uint32_t *, size_t);
 extern ssize_t wcstoutf32s(uint32_t *, wchar_t *, size_t);
 
 extern size_t ast_mbrchar(wchar_t *, const char *, size_t, Mbstate_t *);
+extern char *translate(const char *, const char *, const char *, const char *);
 
 /*
  * C library global data symbols not prototyped by <unistd.h>
  */
 extern char **environ;
 
+#define AST_MESSAGE_SET 3  // see <mc.h> mcindex()
 #define mbinit(q) (void)memset(q, 0, sizeof(*q))
 #define mberrno(q) ((q)->mb_errno)
 #define mbconv(s, w, q) wcrtomb((s), (w), (mbstate_t *)(q))

@@ -29,8 +29,8 @@
 #include <string.h>
 #include <wchar.h>
 
+#include "ast.h"
 #include "ast_float.h"
-#include "ast_std.h"
 #include "sfhdr.h"
 
 /*	Dealing with $ argument addressing stuffs.
