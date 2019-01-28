@@ -30,10 +30,10 @@
 #include <stddef.h>
 
 #include "ast.h"
+#include "defs.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
-#include "shell.h"
 
 // This has to be included after "shell.h".
 #include "builtins.h"

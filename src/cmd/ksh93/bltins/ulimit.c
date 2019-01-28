@@ -33,10 +33,10 @@
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
-#include "fault.h"
 #include "name.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"
 #include "ulimit.h"
 
 #ifndef SH_DICT

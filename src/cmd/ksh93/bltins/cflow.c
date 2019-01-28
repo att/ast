@@ -36,6 +36,7 @@
 #include "error.h"
 #include "fault.h"
 #include "option.h"
+#include "shcmd.h"
 
 //
 // Builtins `return` and `exit`.

@@ -529,4 +529,5 @@
 
     { symbol: ["Sfdisc_t", "private", "\"sfio.h\"", "public"] },
     { symbol: ["sfdisc", "private", "\"sfio.h\"", "public"] },
+    { symbol: ["_Ast_info_t", "private", "\"ast.h\"", "public"] },
 ]

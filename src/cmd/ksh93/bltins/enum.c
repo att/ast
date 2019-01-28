@@ -32,7 +32,6 @@
 #include "name.h"
 #include "option.h"
 #include "sfio.h"
-#include "shcmd.h"  // IWYU pragma: keep
 #include "stk.h"
 
 static const char enum_usage[] =

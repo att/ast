@@ -61,6 +61,7 @@
 #include "option.h"
 #include "path.h"
 #include "sfio.h"
+#include "shcmd.h"
 #include "shnodes.h"
 #include "shtable.h"
 #include "stak.h"

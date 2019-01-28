@@ -40,6 +40,7 @@
 #include "jobs.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"
 #include "shtable.h"
 #include "stk.h"
 

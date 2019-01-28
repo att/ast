@@ -38,6 +38,7 @@
 #include "name.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"
 #include "stk.h"
 #include "variables.h"
 

@@ -38,6 +38,7 @@
 #include "fault.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"
 #include "tmx.h"
 #include "tv.h"
 

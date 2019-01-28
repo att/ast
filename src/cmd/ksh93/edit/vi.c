@@ -33,6 +33,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wchar.h>
 
 #include "ast.h"
 #include "defs.h"

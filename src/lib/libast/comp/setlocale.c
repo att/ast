@@ -32,7 +32,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
-#include <wctype.h>
 
 #include "ast.h"
 

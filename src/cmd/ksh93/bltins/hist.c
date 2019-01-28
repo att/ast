@@ -31,12 +31,12 @@
 #include "defs.h"
 #include "edit.h"
 #include "error.h"
-#include "fault.h"
 #include "history.h"
 #include "io.h"
 #include "name.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"
 #include "stak.h"
 #include "variables.h"
 
