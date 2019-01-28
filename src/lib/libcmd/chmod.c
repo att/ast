@@ -27,9 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#define lchmod ______lchmod
-
 #include <errno.h>
+#include <string.h>
 #include <stddef.h>
 #include <sys/stat.h>
 
@@ -143,15 +142,6 @@ extern int fts_flags();
 #ifndef ENOSYS
 #define ENOSYS EINVAL
 #endif
-
-#undef lchmod
-
-extern int lchmod(const char *, mode_t);
-
-/*
- * NOTE: we only use the native lchmod() on symlinks just in case
- *	 the implementation is a feckless stub
- */
 
 int b_chmod(int argc, char **argv, Shbltin_t *context) {
     int mode;
