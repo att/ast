@@ -207,17 +207,9 @@ extern int regrecord(const regex_t *);
 extern int regrexec(const regex_t *, const char *, size_t, size_t, regmatch_t *, regflags_t, int,
                     void *, regrecord_t);
 extern regstat_t *regstat(const regex_t *);
-
 extern regex_t *regcache(const char *, regflags_t, int *);
-
 extern int regsubflags(regex_t *, const char *, char **, int, const regflags_t *, int *,
                        regflags_t *);
 extern void regsubfree(regex_t *);
-
-/* obsolete hooks */
-
-#ifndef _SFIO_H
-struct _sfio_s;
-#endif
 
 #endif  // _REGEX_H

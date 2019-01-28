@@ -59,7 +59,34 @@ struct _sfdisc_s {
     Sfdisc_t *disc;     /* the continuing discipline	*/
 };
 
-#include "sfio_s.h"
+struct _sfio_s {
+    unsigned char *_next;    // next position to read/write from
+    unsigned char *_endw;    // end of write buffer
+    unsigned char *_endr;    // end of read buffer
+    unsigned char *_endb;    // end of buffer
+    struct _sfio_s *_push;   // the stream that was pushed on
+    unsigned short _flags;   // type of stream
+    short _file;             // file descriptor
+    unsigned char *_data;    // base of data buffer
+    ssize_t _size;           // buffer size
+    ssize_t _val;            // values or string lengths
+    Sfoff_t extent;          // current file	size
+    Sfoff_t here;            // current physical location
+    unsigned char ngetr;     // sfgetr count
+    unsigned char tiny[1];   // for unbuffered read stream
+    unsigned short bits;     // private flags
+    unsigned int mode;       // current io mode
+    struct _sfdisc_s *disc;  // discipline
+    struct _sfpool_s *pool;  // the pool containing this
+    struct _sfrsrv_s *rsrv;  // reserved buffer
+    struct _sfproc_s *proc;  // coprocess id, etc.
+    void *mutex;             // mutex for thread-safety
+    void *stdio;             // stdio FILE if any
+    Sfoff_t lpos;            // last seek position
+    size_t iosz;             // preferred size for I/O
+    size_t blksz;            // preferred block size
+    int getr;                // the last sfgetr separator
+};
 
 /* formatting environment */
 typedef struct _sffmt_s Sffmt_t;
