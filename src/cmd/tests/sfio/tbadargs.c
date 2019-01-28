@@ -23,7 +23,7 @@
 #include <stdarg.h>
 #include <sys/types.h>
 
-// IWYU pragma: no_include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 #include "terror.h"
 

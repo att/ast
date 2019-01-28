@@ -26,7 +26,8 @@
 #include <string.h>
 
 #include "ast_assert.h"
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 #include "vthread.h"
 
 /*	Management of pools of streams.

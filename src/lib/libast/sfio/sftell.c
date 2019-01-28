@@ -25,6 +25,7 @@
 #include <sys/types.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Tell the current location in a given stream
 **

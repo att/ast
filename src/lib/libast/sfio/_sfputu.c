@@ -24,6 +24,7 @@
 #include <sys/types.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Write out an unsigned long value in a portable format.
 **

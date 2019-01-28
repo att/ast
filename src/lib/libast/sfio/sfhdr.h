@@ -666,8 +666,6 @@ typedef struct _sfextern_s {
 #define O_TEMPORARY 0
 #endif
 
-#define SF_RADIX 64 /* maximum integer conversion base */
-
 #define SF_MAXINT INT_MAX
 #define SF_MAXLONG LONG_MAX
 #define SF_MAXCHAR ((uchar)(~0))

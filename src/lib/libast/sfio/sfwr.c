@@ -27,6 +27,7 @@
 #include <unistd.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Write data with discipline.
 **	In the case of a string stream, this is used mainly to extend

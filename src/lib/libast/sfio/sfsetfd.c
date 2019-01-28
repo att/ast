@@ -26,6 +26,7 @@
 #include <stddef.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Change the file descriptor
 **

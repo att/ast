@@ -22,7 +22,8 @@
 /* OBSOLETE 19961031 -- for shared library compatibility */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 #undef _sfgetl2
 

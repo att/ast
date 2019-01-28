@@ -23,7 +23,8 @@
 
 #include <sys/types.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Safe access to the internal stream buffer.
 **	This function is obsolete. sfreserve() should be used.

@@ -22,6 +22,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Set the function to be called when a stream is opened or closed
 **

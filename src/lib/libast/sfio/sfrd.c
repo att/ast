@@ -28,7 +28,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Internal function to do a hard read.
 **	This knows about discipline and memory mapping, peek read.

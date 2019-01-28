@@ -24,6 +24,7 @@
 #include <sys/types.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Write out a long value in a portable format
 **

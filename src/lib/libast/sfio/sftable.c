@@ -29,9 +29,11 @@
 #include <string.h>
 #include <wchar.h>
 
-#include "ast.h"
 #include "ast_float.h"
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
+
+#include "ast.h"
 
 /*	Dealing with $ argument addressing stuffs.
 **

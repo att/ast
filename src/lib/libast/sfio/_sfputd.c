@@ -25,6 +25,7 @@
 #include <sys/types.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Write out a floating point value in a portable format
 **

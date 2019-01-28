@@ -24,6 +24,7 @@
 #include <math.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Read a portably coded double value
 **

@@ -23,7 +23,8 @@
 
 #include <ctype.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Convert a Sfdouble_t value represented in an ASCII format into
 **	the internal Sfdouble_t representation.

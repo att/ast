@@ -84,9 +84,11 @@
 #define _STRTOI_H 1
 
 #include <ctype.h>
+#include <errno.h>
 
 #include "ast.h"
 #include "sfhdr.h"
+#include "sfio.h"
 
 #ifndef ERANGE
 #define ERANGE EINVAL

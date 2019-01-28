@@ -24,7 +24,8 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Read formated data from a stream
 **

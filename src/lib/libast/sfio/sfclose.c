@@ -26,7 +26,8 @@
 #include <unistd.h>
 
 #include "ast_assert.h"
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 #include "vthread.h"
 
 /*	Close a stream. A file stream is synced before closing.

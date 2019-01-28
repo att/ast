@@ -21,7 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Function to clear a locked stream.
 **	This is useful for programs that longjmp from the mid of an sfio function.

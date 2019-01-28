@@ -23,7 +23,8 @@
 
 #include <sys/types.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Write out an unsigned long value in a portable format.
 **

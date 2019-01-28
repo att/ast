@@ -26,7 +26,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 #include "vthread.h"
 
 #include "ast.h"

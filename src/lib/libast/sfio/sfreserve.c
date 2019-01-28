@@ -24,6 +24,7 @@
 #include <stddef.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Reserve a segment of data or buffer.
 **

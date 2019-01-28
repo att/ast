@@ -21,8 +21,6 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#define getpagesize ______getpagesize
-
 #include <ctype.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -32,6 +30,7 @@
 #include <unistd.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 #include "ast.h"
 

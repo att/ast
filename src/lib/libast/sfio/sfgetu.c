@@ -24,6 +24,7 @@
 #include <sys/types.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Read an unsigned long value coded in a portable format.
 **

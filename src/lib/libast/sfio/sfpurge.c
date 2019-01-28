@@ -24,6 +24,7 @@
 #include <stddef.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Delete all pending data in the buffer
 **

@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Open a file/string for IO.
 **	If f is not nil, it is taken as an existing stream that should be

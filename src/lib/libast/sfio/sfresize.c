@@ -25,7 +25,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Resize a stream.
         Written by Kiem-Phong Vo.

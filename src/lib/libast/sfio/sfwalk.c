@@ -22,6 +22,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /* Walk streams and run operations on them
 **

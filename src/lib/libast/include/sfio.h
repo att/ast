@@ -68,7 +68,7 @@ struct _sfio_s {
     unsigned char *_data;    // base of data buffer
     ssize_t _size;           // buffer size
     ssize_t _val;            // values or string lengths
-    Sfoff_t extent;          // current file	size
+    Sfoff_t extent;          // current file size
     Sfoff_t here;            // current physical location
     unsigned char ngetr;     // sfgetr count
     unsigned char tiny[1];   // for unbuffered read stream
@@ -142,15 +142,26 @@ struct _sffmt_s {
 #define SFMTX_UNLOCK 2  /* down mutex count			*/
 #define SFMTX_CLRLOCK 3 /* clear mutex count			*/
 
-/* various constants */
-#ifndef EOF
-#define EOF (-1)
-#endif
+// Various constants.
+#define SF_RADIX 64  // maximum integer conversion base
+
 #ifndef SEEK_SET
+// <stdio.h> hasn't been included
 #define SEEK_SET 0
 #define SEEK_CUR 1
 #define SEEK_END 2
+#else  // SEEK_SET
+// <stdio.h> has been included so make sure the values match our expectations
+#if SEEK_SET != 0
+#error SEEK_SET incompatible with SFIO
 #endif
+#if SEEK_CUR != 1
+#error SEEK_CUR incompatible with SFIO
+#endif
+#if SEEK_END != 2
+#error SEEK_END incompatible with SFIO
+#endif
+#endif  // SEEK_SET
 
 /* bits for various types of files */
 #define SF_READ 0000001     /* open for reading			*/

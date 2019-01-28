@@ -25,6 +25,7 @@
 #include <unistd.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Read n bytes from a stream into a buffer
 **

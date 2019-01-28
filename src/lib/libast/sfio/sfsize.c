@@ -25,7 +25,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Get the size of a stream.
 **

@@ -25,6 +25,7 @@
 #include <sys/types.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Put out a null-terminated string
 **

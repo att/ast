@@ -31,6 +31,7 @@
 #include <wchar.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 #include "ast.h"
 

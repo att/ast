@@ -23,7 +23,8 @@
 
 #include <sys/types.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Read an unsigned long value coded portably for a given range.
 **

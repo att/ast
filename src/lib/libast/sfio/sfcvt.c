@@ -27,7 +27,8 @@
 #include <string.h>
 
 #include "ast_float.h"
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Convert a floating point value to ASCII.
 **

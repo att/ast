@@ -25,6 +25,7 @@
 #include <sys/types.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Synchronize data in buffers with the file system.
 **	If f is nil, all streams are sync-ed

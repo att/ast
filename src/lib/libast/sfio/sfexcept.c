@@ -25,7 +25,8 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Function to handle io exceptions.
 **	Written by Kiem-Phong Vo

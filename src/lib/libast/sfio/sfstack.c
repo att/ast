@@ -23,7 +23,8 @@
 
 #include <stddef.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Push/pop streams
 **

@@ -26,7 +26,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Construct a string with the given format and data.
 **	These functions allocate space as necessary to store the string.

@@ -27,7 +27,8 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Set the IO pointer to a specific location in the stream
 **

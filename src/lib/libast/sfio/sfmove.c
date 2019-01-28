@@ -26,7 +26,8 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Move data from one stream to another.
 **	This code is written so that it'll work even in the presence

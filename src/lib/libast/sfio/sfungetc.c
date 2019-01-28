@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Push back one byte to a given SF_READ stream
 **

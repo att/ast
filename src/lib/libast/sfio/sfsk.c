@@ -25,6 +25,7 @@
 #include <unistd.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Seek function that knows discipline
 **

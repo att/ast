@@ -28,9 +28,10 @@
 #include <sys/types.h>
 
 #include "sfhdr.h"
+#include "sfio.h"
+#include "vthread.h"
 
 #include "ast.h"
-#include "vthread.h"
 
 /*	Functions to set a given stream to some desired mode
 **

@@ -25,7 +25,8 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
+#include "sfio.h"
 
 /*	Fill the buffer of a stream with data.
 **	If n < 0, sffilbuf() attempts to fill the buffer if it's empty.

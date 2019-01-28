@@ -26,6 +26,7 @@
 
 #include "ast_assert.h"
 #include "sfhdr.h"
+#include "sfio.h"
 
 /*	Read a record delineated by a character.
 **	The record length can be accessed via sfvalue(f).
