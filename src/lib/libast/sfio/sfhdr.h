@@ -211,7 +211,6 @@
 
 /* "bits" flags that must be cleared in sfclrlock */
 #define SF_TMPBITS 00170000
-#define SF_DCDOWN 00010000 /* recurse down the discipline stack	*/
 
 #define SF_MVSIZE 00040000 /* f->size was reset in sfmove()	*/
 #define SFMVSET(f)                \
