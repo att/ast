@@ -19,16 +19,14 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "terror.h"
-
-#if _typ_long_double
 #include <float.h>
-#endif
+
+#include "terror.h"
 
 tmain() {
     UNUSED(argc);
     UNUSED(argv);
-#if _typ_long_double
+
     long double ldval, ldmax;
     char *s, *str;
 
@@ -41,7 +39,6 @@ tmain() {
     if (!(s = sfprints("%Le", ldval))) terror("sfprints failed2");
 
     if (strcmp(s, str) != 0) terror("Bad conversion, expecting %s and getting %s", str, s);
-#endif
 
     texit(0);
 }

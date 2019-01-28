@@ -167,8 +167,6 @@
 #mesondefine _sys_ptem
 #mesondefine _sys_stream
 
-#mesondefine _typ_long_double
-
 // These symbols are from src/lib/libast/include/ast_common.h that was
 // generated on a Linux platform by the legacay IFFE mechanism. They may not
 // be correct for other platforms.
