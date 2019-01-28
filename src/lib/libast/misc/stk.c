@@ -41,8 +41,6 @@
 #include <sys/param.h>
 #include <unistd.h>
 
-#include "sfio_t.h"  // must be first include for some reason
-
 #include "ast.h"
 #include "ast_assert.h"
 #include "sfio.h"

@@ -23,8 +23,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "sfio_t.h"  // IWYU pragma: keep
-
 #include "sfio.h"
 #include "terror.h"
 

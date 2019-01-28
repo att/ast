@@ -22,9 +22,6 @@
 #include <string.h>
 #include <unistd.h>
 
-// This has to come before sfio.h to export private structure members.
-#include "sfio_t.h"  // IWYU pragma: keep
-
 #include "sfio.h"
 #include "terror.h"
 

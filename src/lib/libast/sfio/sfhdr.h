@@ -77,7 +77,7 @@
 #define _val val
 
 #include "ast_mmap.h"
-#include "sfio_t.h"
+#include "sfio.h"
 
 /* note that the macro vt_threaded has effect on vthread.h */
 #include "vthread.h"

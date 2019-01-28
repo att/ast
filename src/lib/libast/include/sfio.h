@@ -358,4 +358,83 @@ extern char *sfstrseek(Sfio_t *, Sfoff_t, int);
     (sfsetbuf((f), (b), (n)), ((f)->_flags |= (m) ? SF_MALLOC : 0), \
      ((f)->_data == (unsigned char *)(b) ? 0 : -1))
 
+// The following used to  be in "sfio_t.h". Because cleanups to other modules have removed the
+// handful of #include of that header outside of this header we have folded it into this header.
+
+/* mode bit to indicate that the structure hasn't been initialized */
+#define SF_INIT 0000004
+#define SF_DCDOWN 00010000
+
+/* short-hand for common stream types */
+#define SF_RDWR (SF_READ | SF_WRITE)
+#define SF_RDSTR (SF_READ | SF_STRING)
+// #define SF_WRSTR (SF_WRITE | SF_STRING)
+#define SF_RDWRSTR (SF_RDWR | SF_STRING)
+
+/* for static initialization of an Sfio_t structure */
+#define SFNEW(data, size, file, type, disc, mutex)                       \
+    {                                                                    \
+        (unsigned char *)(data),                            /* next		*/  \
+            (unsigned char *)(data),                        /* endw		*/  \
+            (unsigned char *)(data),                        /* endr		*/  \
+            (unsigned char *)(data),                        /* endb		*/  \
+            NULL,                                           /* push		*/  \
+            (unsigned short)((type)&SFIO_FLAGS),            /* flags	*/  \
+            (short)(file),                                  /* file		*/  \
+            (unsigned char *)(data),                        /* data		*/  \
+            (ssize_t)(size),                                /* size		*/  \
+            (ssize_t)(-1),                                  /* val		*/   \
+            (Sfoff_t)0,                                     /* extent	*/ \
+            (Sfoff_t)0,                                     /* here		*/  \
+            0,                                              /* ngetr	*/  \
+            {0},                                            /* tiny		*/  \
+            0,                                              /* bits		*/  \
+            (unsigned int)(((type) & (SF_RDWR)) | SF_INIT), /* mode		*/  \
+            (struct _sfdisc_s *)(disc),                     /* disc		*/  \
+            NULL,                                           /* pool		*/  \
+            NULL,                                           /* rsrv		*/  \
+            NULL,                                           /* proc		*/  \
+            (mutex),                                        /* mutex	*/  \
+            NULL,                                           /* stdio	*/  \
+            (Sfoff_t)0,                                     /* lpos		*/  \
+            (size_t)0,                                      /* iosz		*/  \
+            0,                                              /* blksz	*/  \
+            0,                                              /* getr		*/  \
+    }
+
+/* function to clear an Sfio_t structure */
+#define SFCLEAR(f, mtx)               \
+    ((f)->next = NULL,   /* next		*/  \
+     (f)->endw = NULL,   /* endw		*/  \
+     (f)->endr = NULL,   /* endr		*/  \
+     (f)->endb = NULL,   /* endb		*/  \
+     (f)->push = NULL,   /* push		*/  \
+     (f)->flags = 0,     /* flags	*/  \
+     (f)->file = -1,     /* file		*/  \
+     (f)->data = NULL,   /* data		*/  \
+     (f)->size = -1,     /* size		*/  \
+     (f)->val = -1,      /* val		*/   \
+     (f)->extent = -1,   /* extent	*/ \
+     (f)->here = 0,      /* here		*/  \
+     (f)->ngetr = 0,     /* ngetr	*/  \
+     (f)->tiny[0] = 0,   /* tiny		*/  \
+     (f)->bits = 0,      /* bits		*/  \
+     (f)->mode = 0,      /* mode		*/  \
+     (f)->disc = NULL,   /* disc		*/  \
+     (f)->pool = NULL,   /* pool		*/  \
+     (f)->rsrv = NULL,   /* rsrv		*/  \
+     (f)->proc = NULL,   /* proc		*/  \
+     (f)->mutex = (mtx), /* mutex	*/  \
+     (f)->stdio = NULL,  /* stdio	*/  \
+     (f)->lpos = 0,      /* lpos		*/  \
+     (f)->iosz = 0,      /* iosz		*/  \
+     (f)->blksz = 0,     /* blksz	*/  \
+     (f)->getr = 0       /* getr		*/  \
+    )
+
+// Expose next stream inside discipline function; state saved in int f.
+// #define SFDCNEXT(sp, f) (((f) = (sp)->bits & SF_DCDOWN), (sp)->bits |= SF_DCDOWN)
+// Restore SFDCNEXT() state from int f.
+// #define SFDCPREV(sp, f) ((f) ? (0) : ((sp)->bits &= ~SF_DCDOWN))
+
 #endif  // _SFIO_H
