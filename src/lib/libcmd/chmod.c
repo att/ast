@@ -28,8 +28,8 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
-#include <string.h>
 #include <stddef.h>
+#include <string.h>
 #include <sys/stat.h>
 
 #include <fts.h>  // OpenBSD and possibly others require the above includes first
