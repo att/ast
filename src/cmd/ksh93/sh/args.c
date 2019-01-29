@@ -347,6 +347,11 @@ int sh_argopts(int argc, char *argv[], void *context) {
             }
             case 'D': {
                 on_option(&newflags, SH_NOEXEC);
+                // Cppcheck doesn't recognize the "goto" in the preceding case and thus thinks we
+                // might fall through and call strchr() with n == -7.  Even though this it
+                // technically a bug in cppcheck it is one reason why `goto` shouldn't be used; at
+                // least inside `switch` blocks.
+                // cppcheck-suppress invalidFunctionArg
                 sp = strchr(optksh, n);
                 if (sp) o = flagval[sp - optksh];
                 break;
