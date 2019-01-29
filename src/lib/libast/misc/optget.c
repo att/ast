@@ -41,6 +41,7 @@
 #include <unistd.h>
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "cdt.h"
 #include "error.h"
 #include "option.h"
@@ -4233,6 +4234,9 @@ again:
             s = a;
         }
     }
+    // There is a theoretical path by which we could reach here with s == NULL according to lint
+    // tools. Make sure that doesn't happen.
+    assert(s);
     if (!*s) {
         if (w) {
             hp = (Help_t *)optget_search(styles, elementsof(styles), sizeof(styles[0]), w);
