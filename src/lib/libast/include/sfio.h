@@ -359,11 +359,11 @@ extern char *sfstrseek(Sfio_t *, Sfoff_t, int);
 #define sfstruse(f) (sfputc((f), 0) < 0 ? NULL : (char *)((f)->next = (f)->data))
 // #define sfstrpend(f) ((f)->_size - sfstrtell())
 
-#define sfstrrsrv(f, n)                                                     \
+#define sfstrrsrv(f, n)                                                    \
     (sfreserve((f), (n), SF_WRITE | SF_LOCKR), sfwrite((f), (f)->next, 0), \
      ((f)->next + (n) <= (f)->data + (f)->size ? (char *)(f)->next : NULL))
 
-#define sfstrbuf(f, b, n, m)                                        \
+#define sfstrbuf(f, b, n, m)                                       \
     (sfsetbuf((f), (b), (n)), ((f)->flags |= (m) ? SF_MALLOC : 0), \
      ((f)->data == (unsigned char *)(b) ? 0 : -1))
 
