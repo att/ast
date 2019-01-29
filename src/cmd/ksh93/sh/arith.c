@@ -324,9 +324,8 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                 Namval_t *np = NULL;
                 int dot = 0;
                 while (1) {
-                    while (xp = str, c = mb1char(str), isaname(c)) {
-                        ;  // empty body
-                    }
+                    xp = str;
+                    while (c = mb1char(str), isaname(c)) xp = str;
                     str = xp;
                     while (c == '[' && dot == NV_NOADD) {
                         str = nv_endsubscript(NULL, str, 0, shp);
@@ -390,9 +389,8 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                         } else {
                             dot = NV_NOADD | NV_NOFAIL;
                             str++;
-                            while (xp = str, c = mb1char(str), isaname(c)) {
-                                ;  // empty body
-                            }
+                            xp = str;
+                            while (c = mb1char(str), isaname(c)) xp = str;
                             str = xp;
                         }
                     }
