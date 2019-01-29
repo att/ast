@@ -58,16 +58,16 @@ struct _sfdisc_s {
 };
 
 struct _sfio_s {
-    unsigned char *_next;    // next position to read/write from
-    unsigned char *_endw;    // end of write buffer
-    unsigned char *_endr;    // end of read buffer
-    unsigned char *_endb;    // end of buffer
-    struct _sfio_s *_push;   // the stream that was pushed on
-    unsigned short _flags;   // type of stream
-    short _file;             // file descriptor
-    unsigned char *_data;    // base of data buffer
-    ssize_t _size;           // buffer size
-    ssize_t _val;            // values or string lengths
+    unsigned char *next;     // next position to read/write from
+    unsigned char *endw;     // end of write buffer
+    unsigned char *endr;     // end of read buffer
+    unsigned char *endb;     // end of buffer
+    struct _sfio_s *push;    // the stream that was pushed on
+    unsigned short flags;    // type of stream
+    short file;              // file descriptor
+    unsigned char *data;     // base of data buffer
+    ssize_t size;            // buffer size
+    ssize_t val;             // values or string lengths
     Sfoff_t extent;          // current file size
     Sfoff_t here;            // current physical location
     unsigned char ngetr;     // sfgetr count
@@ -327,25 +327,25 @@ extern Sfoff_t sfsize(Sfio_t *);
 #define sfputm(f, v, m) (__sf_putm((f), (v), (m)))
 
 static inline int sfputc(Sfio_t *f, int c) {
-    if (f->_next >= f->_endw) return _sfflsbuf(f, (unsigned char)c);
-    *f->_next = (unsigned char)c;
-    f->_next += 1;
+    if (f->next >= f->endw) return _sfflsbuf(f, (unsigned char)c);
+    *f->next = (unsigned char)c;
+    f->next += 1;
     return c;
 }
 
 static inline int sfgetc(Sfio_t *f) {
-    if (f->_next >= f->_endr) return _sffilbuf(f, 0);
-    int c = (int)*f->_next;
-    f->_next += 1;
+    if (f->next >= f->endr) return _sffilbuf(f, 0);
+    int c = (int)*f->next;
+    f->next += 1;
     return c;
 }
 
-static inline int sffileno(Sfio_t *f) { return f->_file; }
-static inline int sfeof(Sfio_t *f) { return f->_flags & SF_EOF; }
-static inline int sferror(Sfio_t *f) { return f->_flags & SF_ERROR; }
-static inline void sfclrerr(Sfio_t *f) { f->_flags &= ~(SF_ERROR | SF_EOF); }
-static inline int sfstacked(Sfio_t *f) { return f->_push != NULL; }
-static inline ssize_t sfvalue(Sfio_t *f) { return f->_val; }
+static inline int sffileno(Sfio_t *f) { return f->file; }
+static inline int sfeof(Sfio_t *f) { return f->flags & SF_EOF; }
+static inline int sferror(Sfio_t *f) { return f->flags & SF_ERROR; }
+static inline void sfclrerr(Sfio_t *f) { f->flags &= ~(SF_ERROR | SF_EOF); }
+static inline int sfstacked(Sfio_t *f) { return f->push != NULL; }
+static inline ssize_t sfvalue(Sfio_t *f) { return f->val; }
 static inline ssize_t sfslen() { return _Sfi; }
 
 // GSF's string manipulation stuff.
@@ -353,19 +353,19 @@ extern char *sfstrseek(Sfio_t *, Sfoff_t, int);
 
 #define sfstropen() sfnew(0, 0, -1, -1, SF_READ | SF_WRITE | SF_STRING)
 #define sfstrclose(f) sfclose(f)
-#define sfstrsize(f) ((f)->_size)
-#define sfstrtell(f) ((f)->_next - (f)->_data)
-#define sfstrbase(f) ((char *)(f)->_data)
-#define sfstruse(f) (sfputc((f), 0) < 0 ? NULL : (char *)((f)->_next = (f)->_data))
+#define sfstrsize(f) ((f)->size)
+#define sfstrtell(f) ((f)->next - (f)->data)
+#define sfstrbase(f) ((char *)(f)->data)
+#define sfstruse(f) (sfputc((f), 0) < 0 ? NULL : (char *)((f)->next = (f)->data))
 // #define sfstrpend(f) ((f)->_size - sfstrtell())
 
 #define sfstrrsrv(f, n)                                                     \
-    (sfreserve((f), (n), SF_WRITE | SF_LOCKR), sfwrite((f), (f)->_next, 0), \
-     ((f)->_next + (n) <= (f)->_data + (f)->_size ? (char *)(f)->_next : NULL))
+    (sfreserve((f), (n), SF_WRITE | SF_LOCKR), sfwrite((f), (f)->next, 0), \
+     ((f)->next + (n) <= (f)->data + (f)->size ? (char *)(f)->next : NULL))
 
 #define sfstrbuf(f, b, n, m)                                        \
-    (sfsetbuf((f), (b), (n)), ((f)->_flags |= (m) ? SF_MALLOC : 0), \
-     ((f)->_data == (unsigned char *)(b) ? 0 : -1))
+    (sfsetbuf((f), (b), (n)), ((f)->flags |= (m) ? SF_MALLOC : 0), \
+     ((f)->data == (unsigned char *)(b) ? 0 : -1))
 
 // The following used to  be in "sfio_t.h". Because cleanups to other modules have removed the
 // handful of #include of that header outside of this header we have folded it into this header.

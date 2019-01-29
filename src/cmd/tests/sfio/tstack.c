@@ -153,10 +153,10 @@ tmain() {
     if (sfgetc(f1) != '0') terror("sfgetc failed");
 
     /* hack to create hidden reserved buffer */
-    f1->_file = fd[1];
+    f1->file = fd[1];
     if (sfwrite(f1, "4", 1) != 1) terror("Can't write to stream");
     sfsync(f1);
-    f1->_file = fd[0];
+    f1->file = fd[0];
     close(fd[1]);
 
     /* now stack stream */

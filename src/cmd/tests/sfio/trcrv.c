@@ -46,10 +46,10 @@ tmain() {
     sfsync(sfstdout);
 
     if (strcmp(sfgetr(sfstdin, '\n', 1), "111") != 0) terror("sfgetr failed1");
-    if (sfstdin->_endb > sfstdin->_next) terror("sfgetr reads too much1");
+    if (sfstdin->endb > sfstdin->next) terror("sfgetr reads too much1");
 
     if (strcmp(sfgetr(sfstdin, '\n', 1), "222") != 0) terror("sfgetr failed2");
-    if (sfstdin->_endb > sfstdin->_next) terror("sfgetr reads too much2");
+    if (sfstdin->endb > sfstdin->next) terror("sfgetr reads too much2");
 
     texit(0);
 }

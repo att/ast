@@ -1240,7 +1240,7 @@ static_fn char *get_table(Namval_t *np, Namfun_t *fp) {
     }
     sfputc(out, 0);
     if (base) dtview(root, base);
-    return (char *)out->_data;
+    return (char *)out->data;
 }
 
 static const Namdisc_t table_disc = {.dsize = sizeof(struct table),

@@ -43,7 +43,7 @@ int sfwalk(Sfwalk_f walkf, void *data, int type) {
         for (n = 0; n < p->n_sf;) {
             f = p->sf[n];
 
-            if (type != 0 && (f->_flags & type) != type) continue; /* not in the interested set */
+            if (type != 0 && (f->flags & type) != type) continue; /* not in the interested set */
 
             if ((rv = (*walkf)(f, data)) < 0) return rv;
 

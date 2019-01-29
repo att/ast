@@ -31,7 +31,6 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 
 #include "ast.h"
 #include "error.h"
@@ -70,7 +69,6 @@ static const char usage[] =
     "[D:dos-output?Output files are opened in \atext\amode which inserts carriage"
     "	returns in front of new-lines on some systems.]"
     "[E:show-ends?Causes a \b$\b to be inserted before each new-line.]"
-    "[R:regress?Regression test defaults: \b-v\b buffer size 4.]"
     "[S:silent?\bcat\b is silent about non-existent files.]"
     "[T:show-blank?Causes tabs to be copied as \b^I\b and formfeeds as \b^L\b.]"
 
@@ -107,27 +105,11 @@ static char *stdin_argv[] = {"-", NULL};
 
 #define printof(c) ((c) ^ 0100)
 
-typedef void *(*Reserve_f)(Sfio_t *, ssize_t, int);
-
-#ifndef sfvalue
-#define sfvalue(f) ((f)->_val)
-#endif
-
-static void *regress(Sfio_t *sp, ssize_t n, int f) {
-    void *r;
-    r = sfreserve(sp, 4, f);
-    if (!r)
-        r = sfreserve(sp, n, f);
-    else if (sfvalue(sp) > 4)
-        sfvalue(sp) = 4;
-    return r;
-}
-
 /*
  * called for any special output processing
  */
 
-static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int flags) {
+static int vcat(char *states, Sfio_t *ip, Sfio_t *op, int flags) {
     unsigned char *cp;
     unsigned char *pp;
     unsigned char *cur;
@@ -186,7 +168,7 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                                 *(cp = cur = end) = 0;
                             } else {
                                 memcpy(tmp, pp, c);
-                                nxt = (unsigned char *)(*reserve)(ip, SF_UNBOUND, 0);
+                                nxt = sfreserve(ip, SF_UNBOUND, 0);
                                 if (!nxt) {
                                     states[0] = sfvalue(ip) ? T_ERROR : T_EOF;
                                     *(cp = end = tmp + sizeof(tmp) - 1) = 0;
@@ -256,7 +238,7 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                     goto flush;
                 }
                 c = last;
-                nxt = (unsigned char *)(*reserve)(ip, SF_UNBOUND, 0);
+                nxt = sfreserve(ip, SF_UNBOUND, 0);
                 if (!nxt) {
                     *(cp = end = tmp + sizeof(tmp) - 1) = 0;
                     states[0] = (m = sfvalue(ip)) ? T_ERROR : T_EOF;
@@ -319,7 +301,7 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                     n = states[*++cp];
                     if (n == T_ENDBUF) {
                         if (cp < end || last != '\n') break;
-                        nxt = (unsigned char *)(*reserve)(ip, SF_UNBOUND, 0);
+                        nxt = sfreserve(ip, SF_UNBOUND, 0);
                         if (!nxt) {
                             states[0] = sfvalue(ip) ? T_ERROR : T_EOF;
                             cp = end = tmp;
@@ -361,7 +343,6 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
     char *cp;
     Sfio_t *fp;
     char *mode;
-    Reserve_f reserve = sfreserve;
     int att;
     int dovcat = 0;
     char states[UCHAR_MAX + 1];
@@ -396,9 +377,6 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
             case 'n':
                 n = N_FLAG;
                 break;
-            case 'R':
-                reserve = opt_info.num ? regress : sfreserve;
-                continue;
             case 's':
                 n = att ? F_FLAG : S_FLAG;
                 break;
@@ -475,7 +453,7 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
         }
         if (flags & U_FLAG) sfsetbuf(fp, (void *)fp, -1);
         if (dovcat) {
-            n = vcat(states, fp, sfstdout, reserve, flags);
+            n = vcat(states, fp, sfstdout, flags);
         } else if (sfmove(fp, sfstdout, SF_UNBOUND, -1) >= 0 && sfeof(fp)) {
             n = 0;
         } else {

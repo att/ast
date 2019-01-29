@@ -789,7 +789,7 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
     }
     if (isarray == 1 && !nq) {
         int c = json ? ':' : '=';
-        if (wp->out->_next[-1] != c) return;
+        if (wp->out->next[-1] != c) return;
         if (json) sfputc(wp->out, ' ');
         sfputc(wp->out, json ? '[' : '(');
         if (wp->indent >= 0) sfputc(wp->out, '\n');
@@ -1128,7 +1128,7 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
     if (!outfile) return NULL;
     sfputc(out, 0);
     sfseek(out, off, SEEK_SET);
-    return (char *)out->_data + off;
+    return (char *)out->data + off;
 }
 
 Namfun_t *nv_isvtree(Namval_t *np) {

@@ -61,7 +61,7 @@ tmain() {
     alarm(2);
     if (!(s = sfgetr(sfstdin, '\n', 1)) || strcmp(s, "01234") != 0) terror("Expecting 01234");
 
-    if (sfstdin->_next < sfstdin->_endb) terror("Sfgetr read too much");
+    if (sfstdin->next < sfstdin->endb) terror("Sfgetr read too much");
 
     if (!(s = sfgetr(sfstdin, '\n', 1)) || strcmp(s, "56789") != 0) terror("Expecting 56789");
 

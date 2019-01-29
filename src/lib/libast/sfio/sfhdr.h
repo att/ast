@@ -65,31 +65,16 @@
 **	Written by Kiem-Phong Vo
 */
 
-#define _next next
-#define _endw endw
-#define _endr endr
-#define _endb endb
-#define _push push
-#define _flags flags
-#define _file file
-#define _data data
-#define _size size
-#define _val val
-
+#include "ast.h"
+#include "ast_float.h"
 #include "ast_mmap.h"
+#include "ast_tty.h"
 #include "sfio.h"
-
-/* note that the macro vt_threaded has effect on vthread.h */
-#include "vthread.h"
+#include "vthread.h"  // note that the macro vt_threaded has effect on vthread.h
 
 /* file system info */
 
-#include "ast.h"
-#include "ast_tty.h"
-
 #define sfoff_t off_t
-
-#include "ast_float.h"
 
 /* deal with multi-byte character and string conversions */
 

@@ -249,22 +249,22 @@ done:
 char *sfstrseek(Sfio_t *f, Sfoff_t p, int type) {
     switch (type) {
         case SEEK_SET: {
-            if (p < 0 || p > f->_size) return NULL;
-            f->_next = f->_data + p;
-            return (char *)f->_next;
+            if (p < 0 || p > f->size) return NULL;
+            f->next = f->data + p;
+            return (char *)f->next;
         }
         case SEEK_CUR: {
-            f->_next += p;
-            if (f->_next < f->_data || f->_next > f->_data + f->_size) {
-                f->_next -= p;
+            f->next += p;
+            if (f->next < f->data || f->next > f->data + f->size) {
+                f->next -= p;
                 return NULL;
             }
-            return (char *)f->_next;
+            return (char *)f->next;
         }
         case SEEK_END: {
-            if (p > 0 || f->_size < -p) return NULL;
-            f->_next = f->_data + f->_size + p;
-            return (char *)f->_next;
+            if (p > 0 || f->size < -p) return NULL;
+            f->next = f->data + f->size + p;
+            return (char *)f->next;
         }
         default: { abort(); }
     }

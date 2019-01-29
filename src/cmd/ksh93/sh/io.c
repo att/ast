@@ -982,7 +982,7 @@ static_fn int iovex_child(void *context, uintmax_t fd1, uintmax_t fd2) {
         spnew = sh_iostream(shp, fd1, fd1);
         shp->fdstatus[fd2] = (shp->fdstatus[fd1] & ~IOCLEX);
         if (sfswap(spnew, sp) != sp) abort();
-        sp->_file = fd2;
+        sp->file = fd2;
         sfset(sp, SF_SHARE | SF_PUBLIC, 1);
     }
 #endif
@@ -1246,7 +1246,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                                 Sfoff_t last = sfseek(sp, 0, SEEK_END);
                                 unlink(tmpname);
                                 free(tmpname);
-                                write(f, sp->_data, (size_t)last);
+                                write(f, sp->data, (size_t)last);
                                 lseek(f, 0, SEEK_SET);
                                 // Associate the stream with the temp file descriptor. We don't
                                 // close then reopen the stream because the stream pointed to by
@@ -1630,7 +1630,7 @@ static_fn int io_heredoc(Shell_t *shp, struct ionod *iop, const char *name, int 
         if (traceon) sfprintf(sfstderr, "< %s\n", name);
         sfputr(outfile, name, '\n');
         sfputc(outfile, 0);
-        outfile->_next--;
+        outfile->next--;
     } else {
         // The locking is only needed in case & blocks process here-docs so
         // this can be eliminted in some cases.
