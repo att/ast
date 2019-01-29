@@ -1437,8 +1437,10 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                         goto fail;
                     }
                     if (!sp) sp = sh_iostream(shp, fn, fn);
+                    // Note that `sp` has to be non-NULL at this juncture.
+                    // See https://github.com/att/ast/issues/1140
                     r = io_patseek(shp, rp, sp, iof);
-                    if (sp && flag == 3) {
+                    if (flag == 3) {
                         // Close stream but not fn.
                         sfsetfd(sp, -1);
                         sfclose(sp);
