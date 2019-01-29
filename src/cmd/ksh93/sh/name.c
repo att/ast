@@ -17,8 +17,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#define putenv ___putenv
-
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
@@ -2626,23 +2624,10 @@ char *sh_getenv(const char *name) {
     return NULL;
 }
 
-// TODO: Remove this. There should be an explicit ksh interface by which plugins can put vars into
-// the set of exported env vars. Not to mention that if you're going to do this you also have to
-// intercept `setenv()` which isn't done.
-#undef putenv
 //
-// This version of putenv uses the hash storage to assign environment values.
+// This uses namval hash storage to manage environment vars rather than the
+// libc mechanism as would be done by putenv(), setenv(), or unsetenv().
 //
-int putenv(const char *name) {
-    Shell_t *shp = sh_getinterp();
-    Namval_t *np;
-    if (name) {
-        np = nv_open(name, shp->var_tree, NV_EXPORT | NV_IDENT | NV_NOARRAY | NV_ASSIGN);
-        if (!strchr(name, '=')) _nv_unset(np, 0);
-    }
-    return 0;
-}
-
 char *sh_setenviron(const char *name) {
     assert(name);
 
