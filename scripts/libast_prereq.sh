@@ -25,9 +25,18 @@ fi
 
 cd "$MESON_BUILD_ROOT"
 
+if cc --version | grep -q "GCC"
+then
+    gcc_major_version=$(cc -dumpversion | cut -d. -f1)
+    if [ "$gcc_major_version" -ge 9 ]
+    then
+        extra_flags="-fno-diagnostics-show-line-numbers"
+    fi
+fi
+
 # Generate the conftab.[ch] source files.
 # shellcheck disable=SC2086
-"$comp_dir/conf.sh" $CC -std=gnu99 -D_BLD_DLL $INC_DIRS
+"$comp_dir/conf.sh" $CC -std=gnu99 -D_BLD_DLL $INC_DIRS $extra_flags
 
 # Generate header files whose content depends on the current platform.
 "$MESON_SOURCE_ROOT/scripts/siglist.sh" > features/siglist.h
