@@ -164,6 +164,11 @@ AT&T KornShell users.
 
 ### Mailing lists
 
+You can track announcements and ask question or
+report problems at korn-shell@googlegroups.com or
+https://groups.google.com/d/forum/korn-shell as an alternative to watching
+this Github project.
+
 Archives of the AST mailing lists (which is mostly about ksh) are available at:
 https://marc.info/?l=ast-developers and https://marc.info/?l=ast-users.
 
