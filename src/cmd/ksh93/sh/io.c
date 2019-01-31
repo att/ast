@@ -703,8 +703,8 @@ int sh_iomovefd(Shell_t *shp, int fdold) {
 }
 
 //
-// Create a pipe and print message on failure. File descriptors will be >2 and
-// close-on-exec.
+// Create a pipe and print message on failure. File descriptors will be >2 and close-on-exec. This
+// may create a pipe using _io_socketpair() if a usable socketpair() is provided by the platform.
 //
 int sh_pipe(int pv[]) {
     Shell_t *shp = sh_getinterp();
@@ -716,10 +716,8 @@ int sh_pipe(int pv[]) {
     }
     if (!sh_iovalidfd(shp, fd[0])) abort();
     if (!sh_iovalidfd(shp, fd[1])) abort();
-#if _pipe_socketpair && !_stream_peek
     if (pv[0] > 2) (void)fcntl(pv[0], F_SETFD, FD_CLOEXEC);
     if (pv[1] > 2) (void)fcntl(pv[1], F_SETFD, FD_CLOEXEC);
-#endif
     if (pv[0] <= 2) pv[0] = sh_iomovefd(shp, pv[0]);
     if (pv[1] <= 2) pv[1] = sh_iomovefd(shp, pv[1]);
     shp->fdstatus[pv[0]] = IONOSEEK | IOREAD | IOCLEX;
@@ -748,6 +746,10 @@ void sh_rpipe(int pv[]) {
     }
     shp->fdstatus[pv[0]] = IONOSEEK | IOREAD | IOCLEX;
     shp->fdstatus[pv[1]] = IONOSEEK | IOWRITE | IOCLEX;
+#if !_lib_pipe2
+    if (pv[0] > 2) (void)fcntl(pv[0], F_SETFD, FD_CLOEXEC);
+    if (pv[1] > 2) (void)fcntl(pv[1], F_SETFD, FD_CLOEXEC);
+#endif
     if (pv[0] <= 2) pv[0] = sh_iomovefd(shp, pv[0]);
     if (pv[1] <= 2) pv[1] = sh_iomovefd(shp, pv[1]);
     sh_subsavefd(pv[0]);
