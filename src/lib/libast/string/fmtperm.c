@@ -32,10 +32,8 @@
 #include "ast.h"
 
 char *fmtperm(int perm) {
-    char *s;
-    char *buf;
-
-    s = buf = fmtbuf(32);
+    static char strbuf[32];
+    char *s = strbuf;
 
     /*
      * u
@@ -73,5 +71,5 @@ char *fmtperm(int perm) {
     if (perm & S_IWOTH) *s++ = 'w';
     if (perm & S_IXOTH) *s++ = 'x';
     *s = 0;
-    return buf;
+    return strbuf;
 }
