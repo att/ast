@@ -1162,14 +1162,6 @@ int sh_type(const char *path) {
 
 #if 0
 // TODO: Decide if this function serves a purpose.
-static_fn char *get_mode(Namval_t *np, Namfun_t *nfp) {
-    mode_t mode = nv_getn(np, nfp);
-    return fmtperm(mode);
-}
-#endif
-
-#if 0
-// TODO: Decide if this function serves a purpose.
 static_fn void put_mode(Namval_t *np, const char *val, int flag, Namfun_t *nfp) {
     if (val) {
         mode_t mode;

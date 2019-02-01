@@ -166,8 +166,10 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
             if ((st.st_mode & (S_ISVTX | S_ISUID | S_ISGID)) !=
                     (mode & (S_ISVTX | S_ISUID | S_ISGID)) &&
                 chmod(path, mode)) {
-                error(ERROR_system(0), "%s: cannot change mode from %s to %s", path,
-                      fmtperm(st.st_mode & (S_ISVTX | S_ISUID | S_ISGID)), fmtperm(mode));
+                char *st_mode_str = strdup(fmtperm(st.st_mode & (S_ISVTX | S_ISUID | S_ISGID)));
+                error(ERROR_system(0), "%s: cannot change mode from %s to %s", path, st_mode_str,
+                      fmtperm(mode));
+                free(st_mode_str);
                 break;
             }
         }
