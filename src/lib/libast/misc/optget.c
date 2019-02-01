@@ -332,8 +332,9 @@ static_fn char *optget_secname(char *section) {
     char *b;
     char *t;
     const char *s;
+    static char tmpbuf[64];
 
-    b = t = fmtbuf(64);
+    b = t = tmpbuf;
     if (section[1]) {
         switch (section[2] ? section[2] : section[1]) {
             case 'C':

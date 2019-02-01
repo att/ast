@@ -203,7 +203,7 @@ extern const char *addr2info(void *p);
 extern void dump_backtrace(int max_frames);
 extern void run_lsof();
 extern char *fmtbase(int64_t, int, int);
-extern char *fmtbuf(size_t);
+extern char *fmtbuf(size_t);  // to be used only by the "string" subsystem
 extern char *fmtelapsed(unsigned long, int);
 extern char *fmterror(int);
 extern char *fmtesc(const char *);
