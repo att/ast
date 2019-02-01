@@ -218,7 +218,6 @@ extern char *fmtperm(int);
 extern char *fmtquote(const char *, const char *, const char *, size_t, int);
 extern char *fmtre(const char *);
 extern char *fmtscale(Sfulong_t, int);
-extern char *fmttime(const char *, time_t);
 extern void *memdup(const void *, size_t);
 extern char *pathaccess(const char *, const char *, const char *, int, char *, size_t);
 extern char *pathbin(void);

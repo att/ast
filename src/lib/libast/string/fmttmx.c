@@ -25,7 +25,7 @@
 #include "tmx.h"
 
 /*
- * Time_t fmttime()
+ * Time_t fmttmx()
  */
 
 char *fmttmx(const char *fmt, Time_t t) {
