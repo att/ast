@@ -204,11 +204,17 @@ static State_t state = {"getconf",
 static_fn char *astconf_feature(Feature_t *, const char *, const char *, const char *, unsigned int,
                                 Error_f);
 
-/*
- * return fmtbuf() copy of s
- */
-
-static_fn char *astconf_buffer(char *s) { return strcpy(fmtbuf(strlen(s) + 1), s); }
+//
+// This deliberately uses `strdup()` rather than `fmtbuf()` and thus leaks memory. That should be
+// okay given that a) the only consumer of this data is the `getconf` builtin, b) that builtin is
+// not enabled by default, and c) even if it is enabled no normal program will invoke it more than a
+// few times.
+//
+// TODO: Rewrite this module to not depend on `fmtbuf()` static buf semantics or just eliminate
+// the entire module. See https://github.com/att/ast/issues/962.
+//
+// static_fn char *astconf_buffer(char *s) { return strcpy(fmtbuf(strlen(s) + 1), s); }
+static_fn char *astconf_buffer(char *s) { return strdup(s); }
 
 /*
  * synthesize state for fp
@@ -810,10 +816,9 @@ static_fn char *astconf_fmtlower(const char *s) {
     char *t;
     char *b;
 
-    b = t = fmtbuf(strlen(s) + 1);
+    b = t = malloc(strlen(s) + 1);
     while ((c = *s++)) {
-        if (isupper(c)) c = tolower(c);
-        *t++ = c;
+        *t++ = tolower(c);
     }
     *t = 0;
     return b;
@@ -1080,15 +1085,18 @@ static_fn char *astconf_print(Sfio_t *sp, Lookup_t *look, const char *name, cons
                     (!(listflags & ASTCONF_base) || p->standard != CONF_POSIX)) {
                     if ((p->flags & CONF_UNDERSCORE) && !(listflags & ASTCONF_base))
                         sfprintf(sp, "_");
-                    sfprintf(sp, "%s",
-                             (listflags & ASTCONF_lower)
-                                 ? astconf_fmtlower(prefix[p->standard].name)
-                                 : prefix[p->standard].name);
+                    char *lower = listflags & ASTCONF_lower
+                                      ? astconf_fmtlower(prefix[p->standard].name)
+                                      : (char *)prefix[p->standard].name;
+                    sfprintf(sp, "%s", s);
+                    if (listflags & ASTCONF_lower) free(lower);
                     if (p->section > 1) sfprintf(sp, "%d", p->section);
                     sfprintf(sp, "_");
                 }
-                sfprintf(sp,
-                         "%s=", (listflags & ASTCONF_lower) ? astconf_fmtlower(p->name) : p->name);
+                char *lower =
+                    listflags & ASTCONF_lower ? astconf_fmtlower(p->name) : (char *)p->name;
+                sfprintf(sp, "%s=", lower);
+                if (listflags & ASTCONF_lower) free(lower);
             }
             if (flags & CONF_ERROR)
                 sfprintf(sp, "error");
@@ -1109,11 +1117,14 @@ static_fn char *astconf_print(Sfio_t *sp, Lookup_t *look, const char *name, cons
         if (!name && !(listflags & ASTCONF_base) && !(p->flags & CONF_STRING) &&
             (p->flags & (CONF_FEATURE | CONF_MINMAX))) {
             if (p->flags & CONF_UNDERSCORE) sfprintf(sp, "_");
-            sfprintf(sp, "%s",
-                     (listflags & ASTCONF_lower) ? astconf_fmtlower(prefix[p->standard].name)
-                                                 : prefix[p->standard].name);
+            char *lower = listflags & ASTCONF_lower ? astconf_fmtlower(prefix[p->standard].name)
+                                                    : (char *)prefix[p->standard].name;
+            sfprintf(sp, "%s", lower);
+            if (listflags & ASTCONF_lower) free(lower);
             if (p->section > 1) sfprintf(sp, "%d", p->section);
-            sfprintf(sp, "_%s=", (listflags & ASTCONF_lower) ? astconf_fmtlower(p->name) : p->name);
+            lower = listflags & ASTCONF_lower ? astconf_fmtlower(p->name) : (char *)p->name;
+            sfprintf(sp, "_%s=", lower);
+            if (listflags & ASTCONF_lower) free(lower);
             if (!defined && !name && (p->flags & CONF_MINMAX_DEF)) {
                 defined = 1;
                 v = p->minmax.number;
@@ -1434,14 +1445,18 @@ void astconflist(Sfio_t *sp, const char *path, int flags, const char *pattern) {
                 sfprintf(sp, "%*s %*s %d %2s %4d %5s %s\n", sizeof(conf[0].name), fp->name,
                          sizeof(prefix[fp->standard].name), prefix[fp->standard].name, 1, call, 0,
                          flg, s);
-            } else if (flags & ASTCONF_parse)
-                sfprintf(sp, "%s %s - %s\n", state.id,
-                         (flags & ASTCONF_lower) ? astconf_fmtlower(fp->name) : fp->name,
+            } else if (flags & ASTCONF_parse) {
+                char *lower = flags & ASTCONF_lower ? astconf_fmtlower(fp->name) : (char *)fp->name;
+                sfprintf(sp, "%s %s - %s\n", state.id, lower,
                          fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL));
-            else
+                if (flags & ASTCONF_lower) free(lower);
+            } else {
+                char *lower = flags & ASTCONF_lower ? astconf_fmtlower(fp->name) : (char *)fp->name;
                 sfprintf(
-                    sp, "%s=%s\n", (flags & ASTCONF_lower) ? astconf_fmtlower(fp->name) : fp->name,
+                    sp, "%s=%s\n", lower,
                     (flags & ASTCONF_quote) ? fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL) : s);
+                if (flags & ASTCONF_lower) free(lower);
+            }
         }
     }
     if (pattern) regfree(&re);
