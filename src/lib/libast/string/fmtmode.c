@@ -35,12 +35,13 @@
 char *fmtmode(int mode, int external) {
     char *s;
     struct modeop *p;
-    char *buf;
+    static char strbuf[MODELEN + 1];
 
     if (!external) mode = modex(mode);
-    s = buf = fmtbuf(MODELEN + 1);
-    for (p = modetab; p < &modetab[MODELEN]; p++)
+    s = strbuf;
+    for (p = modetab; p < &modetab[MODELEN]; p++) {
         *s++ = p->name[((mode & p->mask1) >> p->shift1) | ((mode & p->mask2) >> p->shift2)];
+    }
     *s = 0;
-    return buf;
+    return strbuf;
 }
