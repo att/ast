@@ -238,7 +238,6 @@ extern char *sh_setenviron(const char *);
 extern char *strcopy(char *, const char *);
 extern unsigned long strelapsed(const char *, char **, int);
 extern int stresc(char *);
-extern int strexp(char *, int);
 extern int strgrpmatch(const char *, const char *, ssize_t *, int, int);
 extern int strngrpmatch(const char *, size_t, const char *, ssize_t *, int, int);
 extern int strmatch(const char *, const char *);

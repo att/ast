@@ -31,7 +31,7 @@
 
 #include "ast.h"
 
-int strexp(char *s, int flags) {
+static_fn int strexp(char *s, int flags) {
     char *t;
     int c;
     char *b;
