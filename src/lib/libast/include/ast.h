@@ -244,7 +244,6 @@ extern int strngrpmatch(const char *, size_t, const char *, ssize_t *, int, int)
 extern int strmatch(const char *, const char *);
 extern int strperm(const char *, char **, int);
 extern void strsort(char **, int, Strcmp_f);
-extern void strsort_r(char **, size_t, Strcmp_context_f, void *);
 extern char *strsubmatch(const char *, const char *, int);
 extern long strton(const char *, char **, char *, int);
 extern intmax_t strtonll(const char *, char **, char *, int);
