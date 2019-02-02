@@ -10,7 +10,7 @@ libast_files += [
     'string/fmttime.c', 'string/fmttmx.c',
     'string/memdup.c', 'string/modedata.c', 'string/modei.c',
     'string/modex.c',
-    'string/strcopy.c', 'string/strelapsed.c', 'string/stresc.c',
+    'string/strelapsed.c', 'string/stresc.c',
     'string/strlcat.c', 'string/strlcpy.c',
     'string/strmatch.c',
     'string/strperm.c',

@@ -925,7 +925,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
     nq = nv_namptr(pp->nodes, 0);
     nq->nvname = cp;
     nv_onattr(nq, NV_MINIMAL);
-    cp = strcopy(cp, NV_DATA);
+    cp = stpcpy(cp, NV_DATA);
     *cp++ = 0;
     nq->nvshell = mp->nvshell;
     for (name = 0, offset = 0, k = i = 1; i < numnodes; i++) {
@@ -946,7 +946,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
             if (j >= nd) {
                 pp->names[nd] = cp;
                 mnodes[nd++] = nodes[i];
-                cp = strcopy(cp, sp);
+                cp = stpcpy(cp, sp);
                 *cp++ = 0;
             }
             nv_onattr(mnodes[j], NV_NOFREE);
@@ -1015,7 +1015,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
             // Need to save the string pointer.
             nv_offattr(np, NV_EXPORT);
             help[k - 1] = cp;
-            cp = strcopy(cp, np->nvenv);
+            cp = stpcpy(cp, np->nvenv);
             j = *help[k - 1];
             if (islower(j)) *help[k - 1] = toupper(j);
             *cp++ = 0;
@@ -1023,7 +1023,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
         }
         nq->nvname = cp;
         dsize = nv_datasize(np, &offset);
-        cp = strcopy(name = cp, &np->nvname[m]);
+        cp = stpcpy(name = cp, &np->nvname[m]);
         n = cp - name;
         *cp++ = 0;
         nq->nvsize = np->nvsize;
@@ -1068,10 +1068,10 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                 nq->nvsize = nr->nvsize;
                 offset += dsize;
                 if (*cname != '_' || cname[1]) {
-                    cp = strcopy(cp, cname);
+                    cp = stpcpy(cp, cname);
                     *cp++ = '.';
                 }
-                cp = strcopy(cp, nr->nvname);
+                cp = stpcpy(cp, nr->nvname);
                 *cp++ = 0;
             }
             while ((i + 1) < numnodes && (cname = &nodes[i + 1]->nvname[m]) &&

@@ -75,7 +75,6 @@ string:
 
 	chresc		return next char in string converting \ sequences
 	ctoi		convert char constant string to int
-	strcopy		like strcpy(3) but returns end of destination
 	strdup		malloc(3) and strcpy(3) smashed together
 	strerror	return error message string given errno
 	stresc		convert \ sequences in string in place

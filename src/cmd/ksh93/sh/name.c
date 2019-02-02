@@ -1799,7 +1799,7 @@ static_fn char *staknam(Shell_t *shp, Namval_t *np, char *value) {
     char *p, *q;
 
     q = stkalloc(shp->stk, strlen(nv_name(np)) + (value ? strlen(value) : 0) + 2);
-    p = strcopy(q, nv_name(np));
+    p = stpcpy(q, nv_name(np));
     if (value) {
         *p++ = '=';
         strcpy(p, value);
@@ -1834,7 +1834,7 @@ static_fn void attstore(Namval_t *np, void *data) {
             *ap->attval = ' ';
         }
     }
-    ap->attval = strcopy(++ap->attval, nv_name(np));
+    ap->attval = stpcpy(++ap->attval, nv_name(np));
 }
 
 static_fn void pushnam(Namval_t *np, void *data) {
@@ -1875,7 +1875,7 @@ char **sh_envgen(Shell_t *shp) {
     if (shp->nenv) memcpy((void *)er, environ, shp->nenv * sizeof(char *));
     nv_scan(shp->var_tree, pushnam, &data, NV_EXPORT, NV_EXPORT);
     *data.argnam = (char *)stkalloc(shp->stk, data.attsize);
-    cp = data.attval = strcopy(*data.argnam, e_envmarker);
+    cp = data.attval = stpcpy(*data.argnam, e_envmarker);
     nv_scan(shp->var_tree, attstore, &data, 0,
             (NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER));
     *data.attval = 0;

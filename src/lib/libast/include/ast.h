@@ -235,7 +235,6 @@ extern int pathstat(const char *, struct stat *);
 extern char *ast_temp_path(const char *prefix);
 extern char *ast_temp_file(const char *dir, const char *prefix, int *fd, int open_flags);
 extern char *sh_setenviron(const char *);
-extern char *strcopy(char *, const char *);
 extern unsigned long strelapsed(const char *, char **, int);
 extern int stresc(char *);
 extern int strgrpmatch(const char *, const char *, ssize_t *, int, int);

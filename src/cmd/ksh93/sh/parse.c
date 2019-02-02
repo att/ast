@@ -817,7 +817,7 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
             t->funct.functargs->comarg = (struct argnod *)dp;
             for (cp = (char *)&argv[nargs]; (sp = *old++); cp++) {
                 *argv++ = cp;
-                cp = strcopy(cp, sp);
+                cp = stpcpy(cp, sp);
             }
             *argv = 0;
         }

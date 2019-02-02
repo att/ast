@@ -398,7 +398,7 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
         if (*out) left = stkcopy(shp->stk, out);
         if (cmd_completion && mode == '\\') {
             cp = *com++;
-            out = strcopy(begin, path_basename(cp));
+            out = stpcpy(begin, path_basename(cp));
         } else if (mode == '*') {
             if (ep->e_nlist && dir && var) {
                 if (*cp == var) {
@@ -406,14 +406,14 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
                 } else {
                     *begin++ = var;
                 }
-                out = strcopy(begin, cp);
+                out = stpcpy(begin, cp);
                 var = 0;
             } else {
-                out = strcopy(begin, fmtx(shp, *com));
+                out = stpcpy(begin, fmtx(shp, *com));
             }
             com++;
         } else {
-            out = strcopy(begin, *com++);
+            out = stpcpy(begin, *com++);
         }
         if (mode == '\\') {
             saveout = ++out;
@@ -435,10 +435,10 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
                         (np = nv_search(begin, shp->track_tree, NV_ADD))) {
                         path_alias(np, pp);
                     }
-                    out = strcopy(begin, cp);
+                    out = stpcpy(begin, cp);
                 }
                 // Add quotes if necessary.
-                if ((cp = fmtx(shp, begin)) != begin) out = strcopy(begin, cp);
+                if ((cp = fmtx(shp, begin)) != begin) out = stpcpy(begin, cp);
                 if (var == '$' && begin[-1] == '{') {
                     *out = '}';
                 } else {
@@ -446,14 +446,14 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
                 }
                 *++out = 0;
             } else if ((cp = fmtx(shp, begin)) != begin) {
-                out = strcopy(begin, cp);
+                out = stpcpy(begin, cp);
                 if (out[-1] == '"' || out[-1] == '\'') *--out = 0;
             }
             if (*begin == 0 && begin[-1] != ' ') ed_ringbell();
         } else {
             while (*com) {
                 *out++ = ' ';
-                out = strcopy(out, fmtx(shp, *com++));
+                out = stpcpy(out, fmtx(shp, *com++));
             }
         }
         if (ep->e_nlist) {
@@ -472,7 +472,7 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
         }
         *cur = (out - outbuff);
         // Restore rest of buffer.
-        if (left) out = strcopy(out, left);
+        if (left) out = stpcpy(out, left);
         *eol = (out - outbuff);
     }
 
@@ -544,8 +544,8 @@ int ed_fulledit(Edit_t *ep) {
         sh_onstate(ep->sh, SH_HISTORY);
         hist_flush(shgd->hist_ptr);
     }
-    cp = strcopy((char *)ep->e_inbuf, e_runvi);
-    cp = strcopy(cp, fmtbase((long)ep->e_hline, 10, 0));
+    cp = stpcpy((char *)ep->e_inbuf, e_runvi);
+    cp = stpcpy(cp, fmtbase((long)ep->e_hline, 10, 0));
     ep->e_eol =
         ((unsigned char *)cp - (unsigned char *)ep->e_inbuf) - (sh_isoption(ep->sh, SH_VI) != 0);
     return 0;
