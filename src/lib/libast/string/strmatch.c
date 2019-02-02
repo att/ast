@@ -159,19 +159,3 @@ int strgrpmatch(const char *b, const char *p, ssize_t *sub, int n, int flags) {
 int strmatch(const char *s, const char *p) {
     return strngrpmatch(s, strlen(s), p, NULL, 0, STR_MAXIMAL | STR_LEFT | STR_RIGHT);
 }
-
-/*
- * leading substring match
- * first char after end of substring returned
- * 0 returned if no match
- *
- * OBSOLETE: use strgrpmatch()
- */
-
-char *strsubmatch(const char *s, const char *p, int flags) {
-    ssize_t match[2];
-
-    return strngrpmatch(s, strlen(s), p, match, 1, (flags ? STR_MAXIMAL : 0) | STR_LEFT)
-               ? (char *)s + match[1]
-               : NULL;
-}
