@@ -74,7 +74,7 @@ static const int flagval[] = {
 
 #define NUM_OPTS (sizeof(flagval) / sizeof(*flagval))
 
-typedef struct _arg_ {
+typedef struct Shell_arg {
     Shell_t *sh;
     struct dolnod *argfor;  // linked list of blocks to be cleaned up
     struct dolnod *dolh;
@@ -191,12 +191,10 @@ static_fn int numsort(const char *s1, const char *s2) {
 
 // ======== option handling ========
 
-void *sh_argopen(Shell_t *shp) {
-    void *addr = calloc(1, sizeof(Arg_t));
-    Arg_t *ap = (Arg_t *)addr;
-
+Arg_t *sh_argopen(Shell_t *shp) {
+    Arg_t *ap = calloc(1, sizeof(Arg_t));
     ap->sh = shp;
-    return addr;
+    return ap;
 }
 
 static_fn int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
@@ -227,7 +225,7 @@ static_fn int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
 int sh_argopts(int argc, char *argv[], void *context) {
     Shell_t *shp = (Shell_t *)context;
     int n, o;
-    Arg_t *ap = (Arg_t *)(shp->arg_context);
+    Arg_t *ap = shp->arg_context;
     Lex_t *lp = (Lex_t *)(shp->lex_context);
     Shopt_t newflags;
     int setflag = 0, action = 0, trace = (int)sh_isoption(shp, SH_XTRACE);
@@ -592,7 +590,7 @@ void sh_applyopts(Shell_t *shp, Shopt_t newflags) {
     if (sh_isoption(shp, SH_INTERACTIVE)) off_option(&newflags, SH_NOEXEC);
     if (is_option(&newflags, SH_PRIVILEGED)) on_option(&newflags, SH_NOUSRPROFILE);
     int is_privileged = is_option(&newflags, SH_PRIVILEGED) != sh_isoption(shp, SH_PRIVILEGED);
-    int is_privileged_off = is_option(&((Arg_t *)shp->arg_context)->sh->offoptions, SH_PRIVILEGED);
+    int is_privileged_off = is_option(&(shp->arg_context)->sh->offoptions, SH_PRIVILEGED);
     if ((!sh_isstate(shp, SH_INIT) && is_privileged) ||
         (sh_isstate(shp, SH_INIT) && is_privileged_off && shp->gd->userid != shp->gd->euserid)) {
         if (!is_option(&newflags, SH_PRIVILEGED)) {
@@ -651,7 +649,7 @@ void sh_applyopts(Shell_t *shp, Shopt_t newflags) {
 // Returns the value of $-.
 char *sh_argdolminus(void *context) {
     Shell_t *shp = (Shell_t *)context;
-    Arg_t *ap = (Arg_t *)shp->arg_context;
+    Arg_t *ap = shp->arg_context;
     const char *cp = optksh;
     char *flagp = ap->flagadr;
     while (cp < &optksh[NUM_OPTS]) {
@@ -681,7 +679,7 @@ static_fn void sh_argset(Arg_t *ap, char *argv[]) {
 struct dolnod *sh_argfree(Shell_t *shp, struct dolnod *blk) {
     struct dolnod *argr = blk;
     struct dolnod *argblk;
-    Arg_t *ap = (Arg_t *)shp->arg_context;
+    Arg_t *ap = shp->arg_context;
     argblk = argr;
     if (!argblk) return argr;
     if (--argblk->dolrefcnt != 0) return argr;
@@ -730,7 +728,7 @@ struct dolnod *sh_argcreate(char *argv[]) {
 
 // Used to set new arguments for functions.
 struct dolnod *sh_argnew(Shell_t *shp, char *argi[], struct dolnod **savargfor) {
-    Arg_t *ap = (Arg_t *)shp->arg_context;
+    Arg_t *ap = shp->arg_context;
     struct dolnod *olddolh = ap->dolh;
     *savargfor = ap->argfor;
     ap->dolh = 0;
@@ -741,7 +739,7 @@ struct dolnod *sh_argnew(Shell_t *shp, char *argi[], struct dolnod **savargfor) 
 
 // Reset arguments as they were before function.
 void sh_argreset(Shell_t *shp, struct dolnod *blk, struct dolnod *afor) {
-    Arg_t *ap = (Arg_t *)shp->arg_context;
+    Arg_t *ap = shp->arg_context;
     while ((ap->argfor = sh_argfree(shp, ap->argfor))) {
         ;  // empty block
     }
@@ -756,7 +754,7 @@ void sh_argreset(Shell_t *shp, struct dolnod *blk, struct dolnod *afor) {
 // Increase the use count so that an sh_argset will not make it go away.
 struct dolnod *sh_arguse(Shell_t *shp) {
     struct dolnod *dh;
-    Arg_t *ap = (Arg_t *)shp->arg_context;
+    Arg_t *ap = shp->arg_context;
     dh = ap->dolh;
     if (dh) dh->dolrefcnt++;
     return dh;
