@@ -665,7 +665,7 @@ char *sh_argdolminus(void *context) {
 
 // Set up positional parameters.
 static_fn void sh_argset(Arg_t *ap, char *argv[]) {
-    sh_argfree(ap->sh, ap->dolh, 0);
+    sh_argfree(ap->sh, ap->dolh);
     ap->dolh = sh_argcreate(argv);
     // Link into chain.
     ap->dolh->dolnxt = ap->argfor;
@@ -678,8 +678,7 @@ static_fn void sh_argset(Arg_t *ap, char *argv[]) {
 // If count is greater than 1 decrement count and return same blk.
 // Free the argument list if the use count is 1 and return next blk.
 // Delete the blk from the argfor chain.
-// If flag is set, then the block dolh is not freed.
-struct dolnod *sh_argfree(Shell_t *shp, struct dolnod *blk, int flag) {
+struct dolnod *sh_argfree(Shell_t *shp, struct dolnod *blk) {
     struct dolnod *argr = blk;
     struct dolnod *argblk;
     Arg_t *ap = (Arg_t *)shp->arg_context;
@@ -688,22 +687,18 @@ struct dolnod *sh_argfree(Shell_t *shp, struct dolnod *blk, int flag) {
     if (--argblk->dolrefcnt != 0) return argr;
 
     argr = argblk->dolnxt;
-    if (flag && argblk == ap->dolh) {
-        ap->dolh->dolrefcnt = 1;
+    // Delete from chain.
+    if (ap->argfor == argblk) {
+        ap->argfor = argblk->dolnxt;
     } else {
-        // Delete from chain.
-        if (ap->argfor == argblk) {
-            ap->argfor = argblk->dolnxt;
-        } else {
-            for (argr = ap->argfor; argr; argr = argr->dolnxt) {
-                if (argr->dolnxt == argblk) break;
-            }
-            if (!argr) return NULL;
-            argr->dolnxt = argblk->dolnxt;
-            argr = argblk->dolnxt;
+        for (argr = ap->argfor; argr; argr = argr->dolnxt) {
+            if (argr->dolnxt == argblk) break;
         }
-        free(argblk);
+        if (!argr) return NULL;
+        argr->dolnxt = argblk->dolnxt;
+        argr = argblk->dolnxt;
     }
+    free(argblk);
     return argr;
 }
 
@@ -747,7 +742,7 @@ struct dolnod *sh_argnew(Shell_t *shp, char *argi[], struct dolnod **savargfor) 
 // Reset arguments as they were before function.
 void sh_argreset(Shell_t *shp, struct dolnod *blk, struct dolnod *afor) {
     Arg_t *ap = (Arg_t *)shp->arg_context;
-    while ((ap->argfor = sh_argfree(shp, ap->argfor, 0))) {
+    while ((ap->argfor = sh_argfree(shp, ap->argfor))) {
         ;  // empty block
     }
     ap->argfor = afor;

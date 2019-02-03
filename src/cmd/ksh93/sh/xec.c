@@ -1928,7 +1928,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             if (jmpval) siglongjmp(*shp->jmplist, jmpval);
             if (shp->st.breakcnt > 0) shp->st.execbrk = (--shp->st.breakcnt != 0);
             shp->st.loopcnt--;
-            sh_argfree(shp, argsav, 0);
+            sh_argfree(shp, argsav);
             nv_close(np);
             break;
         }

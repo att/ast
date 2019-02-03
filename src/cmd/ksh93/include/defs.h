@@ -227,7 +227,7 @@ extern struct shared *shgd;
 extern void sh_outname(Shell_t *, Sfio_t *, char *, int);
 extern void sh_applyopts(Shell_t *, Shopt_t);
 extern char **sh_argbuild(Shell_t *, int *, const struct comnod *, int);
-extern struct dolnod *sh_argfree(Shell_t *, struct dolnod *, int);
+extern struct dolnod *sh_argfree(Shell_t *, struct dolnod *);
 extern struct dolnod *sh_argnew(Shell_t *, char *[], struct dolnod **);
 extern void *sh_argopen(Shell_t *);
 extern struct argnod *sh_argprocsub(Shell_t *, struct argnod *);
