@@ -57,7 +57,7 @@ typedef struct Opt_s {
     char option[8];           /* current flag {-,+} + option  */
     char name[64];            /* current long name or flag	*/
     Optdisc_t *disc;          /* user discipline		*/
-    intmax_t number;          /* # numeric argument		*/
+    int64_t number;          /* # numeric argument		*/
     unsigned char assignment; /* option arg assigment op	*/
     unsigned char pads[sizeof(void *) - 1];
     char pad[2 * sizeof(void *)];

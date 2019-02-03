@@ -63,7 +63,7 @@
 #define OPT_ignorecase 0x004 /* arg match ignores case	*/
 #define OPT_invert 0x008     /* flag inverts long sense	*/
 #define OPT_listof 0x010     /* arg is ' ' or ',' list	*/
-#define OPT_number 0x020     /* arg is strtonll() number	*/
+#define OPT_number 0x020     /* arg is strton64() number	*/
 #define OPT_oneof 0x040      /* arg may be set once		*/
 #define OPT_optional 0x080   /* arg is optional		*/
 #define OPT_string 0x100     /* arg is string		*/
@@ -972,7 +972,7 @@ static_fn Push_t *optget_info(Push_t *psp, char *s, char *e, Sfio_t *ip, char *i
     int index;
     int offset;
     int num;
-    intmax_t number;
+    int64_t number;
     char *arg;
 
     index = opt_info.index;
@@ -3342,21 +3342,21 @@ nope:
 char *optusage(const char *opts) { return opthelp(opts, NULL); }
 
 /*
- * convert number using strtonll() *except* that
+ * convert number using strton64() *except* that
  * 0*[[:digit:]].* is treated as [[:digit:]].*
  * i.e., it looks octal but isn't, to meet
  * posix Utility Argument Syntax -- use
  * 0x.* or <base>#* for alternate bases
  */
 
-static_fn intmax_t optnumber(const char *s, char **t, int *e) {
-    intmax_t n;
+static_fn int64_t optnumber(const char *s, char **t, int *e) {
+    int64_t n;
     int oerrno;
 
     while (*s == '0' && isdigit(*(s + 1))) s++;
     oerrno = errno;
     errno = 0;
-    n = strtonll(s, t, NULL, 0);
+    n = strton64(s, t, NULL, 0);
     if (e) *e = errno;
     errno = oerrno;
     return n;

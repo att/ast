@@ -43,7 +43,7 @@ struct Conf_s;
 typedef struct Conf_s Conf_t;
 
 typedef struct Value_s {{
-        intmax_t number;
+        int64_t number;
         const char *string;
     }} Value_t;
 

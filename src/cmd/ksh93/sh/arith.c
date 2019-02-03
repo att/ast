@@ -257,11 +257,11 @@ static_fn Sfdouble_t number(const char *s, char **p, int b, struct lval *lvalue)
     }
     lvalue->eflag = 0;
     lvalue->isfloat = 0;
-    r = strtonll(s, &t, &base, -1);
+    r = strton64(s, &t, &base, -1);
     if (*t == '8' || *t == '9') {
         base = 10;
         errno = 0;
-        r = strtonll(s, &t, &base, -1);
+        r = strton64(s, &t, &base, -1);
     }
     if (base <= 1) base = 10;
     if (*t == '_') {

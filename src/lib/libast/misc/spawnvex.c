@@ -45,7 +45,7 @@
 #define VEXINIT(p) ((p)->cur = (p)->frame, (p)->set = 0)
 
 union _Spawnvex_u {
-    intmax_t number;
+    int64_t number;
     void *handle;
     Spawnvex_f callback;
 };
@@ -129,7 +129,7 @@ Spawnvex_t *spawnvex_open(unsigned int flags) {
     return vex;
 }
 
-int spawnvex_add(Spawnvex_t *vex, intmax_t op, intmax_t arg, Spawnvex_f callback, void *handle) {
+int spawnvex_add(Spawnvex_t *vex, int64_t op, int64_t arg, Spawnvex_f callback, void *handle) {
     if ((vex->cur + (callback ? 4 : 2)) >= vex->max) {
         vex->max += VEXCHUNK;
         vex->op = realloc(vex->op, vex->max * sizeof(Spawnvex_u));
@@ -321,7 +321,7 @@ int spawnvex_apply(Spawnvex_t *vex, int cur, int flags) {
  * what is the fd that is redirected to 2? spawnvex_get(vex, 2, 0)
  */
 
-intmax_t spawnvex_get(Spawnvex_t *vex, int fd, int i) {
+int64_t spawnvex_get(Spawnvex_t *vex, int fd, int i) {
     int od;
     int op;
     int arg;

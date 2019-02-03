@@ -38,7 +38,7 @@ typedef struct Spawnvex_noexec_s {
     int msgfd;          /* if no return and >= 0 close	*/
 } Spawnvex_noexec_t;
 
-typedef int (*Spawnvex_f)(void *, uintmax_t, uintmax_t);
+typedef int (*Spawnvex_f)(void *, uint64_t, uint64_t);
 
 // #define SPAWN_BACKGROUND 0x00001
 #define SPAWN_CLEANUP 0x00002
@@ -72,9 +72,9 @@ typedef int (*Spawnvex_f)(void *, uintmax_t, uintmax_t);
 extern pid_t spawnveg(const char *, char *const[], char *const[], pid_t);
 extern pid_t spawnvex(const char *, char *const[], char *const[], Spawnvex_t *);
 extern Spawnvex_t *spawnvex_open(unsigned int);
-extern int spawnvex_add(Spawnvex_t *, intmax_t, intmax_t, Spawnvex_f, void *);
+extern int spawnvex_add(Spawnvex_t *, int64_t, int64_t, Spawnvex_f, void *);
 extern int spawnvex_apply(Spawnvex_t *, int, int);
-extern intmax_t spawnvex_get(Spawnvex_t *, int, int);
+extern int64_t spawnvex_get(Spawnvex_t *, int, int);
 extern int spawnvex_close(Spawnvex_t *);
 
 #endif  // USE_SPAWN

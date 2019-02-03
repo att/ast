@@ -108,7 +108,7 @@ static_fn int sfsetlinemode(void) {
             case 'M': /* maxrec maxmap */
             case 'm':
                 if (n && v)
-                    z = (size_t)strtonll(v, NULL, NULL, 0);
+                    z = (size_t)strton64(v, NULL, NULL, 0);
                 else
                     z = 0;
                 for (;;) {
@@ -145,7 +145,7 @@ static_fn int sfsetlinemode(void) {
                         switch (v[0]) {
                             default:
                                 if (isdigit(v[0])) {
-                                    b = strtonll(v, NULL, NULL, 0);
+                                    b = strton64(v, NULL, NULL, 0);
                                 } else
                                     b = 0;
                                 break;

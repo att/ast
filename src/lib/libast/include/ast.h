@@ -202,7 +202,7 @@ extern void set_debug_filename(const char *pathname);
 extern const char *addr2info(void *p);
 extern void dump_backtrace(int max_frames);
 extern void run_lsof();
-extern char *fmtbase(intmax_t, int, int);
+extern char *fmtbase(int64_t, int, int);
 extern char *fmtbuf(size_t);
 extern char *fmtelapsed(unsigned long, int);
 extern char *fmterror(int);
@@ -210,7 +210,7 @@ extern char *fmtesc(const char *);
 extern char *fmtesq(const char *, const char *);
 extern char *fmtident(const char *);
 extern char *fmtfmt(const char *);
-extern char *fmtint(intmax_t, int);
+extern char *fmtint(int64_t, int);
 extern char *fmtmatch(const char *);
 extern char *fmtmode(int, int);
 extern char *fmtnesq(const char *, const char *, size_t);
@@ -242,7 +242,7 @@ extern int strngrpmatch(const char *, size_t, const char *, ssize_t *, int, int)
 extern int strmatch(const char *, const char *);
 extern int strperm(const char *, char **, int);
 extern void strsort(char **, int, Strcmp_f);
-extern intmax_t strtonll(const char *, char **, char *, int);
+extern int64_t strton64(const char *, char **, char *, int);
 extern int struniq(char **, int);
 
 extern size_t utf32toutf8(char *, uint32_t);

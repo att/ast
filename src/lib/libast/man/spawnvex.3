@@ -60,7 +60,7 @@ spawnvex \- process spawn with process file and resource control
 .sp
 .L "pid_t spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t*, vex);"
 .L "Spawnvex_t* spawnvex_open(void);"
-.L "int spawnvex_add(Spawnvex_t* vex, intmax_t arg1, intmax_t arg2);"
+.L "int spawnvex_add(Spawnvex_t* vex, int64_t arg1, int64_t arg2);"
 .L "int spawnvex_apply(Spawnvex_t* vex, int index, int flags);"
 .L "int spawnvex_init(Spawnvex_t* vex);"
 .L "int spawnvex_close(Spawnvex_t* vex);"

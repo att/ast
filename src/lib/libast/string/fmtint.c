@@ -83,9 +83,9 @@ static const char table[] = {
     "960961962963964965966967968969970971972973974975976977978979"
     "980981982983984985986987988989990991992993994995996997998999"};
 
-char *fmtint(intmax_t ll, int unsign) {
+char *fmtint(int64_t ll, int unsign) {
     char *buff;
-    uintmax_t n, m;
+    uint64_t n, m;
     int j = 0, k = 3 * sizeof(ll);
     if (unsign || ll >= 0)
         n = ll;

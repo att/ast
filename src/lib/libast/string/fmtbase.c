@@ -34,7 +34,7 @@
 #include "ast.h"
 #include "sfio.h"
 
-char *fmtbase(intmax_t n, int b, int p) {
+char *fmtbase(int64_t n, int b, int p) {
     char *buf;
     int z;
 

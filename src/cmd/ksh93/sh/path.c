@@ -950,7 +950,7 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
 }
 
 #if USE_SPAWN
-static_fn int vexexec(void *ptr, uintmax_t fd1, uintmax_t fd2) {
+static_fn int vexexec(void *ptr, uint64_t fd1, uint64_t fd2) {
     UNUSED(fd1);
     char *devfd;
     int fd = -1;

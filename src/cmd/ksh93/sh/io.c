@@ -972,7 +972,7 @@ void sh_vexrestore(Shell_t *shp, int n) {
 //
 // Set up standard stream in the child.
 //
-static_fn int iovex_child(void *context, uintmax_t fd1, uintmax_t fd2) {
+static_fn int iovex_child(void *context, uint64_t fd1, uint64_t fd2) {
     Shell_t *shp = (Shell_t *)context;
     Sfio_t *sp = shp->sftable[fd2];
 #if 1
@@ -1014,7 +1014,7 @@ static_fn void iovex_stdstream(Shell_t *shp, int fn) {
 //
 // Restore stream in parent.
 //
-static_fn int iovex_stream(void *context, uintmax_t origfd, uintmax_t fd2) {
+static_fn int iovex_stream(void *context, uint64_t origfd, uint64_t fd2) {
     UNUSED(fd2);
     Shell_t *shp = (Shell_t *)context;
     Sfio_t *sp, *sporig = shp->sftable[origfd];
@@ -1052,7 +1052,7 @@ static_fn int iovex_stream(void *context, uintmax_t origfd, uintmax_t fd2) {
     return 0;
 }
 
-static_fn int iovex_trunc(void *context, uintmax_t origfd, uintmax_t fd2) {
+static_fn int iovex_trunc(void *context, uint64_t origfd, uint64_t fd2) {
     Shell_t *shp = (Shell_t *)context;
     int r = 0;
     errno = 0;
@@ -1068,7 +1068,7 @@ static_fn int iovex_trunc(void *context, uintmax_t origfd, uintmax_t fd2) {
     return r;
 }
 
-static_fn int iovex_rename(void *context, uintmax_t origfd, uintmax_t fd2) {
+static_fn int iovex_rename(void *context, uint64_t origfd, uint64_t fd2) {
     Shell_t *shp = *(Shell_t **)context;
     char *fname = (char *)((char *)context + sizeof(void *));
 

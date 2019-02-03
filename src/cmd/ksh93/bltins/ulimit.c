@@ -152,7 +152,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
                 // An explicit suffix unit overrides the default.
                 if ((i = strtol(limit, &last, 0)) != INFINITY && !*last) {
                     i *= unit;
-                } else if ((i = strtonll(limit, &last, NULL, 0)) == INFINITY || *last) {
+                } else if ((i = strton64(limit, &last, NULL, 0)) == INFINITY || *last) {
                     if ((i = sh_strnum(shp, limit, &last, 2)) == INFINITY || *last) {
                         errormsg(SH_DICT, ERROR_system(1), e_number, limit);
                         __builtin_unreachable();

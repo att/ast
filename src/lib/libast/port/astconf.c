@@ -838,7 +838,7 @@ static_fn char *astconf_print(Sfio_t *sp, Lookup_t *look, const char *name, cons
     int olderrno;
     int drop;
     int defined;
-    intmax_t v;
+    int64_t v;
     char buf[PATH_MAX];
     char flg[16];
 
