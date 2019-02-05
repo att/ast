@@ -636,7 +636,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                         np = nv_search(stkptr(shp->stk, offset), troot, 0);
                         stkseek(shp->stk, offset);
                     }
-                    if (np && np->nvalue.cp) np->nvalue.rp->help = tp->help;
+                    if (np && FETCH_VT(np->nvalue, rp)) FETCH_VT(np->nvalue, rp)->help = tp->help;
                 }
                 continue;
             }
@@ -1061,7 +1061,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
             np = nv_search(arg, context->shp->bltin_tree, 0);
             if (np) {
                 if (nv_isattr(np, BLT_SPC)) errmsg = "restricted name";
-                addr = (Shbltin_f)np->nvalue.bfp;
+                addr = (Shbltin_f)FETCH_VT(np->nvalue, bfp);
             }
         }
         if (!disable && !addr) {
@@ -1220,8 +1220,9 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
             if (troot == shp->var_tree && shp->st.real_fun && (dp = shp->var_tree->walk) &&
                 dp == shp->st.real_fun->sdict) {
                 nv_delete(np, dp, NV_NOFREE);
-            } else if (isfun && !(np->nvalue.rp && np->nvalue.rp->running)) {
-                nv_delete(np, troot, 0);
+            } else if (isfun) {
+                struct Ufunction *rp = FETCH_VT(np->nvalue, rp);
+                if (!rp || !rp->running) nv_delete(np, troot, 0);
             } else if (type == ALIAS) {
                 // Alias has been unset by call to _nv_unset, remove it from the tree.
                 nv_delete(np, troot, 0);
@@ -1253,6 +1254,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
 static_fn int print_namval(Sfio_t *file, Namval_t *np, bool omit_attrs, struct tdata *tp) {
     char *cp;
     int indent = tp->indent, outname = 0, isfun;
+    struct Ufunction *rp;
 
     sh_sigcheck(tp->sh);
     if (tp->noref && nv_isref(np)) return 0;
@@ -1289,7 +1291,7 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, bool omit_attrs, struct t
         char *fname = 0;
         if (nv_isattr(np, NV_NOFREE)) return 0;
         if (!omit_attrs) {
-            if (!np->nvalue.ip) {
+            if (!FETCH_VT(np->nvalue, ip)) {
                 sfputr(file, "typeset -fu", ' ');
             } else if (!nv_isattr(np, NV_FPOSIX)) {
                 sfputr(file, "function", ' ');
@@ -1299,15 +1301,16 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, bool omit_attrs, struct t
         if (tp->wctname) cp += strlen(tp->wctname) + 1;
         sfputr(file, cp, -1);
         if (nv_isattr(np, NV_FPOSIX)) sfwrite(file, "()", 2);
-        if (np->nvalue.ip && np->nvalue.rp->hoffset >= 0) {
-            fname = np->nvalue.rp->fname;
+        rp = FETCH_VT(np->nvalue, rp);
+        if (rp && rp->hoffset >= 0) {
+            fname = rp->fname;
         } else {
             omit_attrs = false;
         }
         if (omit_attrs) {
-            if (tp->pflag && np->nvalue.ip && np->nvalue.rp->hoffset >= 0) {
-                sfprintf(file, " #line %d %s\n", np->nvalue.rp->lineno,
-                         fname ? sh_fmtq(fname) : "");
+            rp = FETCH_VT(np->nvalue, rp);
+            if (tp->pflag && rp && rp->hoffset >= 0) {
+                sfprintf(file, " #line %d %s\n", rp->lineno, fname ? sh_fmtq(fname) : "");
             } else {
                 sfputc(file, '\n');
             }
@@ -1320,7 +1323,7 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, bool omit_attrs, struct t
             } else if (tp->sh->gd->hist_ptr) {
                 iop = (tp->sh->gd->hist_ptr)->histfp;
             }
-            if (iop && sfseek(iop, (Sfoff_t)np->nvalue.rp->hoffset, SEEK_SET) >= 0) {
+            if (iop && sfseek(iop, FETCH_VT(np->nvalue, rp)->hoffset, SEEK_SET) >= 0) {
                 sfmove(iop, file, nv_size(np), -1);
             }
             if (fname) sfclose(iop);

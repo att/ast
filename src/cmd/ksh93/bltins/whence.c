@@ -282,7 +282,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                 if (flags & V_FLAG) {
                     if (*cp != '/') {
                         if (!np && (np = nv_search(name, shp->track_tree, 0))) {
-                            const char *command_path = np->nvalue.pathcomp->name;
+                            const char *command_path = FETCH_VT(np->nvalue, pathcomp)->name;
                             sfprintf(sfstdout, "%s %s %s/%s\n", name, sh_translate(is_talias),
                                      command_path, cp);
                         } else if (!np || nv_isnull(np)) {

@@ -238,7 +238,7 @@ retry:
         hp = hist_trim(hp, (int)hp->histind - maxlines);
     }
     sfdisc(hp->histfp, &hp->histdisc);
-    (HISTCUR)->nvalue.lp = (&hp->histind);
+    STORE_VT((HISTCUR)->nvalue, lp, &hp->histind);
     sh_timeradd(1000L * (HIST_RECENT - 30), 1, hist_touch, (void *)hp->histname);
     hp->auditfp = 0;
 

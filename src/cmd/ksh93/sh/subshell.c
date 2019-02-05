@@ -213,7 +213,7 @@ void sh_subfork(void) {
             shp->savesig = -1;
         }
         shp->comsub = 0;
-        SH_SUBSHELLNOD->nvalue.i16 = 0;
+        STORE_VT(SH_SUBSHELLNOD->nvalue, i16, 0);
         sp->subpid = 0;
         shp->st.trapcom[0] = trap;
     }
@@ -343,7 +343,7 @@ static_fn void nv_restore(struct subshell *sp) {
         if (nv_cover(mp)) {
             nv_putval(mp, nv_getval(np), np->nvflag | NV_NOFREE | NV_RDONLY);
         } else {
-            mp->nvalue.cp = np->nvalue.cp;
+            STORE_VT(mp->nvalue, cp, FETCH_VT(np->nvalue, cp));
         }
         if (nofree && np->nvfun && !np->nvfun->nofree) free(np->nvfun);
         np->nvfun = 0;
@@ -408,8 +408,9 @@ static_fn void subshell_table_unset(Dt_t *root, int fun) {
 
         // This code block was restored from last stable release to fix a use after free issue.
         // https://github.com/att/ast/issues/803
-        if (fun && np->nvalue.rp && np->nvalue.rp->fname && *np->nvalue.rp->fname == '/') {
-            np->nvalue.rp->fdict = 0;
+        if (fun && FETCH_VT(np->nvalue, rp) && FETCH_VT(np->nvalue, rp)->fname &&
+            *FETCH_VT(np->nvalue, rp)->fname == '/') {
+            FETCH_VT(np->nvalue, rp)->fdict = NULL;
             flag = NV_NOFREE;
         }
 
@@ -478,7 +479,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     savst = shp->st;
     sh_pushcontext(shp, &buff, SH_JMPSUB);
     shp->subshell++;
-    SH_SUBSHELLNOD->nvalue.i16 = shp->subshell;
+    STORE_VT(SH_SUBSHELLNOD->nvalue, i16, shp->subshell);
     sp->prev = subshell_data;
     sp->shp = shp;
     sp->sig = 0;
@@ -713,10 +714,10 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
 #endif
                 path_newdir(shp, shp->pathlist);
             }
-            if (nv_isattr(pwdnod, NV_NOFREE)) pwdnod->nvalue.cp = (const char *)sp->pwd;
+            if (nv_isattr(pwdnod, NV_NOFREE)) STORE_VT(pwdnod->nvalue, cp, sp->pwd);
         } else if (sp->shpwd != shp->pwd) {
             shp->pwd = sp->pwd;
-            if (PWDNOD->nvalue.cp == sp->shpwd) PWDNOD->nvalue.cp = sp->pwd;
+            if (FETCH_VT(PWDNOD->nvalue, cp) == sp->shpwd) STORE_VT(PWDNOD->nvalue, cp, sp->pwd);
         } else {
             free(sp->pwd);
             if (sp->shpwdfd >= 0) {
@@ -743,7 +744,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
 #if SHOPT_COSHELL
     shp->coshell = sp->coshell;
 #endif  // SHOPT_COSHELL
-    if (shp->subshell) SH_SUBSHELLNOD->nvalue.i16 = --shp->subshell;
+    if (shp->subshell) STORE_VT(SH_SUBSHELLNOD->nvalue, i16, --shp->subshell);
     subshell_data = sp->prev;
     if (!argsav || argsav->dolrefcnt == argcnt) sh_argfree(shp, argsav);
     if (shp->topfd != buff.topfd) sh_iorestore(shp, buff.topfd | IOSUBSHELL, jmpval);

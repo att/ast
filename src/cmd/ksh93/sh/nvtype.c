@@ -218,12 +218,14 @@ static_fn void put_chtype(Namval_t *np, const void *val, int flag, Namfun_t *fp)
         size_t dsize = 0, offset = (char *)np - (char *)pp->ptype;
         Namval_t *mp = (Namval_t *)((char *)pp->ttype + offset);
         dsize = nv_datasize(mp, &dsize);
-        if (mp->nvalue.cp >= pp->ttype->data &&
-            mp->nvalue.cp < (char *)pp->ttype + pp->ttype->fun.dsize) {
-            np->nvalue.cp = pp->ptype->data + (mp->nvalue.cp - pp->ttype->data);
-            if (np->nvalue.cp != mp->nvalue.cp) memcpy((char *)np->nvalue.cp, mp->nvalue.cp, dsize);
-        } else if (!nv_isarray(mp) && mp->nvalue.cp) {
-            np->nvalue.cp = mp->nvalue.cp;
+        if (FETCH_VT(mp->nvalue, cp) >= pp->ttype->data &&
+            FETCH_VT(mp->nvalue, cp) < (char *)pp->ttype + pp->ttype->fun.dsize) {
+            STORE_VT(np->nvalue, cp,
+                     pp->ptype->data + (FETCH_VT(mp->nvalue, cp) - pp->ttype->data));
+            if (FETCH_VT(np->nvalue, sp) != FETCH_VT(mp->nvalue, cp))
+                memcpy(FETCH_VT(np->nvalue, sp), FETCH_VT(mp->nvalue, cp), dsize);
+        } else if (!nv_isarray(mp) && FETCH_VT(mp->nvalue, cp)) {
+            STORE_VT(np->nvalue, cp, FETCH_VT(mp->nvalue, cp));
             nv_onattr(np, NV_NOFREE);
         }
         np->nvsize = mp->nvsize;
@@ -284,23 +286,23 @@ static_fn int fixnode(Namtype_t *np1, Namtype_t *np2, int i, struct Namref *nrp,
     fp = nv_hasdisc(nq, &chtype_disc);
     if (fp) nv_disc(nq, fp, DISC_OP_POP);
     if (nv_isattr(nq, NV_REF)) {
-        nq->nvalue.nrp = nrp++;
+        STORE_VT(nq->nvalue, nrp, nrp++);
         nv_setsize(nq, 0);
         if (strchr(nq->nvname, '.')) {
-            nq->nvalue.nrp->np = findref(np1->nodes, i);
+            FETCH_VT(nq->nvalue, nrp)->np = findref(np1->nodes, i);
         } else {
-            nq->nvalue.nrp->np = nv_namptr(np2->childfun.ttype->nodes, i);
+            FETCH_VT(nq->nvalue, nrp)->np = nv_namptr(np2->childfun.ttype->nodes, i);
         }
-        nq->nvalue.nrp->root = np2->sh->last_root;
-        nq->nvalue.nrp->table = np2->np;
+        FETCH_VT(nq->nvalue, nrp)->root = np2->sh->last_root;
+        FETCH_VT(nq->nvalue, nrp)->table = np2->np;
         nv_setattr(nq, NV_REF | NV_NOFREE | NV_MINIMAL);
         return 1;
     }
-    if (nq->nvalue.cp || nq->nvfun) {
-        const char *data = nq->nvalue.cp;
+    if (FETCH_VT(nq->nvalue, cp) || nq->nvfun) {
+        const char *data = FETCH_VT(nq->nvalue, cp);
         if (nq->nvfun) {
             Namval_t *np = nv_namptr(np2->nodes, i);
-            if (nv_isarray(nq)) nq->nvalue.cp = 0;
+            if (nv_isarray(nq)) STORE_VT(nq->nvalue, cp, NULL);
             nq->nvfun = 0;
             if (nv_isarray(nq) && ((flag & NV_IARRAY) || nv_type(np))) {
                 Shell_t *shp = sh_ptr(np);
@@ -314,29 +316,29 @@ static_fn int fixnode(Namtype_t *np1, Namtype_t *np2, int i, struct Namref *nrp,
             if (fp) nv_disc(np, fp, DISC_OP_LAST);
         }
 #if 0
-		if(nq->nvalue.cp >=  np2->data && nq->nvalue.cp < (char*)np2 +np2->fun.dsize)
-			nq->nvalue.cp = np1->data + (nq->nvalue.cp-np2->data);
+		if(FETCH_VT(nq->nvalue, cp) >=  np2->data && FETCH_VT(nq->nvalue, cp) < (char*)np2 +np2->fun.dsize)
+			FETCH_VT(nq->nvalue, cp) = np1->data + (FETCH_VT(nq->nvalue, cp) - np2->data);
 #else
         if (data >= np2->data && data < (char *)np2 + np2->fun.dsize) {
-            nq->nvalue.cp = np1->data + (data - np2->data);
+            STORE_VT(nq->nvalue, cp, np1->data + (data - np2->data));
         }
 #endif
         else if (!nq->nvfun && np2->childfun.ttype != np2->childfun.ptype) {
             Namval_t *nr = nv_namptr(np2->childfun.ttype->nodes, i);
-            if (nr->nvalue.cp != nq->nvalue.cp) {
+            if (FETCH_VT(nr->nvalue, cp) != FETCH_VT(nq->nvalue, cp)) {
                 i = nv_size(nq);
                 if (i) {
-                    const char *cp = nq->nvalue.cp;
-                    nq->nvalue.cp = (char *)malloc(i);
-                    memcpy((char *)nq->nvalue.cp, cp, i);
+                    const char *cp = FETCH_VT(nq->nvalue, cp);
+                    STORE_VT(nq->nvalue, cp, malloc(i));
+                    memcpy(FETCH_VT(nq->nvalue, sp), cp, i);
                 } else {
-                    nq->nvalue.cp = strdup(nq->nvalue.cp);
+                    STORE_VT(nq->nvalue, cp, strdup(FETCH_VT(nq->nvalue, cp)));
                 }
                 nv_offattr(nq, NV_NOFREE);
             }
-        } else if (nq->nvalue.cp == EmptyStr) {
-            nq->nvalue.cp = Empty;
-        } else if (nq->nvalue.cp == Empty) {
+        } else if (FETCH_VT(nq->nvalue, cp) == EmptyStr) {
+            STORE_VT(nq->nvalue, cp, Empty);
+        } else if (FETCH_VT(nq->nvalue, cp) == Empty) {
             nv_offattr(nq, NV_NOFREE);
         }
     }
@@ -390,14 +392,14 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
         nq->nvshell = np->nvshell;
         if (fixnode(dp, pp, i, nrp, NV_TYPE | (flags & NV_IARRAY))) {
             nrp++;
-            nq = nq->nvalue.nrp->np;
+            nq = FETCH_VT(nq->nvalue, nrp)->np;
         } else if (nv_isattr(nq, NV_RDONLY) && nv_isattr(nq, NV_INTEGER)) {
-            if (nv_type(np) != np || nv_getnum(nq) == 0) nq->nvalue.cp = Empty;
+            if (nv_type(np) != np || nv_getnum(nq) == 0) STORE_VT(nq->nvalue, cp, Empty);
         }
         xp = (Namtype_t *)nv_hasdisc(nq, &type_disc);
         if (xp) xp->parent = mp;
         if (flags == (NV_NOFREE | NV_ARRAY)) continue;
-        if (!nq->nvalue.cp && nv_isvtree(nq) && !nv_isattr(nq, NV_RDONLY)) continue;
+        if (!FETCH_VT(nq->nvalue, cp) && nv_isvtree(nq) && !nv_isattr(nq, NV_RDONLY)) continue;
 
         // See if default value has been overwritten.
         if (!mp->nvname) continue;
@@ -419,7 +421,7 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
         if (!nr) continue;
 
         if (nv_isattr(nq, NV_RDONLY) && nv_type(np) != np &&
-            (nq->nvalue.cp || nv_isattr(nq, NV_INTEGER))) {
+            (FETCH_VT(nq->nvalue, cp) || nv_isattr(nq, NV_INTEGER))) {
             errormsg(SH_DICT, ERROR_exit(1), e_readonly, nq->nvname);
             __builtin_unreachable();
         }
@@ -427,12 +429,12 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
         if ((size = nv_datasize(nr, NULL)) && size == nv_datasize(nq, NULL)) {
             if (nv_isattr(nr, NV_INT16 | NV_DOUBLE) == NV_INT16) {
                 if (nv_isattr(nq, NV_INT16P) == NV_INT16P) {
-                    *nq->nvalue.i16p = nr->nvalue.i16;
+                    *FETCH_VT(nq->nvalue, i16p) = FETCH_VT(nr->nvalue, i16);
                 } else {
-                    nq->nvalue.cp = nr->nvalue.cp;
+                    STORE_VT(nq->nvalue, sp, FETCH_VT(nr->nvalue, sp));
                 }
             } else {
-                memcpy((char *)nq->nvalue.cp, nr->nvalue.cp, size);
+                memcpy(FETCH_VT(nq->nvalue, sp), FETCH_VT(nr->nvalue, sp), size);
             }
         } else if ((ap = nv_arrayptr(nr))) {
             nv_putsub(nr, NULL, 0, ARRAY_SCAN | ARRAY_NOSCOPE);
@@ -465,7 +467,7 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
         }
     }
     if (nv_isattr(mp, NV_BINARY)) {
-        mp->nvalue.cp = dp->data;
+        STORE_VT(mp->nvalue, cp, dp->data);
         nv_onattr(mp, NV_NOFREE);
     }
     if (pp->strsize < 0) dp->strsize = -pp->strsize;
@@ -504,7 +506,7 @@ static_fn Namval_t *create_type(Namval_t *np, const void *vp, int flag, Namfun_t
             nq = nv_namptr(dp->nodes, i);
             if (!nq->nvname) continue;
             if ((n == 0 || strncmp(name, nq->nvname, n) == 0) && nq->nvname[n] == 0) {
-                while (nv_isref(nq)) nq = nq->nvalue.nrp->np;
+                while (nv_isref(nq)) nq = FETCH_VT(nq->nvalue, nrp)->np;
                 goto found;
             }
             if (strlen(nq->nvname) == r && strncmp(name, nq->nvname, r) == 0) s = i;
@@ -591,10 +593,10 @@ static_fn Namfun_t *clone_inttype(Namval_t *np, Namval_t *mp, int flags, Namfun_
 
     memcpy((void *)pp, (void *)fp, fp->dsize);
     fp->nofree &= ~1;
-    if (nv_isattr(mp, NV_NOFREE) && mp->nvalue.cp) {
-        memcpy((void *)mp->nvalue.cp, np->nvalue.cp, fp->dsize - sizeof(*fp));
+    if (nv_isattr(mp, NV_NOFREE) && FETCH_VT(mp->nvalue, cp)) {
+        memcpy(FETCH_VT(mp->nvalue, sp), FETCH_VT(np->nvalue, cp), fp->dsize - sizeof(*fp));
     } else {
-        mp->nvalue.cp = (char *)(fp + 1);
+        STORE_VT(mp->nvalue, funp, fp + 1);
     }
     if (!nv_isattr(mp, NV_MINIMAL)) mp->nvenv = 0;
     nv_offattr(mp, NV_RDONLY);
@@ -679,7 +681,7 @@ static_fn int typeinfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
                 ;  // empty loop
             }
             buffer[n] = 0;
-            if (nq->nvalue.cp == Empty && nv_isattr(nq, NV_RDONLY)) {
+            if (FETCH_VT(nq->nvalue, cp) == Empty && nv_isattr(nq, NV_RDONLY)) {
                 sfprintf(out, "\t[+%s?%s, default value is required at creation\n", nq->nvname,
                          *buffer ? buffer : "string");
             } else if (cp) {
@@ -703,8 +705,9 @@ static_fn int typeinfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
             char *dot;
             sfputr(shp->stk, dp->names[i], 0);
             dot = cp = Empty;
-            if ((nq = nv_search(stkptr(shp->stk, offset), shp->fun_tree, 0)) && nq->nvalue.cp) {
-                cp = nq->nvalue.rp->help;
+            if ((nq = nv_search(stkptr(shp->stk, offset), shp->fun_tree, 0)) &&
+                FETCH_VT(nq->nvalue, cp)) {
+                cp = FETCH_VT(nq->nvalue, rp)->help;
                 dot = ".";
             }
             if (nq && nv_isattr(nq, NV_STATICF)) {
@@ -798,10 +801,10 @@ void nv_addtype(Namval_t *np, const char *optstr, void *op, size_t optsz) {
         sfprintf(shp->strbuf2, ".%s.%s%c\n", nv_name(bp) + 1, name, 0);
         name = sfstruse(shp->strbuf2);
     }
-    if ((bp = nv_search(name, shp->fun_tree, NV_NOSCOPE)) && !bp->nvalue.ip) {
+    if ((bp = nv_search(name, shp->fun_tree, NV_NOSCOPE)) && !FETCH_VT(bp->nvalue, ip)) {
         nv_delete(bp, shp->fun_tree, 0);
     }
-    bp = sh_addbuiltin(shp, name, (Shbltin_f)mp->nvalue.bfp, (void *)cp);
+    bp = sh_addbuiltin(shp, name, (Shbltin_f)FETCH_VT(mp->nvalue, bfp), cp);
     nv_onattr(bp, mp->nvflag);
     nv_onattr(np, NV_RDONLY);
 }
@@ -987,13 +990,14 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                 nq = nv_namptr(pp->nodes, k);
                 if (fixnode(pp, dp, k, nrp, 0)) {
                     nrp++;
-                    nq = nq->nvalue.nrp->np;
+                    nq = FETCH_VT(nq->nvalue, nrp)->np;
                 }
                 if (!nv_isattr(nr, NV_REF) && !nv_hasdisc(nr, &type_disc)) {
                     if (nr->nvsize) {
-                        memcpy((char *)nq->nvalue.cp, nr->nvalue.cp, size = nv_datasize(nr, NULL));
+                        memcpy(FETCH_VT(nq->nvalue, sp), FETCH_VT(nr->nvalue, sp),
+                               size = nv_datasize(nr, NULL));
                     } else {
-                        nq->nvalue.cp = nr->nvalue.cp;
+                        STORE_VT(nq->nvalue, sp, FETCH_VT(nr->nvalue, sp));
                         nv_onattr(nq, NV_NOFREE);
                     }
                 }
@@ -1051,17 +1055,17 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                 dsize = nv_datasize(nr, &offset);
                 nv_setattr(nq, nr->nvflag);
                 if (nv_hasdisc(nr, &type_disc)) clone_all_disc(nr, nq, NV_RDONLY);
-                if (nr->nvalue.cp) {
+                if (FETCH_VT(nr->nvalue, cp)) {
                     Namchld_t *xp = (Namchld_t *)nv_hasdisc(nr, &chtype_disc);
-                    if (xp && nr->nvalue.cp >= xp->ptype->data &&
-                        nr->nvalue.cp < xp->ptype->data + xp->ptype->fun.dsize) {
-                        nq->nvalue.cp = pp->data + offset;
-                        memcpy((char *)nq->nvalue.cp, nr->nvalue.cp, dsize);
+                    if (xp && FETCH_VT(nr->nvalue, cp) >= xp->ptype->data &&
+                        FETCH_VT(nr->nvalue, cp) < xp->ptype->data + xp->ptype->fun.dsize) {
+                        STORE_VT(nq->nvalue, cp, pp->data + offset);
+                        memcpy(FETCH_VT(nq->nvalue, sp), FETCH_VT(nr->nvalue, cp), dsize);
                         nv_onattr(nq, NV_NOFREE);
-                    } else if (nr->nvalue.cp == Empty) {
-                        nq->nvalue.cp = Empty;
+                    } else if (FETCH_VT(nr->nvalue, cp) == Empty) {
+                        STORE_VT(nq->nvalue, cp, Empty);
                     } else {
-                        nq->nvalue.cp = strdup(nr->nvalue.cp);
+                        STORE_VT(nq->nvalue, cp, strdup(FETCH_VT(nr->nvalue, cp)));
                     }
                     nv_disc(nq, &pp->childfun.fun, DISC_OP_LAST);
                 }
@@ -1084,8 +1088,10 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                     nq = nv_namptr(pp->nodes, ++j);
                     if (strcmp(nq->nvname, cname) == 0) {
                         sfprintf(sfstderr, "%s found at k=%d\n", nq->nvname, k);
-                        if (nq->nvalue.cp >= pp->data && nq->nvalue.cp < (char *)pp->names)
-                            memcpy((char *)nq->nvalue.cp, np->nvalue.cp, nv_datasize(np, 0));
+                        if (FETCH_VT(nq->nvalue, cp) >= pp->data &&
+                            FETCH_VT(nq->nvalue, cp) < (char *)pp->names)
+                            memcpy(FETCH_VT(nq->nvalue, sp), FETCH_VT(np->nvalue, sp),
+                                   nv_datasize(np, 0));
                         break;
                     }
                 }
@@ -1101,30 +1107,30 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
             if (nq->nvfun) {
                 for (fp = nq->nvfun; fp; fp = fp->next) fp->nofree |= 1;
             }
-            nq->nvalue.cp = np->nvalue.cp;
-            if (dsize && (np->nvalue.cp || !nv_isarray(np))) {
-                nq->nvalue.cp = pp->data + offset;
-                sp = (char *)np->nvalue.cp;
+            STORE_VT(nq->nvalue, cp, FETCH_VT(np->nvalue, cp));
+            if (dsize && (FETCH_VT(np->nvalue, cp) || !nv_isarray(np))) {
+                STORE_VT(nq->nvalue, cp, pp->data + offset);
+                sp = (char *)FETCH_VT(np->nvalue, cp);
                 if (!nv_isarray(np) && nv_isattr(np, NV_INT16P) == NV_INT16) {
                     sp = (char *)&np->nvalue;
                     nv_onattr(nq, NV_INT16P);
                     j = 1;
                 }
                 if (sp) {
-                    memcpy((char *)nq->nvalue.cp, sp, dsize);
+                    memcpy(FETCH_VT(nq->nvalue, sp), sp, dsize);
                 } else if (nv_isattr(np, NV_LJUST | NV_RJUST)) {
-                    memset((char *)nq->nvalue.cp, ' ', dsize);
+                    memset(FETCH_VT(nq->nvalue, sp), ' ', dsize);
                 }
-                if (!j) free(np->nvalue.sp);
+                if (!j) free(FETCH_VT(np->nvalue, sp));
             }
-            if (!nq->nvalue.cp && nq->nvfun == &pp->childfun.fun) {
+            if (!FETCH_VT(nq->nvalue, cp) && nq->nvfun == &pp->childfun.fun) {
                 if (nv_isattr(np, NV_ARRAY | NV_NOFREE) == (NV_ARRAY | NV_NOFREE)) {
-                    nq->nvalue.cp = EmptyStr;
+                    STORE_VT(nq->nvalue, cp, EmptyStr);
                 } else {
-                    nq->nvalue.cp = Empty;
+                    STORE_VT(nq->nvalue, cp, Empty);
                 }
             }
-            np->nvalue.cp = 0;
+            STORE_VT(np->nvalue, cp, NULL);
             offset += (dsize ? dsize : 4);
         }
         k++;
@@ -1136,10 +1142,10 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
     pp->nref = nref;
     if (k > 1) {
         nv_setsize(mp, offset);
-        mp->nvalue.cp = pp->data;
+        STORE_VT(mp->nvalue, cp, pp->data);
         nv_onattr(mp, NV_NOFREE | binary);
-    } else if (!mp->nvalue.cp) {
-        mp->nvalue.cp = Empty;
+    } else if (!FETCH_VT(mp->nvalue, cp)) {
+        STORE_VT(mp->nvalue, cp, Empty);
     }
     nv_onattr(mp, NV_TAGGED);
     nv_disc(mp, &pp->fun, DISC_OP_LAST);
@@ -1172,7 +1178,7 @@ Namval_t *nv_mkinttype(char *name, size_t size, int sign, const char *help, Namd
     if (ep) *dp = *ep;
     dp->clonef = clone_inttype;
     fp->disc = dp;
-    mp->nvalue.cp = (char *)(fp + 1) + sizeof(Namdisc_t);
+    STORE_VT(mp->nvalue, cp, (char *)(fp + 1) + sizeof(Namdisc_t));
     nv_setsize(mp, 10);
     mp->nvenv = (char *)help;
     nv_onattr(mp, NV_NOFREE | NV_RDONLY | NV_INTEGER | NV_EXPORT);
@@ -1293,12 +1299,13 @@ int nv_settype(Namval_t *np, Namval_t *tp, int flags) {
     if (ap) {
         int nofree;
         nv_disc(np, &ap->hdr, DISC_OP_POP);
-        np->nvalue.up = 0;
+        STORE_VT(np->nvalue, up, NULL);
         nv_clone(tp, np, flags | NV_NOFREE);
-        if (np->nvalue.cp && np->nvalue.cp != Empty && !nv_isattr(np, NV_NOFREE)) {
-            free(np->nvalue.sp);
+        if (FETCH_VT(np->nvalue, cp) && FETCH_VT(np->nvalue, cp) != Empty &&
+            !nv_isattr(np, NV_NOFREE)) {
+            free(FETCH_VT(np->nvalue, sp));
         }
-        np->nvalue.up = 0;
+        STORE_VT(np->nvalue, up, NULL);
         nofree = ap->hdr.nofree;
         ap->hdr.nofree = 0;
         ap->hdr.type = tp;
@@ -1388,7 +1395,7 @@ Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *
     for (i = 0, fp = fields; fp->name; fp++) {
         nq = nv_namptr(pp->nodes, i++);
         nq->nvname = cp;
-        nq->nvalue.cp = pp->data + fp->offset;
+        STORE_VT(nq->nvalue, cp, pp->data + fp->offset);
         nv_onattr(nq, NV_MINIMAL | NV_NOFREE);
         m = strlen(fp->name) + 1;
         memcpy(cp, fp->name, m);
@@ -1405,7 +1412,7 @@ Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *
             dp = (Namtype_t *)nv_hasdisc(tp, &type_disc);
             if (dp) {
                 if (nv_hasdisc(nq, &chtype_disc)) nv_disc(nq, &pp->childfun.fun, DISC_OP_LAST);
-                sp = (char *)nq->nvalue.cp;
+                sp = (char *)FETCH_VT(nq->nvalue, cp);
                 memcpy(sp, dp->data, nv_size(tp));
                 for (j = 0; j < dp->numnodes; j++) {
                     nr = nv_namptr(dp->nodes, j);
@@ -1417,8 +1424,9 @@ Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *
                     n = strlen(nr->nvname) + 1;
                     memcpy(cp, nr->nvname, n);
                     cp += n;
-                    if (nr->nvalue.cp >= dp->data && nr->nvalue.cp < (char *)pp + pp->fun.dsize) {
-                        nq->nvalue.cp = sp + (nr->nvalue.cp - dp->data);
+                    if (FETCH_VT(nr->nvalue, cp) >= dp->data &&
+                        FETCH_VT(nr->nvalue, cp) < (char *)pp + pp->fun.dsize) {
+                        STORE_VT(nq->nvalue, cp, sp + (FETCH_VT(nr->nvalue, cp) - dp->data));
                     }
                     nv_setattr(nq, nr->nvflag);
                     nq->nvsize = nr->nvsize;
@@ -1438,14 +1446,14 @@ Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *
     nv_onattr(mp, NV_RDONLY | NV_NOFREE | NV_BINARY);
     nv_setsize(mp, rsize);
     nv_disc(mp, &pp->fun, DISC_OP_LAST);
-    mp->nvalue.cp = pp->data;
+    STORE_VT(mp->nvalue, cp, pp->data);
     nv_newtype(mp);
     return mp;
 }
 
 static_fn void put_stat(Namval_t *np, const void *val, int flag, Namfun_t *nfp) {
     if (val) {
-        if (sh_stat(val, (struct stat *)np->nvalue.cp) < 0)
+        if (sh_stat(val, (struct stat *)FETCH_VT(np->nvalue, cp)) < 0)
             sfprintf(sfstderr, "stat of %s failed\n", val);
         return;
     }
@@ -1505,7 +1513,7 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
     if (!(mp = nv_open(nvtype, shp->var_base, NV_NOADD | NV_VARNAME))) return 0;
     memcpy(&node, L_ARGNOD, sizeof(node));
     L_ARGNOD->nvfun = 0;
-    L_ARGNOD->nvalue.cp = 0;
+    STORE_VT(L_ARGNOD->nvalue, cp, NULL);
     dp = nv_dict(mp);
     if (indent == 0) {
         for (tp = (Namval_t *)dtfirst(dp); tp; tp = (Namval_t *)dtnext(dp, tp)) {
@@ -1547,13 +1555,13 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
             } else {
                 sfprintf(out, "\tfunction %s", cp);
             }
-            if (!mp->nvalue.ip) continue;
-            if (mp->nvalue.rp->hoffset < 0) continue;
+            if (!FETCH_VT(mp->nvalue, rp)) continue;
+            if (FETCH_VT(mp->nvalue, rp)->hoffset < 0) continue;
 
             xp = NULL;
             if (nv_isattr(mp, NV_FTMP)) {
                 iop = shp->heredocs;
-            } else if ((xp = mp->nvalue.rp->fname)) {
+            } else if ((xp = FETCH_VT(mp->nvalue, rp)->fname)) {
                 iop = sfopen(iop, xp, "r");
             } else if (shp->gd->hist_ptr) {
                 iop = (shp->gd->hist_ptr)->histfp;
@@ -1561,7 +1569,7 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
                 abort();
             }
 
-            if (sfseek(iop, (Sfoff_t)mp->nvalue.rp->hoffset, SEEK_SET) >= 0) {
+            if (sfseek(iop, (Sfoff_t)FETCH_VT(mp->nvalue, rp)->hoffset, SEEK_SET) >= 0) {
                 sfmove(iop, out, nv_size(mp), -1);
             } else {
                 sfputc(iop, '\n');
@@ -1573,7 +1581,9 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
                 sfwrite(out, "\ttypeset -f", 11);
                 if (nv_isattr(mp, NV_STATICF)) sfputc(out, 'S');
                 if (nv_isattr(mp, NV_TAGGED)) sfputc(out, 't');
-                if (mp->nvalue.rp->help) sfprintf(out, "h '%s'", mp->nvalue.rp->help);
+                if (FETCH_VT(mp->nvalue, rp)->help) {
+                    sfprintf(out, "h '%s'", FETCH_VT(mp->nvalue, rp)->help);
+                }
                 sfprintf(out, " %s\n", cp);
             }
             iop = NULL;
@@ -1609,7 +1619,7 @@ void nv_checkrequired(Namval_t *mp) {
     for (i = 0; i < dp->numnodes; i++) {
         if (dq) nq = nv_namptr(dq->nodes, i);
         np = nv_namptr(dp->nodes, i);
-        if (nv_isattr(np, NV_RDONLY) && np->nvalue.cp == Empty) {
+        if (nv_isattr(np, NV_RDONLY) && FETCH_VT(np->nvalue, cp) == Empty) {
             errormsg(SH_DICT, ERROR_exit(1), e_required, np->nvname, nv_type(mp)->nvname);
             __builtin_unreachable();
         }

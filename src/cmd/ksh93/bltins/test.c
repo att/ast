@@ -459,7 +459,7 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
             isref = nv_isref(np);
             if (op == 'R') return isref;
             if (isref) {
-                if (np->nvalue.cp) {
+                if (FETCH_VT(np->nvalue, cp)) {
                     np = nv_refnode(np);
                 } else {
                     return 0;
