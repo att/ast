@@ -253,7 +253,8 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
     ssize_t sz = -1;
     Namval_t *np, *tp, *mp;
     Namarr_t *ap;
-    char *cp, *sp;
+    char *cp;
+    const char *sp;
     struct Enum *ep;
     Shell_t *shp = context->shp;
     struct {

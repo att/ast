@@ -364,7 +364,7 @@ bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
             if (xtrace) sh_offoption(shp, SH_XTRACE);
             ap->flags &= ~ARRAY_SCAN;
             shp->prefix = 0;
-            sh_eval(shp, sh_sfeval(av), 0);
+            sh_eval(shp, sh_sfeval((const char **)av), 0);
             shp->prefix = prefix;
             ap->flags |= ARRAY_SCAN;
             if (xtrace) sh_onoption(shp, SH_XTRACE);

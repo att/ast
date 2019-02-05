@@ -2365,7 +2365,7 @@ static_fn void sftrack(Sfio_t *sp, int flag, void *data) {
 
 struct eval {
     Sfdisc_t disc;
-    char **argv;
+    const char **argv;
     size_t slen;
     char addspace;
 };
@@ -2373,9 +2373,10 @@ struct eval {
 //
 // Create a stream consisting of a space separated argv[] list.
 //
-Sfio_t *sh_sfeval(char *argv[]) {
+Sfio_t *sh_sfeval(const char *argv[]) {
     Sfio_t *iop;
-    char *cp;
+    const char *cp;
+
     if (argv[1]) {
         cp = "";
     } else {
@@ -2401,7 +2402,7 @@ Sfio_t *sh_sfeval(char *argv[]) {
 static_fn int eval_exceptf(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
     UNUSED(data);
     struct eval *ep = (struct eval *)handle;
-    char *cp;
+    const char *cp;
     size_t len;
 
     // No more to do.

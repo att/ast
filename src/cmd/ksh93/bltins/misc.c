@@ -220,7 +220,7 @@ int b_eval(int argc, char *argv[], Shbltin_t *context) {
     argv += opt_info.index;
     if (*argv && **argv) {
         sh_offstate(shp, SH_MONITOR);
-        sh_eval(shp, sh_sfeval(argv), 0);
+        sh_eval(shp, sh_sfeval((const char **)argv), 0);
     }
     return shp->exitval;
 }

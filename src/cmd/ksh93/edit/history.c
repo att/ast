@@ -694,7 +694,7 @@ off_t hist_seek(History_t *hp, int n) {
 // before newline it is deleted each new-line character is replaced with string <nl>.
 //
 
-void hist_list(History_t *hp, Sfio_t *outfile, off_t offset, int last, char *nl) {
+void hist_list(History_t *hp, Sfio_t *outfile, off_t offset, int last, const char *nl) {
     int oldc = 0;
     int c;
 
