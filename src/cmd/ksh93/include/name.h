@@ -37,34 +37,147 @@
 typedef int (*Nambfp_f)(int, char **, void *);
 struct pathcomp;
 
-// Nodes can have all kinds of values.
-union Value {
-    void *vp;
-    const char *cp;
-    char *sp;
-    int *ip;
-    char c;
-    int i;
-    unsigned int u;
-    int32_t *lp;
-    pid_t *pidp;
-    uid_t *uidp;
-    int64_t *llp;  // for long long arithmetic
-    int16_t i16;
-    int16_t *i16p;
-    double *dp;              // for floating point arithmetic
-    Sfdouble_t *ldp;         // for long floating point arithmetic
-    float f;                 // for short floating point
-    float *fp;               // for short floating point
-    struct Namarray *array;  // for array node
-    struct Namval *np;       // for Namval_t node
-    union Value *up;         // for indirect node
-    struct Ufunction *rp;    // shell user defined functions
-    struct Namfun *funp;     // discipline pointer
-    struct Namref *nrp;      // name reference
-    Nambfp_f bfp;            // builtin entry point function pointer
-    struct pathcomp *pathcomp;
+// Nodes can have all kinds of values. We track the type last stored and check the type is what we
+// expect on retrieval. When this list is changed the `value_type_names` array has to be updated.
+enum value_type {
+    VT_do_not_use = 0,
+    VT_vp,
+    VT_cp,
+    VT_sp,
+    VT_ip,
+    VT_c,
+    VT_i,
+    VT_u,
+    VT_lp,
+    VT_pidp,
+    VT_uidp,
+    VT_llp,
+    VT_i16,
+    VT_i16p,
+    VT_dp,
+    VT_ldp,
+    VT_f,
+    VT_fp,
+    VT_array,
+    VT_np,
+    VT_up,
+    VT_rp,
+    VT_funp,
+    VT_nrp,
+    VT_bfp,
+    VT_pathcomp,
 };
+
+// The following array in name.c must be kept in sync with enum value_type.
+extern const char *value_type_names[];
+
+struct Value {
+    const char *funcname;
+    const char *filename;
+    int line_num;
+    enum value_type type;
+    union {
+        void *vp;
+        const char *cp;
+        char *sp;
+        int *ip;
+        char c;
+        int i;
+        unsigned int u;
+        int32_t *lp;
+        pid_t *pidp;
+        uid_t *uidp;
+        int64_t *llp;  // for long long arithmetic
+        int16_t i16;
+        int16_t *i16p;
+        double *dp;              // for floating point arithmetic
+        Sfdouble_t *ldp;         // for long floating point arithmetic
+        float f;                 // for short floating point
+        float *fp;               // for short floating point
+        struct Namarray *array;  // for array node
+        struct Namval *np;       // for Namval_t node
+        struct Value *up;        // for indirect node
+        struct Ufunction *rp;    // shell user defined functions
+        struct Namfun *funp;     // discipline pointer
+        struct Namref *nrp;      // name reference
+        Nambfp_f bfp;            // builtin entry point function pointer
+        struct pathcomp *pathcomp;
+    } _val;
+};
+
+// I dislike macros like these but since C doesn't support polymorphism directly this is the most
+// straightforward way to access any of the fields of the value union.
+//
+// TODO: Remove the `1 ||` once the obvious bugs introduced by converting `union Value` to the
+//       `struct Value` above have been eliminated.
+#if 1 || !DEBUG_BUILD
+
+// Non-debugging versions of the struct Value getter/setter functions.
+#define fetch_vt(line, value_obj, which) (value_obj)._val.which
+#define fetch_vtp(line, value_objp, which) (value_objp)->_val.which
+#define store_vt(line, value_obj, which, val) \
+    do {                                      \
+        (value_obj)._val.which = val;         \
+    } while (0)
+#define store_vtp(line, value_objp, which, val) \
+    do {                                        \
+        (value_objp)->_val.which = val;         \
+    } while (0)
+
+#else
+
+// Debugging versions of the struct Value getter/setter functions.
+#define fetch_abort() 0      // abort()
+#define fetch_backtrace() 0  // dump_backtrace(0)
+
+#define fetch_vt(line, value_obj, which)                                                         \
+    ((value_obj).type == VT_##which                                                              \
+         ? (value_obj)._val.which                                                                \
+         : (fprintf(stderr, "Error: Fetching value type \"%s\" @ %s:%d in %s()\n",               \
+                    value_type_names[VT_##which], __FILE__, line, __FUNCTION__),                 \
+            fprintf(stderr, "Error: Stored   value type \"%s\" @ %s:%d in %s()\n",               \
+                    value_type_names[(value_obj).type],                                          \
+                    (value_obj).filename ? (value_obj).filename : "undef", (value_obj).line_num, \
+                    (value_obj).funcname ? (value_obj).funcname : "undef"),                      \
+            fetch_backtrace(), fetch_abort(), (value_obj)._val.which))
+
+#define fetch_vtp(line, value_objp, which)                                         \
+    ((value_objp)->type == VT_##which                                              \
+         ? (value_objp)->_val.which                                                \
+         : (fprintf(stderr, "Error: Fetching value type \"%s\" @ %s:%d in %s()\n", \
+                    value_type_names[VT_##which], __FILE__, line, __FUNCTION__),   \
+            fprintf(stderr, "Error: Stored   value type \"%s\" @ %s:%d in %s()\n", \
+                    value_type_names[(value_objp)->type],                          \
+                    (value_objp)->filename ? (value_objp)->filename : "undef",     \
+                    (value_objp)->line_num,                                        \
+                    (value_objp)->funcname ? (value_objp)->funcname : "undef"),    \
+            fetch_backtrace(), fetch_abort(), (value_objp)->_val.which))
+
+#define store_vt(line, value_obj, which, val) \
+    do {                                      \
+        (value_obj).funcname = __FUNCTION__;  \
+        (value_obj).filename = __FILE__;      \
+        (value_obj).line_num = line;          \
+        (value_obj).type = VT_##which;        \
+        (value_obj)._val.which = val;         \
+    } while (0)
+
+#define store_vtp(line, value_objp, which, val) \
+    do {                                        \
+        (value_objp)->funcname = __FUNCTION__;  \
+        (value_objp)->filename = __FILE__;      \
+        (value_objp)->line_num = line;          \
+        (value_objp)->type = VT_##which;        \
+        (value_objp)->_val.which = val;         \
+    } while (0)
+
+#endif
+
+// These four macros must be used when retrieving or storing a value in a `struct Value` object.
+#define FETCH_VT(value_obj, which) fetch_vt(__LINE__, value_obj, which)
+#define FETCH_VTP(value_objp, which) fetch_vtp(__LINE__, value_objp, which)
+#define STORE_VT(value_obj, which, val) store_vt(__LINE__, value_obj, which, val)
+#define STORE_VTP(value_objp, which, val) store_vtp(__LINE__, value_objp, which, val)
 
 #ifndef _SHCMD_H
 typedef struct Namval Namval_t;
@@ -164,7 +277,7 @@ struct Namval {
     unsigned short nvsize;  // size or base
 #endif
     Namfun_t *nvfun;     // pointer to trap functions
-    union Value nvalue;  // value field
+    struct Value nvalue;  // value field
     void *nvshell;       // shell pointer
     char *nvenv;         // pointer to environment name
 };
@@ -429,8 +542,8 @@ struct argnod;
 #define nv_isref(n) (nv_isattr((n), NV_REF | NV_TAGGED | NV_FUNCT) == NV_REF)
 #define is_abuiltin(n) (nv_isattr(n, NV_BLTIN | NV_INTEGER) == NV_BLTIN)
 #define is_afunction(n) (nv_isattr(n, NV_FUNCTION | NV_REF) == NV_FUNCTION)
-#define nv_funtree(n) ((n)->nvalue.rp->ptree)
-#define funptr(n) ((n)->nvalue.bfp)
+#define nv_funtree(n) FETCH_VT((n)->nvalue, rp)->ptree
+#define funptr(n) FETCH_VT((n)->nvalue, bfp)
 
 #define NV_SUBQUOTE (NV_ADD << 1)  // used with nv_endsubscript
 
@@ -439,11 +552,11 @@ struct argnod;
 // ... for attributes.
 #define nv_context(n) ((void *)(n)->nvfun)  // for builtins
 // The following are for name references.
-#define nv_refnode(n) ((n)->nvalue.nrp->np)
-#define nv_reftree(n) ((n)->nvalue.nrp->root)
-#define nv_reftable(n) ((n)->nvalue.nrp->table)
-#define nv_refsub(n) ((n)->nvalue.nrp->sub)
-#define nv_refoldnp(n) ((n)->nvalue.nrp->oldnp)
+#define nv_refnode(n) FETCH_VT((n)->nvalue, nrp)->np
+#define nv_reftree(n) FETCH_VT((n)->nvalue, nrp)->root
+#define nv_reftable(n) FETCH_VT((n)->nvalue, nrp)->table
+#define nv_refsub(n) FETCH_VT((n)->nvalue, nrp)->sub
+#define nv_refoldnp(n) FETCH_VT((n)->nvalue, nrp)->oldnp
 // ... for etc.
 #define nv_setsize(n, s) ((n)->nvsize = ((s)*4) | 2)
 #undef nv_size
@@ -462,7 +575,7 @@ extern Namarr_t *nv_arrayptr(Namval_t *);
 extern bool nv_arrayisset(Namval_t *, Namarr_t *);
 extern bool nv_arraysettype(Namval_t *, Namval_t *, const char *, int);
 extern int nv_aimax(Namval_t *);
-extern union Value *nv_aivec(Namval_t *, unsigned char **);
+extern struct Value *nv_aivec(Namval_t *, unsigned char **);
 extern int nv_aipack(Namarr_t *);
 extern bool nv_atypeindex(Namval_t *, const char *);
 extern bool nv_setnotify(Namval_t *, char **);

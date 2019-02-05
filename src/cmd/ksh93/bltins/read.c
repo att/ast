@@ -655,8 +655,9 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
         if (timeslot) timerdel(timeslot);
         if (binary && !((size = nv_size(np)) && nv_isarray(np) && c != size)) {
             int optimize = !np->nvfun || !nv_hasdisc(np, &OPTIMIZE_disc);
-            if (optimize && (c == size) && np->nvalue.cp && !nv_isarray(np)) {
-                memcpy((char *)np->nvalue.cp, var, c);
+            char *cp = FETCH_VT(np->nvalue, sp);
+            if (optimize && (c == size) && cp && !nv_isarray(np)) {
+                memcpy(cp, var, c);
             } else {
                 Namval_t *mp;
                 if (var == buf) var = memdup(var, c + 1);

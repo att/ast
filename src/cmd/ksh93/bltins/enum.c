@@ -206,7 +206,7 @@ static_fn Namval_t *create_enum(Namval_t *np, const void *vp, int flags, Namfun_
         }
 
         if (n == 0) {
-            mp->nvalue.i16 = i;
+            STORE_VT(mp->nvalue, i16, i);
             mp->nvname = (char *)v;
             fp->last = (char *)(name + strlen(name));
             return mp;

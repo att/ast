@@ -88,7 +88,7 @@ static_fn void sh_argset(Arg_t *, char *[]);
 #define SORT_numeric 01
 #define SORT_reverse 02
 struct Node {
-    union Value vp;
+    struct Value vp;
     int index;
     unsigned char bits;
     Namval_t *nodes[1];
@@ -97,7 +97,7 @@ struct Node {
 struct Sort {
     Shell_t *shp;
     Namval_t *np;
-    union Value *vp;
+    struct Value *vp;
     Dt_t *root;
     int cur;
     int nelem;
@@ -439,7 +439,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
         if (action == SORT) {
             int (*sortfn)(const char *, const char *) = strcoll;
             Namarr_t *arp;
-            union Value *args;
+            struct Value *args;
             unsigned char *bits;
             if (argc > 0) {
                 strsort(argv, argc, sortfn);
@@ -483,7 +483,8 @@ int sh_argopts(int argc, char *argv[], void *context) {
                 cp = (char *)sp->nodes;
                 for (c = 0; c < arp->nelem; c++) {
                     if (*keylist && *keylist != ':') {
-                        ((struct Node *)cp)->index = strtol(args[c].np->nvname, NULL, 10);
+                        struct Namval *np = FETCH_VT(args[c], np);
+                        ((struct Node *)cp)->index = strtol(np->nvname, NULL, 10);
                         ((struct Node *)cp)->bits = bits[c];
                     } else {
                         ((struct Node *)cp)->index = c;

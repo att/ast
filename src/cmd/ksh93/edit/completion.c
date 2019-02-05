@@ -277,9 +277,9 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
     {
         char *last = out;
         Namval_t *np = nv_search("COMP_KEY", shp->var_tree, 0);
-        if (np) np->nvalue.i16 = '\t';
+        if (np) STORE_VT(np->nvalue, i16, '\t');
         np = nv_search("COMP_TYPE", shp->var_tree, 0);
-        if (np) np->nvalue.i16 = (mode == '\\' ? '\t' : '?');
+        if (np) STORE_VT(np->nvalue, i16, mode == '\\' ? '\t' : '?');
         var = mode;
         begin = out = find_begin(outbuff, last, 0, &var);
         if (ep->compdict && mode != '?' &&

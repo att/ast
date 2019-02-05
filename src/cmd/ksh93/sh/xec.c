@@ -554,7 +554,7 @@ int sh_debug(Shell_t *shp, const char *trap, const char *name, const char *subsc
     } else if (iop == stkstd) {
         *stkptr(stkp, stktell(stkp) - 1) = 0;
     }
-    np->nvalue.cp = stkfreeze(stkp, 1);
+    STORE_VT(np->nvalue, cp, stkfreeze(stkp, 1));
     // Now setup .sh.level variable.
     shp->st.lineno = error_info.line;
     level = shp->fn_depth + shp->dot_depth;
@@ -568,7 +568,7 @@ int sh_debug(Shell_t *shp, const char *trap, const char *name, const char *subsc
     savst = shp->st;
     shp->st.trap[SH_DEBUGTRAP] = 0;
     n = sh_trap(shp, trap, 0);
-    np->nvalue.cp = 0;
+    STORE_VT(np->nvalue, cp, NULL);
     shp->indebug = 0;
     if (shp->st.cmdname) error_info.id = shp->st.cmdname;
     nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
@@ -641,7 +641,7 @@ static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Na
     }
     nv_putval(SH_NAMENOD, cp, NV_NOFREE);
     memcpy(node, L_ARGNOD, sizeof(*node));
-    L_ARGNOD->nvalue.nrp = nr;
+    STORE_VT(L_ARGNOD->nvalue, nrp, nr);
     nv_setattr(L_ARGNOD, NV_REF | NV_NOFREE);
     L_ARGNOD->nvfun = NULL;
     L_ARGNOD->nvenv = NULL;
@@ -655,7 +655,7 @@ static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Na
 static_fn void unset_instance(Namval_t *nq, Namval_t *node, struct Namref *nr, long mode) {
     UNUSED(nq);
 
-    L_ARGNOD->nvalue.nrp = node->nvalue.nrp;
+    STORE_VT(L_ARGNOD->nvalue, nrp, FETCH_VT(node->nvalue, nrp));
     nv_setattr(L_ARGNOD, node->nvflag);
     L_ARGNOD->nvfun = node->nvfun;
     if (nr->sub) {
@@ -973,7 +973,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         }
                     }
 #endif  // SHOPT_BASH
-                    if (np == SYSTYPESET || (np && np->nvalue.bfp == SYSTYPESET->nvalue.bfp)) {
+                    if (np == SYSTYPESET ||
+                        (np && FETCH_VT(np->nvalue, bfp) == FETCH_VT(SYSTYPESET->nvalue, bfp))) {
                         if (np != SYSTYPESET) {
                             shp->typeinit = np;
                             tp = nv_type(np);
@@ -1073,7 +1074,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         if (!shp->namespace || !(np = sh_fsearch(shp, com0, 0))) {
                             np = nv_search(com0, shp->fun_tree, 0);
                         }
-                        if (!np || !np->nvalue.ip) {
+                        if (!np || !FETCH_VT(np->nvalue, ip)) {
                             Namval_t *mp = nv_search(com0, shp->bltin_tree, 0);
                             if (mp) np = mp;
                         } else if ((t->com.comtyp & COMFIXED) && nv_type(np)) {
@@ -1082,7 +1083,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         }
                     } else {
                         if ((np = nv_search(com0, shp->track_tree, 0)) &&
-                            !nv_isattr(np, NV_NOALIAS) && np->nvalue.cp) {
+                            !nv_isattr(np, NV_NOALIAS) && FETCH_VT(np->nvalue, cp)) {
                             np = nv_search(nv_getval(np), shp->bltin_tree, 0);
                         } else {
                             np = 0;
@@ -1143,7 +1144,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             }
                             shp->redir0 = 1;
                             sh_redirect(shp, io,
-                                        type | (np->nvalue.bfp == (Nambfp_f)b_dot_cmd
+                                        type | (FETCH_VT(np->nvalue, bfp) == (Nambfp_f)b_dot_cmd
                                                     ? 0
                                                     : IOHERESTRING | IOUSEVEX));
                             for (item = buffp->olist; item; item = item->next) item->strm = 0;
@@ -1310,7 +1311,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     struct Namref nr;
                     long mode;
                     struct slnod *slp;
-                    if (!np->nvalue.ip) {
+                    if (!FETCH_VT(np->nvalue, ip)) {
                         indx = path_search(shp, com0, NULL, 0);
                         if (indx == 1) {
                             if (shp->namespace) {
@@ -1320,7 +1321,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             }
                         }
 
-                        if (!np->nvalue.ip) {
+                        if (!FETCH_VT(np->nvalue, ip)) {
                             if (indx == 1) {
                                 errormsg(SH_DICT, ERROR_exit(0), e_defined, com0);
                                 shp->exitval = ERROR_NOEXEC;
@@ -2197,7 +2198,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     Dt_t *root = dtopen(&_Nvdisc, Dtoset);
                     dtuserdata(root, shp, 1);
                     nv_mount(np, NULL, root);
-                    np->nvalue.cp = Empty;
+                    STORE_VT(np->nvalue, cp, Empty);
                     dtview(root, shp->var_base);
                 }
                 oldnspace = enter_namespace(shp, np);
@@ -2241,8 +2242,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     __builtin_unreachable();
                 }
             }
-            if (np->nvalue.rp) {
-                struct Ufunction *rp = np->nvalue.rp;
+            if (FETCH_VT(np->nvalue, rp)) {
+                struct Ufunction *rp = FETCH_VT(np->nvalue, rp);
                 slp = (struct slnod *)np->nvenv;
                 sh_funstaks(slp->slchild, -1);
                 stkclose(slp->slptr);
@@ -2258,14 +2259,14 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     rp->sdict = 0;
                 }
                 if (shp->funload) {
-                    if (!shp->fpathdict) free(np->nvalue.rp);
-                    np->nvalue.rp = 0;
+                    if (!shp->fpathdict) free(FETCH_VT(np->nvalue, rp));
+                    STORE_VT(np->nvalue, rp, NULL);
                 }
             }
-            if (!np->nvalue.rp) {
-                np->nvalue.rp =
+            if (!FETCH_VT(np->nvalue, rp)) {
+                struct Ufunction *rp =
                     calloc(1, sizeof(struct Ufunction) + (shp->funload ? sizeof(Dtlink_t) : 0));
-                memset((void *)np->nvalue.rp, 0, sizeof(struct Ufunction));
+                STORE_VT(np->nvalue, rp, rp);
             }
             if (t->funct.functstak) {
                 static Dtdisc_t _Rpdisc = {.key = offsetof(struct Ufunction, fname),
@@ -2278,19 +2279,19 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 stklink(slp->slptr);
                 np->nvenv = (char *)slp;
                 nv_funtree(np) = (int *)(t->funct.functtre);
-                np->nvalue.rp->hoffset = t->funct.functloc;
-                np->nvalue.rp->lineno = t->funct.functline;
-                np->nvalue.rp->nspace = shp->namespace;
-                np->nvalue.rp->fname = 0;
-                np->nvalue.rp->argv = ac ? ((struct dolnod *)ac->comarg)->dolval + 1 : 0;
-                np->nvalue.rp->argc = ac ? ((struct dolnod *)ac->comarg)->dolnum : 0;
-                np->nvalue.rp->fdict = shp->fun_tree;
+                FETCH_VT(np->nvalue, rp)->hoffset = t->funct.functloc;
+                FETCH_VT(np->nvalue, rp)->lineno = t->funct.functline;
+                FETCH_VT(np->nvalue, rp)->nspace = shp->namespace;
+                FETCH_VT(np->nvalue, rp)->fname = 0;
+                FETCH_VT(np->nvalue, rp)->argv = ac ? ((struct dolnod *)ac->comarg)->dolval + 1 : 0;
+                FETCH_VT(np->nvalue, rp)->argc = ac ? ((struct dolnod *)ac->comarg)->dolnum : 0;
+                FETCH_VT(np->nvalue, rp)->fdict = shp->fun_tree;
                 fp = (struct functnod *)(slp + 1);
-                if (fp->functtyp == (TFUN | FAMP)) np->nvalue.rp->fname = fp->functnam;
+                if (fp->functtyp == (TFUN | FAMP)) FETCH_VT(np->nvalue, rp)->fname = fp->functnam;
                 nv_setsize(np, fp->functline);
                 nv_offattr(np, NV_FPOSIX);
                 if (shp->funload) {
-                    struct Ufunction *rp = np->nvalue.rp;
+                    struct Ufunction *rp = FETCH_VT(np->nvalue, rp);
                     rp->np = np;
                     if (!shp->fpathdict) shp->fpathdict = dtopen(&_Rpdisc, Dtobag);
                     if (shp->fpathdict) {
@@ -2683,21 +2684,21 @@ Sfdouble_t sh_mathfun(Shell_t *shp, void *fp, int nargs, Sfdouble_t *arg) {
     SH_VALNOD->nvfun = 0;
     SH_VALNOD->nvenv = 0;
     nv_setattr(SH_VALNOD, NV_LDOUBLE | NV_NOFREE);
-    SH_VALNOD->nvalue.ldp = 0;
+    STORE_VT(SH_VALNOD->nvalue, ldp, NULL);
     for (i = 0; i < nargs; i++) {
         *nr++ = mp = nv_namptr(shp->mathnodes, i);
-        mp->nvalue.ldp = arg++;
+        STORE_VT(mp->nvalue, ldp, arg++);
     }
     *nr = 0;
-    SH_VALNOD->nvalue.ldp = &d;
+    STORE_VT(SH_VALNOD->nvalue, ldp, &d);
     argv[0] = np->nvname;
     argv[1] = 0;
     sh_funscope(shp, 1, argv, 0, &funenv, 0);
-    while ((mp = *nr++)) mp->nvalue.ldp = 0;
+    while ((mp = *nr++)) STORE_VT(mp->nvalue, ldp, NULL);
     SH_VALNOD->nvfun = node.nvfun;
     nv_setattr(SH_VALNOD, node.nvflag);
     SH_VALNOD->nvenv = node.nvenv;
-    SH_VALNOD->nvalue.ldp = node.nvalue.ldp;
+    STORE_VT(SH_VALNOD->nvalue, ldp, FETCH_VT(node.nvalue, ldp));
     return d;
 }
 
@@ -2713,9 +2714,9 @@ static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], stru
     if (!lp->hdr.disc) lp = init_level(shp, 0);
     if ((struct sh_scoped *)shp->topscope != shp->st.self) sh_setscope(shp, shp->topscope);
     level = lp->maxlevel = shp->dot_depth + shp->fn_depth + 1;
-    SH_LEVELNOD->nvalue.i16 = lp->maxlevel;
+    STORE_VT(SH_LEVELNOD->nvalue, i16, lp->maxlevel);
     shp->st.lineno = error_info.line;
-    np->nvalue.rp->running += 2;
+    FETCH_VT(np->nvalue, rp)->running += 2;
     if (nv_isattr(np, NV_FPOSIX) && !sh_isoption(shp, SH_BASH)) {
         char *save;
         int loopcnt = shp->st.loopcnt;
@@ -2742,7 +2743,7 @@ static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], stru
         sh_setscope(shp, sp);
     }
     lp->maxlevel = level;
-    SH_LEVELNOD->nvalue.i16 = lp->maxlevel;
+    STORE_VT(SH_LEVELNOD->nvalue, i16, lp->maxlevel);
     shp->last_root = nv_dict(DOTSHNOD);
 #if 0
     nv_putval(SH_FUNNAMENOD,shp->st.funname,NV_NOFREE);
@@ -2751,9 +2752,9 @@ static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], stru
 #endif
     nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
     shp->pipepid = pipepid;
-    np->nvalue.rp->running -= 2;
-    if (np->nvalue.rp && np->nvalue.rp->running == 1) {
-        np->nvalue.rp->running = 0;
+    FETCH_VT(np->nvalue, rp)->running -= 2;
+    if (FETCH_VT(np->nvalue, rp) && FETCH_VT(np->nvalue, rp)->running == 1) {
+        FETCH_VT(np->nvalue, rp)->running = 0;
         _nv_unset(np, NV_RDONLY);
     }
 }
@@ -2908,7 +2909,7 @@ static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jo
         if (!strchr(path = argv[0], '/')) {
             Namval_t *np;
             np = nv_search(path, shp->track_tree, 0);
-            if (np && !nv_isattr(np, NV_NOALIAS) && np->nvalue.cp) {
+            if (np && !nv_isattr(np, NV_NOALIAS) && FETCH_VT(np->nvalue, cp)) {
                 path = nv_getval(np);
             } else if (path_absolute(shp, path, NULL)) {
                 path = stkptr(shp->stk, PATH_OFFSET);
@@ -3065,7 +3066,7 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
     shp->st.loopcnt = 0;
     if (!fun) {
         fp = (struct funenv *)arg;
-        shp->st.real_fun = (fp->node)->nvalue.rp;
+        shp->st.real_fun = FETCH_VT((fp->node)->nvalue, rp);
         envlist = fp->env;
     }
     prevscope->save_tree = shp->var_tree;
@@ -3104,7 +3105,7 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
     error_info.id = argv[0];
     shp->st.var_local = shp->var_tree;
     if (!fun) {
-        shp->st.filename = fp->node->nvalue.rp->fname;
+        shp->st.filename = FETCH_VT(fp->node->nvalue, rp)->fname;
         shp->st.funname = nv_name(fp->node);
         shp->last_root = nv_dict(DOTSHNOD);
         nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
@@ -3128,15 +3129,16 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
                     np = nv_search(args[r], shp->var_tree, NV_NOSCOPE | NV_ADD);
                     if (np && *nref) {
                         nq = *nref++;
-                        np->nvalue.nrp = calloc(1, sizeof(struct Namref));
+                        STORE_VT(np->nvalue, nrp, calloc(1, sizeof(struct Namref)));
                         if (nv_isattr(nq, NV_LDOUBLE) == NV_LDOUBLE) {
-                            np->nvalue.nrp->np = nq;
+                            FETCH_VT(np->nvalue, nrp)->np = nq;
                         } else {
                             // TODO: Figure out where the assignment to nq->nvalue.ldp is occurring.
                             // This used to be the sole use of `pointerof()` which simply did what
                             // we're now doing. But when spelled out like this it is obvious there
                             // is a problem.
-                            np->nvalue.nrp->np = (void *)((uintptr_t)*nq->nvalue.ldp);
+                            FETCH_VT(np->nvalue, nrp)->np =
+                                (void *)((uintptr_t)*FETCH_VT(nq->nvalue, ldp));
                             nv_onattr(nq, NV_LDOUBLE);
                         }
                         nv_onattr(np, NV_REF | NV_NOFREE);

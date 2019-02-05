@@ -779,10 +779,11 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
             size += sizeof(struct dolnod) + (nargs + ARG_SPARE) * sizeof(char *);
             if (shp->shcomp && strncmp(".sh.math.", t->funct.functnam, 9) == 0) {
                 Namval_t *np = nv_open(t->funct.functnam, shp->fun_tree, NV_ADD | NV_VARNAME);
-                np->nvalue.rp =
-                    calloc(1, sizeof(struct Ufunction) + (shp->funload ? sizeof(Dtlink_t) : 0));
-                memset((void *)np->nvalue.rp, 0, sizeof(struct Ufunction));
-                np->nvalue.rp->argc = ((struct dolnod *)ac->comarg)->dolnum;
+                STORE_VT(
+                    np->nvalue, rp,
+                    calloc(1, sizeof(struct Ufunction) + (shp->funload ? sizeof(Dtlink_t) : 0)));
+                memset(FETCH_VT(np->nvalue, rp), 0, sizeof(struct Ufunction));
+                FETCH_VT(np->nvalue, rp)->argc = ((struct dolnod *)ac->comarg)->dolnum;
             }
         }
         while (lexp->token == NL) lexp->token = sh_lex(lexp);
@@ -1380,7 +1381,7 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
                     sfputc(stkp, 0);
                     sfseek(stkp, (Sfoff_t)-1, SEEK_CUR);
 
-                    if (np && np->nvalue.bfp != (Nambfp_f)b_alias &&
+                    if (np && FETCH_VT(np->nvalue, bfp) != (Nambfp_f)b_alias &&
                         strchr(stkptr(stkp, ARGVAL), '['))
                         sfputc(stkp, '@');
                     ap = (struct argnod *)stkfreeze(stkp, 1);
@@ -1415,7 +1416,7 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
                         cmdarg++;
                     } else if (np == SYSEXEC) {
                         lexp->inexec = 1;
-                    } else if (np->nvalue.bfp == (Nambfp_f)b_getopts) {
+                    } else if (FETCH_VT(np->nvalue, bfp) == (Nambfp_f)b_getopts) {
                         opt_get |= FOPTGET;
                     }
                 }
@@ -1924,7 +1925,7 @@ unsigned long kiaentity(Lex_t *lexp, const char *name, int len, int type, int fi
     sfputc(stkp, '\0');
     np = nv_search(stakptr(offset), lexp->entity_tree, NV_ADD);
     stkseek(stkp, offset);
-    np->nvalue.i = pkind;
+    STORE_VT(np->nvalue, i, pkind);
     nv_setsize(np, width);
     if (!nv_isattr(np, NV_TAGGED) && first >= 0) {
         nv_onattr(np, NV_TAGGED);
@@ -1946,7 +1947,7 @@ static_fn void kia_add(Namval_t *np, void *data) {
     UNUSED(data);
 
     kiaentity(lp, name + 1, -1, *name, 0, -1, (*name == 'p' ? lp->unknown : lp->script),
-              np->nvalue.i, nv_size(np), "");
+              FETCH_VT(np->nvalue, i), nv_size(np), "");
 }
 
 int kiaclose(Lex_t *lexp) {

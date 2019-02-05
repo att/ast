@@ -274,9 +274,9 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
         // Check for KornShell style function first.
         np = nv_search(script, shp->fun_tree, 0);
         if (np && is_afunction(np) && !nv_isattr(np, NV_FPOSIX)) {
-            if (!np->nvalue.ip) {
+            if (!FETCH_VT(np->nvalue, ip)) {
                 path_search(shp, script, NULL, 0);
-                if (np->nvalue.ip) {
+                if (FETCH_VT(np->nvalue, ip)) {
                     if (nv_isattr(np, NV_FPOSIX)) np = 0;
                 } else {
                     errormsg(SH_DICT, ERROR_exit(1), e_found, script);
@@ -310,7 +310,8 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
     shp->topscope = (Shscope_t *)shp->st.self;
     prevscope->save_tree = shp->var_tree;
     if (np) {
-        shp->st.filename = np->nvalue.rp->fname ? strdup(np->nvalue.rp->fname) : 0;
+        struct Ufunction *rp = FETCH_VT(np->nvalue, rp);
+        shp->st.filename = rp->fname ? strdup(rp->fname) : NULL;
     }
     nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
     shp->posix_fun = 0;

@@ -55,7 +55,7 @@
 // Invalidate path name bindings to relative paths.
 //
 static_fn void invalidate(Namval_t *np, void *data) {
-    Pathcomp_t *pp = (Pathcomp_t *)np->nvalue.cp;
+    Pathcomp_t *pp = (Pathcomp_t *)FETCH_VT(np->nvalue, cp);
     UNUSED(data);
 
     if (pp && *pp->name != '/') _nv_unset(np, 0);
@@ -89,6 +89,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     char *dir;
     Pathcomp_t *cdpath = NULL;
     const char *dp;
+    const char *scoped_dir;
     Shell_t *shp = context->shp;
     int saverrno = 0;
     int rval, i, j;
@@ -149,7 +150,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         dir = nv_getval(HOME);
         if (!dir && (pw = getpwuid(geteuid()))) dir = pw->pw_dir;
     } else if (*dir == '-' && dir[1] == 0) {
-        dir = sh_scoped(shp, opwdnod)->nvalue.sp;
+        dir = FETCH_VT(sh_scoped(shp, opwdnod)->nvalue, sp);
     }
 
     if (!dir || *dir == 0) {
@@ -163,11 +164,14 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
 #endif  // __CYGWIN__
     {
         cdpath = (Pathcomp_t *)shp->cdpathlist;
-        if (!cdpath && (dp = sh_scoped(shp, CDPNOD)->nvalue.cp)) {
-            cdpath = path_addpath(shp, NULL, dp, PATH_CDPATH);
-            if (cdpath) {
-                shp->cdpathlist = (void *)cdpath;
-                cdpath->shp = shp;
+        if (!cdpath) {
+            dp = FETCH_VT(sh_scoped(shp, CDPNOD)->nvalue, cp);
+            if (dp) {
+                cdpath = path_addpath(shp, NULL, dp, PATH_CDPATH);
+                if (cdpath) {
+                    shp->cdpathlist = (void *)cdpath;
+                    cdpath->shp = shp;
+                }
             }
         }
         if (!oldpwd) oldpwd = path_pwd(shp);
@@ -261,8 +265,10 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         errormsg(SH_DICT, ERROR_system(1), "%s:", dir);
         __builtin_unreachable();
     }
+
 success:
-    if (dir == sh_scoped(shp, opwdnod)->nvalue.cp || argc == 2) {
+    scoped_dir = FETCH_VT(sh_scoped(shp, opwdnod)->nvalue, sp);
+    if (dir == scoped_dir || argc == 2) {
         dp = dir;  // print out directory for cd -
     }
     if (pflag) {
@@ -289,7 +295,7 @@ success:
     }
     nv_putval(pwdnod, dir, NV_RDONLY);
     nv_onattr(pwdnod, NV_NOFREE | NV_EXPORT);
-    shp->pwd = pwdnod->nvalue.cp;
+    shp->pwd = FETCH_VT(pwdnod->nvalue, cp);
     nv_scan(shp->track_tree, invalidate, NULL, NV_TAGGED, NV_TAGGED);
     path_newdir(shp, shp->pathlist);
     path_newdir(shp, shp->cdpathlist);
