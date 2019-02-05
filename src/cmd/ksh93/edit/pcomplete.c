@@ -304,7 +304,7 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
         if (complete) {
             _nv_unset(COMPREPLY, 0);
             STORE_VT(COMP_POINT->nvalue, i16, index + 1);
-            STORE_VT(COMP_LINE->nvalue, cp, line);
+            STORE_VT(COMP_LINE->nvalue, const_cp, line);
             cp = (char *)&line[index] - strlen(prefix);
             csave = *(cpsave = cp);
             while (--cp >= line) {

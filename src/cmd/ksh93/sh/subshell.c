@@ -343,7 +343,7 @@ static_fn void nv_restore(struct subshell *sp) {
         if (nv_cover(mp)) {
             nv_putval(mp, nv_getval(np), np->nvflag | NV_NOFREE | NV_RDONLY);
         } else {
-            STORE_VT(mp->nvalue, cp, FETCH_VT(np->nvalue, cp));
+            STORE_VT(mp->nvalue, const_cp, FETCH_VT(np->nvalue, const_cp));
         }
         if (nofree && np->nvfun && !np->nvfun->nofree) free(np->nvfun);
         np->nvfun = 0;
@@ -714,10 +714,11 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
 #endif
                 path_newdir(shp, shp->pathlist);
             }
-            if (nv_isattr(pwdnod, NV_NOFREE)) STORE_VT(pwdnod->nvalue, cp, sp->pwd);
+            if (nv_isattr(pwdnod, NV_NOFREE)) STORE_VT(pwdnod->nvalue, const_cp, sp->pwd);
         } else if (sp->shpwd != shp->pwd) {
             shp->pwd = sp->pwd;
-            if (FETCH_VT(PWDNOD->nvalue, cp) == sp->shpwd) STORE_VT(PWDNOD->nvalue, cp, sp->pwd);
+            if (FETCH_VT(PWDNOD->nvalue, const_cp) == sp->shpwd)
+                STORE_VT(PWDNOD->nvalue, const_cp, sp->pwd);
         } else {
             free(sp->pwd);
             if (sp->shpwdfd >= 0) {

@@ -584,7 +584,7 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
             cp = nv_getval(np);
             nv_offattr(np, NV_RAW);
         } else {
-            cp = FETCH_VT(np->nvalue, sp);
+            cp = FETCH_VT(np->nvalue, cp);
         }
 
         size = n;

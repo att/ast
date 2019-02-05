@@ -354,7 +354,7 @@ static_fn char *lookup(Namval_t *np, int type, Sfdouble_t *dp, Namfun_t *handle)
         unblock(bp, type);
         if (!vp->disc[type]) chktfree(np, vp);
         if (type == LOOKUPN) {
-            cp = (char *)FETCH_VT(SH_VALNOD->nvalue, cp);
+            cp = (char *)FETCH_VT(SH_VALNOD->nvalue, const_cp);
             *dp = nv_getnum(SH_VALNOD);
         } else if ((cp = nv_getval(SH_VALNOD))) {
             cp = stkcopy(stkstd, cp);
@@ -794,7 +794,7 @@ void clone_all_disc(Namval_t *np, Namval_t *mp, int flags) {
 //
 int nv_clone(Namval_t *np, Namval_t *mp, int flags) {
     Namfun_t *fp, *fpnext;
-    const char *val = FETCH_VT(mp->nvalue, cp);
+    const char *val = FETCH_VT(mp->nvalue, const_cp);
     unsigned short flag = mp->nvflag;
     size_t size = nv_size(mp);
 
@@ -829,19 +829,19 @@ int nv_clone(Namval_t *np, Namval_t *mp, int flags) {
         nv_setattr(mp, (np->nvflag & ~(NV_MINIMAL)) | (mp->nvflag & NV_MINIMAL));
     }
     if (nv_isattr(np, NV_EXPORT)) mp->nvflag |= (np->nvflag & NV_MINIMAL);
-    if (FETCH_VT(mp->nvalue, cp) == val && !nv_isattr(np, NV_INTEGER)) {
-        if (FETCH_VT(np->nvalue, cp) && FETCH_VT(np->nvalue, cp) != Empty && (flags & NV_COMVAR) &&
-            !(flags & NV_MOVE)) {
-            const char *cp = FETCH_VT(np->nvalue, cp);
+    if (FETCH_VT(mp->nvalue, const_cp) == val && !nv_isattr(np, NV_INTEGER)) {
+        if (FETCH_VT(np->nvalue, const_cp) && FETCH_VT(np->nvalue, const_cp) != Empty &&
+            (flags & NV_COMVAR) && !(flags & NV_MOVE)) {
+            const char *cp = FETCH_VT(np->nvalue, const_cp);
             if (size) {
-                STORE_VT(mp->nvalue, cp, memdup(cp, size));
+                STORE_VT(mp->nvalue, const_cp, memdup(cp, size));
             } else {
-                STORE_VT(mp->nvalue, cp, strdup(cp));
+                STORE_VT(mp->nvalue, const_cp, strdup(cp));
             }
             nv_offattr(mp, NV_NOFREE);
         } else if (np->nvfun || !nv_isattr(np, NV_ARRAY)) {
-            const char *cp = FETCH_VT(np->nvalue, cp);
-            STORE_VT(mp->nvalue, cp, cp);
+            const char *cp = FETCH_VT(np->nvalue, const_cp);
+            STORE_VT(mp->nvalue, const_cp, cp);
             if (!cp) nv_offattr(mp, NV_NOFREE);
         }
     }
@@ -849,7 +849,7 @@ int nv_clone(Namval_t *np, Namval_t *mp, int flags) {
     if (flags & NV_MOVE) {
         if (nv_isattr(np, NV_INTEGER)) STORE_VT(mp->nvalue, ip, FETCH_VT(np->nvalue, ip));
         np->nvfun = NULL;
-        STORE_VT(np->nvalue, cp, NULL);
+        STORE_VT(np->nvalue, const_cp, NULL);
         if (!nv_isattr(np, NV_MINIMAL) || nv_isattr(mp, NV_EXPORT)) {
             mp->nvenv = np->nvenv;
             if (nv_isattr(np, NV_MINIMAL)) {
@@ -866,7 +866,7 @@ int nv_clone(Namval_t *np, Namval_t *mp, int flags) {
         mp->nvenv = np->nvenv;
     }
     if (nv_isattr(np, NV_INTEGER) && FETCH_VT(mp->nvalue, ip) != FETCH_VT(np->nvalue, ip) &&
-        FETCH_VT(np->nvalue, cp) != Empty) {
+        FETCH_VT(np->nvalue, const_cp) != Empty) {
         STORE_VT(mp->nvalue, ip, (int *)num_clone(np, FETCH_VT(np->nvalue, ip)));
         nv_offattr(mp, NV_NOFREE);
     } else if ((flags & NV_NOFREE) && !nv_arrayptr(np)) {
@@ -907,7 +907,7 @@ static_fn void clone_putv(Namval_t *np, const void *val, int flags, Namfun_t *ha
     Namval_t *mp = FETCH_VT(np->nvalue, np);
     if (!shp->subshell) free(dp);
     if (val) nv_clone(mp, np, NV_NOFREE);
-    STORE_VT(np->nvalue, cp, NULL);
+    STORE_VT(np->nvalue, const_cp, NULL);
     assert(val);
     nv_putval(np, val, flags);
 }
