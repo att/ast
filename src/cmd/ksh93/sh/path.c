@@ -244,7 +244,7 @@ char *path_pwd(Shell_t *shp) {
                 if (cp) {
                     nv_offattr(PWDNOD, NV_NOFREE);
                     _nv_unset(PWDNOD, 0);
-                    STORE_VT(PWDNOD->nvalue, cp, cp);
+                    STORE_VT(PWDNOD->nvalue, const_cp, cp);
                     goto skip;
                 }
                 break;
@@ -259,7 +259,7 @@ char *path_pwd(Shell_t *shp) {
     }
 skip:
     nv_onattr(PWDNOD, NV_NOFREE | NV_EXPORT);
-    shp->pwd = (char *)FETCH_VT(PWDNOD->nvalue, cp);
+    shp->pwd = (char *)FETCH_VT(PWDNOD->nvalue, const_cp);
     return cp;
 }
 
@@ -416,7 +416,7 @@ static_fn Pathcomp_t *defpath_init(Shell_t *shp) {
 }
 
 static_fn void path_init(Shell_t *shp) {
-    const char *val = FETCH_VT(sh_scoped(shp, PATHNOD)->nvalue, cp);
+    const char *val = FETCH_VT(sh_scoped(shp, PATHNOD)->nvalue, const_cp);
     if (val) {
         shp->pathlist = path_addpath(shp, (Pathcomp_t *)shp->pathlist, val, PATH_PATH);
     } else {
@@ -424,7 +424,7 @@ static_fn void path_init(Shell_t *shp) {
         if (!pp) pp = defpath_init(shp);
         shp->pathlist = path_dup(pp);
     }
-    val = FETCH_VT(sh_scoped(shp, FPATHNOD)->nvalue, cp);
+    val = FETCH_VT(sh_scoped(shp, FPATHNOD)->nvalue, const_cp);
     if (val) (void)path_addpath(shp, (Pathcomp_t *)shp->pathlist, val, PATH_FPATH);
 }
 
@@ -439,7 +439,8 @@ Pathcomp_t *path_get(Shell_t *shp, const char *name) {
         if (!shp->pathlist) path_init(shp);
         pp = (Pathcomp_t *)shp->pathlist;
     }
-    if ((!pp && !(FETCH_VT(sh_scoped(shp, PATHNOD)->nvalue, cp))) || sh_isstate(shp, SH_DEFPATH)) {
+    if ((!pp && !(FETCH_VT(sh_scoped(shp, PATHNOD)->nvalue, const_cp))) ||
+        sh_isstate(shp, SH_DEFPATH)) {
         pp = (Pathcomp_t *)shp->defpathlist;
         if (!pp) pp = defpath_init(shp);
     }
@@ -607,7 +608,7 @@ bool path_search(Shell_t *shp, const char *name, Pathcomp_t **oldpp, int flag) {
     }
     if (flag) {
         if (!(flag & 1) && (np = nv_search(name, shp->track_tree, 0)) &&
-            !nv_isattr(np, NV_NOALIAS) && (pp = (Pathcomp_t *)FETCH_VT(np->nvalue, cp))) {
+            !nv_isattr(np, NV_NOALIAS) && (pp = (Pathcomp_t *)FETCH_VT(np->nvalue, const_cp))) {
             stkseek(shp->stk, PATH_OFFSET);
             path_nextcomp(shp, pp, name, pp);
             if (oldpp) *oldpp = pp;
@@ -1440,7 +1441,7 @@ Pathcomp_t *path_addpath(Shell_t *shp, Pathcomp_t *first, const char *path, int 
             if (!pp) pp = defpath_init(shp);
             first = path_dup(pp);
         }
-        cp = FETCH_VT(sh_scoped(shp, FPATHNOD)->nvalue, cp);
+        cp = FETCH_VT(sh_scoped(shp, FPATHNOD)->nvalue, const_cp);
         if (cp) {
             first = (void *)path_addpath(shp, (Pathcomp_t *)first, cp, PATH_FPATH);
         }
@@ -1567,7 +1568,7 @@ Pathcomp_t *path_dirfind(Pathcomp_t *first, const char *name, int c) {
 static_fn char *talias_get(Namval_t *np, Namfun_t *nvp) {
     UNUSED(nvp);
     Shell_t *shp = sh_ptr(np);
-    Pathcomp_t *pp = (Pathcomp_t *)FETCH_VT(np->nvalue, cp);
+    Pathcomp_t *pp = (Pathcomp_t *)FETCH_VT(np->nvalue, const_cp);
     char *ptr;
 
     if (!pp) return NULL;
@@ -1578,8 +1579,8 @@ static_fn char *talias_get(Namval_t *np, Namfun_t *nvp) {
 }
 
 static_fn void talias_put(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
-    if (!val && FETCH_VT(np->nvalue, cp)) {
-        Pathcomp_t *pp = (Pathcomp_t *)FETCH_VT(np->nvalue, cp);
+    if (!val && FETCH_VT(np->nvalue, const_cp)) {
+        Pathcomp_t *pp = (Pathcomp_t *)FETCH_VT(np->nvalue, const_cp);
         if (--pp->refcount <= 0) free(pp);
     }
     nv_putv(np, val, flags, fp);

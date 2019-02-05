@@ -433,7 +433,8 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
         if (prefix && *prefix) {
             if (nv_isvtree(np)) {
                 sfprintf(out, "%s -C ", prefix);
-            } else if ((!FETCH_VT(np->nvalue, cp) || FETCH_VT(np->nvalue, cp) == Empty) &&
+            } else if ((!FETCH_VT(np->nvalue, const_cp) ||
+                        FETCH_VT(np->nvalue, const_cp) == Empty) &&
                        nv_isattr(np, ~NV_NOFREE) == NV_MINIMAL && strcmp(np->nvname, "_")) {
                 sfputr(out, prefix, ' ');
             }
@@ -583,7 +584,7 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
     }
     mp = nv_opensub(np);
     while (1) {
-        if (mp && FETCH_VT(mp->nvalue, cp) == Empty && !mp->nvfun) {
+        if (mp && FETCH_VT(mp->nvalue, const_cp) == Empty && !mp->nvfun) {
             more = nv_nextsub(np);
             goto skip;
         }
@@ -721,7 +722,7 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
     fp = nv_hasdisc(np, &treedisc);
     if (*name == '.') {
         if (nv_isattr(np, NV_BINARY) || nv_type(np)) return;
-        if (fp && FETCH_VT(np->nvalue, cp) && FETCH_VT(np->nvalue, cp) != Empty) {
+        if (fp && FETCH_VT(np->nvalue, const_cp) && FETCH_VT(np->nvalue, const_cp) != Empty) {
             nv_local = true;
             fp = 0;
         }
@@ -760,7 +761,7 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
 #else
     if (!nv_isarray(np) && !nv_isattr(np, NV_INTEGER)) {
         if (nv_isnull(np)) return;
-        if (FETCH_VT(np->nvalue, cp) == Empty && tp &&
+        if (FETCH_VT(np->nvalue, const_cp) == Empty && tp &&
             (last_table->nvname[0] != '_' || last_table->nvname[1])) {
             for (fp = np->nvfun; fp; fp = fp->next) {
                 if (fp->disc && (fp->disc->getval || fp->disc->getnum)) break;
@@ -795,7 +796,8 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
         if (wp->indent >= 0) sfputc(wp->out, '\n');
         return;
     }
-    if (isarray == 0 && nv_isarray(np) && (nv_isnull(np) || FETCH_VT(np->nvalue, cp) == Empty)) {
+    if (isarray == 0 && nv_isarray(np) &&
+        (nv_isnull(np) || FETCH_VT(np->nvalue, const_cp) == Empty)) {
         isarray = 2;  // empty array
     }
     special |= wp->nofollow;
@@ -805,7 +807,7 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
             if (!json) nv_attribute(np, wp->out, "typeset", '=');
         }
         outname(wp->shp, wp->out, name, -1, json);
-        if ((FETCH_VT(np->nvalue, cp) && FETCH_VT(np->nvalue, cp) != Empty) ||
+        if ((FETCH_VT(np->nvalue, const_cp) && FETCH_VT(np->nvalue, const_cp) != Empty) ||
             nv_isattr(np, ~(NV_MINIMAL | NV_NOFREE)) || nv_isvtree(np)) {
             if (!json) sfputc(wp->out, (isarray == 2 ? (wp->indent >= 0 ? '\n' : ';') : '='));
         }

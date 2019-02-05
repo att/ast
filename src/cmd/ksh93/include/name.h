@@ -43,7 +43,7 @@ enum value_type {
     VT_do_not_use = 0,
     VT_vp,
     VT_cp,
-    VT_sp,
+    VT_const_cp,
     VT_ip,
     VT_c,
     VT_i,
@@ -78,8 +78,8 @@ struct Value {
     enum value_type type;
     union {
         void *vp;
-        const char *cp;
-        char *sp;
+        char *cp;
+        const char *const_cp;
         int *ip;
         char c;
         int i;
@@ -276,10 +276,10 @@ struct Namval {
 #else
     unsigned short nvsize;  // size or base
 #endif
-    Namfun_t *nvfun;     // pointer to trap functions
+    Namfun_t *nvfun;      // pointer to trap functions
     struct Value nvalue;  // value field
-    void *nvshell;       // shell pointer
-    char *nvenv;         // pointer to environment name
+    void *nvshell;        // shell pointer
+    char *nvenv;          // pointer to environment name
 };
 
 #define NV_CLASS ".sh.type"

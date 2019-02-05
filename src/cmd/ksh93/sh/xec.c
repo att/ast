@@ -554,7 +554,7 @@ int sh_debug(Shell_t *shp, const char *trap, const char *name, const char *subsc
     } else if (iop == stkstd) {
         *stkptr(stkp, stktell(stkp) - 1) = 0;
     }
-    STORE_VT(np->nvalue, cp, stkfreeze(stkp, 1));
+    STORE_VT(np->nvalue, const_cp, stkfreeze(stkp, 1));
     // Now setup .sh.level variable.
     shp->st.lineno = error_info.line;
     level = shp->fn_depth + shp->dot_depth;
@@ -568,7 +568,7 @@ int sh_debug(Shell_t *shp, const char *trap, const char *name, const char *subsc
     savst = shp->st;
     shp->st.trap[SH_DEBUGTRAP] = 0;
     n = sh_trap(shp, trap, 0);
-    STORE_VT(np->nvalue, cp, NULL);
+    STORE_VT(np->nvalue, const_cp, NULL);
     shp->indebug = 0;
     if (shp->st.cmdname) error_info.id = shp->st.cmdname;
     nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
@@ -1083,7 +1083,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         }
                     } else {
                         if ((np = nv_search(com0, shp->track_tree, 0)) &&
-                            !nv_isattr(np, NV_NOALIAS) && FETCH_VT(np->nvalue, cp)) {
+                            !nv_isattr(np, NV_NOALIAS) && FETCH_VT(np->nvalue, const_cp)) {
                             np = nv_search(nv_getval(np), shp->bltin_tree, 0);
                         } else {
                             np = 0;
@@ -2198,7 +2198,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     Dt_t *root = dtopen(&_Nvdisc, Dtoset);
                     dtuserdata(root, shp, 1);
                     nv_mount(np, NULL, root);
-                    STORE_VT(np->nvalue, cp, Empty);
+                    STORE_VT(np->nvalue, const_cp, Empty);
                     dtview(root, shp->var_base);
                 }
                 oldnspace = enter_namespace(shp, np);
@@ -2909,7 +2909,7 @@ static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jo
         if (!strchr(path = argv[0], '/')) {
             Namval_t *np;
             np = nv_search(path, shp->track_tree, 0);
-            if (np && !nv_isattr(np, NV_NOALIAS) && FETCH_VT(np->nvalue, cp)) {
+            if (np && !nv_isattr(np, NV_NOALIAS) && FETCH_VT(np->nvalue, const_cp)) {
                 path = nv_getval(np);
             } else if (path_absolute(shp, path, NULL)) {
                 path = stkptr(shp->stk, PATH_OFFSET);

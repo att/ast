@@ -55,7 +55,7 @@
 // Invalidate path name bindings to relative paths.
 //
 static_fn void invalidate(Namval_t *np, void *data) {
-    Pathcomp_t *pp = (Pathcomp_t *)FETCH_VT(np->nvalue, cp);
+    Pathcomp_t *pp = (Pathcomp_t *)FETCH_VT(np->nvalue, const_cp);
     UNUSED(data);
 
     if (pp && *pp->name != '/') _nv_unset(np, 0);
@@ -150,7 +150,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         dir = nv_getval(HOME);
         if (!dir && (pw = getpwuid(geteuid()))) dir = pw->pw_dir;
     } else if (*dir == '-' && dir[1] == 0) {
-        dir = FETCH_VT(sh_scoped(shp, opwdnod)->nvalue, sp);
+        dir = FETCH_VT(sh_scoped(shp, opwdnod)->nvalue, cp);
     }
 
     if (!dir || *dir == 0) {
@@ -165,7 +165,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     {
         cdpath = (Pathcomp_t *)shp->cdpathlist;
         if (!cdpath) {
-            dp = FETCH_VT(sh_scoped(shp, CDPNOD)->nvalue, cp);
+            dp = FETCH_VT(sh_scoped(shp, CDPNOD)->nvalue, const_cp);
             if (dp) {
                 cdpath = path_addpath(shp, NULL, dp, PATH_CDPATH);
                 if (cdpath) {
@@ -267,7 +267,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     }
 
 success:
-    scoped_dir = FETCH_VT(sh_scoped(shp, opwdnod)->nvalue, sp);
+    scoped_dir = FETCH_VT(sh_scoped(shp, opwdnod)->nvalue, cp);
     if (dir == scoped_dir || argc == 2) {
         dp = dir;  // print out directory for cd -
     }
@@ -295,7 +295,7 @@ success:
     }
     nv_putval(pwdnod, dir, NV_RDONLY);
     nv_onattr(pwdnod, NV_NOFREE | NV_EXPORT);
-    shp->pwd = FETCH_VT(pwdnod->nvalue, cp);
+    shp->pwd = FETCH_VT(pwdnod->nvalue, const_cp);
     nv_scan(shp->track_tree, invalidate, NULL, NV_TAGGED, NV_TAGGED);
     path_newdir(shp, shp->pathlist);
     path_newdir(shp, shp->cdpathlist);

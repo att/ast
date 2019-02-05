@@ -931,7 +931,7 @@ static_fn char *prefix(Shell_t *shp, char *id) {
     size_t n;
     char *sp;
     shp->argaddr = 0;
-    while (nv_isref(np) && FETCH_VT(np->nvalue, cp)) {
+    while (nv_isref(np) && FETCH_VT(np->nvalue, const_cp)) {
         sub = nv_refsub(np);
         np = nv_refnode(np);
         if (sub) nv_putsub(np, sub, 0, 0L);
@@ -1849,7 +1849,7 @@ retry2:
             }
         }
     } else if (var && sh_isoption(mp->shp, SH_NOUNSET) && type <= M_TREE &&
-               (!np || nv_isnull(np) || (nv_isarray(np) && !FETCH_VT(np->nvalue, cp)))) {
+               (!np || nv_isnull(np) || (nv_isarray(np) && !FETCH_VT(np->nvalue, const_cp)))) {
         if (np) {
             if (nv_isarray(np)) {
                 sfprintf(mp->shp->strbuf, "%s[%s]\0", nv_name(np), nv_getsub(np));
