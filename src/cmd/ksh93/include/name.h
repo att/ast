@@ -130,19 +130,20 @@ struct Value {
 #define fetch_abort() 0      // abort()
 #define fetch_backtrace() 0  // dump_backtrace(0)
 
-#define fetch_vt(line, value_obj, which)                                                         \
-    ((value_obj).type == VT_##which                                                              \
-         ? (value_obj)._val.which                                                                \
-         : (fprintf(stderr, "Error: Fetching value type \"%s\" @ %s:%d in %s()\n",               \
-                    value_type_names[VT_##which], __FILE__, line, __FUNCTION__),                 \
-            fprintf(stderr, "Error: Stored   value type \"%s\" @ %s:%d in %s()\n",               \
-                    value_type_names[(value_obj).type],                                          \
-                    (value_obj).filename ? (value_obj).filename : "undef", (value_obj).line_num, \
-                    (value_obj).funcname ? (value_obj).funcname : "undef"),                      \
+#define fetch_vt(line, value_obj, which)                                                          \
+    (((value_obj).type == VT_##which || (VT_##which == VT_const_cp && (value_obj).type == VT_cp)) \
+         ? (value_obj)._val.which                                                                 \
+         : (fprintf(stderr, "Error: Fetching value type \"%s\" @ %s:%d in %s()\n",                \
+                    value_type_names[VT_##which], __FILE__, line, __FUNCTION__),                  \
+            fprintf(stderr, "Error: Stored   value type \"%s\" @ %s:%d in %s()\n",                \
+                    value_type_names[(value_obj).type],                                           \
+                    (value_obj).filename ? (value_obj).filename : "undef", (value_obj).line_num,  \
+                    (value_obj).funcname ? (value_obj).funcname : "undef"),                       \
             fetch_backtrace(), fetch_abort(), (value_obj)._val.which))
 
 #define fetch_vtp(line, value_objp, which)                                         \
-    ((value_objp)->type == VT_##which                                              \
+    (((value_objp)->type == VT_##which ||                                          \
+      (VT_##which == VT_const_cp && (value_objp)->type == VT_cp))                  \
          ? (value_objp)->_val.which                                                \
          : (fprintf(stderr, "Error: Fetching value type \"%s\" @ %s:%d in %s()\n", \
                     value_type_names[VT_##which], __FILE__, line, __FUNCTION__),   \
