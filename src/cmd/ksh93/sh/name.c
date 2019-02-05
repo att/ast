@@ -1710,7 +1710,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
         } else {
             cp = NULL;
         }
-        STORE_VTP(up, const_cp, cp);
+        STORE_VTP(up, cp, cp);
         if (sp) {
             int c = cp[dot + append];
             memmove(cp + append, sp, dot);
@@ -2315,6 +2315,7 @@ void sh_optclear(Shell_t *shp, void *old) {
 //
 // If <np> has no value, 0 is returned.
 //
+// TODO: Convert this to return a const char *.
 char *nv_getval(Namval_t *np) {
     Shell_t *shp = sh_ptr(np);
     struct Value *up = &np->nvalue;
@@ -2435,7 +2436,8 @@ done:
         }
     }
 
-    return FETCH_VTP(up, cp);
+    // TODO: remove the cast when this function is converted to return a const char *.
+    return (char *)FETCH_VTP(up, const_cp);
 }
 
 Sfdouble_t nv_getnum(Namval_t *np) {

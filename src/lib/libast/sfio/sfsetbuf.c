@@ -169,7 +169,7 @@ static_fn int sfsetlinemode(void) {
     return modes;
 }
 
-void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
+void *sfsetbuf(Sfio_t *f, const void *buf, size_t size) {
     int sf_malloc, oflags, init, okmmap, local;
     ssize_t bufsize, blksz;
     Sfdisc_t *disc;

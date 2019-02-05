@@ -27,6 +27,7 @@
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "builtins.h"
 #include "defs.h"
 #include "edit.h"
@@ -42,7 +43,7 @@
 
 #define HIST_RECURSE 5
 
-static_fn void hist_subst(Shell_t *shp, const char *, int fd, char *);
+static_fn void hist_subst(Shell_t *shp, const char *, int fd, const char *);
 
 //
 // Builtin `hist`.
@@ -50,14 +51,14 @@ static_fn void hist_subst(Shell_t *shp, const char *, int fd, char *);
 int b_hist(int argc, char *argv[], Shbltin_t *context) {
     UNUSED(argc);
     History_t *hp;
-    char *arg;
+    const char *arg;
     int flag, fdo;
     Shell_t *shp = context->shp;
     Sfio_t *outfile;
     char *fname;
     int range[2], incr, index2, indx = -1;
     char *edit = NULL;     // name of editor
-    char *replace = NULL;  // replace old=new
+    const char *replace = NULL;  // replace old=new
     int lflag = 0;
     int nflag = 0;
     int rflag = 0;
@@ -126,17 +127,15 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
         hist_cancel(hp);
         pflag = 0;
         while (argv[1]) {
+            char *hist_expansion;
             arg = argv[1];
-            flag = hist_expand(shp, arg, &replace);
+            flag = hist_expand(shp, arg, &hist_expansion);
             if (!(flag & HIST_ERROR)) {
-                sfputr(sfstdout, replace, '\n');
+                sfputr(sfstdout, hist_expansion, '\n');
             } else {
                 pflag = 1;
             }
-            if (replace) {
-                free(replace);
-                replace = NULL;
-            }
+            if (hist_expansion) free(hist_expansion);
             argv++;
         }
         return pflag;
@@ -240,10 +239,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
         }
     }
     if (*arg != '-') {
-        char *com[3];
-        com[0] = arg;
-        com[1] = fname;
-        com[2] = 0;
+        const char *com[] = {arg, fname, NULL};
         error_info.errors = sh_eval(shp, sh_sfeval(com), 0);
     }
 
@@ -282,16 +278,17 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
 // Given a file containing a command and a string of the form old=new, execute the command with the
 // string old replaced by new.
 //
-static_fn void hist_subst(Shell_t *shp, const char *command, int fd, char *replace) {
-    char *newp = replace;
-    char *sp;
+static_fn void hist_subst(Shell_t *shp, const char *command, int fd, const char *old_and_new) {
     int c;
     off_t size;
     char *string;
 
-    while (*++newp != '=') {
-        ;  // skip to '='
-    }
+    // Split the "old=new" string into two pieces.
+    const char *newp = strchr(old_and_new, '=');
+    assert(newp);
+    newp++;
+    char *oldp = strndup(old_and_new, newp - old_and_new - 1);
+
     size = sh_seek(fd, (off_t)0, SEEK_END);
     if (size < 0) return;
     sh_seek(fd, (off_t)0, SEEK_SET);
@@ -299,12 +296,11 @@ static_fn void hist_subst(Shell_t *shp, const char *command, int fd, char *repla
     string = stakalloc(c + 1);
     if (read(fd, string, c) != c) return;
     string[c] = 0;
-    *newp++ = 0;
-    sp = sh_substitute(shp, string, replace, newp);
-    if (sp == 0) {
+    char *sp = sh_substitute(shp, string, oldp, newp);
+    free(oldp);
+    if (sp == NULL) {
         errormsg(SH_DICT, ERROR_exit(1), e_subst, command);
         __builtin_unreachable();
     }
-    *(newp - 1) = '=';
     sh_eval(shp, sfopen(NULL, sp, "s"), 1);
 }

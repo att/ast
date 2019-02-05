@@ -246,7 +246,7 @@ extern void *sfreserve(Sfio_t *, ssize_t, int);
 extern int sfresize(Sfio_t *, Sfoff_t);
 extern int sfsync(Sfio_t *);
 extern int sfclrlock(Sfio_t *);
-extern void *sfsetbuf(Sfio_t *, void *, size_t);
+extern void *sfsetbuf(Sfio_t *, const void *, size_t);
 extern Sfdisc_t *sfdisc(Sfio_t *, Sfdisc_t *);
 extern int sfraise(Sfio_t *, int, void *);
 extern int sfnotify(void (*)(Sfio_t *, int, void *));

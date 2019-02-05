@@ -154,7 +154,7 @@ int sh_lookopt(const char *sp, int *invert) {
 // return x satisfying x==NULL ||
 //     strlen(x)==(strlen(in string)+strlen(in newsp)-strlen(in oldsp));
 //
-char *sh_substitute(Shell_t *shp, const char *string, const char *oldsp, char *newsp) {
+char *sh_substitute(Shell_t *shp, const char *string, const char *oldsp, const char *newsp) {
     const char *sp = string;
     const char *cp;
     const char *savesp = 0;
