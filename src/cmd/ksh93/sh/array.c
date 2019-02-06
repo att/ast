@@ -259,7 +259,9 @@ static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
     if (is_associative(&ap->namarr)) {
         mp = (Namval_t *)((*arp->fun)(np, NULL, ASSOC_OP_CURRENT));
         if (!mp) {
-            up = (struct Value *)&mp;
+            static struct Value dummy_value;
+            STORE_VT(dummy_value, cp, NULL);
+            up = &dummy_value;
         } else if (nv_isarray(mp)) {
             if (wasundef) nv_putsub(mp, NULL, 0, ARRAY_UNDEF);
             return mp;
