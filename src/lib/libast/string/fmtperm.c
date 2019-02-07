@@ -29,8 +29,6 @@
 
 #include <sys/stat.h>
 
-#include "ast.h"
-
 char *fmtperm(int perm) {
     static char strbuf[32];
     char *s = strbuf;
