@@ -34,7 +34,7 @@ const Shtable_t shtab_testops[] = {
     {"-o", TEST_OR},  {"-ot", TEST_OT}, {"=", TEST_SEQ},  {"==", TEST_SEQ}, {"=~", TEST_REP},
     {"<", TEST_SLT},  {">", TEST_SGT},  {"]]", TEST_END}, {"", 0}};
 
-const char sh_opttest[] =
+const char *sh_opttest =
     "[-1c?\n@(#)$Id: test (AT&T Research) 2003-03-18 $\n]" USAGE_LICENSE
     "[+NAME?test - evaluate expression]"
     "[+DESCRIPTION?\btest\b evaluates expressions and indicates its "
@@ -131,11 +131,10 @@ const char sh_opttest[] =
     "}"
     "[+SEE ALSO?\blet\b(1), \bexpr\b(1)]";
 
-const char test_opchars[] =
-    "HLNRSVOGCaeohrwxdcbfugkv"
-    "psnzt";
-const char e_argument[] = "argument expected";
-const char e_missing[] = "%s missing";
-const char e_badop[] = "%s: unknown operator";
-const char e_tstbegin[] = "[[ ! ";
-const char e_tstend[] = " ]]\n";
+const char *test_opchars = "HLNRSVOGCaeohrwxdcbfugkvpsnzt";
+const char *e_argument = "argument expected";
+const char *e_missing = "%s missing";
+const char *e_badop = "%s: unknown operator";
+const char *e_op_unhandled = "%d: operator not handled";
+const char *e_tstbegin = "[[ ! ";
+const char *e_tstend = " ]]\n";
