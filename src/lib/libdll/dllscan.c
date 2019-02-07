@@ -76,17 +76,17 @@ Dllinfo_t *dllinfo(void) {
         if (*s) {
             h = 0;
             for (;;) {
-                for (d = s; *s && *s != ':' && *s != ','; s++)
-                    ;
+                d = s;
+                while (*s && *s != ':' && *s != ',') s++;
                 dn = s - d;
                 if (!dn) d = 0;
                 if (*s == ':') {
-                    for (v = ++s; *s && *s != ':' && *s != ','; s++)
-                        ;
+                    v = ++s;
+                    while (*s && *s != ':' && *s != ',') s++;
                     if (!(vn = s - v)) v = 0;
                     if (*s == ':') {
-                        for (p = ++s; *s && *s != ':' && *s != ','; s++)
-                            ;
+                        p = ++s;
+                        while (*s && *s != ':' && *s != ',') s++;
                         if (!(pn = s - p)) p = 0;
                     } else {
                         p = 0;
@@ -95,8 +95,7 @@ Dllinfo_t *dllinfo(void) {
                     v = 0;
                     p = 0;
                 }
-                while (*s && *s++ != ',')
-                    ;
+                while (*s && *s != ',') s++;
                 if (!*s || !p || (!h && !*(h = astconf("HOSTTYPE", NULL, NULL)))) break;
                 if (pn >= sizeof(pat)) pn = sizeof(pat) - 1;
                 memcpy(pat, p, pn);
