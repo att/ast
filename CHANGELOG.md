@@ -43,6 +43,8 @@ None at this time.
 
 ## Notable fixes and improvements
 
+- The `test` command no longer silently fails all uses of the `=~` operator.
+  Instead an error is printed suggesting the use of `[[...]]` (issue #1152).
 - Doing `[ -t1 ]` inside a command substitution behaves correctly
   (issue #1079).
 - The project now passes its unit tests when built with malloc debugging

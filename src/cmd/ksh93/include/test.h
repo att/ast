@@ -58,12 +58,14 @@ extern int test_unop(Shell_t *, int, const char *);
 extern int test_inode(const char *, const char *);
 extern int test_binop(Shell_t *, int, const char *, const char *);
 
-extern const char sh_opttest[];
-extern const char test_opchars[];
-extern const char e_argument[];
-extern const char e_missing[];
-extern const char e_badop[];
-extern const char e_tstbegin[];
-extern const char e_tstend[];
+extern const char *sh_opttest;
+extern const char *test_opchars;
+extern const char *e_argument;
+extern const char *e_missing;
+extern const char *e_badop;
+extern const char *e_test_no_pattern;
+extern const char *e_op_unhandled;
+extern const char *e_tstbegin;
+extern const char *e_tstend;
 
 #endif  // _TEST_H

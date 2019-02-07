@@ -545,7 +545,21 @@ int test_binop(Shell_t *shp, int op, const char *left, const char *right) {
         case TEST_LE: {
             return lnum <= rnum;
         }
-        default: { abort(); }
+        case TEST_REP: {
+            // The ksh93u release treated this as a silent failure. That is, `test foo =~ foo` would
+            // simply return zero (false) regardless of the operands and whether the condition is
+            // true. We now alert the user that the `=~` binop is not supported by the POSIX test
+            // command. See https://github.com/att/ast/issues/1152.
+            errormsg(SH_DICT, ERROR_exit(2), e_test_no_pattern);
+            __builtin_unreachable();
+        }
+        default: {
+            // This requires that all binops be enumerated above. If we haven't done so that is a
+            // bug. Alternatively, data corruption has caused us to be called with an unknown binop.
+            // Either way don't pretend everything is okay by returning 0 (false) like ksh93u did.
+            errormsg(SH_DICT, ERROR_ERROR, e_op_unhandled, op);
+            abort();
+        }
     }
 }
 
