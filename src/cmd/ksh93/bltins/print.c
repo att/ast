@@ -567,12 +567,7 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
                 number.i = (int)d;
             }
         }
-#if 1
         return sfwrite(iop, (void *)&number, size);
-#else   // 1
-        if (sz) *sz = size;
-        return (void *)&number;
-#endif  // 1
     }
     if (nv_isattr(np, NV_BINARY))
 #if 1
@@ -581,7 +576,7 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
         for (fp = np->nvfun; fp; fp = fp->next) {
             if (fp->disc && fp->disc->writef) break;
         }
-        if (fp) return (*fp->disc->writef)(np, iop, 0, fp);
+        if (fp) (*fp->disc->writef)(np, iop, 0, fp);
 
         int n = nv_size(np);
         if (nv_isarray(np)) {
@@ -632,7 +627,7 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
     if (nv_isattr(np, NV_BINARY)) nv_offattr(np, NV_RAW);
     if ((size = nv_size(np)) == 0) size = strlen(cp);
     if (sz) *sz = size;
-    return (void *)cp;
+    return cp;
 #endif  // 1
 }
 

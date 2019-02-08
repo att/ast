@@ -123,7 +123,7 @@ static inline int getop(int c) {
 }
 
 #define seterror(v, msg) _seterror(v, ERROR_dictionary(msg))
-#define ERROR(vp, msg) return (seterror((vp), msg))
+#define ERROR(vp, msg) return seterror((vp), msg)
 
 //
 // Set error message string and return 0.

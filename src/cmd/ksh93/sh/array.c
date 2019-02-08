@@ -185,7 +185,7 @@ static_fn union Value *array_getup(Namval_t *np, Namarr_t *arp, int update) {
             nofree = nv_isattr(mp, NV_NOFREE);
             up = &(mp->nvalue);  // parens are to silence false positive from cppcheck
         } else {
-            return (union Value *)((*arp->fun)(np, NULL, ASSOC_OP_ADD2));
+            return (*arp->fun)(np, NULL, ASSOC_OP_ADD2);
         }
     } else {
         if (ap->cur >= ap->maxi) {
