@@ -1341,7 +1341,10 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                 ap->cur = np;
             }
             if (ap->cur) return &ap->cur->nvalue;
-            return &ap->cur;
+
+            static struct Value dummy_value;
+            STORE_VT(dummy_value, cp, NULL);
+            return &dummy_value;
         }
         default: { abort(); }
     }
