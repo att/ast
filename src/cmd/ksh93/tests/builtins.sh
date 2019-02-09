@@ -662,7 +662,7 @@ expect=$(command logname)
 actual=$($SHELL -c 'test foo =~ foo' 2>&1)
 actual_status=$?
 actual=${actual#*: }
-expect='test: =~: operator not support; use [[...]]'
+expect='test: =~ operator not supported; use [[...]]'
 expect_status=2
 [[ "$actual" = "$expect" ]] || log_error "test =~ failed" "$expect" "$actual"
 [[ "$actual_status" = "$expect_status" ]] ||
