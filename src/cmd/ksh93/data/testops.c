@@ -135,7 +135,7 @@ const char *test_opchars = "HLNRSVOGCaeohrwxdcbfugkvpsnzt";
 const char *e_argument = "argument expected";
 const char *e_missing = "%s missing";
 const char *e_badop = "%s: unknown operator";
-const char *e_test_no_pattern = "=~: operator not support; use [[...]]";
+const char *e_test_no_pattern = "=~ operator not supported; use [[...]]";
 const char *e_op_unhandled = "%d: operator not handled";
 const char *e_tstbegin = "[[ ! ";
 const char *e_tstend = " ]]\n";
