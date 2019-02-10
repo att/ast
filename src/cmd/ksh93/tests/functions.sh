@@ -950,9 +950,14 @@ sub()
                 done
         )
 }
-[[ $(sub -a) == OPTIND=2 ]] || log_error 'OPTIND should be 2'
-[[ $(sub -a) == OPTIND=2 ]] || log_error 'OPTIND should be 2 again'
-[[ $OPTIND == "$optind" ]] || log_error 'OPTIND should be 1'
+expect="OPTIND=2"
+actual=$(sub -a)
+[[ $actual == $expect ]] || log_error 'OPTIND should be 2' "$expect" "$actual"
+actual=$(sub -a)
+[[ $actual == $expect ]] || log_error 'OPTIND should be 2 again' "$expect" "$actual"
+expect=$optind
+actual=$OPTIND
+[[ $actual == $expect ]] || log_error 'OPTIND is wrong' "$expect" "$actual"
 
 function bar
 {
