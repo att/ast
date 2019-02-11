@@ -245,7 +245,7 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
     int skip;  // non-zero for don't copy
     int must;
     const char *xx;
-    const int *lp = cut->list;
+    const int *lp;
 
     for (;;) {
         len = cut->reclen;
@@ -258,6 +258,7 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
         if (!bp && !(bp = sfgetr(fdin, 0, SF_LASTR))) break;
         len = sfvalue(fdin);
         xx = 0;
+        lp = cut->list;
         ncol = skip = *lp;
         if (!ncol) ncol = *++lp;
         must = 1;
