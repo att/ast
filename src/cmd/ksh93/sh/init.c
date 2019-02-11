@@ -253,7 +253,7 @@ static_fn void put_optindex(Namval_t *np, const void *val, int flags, Namfun_t *
 static_fn Sfdouble_t nget_optindex(Namval_t *np, Namfun_t *fp) {
     UNUSED(fp);
 
-    return *FETCH_VT(np->nvalue, ldp);
+    return *FETCH_VT(np->nvalue, lp);
 }
 
 static_fn Namfun_t *clone_optindex(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
