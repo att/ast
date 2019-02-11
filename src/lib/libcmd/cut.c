@@ -316,10 +316,11 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
             bp += c;
             if (ncol) break;
             len -= c;
+            // TODO: Below statement was commented as a "fix" for https://github.com/att/ast/issues/1157
             // Coverity Scan, CID#279521, has identified a theoretical path to the next assignment
             // where `lp` has already been incremented. Which would result in accessing memory whose
             // content is undefined.
-            assert(lp == cut->list);
+            // assert(lp == cut->list);
             ncol = *++lp;
             skip = !skip;
         } while (ncol != HUGE);
