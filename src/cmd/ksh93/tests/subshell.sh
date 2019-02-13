@@ -212,7 +212,7 @@ do
                 for TEST_substitute in '' ': $'
                 do
 
-                     TEST_test="$TEST_substitute($TEST_fork $TEST_exec $TEST_command $TEST_redirect)"
+                     TEST_test="$TEST_substitute($TEST_fork $TEST_exec $TEST_command $TEST_redirect 2>/dev/null)"
                     [[ $TEST_test == '('*([[:space:]])')' ]] && continue
                     r=$($SHELL -c '
                         {
