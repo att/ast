@@ -12,11 +12,13 @@ readonly test_name=$1
 #
 bin_basename=$(whence -p basename)
 bin_cat=$(whence -p cat)
+bin_chmod=$(whence -p chmod)
 bin_cmp=$(whence -p cmp)
 bin_date=$(whence -p date)
 bin_echo=$(whence -p echo)
 bin_false=$(whence -p false)
 bin_printf=$(whence -p printf)
+bin_rm=$(whence -p rm)
 bin_sleep=$(whence -p sleep)
 bin_tee=$(whence -p tee)
 bin_true=$(whence -p true)

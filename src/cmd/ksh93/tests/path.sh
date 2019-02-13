@@ -109,7 +109,6 @@ PATH=${PATH%.}
 PATH=${PATH%:}
 PATH=${PATH#.}
 PATH=${PATH#:}
-path=$PATH
 var=$(whence date)
 dir=$(basename "$var")
 for i in 1 2 3 4 5 6 7 8 9 0
@@ -127,10 +126,8 @@ print 'print notfound' >  $cmd
 chmod +x "$cmd"
 > foo
 chmod 755 foo
-for PATH in "$path" ":$path" "$path:" ".:$path" "$path:" "$path:." "$PWD::$path" "$PWD:.:$path" "$path:$PWD" "$path:.:$PWD"
+for PATH in "$FULL_PATH" ":$FULL_PATH" "$FULL_PATH:" ".:$FULL_PATH" "$FULL_PATH:" "$FULL_PATH:." "$PWD::$FULL_PATH" "$PWD:.:$FULL_PATH" "$FULL_PATH:$PWD" "$FULL_PATH:.:$PWD"
 do
-#    print path=$PATH $(whence date)
-#    print path=$PATH $(whence "$cmd")
         date
         "$cmd"
 done > /dev/null 2>&1
@@ -151,17 +148,13 @@ expect=126
 [[ $actual == $expect ]] || log_error "exit status of non-executable is wrong" "$expect" "$actual"
 
 builtin -d rm 2> /dev/null
-chmod=$(whence chmod)
-rm=$(whence rm)
-d=$(dirname "$rm")
-
-chmod=$(whence chmod)
+d=$(dirname "$bin_rm")
 
 for cmd in date foo
 do
     exp="$cmd found"
     print print $exp > $cmd
-    $chmod +x $cmd
+    chmod +x $cmd
     got=$($SHELL -c "unset FPATH; PATH=/dev/null; $cmd" 2>&1)
     [[ $got == $exp ]] && log_error "$cmd as last command should not find ./$cmd with PATH=/dev/null"
     got=$($SHELL -c "unset FPATH; PATH=/dev/null; $cmd" 2>&1)
@@ -186,7 +179,7 @@ for cmd in date foo
 do
     exp="$cmd found"
     print print $exp > $cmd
-    $chmod +x $cmd
+    $bin_chmod +x $cmd
     got=$($cmd 2>&1)
     [[ $got == $exp ]] && log_error "$cmd as last command should not find ./$cmd with PATH=/dev/null"
     got=$($cmd 2>&1; :)
@@ -205,13 +198,13 @@ got=$(whence $PWD/notfound)
 [[ $got == $exp ]] || log_error "whence \$PWD/$cmd failed -- expected '$exp', got '$got'"
 
 PATH=$d:.
-cp "$rm" kshrm
+cp "$bin_rm" kshrm
 if [[ $(whence kshrm) != $PWD/kshrm  ]]
 then
     log_error 'trailing : in pathname not working'
 fi
 
-cp "$rm" rm
+cp "$bin_rm" rm
 PATH=.:$d
 if [[ $(whence rm) != $PWD/rm ]]
 then
@@ -258,7 +251,6 @@ y=$(whence rm)
 whence getconf > /dev/null  &&  log_error 'getconf should not be found'
 builtin /bin/getconf
 PATH=/bin
-PATH=$path
 PATH="$(getconf PATH)"
 x=$(whence ls)
 PATH=.:$PWD:${x%/ls}
@@ -276,7 +268,7 @@ status=$($SHELL -c $'trap \'print $?\' ERR;/xxx/a/b/c/d/e 2> /dev/null')
 status=$($SHELL -c $'trap \'print $?\' ERR;/dev/null 2> /dev/null')
 [[ $status == 126 ]] || log_error "non executable command ERR trap exit status $status -- expected 126"
 
-PATH=$path
+PATH=$FULL_PATH
 
 scr=$TEST_DIR/script
 exp=126
@@ -356,15 +348,10 @@ exec {n}< /dev/null
 # whence -a bug fix
 rmdir=rmdir
 mkdir $rmdir || { log_warning "failed to create '$rmdir'"; exit 99; }
-type whence >&2
-rm=${ whence rm; }
-if [[ $rm ]]
-then
-cp "$rm" "$rmdir"
-{ PATH=:${rm%/rm} $SHELL -c "cd \"$rmdir\";whence -a rm";} > /dev/null 2>&1
+cp "$bin_rm" "$rmdir"
+{ PATH=:${bin_rm%/rm} $SHELL -c "cd \"$rmdir\";whence -a rm";} > /dev/null 2>&1
 exitval=$?
 (( exitval==0 )) || log_error "whence -a has exitval $exitval"
-fi
 
 [[ ! -d bin ]] && mkdir bin
 [[ ! -d fun ]] && mkdir fun
