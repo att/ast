@@ -505,8 +505,8 @@ $SHELL $f > $g
 [[ $(grep meep $g | grep -v foobar) != '' ]] && log_error 'here-doc loosing $var expansions on boundaries in rare cases'
 
 expect=here-foo
-print $expect > $TEST_DIR/here-foo.dat
-actual=$( $SHELL -x 'read <<< $(<'"$TEST_DIR"'/here-foo.dat) 2> /dev/null; print -r "$REPLY"')
+print $expect > here-foo.dat
+actual=$( $SHELL 'read <<< $(<here-foo.dat) 2> /dev/null; print -r "$REPLY"' )
 [[ $actual == $expect ]] || log_error '<<< $(<file) not working' "$expect" "$actual"
 
 $SHELL 2> /dev/null -c 'true <<- ++EOF++ || true "$(true)"
