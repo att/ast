@@ -796,9 +796,9 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
         case cntl('['): {  // filename completion
             if (ep->ed->hlist) {
                 value += ep->ed->hoff;
-                if (value > ep->ed->nhlist)
+                if (value > ep->ed->nhlist) {
                     beep();
-                else {
+                } else {
                     value = histlines - ep->ed->hlist[value - 1]->index;
                     ed_histlist(ep->ed, 0);
                     ed_ungetchar(ep->ed, cntl('P'));

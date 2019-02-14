@@ -376,8 +376,9 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
                         flag |= HIST_WORDDSGN;
                         if (n == 0) w[1] = w[0];
                         n++;
-                    } else
+                    } else {
                         n = 2;
+                    }
                     cp--;
                     break;
                 }

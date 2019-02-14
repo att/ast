@@ -950,10 +950,11 @@ static_fn void vigetline(Vi_t *vp, int mode) {
                         return;
                     }
                     if (mode == REPLACE || (last_save > 0 && last_virt <= last_save)) {
-                        if (cur_virt <= first_virt)
+                        if (cur_virt <= first_virt) {
                             ed_ringbell();
-                        else if (mode == REPLACE)
+                        } else if (mode == REPLACE) {
                             --cur_virt;
+                        }
                         mode = REPLACE;
                         sync_cursor(vp);
                         continue;
@@ -1020,8 +1021,9 @@ static_fn void vigetline(Vi_t *vp, int mode) {
                         goto escape;
                     }
                     vp->ed->e_tabcount = 0;
-                } else
+                } else {
                     vp->ed->e_tabcount = 1;
+                }
             }
             // FALLTHRU
             default: {
@@ -1086,10 +1088,11 @@ static_fn int mvcursor(Vi_t *vp, int motion) {
                         *lsearch = '^';
                         vp->direction = -2;
                         ed_ungetchar(vp->ed, 'n');
-                    } else if (cur_virt == 0 && vp->direction == -2)
+                    } else if (cur_virt == 0 && vp->direction == -2) {
                         ed_ungetchar(vp->ed, 'n');
-                    else
+                    } else {
                         ed_ungetchar(vp->ed, 'k');
+                    }
                     return 1;
                 }
                 case 'B': {
@@ -1945,10 +1948,11 @@ addin:
                 i = cur_virt;
                 c = virtual[cur_virt];
                 if ((c & ~STRIP) == 0) {
-                    if (isupper(c))
+                    if (isupper(c)) {
                         c = tolower(c);
-                    else if (islower(c))
+                    } else if (islower(c)) {
                         c = toupper(c);
+                    }
                 }
                 replace(vp, c, 1);
             }

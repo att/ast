@@ -646,8 +646,9 @@ static int putstack(Edit_t *ep, char string[], int nbyte, int type) {
     } while (p < endp);
     // Shift lookahead buffer if necessary.
     if (offset -= ep->e_lookahead) {
-        for (size = offset; size < nbyte; size++)
+        for (size = offset; size < nbyte; size++) {
             ep->e_lbuf[ep->e_lookahead + size - offset] = ep->e_lbuf[ep->e_lookahead + size];
+        }
     }
     ep->e_lookahead += nbyte - offset;
     return 1;
