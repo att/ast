@@ -53,8 +53,9 @@ int strperm(const char *aexpr, char **e, int perm) {
         perm = 0;
         masked = 1;
         mask = ~0;
-    } else
+    } else {
         masked = 0;
+    }
     for (;;) {
         num = who = typ = 0;
         for (;;) {
@@ -79,10 +80,11 @@ int strperm(const char *aexpr, char **e, int perm) {
                     expr--;
                     /*FALLTHROUGH*/
                 case '=':
-                    if (who)
+                    if (who) {
                         perm &= ~who;
-                    else
+                    } else {
                         perm = 0;
+                    }
                     /*FALLTHROUGH*/
                 case '+':
                 case '|':
@@ -99,8 +101,9 @@ int strperm(const char *aexpr, char **e, int perm) {
                                 typ |= S_IWUSR | S_IWGRP | S_IWOTH;
                                 continue;
                             case 'X':
-                                if (!S_ISDIR(perm) && !(perm & (S_IXUSR | S_IXGRP | S_IXOTH)))
+                                if (!S_ISDIR(perm) && !(perm & (S_IXUSR | S_IXGRP | S_IXOTH))) {
                                     continue;
+                                }
                                 /*FALLTHROUGH*/
                             case 'x':
                                 typ |= S_IXUSR | S_IXGRP | S_IXOTH;
@@ -126,9 +129,9 @@ int strperm(const char *aexpr, char **e, int perm) {
                             case '^':
                             case ',':
                             case 0:
-                                if (who)
+                                if (who) {
                                     typ &= who;
-                                else
+                                } else {
                                     switch (op) {
                                         case '=':
                                         case '+':
@@ -143,12 +146,14 @@ int strperm(const char *aexpr, char **e, int perm) {
                                             typ &= mask;
                                             break;
                                     }
+                                }
                                 switch (op) {
                                     default:
-                                        if (who)
+                                        if (who) {
                                             perm &= ~who;
-                                        else
+                                        } else {
                                             perm = 0;
+                                        }
                                         /*FALLTHROUGH*/
                                     case '+':
                                     case '|':
@@ -215,8 +220,9 @@ int strperm(const char *aexpr, char **e, int perm) {
                                     return perm & ALLPERMS;
                                 }
                                 num = (num << 3) | (c - '0');
-                                if (!who && (op == '+' || op == '-'))
+                                if (!who && (op == '+' || op == '-')) {
                                     who = S_ISVTX | S_ISUID | S_ISGID | S_IRWXU | S_IRWXG | S_IRWXO;
+                                }
                                 if (*expr < '0' || *expr > '7') {
                                     typ |= modei(num);
                                     num = 0;

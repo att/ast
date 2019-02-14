@@ -43,21 +43,24 @@ char *fmtident(const char *a) {
     for (;;) {
         while (isspace(*s)) s++;
         if (s[0] == '[') {
-            while (*++s && *s != '\n')
+            while (*++s && *s != '\n') {
                 ;
+            }
             i |= USAGE;
-        } else if (s[0] == '@' && s[1] == '(' && s[2] == '#' && s[3] == ')')
+        } else if (s[0] == '@' && s[1] == '(' && s[2] == '#' && s[3] == ')') {
             s += 4;
-        else if (s[0] == '$' && s[1] == 'I' && s[2] == 'd' && s[3] == ':' && isspace(s[4])) {
+        } else if (s[0] == '$' && s[1] == 'I' && s[2] == 'd' && s[3] == ':' && isspace(s[4])) {
             s += 5;
             i |= IDENT;
-        } else
+        } else {
             break;
+        }
     }
     if (i) {
         i &= IDENT;
-        for (t = s; isprint(*t) && *t != '\n'; t++)
+        for (t = s; isprint(*t) && *t != '\n'; t++) {
             if (i && t[0] == ' ' && t[1] == '$') break;
+        }
         while (t > s && isspace(t[-1])) t--;
         i = t - s;
         buf = fmtbuf(i + 1);

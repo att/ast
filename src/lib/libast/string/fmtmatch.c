@@ -129,8 +129,9 @@ char *fmtmatch(const char *as) {
                         continue;
                     }
                     *t++ = '~';
-                } else
+                } else {
                     *t++ = '@';
+                }
                 *t++ = '(';
                 continue;
             case ')':
@@ -153,14 +154,16 @@ char *fmtmatch(const char *as) {
                         }
                         continue;
                     case '{':
-                        for (z = s; *z != '}'; z++)
+                        for (z = s; *z != '}'; z++) {
                             if (!*z) return 0;
+                        }
                         n = z - s;
                         if (*++z == '?') n++;
                         x = *p + n;
                         for (y = t += n; y > x; y--) *y = *(y - n);
-                        for (x = *p; s < z; *x++ = *s++)
+                        for (x = *p; s < z; *x++ = *s++) {
                             ;
+                        }
                         if (*s == '?') {
                             s++;
                             *x++ = '-';
@@ -205,10 +208,12 @@ char *fmtmatch(const char *as) {
                 if (t == b || n == '(' || n == '|') return 0;
                 *(t - 1) = c;
                 if (c == '{') {
-                    for (z = s; *z != '}'; z++)
+                    for (z = s; *z != '}'; z++) {
                         if (!*z) return 0;
-                    for (; s <= z; *t++ = *s++)
+                    }
+                    for (; s <= z; *t++ = *s++) {
                         ;
+                    }
                 }
                 if (*s == '?') {
                     s++;
@@ -241,9 +246,10 @@ char *fmtmatch(const char *as) {
     }
     if (p != stack) return 0;
     if (b != buf + 3) *t++ = ')';
-    if (!a &&
-        (*b != '*' || *(b + 1) == '(' || ((*(b + 1) == '-' || *(b + 1) == '~') && *(b + 2) == '(')))
+    if (!a && (*b != '*' || *(b + 1) == '(' ||
+               ((*(b + 1) == '-' || *(b + 1) == '~') && *(b + 2) == '('))) {
         *--b = '*';
+    }
     if (!e) *t++ = '*';
     *t = 0;
     return b;

@@ -102,8 +102,9 @@ char *fmtre(const char *as) {
                 }
                 continue;
             case '{':
-                for (x = s; *x && *x != '}'; x++)
+                for (x = s; *x && *x != '}'; x++) {
                     ;
+                }
                 if (*x++ && (*x == '(' || (*x == '-' && *(x + 1) == '('))) {
                     if (p >= &stack[elementsof(stack)]) return 0;
                     p->beg = s - 1;
@@ -113,8 +114,9 @@ char *fmtre(const char *as) {
                     if (p->min) s++;
                     p++;
                     *t++ = *s++;
-                } else
+                } else {
                     *t++ = c;
+                }
                 continue;
             case '*':
                 if (!*s) {

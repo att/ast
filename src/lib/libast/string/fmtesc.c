@@ -68,17 +68,19 @@ char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int fla
     doublequote = 0;
     singlequote = 0;
     if (qb) {
-        if (qb[0] == '$' && qb[1] == '\'' && qb[2] == 0)
+        if (qb[0] == '$' && qb[1] == '\'' && qb[2] == 0) {
             shell = 1;
-        else if ((flags & FMT_SHELL) && qb[1] == 0) {
-            if (qb[0] == '"')
+        } else if ((flags & FMT_SHELL) && qb[1] == 0) {
+            if (qb[0] == '"') {
                 doublequote = 1;
-            else if (qb[0] == '\'')
+            } else if (qb[0] == '\'') {
                 singlequote = 1;
+            }
         }
         while ((*b = *qb++)) b++;
-    } else if (flags & FMT_SHELL)
+    } else if (flags & FMT_SHELL) {
         doublequote = 1;
+    }
     f = b;
     escaped = spaced = (flags & FMT_ALWAYS) != 0;
     mbinit(&q);
@@ -125,8 +127,9 @@ char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int fla
                             *b++ = '0' + ((c >> 6) & 07);
                             *b++ = '0' + ((c >> 3) & 07);
                             c = '0' + (c & 07);
-                        } else
+                        } else {
                             b--;
+                        }
                         break;
                 }
             } else if (c == '\\') {
@@ -161,10 +164,11 @@ char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int fla
                         *b++ = c;
                         c = *s++;
                     }
-                } else if (doublequote)
+                } else if (doublequote) {
                     *b++ = '\\';
-                else if (singlequote || (flags & FMT_SHELL))
+                } else if (singlequote || (flags & FMT_SHELL)) {
                     spaced = 1;
+                }
             } else if (!spaced && !escaped &&
                        (isspace(c) ||
                         ((((flags & FMT_SHELL) || shell) && strchr("\";~&|()<>[]*?", c)) ||
@@ -176,8 +180,9 @@ char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int fla
     }
     if (qb) {
         if (!escaped) buf += shell + !spaced;
-        if (qe && (escaped || spaced))
+        if (qe && (escaped || spaced)) {
             while ((*b = *qe++)) b++;
+        }
     }
     *b = 0;
     return buf;

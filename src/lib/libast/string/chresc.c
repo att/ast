@@ -238,10 +238,11 @@ int chrexp(const char *s, char **p, int *m, int flags) {
                                     if (n > 2) {
                                         if (!(flags & FMT_EXP_WIDE)) goto noexpand;
                                         w = 1;
-                                    } else if (!(flags & FMT_EXP_CHAR))
+                                    } else if (!(flags & FMT_EXP_CHAR)) {
                                         goto noexpand;
-                                    else
+                                    } else {
                                         break;
+                                    }
                                 }
                                 if (!mbwide()) w = 0;
                                 if (c <= 0x7f) break;
@@ -253,8 +254,9 @@ int chrexp(const char *s, char **p, int *m, int flags) {
                                         c = o;
                                         break;
                                     }
-                                } else if (w || c <= ast.byte_max)
+                                } else if (w || c <= ast.byte_max) {
                                     break;
+                                }
                             }
                             if (x) {
                                 c = x;

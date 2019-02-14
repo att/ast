@@ -165,10 +165,11 @@ char *fmtfmt(const char *as) {
                     }
                     break;
                 }
-                if (a)
+                if (a) {
                     i = a;
-                else
+                } else {
                     i++;
+                }
                 if (i < elementsof(formats)) {
                     formats[i] = t;
                     extra[i] = x;

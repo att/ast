@@ -57,33 +57,37 @@ unsigned long strelapsed(const char *s, char **e, int n) {
         v = 0;
         while ((c = *s++) >= '0' && c <= '9') v = v * 10 + c - '0';
         v *= n;
-        if (c == '.')
+        if (c == '.') {
             for (m = n; (c = *s++) >= '0' && c <= '9';) f += (m /= 10) * (c - '0');
+        }
         if (c == '%') {
             t = ~t;
             last = s;
             break;
         }
         if (s == last + 1) break;
-        if (!p)
+        if (!p) {
             while (isspace(c) || c == '_') c = *s++;
+        }
         switch (c) {
             case 'S':
                 if (*s == 'E' || *s == 'e') {
                     v += f;
                     f = 0;
-                } else
+                } else {
                     v *= 20 * 12 * 4 * 7 * 24 * 60 * 60;
+                }
                 break;
             case 'y':
             case 'Y':
                 v *= 12 * 4 * 7 * 24 * 60 * 60;
                 break;
             case 'M':
-                if (*s == 'I' || *s == 'i')
+                if (*s == 'I' || *s == 'i') {
                     v *= 60;
-                else
+                } else {
                     v *= 4 * 7 * 24 * 60 * 60;
+                }
                 break;
             case 'w':
                 v *= 7 * 24 * 60 * 60;
@@ -102,10 +106,11 @@ unsigned long strelapsed(const char *s, char **e, int n) {
                 v *= strchr(s, ':') ? (60 * 60) : 60;
                 break;
             case 'm':
-                if (*s == 'o')
+                if (*s == 'o') {
                     v *= 4 * 7 * 24 * 60 * 60;
-                else
+                } else {
                     v *= 60;
+                }
                 break;
             case 's':
                 if (*s == 'c') {

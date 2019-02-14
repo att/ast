@@ -38,31 +38,32 @@ char *fmtelapsed(unsigned long u, int n) {
     if (u == ~0L) return "%";
     buf = fmtbuf(z = 8);
     t = u / n;
-    if (t < 60)
+    if (t < 60) {
         sfsprintf(buf, z, "%lu.%02lus", t, (u * 100 / n) % 100);
-    else if (t < 60 * 60)
+    } else if (t < 60 * 60) {
         sfsprintf(buf, z, "%lum%02lus", t / 60, t - (t / 60) * 60);
-    else if (t < 24 * 60 * 60)
+    } else if (t < 24 * 60 * 60) {
         sfsprintf(buf, z, "%luh%02lum", t / (60 * 60), (t - (t / (60 * 60)) * (60 * 60)) / 60);
-    else if (t < 7 * 24 * 60 * 60)
+    } else if (t < 7 * 24 * 60 * 60) {
         sfsprintf(buf, z, "%lud%02luh", t / (24 * 60 * 60),
                   (t - (t / (24 * 60 * 60)) * (24 * 60 * 60)) / (60 * 60));
-    else if (t < 31 * 24 * 60 * 60)
+    } else if (t < 31 * 24 * 60 * 60) {
         sfsprintf(buf, z, "%luw%02lud", t / (7 * 24 * 60 * 60),
                   (t - (t / (7 * 24 * 60 * 60)) * (7 * 24 * 60 * 60)) / (24 * 60 * 60));
-    else if (t < 365 * 24 * 60 * 60)
+    } else if (t < 365 * 24 * 60 * 60) {
         sfsprintf(buf, z, "%luM%02lud", (t * 12) / (365 * 24 * 60 * 60),
                   ((t * 12) - ((t * 12) / (365 * 24 * 60 * 60)) * (365 * 24 * 60 * 60)) /
                       (12 * 24 * 60 * 60));
-    else if (t < (365UL * 4UL + 1UL) * 24UL * 60UL * 60UL)
+    } else if (t < (365UL * 4UL + 1UL) * 24UL * 60UL * 60UL) {
         sfsprintf(
             buf, z, "%luY%02luM", t / (365 * 24 * 60 * 60),
             ((t - (t / (365 * 24 * 60 * 60)) * (365 * 24 * 60 * 60)) * 5) / (152 * 24 * 60 * 60));
-    else
+    } else {
         sfsprintf(buf, z, "%luY%02luM", (t * 4) / ((365UL * 4UL + 1UL) * 24UL * 60UL * 60UL),
                   (((t * 4) - ((t * 4) / ((365UL * 4UL + 1UL) * 24UL * 60UL * 60UL)) *
                                   ((365UL * 4UL + 1UL) * 24UL * 60UL * 60UL)) *
                    5) /
                       ((4 * 152 + 1) * 24 * 60 * 60));
+    }
     return buf;
 }

@@ -60,8 +60,9 @@ char *fmtbuf(size_t n) {
         cur = nxt;
         if (n > (&buf[sizeof(buf)] - cur)) {
             tst = buf;
-        } else
+        } else {
             tst = cur;
+        }
     } while (asocasptr(&nxt, cur, tst + n) != cur);
     return tst;
 }

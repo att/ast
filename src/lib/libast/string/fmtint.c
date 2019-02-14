@@ -87,9 +87,9 @@ char *fmtint(int64_t ll, int unsign) {
     char *buff;
     uint64_t n, m;
     int j = 0, k = 3 * sizeof(ll);
-    if (unsign || ll >= 0)
+    if (unsign || ll >= 0) {
         n = ll;
-    else {
+    } else {
         n = -ll;
         j = 1;
     }

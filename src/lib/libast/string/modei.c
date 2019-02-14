@@ -45,8 +45,9 @@ int modei(int x) {
     int c;
 
     i = 0;
-    for (c = 0; c < PERMLEN; c += 2)
+    for (c = 0; c < PERMLEN; c += 2) {
         if (x & permmap[c + 1]) i |= permmap[c];
+    }
     return i;
 #endif
 }

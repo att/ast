@@ -97,8 +97,9 @@ int strngrpmatch(const char *b, size_t z, const char *p, ssize_t *sub, int n, in
                 int *subi = (int *)sub;
 
                 subi[0] = subi[1] = 0;
-            } else
+            } else {
                 sub[0] = sub[1] = 0;
+            }
         }
         return *b == 0;
     }
@@ -107,9 +108,9 @@ int strngrpmatch(const char *b, size_t z, const char *p, ssize_t *sub, int n, in
      * convert flags
      */
 
-    if (flags & REG_ADVANCE)
+    if (flags & REG_ADVANCE) {
         reflags = flags & ~REG_ADVANCE;
-    else {
+    } else {
         reflags = REG_SHELL | REG_AUGMENTED;
         if (!(flags & STR_MAXIMAL)) reflags |= REG_MINIMAL;
         if (flags & STR_GROUP) reflags |= REG_SHELL_GROUP;
@@ -125,8 +126,9 @@ int strngrpmatch(const char *b, size_t z, const char *p, ssize_t *sub, int n, in
         matchstate.nmatch = n;
     }
     if (regnexec(re, b, z, n, matchstate.match,
-                 reflags & ~(REG_MINIMAL | REG_SHELL_GROUP | REG_LEFT | REG_RIGHT | REG_ICASE)))
+                 reflags & ~(REG_MINIMAL | REG_SHELL_GROUP | REG_LEFT | REG_RIGHT | REG_ICASE))) {
         return 0;
+    }
     if (!sub || n <= 0) return 1;
     i = re->re_nsub;
     if (flags & STR_INT) {

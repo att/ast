@@ -135,8 +135,9 @@ char *tokread(char *u) {
                             return "\n";
                         }
                         r++;
-                    } else if (!p->flg)
+                    } else if (!p->flg) {
                         p->flg = FLG_NEWLINE;
+                    }
                 }
                 /*FALLTHROUGH*/
             case ' ':
@@ -157,10 +158,11 @@ char *tokread(char *u) {
                 break;
             case '"':
             case '\'':
-                if (c == q)
+                if (c == q) {
                     q = 0;
-                else if (!q)
+                } else if (!q) {
                     q = c;
+                }
                 break;
         }
     }

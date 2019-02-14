@@ -39,8 +39,9 @@ int struniq(char **argv, int n) {
     ao = an = argv;
     ae = ao + n;
     while (++an < ae) {
-        while (!strcmp(*ao, *an))
+        while (!strcmp(*ao, *an)) {
             if (++an >= ae) return ao - argv + 1;
+        }
         *++ao = *an;
     }
     return ao - argv + 1;

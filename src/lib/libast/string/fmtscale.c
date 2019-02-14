@@ -46,9 +46,9 @@ char *fmtscale(Sfulong_t n, int k) {
     static const char scale[] = "bkMGTPE";
 
     u = scale;
-    if (n < 1000)
+    if (n < 1000) {
         r = 0;
-    else {
+    } else {
         m = 0;
         while (n >= k && *(u + 1)) {
             m = n;
@@ -71,8 +71,9 @@ char *fmtscale(Sfulong_t n, int k) {
         if (k == 1024) {
             *s++ = *u == 'k' ? 'K' : *u;
             *s++ = 'i';
-        } else
+        } else {
             *s++ = *u;
+        }
     }
     *s = 0;
     if (n > 0 && n < 10) {

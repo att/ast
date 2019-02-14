@@ -72,11 +72,12 @@ ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
             ssize_t len;
 
             mbinit(&q);
-            for (inbuf = inbuf_start, i = 0; i < n; i++, inbuf += len)
+            for (inbuf = inbuf_start, i = 0; i < n; i++, inbuf += len) {
                 if ((len = mbconv(inbuf, wchar[i], &q)) < 0) {
                     inbuf[i] = 0;
                     break;
                 }
+            }
         } else {
             /*
              * We need this because Linux's |wcrtomb()| doesn't
@@ -93,8 +94,9 @@ ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
         if ((res = iconv(ast.mb_wc2uc, &inbuf, &inbytesleft, &outbuf, &outbytesleft)) >= 0) {
             const char *s;
 
-            for (s = outbuf_start, i = 0; i < n && s < (const char *)outbuf; i++)
+            for (s = outbuf_start, i = 0; i < n && s < (const char *)outbuf; i++) {
                 s += utf8toutf32v(&utf32[i], s);
+            }
             if (i < n) utf32[i] = 0;
         }
         oerrno = errno;

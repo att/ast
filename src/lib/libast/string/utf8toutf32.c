@@ -61,9 +61,9 @@ int utf8towc(wchar_t *wp, const char *str, size_t n) {
     if ((m = utf8tab[*sp]) > 0) {
         if (m > n) return -2;
         if (wp) {
-            if (m == 1)
+            if (m == 1) {
                 *wp = *sp;
-            else {
+            } else {
                 w = *sp & ((1 << (8 - m)) - 1);
                 for (i = m - 1; i > 0; i--) {
                     c = *++sp;
