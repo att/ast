@@ -101,8 +101,9 @@ void *llist(Dt_t *dt, Dtlink_t *lnk, int type) {
     Dtlist_t *list = (Dtlist_t *)dt->data;
 
     if (type & (DT_FLATTEN | DT_EXTRACT)) {
-        if (lnk) /* error on calling */
+        if (lnk) { /* error on calling */
             return NULL;
+        }
 
         lnk = list->link;
         if (type & DT_EXTRACT) {
@@ -145,17 +146,18 @@ static_fn void *dtlist(Dt_t *dt, void *obj, int type) {
 
     DTSETLOCK(dt);
 
-    if (type & (DT_FIRST | DT_LAST))
+    if (type & (DT_FIRST | DT_LAST)) {
         DTRETURN(obj, lfirstlast(dt, type));
-    else if (type & (DT_EXTRACT | DT_RESTORE | DT_FLATTEN))
+    } else if (type & (DT_EXTRACT | DT_RESTORE | DT_FLATTEN)) {
         DTRETURN(obj, llist(dt, (Dtlink_t *)obj, type));
-    else if (type & DT_CLEAR)
+    } else if (type & DT_CLEAR) {
         DTRETURN(obj, lclear(dt));
-    else if (type & DT_STAT)
+    } else if (type & DT_STAT) {
         DTRETURN(obj, dtlist_at(dt, (Dtstat_t *)obj));
-    else if (type & DT_START) {
-        if (!(fngr = (Dtlink_t **)(*dt->memoryf)(dt, NULL, sizeof(Dtlink_t *), disc)))
+    } else if (type & DT_START) {
+        if (!(fngr = (Dtlink_t **)(*dt->memoryf)(dt, NULL, sizeof(Dtlink_t *), disc))) {
             DTRETURN(obj, NULL);
+        }
         if (!obj) {
             if (!list->link) {
                 (void)(*dt->memoryf)(dt, (void *)fngr, 0, disc);
@@ -172,8 +174,9 @@ static_fn void *dtlist(Dt_t *dt, void *obj, int type) {
         *fngr = r->_rght;
         goto dt_return;
     } else if (type & DT_STOP) {
-        if (obj) /* free allocated memory */
+        if (obj) { /* free allocated memory */
             (void)(*dt->memoryf)(dt, obj, 0, disc);
+        }
         DTRETURN(obj, NULL);
     }
 
@@ -182,9 +185,11 @@ static_fn void *dtlist(Dt_t *dt, void *obj, int type) {
 
     if (!obj) {
         if ((type & (DT_DELETE | DT_DETACH | DT_REMOVE)) &&
-            (dt->meth->type & (DT_STACK | DT_QUEUE)))
-            if ((r = list->link)) /* special case for destack or dequeue */
+            (dt->meth->type & (DT_STACK | DT_QUEUE))) {
+            if ((r = list->link)) { /* special case for destack or dequeue */
                 goto dt_delete;
+            }
+        }
         DTRETURN(obj, NULL); /* error, needing non-void object */
     }
 
@@ -198,10 +203,11 @@ static_fn void *dtlist(Dt_t *dt, void *obj, int type) {
 
     do_insert:
         if (dt->meth->type & DT_DEQUE) {
-            if (type & DT_APPEND)
+            if (type & DT_APPEND) {
                 goto dt_queue; /* append at end */
-            else
+            } else {
                 goto dt_stack; /* insert at top */
+            }
         } else if (dt->meth->type & DT_LIST) {
             if (type & DT_APPEND) {
                 if (!h || !h->_rght) goto dt_queue;
@@ -222,8 +228,9 @@ static_fn void *dtlist(Dt_t *dt, void *obj, int type) {
             if (t) {
                 r->_left = t->_left;
                 t->_left = r;
-            } else
+            } else {
                 r->_left = r;
+            }
             list->link = r;
         } else /* if(dt->meth->type&DT_QUEUE) */
         {
@@ -247,42 +254,46 @@ static_fn void *dtlist(Dt_t *dt, void *obj, int type) {
     if (type & DT_MATCH) {
         key = obj;
         obj = NULL;
-    } else
+    } else {
         key = _DTKEY(disc, obj);
+    }
 
     /* try to find a matching object */
-    if (h && _DTOBJ(disc, h) == obj && (type & (DT_START | DT_SEARCH | DT_NEXT | DT_PREV)))
+    if (h && _DTOBJ(disc, h) == obj && (type & (DT_START | DT_SEARCH | DT_NEXT | DT_PREV))) {
         r = h; /* match at the finger, no search needed */
-    else       /* linear search through the list */
+    } else     /* linear search through the list */
     {
         h = NULL; /* track first/last obj with same key */
         for (r = list->link; r; r = r->_rght) {
             o = _DTOBJ(disc, r);
             k = _DTKEY(disc, o);
-            if (_DTCMP(dt, key, k, disc) != 0)
+            if (_DTCMP(dt, key, k, disc) != 0) {
                 continue;
-            else if (type & (DT_REMOVE | DT_NEXT | DT_PREV)) {
-                if (o == obj) /* got exact object, done */
+            } else if (type & (DT_REMOVE | DT_NEXT | DT_PREV)) {
+                if (o == obj) { /* got exact object, done */
                     break;
-                else if (type & DT_NEXT) /* track last object */
+                } else if (type & DT_NEXT) { /* track last object */
                     h = r;
-                else if (type & DT_PREV) /* track first object */
+                } else if (type & DT_PREV) { /* track first object */
                     h = h ? h : r;
-                else
+                } else {
                     continue;
-            } else if (type & DT_ATLEAST)
+                }
+            } else if (type & DT_ATLEAST) {
                 h = r; /* track last object */
-            else
+            } else {
                 break;
+            }
         }
         r = h ? h : r;
     }
     if (!r) /* not found */
     {
-        if (type & DT_START)
+        if (type & DT_START) {
             (void)(*dt->memoryf)(dt, (void *)fngr, 0, disc);
-        else if (type & DT_STEP)
+        } else if (type & DT_STEP) {
             *fngr = NULL;
+        }
 
         DTRETURN(obj, NULL);
     }
@@ -308,17 +319,19 @@ static_fn void *dtlist(Dt_t *dt, void *obj, int type) {
         dt->data->size -= 1;
 
         goto dt_return;
-    } else if (type & DT_NEXT)
+    } else if (type & DT_NEXT) {
         r = r->_rght;
-    else if (type & DT_PREV)
+    } else if (type & DT_PREV) {
         r = r == list->link ? NULL : r->_left;
+    }
     /* else: if(type&(DT_SEARCH|DT_MATCH|DT_ATLEAST|DT_ATMOST)) */
 
     list->here = r;
-    if (r)
+    if (r) {
         DTRETURN(obj, _DTOBJ(disc, r));
-    else
+    } else {
         DTRETURN(obj, NULL);
+    }
 
 dt_return:
     DTANNOUNCE(dt, obj, type);

@@ -45,14 +45,16 @@ Dtmethod_t *dtmethod(Dt_t *dt, Dtmethod_t *meth) {
     list = dtextract(dt); /* extract elements out of dictionary */
 
     /* try to create internal structure for new method */
-    if (dt->searchf == oldmt->searchf) /* ie, not viewpathing */
+    if (dt->searchf == oldmt->searchf) { /* ie, not viewpathing */
         dt->searchf = meth->searchf;
+    }
     dt->meth = meth;
     dt->data = NULL;
-    if ((*dt->meth->eventf)(dt, DT_OPEN, NULL) < 0)
+    if ((*dt->meth->eventf)(dt, DT_OPEN, NULL) < 0) {
         newdt = NULL;
-    else
+    } else {
         newdt = dt->data;
+    }
 
     /* see what need to be done to data of the old method */
     if (dt->searchf == meth->searchf) dt->searchf = oldmt->searchf;
@@ -79,25 +81,28 @@ int dtcustomize(Dt_t *dt, int type, int action) {
 
     if ((type & DT_SHARE) &&
         (!dt->meth->eventf || (*dt->meth->eventf)(dt, DT_SHARE, (void *)((long)action)) >= 0)) {
-        if (action <= 0)
+        if (action <= 0) {
             dt->data->type &= ~DT_SHARE;
-        else
+        } else {
             dt->data->type |= DT_SHARE;
+        }
         done |= DT_SHARE;
     }
 
     if ((type & DT_ANNOUNCE) &&
         (!dt->meth->eventf || (*dt->meth->eventf)(dt, DT_ANNOUNCE, (void *)((long)action)) >= 0)) {
-        if (action <= 0)
+        if (action <= 0) {
             dt->data->type &= ~DT_ANNOUNCE;
-        else
+        } else {
             dt->data->type |= DT_ANNOUNCE;
+        }
         done |= DT_ANNOUNCE;
     }
 
     if ((type & DT_OPTIMIZE) &&
-        (!dt->meth->eventf || (*dt->meth->eventf)(dt, DT_OPTIMIZE, (void *)((long)action)) >= 0))
+        (!dt->meth->eventf || (*dt->meth->eventf)(dt, DT_OPTIMIZE, (void *)((long)action)) >= 0)) {
         done |= DT_OPTIMIZE;
+    }
 
     return done;
 }

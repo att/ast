@@ -135,9 +135,11 @@ static_fn int hclslock(Dt_t *dt, uint hsh, int type, int locking) {
     if (locking) {
         if (type & (H_INSERT | H_DELETE)) {
             asospindecl();
-            for (asospininit();; asospinnext())
-                if (asocaschar(lckp, 0, 1) == 0) /* got lock */
+            for (asospininit();; asospinnext()) {
+                if (asocaschar(lckp, 0, 1) == 0) { /* got lock */
                     break;
+                }
+            }
         }
 
         /* increase reference count */
@@ -190,8 +192,9 @@ static_fn void dtrehash_delete(Dt_t *dt, Dtlink_t **lnkp, int type) {
     {
         uint *refn = hash->refn + (lnk->_hash & hash->lmax);
         asospindecl();
-        for (asospininit();; asospinnext())
+        for (asospininit();; asospinnext()) {
             if (asogetint(refn) == 1) break;
+        }
     }
 
     _dtfree(dt, lnk, type); /* now it's safe to free object */
@@ -206,13 +209,15 @@ static_fn void *dtrehash_clear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap) {
     int share = hash->data.type & DT_SHARE;
 
     for (tblz = HSIZE(hash, lev), p = 0; p < tblz; ++p) {
-        if (lev == 0) /* lock the class as necessary */
+        if (lev == 0) { /* lock the class as necessary */
             HCLSLOCK(dt, p, DT_DELETE, share);
+        }
 
         dtrehash_delete(dt, HLNKP(tbl, p), DT_DELETE);
 
-        if ((t = asogetptr(tbl->list + p)) && HTABLE(t))
+        if ((t = asogetptr(tbl->list + p)) && HTABLE(t)) {
             dtrehash_clear(dt, (Htbl_t *)t, lev + 1, zap);
+        }
 
         if (lev == 0) HCLSOPEN(dt, p, DT_DELETE, share);
     }
@@ -238,15 +243,17 @@ static_fn void *dtrehash_first(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev,
 
     obj = NULL;
     for (tblz = HSIZE(hash, lev); pos < tblz && !obj; ++pos) {
-        if (lev == 0 || type != 0) /* type != 0 means not a recursion */
+        if (lev == 0 || type != 0) { /* type != 0 means not a recursion */
             HCLSLOCK(dt, lev == 0 ? pos : hsh, DT_SEARCH, share);
+        }
 
         if ((p = t = asogetptr(tbl->list + pos))) {
             if (HTABLE(t)) {
-                if (!(p = asogetptr(&(((Htbl_t *)t)->pobj)))) /* type == 0 */
+                if (!(p = asogetptr(&(((Htbl_t *)t)->pobj)))) { /* type == 0 */
                     obj = dtrehash_first(dt, fngr, (Htbl_t *)t, lev + 1, 0, 0, 0);
-                else
+                } else {
                     goto o_bj; /* p is a valid object */
+                }
             } else {
             o_bj:
                 obj = _DTOBJ(dt->disc, p);
@@ -299,21 +306,25 @@ static_fn void *dtrehash_flatten(Dt_t *dt, Dtlink_t **list, Dtlink_t *last, Htbl
     int share = hash->data.type & DT_SHARE;
 
     for (tblz = HSIZE(hash, lev), p = 0; p < tblz; ++p) {
-        if (lev == 0) /* hard lock in case we need to zap it */
+        if (lev == 0) { /* hard lock in case we need to zap it */
             HCLSLOCK(dt, p, DT_DELETE, share);
+        }
 
         lnkp = HLNKP(tbl, p);
         if ((t = asogetptr(lnkp))) {
-            if (last) /* append to flattened list */
+            if (last) { /* append to flattened list */
                 last = (last->_rght = t);
-            else
+            } else {
                 last = (*list = t);
-            if (zap) /* just clearing structure, not freeing object */
+            }
+            if (zap) { /* just clearing structure, not freeing object */
                 *lnkp = NULL;
+            }
         }
 
-        if ((t = asogetptr(tbl->list + p)) && HTABLE(t))
+        if ((t = asogetptr(tbl->list + p)) && HTABLE(t)) {
             last = dtrehash_flatten(dt, list, last, (Htbl_t *)t, lev + 1, zap);
+        }
 
         if (lev == 0) HCLSOPEN(dt, p, DT_DELETE, share);
     }
@@ -397,9 +408,9 @@ static_fn void *dtrehash_stat(Dt_t *dt, Dtstat_t *st) {
     ssize_t size;
     Hash_t *hash = (Hash_t *)dt->data;
 
-    if (!st)
+    if (!st) {
         size = hash->data.size;
-    else {
+    } else {
         memset(st, 0, sizeof(Dtstat_t));
         st->meth = dt->meth->type;
         st->size = size = dtrehash_size(dt, hash->root, 0, st);
@@ -434,8 +445,9 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
             if (!(fngr = (*dt->memoryf)(dt, NULL, sizeof(Fngr_t), disc))) return NULL;
             if (!obj) /* start walk from the first element */
             {
-                if (!(obj = dtrehash_first(dt, fngr, hash->root, 0, 0, 0, type)))
+                if (!(obj = dtrehash_first(dt, fngr, hash->root, 0, 0, 0, type))) {
                     (*dt->memoryf)(dt, fngr, 0, disc);
+                }
                 return obj ? (void *)fngr : NULL;
             }
             /* else, search for obj below */
@@ -443,33 +455,38 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
         {
             if (!(fngr = (Fngr_t *)obj) || !(lnk = fngr->here)) return NULL;
             obj = _DTOBJ(disc, lnk);
-            if (!dtrehash_next(dt, fngr, fngr->mtbl, fngr->mlev, fngr->mpos, lnk->_hash, type))
+            if (!dtrehash_next(dt, fngr, fngr->mtbl, fngr->mlev, fngr->mpos, lnk->_hash, type)) {
                 fngr->here = NULL; /* walk will end after this call */
+            }
 
             DTANNOUNCE(dt, obj, type);
             return obj;
         } else if (type & DT_STOP) /* stop a walk */
         {
-            if (obj) /* free associated memory */
+            if (obj) { /* free associated memory */
                 (*dt->memoryf)(dt, obj, 0, disc);
+            }
             return NULL;
-        } else if (type & (DT_FIRST | DT_LAST))
+        } else if (type & (DT_FIRST | DT_LAST)) {
             return dtrehash_first(dt, fngr, hash->root, 0, 0, 0, type);
-        else if (type & DT_CLEAR)
+        } else if (type & DT_CLEAR) {
             return dtrehash_clear(dt, hash->root, 0, 0);
-        else if (type & DT_STAT)
+        } else if (type & DT_STAT) {
             return dtrehash_stat(dt, (Dtstat_t *)obj);
-        else /*if(type&(DT_EXTRACT|DT_RESTORE|DT_FLATTEN))*/
+        } else { /*if(type&(DT_EXTRACT|DT_RESTORE|DT_FLATTEN))*/
             return dtrehash_list(dt, (Dtlink_t *)obj, type);
+        }
     }
 
-    if (!obj) /* from here on, a non-NULL object is needed */
+    if (!obj) { /* from here on, a non-NULL object is needed */
         return NULL;
+    }
 
     /* optimization for fast walking of a dictionary */
     if (!share && (type & (DT_NEXT | DT_PREV)) && (lnk = fngr->here) && obj == _DTOBJ(disc, lnk) &&
-        (tbl = fngr->mtbl) && (pos = fngr->mpos) >= 0 && (lev = fngr->mlev) >= 0)
+        (tbl = fngr->mtbl) && (pos = fngr->mpos) >= 0 && (lev = fngr->mlev) >= 0) {
         return dtrehash_next(dt, fngr, tbl, lev, pos, lnk->_hash, type);
+    }
 
     if (type & DT_RELINK) /* reinserting an object */
     {
@@ -481,8 +498,9 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
         if (type & DT_MATCH) {
             key = obj;
             obj = NULL;
-        } else
+        } else {
             key = _DTKEY(disc, obj);
+        }
     }
     hsh = _DTHSH(dt, key, disc); /* hash value from hash function */
     hsh = HREMIX(hsh);           /* remix value for what we need */
@@ -505,15 +523,15 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
                     opnp = pos;
                 }
                 continue;
-            } else if (t->_hash != hsh) /* cannot match */
+            } else if (t->_hash != hsh) { /* cannot match */
                 continue;
-            else /* potential match, verify */
+            } else /* potential match, verify */
             {
                 o = _DTOBJ(disc, t);
                 ky = _DTKEY(disc, o);
-                if (_DTCMP(dt, key, ky, disc) != 0)
+                if (_DTCMP(dt, key, ky, disc) != 0) {
                     continue;
-                else if (type & (DT_REMOVE | DT_NEXT | DT_PREV | DT_START)) {
+                } else if (type & (DT_REMOVE | DT_NEXT | DT_PREV | DT_START)) {
                     if (type & DT_START) /* starting a walk, return fingered data */
                     {
                         fngr->here = t;
@@ -556,9 +574,9 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
 
             assert(type & H_INSERT);
             if (!(dt->meth->type & DT_RHBAG)) {  // no duplicates
-                if (type & (DT_INSERT | DT_APPEND | DT_ATTACH))
+                if (type & (DT_INSERT | DT_APPEND | DT_ATTACH)) {
                     type |= DT_MATCH; /* for announcement */
-                else if (type & DT_RELINK) {
+                } else if (type & DT_RELINK) {
                     assert(lnk);
                     o = _DTOBJ(disc, t); /* remove a duplicate */
                     _dtfree(dt, lnk, DT_DELETE);
@@ -579,9 +597,9 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
                 DTANNOUNCE(dt, obj, type);
                 HCLSOPEN(dt, hsh, type, share);
                 return obj;
-            } else if (opnt) /* already got an open slot */
+            } else if (opnt) { /* already got an open slot */
                 goto do_insert;
-            else
+            } else {
                 for (;;) {  // try finding an open slot
                     for (; k < srch; ++k, pos = ((pos + 1) & modz)) {
                         lnkp = HLNKP(tbl, pos);
@@ -604,6 +622,7 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
                         goto do_insert;
                     }
                 }
+            }
         }
 
         if ((t = asogetptr(tbl->list + hshp)) && HTABLE(t)) {
@@ -619,9 +638,9 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
                 return dtrehash_next(dt, fngr, opnt, oplv, opnp, hsh, type);
             }
             return NULL;
-        } else if (type & H_INSERT)
+        } else if (type & H_INSERT) {
             goto do_insert; /* inserting a  new object */
-        else                /* search/delete failed */
+        } else              /* search/delete failed */
         {
             HCLSOPEN(dt, hsh, type, share);
             return NULL;
@@ -665,8 +684,9 @@ static_fn int dtrehash_event(Dt_t *dt, int event, void *arg) {
     if (!disc) return -1;
 
     if (event == DT_OPEN) {
-        if (hash) /* already allocated private data */
+        if (hash) { /* already allocated private data */
             return 0;
+        }
 
         if (!(hash = (Hash_t *)(*dt->memoryf)(dt, 0, sizeof(Hash_t), dt->disc))) {
             DTERROR(dt, "Error in allocating a hashtrie table");
@@ -676,11 +696,13 @@ static_fn int dtrehash_event(Dt_t *dt, int event, void *arg) {
         dt->data = (Dtdata_t *)hash;
 
         z = 0; /* get size of the root table and #bits */
-        if (disc && disc->eventf && (*disc->eventf)(dt, DT_HASHSIZE, &z, disc) > 0)
+        if (disc && disc->eventf && (*disc->eventf)(dt, DT_HASHSIZE, &z, disc) > 0) {
             z = z < 0 ? -z : z;
+        }
         z = z == 0 ? (1 << H_BIT0) - 1 : z;
-        for (b = DT_HTABLE; b < H_NBITS; ++b) /* count #bits */
+        for (b = DT_HTABLE; b < H_NBITS; ++b) { /* count #bits */
             if ((1 << b) >= z) break;
+        }
 
         hash->shft[0] = 0;             /* amount to shift right before masking */
         hash->mask[0] = (1U << b) - 1; /* mask to get bits after shifting */
@@ -704,12 +726,15 @@ static_fn int dtrehash_event(Dt_t *dt, int event, void *arg) {
         return 1;
     } else if (event == DT_CLOSE) {
         if (!hash) return 0;
-        if (hash->root) /* free all objects in dictionary */
+        if (hash->root) { /* free all objects in dictionary */
             (void)dtrehash_clear(dt, hash->root, 0, -1);
-        if (hash->lock) /* free the lock table, if any */
+        }
+        if (hash->lock) { /* free the lock table, if any */
             (void)(*dt->memoryf)(dt, hash->lock, 0, disc);
-        if (hash->refn) /* free the hazard table, if any */
+        }
+        if (hash->refn) { /* free the hazard table, if any */
             (void)(*dt->memoryf)(dt, hash->refn, 0, disc);
+        }
         (void)(*dt->memoryf)(dt, hash, 0, disc);
         dt->data = NULL;
         return 0;

@@ -68,8 +68,9 @@ static_fn int dthash_htable(Dt_t *dt) {
             {
                 hash->type |= H_FIXED;
                 n = -n;              /* desired table size */
-                if (hash->tblz >= n) /* table size is fixed now */
+                if (hash->tblz >= n) { /* table size is fixed now */
                     return 0;
+                }
             }
         }
     }
@@ -95,8 +96,9 @@ static_fn int dthash_htable(Dt_t *dt) {
         }
     }
 
-    if (hash->htbl) /* free old table and set new table */
+    if (hash->htbl) { /* free old table and set new table */
         (void)(*dt->memoryf)(dt, hash->htbl, 0, disc);
+    }
     hash->htbl = htbl;
     hash->tblz = n;
 
@@ -126,8 +128,9 @@ static_fn void *dthash_hfirst(Dt_t *dt) {
     Dthash_t *hash = (Dthash_t *)dt->data;
 
     lnk = NULL;
-    for (endt = (tbl = hash->htbl) + hash->tblz; tbl < endt; ++tbl)
+    for (endt = (tbl = hash->htbl) + hash->tblz; tbl < endt; ++tbl) {
         if ((lnk = *tbl)) break;
+    }
     hash->here = lnk;
     return lnk ? _DTOBJ(dt->disc, lnk) : NULL;
 }
@@ -140,8 +143,9 @@ static_fn void *dthash_hnext(Dt_t *dt, Dtlink_t *lnk) {
     {
         tbl = hash->htbl + (lnk->_hash & (hash->tblz - 1)) + 1;
         endt = hash->htbl + hash->tblz;
-        for (; tbl < endt; ++tbl)
+        for (; tbl < endt; ++tbl) {
             if ((next = *tbl)) break;
+        }
     }
 
     hash->here = next;
@@ -156,10 +160,11 @@ static_fn void *dthash_hflatten(Dt_t *dt, int type) {
         head = tail = NULL;
         for (endt = (tbl = hash->htbl) + hash->tblz; tbl < endt; ++tbl) {
             for (lnk = *tbl; lnk; lnk = lnk->_rght) {
-                if (tail)
+                if (tail) {
                     tail = (tail->_rght = lnk);
-                else
+                } else {
                     head = tail = lnk;
+                }
 
                 *tbl = type == DT_FLATTEN ? tail : NULL;
             }
@@ -168,8 +173,9 @@ static_fn void *dthash_hflatten(Dt_t *dt, int type) {
         if (type == DT_FLATTEN) {
             hash->here = head;
             hash->type |= H_FLATTEN;
-        } else
+        } else {
             hash->data.size = 0;
+        }
 
         return (void *)head;
     }
@@ -231,8 +237,9 @@ static_fn void *dthash_hstat(Dt_t *dt, Dtstat_t *st) {
             n += 1;
         }
         st->mlev = n > st->mlev ? n : st->mlev;
-        if (n < DT_MAXSIZE) /* if chain length is small */
+        if (n < DT_MAXSIZE) { /* if chain length is small */
             st->msize = n > st->msize ? n : st->msize;
+        }
     }
 
     return (void *)hash->data.size;
@@ -251,17 +258,20 @@ static_fn void *dthashchain(Dt_t *dt, void *obj, int type) {
 
     DTSETLOCK(dt);
 
-    if (!hash->htbl && dthash_htable(dt) < 0) /* initialize hash table */
+    if (!hash->htbl && dthash_htable(dt) < 0) { /* initialize hash table */
         DTRETURN(obj, NULL);
+    }
 
-    if (hash->type & H_FLATTEN) /* restore flattened list */
+    if (hash->type & H_FLATTEN) { /* restore flattened list */
         dthash_hflatten(dt, 0);
+    }
 
     if (type & (DT_START | DT_STEP | DT_STOP | DT_FIRST | DT_LAST | DT_CLEAR | DT_EXTRACT |
                 DT_RESTORE | DT_FLATTEN | DT_STAT)) {
         if (type & DT_START) {
-            if (!(fngr = (Dtlink_t **)(*dt->memoryf)(dt, NULL, sizeof(Dtlink_t *), disc)))
+            if (!(fngr = (Dtlink_t **)(*dt->memoryf)(dt, NULL, sizeof(Dtlink_t *), disc))) {
                 DTRETURN(obj, NULL);
+            }
             if (!obj) {
                 if (!(obj = dthash_hfirst(dt))) /* nothing to walk over */
                 {
@@ -280,29 +290,31 @@ static_fn void *dthashchain(Dt_t *dt, void *obj, int type) {
             *fngr = NULL;
             /* fall through to search for obj */
         } else if (type & DT_STOP) {
-            if (obj) /* free allocated memory */
+            if (obj) { /* free allocated memory */
                 (void)(*dt->memoryf)(dt, obj, 0, disc);
+            }
             asosubint(&hash->walk, 1); /* reduce walk count */
             DTRETURN(obj, NULL);
-        } else if (type & (DT_FIRST | DT_LAST))
+        } else if (type & (DT_FIRST | DT_LAST)) {
             DTRETURN(obj, dthash_hfirst(dt));
-        else if (type & DT_CLEAR)
+        } else if (type & DT_CLEAR) {
             DTRETURN(obj, dthash_hclear(dt));
-        else if (type & DT_STAT)
+        } else if (type & DT_STAT) {
             DTRETURN(obj, dthash_hstat(dt, (Dtstat_t *)obj));
-        else /*if(type&(DT_EXTRACT|DT_RESTORE|DT_FLATTEN))*/
+        } else { /*if(type&(DT_EXTRACT|DT_RESTORE|DT_FLATTEN))*/
             DTRETURN(obj, dthash_hlist(dt, (Dtlink_t *)obj, type));
+        }
     }
 
     lnk = hash->here; /* fingered object */
     hash->here = NULL;
 
     if (lnk && obj == _DTOBJ(disc, lnk)) {
-        if (type & DT_SEARCH)
+        if (type & DT_SEARCH) {
             goto dt_return;
-        else if (type & (DT_NEXT | DT_PREV))
+        } else if (type & (DT_NEXT | DT_PREV)) {
             DTRETURN(obj, dthash_hnext(dt, lnk));
-        else if (type & DT_START) {
+        } else if (type & DT_START) {
             *fngr = lnk; /* set finger to found object */
             DTRETURN(obj, (void *)fngr);
         } else if (type & DT_STEP) /* return obj and set finger to next */
@@ -321,8 +333,9 @@ static_fn void *dthashchain(Dt_t *dt, void *obj, int type) {
         if ((type & DT_MATCH)) {
             key = obj;
             obj = NULL;
-        } else
+        } else {
             key = _DTKEY(disc, obj);
+        }
     }
     hsh = _DTHSH(dt, key, disc);
 
@@ -332,16 +345,17 @@ static_fn void *dthashchain(Dt_t *dt, void *obj, int type) {
         if (hsh == l->_hash) {
             o = _DTOBJ(disc, l);
             k = _DTKEY(disc, o);
-            if (_DTCMP(dt, key, k, disc) != 0)
+            if (_DTCMP(dt, key, k, disc) != 0) {
                 continue;
-            else if ((type & (DT_REMOVE | DT_NEXT | DT_PREV | DT_STEP)) && o != obj) {
+            } else if ((type & (DT_REMOVE | DT_NEXT | DT_PREV | DT_STEP)) && o != obj) {
                 if (type & (DT_NEXT | DT_PREV | DT_STEP)) {
                     pp = p;
                     ll = l;
                 }
                 continue;
-            } else
+            } else {
                 break;
+            }
         }
     }
     if (l) /* found an object, use it */
@@ -364,29 +378,31 @@ static_fn void *dthashchain(Dt_t *dt, void *obj, int type) {
         {
             *fngr = dthash_hnext(dt, ll) ? hash->here : NULL;
             goto dt_return;
-        } else if (type & (DT_NEXT | DT_PREV))
+        } else if (type & (DT_NEXT | DT_PREV)) {
             DTRETURN(obj, dthash_hnext(dt, ll));
-        else if (type & (DT_DELETE | DT_DETACH | DT_REMOVE)) {
+        } else if (type & (DT_DELETE | DT_DETACH | DT_REMOVE)) {
             hash->data.size -= 1;
-            if (pp)
+            if (pp) {
                 pp->_rght = ll->_rght;
-            else
+            } else {
                 *tbl = ll->_rght;
+            }
             // Cause a `_dtfree(dt, ll, type)` in the exit path. This is needed because macros like
             // _DTOBJ() dereference the pointer we want to free.
             free_ll = true;
             DTRETURN(obj, _DTOBJ(disc, ll));
         } else if (type & DT_INSTALL) {
-            if (dt->meth->type & DT_BAG)
+            if (dt->meth->type & DT_BAG) {
                 goto do_insert;
-            else if (!(lnk = _dtmake(dt, obj, type)))
+            } else if (!(lnk = _dtmake(dt, obj, type))) {
                 DTRETURN(obj, NULL);
-            else /* replace old object with new one */
+            } else /* replace old object with new one */
             {
-                if (pp) /* remove old object */
+                if (pp) { /* remove old object */
                     pp->_rght = ll->_rght;
-                else
+                } else {
                     *tbl = ll->_rght;
+                }
                 o = _DTOBJ(disc, ll);
                 _dtfree(dt, ll, DT_DELETE);
                 DTANNOUNCE(dt, o, DT_DELETE);
@@ -395,12 +411,12 @@ static_fn void *dthashchain(Dt_t *dt, void *obj, int type) {
             }
         } else {
             assert(type & (DT_INSERT | DT_ATTACH | DT_APPEND | DT_RELINK));
-            if ((dt->meth->type & DT_BAG))
+            if ((dt->meth->type & DT_BAG)) {
                 goto do_insert;
-            else {
-                if (type & (DT_INSERT | DT_APPEND | DT_ATTACH))
+            } else {
+                if (type & (DT_INSERT | DT_APPEND | DT_ATTACH)) {
                     type |= DT_MATCH;                 /* for announcement */
-                else if (lnk && (type & DT_RELINK)) { /* remove a duplicate */
+                } else if (lnk && (type & DT_RELINK)) { /* remove a duplicate */
                     o = _DTOBJ(disc, lnk);
                     _dtfree(dt, lnk, DT_DELETE);
                     DTANNOUNCE(dt, o, DT_DELETE);
@@ -411,10 +427,11 @@ static_fn void *dthashchain(Dt_t *dt, void *obj, int type) {
     } else /* no matching object */
     {
         if (!(type & (DT_INSERT | DT_INSTALL | DT_APPEND | DT_ATTACH | DT_RELINK))) {
-            if (type & DT_START) /* cannot start a walk from nowhere */
+            if (type & DT_START) { /* cannot start a walk from nowhere */
                 (void)(*dt->memoryf)(dt, (void *)fngr, 0, disc);
-            else if (type & DT_STEP)
+            } else if (type & DT_STEP) {
                 *fngr = NULL;
+            }
             DTRETURN(obj, NULL);
         }
 

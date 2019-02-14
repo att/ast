@@ -44,8 +44,9 @@ ssize_t dtstat(Dt_t *dt, Dtstat_t *dtst) {
                      (long)dtst->tslot, (long)(dtst->mlev + 1));
 
     /* print first 5 levels */
-    for (k = 0; k < 5 && k <= dtst->mlev; ++k)
+    for (k = 0; k < 5 && k <= dtst->mlev; ++k) {
         str += sfsprintf(str, end - str, "\t\tlev[%ld]=%ld\n", (long)k, (long)dtst->lsize[k]);
+    }
     str[0] = 0;
 
     return sz;

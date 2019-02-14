@@ -48,16 +48,18 @@ static_fn void *dtvsearch(Dt_t *dt, void *obj, int type) {
     if ((type & (DT_MATCH | DT_SEARCH)) ||
         ((type & (DT_FIRST | DT_LAST | DT_ATLEAST | DT_ATMOST)) &&
          !(dt->meth->type & DT_ORDERED))) {
-        for (d = dt; d; d = d->view)
+        for (d = dt; d; d = d->view) {
             if ((o = (*(d->meth->searchf))(d, obj, type))) break;
+        }
         dt->walk = d;
         return o;
     }
 
     if (dt->meth->type & DT_ORDERED) /* ordered sets/bags */
     {
-        if (!(type & (DT_FIRST | DT_LAST | DT_NEXT | DT_PREV | DT_ATLEAST | DT_ATMOST)))
+        if (!(type & (DT_FIRST | DT_LAST | DT_NEXT | DT_PREV | DT_ATLEAST | DT_ATMOST))) {
             return NULL;
+        }
 
         /* find the min/max element that satisfies the op requirement */
         n = nky = NULL;
@@ -70,8 +72,9 @@ static_fn void *dtvsearch(Dt_t *dt, void *obj, int type) {
             {
                 cmp = _DTCMP(d, oky, nky, d->disc);
                 if (((type & (DT_NEXT | DT_FIRST | DT_ATLEAST)) && cmp < 0) ||
-                    ((type & (DT_PREV | DT_LAST | DT_ATMOST)) && cmp > 0))
+                    ((type & (DT_PREV | DT_LAST | DT_ATMOST)) && cmp > 0)) {
                     goto b_est;
+                }
             } else {
             b_est: /* current best element to fit op requirement */
                 p = d;
@@ -88,8 +91,9 @@ static_fn void *dtvsearch(Dt_t *dt, void *obj, int type) {
     if (!(type & (DT_NEXT | DT_PREV))) return NULL;
 
     if (!dt->walk) {
-        for (d = dt; d; d = d->view)
+        for (d = dt; d; d = d->view) {
             if ((o = (*(d->meth->searchf))(d, obj, DT_SEARCH))) break;
+        }
         dt->walk = d;
         if (!(obj = o)) return NULL;
     }
@@ -98,31 +102,35 @@ static_fn void *dtvsearch(Dt_t *dt, void *obj, int type) {
         while (obj) /* keep moving until finding an uncovered object */
         {
             for (p = dt;; p = p->view) {
-                if (p == d) /* adjacent object is uncovered */
+                if (p == d) { /* adjacent object is uncovered */
                     return obj;
+                }
                 if ((*(p->meth->searchf))(p, obj, DT_SEARCH)) break;
             }
             obj = (*d->meth->searchf)(d, obj, type);
         }
 
-        if (!(d = dt->walk = d->view)) /* move on to next dictionary */
+        if (!(d = dt->walk = d->view)) { /* move on to next dictionary */
             return NULL;
-        else if (type & DT_NEXT)
+        } else if (type & DT_NEXT) {
             obj = (*(d->meth->searchf))(d, NULL, DT_FIRST);
-        else
+        } else {
             obj = (*(d->meth->searchf))(d, NULL, DT_LAST);
+        }
     }
 }
 
 Dt_t *dtview(Dt_t *dt, Dt_t *view) {
     Dt_t *d;
 
-    if (view && view->meth != dt->meth) /* must use the same method */
+    if (view && view->meth != dt->meth) { /* must use the same method */
         return NULL;
+    }
 
     /* make sure there won't be a cycle */
-    for (d = view; d; d = d->view)
+    for (d = view; d; d = d->view) {
         if (d == dt) return NULL;
+    }
 
     /* no more viewing lower dictionary */
     if ((d = dt->view)) d->nview -= 1;

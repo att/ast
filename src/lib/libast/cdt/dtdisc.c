@@ -58,21 +58,24 @@ Dtdisc_t *dtdisc(Dt_t *dt, Dtdisc_t *disc, int type) {
         return disc;
     }
 
-    if (!disc) /* only want to know current discipline */
+    if (!disc) { /* only want to know current discipline */
         return old;
+    }
 
     if (old->eventf && (*old->eventf)(dt, DT_DISC, (void *)disc, old) < 0) return NULL;
 
-    if ((type & (DT_SAMEHASH | DT_SAMECMP)) != (DT_SAMEHASH | DT_SAMECMP))
+    if ((type & (DT_SAMEHASH | DT_SAMECMP)) != (DT_SAMEHASH | DT_SAMECMP)) {
         list = dtextract(dt); /* grab the list of objects if any */
-    else
+    } else {
         list = NULL;
+    }
 
     dt->disc = disc;
     if (!(dt->memoryf = disc->memoryf)) dt->memoryf = dtmemory;
 
-    if (list) /* reinsert extracted objects (with new discipline) */
+    if (list) { /* reinsert extracted objects (with new discipline) */
         dtrestore(dt, list);
+    }
 
     return old;
 }
