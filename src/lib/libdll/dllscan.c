@@ -224,7 +224,7 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
                 name_duped = true;
             }
         }
-        if (!version)
+        if (!version) {
             for (t = (char *)name; *t; t++) {
                 if ((*t == '-' || *t == '.' || *t == '?') && isdigit(*(t + 1))) {
                     if (*t != '-') scan->flags |= DLL_MATCH_VERSION;
@@ -237,6 +237,7 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
                     break;
                 }
             }
+        }
     }
     if (!version) {
         scan->flags |= DLL_MATCH_VERSION;
@@ -372,11 +373,12 @@ again:
     if (!p) return 0;
 found:
     b = scan->buf + sfsprintf(scan->buf, sizeof(scan->buf), "%s", b + scan->prelen);
-    if (!(scan->flags & DLL_INFO_PREVER))
+    if (!(scan->flags & DLL_INFO_PREVER)) {
         while (b > scan->buf) {
             if (!isdigit(*(b - 1)) && *(b - 1) != '.') break;
             b--;
         }
+    }
     b -= scan->suflen;
     if (b > (scan->buf + 2) && (*(b - 1) == 'g' || *(b - 1) == 'O') && *(b - 2) == '-') b -= 2;
     n = m = 0;
