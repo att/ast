@@ -65,12 +65,14 @@ int pathexists(char *path, int mode) {
     cmp = strchr(astconf("PATH_ATTRIBUTES", path, NULL), 'c') ? strcasecmp : strcmp;
     while (c) {
         p = t;
-        for (s = e; *e && *e != '/'; e++)
+        for (s = e; *e && *e != '/'; e++) {
             ;
+        }
         c = *e;
         *e = 0;
-        for (t = p->tree; t && (*cmp)(s, t->name); t = t->next)
+        for (t = p->tree; t && (*cmp)(s, t->name); t = t->next) {
             ;
+        }
         if (!t) {
             t = calloc(1, sizeof(Tree_t) + strlen(s));
             if (!t) {
@@ -82,12 +84,14 @@ int pathexists(char *path, int mode) {
             p->tree = t;
             if (c) {
                 *e = c;
-                for (s = ee = e + 1; *ee && *ee != '/'; ee++)
+                for (s = ee = e + 1; *ee && *ee != '/'; ee++) {
                     ;
+                }
                 cc = *ee;
                 *ee = 0;
-            } else
+            } else {
                 ee = 0;
+            }
             x = stat(path, &st);
             if (ee) {
                 e = ee;

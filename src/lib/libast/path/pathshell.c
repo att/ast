@@ -66,8 +66,9 @@ char *pathshell(void) {
         if (!(ru = getuid()) || !eaccess("/bin", W_OK)) {
             if (stat(sh, &st)) goto defshell;
             if (ru != st.st_uid &&
-                !strmatch(sh, "?(/usr)?(/local)/?([ls])bin/?([[:lower:]])sh?(.exe)"))
+                !strmatch(sh, "?(/usr)?(/local)/?([ls])bin/?([[:lower:]])sh?(.exe)")) {
                 goto defshell;
+            }
         } else {
             eu = geteuid();
             rg = getgid();
@@ -95,8 +96,9 @@ char *pathshell(void) {
 defshell:
     if (!(sh = val)) {
         if (!*(sh = astconf("SH", NULL, NULL)) || *sh != '/' || eaccess(sh, X_OK) ||
-            !(sh = strdup(sh)))
+            !(sh = strdup(sh))) {
             sh = "/bin/sh";
+        }
         val = sh;
     }
     return sh;
