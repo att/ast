@@ -60,17 +60,19 @@ size_t regerror(int code, const regex_t *p, char *buf, size_t size) {
     const char *s;
 
     UNUSED(p);
-    if (code++ == REG_VERSIONID)
+    if (code++ == REG_VERSIONID) {
         s = (const char *)fmtident(&id[1]);
-    else if (code >= 0 && code < elementsof(reg_error))
+    } else if (code >= 0 && code < elementsof(reg_error)) {
         s = reg_error[code];
-    else
+    } else {
         s = (const char *)"unknown error";
+    }
     if (size) {
         strlcpy(buf, s, size);
         buf[size - 1] = 0;
-    } else
+    } else {
         buf = (char *)s;
+    }
     return strlen(buf) + 1;
 }
 
@@ -80,12 +82,13 @@ size_t regerror(int code, const regex_t *p, char *buf, size_t size) {
 
 int fatal(regdisc_t *disc, int code, const char *pattern) {
     if (disc->re_errorf) {
-        if (pattern)
+        if (pattern) {
             (*disc->re_errorf)(NULL, disc, disc->re_errorlevel, "regular expression: %s: %s",
                                pattern, reg_error[code + 1]);
-        else
+        } else {
             (*disc->re_errorf)(NULL, disc, disc->re_errorlevel, "regular expression: %s",
                                reg_error[code + 1]);
+        }
     }
     return code;
 }

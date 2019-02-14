@@ -62,11 +62,12 @@ static State_t matchstate;
 static_fn void regex_flushcache(void) {
     int i;
 
-    for (i = matchstate.size; i--;)
+    for (i = matchstate.size; i--;) {
         if (matchstate.cache[i] && matchstate.cache[i]->keep) {
             matchstate.cache[i]->keep = 0;
             regfree(&matchstate.cache[i]->re);
         }
+    }
 }
 
 /*
@@ -126,24 +127,27 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
     for (; i < sizeof(key); i++) ((char *)&key)[i] = 0;
     empty = unused = -1;
     old = 0;
-    for (i = matchstate.size; i--;)
-        if (!matchstate.cache[i])
+    for (i = matchstate.size; i--;) {
+        if (!matchstate.cache[i]) {
             empty = i;
-        else if (!matchstate.cache[i]->keep)
+        } else if (!matchstate.cache[i]->keep) {
             unused = i;
-        else if (*(Key_t *)matchstate.cache[i]->pattern == key &&
-                 !strcmp(matchstate.cache[i]->pattern, pattern) &&
-                 matchstate.cache[i]->reflags == reflags)
+        } else if (*(Key_t *)matchstate.cache[i]->pattern == key &&
+                   !strcmp(matchstate.cache[i]->pattern, pattern) &&
+                   matchstate.cache[i]->reflags == reflags) {
             break;
-        else if (!matchstate.cache[old] ||
-                 matchstate.cache[old]->serial > matchstate.cache[i]->serial)
+        } else if (!matchstate.cache[old] ||
+                   matchstate.cache[old]->serial > matchstate.cache[i]->serial) {
             old = i;
+        }
+    }
     if (i < 0) {
         if (unused < 0) {
-            if (empty < 0)
+            if (empty < 0) {
                 unused = old;
-            else
+            } else {
                 unused = empty;
+            }
         }
         if (!(cp = matchstate.cache[unused]) &&
             !(cp = matchstate.cache[unused] = calloc(1, sizeof(Cache_t)))) {
@@ -172,8 +176,9 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
         }
         cp->keep = 1;
         cp->reflags = reflags;
-    } else
+    } else {
         cp = matchstate.cache[i];
+    }
     cp->serial = ++matchstate.serial;
     if (status) *status = 0;
     return &cp->re;

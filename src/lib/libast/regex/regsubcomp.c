@@ -63,7 +63,7 @@ int regsubflags(regex_t *p, const char *s, char **e, int delim, const regflags_t
             minmatch = c - '0';
             while (*s >= '0' && *s <= '9') minmatch = minmatch * 10 + *s++ - '0';
         } else {
-            for (m = map; *m; m++)
+            for (m = map; *m; m++) {
                 if (*m++ == c) {
                     if (flags & *m) {
                         disc = p->env->disc;
@@ -73,6 +73,7 @@ int regsubflags(regex_t *p, const char *s, char **e, int delim, const regflags_t
                     flags |= *m--;
                     break;
                 }
+            }
             if (!*m) {
                 s--;
                 break;
@@ -121,9 +122,9 @@ int regsubcomp(regex_t *p, const char *s, const regflags_t *map, int minmatch, r
     p->env->sub = 1;
     op = sub->re_ops;
     o = s;
-    if (!(p->env->flags & REG_DELIMITED))
+    if (!(p->env->flags & REG_DELIMITED)) {
         d = 0;
-    else
+    } else {
         switch (d = *(s - 1)) {
             case '\\':
             case '\n':
@@ -131,6 +132,7 @@ int regsubcomp(regex_t *p, const char *s, const regflags_t *map, int minmatch, r
                 regfree(p);
                 return fatal(disc, REG_EDELIM, s);
         }
+    }
     sre = p->env->flags & REG_SHELL;
     t = sub->re_rhs;
     if (d) {
@@ -158,8 +160,9 @@ int regsubcomp(regex_t *p, const char *s, const regflags_t *map, int minmatch, r
         }
         p->re_npat = s - o;
         s = r;
-    } else
+    } else {
         p->re_npat = 0;
+    }
     op->op = f = g = flags & (REG_SUB_LOWER | REG_SUB_UPPER);
     op->off = 0;
     while ((c = *s++) != d) {
@@ -195,10 +198,11 @@ int regsubcomp(regex_t *p, const char *s, const regflags_t *map, int minmatch, r
                     if (isupper(c)) c = tolower(c);
                     break;
                 case REG_SUB_UPPER | REG_SUB_LOWER:
-                    if (isupper(c))
+                    if (isupper(c)) {
                         c = tolower(c);
-                    else if (islower(c))
+                    } else if (islower(c)) {
                         c = toupper(c);
+                    }
                     break;
             }
             *t++ = c;

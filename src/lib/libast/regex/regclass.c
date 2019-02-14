@@ -140,19 +140,22 @@ regclass_t regclass(const char *s, char **e) {
     Ctype_t *zp;
 
     if (!(c = *s++)) return 0;
-    for (t = s; *t && (*t != c || *(t + 1) != ']'); t++)
+    for (t = s; *t && (*t != c || *(t + 1) != ']'); t++) {
         ;
+    }
     if (*t != c || !(n = t - s)) return 0;
-    for (cp = ctypes; cp; cp = cp->next)
+    for (cp = ctypes; cp; cp = cp->next) {
         if (n == cp->size && !strncmp(s, cp->name, n)) goto found;
+    }
     xp = zp = 0;
     lc = (Ctype_t *)ast_setlocale(LC_CTYPE, NULL);
     for (cp = ctype; cp < &ctype[elementsof(ctype)]; cp++) {
         if (!zp) {
-            if (!cp->size)
+            if (!cp->size) {
                 zp = cp;
-            else if (!xp && cp->next && cp->next != lc)
+            } else if (!xp && cp->next && cp->next != lc) {
                 xp = cp;
+            }
         }
         if (n == cp->size && !strncmp(s, cp->name, n) && (!cp->next || cp->next == lc)) goto found;
     }
@@ -191,11 +194,12 @@ int regaddclass(const char *name, regclass_t fun) {
     size_t n;
 
     n = strlen(name);
-    for (cp = ctypes; cp; cp = cp->next)
+    for (cp = ctypes; cp; cp = cp->next) {
         if (cp->size == n && !strncmp(name, cp->name, n)) {
             cp->ctype = fun;
             return 0;
         }
+    }
     np = calloc(1, sizeof(Ctype_t) + n + 1);
     if (!np) return REG_ESPACE;
     np->size = n;

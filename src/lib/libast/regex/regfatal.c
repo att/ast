@@ -34,10 +34,11 @@ void regfatalpat(regex_t *p, int level, int code, const char *pat) {
 
     regerror(code, p, buf, sizeof(buf));
     regfree(p);
-    if (pat)
+    if (pat) {
         error(level, "regular expression: %s: %s", pat, buf);
-    else
+    } else {
         error(level, "regular expression: %s", buf);
+    }
 }
 
 void regfatal(regex_t *p, int level, int code) { regfatalpat(p, level, code, NULL); }

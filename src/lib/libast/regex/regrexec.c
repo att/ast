@@ -88,11 +88,12 @@ int regrexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatc
         goto done;
     possible:
         r = (l = buf + index) + exactlen;
-        while (l > beg)
+        while (l > beg) {
             if (*--l == sep) {
                 l++;
                 break;
             }
+        }
         if ((r - l) < leftlen) goto spanned;
         while (r < end && *r != sep) r++;
         if ((r - (buf + index)) < rightlen) goto spanned;
