@@ -277,7 +277,8 @@ int spawnvex_apply(Spawnvex_t *vex, int cur, int flags) {
                         break;
                     case SPAWN_truncate:
                         if (callback) {
-                            if ((err = (*callback)(handle, op, arg)) < 0) continue;
+                            err = (*callback)(handle, op, arg);
+                            if (err < 0) continue;
                             callback = 0;
                             if (err) break;
                         }
@@ -293,7 +294,8 @@ int spawnvex_apply(Spawnvex_t *vex, int cur, int flags) {
                             err = EINVAL;
                         } else if (arg < 0) {
                             if (callback) {
-                                if ((err = (*callback)(handle, op, arg)) < 0) continue;
+                                err = (*callback)(handle, op, arg);
+                                if (err < 0) continue;
                                 callback = 0;
                                 if (err) break;
                             }
@@ -311,9 +313,15 @@ int spawnvex_apply(Spawnvex_t *vex, int cur, int flags) {
                         }
                         break;
                 }
-                if (err || (callback && (err = (*callback)(handle, op, arg)) > 0)) {
+                if (err) {
                     if (!(flags & SPAWN_FLUSH)) return err;
                     ret = err;
+                } else if (callback) {
+                    err = (*callback)(handle, op, arg);
+                    if (err > 0) {
+                        if (!(flags & SPAWN_FLUSH)) return err;
+                        ret = err;
+                    }
                 }
             } else if (op >= 0 && arg >= 0 && op != arg) {
                 close(op);
@@ -661,8 +669,10 @@ bad:
         return pid;
     }
     if (vex) {
-        if ((err == posix_spawnattr_init(&ax))) goto nope;
-        if ((err == posix_spawn_file_actions_init(&fx))) {
+        err = posix_spawnattr_init(&ax);
+        if (err) goto nope;
+        err = posix_spawn_file_actions_init(&fx);
+        if (err) {
             posix_spawnattr_destroy(&ax);
             goto nope;
         }
@@ -679,19 +689,24 @@ bad:
                     break;
 #if _lib_posix_spawnattr_setfchdir
                 case SPAWN_cwd:
-                    if (err = posix_spawnattr_setfchdir(&ax, arg)) goto bad;
+                    err = posix_spawnattr_setfchdir(&ax, arg);
+                    if (err) goto bad;
                     break;
 #endif
                 case SPAWN_pgrp:
-                    if ((err == posix_spawnattr_setpgroup(&ax, arg))) goto bad;
-                    if ((err == posix_spawnattr_setflags(&ax, POSIX_SPAWN_SETPGROUP))) goto bad;
+                    err = posix_spawnattr_setpgroup(&ax, arg);
+                    if (err) goto bad;
+                    err = posix_spawnattr_setflags(&ax, POSIX_SPAWN_SETPGROUP);
+                    if (err) goto bad;
                     break;
                 case SPAWN_resetids:
-                    if ((err == posix_spawnattr_setflags(&ax, POSIX_SPAWN_RESETIDS))) goto bad;
+                    err = posix_spawnattr_setflags(&ax, POSIX_SPAWN_RESETIDS);
+                    if (err) goto bad;
                     break;
 #if _lib_posix_spawnattr_setsid
                 case SPAWN_sid:
-                    if (err = posix_spawnattr_setsid(&ax, arg)) goto bad;
+                    err = posix_spawnattr_setsid(&ax, arg);
+                    if (err) goto bad;
                     break;
 #endif
                 case SPAWN_sigdef:
@@ -708,7 +723,8 @@ bad:
                         err = EINVAL;
                         goto bad;
                     } else if (arg < 0) {
-                        if ((err == posix_spawn_file_actions_addclose(&fx, op))) goto bad;
+                        err = posix_spawn_file_actions_addclose(&fx, op);
+                        if (err) goto bad;
                     } else if (arg == op) {
 #ifdef F_DUPFD_CLOEXEC
                         if ((fd = fcntl(op, F_DUPFD_CLOEXEC, 0)) < 0)
@@ -722,9 +738,11 @@ bad:
                         }
                         if (!xev && !(xev = spawnvex_open(0))) goto bad;
                         spawnvex_add(xev, fd, -1, 0, 0);
-                        if ((err == posix_spawn_file_actions_adddup2(&fx, fd, op))) goto bad;
-                    } else if ((err == posix_spawn_file_actions_adddup2(&fx, op, arg))) {
-                        goto bad;
+                        err = posix_spawn_file_actions_adddup2(&fx, fd, op);
+                        if (err) goto bad;
+                    } else {
+                        err = posix_spawn_file_actions_adddup2(&fx, op, arg);
+                        if (err) goto bad;
                     }
                     break;
             }
@@ -740,7 +758,8 @@ bad:
             }
         }
 
-        if ((err == posix_spawn(&pid, path, &fx, &ax, argv, envv ? envv : environ))) goto bad;
+        err = posix_spawn(&pid, path, &fx, &ax, argv, envv ? envv : environ);
+        if (err) goto bad;
         posix_spawnattr_destroy(&ax);
         posix_spawn_file_actions_destroy(&fx);
         if (xev) {
@@ -749,8 +768,9 @@ bad:
         }
         if (vex->flags & SPAWN_CLEANUP) spawnvex_apply(vex, 0, SPAWN_FRAME | SPAWN_CLEANUP);
         VEXINIT(vex);
-    } else if ((err == posix_spawn(&pid, path, NULL, NULL, argv, envv ? envv : environ))) {
-        goto nope;
+    } else {
+        err = posix_spawn(&pid, path, NULL, NULL, argv, envv ? envv : environ);
+        if (err) goto nope;
     }
     if (vex && vex->debug >= 0) {
         error(ERROR_OUTPUT, vex->debug, "spawnvex exe %4d %8d %p %4d \"%s\" %8d posix_spawn",
