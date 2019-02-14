@@ -55,8 +55,9 @@ Tm_t *tmxtm(Tm_t *tm, Time_t t, Tm_zone_t *zone) {
     tminit(tm_info.zone);
     leapsec = 0;
     if ((tm_info.flags & (TM_ADJUST | TM_LEAP)) == (TM_ADJUST | TM_LEAP) && (n = tmxsec(t))) {
-        for (lp = &tm_data.leap[0]; n < lp->time; lp++)
+        for (lp = &tm_data.leap[0]; n < lp->time; lp++) {
             ;
+        }
         if (lp->total) {
             if (n == lp->time && (leapsec = (lp->total - (lp + 1)->total)) < 0) leapsec = 0;
             t = tmxsns(n - lp->total, tmxnsec(t));
@@ -64,10 +65,11 @@ Tm_t *tmxtm(Tm_t *tm, Time_t t, Tm_zone_t *zone) {
     }
     x = tmxsec(t);
     if (!(tm->tm_zone = zone)) {
-        if (tm_info.flags & TM_UTC)
+        if (tm_info.flags & TM_UTC) {
             tm->tm_zone = &tm_data.zone[2];
-        else
+        } else {
             tm->tm_zone = tm_info.zone;
+        }
     }
     if ((o = 60 * tm->tm_zone->west) && x > o) {
         x -= o;
@@ -102,9 +104,9 @@ Tm_t *tmxtm(Tm_t *tm, Time_t t, Tm_zone_t *zone) {
     tmfix(tm);
     tm->tm_isdst = 0;
     if (tm->tm_zone->daylight) {
-        if ((y = tmequiv(tm) - 1900) == tm->tm_year)
+        if ((y = tmequiv(tm) - 1900) == tm->tm_year) {
             now = tmxsec(t);
-        else {
+        } else {
             Tm_t te;
 
             te = *tm;

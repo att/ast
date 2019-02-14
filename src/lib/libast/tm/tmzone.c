@@ -66,8 +66,9 @@ Tm_zone_t *tmzone(const char *name, char **end, const char *type, int *dst) {
         if ((d = fixed.west) <= 0) {
             d = -d;
             *p++ = 'E';
-        } else
+        } else {
             *p++ = 'W';
+        }
         p += sfsprintf(p, sizeof(off) - 2, "%u", d / 60);
         d = (d % 60) / 15;
         if (d) *p++ = 'A' + d - 1;
@@ -121,10 +122,11 @@ Tm_zone_t *tmzone(const char *name, char **end, const char *type, int *dst) {
                 return zp;
             }
         }
-        if (zp == tm_info.local)
+        if (zp == tm_info.local) {
             zp = tm_data.zone;
-        else
+        } else {
             zp++;
+        }
     } while (zp->standard);
     return 0;
 }

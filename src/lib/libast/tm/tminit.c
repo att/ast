@@ -54,19 +54,21 @@ struct tm *tmlocaltime(const time_t *t) {
     char **v = environ;
 
     if (TZ[0]) {
-        if (!environ || !*environ)
+        if (!environ || !*environ) {
             environ = ZZ;
-        else
+        } else {
             e = environ[0];
+        }
         environ[0] = TZ;
     }
     // cppcheck-suppress localtimeCalled
     r = localtime(t);
     if (TZ[0]) {
-        if (environ != v)
+        if (environ != v) {
             environ = v;
-        else
+        } else {
             environ[0] = e;
+        }
     }
     return r;
 }
@@ -111,10 +113,11 @@ static_fn int tzwest(time_t *clock, int *isdst) {
     tp = tmlocaltime(clock);
     n = tp->tm_yday - n;
     if (n) {
-        if (n > 1)
+        if (n > 1) {
             n = -1;
-        else if (n < -1)
+        } else if (n < -1) {
             n = 1;
+        }
     }
     *isdst = tp->tm_isdst;
     return (h - tp->tm_hour - n * 24) * 60 + m - tp->tm_min;
@@ -145,20 +148,22 @@ static_fn void tmlocal(void) {
         s = getenv("TZ");
         if (s) {
             sfsprintf(TZ, sizeof(TZ), "TZ=%s", s);
-            if (!environ || !*environ)
+            if (!environ || !*environ) {
                 environ = ZZ;
-            else
+            } else {
                 e = environ[0];
+            }
             environ[0] = TZ;
         } else {
             TZ[0] = 0;
             e = NULL;
         }
         tzset();
-        if (environ != v)
+        if (environ != v) {
             environ = v;
-        else if (e)
+        } else if (e) {
             environ[0] = e;
+        }
     }
 
     tmlocale();
@@ -221,11 +226,13 @@ static_fn void tmlocal(void) {
         if (*++s && *++s && *++s) {
             *s++ = 0;
             tmgoff(s, &t, 0);
-            for (s = t; isalpha(*t); t++)
+            for (s = t; isalpha(*t); t++) {
                 ;
+            }
             *t = 0;
-        } else
+        } else {
             s = "";
+        }
         local.daylight = s;
     } else {
         /*
@@ -275,8 +282,9 @@ static_fn void tmlocal(void) {
             if (zp->daylight) local.daylight = strdup(zp->daylight);
             local.west = zp->west;
             local.dst = zp->dst;
-        } else
+        } else {
             local.standard = strdup(s);
+        }
         if (!local.standard) local.standard = "";
         if (!local.daylight) local.daylight = "";
     }
@@ -310,11 +318,12 @@ static_fn void tmlocal(void) {
         s = local.standard;
         zp = tm_data.zone;
         if (local.daylight) zp++;
-        for (; !zp->type && zp->standard; zp++)
+        for (; !zp->type && zp->standard; zp++) {
             if (tmword(s, NULL, zp->standard, NULL, 0)) {
                 tm_info.flags |= TM_UTC;
                 break;
             }
+        }
     }
 }
 

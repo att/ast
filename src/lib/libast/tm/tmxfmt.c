@@ -51,13 +51,14 @@ static_fn char *tmx_number(char *s, char *e, long n, int p, int w, int pad) {
     char *b;
 
     if (w) {
-        if (p > 0 && (pad == 0 || pad == '0'))
+        if (p > 0 && (pad == 0 || pad == '0')) {
             while (w > p) {
                 p++;
                 n *= 10;
             }
-        else if (w > p)
+        } else if (w > p) {
             p = w;
+        }
     }
     switch (pad) {
         case '-':
@@ -71,12 +72,13 @@ static_fn char *tmx_number(char *s, char *e, long n, int p, int w, int pad) {
             break;
     }
     b = s;
-    if (p > 0)
+    if (p > 0) {
         s += sfsprintf(s, e - s, "%0*lu", p, n);
-    else if (p < 0)
+    } else if (p < 0) {
         s += sfsprintf(s, e - s, "%*lu", -p, n);
-    else
+    } else {
         s += sfsprintf(s, e - s, "%lu", n);
+    }
     if (w && (s - b) > w) *(s = b + w) = 0;
     return s;
 }
@@ -194,12 +196,13 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                         if (!(c = *format++)) {
                             format--;
                             break;
-                        } else if (c == '(')
+                        } else if (c == '(') {
                             i++;
-                        else if (c == ')' && !--i)
+                        } else if (c == ')' && !--i) {
                             break;
-                        else if (arg < &argbuf[sizeof(argbuf) - 1])
+                        } else if (arg < &argbuf[sizeof(argbuf) - 1]) {
                             *arg++ = c;
+                        }
                     }
                     *arg = 0;
                     arg = argbuf;
@@ -217,10 +220,11 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                 if (cp < ep) *cp++ = '%';
                 continue;
             case '?':
-                if (tm_info.deformat != tm_info.format[TM_DEFAULT])
+                if (tm_info.deformat != tm_info.format[TM_DEFAULT]) {
                     format = tm_info.deformat;
-                else if (!*format)
+                } else if (!*format) {
                     format = tm_info.format[TM_DEFAULT];
+                }
                 continue;
             case 'a': /* abbreviated day of week name */
                 n = TM_DAY_ABBREV + tm->tm_wday;
@@ -267,8 +271,9 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                 if (c == 'g') {
                     n %= 100;
                     c = 2;
-                } else
+                } else {
                     c = 4;
+                }
                 cp = tmx_number(cp, ep, (long)n, c, width, pad);
                 continue;
             case 'H': /* hour (0 - 23) */
@@ -278,10 +283,11 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                 p = "%QI";
                 goto push;
             case 'I': /* hour (0 - 12) */
-                if ((n = tm->tm_hour) > 12)
+                if ((n = tm->tm_hour) > 12) {
                     n -= 12;
-                else if (n == 0)
+                } else if (n == 0) {
                     n = 12;
+                }
                 cp = tmx_number(cp, ep, (long)n, 2, width, pad);
                 continue;
             case 'j': /* Julian date (1 offset) */
@@ -456,8 +462,9 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                         if (t) {
                             now = tmxgettime();
                             p = warped(t, now) ? NULL : (char *)format;
-                        } else
+                        } else {
                             p = (char *)format;
+                        }
                         i = 0;
                         while (*format) {
                             n = *format;
@@ -538,19 +545,21 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                 continue;
             case 'z': /* time zone west offset */
                 if (arg) {
-                    if ((zp = tmzone(arg, &f, 0, 0)) && !*f && tm->tm_zone != zp)
+                    if ((zp = tmzone(arg, &f, 0, 0)) && !*f && tm->tm_zone != zp) {
                         tm = tmxtm(
                             tm,
                             tmxtime(tm, tm->tm_zone->west + (tm->tm_isdst ? tm->tm_zone->dst : 0)),
                             zp);
+                    }
                     continue;
                 }
-                if ((ep - cp) >= 16)
+                if ((ep - cp) >= 16) {
                     cp = tmpoff(cp, ep - cp, "",
                                 (flags & TM_UTC)
                                     ? 0
                                     : tm->tm_zone->west + (tm->tm_isdst ? tm->tm_zone->dst : 0),
                                 pad == '_' ? -24 * 60 : 24 * 60);
+                }
                 continue;
             case 'Z': /* time zone */
                 if (arg) {
@@ -570,8 +579,10 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                 goto string;
             case '=': /* (AST) OBSOLETE use %([+-]flag...)Qo (old %=[=][+-]flag) */
                 for (arg = argbuf;
-                     *format == '=' || *format == '-' || *format == '+' || *format == '!'; format++)
+                     *format == '=' || *format == '-' || *format == '+' || *format == '!';
+                     format++) {
                     if (arg < &argbuf[sizeof(argbuf) - 2]) *arg++ = *format;
+                }
                 *arg++ = *format;
                 if (*format) format++;
                 *arg = 0;

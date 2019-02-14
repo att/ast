@@ -99,19 +99,22 @@ static_fn Time_t tmx_gen(Tm_t *tm, Set_t *set) {
             tm->tm_mon = 0;
             tm->tm_mday = set->yday + 1;
         }
-    } else if (set->mday >= 0)
+    } else if (set->mday >= 0) {
         tm->tm_mday = set->mday;
+    }
     if (set->hour >= 0) {
-        if (set->hour < tm->tm_hour && set->yday < 0 && set->mday < 0 && set->wday < 0)
+        if (set->hour < tm->tm_hour && set->yday < 0 && set->mday < 0 && set->wday < 0) {
             tm->tm_mday++;
+        }
         tm->tm_hour = set->hour;
         tm->tm_min = (set->min >= 0) ? set->min : 0;
         tm->tm_sec = (set->sec >= 0) ? set->sec : 0;
     } else if (set->min >= 0) {
         tm->tm_min = set->min;
         tm->tm_sec = (set->sec >= 0) ? set->sec : 0;
-    } else if (set->sec >= 0)
+    } else if (set->sec >= 0) {
         tm->tm_sec = set->sec;
+    }
     if (set->nsec < 1000000000L) tm->tm_nsec = set->nsec;
     if (set->meridian > 0) {
         if (tm->tm_hour < 12) tm->tm_hour += 12;
@@ -128,8 +131,9 @@ static_fn Time_t tmx_gen(Tm_t *tm, Set_t *set) {
         tm = tmxtm(tm, t, tm->tm_zone);
         if ((n = set->wday - tm->tm_wday) < 0) n += 7;
         tm->tm_mday += n;
-    } else
+    } else {
         z = 0;
+    }
     if (set->nsec < 1000000000L) {
         if (!z) {
             z = 1;
@@ -274,8 +278,9 @@ again:
                     continue;
                 case 'p':
                     if ((n = tmlex(s, &u, tm_info.format + TM_MERIDIAN, TM_UT - TM_MERIDIAN, NULL,
-                                   0)) < 0)
+                                   0)) < 0) {
                         goto next;
+                    }
                     set.meridian = n;
                     s = u;
                     continue;
@@ -370,26 +375,29 @@ again:
             if (sp >= &stack[elementsof(stack)]) goto next;
             *sp++ = (char *)format;
             format = (const char *)p;
-        } else if (isspace(d))
+        } else if (isspace(d)) {
             while (isspace(*s)) s++;
-        else if (*s != d)
+        } else if (*s != d) {
             break;
-        else
+        } else {
             s++;
+        }
     }
 next:
     if (sp > &stack[0]) format = (const char *)stack[0];
     if (*format) {
         p = (char *)format;
-        if (!*s && *p == '%' && *(p + 1) == '|')
+        if (!*s && *p == '%' && *(p + 1) == '|') {
             format += strlen(format);
-        else
-            while (*p)
+        } else {
+            while (*p) {
                 if (*p++ == '%' && *p && *p++ == '|' && *p) {
                     format = (const char *)p;
                     s = b;
                     goto again;
                 }
+            }
+        }
     }
     t = tmx_gen(tm, &set);
 done:
@@ -429,8 +437,9 @@ Time_t tmxscan(const char *s, char **e, const char *format, char **f, Time_t t, 
 
             initialized = 1;
             if ((v = getenv("DATEMSK")) && *v && (sp = sfopen(NULL, v, "r"))) {
-                for (n = 1; sfgetr(sp, '\n', 0); n++)
+                for (n = 1; sfgetr(sp, '\n', 0); n++) {
                     ;
+                }
                 m = sfseek(sp, 0L, SEEK_CUR);
                 p = calloc(1, n * sizeof(char *) + m);
                 if (p) {

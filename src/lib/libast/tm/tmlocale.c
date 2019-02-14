@@ -552,10 +552,11 @@ static_fn void load() {
 char **tmlocale(void) {
     if (!tm_info.format) {
         tm_info.format = tm_data.format;
-        if (!tm_info.deformat)
+        if (!tm_info.deformat) {
             tm_info.deformat = tm_info.format[TM_DEFAULT];
-        else if (tm_info.deformat != tm_info.format[TM_DEFAULT])
+        } else if (tm_info.deformat != tm_info.format[TM_DEFAULT]) {
             state.format = tm_info.deformat;
+        }
     }
     if (tmlocale_serial != ast.locale.serial || !tmlocale_data) load();
     return tm_info.format;

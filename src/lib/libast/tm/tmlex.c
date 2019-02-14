@@ -47,15 +47,18 @@ int tmlex(const char *s, char **e, char **tab, int ntab, char **suf, int nsuf) {
     char *x;
     int n;
 
-    for (p = tab, n = ntab; n-- && (x = *p); p++)
+    for (p = tab, n = ntab; n-- && (x = *p); p++) {
         if (*x && *x != '%' && tmword(s, e, x, suf, nsuf)) return p - tab;
+    }
     if (tm_info.format != tm_data.format && tab >= tm_info.format &&
         tab < tm_info.format + TM_NFORM) {
         tab = tm_data.format + (tab - tm_info.format);
-        if (suf && tab >= tm_info.format && tab < tm_info.format + TM_NFORM)
+        if (suf && tab >= tm_info.format && tab < tm_info.format + TM_NFORM) {
             suf = tm_data.format + (suf - tm_info.format);
-        for (p = tab, n = ntab; n-- && (x = *p); p++)
+        }
+        for (p = tab, n = ntab; n-- && (x = *p); p++) {
             if (*x && *x != '%' && tmword(s, e, x, suf, nsuf)) return p - tab;
+        }
     }
     return -1;
 }

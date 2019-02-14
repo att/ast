@@ -98,8 +98,9 @@ static_fn int tmx_range(char *s, char **e, char *set, int lo, int hi) {
                 if (s == t || i < 1) return -1;
                 s = t;
             }
-        } else
+        } else {
             m = n;
+        }
         for (; n <= m; n += i) set[n] = 1;
         if (*s != ',') break;
         s++;
@@ -219,10 +220,12 @@ again:
                     zone = i;
                     state |= ZONE;
                     if (!*(s = t)) break;
-                } else if (*s == '+')
+                } else if (*s == '+') {
                     break;
-            } else if (!skip[*s])
+                }
+            } else if (!skip[*s]) {
                 break;
+            }
             s++;
         }
         if (!*(last = (char *)s)) break;
@@ -235,8 +238,9 @@ again:
                     m = 1000000000;
                     while (isdigit(*++s)) fix += (*s - '0') * (m /= 10);
                     now = tmxsns(now, fix);
-                } else if (now <= 0x7fffffff)
+                } else if (now <= 0x7fffffff) {
                     now = tmxsns(now, 0);
+                }
                 goto reset;
             } else if (*s++ == '#') {
                 now = tmxtime(tm, zone);
@@ -280,10 +284,11 @@ again:
                     case 'Y':
                     case 'y':
                         m = 0;
-                        if (q > 1)
+                        if (q > 1) {
                             tm->tm_sec += (365L * 24L * 60L * 60L) * p / q;
-                        else
+                        } else {
                             tm->tm_year += p;
+                        }
                         P_INIT('M');
                         continue;
                     case 'm':
@@ -313,23 +318,26 @@ again:
                         switch (m) {
                             case 0:
                                 m = 1;
-                                if (q > 1)
+                                if (q > 1) {
                                     tm->tm_sec += (3042L * 24L * 60L * 60L) * p / q / 100L;
-                                else
+                                } else {
                                     tm->tm_mon += p;
+                                }
                                 break;
                             case 1:
                                 m = 2;
-                                if (q > 1)
+                                if (q > 1) {
                                     tm->tm_sec += (60L) * p / q;
-                                else
+                                } else {
                                     tm->tm_min += p;
+                                }
                                 break;
                             default:
-                                if (q > 1)
+                                if (q > 1) {
                                     tmx_powerize(tm, p, q, 1000UL);
-                                else
+                                } else {
                                     tm->tm_nsec += p * 1000000L;
+                                }
                                 break;
                         }
                         P_INIT(w);
@@ -337,28 +345,31 @@ again:
                     case 'W':
                     case 'w':
                         m = 0;
-                        if (q > 1)
+                        if (q > 1) {
                             tm->tm_sec += (7L * 24L * 60L * 60L) * p / q;
-                        else
+                        } else {
                             tm->tm_mday += 7 * p;
+                        }
                         P_INIT('D');
                         continue;
                     case 'D':
                     case 'd':
                         m = 0;
-                        if (q > 1)
+                        if (q > 1) {
                             tm->tm_sec += (24L * 60L * 60L) * p / q;
-                        else
+                        } else {
                             tm->tm_mday += p;
+                        }
                         P_INIT('H');
                         continue;
                     case 'H':
                     case 'h':
                         m = 1;
-                        if (q > 1)
+                        if (q > 1) {
                             tm->tm_sec += (60L * 60L) * p / q;
-                        else
+                        } else {
                             tm->tm_hour += p;
+                        }
                         P_INIT('m');
                         continue;
                     case 'S':
@@ -371,10 +382,11 @@ again:
                     case '\r':
                     case '\t':
                     case '\v':
-                        if (q > 1)
+                        if (q > 1) {
                             tmx_powerize(tm, p, q, 1000000000UL);
-                        else
+                        } else {
                             tm->tm_sec += p;
+                        }
                         P_INIT('U');
                         continue;
                     case 'U':
@@ -386,10 +398,11 @@ again:
                                 break;
                         }
                         m = 0;
-                        if (q > 1)
+                        if (q > 1) {
                             tmx_powerize(tm, p, q, 1000000UL);
-                        else
+                        } else {
                             tm->tm_nsec += p * 1000L;
+                        }
                         P_INIT('N');
                         continue;
                     case 'N':
@@ -401,10 +414,11 @@ again:
                                 break;
                         }
                         m = 0;
-                        if (q > 1)
+                        if (q > 1) {
                             tmx_powerize(tm, p, q, 1000000000UL);
-                        else
+                        } else {
                             tm->tm_nsec += p;
+                        }
                         P_INIT('Y');
                         continue;
                     case '.':
@@ -414,20 +428,22 @@ again:
                     case '-':
                         c = 'M';
                         u = (char *)s++;
-                        while (*++u && *u != ':')
+                        while (*++u && *u != ':') {
                             if (*u == '-') {
                                 c = 'Y';
                                 break;
                             }
+                        }
                         goto duration_next;
                     case ':':
                         c = 'm';
                         u = (char *)s++;
-                        while (*++u)
+                        while (*++u) {
                             if (*u == ':') {
                                 c = 'H';
                                 break;
                             }
+                        }
                         goto duration_next;
                     case '0':
                     case '1':
@@ -459,8 +475,9 @@ again:
         }
         f = -1;
         if (*s == '+') {
-            while (isspace(*++s) || *s == '_')
+            while (isspace(*++s) || *s == '_') {
                 ;
+            }
             n = strtol(s, &t, 0);
             w = t - s;
             if (w) {
@@ -491,20 +508,23 @@ again:
             i = 0;
             n = *(t = (char *)s);
             for (;;) {
-                if (n == '*')
+                if (n == '*') {
                     n = *++s;
-                else if (!isdigit(n))
+                } else if (!isdigit(n)) {
                     break;
-                else
-                    while ((n = *++s) == ',' || n == '-' || n == '/' || isdigit(n))
+                } else {
+                    while ((n = *++s) == ',' || n == '-' || n == '/' || isdigit(n)) {
                         ;
+                    }
+                }
                 if (n != ' ' && n != '_' && n != ';') {
                     if (!n) i++;
                     break;
                 }
                 i++;
-                while ((n = *++s) == ' ' || n == '_')
+                while ((n = *++s) == ' ' || n == '_') {
                     ;
+                }
             }
             if (i == 5) {
                 Time_t tt;
@@ -525,7 +545,7 @@ again:
                 if ((k = tmx_range(t, &t, hit, 0, 59)) < 0) break;
                 if (k && !hit[i = tm->tm_min]) {
                     hit[i] = 1;
-                    do
+                    do {
                         if (++i > 59) {
                             i = 0;
                             if (++tm->tm_hour > 59) {
@@ -533,7 +553,7 @@ again:
                                 tmfix(tm);
                             }
                         }
-                    while (!hit[i]);
+                    } while (!hit[i]);
                     tm->tm_min = i;
                 }
 
@@ -544,7 +564,7 @@ again:
                 if ((k = tmx_range(t, &t, hit, 0, 23)) < 0) break;
                 if (k && !hit[i = tm->tm_hour]) {
                     hit[i] = 1;
-                    do
+                    do {
                         if (++i > 23) {
                             i = 0;
                             if (++tm->tm_mday > 28) {
@@ -552,7 +572,7 @@ again:
                                 tmfix(tm);
                             }
                         }
-                    while (!hit[i]);
+                    } while (!hit[i]);
                     tm->tm_hour = i;
                 }
 
@@ -568,10 +588,11 @@ again:
                  */
 
                 if ((k = tmx_range(t, &t, mon, 1, 12)) < 0) break;
-                if (k)
+                if (k) {
                     flags |= MONTH;
-                else
+                } else {
                     for (i = 1; i <= 12; i++) mon[i] = 1;
+                }
 
                 /*
                  * day of week
@@ -605,10 +626,11 @@ again:
                         if (flags & (MDAY | WDAY)) {
                             if ((flags & (MDAY | WDAY)) == (MDAY | WDAY)) {
                                 if (hit[j] && day[k]) break;
-                            } else if ((flags & MDAY) && hit[j])
+                            } else if ((flags & MDAY) && hit[j]) {
                                 break;
-                            else if ((flags & WDAY) && day[k])
+                            } else if ((flags & WDAY) && day[k]) {
                                 break;
+                            }
                             if (++j > 28) {
                                 tm->tm_mon = i - 1;
                                 tm->tm_mday = j;
@@ -616,10 +638,12 @@ again:
                                 i = tm->tm_mon + 1;
                                 j = tm->tm_mday;
                                 k = tm->tm_wday;
-                            } else if ((flags & WDAY) && ++k > 6)
+                            } else if ((flags & WDAY) && ++k > 6) {
                                 k = 0;
-                        } else if (flags & MONTH)
+                            }
+                        } else if (flags & MONTH) {
                             break;
+                        }
                     }
                     tm->tm_mon = i - 1;
                     tm->tm_mday = j;
@@ -638,24 +662,27 @@ again:
                 goto sns;
             }
             if ((*t == 'T' || *t == 't') &&
-                ((set | state) & (YEAR | MONTH | DAY)) == (YEAR | MONTH) && isdigit(*(t + 1)))
+                ((set | state) & (YEAR | MONTH | DAY)) == (YEAR | MONTH) && isdigit(*(t + 1))) {
                 t++;
+            }
             u = t + (*t == '-');
             if ((w == 2 || w == 4) && (*u == 'W' || *u == 'w') && isdigit(*(u + 1))) {
                 if (w == 4) {
                     if ((n -= 1900) < TM_WINDOW) break;
-                } else if (n < TM_WINDOW)
+                } else if (n < TM_WINDOW) {
                     n += 100;
+                }
                 m = n;
                 n = strtol(++u, &t, 10);
                 if ((i = (t - u)) < 2 || i > 3) break;
                 if (i == 3) {
                     k = n % 10;
                     n /= 10;
-                } else if (*t != '-')
+                } else if (*t != '-') {
                     k = 1;
-                else if ((*++t && dig1(t, k) < 1) || k > 7)
+                } else if ((*++t && dig1(t, k) < 1) || k > 7) {
                     break;
+                }
                 if (n < 0 || n > 53) break;
                 if (k == 7) k = 0;
                 tm->tm_year = m;
@@ -695,10 +722,11 @@ again:
                 if ((t - s) == 2) {
                     if (dig2(s, n) > (59 + TM_MAXLEAP)) break;
                     flags |= SECOND;
-                } else if (t - s)
+                } else if (t - s) {
                     break;
-                else
+                } else {
                     n = 0;
+                }
                 p = 0;
                 if (*t == '.') {
                     q = 1000000000;
@@ -723,17 +751,19 @@ again:
                     if (n) n--;
                     s = t;
                     if (*s == '_') s++;
-                } else
+                } else {
                     n = -1;
+                }
                 dir = f;
             } else {
-                for (u = t; isspace(*u); u++)
+                for (u = t; isspace(*u); u++) {
                     ;
+                }
                 if ((j = tmlex(u, NULL, tm_info.format, TM_NFORM, tm_info.format + TM_SUFFIXES,
                                TM_PARTS - TM_SUFFIXES)) >= 0 &&
-                    tm_data.lex[j] == TM_PARTS)
+                    tm_data.lex[j] == TM_PARTS) {
                     s = u;
-                else {
+                } else {
                     if (!(state & (LAST | NEXT | THIS)) &&
                         (((i = t - s) == 4 &&
                           ((*t == '.' && isdigit(*(t + 1)) && isdigit(*(t + 2)) &&
@@ -759,17 +789,18 @@ again:
                             if (i == 7) {
                                 dig4(s, m);
                                 if ((m -= 1900) < TM_WINDOW) break;
-                            } else if (dig2(s, m) < TM_WINDOW)
+                            } else if (dig2(s, m) < TM_WINDOW) {
                                 m += 100;
+                            }
                             dig3(s, k);
                             l = 1;
                             j = 0;
                             i = 0;
                             n = 0;
                             flags |= MONTH;
-                        } else if (i & 1)
+                        } else if (i & 1) {
                             break;
-                        else {
+                        } else {
                             u = t;
                             if (i == 12) {
                                 x = s;
@@ -779,8 +810,9 @@ again:
                                     i -= 4;
                                     x = s + 8;
                                     dig4(x, m);
-                                } else
+                                } else {
                                     dig4(s, m);
+                                }
                                 if (m < 1969 || m >= 3000) break;
                                 m -= 1900;
                             } else if (i == 10) {
@@ -796,20 +828,23 @@ again:
                                     dig2(x, m);
                                 }
                                 if (m < TM_WINDOW) m += 100;
-                            } else
+                            } else {
                                 m = tm->tm_year;
-                            if ((u - s) < 8)
+                            }
+                            if ((u - s) < 8) {
                                 l = tm->tm_mon + 1;
-                            else if (dig2(s, l) <= 0 || l > 12)
+                            } else if (dig2(s, l) <= 0 || l > 12) {
                                 break;
-                            else
+                            } else {
                                 flags |= MONTH;
-                            if ((u - s) < 6)
+                            }
+                            if ((u - s) < 6) {
                                 k = tm->tm_mday;
-                            else if (dig2(s, k) < 1 || k > 31)
+                            } else if (dig2(s, k) < 1 || k > 31) {
                                 break;
-                            else
+                            } else {
                                 flags |= DAY;
+                            }
                             if ((u - s) < 4) break;
                             if (dig2(s, j) > 24) break;
                             if (dig2(s, i) > 59) break;
@@ -817,11 +852,11 @@ again:
                             if ((u - s) == 2) {
                                 dig2(s, n);
                                 flags |= SECOND;
-                            } else if (u - s)
+                            } else if (u - s) {
                                 break;
-                            else if (*t != '.')
+                            } else if (*t != '.') {
                                 n = 0;
-                            else {
+                            } else {
                                 n = strtol(t + 1, &t, 10);
                                 flags |= SECOND;
                                 if (*t == '.') {
@@ -852,25 +887,29 @@ again:
                         }
                         continue;
                     }
-                    for (s = t; skip[*s]; s++)
+                    for (s = t; skip[*s]; s++) {
                         ;
+                    }
                     if (*s == ':' || (*s == '.' && ((set | state) & (YEAR | MONTH | DAY | HOUR)) ==
                                                        (YEAR | MONTH | DAY))) {
                         c = *s;
                         if ((state & HOUR) || n > 24) break;
-                        while (isspace(*++s) || *s == '_')
+                        while (isspace(*++s) || *s == '_') {
                             ;
+                        }
                         if (!isdigit(*s)) break;
                         i = n;
                         n = strtol(s, &t, 10);
-                        for (s = t; isspace(*s) || *s == '_'; s++)
+                        for (s = t; isspace(*s) || *s == '_'; s++) {
                             ;
+                        }
                         if (n > 59) break;
                         j = n;
                         m = 0;
                         if (*s == c) {
-                            while (isspace(*++s) || *s == '_')
+                            while (isspace(*++s) || *s == '_') {
                                 ;
+                            }
                             if (!isdigit(*s)) break;
                             n = strtol(s, &t, 10);
                             s = t;
@@ -882,8 +921,9 @@ again:
                                 while (isdigit(*++s)) m += (*s - '0') * (q /= 10);
                                 set |= NSEC;
                             }
-                        } else
+                        } else {
                             n = 0;
+                        }
                         set |= HOUR | MINUTE;
                         skip[':'] = 1;
                         k = tm->tm_hour;
@@ -906,12 +946,13 @@ again:
                         if (f >= 0 || (state & (LAST | NEXT))) {
                             state &= ~HOLD;
                             if (f < 0) {
-                                if (state & LAST)
+                                if (state & LAST) {
                                     f = -1;
-                                else if (state & NEXT)
+                                } else if (state & NEXT) {
                                     f = 1;
-                                else
+                                } else {
                                     f = 0;
+                                }
                             }
                             if (f > 0) {
                                 if (i > k || (i == k && j > l)) f--;
@@ -947,10 +988,11 @@ again:
                     break;
                 }
                 s++;
-            } else if (skip[*s])
+            } else if (skip[*s]) {
                 s++;
-            else
+            } else {
                 break;
+            }
         }
         if (isalpha(*s)) {
             if (n > 0) {
@@ -961,8 +1003,9 @@ again:
                     q |= *s++;
                     if (isalpha(*s)) {
                         if (tmlex(s, &t, tm_info.format + TM_SUFFIXES, TM_PARTS - TM_SUFFIXES, NULL,
-                                  0) >= 0)
+                                  0) >= 0) {
                             s = t;
+                        }
                         if (isalpha(*s)) {
                             q <<= 8;
                             q |= *s++;
@@ -1108,27 +1151,30 @@ again:
                             n = j - TM_ORDINALS + 1;
                             goto ordinal;
                         case TM_MERIDIAN:
-                            if (f >= 0)
+                            if (f >= 0) {
                                 f++;
-                            else if (state & LAST)
+                            } else if (state & LAST) {
                                 f = -1;
-                            else if (state & THIS)
+                            } else if (state & THIS) {
                                 f = 1;
-                            else if (state & NEXT)
+                            } else if (state & NEXT) {
                                 f = 2;
-                            else
+                            } else {
                                 f = 0;
+                            }
                             if (n > 0) {
                                 if (n > 24) goto done;
                                 tm->tm_hour = n;
                             }
-                            for (k = tm->tm_hour; k < 0; k += 24)
+                            for (k = tm->tm_hour; k < 0; k += 24) {
                                 ;
+                            }
                             k %= 24;
                             if (j == TM_MERIDIAN) {
                                 if (k == 12) tm->tm_hour -= 12;
-                            } else if (k < 12)
+                            } else if (k < 12) {
                                 tm->tm_hour += 12;
+                            }
                             if (n > 0) goto clear_min;
                             continue;
                         case TM_DAY_ABBREV:
@@ -1138,20 +1184,21 @@ again:
                         case TM_PARTS:
                         case TM_HOURS:
                             state |= set & (EXACT | LAST | NEXT | THIS);
-                            if (!(state & (LAST | NEXT | THIS)))
+                            if (!(state & (LAST | NEXT | THIS))) {
                                 for (;;) {
                                     while (skip[*s]) s++;
                                     if ((k = tmlex(s, &t, tm_info.format + TM_LAST,
                                                    TM_NOISE - TM_LAST, NULL, 0)) >= 0) {
                                         s = t;
-                                        if (k <= 2)
+                                        if (k <= 2) {
                                             state |= LAST;
-                                        else if (k <= 5)
+                                        } else if (k <= 5) {
                                             state |= THIS;
-                                        else if (k <= 8)
+                                        } else if (k <= 8) {
                                             state |= NEXT;
-                                        else
+                                        } else {
                                             state |= EXACT;
+                                        }
                                     } else {
                                         state |= (n > 0) ? NEXT : THIS;
                                         break;
@@ -1159,6 +1206,7 @@ again:
                                     set &= ~(EXACT | LAST | NEXT | THIS);
                                     set |= state & (EXACT | LAST | NEXT | THIS);
                                 }
+                            }
                             /*FALLTHROUGH*/
                         case TM_DAYS:
                             if (n == -1) {
@@ -1189,13 +1237,15 @@ again:
                                     set &= ~LAST;
                                     state |= FINAL;
                                     set |= FINAL;
-                                } else
+                                } else {
                                     state &= ~(THIS | NEXT);
+                                }
                             }
-                            if (state & LAST)
+                            if (state & LAST) {
                                 n = -n;
-                            else if (!(state & NEXT))
+                            } else if (!(state & NEXT)) {
                                 n--;
+                            }
                             m = (f > 0) ? f * n : n;
                             switch (j) {
                                 case TM_DAYS + 0:
@@ -1226,14 +1276,15 @@ again:
                                     set |= MINUTE;
                                     goto clear_min;
                                 case TM_PARTS + 3:
-                                    if ((state & (LAST | NEXT | THIS)) == LAST)
+                                    if ((state & (LAST | NEXT | THIS)) == LAST) {
                                         tm->tm_mday =
                                             tm_data.days[tm->tm_mon] +
                                             (tm->tm_mon == 1 && tmisleapyear(tm->tm_year));
-                                    else if (state & ORDINAL)
+                                    } else if (state & ORDINAL) {
                                         tm->tm_mday = m + 1;
-                                    else
+                                    } else {
                                         tm->tm_mday += m;
+                                    }
                                     if (!(set & (FINAL | WORK))) set |= HOUR;
                                     goto clear_hour;
                                 case TM_PARTS + 4:
@@ -1283,16 +1334,19 @@ again:
                                     }
                                 }
                                 if (j < 0) j += 7;
-                            } else if (j > 0)
+                            } else if (j > 0) {
                                 j -= 7;
+                            }
                             set |= DAY;
-                            if (set & (FINAL | WORK))
+                            if (set & (FINAL | WORK)) {
                                 goto clear_hour;
-                            else if (state & (LAST | NEXT | THIS)) {
-                                if (f >= 0)
+                            } else if (state & (LAST | NEXT | THIS)) {
+                                if (f >= 0) {
                                     day = -1;
-                                else if (m > 0 && (state & (NEXT | YEAR | MONTH)) == NEXT && j >= 0)
+                                } else if (m > 0 && (state & (NEXT | YEAR | MONTH)) == NEXT &&
+                                           j >= 0) {
                                     m--;
+                                }
                                 tm->tm_mday += j + m * 7;
                                 set &= ~(LAST | NEXT | THIS | ORDINAL);   /*AHA*/
                                 state &= ~(LAST | NEXT | THIS | ORDINAL); /*AHA*/
@@ -1311,10 +1365,11 @@ again:
                                 while (skip[*s]) s++;
                                 if (isdigit(*s)) {
                                     n = strtol(s, &t, 10);
-                                    if (n <= 31 && *t != ':')
+                                    if (n <= 31 && *t != ':') {
                                         s = t;
-                                    else
+                                    } else {
                                         n = -1;
+                                    }
                                 }
                             }
                             if (n >= 0) {
@@ -1398,10 +1453,11 @@ again:
             } else {
                 if (state & (LAST | NEXT | THIS)) {
                 rel_month:
-                    if (state & LAST)
+                    if (state & LAST) {
                         tm->tm_year -= (tm->tm_mon < n) ? 0 : 1;
-                    else
+                    } else {
                         tm->tm_year += ((state & NEXT) ? 1 : 0) + ((tm->tm_mon < n) ? 1 : 0);
+                    }
                     if (state & MDAY) goto clear_hour;
                     set &= ~(LAST | NEXT | THIS);   /*AHA*/
                     state &= ~(LAST | NEXT | THIS); /*AHA*/
@@ -1430,8 +1486,9 @@ again:
         } else if (!(state & (MDAY | WDAY)) && n >= 1 && n <= 31) {
             state |= DAY | MDAY | WDAY;
             tm->tm_mday = n;
-        } else
+        } else {
             break;
+        }
         if (state & BREAK) {
             last = t;
             break;
@@ -1465,18 +1522,21 @@ done:
     if (day >= 0 && !(state & (MDAY | WDAY))) {
         tmfix(tm);
         m = dir;
-        if (state & MONTH)
+        if (state & MONTH) {
             tm->tm_mday = 1;
-        else if (m < 0)
+        } else if (m < 0) {
             m++;
+        }
         tm = tmxtm(tm, tmxtime(tm, zone), tm->tm_zone);
         j = day - tm->tm_wday;
         if (j < 0) j += 7;
         tm->tm_mday += j + m * 7;
-        if (state & FINAL)
+        if (state & FINAL) {
             for (n = tm_data.days[tm->tm_mon] + (tm->tm_mon == 1 && tmisleapyear(tm->tm_year));
-                 (tm->tm_mday + 7) <= n; tm->tm_mday += 7)
+                 (tm->tm_mday + 7) <= n; tm->tm_mday += 7) {
                 ;
+            }
+        }
     } else if (day < 0 && (state & FINAL) && (set & DAY)) {
         tmfix(tm);
         tm->tm_mday = tm_data.days[tm->tm_mon] + (tm->tm_mon == 1 && tmisleapyear(tm->tm_year));
@@ -1490,8 +1550,9 @@ done:
         if (tm->tm_wday == 0 || tm->tm_wday == 6) {
             j = tm->tm_wday == 0 ? 1 : 2;
             if ((tm->tm_mday + j) >
-                (tm_data.days[tm->tm_mon] + (tm->tm_mon == 1 && tmisleapyear(tm->tm_year))))
+                (tm_data.days[tm->tm_mon] + (tm->tm_mon == 1 && tmisleapyear(tm->tm_year)))) {
                 j -= 3;
+            }
             tm->tm_mday += j;
         }
     }
