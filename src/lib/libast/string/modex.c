@@ -69,8 +69,7 @@ int modex(int i) {
     } else if (S_ISCHR(i)) {
         x |= X_IFCHR;
 #ifdef S_ISCTG
-    else if (S_ISCTG(i))
-        x |= X_IFCTG;
+        else if (S_ISCTG(i)) x |= X_IFCTG;
 #endif
     } else if (S_ISFIFO(i)) {
         x |= X_IFIFO;

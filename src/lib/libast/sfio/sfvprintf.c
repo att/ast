@@ -636,7 +636,7 @@ loop_fmt:
 #if _wchar_t_is_int
                         argv.wc = va_arg(args, wchar_t);
 #else   // _wchar_t_is_int
-                        argv.wc = (wchar_t)va_arg(args, uint);
+                    argv.wc = (wchar_t)va_arg(args, uint);
 #endif  // _wchar_t_is_int
                     } else {
                         argv.i = va_arg(args, int);
@@ -935,8 +935,8 @@ loop_fmt:
                 lv = (Sflong_t)((Sfulong_t)argv.vp);
                 goto long_cvt;
 #else
-                v = (int)((uint)argv.vp);
-                goto int_cvt;
+            v = (int)((uint)argv.vp);
+            goto int_cvt;
 #endif
             case 'o':
                 base = 8;

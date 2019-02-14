@@ -866,8 +866,8 @@ loop_fmt:
                     *((void **)value) = (void *)((uint)argv.lu);
 #endif
 #if !_ast_intmax_long
-                else if (size == sizeof(Sflong_t))
-                    *((Sflong_t *)value) = argv.ll;
+                } else if (size == sizeof(Sflong_t)) {
+                    * ((Sflong_t *)value) = argv.ll;
 #endif
                 } else if (size == sizeof(long)) {
                     if (fmt == 'd' || fmt == 'i') {

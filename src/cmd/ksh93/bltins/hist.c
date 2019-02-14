@@ -57,7 +57,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     Sfio_t *outfile;
     char *fname;
     int range[2], incr, index2, indx = -1;
-    char *edit = NULL;     // name of editor
+    char *edit = NULL;           // name of editor
     const char *replace = NULL;  // replace old=new
     int lflag = 0;
     int nflag = 0;

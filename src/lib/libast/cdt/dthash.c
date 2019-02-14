@@ -67,7 +67,7 @@ static_fn int dthash_htable(Dt_t *dt) {
             if (n < 0) /* fix table size */
             {
                 hash->type |= H_FIXED;
-                n = -n;              /* desired table size */
+                n = -n;                /* desired table size */
                 if (hash->tblz >= n) { /* table size is fixed now */
                     return 0;
                 }
@@ -415,7 +415,7 @@ static_fn void *dthashchain(Dt_t *dt, void *obj, int type) {
                 goto do_insert;
             } else {
                 if (type & (DT_INSERT | DT_APPEND | DT_ATTACH)) {
-                    type |= DT_MATCH;                 /* for announcement */
+                    type |= DT_MATCH;                   /* for announcement */
                 } else if (lnk && (type & DT_RELINK)) { /* remove a duplicate */
                     o = _DTOBJ(disc, lnk);
                     _dtfree(dt, lnk, DT_DELETE);

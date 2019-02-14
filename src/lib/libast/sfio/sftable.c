@@ -433,7 +433,7 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
 #if _wchar_t_is_int
                             fp[n].argv.wc = va_arg(args, wchar_t);
 #else   // _wchar_t_is_int
-                            fp[n].argv.wc = (wchar_t)va_arg(args, uint);
+                        fp[n].argv.wc = (wchar_t)va_arg(args, uint);
 #endif  // _wchar_t_is_int
                         }
                         /* observe promotion rule */

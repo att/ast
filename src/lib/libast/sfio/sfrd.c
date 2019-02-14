@@ -227,7 +227,7 @@ ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
 
             if (rcrv) { /* pass on rcrv for possible continuations */
                 f->mode |= rcrv;
-            /* tell readf that no peeking necessary */
+                /* tell readf that no peeking necessary */
             } else {
                 f->flags &= ~SF_SHARE;
             }

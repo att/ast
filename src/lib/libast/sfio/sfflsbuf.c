@@ -96,8 +96,8 @@ int _sfflsbuf(Sfio_t *f, int c) {
             if (c < 0 && (!isall || n == 0)) break;
         } else if (w == 0) {
             if (written > 0) { /* some buffer was cleared */
-                break;       /* do normal exit below */
-            } else           /* nothing was done, returning failure */
+                break;         /* do normal exit below */
+            } else             /* nothing was done, returning failure */
             {
                 if (!local) SFOPEN(f)
                 SFMTXRETURN(f, -1)
