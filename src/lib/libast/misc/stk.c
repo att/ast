@@ -170,9 +170,9 @@ static_fn int stkexcept(Sfio_t *stream, int type, void *val, Sfdisc_t *dp) {
             struct frame *fp;
             if (--sp->stkref <= 0) {
                 increment(delete);
-                if (stream == stkstd)
+                if (stream == stkstd) {
                     stkset(stream, NULL, 0);
-                else {
+                } else {
                     while (1) {
                         fp = (struct frame *)cp;
                         if (fp->prev) {
@@ -201,8 +201,9 @@ static_fn int stkexcept(Sfio_t *stream, int type, void *val, Sfdisc_t *dp) {
                 if (stream != stkstd) old = stkinstall(stream, NULL);
                 if (!stkgrow(stkstd, size - (stkstd->endb - stkstd->data))) return -1;
                 if (old) stkinstall(old, NULL);
-            } else
+            } else {
                 stkinit(size);
+            }
         }
             return 1;
         case SF_NEW:
@@ -312,8 +313,9 @@ int stkclose(Sfio_t *stream) {
 int stkon(Sfio_t *stream, char *loc) {
     struct stk *sp = stream2stk(stream);
     struct frame *fp;
-    for (fp = (struct frame *)sp->stkbase; fp; fp = (struct frame *)fp->prev)
+    for (fp = (struct frame *)sp->stkbase; fp; fp = (struct frame *)fp->prev) {
         if (loc >= ((char *)(fp + 1)) && loc < fp->end) return 1;
+    }
     return 0;
 }
 /*

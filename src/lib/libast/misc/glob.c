@@ -126,11 +126,12 @@ static_fn char *gl_nextdir(glob_t *gp, char *dir) {
             dir = ".";
             break;
         default:
-            while (*gp->gl_nextpath)
+            while (*gp->gl_nextpath) {
                 if (*gp->gl_nextpath++ == ':') {
                     *(gp->gl_nextpath - 1) = 0;
                     break;
                 }
+            }
             break;
     }
     return dir;
@@ -191,10 +192,11 @@ static_fn void glob_addmatch(glob_t *gp, const char *dir, const char *pat, const
         stakputc(gp->gl_delim);
         offset = staktell();
         /* if null, reserve room for . */
-        if (*rescan)
+        if (*rescan) {
             stakputs(rescan);
-        else
+        } else {
             stakputc(0);
+        }
         stakputc(0);
         rescan = stakptr(offset);
         ap = (globlist_t *)stakfreeze(0);
@@ -207,8 +209,9 @@ static_fn void glob_addmatch(glob_t *gp, const char *dir, const char *pat, const
             if ((gp->gl_flags & GLOB_COMPLETE) && type != GLOB_EXE) {
                 stakseek(0);
                 return;
-            } else if (type == GLOB_DIR && (gp->gl_flags & GLOB_MARK))
+            } else if (type == GLOB_DIR && (gp->gl_flags & GLOB_MARK)) {
                 stakputc(gp->gl_delim);
+            }
         }
         ap = (globlist_t *)stakfreeze(1);
         ap->gl_next = gp->gl_match;
@@ -282,8 +285,9 @@ again:
                     *(rescan - 2) = gp->gl_delim;
                     if (c == GLOB_DIR) glob_addmatch(gp, NULL, prefix, NULL, rescan - 1, anymeta);
                 } else if ((anymeta || !(gp->gl_flags & GLOB_NOCHECK)) &&
-                           (*gp->gl_type)(gp, prefix, 0))
+                           (*gp->gl_type)(gp, prefix, 0)) {
                     glob_addmatch(gp, NULL, prefix, NULL, NULL, anymeta);
+                }
                 return;
             case '[':
                 if (!bracket) {
@@ -326,8 +330,9 @@ again:
         if (!rescan && (gp->gl_flags & GLOB_COMPLETE)) {
             complete = 1;
             dirname = 0;
-        } else
+        } else {
             dirname = ".";
+        }
     } else {
         if (pat == prefix + 1) dirname = "/";
         if (savequote) {
@@ -338,7 +343,7 @@ again:
         }
         *(restore1 = pat - 1) = 0;
     }
-    if (!complete && (gp->gl_flags & GLOB_STARSTAR))
+    if (!complete && (gp->gl_flags & GLOB_STARSTAR)) {
         while (pat[0] == '*' && pat[1] == '*' && (pat[2] == '/' || pat[2] == 0)) {
             matchdir = pat;
             if (pat[2]) {
@@ -350,6 +355,7 @@ again:
             pat = "*";
             goto skip;
         }
+    }
     if (matchdir) {
         rescan = pat;
         goto again;
@@ -425,19 +431,22 @@ skip:
                 if (notdir) gp->gl_status &= ~GLOB_NOTDIR;
                 if (ire && !regexec(ire, name, 0, NULL, 0)) continue;
                 if (matchdir && (name[0] != '.' || (name[1] && (name[1] != '.' || name[2]))) &&
-                    !notdir)
+                    !notdir) {
                     glob_addmatch(gp, prefix, name, matchdir, NULL, anymeta);
+                }
                 if (!regexec(pre, name, 0, NULL, 0)) {
                     if (!rescan || !notdir) glob_addmatch(gp, prefix, name, rescan, NULL, anymeta);
-                    if (starstar == 1 || (starstar == 2 && !notdir))
+                    if (starstar == 1 || (starstar == 2 && !notdir)) {
                         glob_addmatch(gp, prefix, name, starstar == 2 ? "" : NULL, NULL, anymeta);
+                    }
                 }
                 errno = 0;
             }
             (*gp->gl_dirclose)(gp, dirf);
             if (err || (errno && !glob_errorcheck(gp, dirname))) break;
-        } else if (!complete && !glob_errorcheck(gp, dirname))
+        } else if (!complete && !glob_errorcheck(gp, dirname)) {
             break;
+        }
         if (!complete) break;
         if (*gp->gl_intr) {
             gp->gl_error = GLOB_INTR;
@@ -521,16 +530,17 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
         if (!gp->gl_attr) gp->gl_attr = gl_attr;
         if (flags & GLOB_GROUP) gp->re_flags |= REG_SHELL_GROUP;
         if (flags & GLOB_ICASE) gp->re_flags |= REG_ICASE;
-        if (!gp->gl_fignore)
+        if (!gp->gl_fignore) {
             gp->re_flags |= REG_SHELL_DOT;
-        else if (*gp->gl_fignore) {
+        } else if (*gp->gl_fignore) {
             if (regcomp(&gp->re_ignore, gp->gl_fignore, gp->re_flags)) return GLOB_APPERR;
             gp->gl_ignore = &gp->re_ignore;
         }
-        if (gp->gl_flags & GLOB_STACK)
+        if (gp->gl_flags & GLOB_STACK) {
             gp->gl_stak = 0;
-        else if (!(gp->gl_stak = stakcreate(0)))
+        } else if (!(gp->gl_stak = stakcreate(0))) {
             return GLOB_NOSPACE;
+        }
         if ((gp->gl_flags & GLOB_COMPLETE) && !gp->gl_nextdir) gp->gl_nextdir = gl_nextdir;
     }
     skip = gp->gl_pathc;
@@ -554,35 +564,40 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
                     n = 1;
                     continue;
                 case 'i':
-                    if (n)
+                    if (n) {
                         f |= GLOB_ICASE;
-                    else
+                    } else {
                         f &= ~GLOB_ICASE;
+                    }
                     continue;
                 case 'M':
-                    if (n)
+                    if (n) {
                         f |= GLOB_BRACE;
-                    else
+                    } else {
                         f &= ~GLOB_BRACE;
+                    }
                     continue;
                 case 'N':
-                    if (n)
+                    if (n) {
                         f &= ~GLOB_NOCHECK;
-                    else
+                    } else {
                         f |= GLOB_NOCHECK;
+                    }
                     continue;
                 case 'O':
-                    if (n)
+                    if (n) {
                         f |= GLOB_STARSTAR;
-                    else
+                    } else {
                         f &= ~GLOB_STARSTAR;
+                    }
                     continue;
                 case ')':
                     flags = (gp->gl_flags = f) & 0xffff;
-                    if (f & GLOB_ICASE)
+                    if (f & GLOB_ICASE) {
                         gp->re_flags |= REG_ICASE;
-                    else
+                    } else {
                         gp->re_flags &= ~REG_ICASE;
+                    }
                     if (x) optlen = pat - (char *)pattern;
                     break;
                 default:

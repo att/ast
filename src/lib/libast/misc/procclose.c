@@ -45,9 +45,9 @@ int procclose(Proc_t *p) {
     if (p) {
         if (p->rfd >= 0) close(p->rfd);
         if (p->wfd >= 0 && p->wfd != p->rfd) close(p->wfd);
-        if (p->flags & PROC_ORPHAN)
+        if (p->flags & PROC_ORPHAN) {
             status = 0;
-        else {
+        } else {
             if (p->flags & PROC_ZOMBIE) {
                 /*
                  * process may leave a zombie behind
@@ -59,12 +59,13 @@ int procclose(Proc_t *p) {
                 sleep(1);
             }
             if (!(p->flags & PROC_FOREGROUND)) sigcritical(SIG_REG_EXEC | SIG_REG_PROC);
-            while ((pid = waitpid(p->pid, &status, flags)) == -1 && errno == EINTR)
+            while ((pid = waitpid(p->pid, &status, flags)) == -1 && errno == EINTR) {
                 ;
+            }
             if (pid != p->pid && (flags & WNOHANG)) status = 0;
-            if (!(p->flags & PROC_FOREGROUND))
+            if (!(p->flags & PROC_FOREGROUND)) {
                 sigcritical(SIG_REG_POP);
-            else {
+            } else {
                 if (p->sigint != SIG_IGN) signal(SIGINT, p->sigint);
                 if (p->sigquit != SIG_IGN) signal(SIGQUIT, p->sigquit);
 #if defined(SIGCHLD)
@@ -76,7 +77,8 @@ int procclose(Proc_t *p) {
                                                         : EXIT_CODE(WEXITSTATUS(status));
         }
         procfree(p);
-    } else
+    } else {
         status = errno == ENOENT ? EXIT_NOTFOUND : EXIT_NOEXEC;
+    }
     return status;
 }

@@ -376,8 +376,9 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
 #else
         if (procfd > 1) {
             if (socketpair(AF_UNIX, SOCK_STREAM, 0, pio)) goto bad;
-        } else if (pipe(pio))
+        } else if (pipe(pio)) {
             goto bad;
+        }
 #endif
     }
     if (flags & PROC_OVERLAY) {
@@ -389,9 +390,9 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
         proc->pid = 0;
 #endif
     else {
-        if (!(flags & PROC_FOREGROUND))
+        if (!(flags & PROC_FOREGROUND)) {
             sigcritical(SIG_REG_EXEC | SIG_REG_PROC);
-        else {
+        } else {
             signalled = 1;
             proc->sigint = signal(SIGINT, SIG_IGN);
             proc->sigquit = signal(SIGQUIT, SIG_IGN);
@@ -403,9 +404,9 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
         }
         if ((flags & PROC_ORPHAN) && pipe(pop)) goto bad;
         proc->pid = fork();
-        if (!(flags & PROC_FOREGROUND))
+        if (!(flags & PROC_FOREGROUND)) {
             sigcritical(SIG_REG_POP);
-        else if (!proc->pid) {
+        } else if (!proc->pid) {
             if (proc->sigint != SIG_IGN) {
                 proc->sigint = SIG_DFL;
                 signal(SIGINT, proc->sigint);
@@ -417,8 +418,9 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
 #if defined(SIGCHLD)
             sigprocmask(SIG_SETMASK, &proc->mask, NULL);
 #endif
-        } else if (proc->pid == -1)
+        } else if (proc->pid == -1) {
             goto bad;
+        }
         forked = 1;
     }
     if (!proc->pid) {
@@ -511,8 +513,9 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
                     case PROC_fd_dup | PROC_FD_PARENT:
                     case PROC_fd_dup | PROC_FD_CHILD:
                     case PROC_fd_dup | PROC_FD_PARENT | PROC_FD_CHILD:
-                        if (modify(proc, forked, PROC_OP(n), PROC_ARG(n, 1), PROC_ARG(n, 2)))
+                        if (modify(proc, forked, PROC_OP(n), PROC_ARG(n, 1), PROC_ARG(n, 2))) {
                             goto cleanup;
+                        }
                         break;
                     default:
                         if (modify(proc, forked, PROC_OP(n), PROC_ARG(n, 1), 0)) goto cleanup;
@@ -543,9 +546,11 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
             if (!sh_setenviron(env)) goto cleanup;
         }
         if ((flags & PROC_PARANOID) && setenv("PATH", astconf("PATH", NULL, NULL), 1)) goto cleanup;
-        if ((p = envv) && p != (char **)environ)
-            while (*p)
+        if ((p = envv) && p != (char **)environ) {
+            while (*p) {
                 if (!sh_setenviron(*p++)) goto cleanup;
+            }
+        }
         p = argv;
         if (forked && !p) return proc;
         if (cmd) {
@@ -622,13 +627,14 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
                         close(PROC_ARG(n, 1));
                         break;
                     case PROC_sys_pgrp:
-                        if (proc->pgrp < 0)
+                        if (proc->pgrp < 0) {
                             proc->pgrp = proc->pid;
-                        else if (proc->pgrp > 0) {
+                        } else if (proc->pgrp > 0) {
                             if (proc->pgrp == 1) proc->pgrp = proc->pid;
                             if (setpgid(proc->pid, proc->pgrp) < 0 && proc->pid != proc->pgrp &&
-                                errno == EPERM)
+                                errno == EPERM) {
                                 setpgid(proc->pid, proc->pid);
+                            }
                         }
                         break;
                 }
@@ -639,8 +645,9 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
             if ((flags & (PROC_WRITE | PROC_IGNORE)) == (PROC_WRITE | PROC_IGNORE)) {
                 sig_t handler;
 
-                if ((handler = signal(SIGPIPE, ignoresig)) != SIG_DFL && handler != ignoresig)
+                if ((handler = signal(SIGPIPE, ignoresig)) != SIG_DFL && handler != ignoresig) {
                     signal(SIGPIPE, handler);
+                }
             }
 #endif
             switch (procfd) {
@@ -667,8 +674,9 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
         if (!proc->pid) {
             proc->pid = getpid();
         } else if (flags & PROC_ORPHAN) {
-            while (waitpid(proc->pid, &i, 0) == -1 && errno == EINTR)
+            while (waitpid(proc->pid, &i, 0) == -1 && errno == EINTR) {
                 ;
+            }
             if (read(pop[0], &proc->pid, sizeof(proc->pid)) != sizeof(proc->pid)) goto bad;
             close(pop[0]);
         }

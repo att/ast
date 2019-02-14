@@ -192,11 +192,12 @@ char *fgetcwd(int fd, char *buf, size_t len) {
             break;
         }
         memcpy(p, entry->d_name, namlen);
-        for (n = 0; n < elementsof(env); n++)
+        for (n = 0; n < elementsof(env); n++) {
             if (env[n].ino == par->st_ino && env[n].dev == par->st_dev) {
                 namlen = strlen(env[n].path);
                 goto part;
             }
+        }
     }
     if (p != buf) {
         s = buf;

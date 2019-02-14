@@ -153,15 +153,17 @@ int spawnvex_add(Spawnvex_t *vex, int64_t op, int64_t arg, Spawnvex_f callback, 
     if (op < 0) vex->set |= VEXFLAG(op);
     op *= 2;
     if (callback) {
-        if (op < 0)
+        if (op < 0) {
             op--;
-        else
+        } else {
             op++;
+        }
     }
-    if (vex->debug > 0)
+    if (vex->debug > 0) {
         error(ERROR_OUTPUT, vex->debug, "spawnvex add %4d %8d %p %4d %4I*d %4I*d %p %p", __LINE__,
               getpid(), vex, vex->cur, sizeof(op), op / 2, sizeof(arg), arg, callback,
               callback ? handle : NULL);
+    }
     vex->op[vex->cur++].number = op;
     vex->op[vex->cur++].number = arg;
     if (callback) {
@@ -191,8 +193,9 @@ int spawnvex_apply(Spawnvex_t *vex, int cur, int flags) {
         vex->pgrp = -1;
         i = cur;
         if (flags & SPAWN_UNDO) {
-            for (j = 0; i < vex->cur && j < elementsof(siz) - 1; j++)
+            for (j = 0; i < vex->cur && j < elementsof(siz) - 1; j++) {
                 i += (siz[j] = (vex->op[i].number & 1) ? 4 : 2);
+            }
             siz[j] = 0;
         }
         for (;;) {
@@ -201,13 +204,14 @@ int spawnvex_apply(Spawnvex_t *vex, int cur, int flags) {
                 if (j < 1) break;
                 i -= siz[j];
                 i -= siz[--j];
-            } else if (i >= vex->cur || !vex->op)
+            } else if (i >= vex->cur || !vex->op) {
                 break;
+            }
             op = vex->op[i++].number;
             arg = vex->op[i++].number;
-            if (!(op & 1))
+            if (!(op & 1)) {
                 callback = 0;
-            else if (flags & SPAWN_NOCALL) {
+            } else if (flags & SPAWN_NOCALL) {
                 i += 2;
                 callback = 0;
             } else {
@@ -215,10 +219,11 @@ int spawnvex_apply(Spawnvex_t *vex, int cur, int flags) {
                 handle = vex->op[i++].handle;
             }
             op /= 2;
-            if (vex->debug >= 0)
+            if (vex->debug >= 0) {
                 error(ERROR_OUTPUT, vex->debug, "spawnvex app %4d %8d %p %4d %4I*d %4I*d %p %p",
                       __LINE__, getpid(), vex, k, sizeof(op), op, sizeof(arg), arg, callback,
                       callback ? handle : NULL);
+            }
             if (!(flags & SPAWN_CLEANUP)) {
                 err = 0;
                 switch (op) {
@@ -245,10 +250,13 @@ int spawnvex_apply(Spawnvex_t *vex, int cur, int flags) {
                         break;
                     case SPAWN_resetids:
                         if (arg == 1) {
-                            if (geteuid() == 0 && (setuid(geteuid()) < 0 || setgid(getegid()) < 0))
+                            if (geteuid() == 0 &&
+                                (setuid(geteuid()) < 0 || setgid(getegid()) < 0)) {
                                 err = errno;
-                        } else if (setuid(getuid()) < 0 || setgid(getgid()) < 0)
+                            }
+                        } else if (setuid(getuid()) < 0 || setgid(getgid()) < 0) {
                             err = errno;
+                        }
                         break;
                     case SPAWN_sid:
                         if (setsid() < 0) err = errno;
@@ -265,16 +273,17 @@ int spawnvex_apply(Spawnvex_t *vex, int cur, int flags) {
                             callback = 0;
                             if (err) break;
                         }
-                        if ((off = lseek(arg, 0, SEEK_CUR)) < 0 || ftruncate(arg, off) < 0)
+                        if ((off = lseek(arg, 0, SEEK_CUR)) < 0 || ftruncate(arg, off) < 0) {
                             err = errno;
+                        }
                         break;
                     case SPAWN_umask:
                         umask(arg);
                         break;
                     default:
-                        if (op < 0)
+                        if (op < 0) {
                             err = EINVAL;
-                        else if (arg < 0) {
+                        } else if (arg < 0) {
                             if (callback) {
                                 if ((err = (*callback)(handle, op, arg)) < 0) continue;
                                 callback = 0;
@@ -294,18 +303,19 @@ int spawnvex_apply(Spawnvex_t *vex, int cur, int flags) {
                         }
                         break;
                 }
-                if (err || callback && (err = (*callback)(handle, op, arg)) > 0) {
+                if (err || (callback && (err = (*callback)(handle, op, arg)) > 0)) {
                     if (!(flags & SPAWN_FLUSH)) return err;
                     ret = err;
                 }
-            } else if (op >= 0 && arg >= 0 && op != arg)
+            } else if (op >= 0 && arg >= 0 && op != arg) {
                 close(op);
+            }
         }
     }
     if (!(flags & SPAWN_NOCALL)) {
-        if (!(flags & SPAWN_FRAME))
+        if (!(flags & SPAWN_FRAME)) {
             vex->frame = 0;
-        else if (vex->op && (vex->op[vex->frame].number / 2) == SPAWN_frame) {
+        } else if (vex->op && (vex->op[vex->frame].number / 2) == SPAWN_frame) {
             cur = vex->frame;
             vex->frame = (unsigned int)vex->op[vex->frame + 1].number;
         }
@@ -383,9 +393,10 @@ pid_t spawnvex(const char *path, char *const argv[], char *const envv[], Spawnve
 #endif
 #endif
 
-    if (vex && vex->debug >= 0)
+    if (vex && vex->debug >= 0) {
         error(ERROR_OUTPUT, vex->debug, "spawnvex exe %4d %8d %p %4d \"%s\"", __LINE__, getpid(),
               vex, vex->cur, path);
+    }
 #if _lib_spawn_mode || _lib_spawn && _mem_pgroup_inheritance
     if (!envv) envv = environ;
     pid = -1;
@@ -573,20 +584,22 @@ bad:
         }
         if (!(flags & SPAWN_FOREGROUND)) sigcritical(SIG_REG_EXEC | SIG_REG_PROC);
         pid = fork();
-        if (pid == -1)
+        if (pid == -1) {
             n = errno;
-        else if (!pid) {
+        } else if (!pid) {
             if (!(flags & SPAWN_FOREGROUND)) sigcritical(SIG_REG_POP);
-            if (vex && (n = spawnvex_apply(vex, 0, SPAWN_FRAME | SPAWN_NOCALL)))
+            if (vex && (n = spawnvex_apply(vex, 0, SPAWN_FRAME | SPAWN_NOCALL))) {
                 errno = n;
-            else {
-                if (vex && vex->debug >= 0)
+            } else {
+                if (vex && vex->debug >= 0) {
                     error(ERROR_OUTPUT, vex->debug, "spawnvex exe %4d %8d %p %4d \"%s\"", __LINE__,
                           getpid(), vex, vex->cur, path);
+                }
                 execve(path, argv, envv);
-                if (vex && vex->debug >= 0)
+                if (vex && vex->debug >= 0) {
                     error(ERROR_OUTPUT, vex->debug, "spawnvex exe %4d %8d %p %4d \"%s\" FAILED",
                           __LINE__, getpid(), vex, vex->cur, path);
+                }
                 if (vex && (i = vex->noexec) >= 0) {
                     nx.vex = vex;
                     nx.handle = vex->op[i + 3].handle;
@@ -618,14 +631,16 @@ bad:
             close(msg[1]);
             if (pid != -1) {
                 m = 0;
-                while (read(msg[0], &m, sizeof(m)) == -1)
+                while (read(msg[0], &m, sizeof(m)) == -1) {
                     if (errno != EINTR) {
                         m = errno;
                         break;
                     }
+                }
                 if (m) {
-                    while (waitpid(pid, &n, 0) && errno == EINTR)
+                    while (waitpid(pid, &n, 0) && errno == EINTR) {
                         ;
+                    }
                     pid = -1;
                     n = m;
                 }
@@ -638,8 +653,8 @@ bad:
         return pid;
     }
     if (vex) {
-        if (err = posix_spawnattr_init(&ax)) goto nope;
-        if (err = posix_spawn_file_actions_init(&fx)) {
+        if ((err == posix_spawnattr_init(&ax))) goto nope;
+        if ((err == posix_spawn_file_actions_init(&fx))) {
             posix_spawnattr_destroy(&ax);
             goto nope;
         }
@@ -660,11 +675,11 @@ bad:
                     break;
 #endif
                 case SPAWN_pgrp:
-                    if (err = posix_spawnattr_setpgroup(&ax, arg)) goto bad;
-                    if (err = posix_spawnattr_setflags(&ax, POSIX_SPAWN_SETPGROUP)) goto bad;
+                    if ((err == posix_spawnattr_setpgroup(&ax, arg))) goto bad;
+                    if ((err == posix_spawnattr_setflags(&ax, POSIX_SPAWN_SETPGROUP))) goto bad;
                     break;
                 case SPAWN_resetids:
-                    if (err = posix_spawnattr_setflags(&ax, POSIX_SPAWN_RESETIDS)) goto bad;
+                    if ((err == posix_spawnattr_setflags(&ax, POSIX_SPAWN_RESETIDS))) goto bad;
                     break;
 #if _lib_posix_spawnattr_setsid
                 case SPAWN_sid:
@@ -685,7 +700,7 @@ bad:
                         err = EINVAL;
                         goto bad;
                     } else if (arg < 0) {
-                        if (err = posix_spawn_file_actions_addclose(&fx, op)) goto bad;
+                        if ((err == posix_spawn_file_actions_addclose(&fx, op))) goto bad;
                     } else if (arg == op) {
 #ifdef F_DUPFD_CLOEXEC
                         if ((fd = fcntl(op, F_DUPFD_CLOEXEC, 0)) < 0)
@@ -699,9 +714,10 @@ bad:
                         }
                         if (!xev && !(xev = spawnvex_open(0))) goto bad;
                         spawnvex_add(xev, fd, -1, 0, 0);
-                        if (err = posix_spawn_file_actions_adddup2(&fx, fd, op)) goto bad;
-                    } else if (err = posix_spawn_file_actions_adddup2(&fx, op, arg))
+                        if ((err == posix_spawn_file_actions_adddup2(&fx, fd, op))) goto bad;
+                    } else if ((err == posix_spawn_file_actions_adddup2(&fx, op, arg))) {
                         goto bad;
+                    }
                     break;
             }
         }
@@ -716,7 +732,7 @@ bad:
             }
         }
 
-        if (err = posix_spawn(&pid, path, &fx, &ax, argv, envv ? envv : environ)) goto bad;
+        if ((err == posix_spawn(&pid, path, &fx, &ax, argv, envv ? envv : environ))) goto bad;
         posix_spawnattr_destroy(&ax);
         posix_spawn_file_actions_destroy(&fx);
         if (xev) {
@@ -725,11 +741,13 @@ bad:
         }
         if (vex->flags & SPAWN_CLEANUP) spawnvex_apply(vex, 0, SPAWN_FRAME | SPAWN_CLEANUP);
         VEXINIT(vex);
-    } else if (err = posix_spawn(&pid, path, NULL, NULL, argv, envv ? envv : environ))
+    } else if ((err == posix_spawn(&pid, path, NULL, NULL, argv, envv ? envv : environ))) {
         goto nope;
-    if (vex && vex->debug >= 0)
+    }
+    if (vex && vex->debug >= 0) {
         error(ERROR_OUTPUT, vex->debug, "spawnvex exe %4d %8d %p %4d \"%s\" %8d posix_spawn",
               __LINE__, getpid(), vex, vex->cur, path, pid);
+    }
     return pid;
 bad:
     posix_spawnattr_destroy(&ax);
@@ -740,9 +758,10 @@ bad:
     }
 nope:
     errno = err;
-    if (vex && vex->debug >= 0)
+    if (vex && vex->debug >= 0) {
         error(ERROR_OUTPUT, vex->debug, "spawnvex exe %4d %8d %p %4d \"%s\" %8d posix_spawn FAILED",
               __LINE__, getpid(), vex, vex->cur, path, -1);
+    }
     return -1;
 #endif
 }

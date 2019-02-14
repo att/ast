@@ -83,17 +83,19 @@ int sigcritical(int op) {
         if (!level++) {
             region = op;
             sigemptyset(&nmask);
-            for (i = 0; i < elementsof(signals); i++)
+            for (i = 0; i < elementsof(signals); i++) {
                 if (op & signals[i].op) sigaddset(&nmask, signals[i].sig);
+            }
             sigprocmask(SIG_BLOCK, &nmask, &mask);
         }
         return level;
     } else if (op < 0) {
         sigpending(&nmask);
-        for (i = 0; i < elementsof(signals); i++)
+        for (i = 0; i < elementsof(signals); i++) {
             if (region & signals[i].op) {
                 if (sigismember(&nmask, signals[i].sig)) return 1;
             }
+        }
         return 0;
     }
 

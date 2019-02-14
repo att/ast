@@ -162,8 +162,9 @@ int stackpop(STACK stack) {
  */
 
 void stacktell(STACK stack, int set, STACKPOS *position) {
-    if (set)
+    if (set) {
         stack->position = *position;
-    else
+    } else {
         *position = stack->position;
+    }
 }

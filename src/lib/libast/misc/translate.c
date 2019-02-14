@@ -359,10 +359,11 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
         cp->locale = loc;
         cp->nlspath = nlspath;
         if (cp->cat != NOCAT) catclose(cp->cat);
-        if ((cp->cat = find(cp->locale, cp->name)) == NOCAT)
+        if ((cp->cat = find(cp->locale, cp->name)) == NOCAT) {
             cp->debug = !strcmp(cp->locale, "debug");
-        else
+        } else {
             cp->debug = 0;
+        }
 #if DEBUG_trace
         sfprintf(sfstderr, "AHA#%d:%s cp->cat %p cp->debug %d NOCAT %p\n", __LINE__, __FILE__,
                  cp->cat, cp->debug, NOCAT);
@@ -381,9 +382,9 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
 
         r = catgets(cp->cat, mp->set, mp->seq, msg);
         if (r != (char *)msg) {
-            if (!strcmp(r, (char *)msg))
+            if (!strcmp(r, (char *)msg)) {
                 r = (char *)msg;
-            else if (strcmp(fmtfmt(r), fmtfmt(msg))) {
+            } else if (strcmp(fmtfmt(r), fmtfmt(msg))) {
                 sfprintf(sfstderr,
                          "locale %s catalog %s message %d.%d \"%s\" does not match \"%s\"\n",
                          cp->locale, cp->name, mp->set, mp->seq, r, msg);

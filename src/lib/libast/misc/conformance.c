@@ -52,7 +52,7 @@ static_fn char **initconformance(void) {
     p = 0;
     sp = sfstropen();
     if (sp) {
-        for (i = h = 0, j = 1; i < elementsof(conf); i++)
+        for (i = h = 0, j = 1; i < elementsof(conf); i++) {
             if ((*(m = astconf(conf[i], NULL, NULL)) && (h |= (1 << i))) || (!i && (m = "ast"))) {
                 t = m;
                 while ((c = *m++) && c != '.') {
@@ -71,6 +71,7 @@ static_fn char **initconformance(void) {
                 }
                 if (h & 1) break;
             }
+        }
         i = sfstrtell(sp);
         sfstrseek(sp, 0, SEEK_SET);
         p = calloc(1, j * sizeof(char *) + i);
@@ -80,8 +81,9 @@ static_fn char **initconformance(void) {
             i = 0;
             p[i++] = m;
             while (i < j) {
-                while (*m++)
+                while (*m++) {
                     ;
+                }
                 p[i++] = m;
             }
             p[i] = 0;
@@ -122,8 +124,9 @@ char *conformance(const char *s, size_t n) {
     do {
         while (s < e && (isspace(*s) || *s == ',' || *s == '|')) s++;
         if (*s == ')') break;
-        for (t = s; s < e && !isspace(*s) && *s != ',' && *s != '|' && *s != ')'; s++)
+        for (t = s; s < e && !isspace(*s) && *s != ',' && *s != '|' && *s != ')'; s++) {
             ;
+        }
         if (s == t) break;
         q = p;
         while (*q) {

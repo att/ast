@@ -34,8 +34,9 @@
 char *errorx(const char *loc, const char *cmd, const char *cat, const char *msg) {
     char *s;
 
-    if (!error_info.translate)
+    if (!error_info.translate) {
         error_info.translate = translate; /* 2007-03-19 OLD_Error_info_t workaround */
+    }
     if (ERROR_translating()) {
         if (!loc) loc = (const char *)ast_setlocale(LC_MESSAGES, NULL);
         if (!cmd) cmd = (const char *)error_info.id;

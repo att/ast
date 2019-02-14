@@ -102,9 +102,9 @@ static struct State_s {
  */
 
 static_fn void error_print(Sfio_t *sp, char *name, char *delim) {
-    if (mbwide())
+    if (mbwide()) {
         sfputr(sp, name, -1);
-    else {
+    } else {
         int c;
 
         while (*name) {
@@ -135,11 +135,12 @@ static_fn void error_context(Sfio_t *sp, Error_context_t *cp) {
     if (!(cp->flags & ERROR_SILENT)) {
         if (cp->id) error_print(sp, cp->id, NULL);
         if (cp->line > ((cp->flags & ERROR_INTERACTIVE) != 0)) {
-            if (cp->file)
+            if (cp->file) {
                 sfprintf(sp, ": \"%s\", %s %d", cp->file,
                          ERROR_translate(NULL, NULL, ast.id, "line"), cp->line);
-            else
+            } else {
                 sfprintf(sp, "[%d]", cp->line);
+            }
         }
         sfputr(sp, ": ", -1);
     }
@@ -187,27 +188,30 @@ void errorv(const char *id, int level, va_list ap) {
     if (level > 0) {
         flags = level & ~ERROR_LEVEL;
         level &= ERROR_LEVEL;
-    } else
+    } else {
         flags = 0;
+    }
     if ((flags & (ERROR_USAGE | ERROR_NOID)) == ERROR_NOID) {
         format = (char *)id;
         id = 0;
-    } else
+    } else {
         format = 0;
+    }
     if (id) {
         catalog = (char *)id;
         if (!*catalog || *catalog == ':') {
             catalog = 0;
             library = 0;
-        } else if ((library = strchr(catalog, ':')) && !*++library)
+        } else if ((library = strchr(catalog, ':')) && !*++library) {
             library = 0;
+        }
     } else {
         catalog = 0;
         library = 0;
     }
-    if (catalog)
+    if (catalog) {
         id = 0;
-    else {
+    } else {
         id = (const char *)error_info.id;
         catalog = error_info.catalog;
     }
@@ -233,33 +237,39 @@ void errorv(const char *id, int level, va_list ap) {
         file = error_info.id;
         if (error_state.prefix) sfprintf(stkstd, "%s: ", error_state.prefix);
         if (flags & ERROR_USAGE) {
-            if (flags & ERROR_NOID)
+            if (flags & ERROR_NOID) {
                 sfprintf(stkstd, "       ");
-            else
+            } else {
                 sfprintf(stkstd, "%s: ", ERROR_translate(NULL, NULL, ast.id, "Usage"));
-            if (file || (opt_info.argv && (file = opt_info.argv[0])))
+            }
+            if (file || (opt_info.argv && (file = opt_info.argv[0]))) {
                 error_print(stkstd, file, " ");
+            }
         } else {
             if (level && !(flags & ERROR_NOID)) {
-                if (error_info.context && level > 0)
+                if (error_info.context && level > 0) {
                     error_context(stkstd, CONTEXT(error_info.flags, error_info.context));
+                }
                 if (file) error_print(stkstd, file, (flags & ERROR_LIBRARY) ? " " : ": ");
                 if (flags & (ERROR_CATALOG | ERROR_LIBRARY)) {
                     sfprintf(stkstd, "[");
-                    if (flags & ERROR_CATALOG)
+                    if (flags & ERROR_CATALOG) {
                         sfprintf(stkstd, "%s %s%s",
                                  catalog ? catalog : ERROR_translate(NULL, NULL, ast.id, "DEFAULT"),
                                  ERROR_translate(NULL, NULL, ast.id, "catalog"),
                                  (flags & ERROR_LIBRARY) ? ", " : "");
-                    if (flags & ERROR_LIBRARY)
+                    }
+                    if (flags & ERROR_LIBRARY) {
                         sfprintf(stkstd, "%s %s", library,
                                  ERROR_translate(NULL, NULL, ast.id, "library"));
+                    }
                     sfprintf(stkstd, "]: ");
                 }
             }
             if (level > 0 && error_info.line > ((flags & ERROR_INTERACTIVE) != 0)) {
-                if (error_info.file && *error_info.file)
+                if (error_info.file && *error_info.file) {
                     sfprintf(stkstd, "\"%s\", ", error_info.file);
+                }
                 sfprintf(stkstd, "%s %d: ", ERROR_translate(NULL, NULL, ast.id, "line"),
                          error_info.line);
             }
@@ -282,10 +292,11 @@ void errorv(const char *id, int level, va_list ap) {
             default:
                 if (level < 0) {
                     s = ERROR_translate(NULL, NULL, ast.id, "debug");
-                    if (error_info.trace < -1)
+                    if (error_info.trace < -1) {
                         sfprintf(stkstd, "%s%d:%s", s, level, level > -10 ? " " : "");
-                    else
+                    } else {
                         sfprintf(stkstd, "%s: ", s);
+                    }
                     for (n = 0; n < error_info.indent; n++) {
                         sfputc(stkstd, ' ');
                         sfputc(stkstd, ' ');
@@ -301,10 +312,11 @@ void errorv(const char *id, int level, va_list ap) {
             file = va_arg(ap, char *);
             line = va_arg(ap, int);
             s = ERROR_translate(NULL, NULL, ast.id, "line");
-            if (error_info.version)
+            if (error_info.version) {
                 sfprintf(stkstd, "(%s: \"%s\", %s %d) ", error_info.version, file, s, line);
-            else
+            } else {
                 sfprintf(stkstd, "(\"%s\", %s %d) ", file, s, line);
+            }
         }
         if (format || (format = va_arg(ap, char *))) {
             if (!(flags & ERROR_USAGE)) format = ERROR_translate(NULL, id, catalog, format);
@@ -321,15 +333,17 @@ void errorv(const char *id, int level, va_list ap) {
                 if (error_info.set & ERROR_SYSTEM) errno = 0;
                 error_info.last_errno = (level >= 0) ? 0 : errno;
             }
-            if (error_info.auxilliary && level >= 0)
+            if (error_info.auxilliary && level >= 0) {
                 level = (*error_info.auxilliary)(stkstd, level, flags);
+            }
             sfputc(stkstd, '\n');
         }
         if (level > 0) {
-            if ((level & ~ERROR_OUTPUT) > 1)
+            if ((level & ~ERROR_OUTPUT) > 1) {
                 error_info.errors++;
-            else
+            } else {
                 error_info.warnings++;
+            }
         }
         if (level < 0 || !(level & ERROR_OUTPUT)) {
             n = stktell(stkstd);
@@ -347,15 +361,17 @@ void errorv(const char *id, int level, va_list ap) {
             if (fd == sffileno(sfstderr) && error_info.write == write) {
                 sfwrite(sfstderr, s, n);
                 sfsync(sfstderr);
-            } else
+            } else {
                 (*error_info.write)(fd, s, n);
+            }
         } else {
             s = 0;
             level &= ERROR_LEVEL;
         }
         stkset(stkstd, bas, off);
-    } else
+    } else {
         s = 0;
+    }
     if (level >= error_state.breakpoint && error_state.breakpoint &&
         (!error_state.match || !regexec(error_state.match, s ? s : format, 0, NULL, 0)) &&
         (!error_state.count || !--error_state.count)) {
@@ -376,8 +392,9 @@ void errorv(const char *id, int level, va_list ap) {
 #else
             abort();
 #endif
-        } else
+        } else {
             error_break();
+        }
     }
     if (level >= ERROR_FATAL) (*error_info.exit)(level - ERROR_FATAL + 1);
 }
