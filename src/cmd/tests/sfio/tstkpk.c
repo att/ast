@@ -42,8 +42,9 @@ tmain() {
     if (!sfstack(f, sfstdin)) terror("Stacking");
 
     if (write(fd[1], "ab", 2) != 2) terror("Writing ab to pipe");
-    if (!(s = sfreserve(f, SF_UNBOUND, SF_LOCKR)) || sfvalue(f) != 2)
+    if (!(s = sfreserve(f, SF_UNBOUND, SF_LOCKR)) || sfvalue(f) != 2) {
         terror("Peeking size1 = %d but should be 2", sfvalue(f));
+    }
     sfread(f, s, 0);
     if (strncmp(s, "ab", 2) != 0) terror("Wrong data1");
 

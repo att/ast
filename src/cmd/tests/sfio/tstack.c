@@ -88,8 +88,9 @@ tmain() {
     s4 = "!@#$%^&*()_-+={}[]~`':;?/><,|";
 
     if (!(f1 = sfopen(NULL, s1, "s")) || !(f2 = sfopen(NULL, s2, "s")) ||
-        !(f3 = sfopen(NULL, s3, "s")))
+        !(f3 = sfopen(NULL, s3, "s"))) {
         terror("Opening strings");
+    }
 
     sfdisc(sfstdin, &Disc);
     sfclose(sfstdin);
@@ -102,8 +103,9 @@ tmain() {
     if (sfstack(sfstdin, f) != sfstdin) terror("Stacking on stdin2");
     if (sfopen(sfstdout, "/dev/null", "w") != sfstdout) terror("Opening sfstdout");
     if (sfmove(sfstdin, sfstdout, (Sfoff_t)SF_UNBOUND, -1) != 10 || !sfeof(sfstdin) ||
-        sferror(sfstdout))
+        sferror(sfstdout)) {
         terror("Bad sfmove");
+    }
 
     tcleanup();
 
@@ -129,12 +131,14 @@ tmain() {
 #endif
 
     if (!(f1 = sfopen(NULL, s1, "s")) || !(f2 = sfopen(NULL, s2, "s")) ||
-        !(f3 = sfopen(NULL, s3, "s")))
+        !(f3 = sfopen(NULL, s3, "s"))) {
         terror("Opening strings2");
+    }
     sfseek(f, (Sfoff_t)0, 0);
 
-    if (sfstack(f, f3) != f || sfstack(f, f2) != f || sfstack(f, f1) != f)
+    if (sfstack(f, f3) != f || sfstack(f, f2) != f || sfstack(f, f1) != f) {
         terror("Stacking streams2");
+    }
 
     if (!(s = sfreserve(f, SF_UNBOUND, 0)) || s != s1) terror("Sfpeek1");
 
@@ -146,8 +150,9 @@ tmain() {
 
     /* test to see if hidden read data still accessible */
     if (pipe(fd) < 0) terror("Can't create pipe");
-    if (!(f1 = sfnew(0, NULL, (size_t)SF_UNBOUND, fd[0], SF_READ | SF_WRITE)))
+    if (!(f1 = sfnew(0, NULL, (size_t)SF_UNBOUND, fd[0], SF_READ | SF_WRITE))) {
         terror("Can't create stream");
+    }
 
     if (write(fd[1], "0123", 4) != 4) terror("Can't write to pipe");
     if (sfgetc(f1) != '0') terror("sfgetc failed");

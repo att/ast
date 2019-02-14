@@ -42,8 +42,9 @@ tmain() {
     if ((long)dtinsert(dt, 1L) != 1) terror("Dtdeque insert 1");
     if ((long)dtappend(dt, 6L) != 6) terror("Dtdeque append 6");
 
-    for (k = 1, i = (long)dtfirst(dt); i != 0; i = (long)dtnext(dt, i), k += 1)
+    for (k = 1, i = (long)dtfirst(dt); i != 0; i = (long)dtnext(dt, i), k += 1) {
         if (i != k) terror("Unmatched elements");
+    }
     if (k != 7) terror("Bad element count");
 
     texit(0);

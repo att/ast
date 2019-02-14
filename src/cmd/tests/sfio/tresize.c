@@ -73,8 +73,9 @@ tmain() {
 
     for (i = 0; i < sizeof(buf); ++i) buf[i] = '1';
 
-    for (i = 0; i < 1024; ++i)
+    for (i = 0; i < 1024; ++i) {
         if (sfwrite(f, buf, sizeof(buf)) != sizeof(buf)) terror("Can't write data");
+    }
 
     if (sfsize(f) != (s = 1024 * sizeof(buf))) terror("Bad stream size");
 
@@ -84,8 +85,9 @@ tmain() {
     if (sfseek(f, s, 0) != s) terror("seek failed");
     if (sfread(f, buf, sizeof(buf)) != sizeof(buf)) terror("Can't read data");
 
-    for (i = 0; i < sizeof(buf); ++i)
+    for (i = 0; i < sizeof(buf); ++i) {
         if (buf[i] != 0) terror("Bad data");
+    }
 
     if (sfresize(f, s) < 0) terror("Can't resize stream");
     if (sfsize(f) != s) terror("Bad stream size");

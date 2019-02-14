@@ -53,54 +53,62 @@ int lockobj(void *lck, ssize_t size, int locking) {
 
     if (locking == 0) /* unlocking a slot */
     {
-        if (size == sizeof(char))
+        if (size == sizeof(char)) {
             lckv = *((char *)lck);
-        else if (size == sizeof(short))
+        } else if (size == sizeof(short)) {
             lckv = *((short *)lck);
-        else
+        } else {
             lckv = *((int *)lck);
-        if (lckv != Pnum) /* unlocking a wrong lock */
+        }
+        if (lckv != Pnum) { /* unlocking a wrong lock */
             terror("Process %3d(pid=%d): unlocking %d(pid=%d)?", Pnum, Pid[Pnum], lckv);
+        }
 
-        if (size == sizeof(char))
+        if (size == sizeof(char)) {
             aso = asocaschar(lck, Pnum, 0);
-        else if (size == sizeof(short))
+        } else if (size == sizeof(short)) {
             aso = asocasshort(lck, Pnum, 0);
-        else
+        } else {
             aso = asocasint(lck, Pnum, 0);
-        if (aso != Pnum) /* CAS failed! */
+        }
+        if (aso != Pnum) { /* CAS failed! */
             terror("Process %3d(pid=%d): unlocking CAS error %d", Pnum, Pid[Pnum], aso);
+        }
 
         return 0;
     }
 
     for (k = 0;; ++k, sched_yield()) /* locking a slot */
     {
-        if (size == sizeof(char))
+        if (size == sizeof(char)) {
             aso = asocaschar(lck, 0, Pnum);
-        else if (size == sizeof(short))
+        } else if (size == sizeof(short)) {
             aso = asocasshort(lck, 0, Pnum);
-        else
+        } else {
             aso = asocasint(lck, 0, Pnum);
+        }
 
-        if (aso == 0)
+        if (aso == 0) {
             break;
-        else if (aso < 0)
+        } else if (aso < 0) {
             terror("Process %3d(pid=%d): locking CAS error %d", Pnum, Pid[Pnum], aso);
-        else if (k > 0 && (k % 10000) == 0)
+        } else if (k > 0 && (k % 10000) == 0) {
             twarn("Process %3d(pid=%d): locking loop %d blocked by %d", Pnum, Pid[Pnum], k, aso);
+        }
     }
 
     for (k = 0; k < 2; ++k, sched_yield()) /* make sure that lock is good */
     {
-        if (size == sizeof(char))
+        if (size == sizeof(char)) {
             lckv = *((char *)lck);
-        else if (size == sizeof(short))
+        } else if (size == sizeof(short)) {
             lckv = *((short *)lck);
-        else
+        } else {
             lckv = *((int *)lck);
-        if (lckv != Pnum)
+        }
+        if (lckv != Pnum) {
             terror("Process %3d(pid=%d): at step %d lock=%d?", Pnum, Pid[Pnum], k, lckv);
+        }
     }
 
     return 0;
@@ -111,25 +119,29 @@ static void workload(int pnum) {
 
     Pnum = pnum;
     for (k = 0; k < N_STEP; ++k) {
-        if (k > 0 && (k % 100) == 0)
+        if (k > 0 && (k % 100) == 0) {
             tinfo("Process %3d(pid=%d): progress to %d", Pnum, Pid[Pnum], k);
+        }
 
         r = random() % N_SLOT;
         lockobj(Lcki + r, sizeof(int), 1);
-        if (Lcki[r] != Pnum)
+        if (Lcki[r] != Pnum) {
             terror("Process %3d(pid=%d): bad int lock %d", Pnum, Pid[Pnum], (int)Lcki[r]);
+        }
         lockobj(Lcki + r, sizeof(int), 0);
 
         r = random() % N_SLOT;
         lockobj(Lcks + r, sizeof(short), 1);
-        if (Lcks[r] != Pnum)
+        if (Lcks[r] != Pnum) {
             terror("Process %3d(pid=%d): bad short lock %d", Pnum, Pid[Pnum], (int)Lcks[r]);
+        }
         lockobj(Lcks + r, sizeof(short), 0);
 
         r = random() % N_SLOT;
         lockobj(Lckc + r, sizeof(char), 1);
-        if (Lckc[r] != Pnum)
+        if (Lckc[r] != Pnum) {
             terror("Process %3d(pid=%d): bad char lock %d", Pnum, Pid[Pnum], (int)Lckc[r]);
+        }
         lockobj(Lckc + r, sizeof(char), 0);
     }
     asoincint(Done);
@@ -156,17 +168,18 @@ tmain() {
     Lckc = (unsigned char *)(Lcks + N_SLOT);
 
     for (k = 1; k <= N_PROC; ++k) {
-        if ((pid = fork()) < 0)
+        if ((pid = fork()) < 0) {
             terror("Can't create a child process");
-        else if (pid > 0) /* parent process */
+        } else if (pid > 0) /* parent process */
         {
             Pid[k] = pid;
             *Nproc += 1;
             continue;
         } else /* child process */
         {
-            for (;; sched_yield()) /* wait until all are alive */
+            for (;; sched_yield()) { /* wait until all are alive */
                 if (*Nproc == N_PROC) break;
+            }
             workload(k); /* now start working concurrently */
             texit(0);
         }

@@ -32,8 +32,9 @@ static ssize_t writef(Sfio_t *f, const void *data, size_t n, Sfdisc_t *disc) {
     char *dt;
     ssize_t k;
 
-    for (dt = (char *)data + n - 1; dt >= (char *)data; --dt)
+    for (dt = (char *)data + n - 1; dt >= (char *)data; --dt) {
         if (*dt == '\n') break;
+    }
 
     if ((k = (dt - (char *)data) + 1) == 0) tinfo("Processing a partial line, ok");
 

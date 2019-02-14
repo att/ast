@@ -72,20 +72,24 @@ tmain() {
         for (i = 0; i < N_OBJ; ++i) {
             if (dtinsert(dt, Obj + i) != Obj + i) terror("Insert %d,%d", Obj[i].key, Obj[i].ord);
 
-            if (i > 0 && (i % N_CHK) == 0)
+            if (i > 0 && (i % N_CHK) == 0) {
                 if ((count = dtsize(dt)) != i + 1) terror("Bad size %d (need %d)", count, i + 1);
+            }
         }
 
         count = n = 0; /* count the group of elements with key == 0 */
-        for (o = (Obj_t *)dtflatten(dt); o; o = (Obj_t *)dtlink(dt, o), count += 1)
+        for (o = (Obj_t *)dtflatten(dt); o; o = (Obj_t *)dtlink(dt, o), count += 1) {
             if (o->key == 0) n += 1;
-        if (count != N_OBJ || n != R_OBJ)
+        }
+        if (count != N_OBJ || n != R_OBJ) {
             terror("flatten %s: count=%d(need=%d) n=%d(need=%d)", k == 0 ? "bag" : "obag", count,
                    N_OBJ, n, R_OBJ);
+        }
 
         /* delete a bunch of objects */
-        for (n = 0, i = 0; i < N_OBJ; i += R_OBJ, n += 1)
+        for (n = 0, i = 0; i < N_OBJ; i += R_OBJ, n += 1) {
             if (!dtdelete(dt, Obj + i)) terror("delete %s: i=%d", k == 0 ? "bag" : "obag", i);
+        }
 
         count = 0; /* count the left over */
         for (o = (Obj_t *)dtflatten(dt); o; o = (Obj_t *)dtlink(dt, o)) count += 1;

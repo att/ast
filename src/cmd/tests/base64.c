@@ -66,8 +66,9 @@ int main() {
                 sfprintf(sfstdout, "test %02d left buffer decode failed\n", testno);
                 continue;
             }
-        } else
+        } else {
             l = 0;
+        }
         r = base64encode(dat + i, sizeof(dat) - i, NULL, buf + l, sizeof(buf) - l);
         if (r < 0 || r > sizeof(buf) - l) {
             errors++;

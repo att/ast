@@ -88,8 +88,9 @@ static Dt_t *opendictionary(Mydisc_t *dc) {
     dc->disc.memoryf = mymemory;
     dc->disc.eventf = (Dtevent_f)0;
 
-    if (!(dt = dtopen(&dc->disc, Dtrhset))) /* open dictionary with hash-trie */
+    if (!(dt = dtopen(&dc->disc, Dtrhset))) { /* open dictionary with hash-trie */
         terror("Can't open dictionary");
+    }
     dtcustomize(dt, DT_SHARE, 1); /* turn on concurrent access mode */
 
     return dt;
@@ -103,8 +104,9 @@ static void *volley(void *arg) {
     Nthreads += 1; /* wait until all threads have been started */
     while (Nthreads < N_THREADS) tmsleep(0, 1);
 
-    if ((deldt = (int)((long)arg)) < 0 || deldt > 1)
+    if ((deldt = (int)((long)arg)) < 0 || deldt > 1) {
         terror("Thread number must be 0 or 1, not %d", deldt);
+    }
     insdt = !deldt;
 
     n_move = 0;
@@ -121,8 +123,9 @@ static void *volley(void *arg) {
                 asoincint(&o->ins[insdt]);
 
                 n_move += 1;
-            } else if (rv)
+            } else if (rv) {
                 terror("Unknown object %d", rv->value);
+            }
 
             if (k % 100 == 0) tmsleep(0, 1);
         }
@@ -154,8 +157,9 @@ tmain() {
             o->value = n == 0 ? k : k + N_OBJ / 2;
 
             if (dtinsert(Dict[n], o) != o) terror("Insert failed n=%d k=%d", n, k);
-            if (dtsearch(Dict[n], o) != o) /* verify insert succeeded */
+            if (dtsearch(Dict[n], o) != o) { /* verify insert succeeded */
                 terror("Search failed n=%d k=%d", n, k);
+            }
 
             o->ins[n] += 1;
         }

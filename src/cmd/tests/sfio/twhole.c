@@ -54,8 +54,9 @@ tmain() {
     sfset(f, SF_WHOLE, 1);
     sfdisc(f, &Disc);
 
-    for (i = 0; i < 100; ++i)
+    for (i = 0; i < 100; ++i) {
         if (sfwrite(f, s, 52) != 52) terror("sfwrite failed");
+    }
     sfclose(f);
     if (Count != 10) terror("Wrong number of writes1");
 
@@ -67,8 +68,9 @@ tmain() {
     sfset(f, SF_WHOLE, 1);
     sfdisc(f, &Disc);
 
-    for (i = 0; i < 100; ++i)
+    for (i = 0; i < 100; ++i) {
         if (sfputr(f, s, '\n') != 53) terror("sfputr failed");
+    }
     sfclose(f);
     if (Count != 10) terror("Wrong number of writes2");
 

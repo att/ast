@@ -70,8 +70,9 @@ tmain() {
 
     dtwalk(dt1, visit, NULL);
     if (Count != 6) terror("Walk wrong length");
-    for (i = 1; i <= 6; ++i)
+    for (i = 1; i <= 6; ++i) {
         if (!See[i]) terror("Bad walk");
+    }
 
     dtinsert(dt1, 2L);
 
@@ -85,8 +86,9 @@ tmain() {
 
     /* check union of elements in order across ordered sets */
     dtview(dt2, dt3);
-    for (k = 1, i = (long)dtfirst(dt1); i; ++k, i = (long)dtnext(dt1, i))
+    for (k = 1, i = (long)dtfirst(dt1); i; ++k, i = (long)dtnext(dt1, i)) {
         if (i != k) terror("Elements not appearing in order");
+    }
 
     dtinsert(dt3, 10L);
     if ((long)dtatmost(dt1, 9L) != 8L) terror("dtatmost failed on an order set");

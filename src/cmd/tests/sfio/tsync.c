@@ -53,12 +53,13 @@ ssize_t newline(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
     size_t i;
     char *s = (char *)buf;
 
-    if (((Mydisc_t *)disc)->sync) /* for synchronization, write everything */
+    if (((Mydisc_t *)disc)->sync) { /* for synchronization, write everything */
         i = n;
-    else /* only write entire lines */
+    } else /* only write entire lines */
     {
-        for (i = n; i > 0; --i)
+        for (i = n; i > 0; --i) {
             if (s[i - 1] == '\n') break;
+        }
         if (i <= 0) return 0;
     }
 
@@ -91,8 +92,9 @@ tmain() {
 
     if (sfeof(sfstdin)) terror("Premature eof");
     if (sferror(sfstdout)) terror("Weird error1");
-    if ((off = sfmove(sfstdin, sfstdout, (Sfoff_t)SF_UNBOUND, -1)) != 4)
+    if ((off = sfmove(sfstdin, sfstdout, (Sfoff_t)SF_UNBOUND, -1)) != 4) {
         terror("Wrong # of bytes %lld", off);
+    }
     if (!sfeof(sfstdin)) terror("Should be eof");
     if (sferror(sfstdout)) terror("Weird error2");
     if (sfpurge(sfstdout) < 0) terror("Purging stdout");
@@ -132,8 +134,9 @@ tmain() {
     sfgetc(f2);
     if ((off = sftell(f2)) != 1) terror("Wrong sfseek location %lld", off);
     sfsync(0);
-    if ((off = (Sfoff_t)lseek(sffileno(f2), (off_t)0, 1)) != 1)
+    if ((off = (Sfoff_t)lseek(sffileno(f2), (off_t)0, 1)) != 1) {
         terror("Wrong lseek location %lld", off);
+    }
 
     dupf2 = dup(sffileno(f2));
     sfclose(f2);
@@ -145,8 +148,9 @@ tmain() {
     sfsetbuf(f, NULL, 95);
     sfset(f, SF_IOCHECK, 1);
 
-    for (n = 0; n < 10; ++n)
+    for (n = 0; n < 10; ++n) {
         if (sfwrite(f, "0123456789\n", 11) != 11) terror("Bad sfwrite call");
+    }
 
     if (sfwrite(f, "abcdefgh", 8) != 8) terror("Bad sfwrite call 2");
 

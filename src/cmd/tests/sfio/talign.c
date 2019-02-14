@@ -47,8 +47,9 @@ tmain() {
 
     for (i = 0; i < sizeof(buf); ++i) buf[i] = 'a' + (i % 26);
 
-    for (i = 0; i < 1024; ++i)
+    for (i = 0; i < 1024; ++i) {
         if (sfwrite(f, buf, sizeof(buf)) != sizeof(buf)) terror("Write error");
+    }
     sfclose(f);
 
     if (!(f = sfopen(NULL, tstfile("sf", 0), "r"))) terror("Opening to read");

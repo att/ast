@@ -114,8 +114,9 @@ tmain() {
     if (sfsscanf("123 ab", "%*d") != 0) terror("Bad return value");
 
     if (sfsscanf("123abcA", "%[0-9]%[a-z]%[0-9]", str, c, cl) != 2 || strcmp(str, "123") != 0 ||
-        strcmp(c, "abc") != 0)
+        strcmp(c, "abc") != 0) {
         terror("Bad character class scanning");
+    }
 
     if (sfsscanf("123 456 ", "%d %d%n", &i, &j, &n) != 2) terror("Bad integer scanning");
     if (i != 123 || j != 456 || n != 7) terror("Bad return values");
@@ -135,14 +136,16 @@ tmain() {
     s = ".1234 .1234";
     if (sfsscanf(s, "%f %lf", &f, &d) != 2) terror("Bad scanning6");
 
-    if (f <= .1233 || f >= .1235 || d <= .1233 || d >= .1235)
+    if (f <= .1233 || f >= .1235 || d <= .1233 || d >= .1235) {
         terror("Bad return values: f=%.4f d=%.4lf", f, d);
+    }
 
     /* test for scanning max double value */
     s = sfprints("%.14le", MAXD);
     if (!s || s[0] < '0' || s[0] > '9') terror("sfprints failed");
-    for (i = 0; s[i]; ++i)
+    for (i = 0; s[i]; ++i) {
         if (s[i] == 'e') break;
+    }
     if (s[i - 1] > '0' && s[i - 1] <= '9') s[i - 1] -= 1;
     sfsscanf(s, "%le", &d);
     if (d > MAXD || d < MAXD / 2) terror("sfscanf of MAXDOUBLE failed");
@@ -165,21 +168,26 @@ tmain() {
     if (vp != (void *)sf) terror("Wrong pointer scan");
 
     if (sfsscanf("2#1001", "%i", &i) != 1 || i != 9) terror("Bad %%i scanning");
-    if (sfsscanf("2#1001", "%#i%c", &i, c) != 2 || i != 2 || c[0] != '#')
+    if (sfsscanf("2#1001", "%#i%c", &i, c) != 2 || i != 2 || c[0] != '#') {
         terror("Bad %%#i scanning");
+    }
 
     n = -1;
-    if (sfsscanf("12345", "%d%n", &k, &n) != 1 || k != 12345 || n != 5)
+    if (sfsscanf("12345", "%d%n", &k, &n) != 1 || k != 12345 || n != 5) {
         terror("Bad scanning results");
+    }
     n = -1;
-    if (sfsscanf("12345", "%d %n", &k, &n) != 1 || k != 12345 || n != 5)
+    if (sfsscanf("12345", "%d %n", &k, &n) != 1 || k != 12345 || n != 5) {
         terror("Bad scanning results");
+    }
     n = -1;
-    if (sfsscanf("12345 ", "%d%n", &k, &n) != 1 || k != 12345 || n != 5)
+    if (sfsscanf("12345 ", "%d%n", &k, &n) != 1 || k != 12345 || n != 5) {
         terror("Bad scanning results");
+    }
     n = -1;
-    if (sfsscanf("12345 ", "%d %n", &k, &n) != 1 || k != 12345 || n != 6)
+    if (sfsscanf("12345 ", "%d %n", &k, &n) != 1 || k != 12345 || n != 6) {
         terror("Bad scanning results");
+    }
 
     n = sfsscanf("zis.zis.gawpwo", "%..36lu.%..36lu.%..36lu", &a1, &a2, &a3);
     s = sfprints("%d %lu %lu %lu", n, a1, a2, a3);
@@ -201,8 +209,9 @@ tmain() {
     fmt.args[1] = (void *)&f;
     f = 0;
     i = sfsscanf("123 3.1415", "%!", &fmt.fmt);
-    if (i != 2 || n != 123 || f <= 3.1414 || f >= 3.1416)
+    if (i != 2 || n != 123 || f <= 3.1414 || f >= 3.1416) {
         terror("%%! failed i=%d n=%d d=%g", i, n, f);
+    }
 
     k = 0;
     if (sfsscanf("%1", "%%%d", &k) != 1 || k != 1) terror("%%%% failed");

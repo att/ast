@@ -46,8 +46,9 @@ ssize_t discread(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     }
 
     if (n > dc->size) n = dc->size;
-    if ((r = read(sffileno(f), buf, n)) <= 0)
+    if ((r = read(sffileno(f), buf, n)) <= 0) {
         terror("Bad reading of data from file r=%d n=%d", r, n);
+    }
     /**/ TSTDEBUG(("Reader just read %d bytes", r));
 
     dc->size -= r;
@@ -69,15 +70,17 @@ void writeprocess(int send, int recv, Sfio_t *f) {
 
     for (i = 0; i < ITER; i++) {
         /* write out a buffer of data */
-        if ((size = write(sffileno(f), buf, sizeof(buf))) != sizeof(buf))
+        if ((size = write(sffileno(f), buf, sizeof(buf))) != sizeof(buf)) {
             terror("Bad write to file");
+        }
         if (write(send, &size, sizeof(int)) != sizeof(int)) terror("Sending output size %d", size);
         /**/ TSTDEBUG(("Writer just wrote %d bytes", size));
 
         /* now wait until readprocess exhausts the data */
         while (size > 0) {
-            if ((rv = read(recv, &s, sizeof(int))) != sizeof(int))
+            if ((rv = read(recv, &s, sizeof(int))) != sizeof(int)) {
                 terror("Reading amount of consumed data, rv=%d", rv);
+            }
             /**/ TSTDEBUG(("Writer was told of a %d byte read", s));
 
             if (s <= 0 || s > size) terror("Reader just told a bad read size %d", s);

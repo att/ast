@@ -47,8 +47,9 @@ tmain() {
 
     to = argc > 1 ? 0 : 4;
 
-    if (sfnew(sfstdout, buf, sizeof(buf), SF_UNBOUND, SF_STRING | SF_WRITE) != sfstdout)
+    if (sfnew(sfstdout, buf, sizeof(buf), SF_UNBOUND, SF_STRING | SF_WRITE) != sfstdout) {
         terror("Reopen sfstdout");
+    }
 
     if (pipe(fd) < 0) terror("Can't open pipe");
     fr = sfnew(NULL, NULL, (size_t)SF_UNBOUND, fd[0], SF_READ);
@@ -70,16 +71,18 @@ tmain() {
 
     if (pipe(fd) < 0) terror("Can't open pipe2");
     if (!(fr = sfnew(NULL, NULL, (size_t)SF_UNBOUND, fd[0], SF_READ)) ||
-        !(fw = sfnew(NULL, NULL, (size_t)SF_UNBOUND, fd[1], SF_WRITE)))
+        !(fw = sfnew(NULL, NULL, (size_t)SF_UNBOUND, fd[1], SF_WRITE))) {
         terror("Can't open stream");
+    }
     sfset(fr, SF_SHARE | SF_LINE, 1);
     sfset(fw, SF_SHARE, 1);
 
     if (to) alarm(4);
     SYNC if (sfwrite(fw, "1\n2\n3\n", 6) != 6) terror("sfwrite failed");
     i = j = -1;
-    SYNC if (sfscanf(fr, "%d%d\n%n", &i, &j, &n) != 2 || i != 1 || j != 2 || n != 4)
+    SYNC if (sfscanf(fr, "%d%d\n%n", &i, &j, &n) != 2 || i != 1 || j != 2 || n != 4) {
         terror("sfscanf failed");
+    }
     SYNC if (sfscanf(fr, "%d\n%n", &i, &n) != 1 || i != 3 || n != 2) terror("sfscanf failed");
     if (to) alarm(0);
 

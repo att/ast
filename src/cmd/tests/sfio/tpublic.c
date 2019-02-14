@@ -41,8 +41,9 @@ tmain() {
     sfputr(f, "4444", '\n');
 
     if (!(f = sfopen(f, tstfile("sf", 0), "r"))) terror("Can't open file to read1");
-    if (!(g = sfnew(NULL, NULL, (size_t)SF_UNBOUND, dup(sffileno(f)), SF_READ)))
+    if (!(g = sfnew(NULL, NULL, (size_t)SF_UNBOUND, dup(sffileno(f)), SF_READ))) {
         terror("Can't open file to read2");
+    }
 
     sfset(f, SF_SHARE | SF_PUBLIC, 1);
     sfset(g, SF_SHARE | SF_PUBLIC, 1);
@@ -59,8 +60,9 @@ tmain() {
     sfclose(f);
     sfclose(g);
     if (!(f = sfopen(NULL, tstfile("sf", 0), "r+"))) terror("Can't open file to write2");
-    if (!(g = sfnew(NULL, NULL, (size_t)SF_UNBOUND, dup(sffileno(f)), SF_READ)))
+    if (!(g = sfnew(NULL, NULL, (size_t)SF_UNBOUND, dup(sffileno(f)), SF_READ))) {
         terror("Can't open file to read3");
+    }
 
     sfset(f, SF_SHARE | SF_PUBLIC, 1);
     sfset(g, SF_SHARE | SF_PUBLIC, 1);
@@ -77,26 +79,30 @@ tmain() {
     if (!(f = sfopen(f, tstfile("sf", 0), "w"))) terror("Can't open file to write3");
 
     for (i = 0; i < sizeof(buf); ++i) buf[i] = 0;
-    for (i = 0; i < 256; ++i)
+    for (i = 0; i < 256; ++i) {
         if (sfwrite(f, buf, sizeof(buf)) != sizeof(buf)) terror("Writing buffer0");
+    }
 
     for (i = 0; i < sizeof(buf); ++i) buf[i] = 1;
-    for (i = 0; i < 256; ++i)
+    for (i = 0; i < 256; ++i) {
         if (sfwrite(f, buf, sizeof(buf)) != sizeof(buf)) terror("Writing buffer1");
+    }
 
     if (!(f = sfopen(f, tstfile("sf", 0), "r"))) terror("Can't open file to read3");
     sfset(f, SF_SHARE | SF_PUBLIC, 1);
 
     for (n = 0; n < 256; ++n) {
         if (!(s = sfreserve(f, sizeof(buf), 0))) terror("Can't reserve buffer1");
-        for (i = 0; i < sizeof(buf); ++i)
+        for (i = 0; i < sizeof(buf); ++i) {
             if (s[i] != 0) terror("Bad data1");
+        }
     }
 
     for (n = 0; n < 256; ++n) {
         if (!(s = sfreserve(f, sizeof(buf), 0))) terror("Can't reserve buffer2");
-        for (i = 0; i < sizeof(buf); ++i)
+        for (i = 0; i < sizeof(buf); ++i) {
             if (s[i] != 1) terror("Bad data2");
+        }
     }
 
     if ((s = sfreserve(f, 1, 0))) terror("Reading beyond eof");
@@ -105,13 +111,16 @@ tmain() {
     if (sfwrite(f, "aaa\nbbb\nccc\n", 12) != 12) terror("Can't write");
     sfclose(f);
     if (sfopen(sfstdin, tstfile("sf", 0), "r") != sfstdin) terror("Can't open file as sfstdin");
-    if ((n = (int)sfmove(sfstdin, NULL, (Sfoff_t)SF_UNBOUND, '\n')) != 3)
+    if ((n = (int)sfmove(sfstdin, NULL, (Sfoff_t)SF_UNBOUND, '\n')) != 3) {
         terror("sfmove wrong number of lines %d", n);
+    }
     if (sfseek(sfstdin, (Sfoff_t)0, 0) != 0) terror("Can't seek back to 0");
-    if ((n = (int)sfmove(sfstdin, NULL, (Sfoff_t)2, '\n')) != 2)
+    if ((n = (int)sfmove(sfstdin, NULL, (Sfoff_t)2, '\n')) != 2) {
         terror("sfmove2 wrong number of lines %d", n);
-    if ((n = (int)sfmove(sfstdin, NULL, (Sfoff_t)SF_UNBOUND, '\n')) != 1)
+    }
+    if ((n = (int)sfmove(sfstdin, NULL, (Sfoff_t)SF_UNBOUND, '\n')) != 1) {
         terror("sfmove3 wrong number of lines %d", n);
+    }
 
     texit(0);
 }

@@ -291,15 +291,17 @@ tmain() {
     fe.extf = nulprint;
     buf2[0] = buf2[1] = buf2[2] = buf2[3] = buf2[4] = 3;
     sfsprintf(buf2, sizeof(buf2), "%!\001%Z\002", &fe);
-    if (buf2[0] != 1 || buf2[1] != 0 || buf2[2] != 2 || buf2[3] != 0 || buf2[4] != 3)
+    if (buf2[0] != 1 || buf2[1] != 0 || buf2[2] != 2 || buf2[3] != 0 || buf2[4] != 3) {
         terror("%%Z <1,0,2,0,3> != <%o,%o,%o,%o,%o>", buf2[0], buf2[1], buf2[2], buf2[3], buf2[4]);
+    }
 
     fe.form = NULL;
     fe.extf = nulprint;
     buf2[0] = buf2[1] = buf2[2] = buf2[3] = buf2[4] = 3;
     sfsprintf(buf2, sizeof(buf2), "%!%c%Z%c", &fe, 1, 2);
-    if (buf2[0] != 1 || buf2[1] != 0 || buf2[2] != 2 || buf2[3] != 0 || buf2[4] != 3)
+    if (buf2[0] != 1 || buf2[1] != 0 || buf2[2] != 2 || buf2[3] != 0 || buf2[4] != 3) {
         terror("%%Z <1,0,2,0,3> != <%o,%o,%o,%o,%o>", buf2[0], buf2[1], buf2[2], buf2[3], buf2[4]);
+    }
 
     fe.form = NULL;
     fe.extf = nulprint;
@@ -398,8 +400,9 @@ tmain() {
     if (strcmp(buf1, "A0000001.20B") != 0) terror("Failed floating point and zero-filled test");
 
     sfsprintf(buf1, sizeof(buf1), "A%-010.2fB", 1.2);
-    if (strcmp(buf1, "A1.20      B") != 0)
+    if (strcmp(buf1, "A1.20      B") != 0) {
         terror("Failed floating point and left justification test");
+    }
 
     sfsprintf(buf1, sizeof(buf1), "A%-#XB", 0xab);
     if (strcmp(buf1, "A0XABB") != 0) terror("Failed %%-#X conversion test");
@@ -466,8 +469,9 @@ tmain() {
               1345, 1234, 1234567890, 321.7654321, 321.7654321, -0.01, 0.01, 1e-5, 1.4, -1.4,
               "test-string", 0, 0, 0L);
 
-    if (strcmp(buf1, "1345 1234 11145401322 322 3e+02 -0.01 0.01 1e-05 1 -1    |"))
+    if (strcmp(buf1, "1345 1234 11145401322 322 3e+02 -0.01 0.01 1e-05 1 -1    |")) {
         terror("Precision not set to zero as required after a dot");
+    }
 
     /* test %#c to print C-style characters */
     sfsprintf(buf1, sizeof(buf1), "%#.2c%#.2c", '\n', 255);
@@ -551,14 +555,16 @@ tmain() {
     }
 
     /* test the sfaprints() function */
-    if ((i = sfaprints(&s, "%d", 123)) != 3 || strcmp(s, "123") != 0)
+    if ((i = sfaprints(&s, "%d", 123)) != 3 || strcmp(s, "123") != 0) {
         terror("sfaprints() failed -- expected \"123\" [3], got \"%s\" [%d]", s, i);
+    }
     free(s);
 
     /* test 64-bit linux %g */
     sfsprintf(buf1, sizeof(buf1), "%1.15g", (double)987654321098782.0);
-    if (strcmp(buf1, "987654321098782") != 0)
+    if (strcmp(buf1, "987654321098782") != 0) {
         terror("(double)987654321098782.0 %%1.15g format error: %s", buf1);
+    }
 
     texit(0);
 }

@@ -65,8 +65,9 @@ tmain() {
 
     os = "1234567890\n";
     on = strlen(os);
-    for (i = 0; i < 100; ++i)
+    for (i = 0; i < 100; ++i) {
         if (sfputr(f1, os, -1) < 0) terror("Writing data");
+    }
     sfseek(f1, (Sfoff_t)0, 0);
     for (i = 0; i < 100; ++i) {
         if (!(s = sfgetr(f1, '\n', 0)) || (n = sfvalue(f1)) != on) terror("Reading data");
@@ -76,14 +77,16 @@ tmain() {
 
     /* see if data matches */
     if (!(f1 = sfopen(f1, tstfile("sf", 0), "r")) || !(f2 = sfopen(f2, tstfile("sf", 1), "r")) ||
-        !(f3 = sfopen(f3, tstfile("sf", 2), "r")))
+        !(f3 = sfopen(f3, tstfile("sf", 2), "r"))) {
         terror("sfopen for file comparison");
+    }
 
     if (sfsize(f1) != sfsize(f2) || sfsize(f2) != sfsize(f3)) terror("Files don't match sizes");
 
     n = (int)sfsize(f1);
-    if (!(s1 = sfreserve(f1, n, 0)) || !(s2 = sfreserve(f2, n, 0)) || !(s3 = sfreserve(f3, n, 0)))
+    if (!(s1 = sfreserve(f1, n, 0)) || !(s2 = sfreserve(f2, n, 0)) || !(s3 = sfreserve(f3, n, 0))) {
         terror("Fail reserving data");
+    }
 
     if (memcmp(s1, s2, n) != 0 || memcmp(s2, s3, n) != 0) terror("Data do not match");
     sfclose(f1);
@@ -110,8 +113,9 @@ tmain() {
 
     if (!(f1 = sfopen(NULL, tstfile("sf", 0), "w+")) ||
         !(f2 = sfopen(NULL, tstfile("sf", 1), "w+")) ||
-        !(f3 = sfopen(NULL, tstfile("sf", 2), "w+")))
+        !(f3 = sfopen(NULL, tstfile("sf", 2), "w+"))) {
         terror("sfopen3");
+    }
     if (sfpool(f1, f2, SF_SHARE) != f2) terror("sfpool3 f1");
     if (sfpool(f3, f2, SF_SHARE) != f2) terror("sfpool3 f3");
     if (sfputc(f3, 'x') < 0) terror("sfputc to f3");
@@ -134,16 +138,19 @@ tmain() {
 
     if (sfpool(f1, NULL, 0) != f1) terror("sfpool delete of a lone stream did not return self");
 
-    if (!(f1 = sfopen(NULL, tstfile("sf", 0), "w+")) || !(f2 = sfopen(NULL, tstfile("sf", 1), "w")))
+    if (!(f1 = sfopen(NULL, tstfile("sf", 0), "w+")) ||
+        !(f2 = sfopen(NULL, tstfile("sf", 1), "w"))) {
         terror("sfopen4");
+    }
     sfputc(f1, 'a');
     sfputc(f1, 'b');
     sfputc(f1, 'c');
     sfset(f1, SF_WRITE, 0); /* off write mode */
     if (sfpool(f1, f2, SF_SHARE)) terror("sfpool should fail pooling read+write streams");
     if (sfseek(f1, (Sfoff_t)0, 0) != (Sfoff_t)0) terror("sfseek failed");
-    if (!(s = sfreserve(f1, 3, SF_LOCKR)) || memcmp(s, "abc", 3) != 0)
+    if (!(s = sfreserve(f1, 3, SF_LOCKR)) || memcmp(s, "abc", 3) != 0) {
         terror("Can't get data from f1");
+    }
 
     texit(0);
 }

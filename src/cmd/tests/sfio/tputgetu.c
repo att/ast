@@ -30,13 +30,15 @@ tmain() {
 
     if (!(fp = sftmp(8))) terror("Can't open temp file");
 
-    for (i = 10000; i <= 100000; i += 9)
+    for (i = 10000; i <= 100000; i += 9) {
         if (sfputu(fp, i) < 0) terror("Writing %u", i);
+    }
 
     sfseek(fp, (Sfoff_t)0, 0);
 
-    for (i = 10000; i <= 100000; i += 9)
+    for (i = 10000; i <= 100000; i += 9) {
         if ((r = (unsigned int)sfgetu(fp)) != i) terror("Input=%u, Expect=%u", r, i);
+    }
 
     texit(0);
 }

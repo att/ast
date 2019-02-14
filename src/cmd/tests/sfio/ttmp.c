@@ -58,8 +58,9 @@ tmain() {
     /* test to see if transforming to file is ok with sfwrite */
     memset(buf, 1, TEST_BUFSIZE);
     if (!(f = sftmp(1024))) terror("sftmp failed");
-    if ((siz = sfwrite(f, buf, TEST_BUFSIZE)) != TEST_BUFSIZE)
+    if ((siz = sfwrite(f, buf, TEST_BUFSIZE)) != TEST_BUFSIZE) {
         terror("sfwrite failed with siz=%ld", siz);
+    }
 
     /* ast ed does this */
     f = sftmp(SF_BUFSIZE);
@@ -99,14 +100,16 @@ tmain() {
     sfset(f, SF_READ, 0); /* turn off read mode so stream is write only */
 
     sfseek(f, (Sfoff_t)(-10), 1); /* back 10 places to get space to write */
-    if (!(s = sfreserve(f, SF_UNBOUND, SF_LOCKR)) || sfwrite(f, s, 0) != 0)
+    if (!(s = sfreserve(f, SF_UNBOUND, SF_LOCKR)) || sfwrite(f, s, 0) != 0) {
         terror("Get n=%d, expect n > 0", sfvalue(f));
+    }
     strcpy(s, "5678\n");
 
     sfset(f, SF_READ, 1);
     sfseek(f, (Sfoff_t)0, 0); /* read 1234\n5678\n */
-    if (!(s = sfreserve(f, SF_UNBOUND, SF_LOCKR)) || sfread(f, s, 0) != 0)
+    if (!(s = sfreserve(f, SF_UNBOUND, SF_LOCKR)) || sfread(f, s, 0) != 0) {
         terror("Get n=%d, expect n > 0", sfvalue(f));
+    }
     if (strncmp(s, "1234\n5678\n", 10) != 0) terror("Get wrong string");
     sfclose(f);
 
@@ -137,8 +140,9 @@ tmain() {
     sfdisc(f, SF_POPDISC);
     if (sfsize(f) != 10) terror("Wrong size");
     s = sfreserve(f, SF_UNBOUND, 0);
-    if (sfvalue(f) != 10 || strncmp(s, "1234567890", 10) != 0)
+    if (sfvalue(f) != 10 || strncmp(s, "1234567890", 10) != 0) {
         terror("did not create correct real file");
+    }
 
     if (pid != 0) wait(&pid);
 

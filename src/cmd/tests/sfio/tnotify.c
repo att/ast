@@ -60,12 +60,14 @@ tmain() {
 
     int fd = sffileno(f);
     close(fd + 5);
-    if (sfsetfd(f, fd + 5) != fd + 5 || Type != SF_SETFD)
+    if (sfsetfd(f, fd + 5) != fd + 5 || Type != SF_SETFD) {
         terror("Notify did not announce SF_SETFD event");
+    }
     if (sfclose(f) < 0 || Type != SF_CLOSING) terror("Notify did not announce SF_CLOSING event");
 
-    if (sfputc(sfstdin, 'a') >= 0 || Type != SF_WRITE)
+    if (sfputc(sfstdin, 'a') >= 0 || Type != SF_WRITE) {
         terror("Notify did not announce SF_WRITE event");
+    }
 
     if (sfgetc(sfstdout) >= 0 || Type != SF_READ) terror("Notify did not announce SF_READ event");
 

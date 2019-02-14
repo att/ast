@@ -33,20 +33,23 @@ tmain() {
     char buf[1024];
 
     if (sfopen(sfstdout, tstfile("sf", 0), "w+") != sfstdout) terror("Opening output file");
-    for (i = 0; i < 10000; ++i)
+    for (i = 0; i < 10000; ++i) {
         if (sfputr(sfstdout, s, -1) < 0) terror("Writing data");
+    }
 
     if (!(f = sfopen(NULL, tstfile("sf", 1), "w"))) terror("Opening output file ");
 
     sfseek(sfstdout, (Sfoff_t)0, 0);
-    if ((n = sfmove(sfstdout, f, (Sfoff_t)SF_UNBOUND, '\n')) != i)
+    if ((n = sfmove(sfstdout, f, (Sfoff_t)SF_UNBOUND, '\n')) != i) {
         terror("Move %d lines, Expect %d", n, i);
+    }
 
     sfseek(sfstdout, (Sfoff_t)0, 0);
     sfseek(f, (Sfoff_t)0, 0);
     sfsetbuf(sfstdout, buf, sizeof(buf));
-    if ((n = sfmove(sfstdout, f, (Sfoff_t)SF_UNBOUND, '\n')) != i)
+    if ((n = sfmove(sfstdout, f, (Sfoff_t)SF_UNBOUND, '\n')) != i) {
         terror("Move %d lines, Expect %d", n, i);
+    }
 
     sfopen(sfstdin, tstfile("sf", 0), "r");
     sfopen(sfstdout, tstfile("sf", 1), "w");

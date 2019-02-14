@@ -48,12 +48,14 @@ tmain() {
     int i, r, done;
 
     /* create random record sizes */
-    for (i = 0; i < N_WRITER; ++i)
+    for (i = 0; i < N_WRITER; ++i) {
         for (r = 0; r < N_RECORD; ++r) size[i][r] = (ssize_t)(vrandom() % 64) + 2;
+    }
 
     /* records for different processes */
-    for (i = 0; i < N_WRITER; ++i)
+    for (i = 0; i < N_WRITER; ++i) {
         for (r = 0; r < 128; ++r) record[i][r] = '0' + i;
+    }
 
     /* create file */
     fr = sfopen(NULL, tstfile("sf", 0), "w+");
@@ -68,8 +70,9 @@ tmain() {
         i = (int)(vrandom() % N_WRITER);
         if (count[i] < N_RECORD) {
             r = size[i][count[i]];
-            if (!(s = sfreserve(fw[i], r, SF_LOCKR)) || sfvalue(fw[i]) < r)
+            if (!(s = sfreserve(fw[i], r, SF_LOCKR)) || sfvalue(fw[i]) < r) {
                 terror("sfreserve fails in process %d", i);
+            }
             memcpy(s, record[i], r - 1);
             s[r - 1] = '\n';
             sfwrite(fw[i], s, r);
@@ -86,18 +89,21 @@ tmain() {
     while ((s = sfgetr(fr, '\n', 0))) {
         if ((i = s[0] - '0') < 0 || i >= N_WRITER) terror("Wrong record type");
 
-        for (r = sfvalue(fr) - 2; r > 0; --r)
+        for (r = sfvalue(fr) - 2; r > 0; --r) {
             if (s[r] != s[0]) terror("Bad record%d, count=%d", i, count[i]);
+        }
 
-        if (sfvalue(fr) != size[i][count[i]])
+        if (sfvalue(fr) != size[i][count[i]]) {
             terror("Record%d count=%d size=%d sfvalue=%d", i, count[i], size[i][count[i]],
                    sfvalue(fr));
+        }
 
         count[i] += 1;
     }
 
-    for (i = 0; i < N_WRITER; ++i)
+    for (i = 0; i < N_WRITER; ++i) {
         if (count[i] != N_RECORD) terror("Bad count%d %d", i, count[i]);
+    }
 
     texit(0);
 }

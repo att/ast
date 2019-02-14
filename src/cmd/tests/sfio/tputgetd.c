@@ -37,15 +37,16 @@ tmain() {
 #define ENDV (Sfdouble_t)(1e-10 + 1)
 #define INCR (Sfdouble_t)(1e-3)
 
-    for (f = BEGV; f < ENDV; f += INCR)
+    for (f = BEGV; f < ENDV; f += INCR) {
         if (sfputd(fp, f) < 0) terror("Writing %.12Lf", f);
+    }
 
     sfseek(fp, (Sfoff_t)0, 0);
     for (flag = 0, f = BEGV, i = 0; f < ENDV; ++i, f += INCR) {
         if ((v = sfgetd(fp)) == f) continue;
-        if (v <= (f - 1e-10) || v >= (f + 1e-10))
+        if (v <= (f - 1e-10) || v >= (f + 1e-10)) {
             terror("Element=%d Input=%.12Lf, Expect=%.12Lf", i, v, f);
-        else if (!flag) {
+        } else if (!flag) {
             twarn("Element=%d Input=%.12Lf, Expect=%.12Lf\n", i, v, f);
             flag = 1;
         }

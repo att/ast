@@ -81,11 +81,13 @@ tmain() {
     if ((long)dtinsert(dt2, 4L) != 4) terror("Inserting 4");
     if ((long)dtinsert(dt2, 6L) != 6) terror("Inserting 6");
 
-    for (i = 1; i <= 6; ++i)
+    for (i = 1; i <= 6; ++i) {
         if ((long)dtsearch(dt1, i) != i) terror("Didn't find a long");
+    }
 
-    for (i = (long)dtlast(dt2), k = 6; i != 0; i = (long)dtprev(dt2, i), k -= 1)
+    for (i = (long)dtlast(dt2), k = 6; i != 0; i = (long)dtprev(dt2, i), k -= 1) {
         if (i != k) terror("Didn't walk a long");
+    }
 
     /* this test makes sure that dtclose() does not free objects */
     Close = 0;

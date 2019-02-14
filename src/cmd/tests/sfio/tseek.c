@@ -47,8 +47,9 @@ tmain() {
     s = "123456789\n";
     n = strlen(s);
     if (!(f = sfopen(NULL, tstfile("sf", 0), "w"))) terror("Opening file to write");
-    for (i = 0; i < 1000; ++i)
+    for (i = 0; i < 1000; ++i) {
         if (sfwrite(f, s, n) != n) terror("Writing data");
+    }
 
     if (!(f = sfopen(f, tstfile("sf", 0), "r"))) terror("Opening file to read");
 
@@ -69,20 +70,24 @@ tmain() {
     one = sfseek(f, (Sfoff_t)0, 2);
     two = (Sfoff_t)lseek(sffileno(f), (off_t)0, 2);
     if (one != two) terror("seeking1");
-    if (sfseek(f, (Sfoff_t)(-1), 2) != (Sfoff_t)lseek(sffileno(f), (off_t)(-1), 2))
+    if (sfseek(f, (Sfoff_t)(-1), 2) != (Sfoff_t)lseek(sffileno(f), (off_t)(-1), 2)) {
         terror("seeking2");
+    }
 
     if (!(f = sfopen(f, tstfile("sf", 0), "w"))) terror("Open to write2");
     for (n = 0; n < sizeof(buf); n++) buf[n] = n;
-    for (n = 0; n < 256; n++)
+    for (n = 0; n < 256; n++) {
         if (sfwrite(f, buf, sizeof(buf)) != sizeof(buf)) terror("Writing data 2");
+    }
     if (!(f = sfopen(f, tstfile("sf", 0), "r"))) terror("Open to read2");
     if (sfgetc(f) != 0 && sfgetc(f) != 1) terror("Get first 2 bytes");
 
-    if (sfseek(f, (Sfoff_t)(128 * sizeof(buf)), 0) != (Sfoff_t)128 * sizeof(buf))
+    if (sfseek(f, (Sfoff_t)(128 * sizeof(buf)), 0) != (Sfoff_t)128 * sizeof(buf)) {
         terror("Seeking ");
-    for (n = 0; n < 128; ++n)
+    }
+    for (n = 0; n < 128; ++n) {
         if (sfread(f, buf, sizeof(buf)) != sizeof(buf)) terror("Reading data");
+    }
 
     if (!(f = sfopen(f, tstfile("sf", 0), "r"))) terror("Open to read3");
     sfsetbuf(f, little, sizeof(little));
@@ -98,13 +103,15 @@ tmain() {
     if (sfseek(sf, (Sfoff_t)4000, SEEK_SET) != (Sfoff_t)4000) terror("sfseek failed on sf");
     sfsync(sf);
 
-    if (sfseek(f, (Sfoff_t)10, SEEK_CUR | SF_PUBLIC) != (Sfoff_t)4010)
+    if (sfseek(f, (Sfoff_t)10, SEEK_CUR | SF_PUBLIC) != (Sfoff_t)4010) {
         terror("sfseek public failed");
+    }
 
     /* test to see if the buffering algorithm does the right thing */
     if (!(f = sfopen(NULL, tstfile("sf", 0), "w"))) terror("Opening test file to write");
-    for (i = 0; i < 8192; ++i)
+    for (i = 0; i < 8192; ++i) {
         if (sfputr(f, "123456789", '\n') != 10) terror("writing test data");
+    }
     if (!(f = sfopen(f, tstfile("sf", 0), "r"))) terror("Opening test file to read");
     sfdisc(f, &Disc);
     sfsetbuf(f, NULL, 8192);
@@ -119,8 +126,9 @@ tmain() {
     /* test buffer alignment for read streams - from a Daytona case */
     tmp = tstfile("sf", 0); /* create a small file of data */
     if (!(f = sfopen(NULL, tmp, "w"))) terror("Opening to write");
-    for (i = 0; i < 500; ++i)
+    for (i = 0; i < 500; ++i) {
         if (sfputr(f, "123456789", '\n') != 10) terror("writing test data");
+    }
     sfclose(f);
 
     if (!(f = sfopen(NULL, tmp, "r"))) terror("Opening to read");

@@ -37,8 +37,9 @@ tmain() {
 
     if (!(fp = sftmp(0))) terror("Opening temp file");
 
-    for (i = 0; i < 256; ++i)
+    for (i = 0; i < 256; ++i) {
         if (sfwrite(fp, wbuf, sizeof(wbuf)) != sizeof(wbuf)) terror("Writing");
+    }
 
     sfseek(fp, (Sfoff_t)0, 0);
     sfset(fp, SF_WRITE, 0);

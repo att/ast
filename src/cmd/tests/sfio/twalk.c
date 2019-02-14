@@ -34,13 +34,15 @@ tmain() {
     Sfio_t *f;
     int c, count = 0;
 
-    if ((c = sfwalk(walkf, &count, 0)) != 3) /* counting sfstdin/out/err */
+    if ((c = sfwalk(walkf, &count, 0)) != 3) { /* counting sfstdin/out/err */
         terror("Bad count c=%d", c);
+    }
 
     if (!(f = sfopen(0, 0, "sw"))) terror("Sfopen failed");
 
-    if ((c = sfwalk(walkf, &count, 0)) != 7) /* recount std-streams and 1 more */
+    if ((c = sfwalk(walkf, &count, 0)) != 7) { /* recount std-streams and 1 more */
         terror("Bad count c=%d", c);
+    }
 
     texit(0);
 }

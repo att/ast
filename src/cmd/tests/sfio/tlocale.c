@@ -44,17 +44,19 @@ tmain() {
     thousand = 0;
     if (lv->thousands_sep && lv->thousands_sep[0]) thousand = lv->thousands_sep[0];
 
-    if (thousand)
+    if (thousand) {
         sfsprintf(cmp, sizeof(cmp), "1%c000", thousand);
-    else
+    } else {
         sfsprintf(cmp, sizeof(cmp), "1000");
+    }
     sfsprintf(buf, sizeof(buf), "%'d", 1000);
     if (strcmp(buf, cmp) != 0) terror("Bad printing");
 
-    if (thousand)
+    if (thousand) {
         sfsprintf(cmp, sizeof(cmp), "1%c000%c10", thousand, decimal);
-    else
+    } else {
         sfsprintf(cmp, sizeof(cmp), "1000%c10", decimal);
+    }
     d = 0.;
     if ((n = sfsscanf(cmp, "%'f", &d)) != 1) terror("Scan error %d", n);
     if (d < 1000.099 || d > 1000.101) terror("Bad scanning");

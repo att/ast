@@ -113,15 +113,18 @@ tmain() {
 
         /* now walk different parts of the list */
         tresource(-1, 0);
-        for (p = 0; p < N_PATH; ++p)
-            if (!(path[p] = dtstart(dt, Ord[p * (N_OBJ / N_PATH)])))
+        for (p = 0; p < N_PATH; ++p) {
+            if (!(path[p] = dtstart(dt, Ord[p * (N_OBJ / N_PATH)]))) {
                 terror("%s: Can't create a path at pos=%d", name, p * (N_OBJ / N_PATH));
+            }
+        }
         for (k = 0; k < N_OBJ / N_PATH; ++k) {
             for (p = 0; p < N_PATH; ++p) {
                 if (!(o = dtstep(dt, path[p]))) terror("%s: missing an object", name);
-                if (o != Ord[p * (N_OBJ / N_PATH) + k])
+                if (o != Ord[p * (N_OBJ / N_PATH) + k]) {
                     terror("%s: object=%d != expected %d", name, o->key,
                            Ord[p * (N_OBJ / N_PATH) + k]->key);
+                }
             }
         }
         for (p = 0; p < N_PATH; ++p) dtstop(dt, path[p]);

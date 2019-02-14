@@ -75,23 +75,26 @@ tmain() {
 
     /* create pseudo-random record sizes */
     u = 1;
-    for (i = 0; i < N_PROC; ++i)
+    for (i = 0; i < N_PROC; ++i) {
         for (r = 0; r < N_REC; ++r) {
             u = u * 0x63c63cd9L + 0x9c39c33dL;
             size[i][r] = (ssize_t)(u % 63) + 16;
         }
+    }
 
     /* records for different processes */
-    for (i = 0; i < N_PROC; ++i)
+    for (i = 0; i < N_PROC; ++i) {
         for (r = 0; r < 128; ++r) record[i][r] = '0' + 2 * i;
+    }
 
     /* create file */
     file = tstfile("sf", 0);
     if (!(f = sfopen(NULL, file, "w+"))) terror("Opening temporary file %s", file);
 
     /* open file for appending */
-    for (i = 0; i < N_PROC; ++i)
+    for (i = 0; i < N_PROC; ++i) {
         if (!(fa[i] = sfopen(NULL, file, "a"))) terror("Open %s to append", file);
+    }
 
     /* fork processes */
     for (i = 0; i < N_PROC; ++i) {
@@ -102,9 +105,9 @@ tmain() {
 #define FORK() fork()
 #define RETURN(v) texit(v)
 #endif
-        if ((pid = (int)FORK()) < 0)
+        if ((pid = (int)FORK()) < 0) {
             terror("Creating process %d", i);
-        else if (pid == 0) { /* write to file */
+        } else if (pid == 0) { /* write to file */
             sfsetbuf(fa[i], (void *)buf[i], sizeof(buf[i]));
             sfset(fa[i], SF_WHOLE, 1);
             Disc[i].writef = inspect;
@@ -136,23 +139,27 @@ tmain() {
     n = 0;
     while ((s = sfgetr(f, '\n', 0))) {
         n += 1;
-        if ((i = s[0] - '0') < 0 || (i % 2) != 0 || (i /= 2) >= N_PROC)
+        if ((i = s[0] - '0') < 0 || (i % 2) != 0 || (i /= 2) >= N_PROC) {
             terror("%d: Wrong record type", n);
+        }
 
         r = sfvalue(f);
         if (s[r - 2] != s[0] + 1) terror("%d: process%d, number=%d", n, i, count[i]);
-        for (r -= 3; r > 4; --r)
+        for (r -= 3; r > 4; --r) {
             if (s[r] != s[0]) terror("%d: process%d, count=%d", n, i, count[i]);
+        }
 
-        if (sfvalue(f) != size[i][count[i]])
+        if (sfvalue(f) != size[i][count[i]]) {
             terror("%d: process%d number=%d expected size=%d read size=%d", n, i, count[i],
                    size[i][count[i]], sfvalue(f));
+        }
 
         count[i] += 1;
     }
 
-    for (i = 0; i < N_PROC; ++i)
+    for (i = 0; i < N_PROC; ++i) {
         if (count[i] != N_REC) terror("Bad count%d %d", i, count[i]);
+    }
 
     texit(0);
 }

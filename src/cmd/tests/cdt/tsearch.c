@@ -54,32 +54,40 @@ tmain() {
     if ((long)dtatmost(dt, 5L) != 5) terror("Should have found 5");
     if ((long)dtatleast(dt, 3L) != 3) terror("Should have found 3");
 
-    for (i = 1; i <= 7; ++i)
+    for (i = 1; i <= 7; ++i) {
         if ((long)dtsearch(dt, i) != i) terror("Dtoset search");
-    for (link = dtflatten(dt), i = 1; link; link = dtlink(dt, link), i += 1)
+    }
+    for (link = dtflatten(dt), i = 1; link; link = dtlink(dt, link), i += 1) {
         if ((long)dtobj(dt, link) != i) terror("Dtoset flatten");
-    for (i = (long)dtlast(dt), k = 7; k >= 1; i = (long)dtprev(dt, i), k -= 1)
+    }
+    for (i = (long)dtlast(dt), k = 7; k >= 1; i = (long)dtprev(dt, i), k -= 1) {
         if (i != k) terror("Dtoset backwalk");
+    }
 
     /* reverse ordering */
     dtdisc(dt, &Rdisc, 0);
-    for (i = 7; i >= 1; --i)
+    for (i = 7; i >= 1; --i) {
         if ((long)dtsearch(dt, i) != i) terror("Dtoset search 2");
-    for (i = (long)dtlast(dt), k = 1; k <= 7; i = (long)dtprev(dt, i), k += 1)
+    }
+    for (i = (long)dtlast(dt), k = 1; k <= 7; i = (long)dtprev(dt, i), k += 1) {
         if (i != k) terror("Dtoset backwalk 2");
-    for (link = dtflatten(dt), i = 7; link; link = dtlink(dt, link), i -= 1)
+    }
+    for (link = dtflatten(dt), i = 7; link; link = dtlink(dt, link), i -= 1) {
         if ((long)dtobj(dt, link) != i) terror("Dtoset flatten 2");
+    }
 
     if (!(link = dtextract(dt))) terror("Fail extracting Dtoset");
     if (!dtrestore(dt, link)) terror("Fail restoring Dtoset");
     if (dtsize(dt) != 7) terror("Dtoset size after extract");
-    for (link = dtflatten(dt), i = 7; link; link = dtlink(dt, link), i -= 1)
+    for (link = dtflatten(dt), i = 7; link; link = dtlink(dt, link), i -= 1) {
         if ((long)dtobj(dt, link) != i) terror("Dtoset flatten after extract");
+    }
 
     /* change to hashing */
     dtmethod(dt, Dtset);
-    for (i = 1; i <= 7; ++i)
+    for (i = 1; i <= 7; ++i) {
         if ((long)dtsearch(dt, i) != i) terror("Dtset search");
+    }
     for (i = 0, link = dtflatten(dt); link; link = dtlink(dt, link)) i += 1;
     if (i != 7) terror("Dtset flatten");
     for (k = 0, i = (long)dtlast(dt); i != 0; i = (long)dtprev(dt, i)) k += 1;
@@ -92,8 +100,9 @@ tmain() {
     if (k != 7) terror("Dtset flatten after extract");
 
     dtdisc(dt, &Disc, 0);
-    for (i = 1; i <= 7; ++i)
+    for (i = 1; i <= 7; ++i) {
         if ((long)dtsearch(dt, i) != i) terror("Dtset search 2");
+    }
     for (link = dtflatten(dt), i = 0; link; link = dtlink(dt, link)) i += 1;
     if (i != 7) terror("Dtset flatten 2");
 
@@ -166,24 +175,29 @@ tmain() {
     /* test large set of values */
     dtclear(dt);
     dtmethod(dt, Dtset);
-    for (i = 1; i < 20000; ++i)
+    for (i = 1; i < 20000; ++i) {
         if ((long)dtinsert(dt, i) != i) terror("Can't insert");
+    }
     dtmethod(dt, Dtoset);
-    for (i = 1, k = (long)dtfirst(dt); i < 20000; ++i, k = (long)dtnext(dt, k))
+    for (i = 1, k = (long)dtfirst(dt); i < 20000; ++i, k = (long)dtnext(dt, k)) {
         if (i != k) terror("Bad value");
+    }
 
     /* test walking Dtrhset */
     dtclear(dt);
     dtmethod(dt, Dtrhset);
-    for (i = 1; i < 100; ++i)
+    for (i = 1; i < 100; ++i) {
         if ((long)dtinsert(dt, i) != i) terror("Can't insert");
-    for (i = 1; i < 100; ++i)
+    }
+    for (i = 1; i < 100; ++i) {
         if ((long)dtsearch(dt, i) != i) terror("Can't find %d", i);
+    }
 
     memset(count, 0, sizeof(count));
     for (i = 0, k = (long)dtfirst(dt); k != 0; i += 1, k = (long)dtnext(dt, k)) count[k] += 1;
-    for (i = 1; i < 100; ++i)
+    for (i = 1; i < 100; ++i) {
         if (count[i] != 1) terror("wrong count[%d]=%d", i, count[i]);
+    }
 
     texit(0);
 }

@@ -54,8 +54,9 @@ static int chkevent(int type) {
         return 0;
     }
     cnt = 0;
-    for (i = 0; i < sizeof(Event) / sizeof(Event[0]); ++i)
+    for (i = 0; i < sizeof(Event) / sizeof(Event[0]); ++i) {
         if (Event[i] == type) cnt += 1;
+    }
     return cnt;
 }
 

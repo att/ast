@@ -34,9 +34,9 @@ int Except;
 void alrmhandler(int sig) {
     strcpy(Buf, HANDLER);
 
-    if (Except == 0)
+    if (Except == 0) {
         signal(sig, alrmhandler);
-    else if (Except == 1) /* testing return on interrupt */
+    } else if (Except == 1) /* testing return on interrupt */
     {
         Except = 2;
         signal(sig, alrmhandler);
@@ -44,8 +44,9 @@ void alrmhandler(int sig) {
     } else if (Except == 2) {
         twarn("System call was automatically resumed by the OS");
         texit(0);
-    } else
+    } else {
         terror("Unexpected Except(%d) state", Except);
+    }
 }
 
 int exceptf(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
@@ -72,8 +73,9 @@ tmain() {
     char buf[128];
 
     if (pipe(fd) < 0) terror("Can't make pipe");
-    if (sfnew(sfstdin, NULL, (size_t)SF_UNBOUND, fd[0], SF_READ) != sfstdin)
+    if (sfnew(sfstdin, NULL, (size_t)SF_UNBOUND, fd[0], SF_READ) != sfstdin) {
         terror("Can't renew stdin");
+    }
     sfdisc(sfstdin, &Disc);
     sfset(sfstdin, SF_SHARE, 1);
 
@@ -99,8 +101,9 @@ tmain() {
     signal(SIGALRM, alrmhandler);
     if (write(fd[1], "0123456789", 10) != 10) terror("Writing to pipe");
     alarm(2);
-    if ((n = sfread(sfstdin, buf, sizeof(buf))) != 10)
+    if ((n = sfread(sfstdin, buf, sizeof(buf))) != 10) {
         twarn("Wrong read size(%d) after an interrupt\n", n);
+    }
 
     texit(0);
 }

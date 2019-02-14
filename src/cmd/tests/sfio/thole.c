@@ -51,16 +51,18 @@ tmain() {
     if (sfread(f, buf, 4) != 4 || strncmp(buf, "1234", 4) != 0) terror("Bad data");
 
     for (k = 0; k < sizeof(buf); ++k) buf[k] = 1;
-    for (k = sizeof(buf) / 4; k < sizeof(buf) / 2; ++k) /* make a big hole */
+    for (k = sizeof(buf) / 4; k < sizeof(buf) / 2; ++k) { /* make a big hole */
         buf[k] = 0;
+    }
 
     if (!(f = sfopen(f, tstfile("sf", 0), "w+"))) terror("Creating %s", tstfile("sf", 0));
     n = sizeof(buf) - 127;
     if (sfwrite(f, buf, n) != n) terror("Writing large buffer");
     sfseek(f, (Sfoff_t)0, 0);
     if (sfread(f, b, n) != n) terror("Reading large buffer");
-    for (k = 0; k < n; ++k)
+    for (k = 0; k < n; ++k) {
         if (b[k] != buf[k]) terror("Bad data");
+    }
 
     texit(0);
 }

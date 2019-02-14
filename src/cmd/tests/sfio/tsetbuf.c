@@ -57,8 +57,9 @@ tmain() {
 
     if (!(f = sfnew(NULL, buf, sizeof(buf), fd, SF_WRITE))) terror("Making stream");
 
-    if (!(s = sfreserve(f, SF_UNBOUND, SF_LOCKR)) || s != buf)
+    if (!(s = sfreserve(f, SF_UNBOUND, SF_LOCKR)) || s != buf) {
         terror("sfreserve1 returns the wrong pointer");
+    }
     sfwrite(f, s, 0);
 
 #define NEXTFD 12
@@ -67,26 +68,31 @@ tmain() {
         int i;
         for (i = 0; i < fd + NEXTFD; ++i) fdv[i] = fstat(i, &st);
     }
-    if ((n = sfsetfd(f, fd + NEXTFD)) != fd + NEXTFD)
+    if ((n = sfsetfd(f, fd + NEXTFD)) != fd + NEXTFD) {
         terror("Try to set file descriptor to %d but get %d", fd + NEXTFD, n);
+    }
     if ((fd + NEXTFD) < (sizeof(fdv) / sizeof(fdv[0]))) {
         struct stat st;
         int i;
-        for (i = 0; i < fd + NEXTFD; ++i)
-            if (i != fd && fdv[i] != fstat(i, &st))
+        for (i = 0; i < fd + NEXTFD; ++i) {
+            if (i != fd && fdv[i] != fstat(i, &st)) {
                 terror("Fd %d changes status after sfsetfd %d->%d", i, fd, fd + NEXTFD);
+            }
+        }
     }
 
-    if (!(s = sfreserve(f, SF_UNBOUND, SF_LOCKR)) || s != buf)
+    if (!(s = sfreserve(f, SF_UNBOUND, SF_LOCKR)) || s != buf) {
         terror("sfreserve2 returns the wrong pointer");
+    }
     sfwrite(f, s, 0);
 
     if (sfsetbuf(f, NULL, (size_t)SF_UNBOUND) != buf) terror("sfsetbuf didnot returns last buffer");
 
     sfsetbuf(f, buf, sizeof(buf));
 
-    if (sfreserve(f, SF_UNBOUND, SF_LOCKR) != buf || sfvalue(f) != sizeof(buf))
+    if (sfreserve(f, SF_UNBOUND, SF_LOCKR) != buf || sfvalue(f) != sizeof(buf)) {
         terror("sfreserve3 returns the wrong value");
+    }
     sfwrite(f, s, 0);
 
     texit(0);

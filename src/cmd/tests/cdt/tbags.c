@@ -95,13 +95,15 @@ tmain() {
         dtcustomize(dt, DT_SHARE, 1); /* make it more interesting */
 
         /* add all objects into dictionary */
-        for (k = 0; k < R_OBJ; ++k)
+        for (k = 0; k < R_OBJ; ++k) {
             for (i = 0; i < N_OBJ / R_OBJ; ++i) {
                 obj = Obj + i * R_OBJ + k;
                 o = (meth == 3 || i % 2 == 0) ? dtappend(dt, obj) : dtinsert(dt, obj);
-                if (o != obj)
+                if (o != obj) {
                     terror("%s: dtappend (key=%d,ord=%d) failed", name, obj->key, obj->ord);
+                }
             }
+        }
 
         mid = ((N_OBJ / R_OBJ) / 2) * R_OBJ; /* key for middle group */
         proto.key = mid;
@@ -113,14 +115,16 @@ tmain() {
             if (o->ord != 0) terror("%s: dtatmost (key=%d) but ord=%d > 0", name, o->key, o->ord);
 
             if (!(o = dtatleast(dt, &proto))) terror("%s: dtatleast (key=%d) failed", name, mid);
-            if (o->ord != R_OBJ - 1)
+            if (o->ord != R_OBJ - 1) {
                 terror("%s: dtatleast (key=%d) but ord=%d > 0", name, o->key, o->ord);
+            }
 
             n_obj = 0; /* test ordering */
             for (p = NULL, o = dtfirst(dt); o; p = o, o = dtnext(dt, o)) {
                 n_obj += 1;
-                if (p && p->ord > o->ord)
+                if (p && p->ord > o->ord) {
                     terror("%s: objects not ordered correctly p=%d > o=%d", name, p->ord, o->ord);
+                }
             }
             if (n_obj != N_OBJ) terror("%s: Bad object count %d != %d", n_obj, N_OBJ);
         }
@@ -129,29 +133,34 @@ tmain() {
         {
             n_obj = 0; /* test atmost/next */
             for (o = dtatmost(dt, &proto); o; o = dtnext(dt, o)) {
-                if (o->key == mid)
+                if (o->key == mid) {
                     n_obj += 1;
-                else
+                } else {
                     break;
+                }
             }
-            if (n_obj != R_OBJ)
+            if (n_obj != R_OBJ) {
                 terror("%s: dtatmost/dtnext count n_obj=%d != %d", name, n_obj, R_OBJ);
+            }
 
             n_obj = 0; /* test atleast/prev */
             for (o = dtatleast(dt, &proto); o; o = dtprev(dt, o)) {
-                if (o->key == mid)
+                if (o->key == mid) {
                     n_obj += 1;
-                else
+                } else {
                     break;
+                }
             }
-            if (n_obj != R_OBJ)
+            if (n_obj != R_OBJ) {
                 terror("%s: dtatleast/dtprev count n_obj=%d != %d", name, n_obj, R_OBJ);
+            }
 
             n_obj = 0; /* test linear order */
             for (p = NULL, o = dtfirst(dt); o; p = o, o = dtnext(dt, o)) {
                 n_obj += 1;
-                if (p && p->key > o->key)
+                if (p && p->key > o->key) {
                     terror("%s: objects not ordered correctly p=%d > o=%d", name, p->key, o->key);
+                }
             }
             if (n_obj != N_OBJ) terror("%s: Bad object count %d != %d", n_obj, N_OBJ);
         }
@@ -184,32 +193,37 @@ tmain() {
         for (i = 0; i < N_OBJ - 1; i += R_OBJ) {
             obj = Obj + i + R_OBJ / 2; /* use the one in the middle of group */
 
-            if ((o = dtremove(dt, obj)) == obj)
+            if ((o = dtremove(dt, obj)) == obj) {
                 n_mid += 1;
-            else
+            } else {
                 terror("%s: dtremove (key=%d,ord=%d) wrongly yielded (key=%d,ord=%d)", name,
                        obj->key, obj->ord, o->key, o->ord);
+            }
 
-            if ((o = dtremove(dt, obj)) != NULL)
+            if ((o = dtremove(dt, obj)) != NULL) {
                 terror("%s: dtremove (key=%d,ord=%d) wrongly yielded (key=%d,ord=%d)", name,
                        obj->key, obj->ord, o->key, o->ord);
+            }
 
-            if ((o = dtdelete(dt, obj)) != NULL)
+            if ((o = dtdelete(dt, obj)) != NULL) {
                 n_mid += 1;
-            else
+            } else {
                 terror("%s: dtdelete matching object to (key=%d,ord=%d) failed", name, obj->key,
                        obj->ord);
+            }
         }
 
         n_obj = 0; /* count the left over */
         for (o = (Obj_t *)dtflatten(dt); o; o = (Obj_t *)dtlink(dt, o)) n_obj += 1;
-        if ((n_obj + n_mid) != N_OBJ)
+        if ((n_obj + n_mid) != N_OBJ) {
             terror("%s: wrong count (n_obj=%d + n_del=%d) != %d", name, n_obj, n_mid, N_OBJ);
+        }
 
         dtcustomize(dt, DT_OPTIMIZE, 1); /* balance the tree in Dtobag to reduce depth */
         if (dtstat(dt, &stat) < 0) terror("%s: Couldn't get statistics", name);
-        if (stat.size != n_obj)
+        if (stat.size != n_obj) {
             terror("%s: stat.size=%d != %d (actual size)", name, stat.size, n_obj);
+        }
 
         dtclose(dt);
     }
