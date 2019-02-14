@@ -71,6 +71,10 @@
 #include "test.h"
 #include "variables.h"
 
+#if USE_SPAWN
+#include "ast_sys.h"
+#endif
+
 #if SHOPT_COSHELL
 #include "coshell.h"
 #endif

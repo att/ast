@@ -63,6 +63,10 @@
 #include "timeout.h"
 #include "variables.h"
 
+#if USE_SPAWN
+#include "ast_sys.h"
+#endif
+
 #ifdef FNDELAY
 #ifdef EAGAIN
 #if EAGAIN != EWOULDBLOCK

@@ -30,6 +30,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include "argnod.h"
 #include "ast.h"
 #include "ast_assert.h"
 #include "cdt.h"

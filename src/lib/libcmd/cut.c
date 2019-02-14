@@ -33,7 +33,6 @@
 #include <wchar.h>
 
 #include "ast.h"
-#include "ast_assert.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"

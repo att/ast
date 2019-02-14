@@ -46,6 +46,10 @@
 #include "shtable.h"
 #include "stk.h"
 
+#if USE_SPAWN
+#include "ast_sys.h"
+#endif
+
 #if SHOPT_BASH
 
 #define BASHOPT "\374"

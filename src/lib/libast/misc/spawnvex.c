@@ -28,10 +28,18 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 #include "ast.h"
+#include "ast_sys.h"
 #include "error.h"
+#include "sfio.h"
 #include "sig.h"
 
 #ifndef ENOSYS

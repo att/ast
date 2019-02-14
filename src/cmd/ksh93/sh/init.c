@@ -63,6 +63,10 @@
 #include "variables.h"
 #include "version.h"
 
+#if USE_SPAWN
+#include "ast_sys.h"
+#endif
+
 char e_version[] =
     "\n@(#)$Id: Version "
 #define ATTRS 1

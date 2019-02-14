@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #include "argnod.h"
@@ -53,6 +54,10 @@
 #include "stk.h"
 #include "test.h"
 #include "variables.h"
+
+#if USE_SPAWN
+#include "ast_sys.h"
+#endif
 
 #define LIBCMD "cmd"
 
