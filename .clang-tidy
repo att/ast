@@ -1,0 +1,3 @@
+CheckOptions:
+  - key: readability-braces-around-statements.ShortStatementLines
+    value: 1
