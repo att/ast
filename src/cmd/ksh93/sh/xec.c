@@ -1150,14 +1150,15 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             for (item = buffp->olist; item; item = item->next) item->strm = 0;
                         }
                         if (!nv_isattr(np, BLT_ENV) && !nv_isattr(np, BLT_SPC)) {
-                            if (!shp->pwd) path_pwd(shp);
+                            if (!shp->pwd) {
+                                path_pwd(shp);
 #ifndef O_SEARCH
-                            else if (shp->pwdfd >= 0) {
+                            } else if (shp->pwdfd >= 0) {
                                 fstat(shp->pwdfd, &statb);
                             } else if (shp->pwd) {
                                 stat(e_dot, &statb);
-                            }
 #endif
+                            }
                             sfsync(NULL);
                             share = sfset(sfstdin, SF_SHARE, 0);
                             sh_onstate(shp, SH_STOPOK);
@@ -1188,10 +1189,12 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             !nv_isattr(np, BLT_ENV)) {
                             // Do close-on-exec.
                             int fd;
-                            for (fd = 0; fd < shp->gd->lim.open_max; fd++)
+                            for (fd = 0; fd < shp->gd->lim.open_max; fd++) {
                                 if ((shp->fdstatus[fd] & IOCLEX) && fd != shp->infd &&
-                                    (fd != shp->pwdfd))
+                                    (fd != shp->pwdfd)) {
                                     sh_close(fd);
+                                }
+                            }
                         }
                         if (argn) {
                             shp->exitval = (*shp->bltinfun)(argn, com, (void *)bp);
@@ -1435,12 +1438,13 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                  (execflg && shp->fn_depth == 0 && !(pipejob && sh_isoption(shp, SH_PIPEFAIL))));
             if (sh_isstate(shp, SH_PROFILE) || shp->dot_depth) {
                 // Disable foreground job monitor.
-                if (!(type & FAMP)) sh_offstate(shp, SH_MONITOR);
-#if has_dev_fd
-                else if (!(type & FINT)) {
+                if (!(type & FAMP)) {
                     sh_offstate(shp, SH_MONITOR);
-                }
+#if has_dev_fd
+                } else if (!(type & FINT)) {
+                    sh_offstate(shp, SH_MONITOR);
 #endif  // has_dev_fd
+                }
             }
             if (no_fork) {
                 job.parent = parent = 0;
@@ -1771,8 +1775,9 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             }
             shp->exitval = n;
 #ifdef SIGTSTP
-            if (!pipejob && sh_isstate(shp, SH_MONITOR) && sh_isoption(shp, SH_INTERACTIVE))
+            if (!pipejob && sh_isstate(shp, SH_MONITOR) && sh_isoption(shp, SH_INTERACTIVE)) {
                 tcsetpgrp(JOBTTY, shp->gd->pid);
+            }
 #endif  // SIGTSTP
             job.curpgid = savepgid;
             job.exitval = saveexitval;

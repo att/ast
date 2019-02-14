@@ -222,8 +222,9 @@ static_fn void put_chtype(Namval_t *np, const void *val, int flag, Namfun_t *fp)
             FETCH_VT(mp->nvalue, const_cp) < (char *)pp->ttype + pp->ttype->fun.dsize) {
             STORE_VT(np->nvalue, const_cp,
                      pp->ptype->data + (FETCH_VT(mp->nvalue, const_cp) - pp->ttype->data));
-            if (FETCH_VT(np->nvalue, cp) != FETCH_VT(mp->nvalue, const_cp))
+            if (FETCH_VT(np->nvalue, cp) != FETCH_VT(mp->nvalue, const_cp)) {
                 memcpy(FETCH_VT(np->nvalue, cp), FETCH_VT(mp->nvalue, const_cp), dsize);
+            }
         } else if (!nv_isarray(mp) && FETCH_VT(mp->nvalue, const_cp)) {
             STORE_VT(np->nvalue, const_cp, FETCH_VT(mp->nvalue, const_cp));
             nv_onattr(np, NV_NOFREE);
@@ -399,8 +400,9 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
         xp = (Namtype_t *)nv_hasdisc(nq, &type_disc);
         if (xp) xp->parent = mp;
         if (flags == (NV_NOFREE | NV_ARRAY)) continue;
-        if (!FETCH_VT(nq->nvalue, const_cp) && nv_isvtree(nq) && !nv_isattr(nq, NV_RDONLY))
+        if (!FETCH_VT(nq->nvalue, const_cp) && nv_isvtree(nq) && !nv_isattr(nq, NV_RDONLY)) {
             continue;
+        }
 
         // See if default value has been overwritten.
         if (!mp->nvname) continue;
@@ -764,8 +766,9 @@ found:
     }
     if (np) {
         nv_onattr(mp, NV_NOFREE);
-        if (!nv_setdisc(np, cp, mp, (Namfun_t *)np))
+        if (!nv_setdisc(np, cp, mp, (Namfun_t *)np)) {
             sfprintf(sfstderr, " nvsetdisc failed name=%s sp=%s cp=%s\n", np->nvname, sp, cp);
+        }
     } else {
         sfprintf(sfstderr, "can't set discipline %s cp=%s \n", sp, cp);
     }
@@ -850,8 +853,9 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
         if (is_afunction(np)) {
             if (!std_disc(np, NULL)) {
                 size += strlen(np->nvname + m) + 1;
-                if (strncmp(np->nvname, NV_CLASS, sizeof(NV_CLASS) - 1) == 0)
+                if (strncmp(np->nvname, NV_CLASS, sizeof(NV_CLASS) - 1) == 0) {
                     size -= sizeof(NV_CLASS);
+                }
                 nd++;
             }
             continue;
@@ -1090,9 +1094,10 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                     if (strcmp(nq->nvname, cname) == 0) {
                         sfprintf(sfstderr, "%s found at k=%d\n", nq->nvname, k);
                         if (FETCH_VT(nq->nvalue, const_cp) >= pp->data &&
-                            FETCH_VT(nq->nvalue, const_cp) < (char *)pp->names)
+                            FETCH_VT(nq->nvalue, const_cp) < (char *)pp->names) {
                             memcpy(FETCH_VT(nq->nvalue, cp), FETCH_VT(np->nvalue, cp),
                                    nv_datasize(np, 0));
+                        }
                         break;
                     }
                 }
@@ -1455,8 +1460,9 @@ Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *
 
 static_fn void put_stat(Namval_t *np, const void *val, int flag, Namfun_t *nfp) {
     if (val) {
-        if (sh_stat(val, (struct stat *)FETCH_VT(np->nvalue, const_cp)) < 0)
+        if (sh_stat(val, (struct stat *)FETCH_VT(np->nvalue, const_cp)) < 0) {
             sfprintf(sfstderr, "stat of %s failed\n", val);
+        }
         return;
     }
     nv_putv(np, val, flag, nfp);

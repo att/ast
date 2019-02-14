@@ -717,8 +717,9 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
             if (nv_isattr(pwdnod, NV_NOFREE)) STORE_VT(pwdnod->nvalue, const_cp, sp->pwd);
         } else if (sp->shpwd != shp->pwd) {
             shp->pwd = sp->pwd;
-            if (FETCH_VT(PWDNOD->nvalue, const_cp) == sp->shpwd)
+            if (FETCH_VT(PWDNOD->nvalue, const_cp) == sp->shpwd) {
                 STORE_VT(PWDNOD->nvalue, const_cp, sp->pwd);
+            }
         } else {
             free(sp->pwd);
             if (sp->shpwdfd >= 0) {

@@ -1384,8 +1384,9 @@ retry1:
                     if ((mp->let ||
                          (mp->arith && nv_isattr(np, (NV_LJUST | NV_RJUST | NV_ZFILL)))) &&
                         !nv_isattr(np, NV_INTEGER) &&
-                        (offset == 0 || isspace(c) || strchr(",.+-*/=%&|^?!<>", c)))
+                        (offset == 0 || isspace(c) || strchr(",.+-*/=%&|^?!<>", c))) {
                         mp->zeros = 1;
+                    }
                 }
                 if (savptr == stkptr(stkp, 0)) {
                     stkseek(stkp, offset);
@@ -1945,8 +1946,9 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
         while ((c = fcgetc()) != '`' && c) {
             if (c == ESCAPE) {
                 c = fcgetc();
-                if (!(isescchar(sh_lexstates[ST_QUOTE][c]) || (c == '"' && mp->quote)))
+                if (!(isescchar(sh_lexstates[ST_QUOTE][c]) || (c == '"' && mp->quote))) {
                     sfputc(stkp, ESCAPE);
+                }
             }
             sfputc(stkp, c);
         }

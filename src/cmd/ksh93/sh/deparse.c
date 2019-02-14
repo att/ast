@@ -244,8 +244,9 @@ static_fn void p_tree(const Shnode_t *t, int tflags) {
                 end_line = '\n';
                 p_comarg(t->for_.forlst);
                 end_line = tflags;
-            } else
+            } else {
                 sfputc(outfile, '\n');
+            }
             begin_line = 1;
             t = t->for_.fortre;
             p_keyword("do", MIDDLE);

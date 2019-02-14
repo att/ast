@@ -501,8 +501,9 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
         job.waitall = job.curpgid = 0;
         error_info.flags |= ERROR_INTERACTIVE;
         t = (Shnode_t *)sh_parse(shp, iop, 0);
-        if (!sh_isstate(shp, SH_INTERACTIVE) && !sh_isoption(shp, SH_CFLAG))
+        if (!sh_isstate(shp, SH_INTERACTIVE) && !sh_isoption(shp, SH_CFLAG)) {
             error_info.flags &= ~ERROR_INTERACTIVE;
+        }
         shp->readscript = 0;
         if (sh_isstate(shp, SH_INTERACTIVE) && shp->gd->hist_ptr) hist_flush(shp->gd->hist_ptr);
         sh_offstate(shp, SH_HISTORY);

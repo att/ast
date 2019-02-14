@@ -490,13 +490,14 @@ bool job_reap(int sig) {
         else {
             px = job_byjid(pw->p_job);
         }
-        if (WIFCONTINUED(wstat) && wcontinued)
+        if (WIFCONTINUED(wstat) && wcontinued) {
             pw->p_flag &= ~(P_NOTIFY | P_SIGNALLED | P_STOPPED);
-        else if (WIFSTOPPED(wstat)) {
+        } else if (WIFSTOPPED(wstat)) {
             pw->p_flag |= (P_NOTIFY | P_SIGNALLED | P_STOPPED);
             pw->p_exit = WSTOPSIG(wstat);
-            if (pw->p_pgrp && pw->p_pgrp == job.curpgid && sh_isstate(shp, SH_STOPOK))
+            if (pw->p_pgrp && pw->p_pgrp == job.curpgid && sh_isstate(shp, SH_STOPOK)) {
                 kill(getpid(), pw->p_exit);
+            }
             if (px) {
                 // Move to top of job list.
                 job_unlink(px);
@@ -821,9 +822,10 @@ void job_bwait(char **jobs) {
                 return;
             }
 #endif  // SHOPT_COSHELL
-            else
+            else {
 #endif  // JOBS
                 pid = pid_fromstring(jp);
+            }
             job_wait(-pid);
         }
     }
@@ -971,9 +973,9 @@ int job_list(struct process *pw, int flag) {
             msize += (int)strlen(msg);
         }
         sfnputc(outfile, ' ', MAXMSG > msize ? MAXMSG - msize : 1);
-        if (flag & JOB_LFLAG)
+        if (flag & JOB_LFLAG) {
             px = px->p_nxtproc;
-        else {
+        } else {
             while ((px = px->p_nxtproc)) px->p_flag &= ~P_NOTIFY;
             px = NULL;
         }
@@ -1337,10 +1339,11 @@ int job_post(Shell_t *shp, pid_t pid, pid_t join) {
 //
 static_fn struct process *job_bypid(pid_t pid) {
     struct process *pw, *px;
-    for (pw = job.pwlist; pw; pw = pw->p_nxtjob)
+    for (pw = job.pwlist; pw; pw = pw->p_nxtjob) {
         for (px = pw; px; px = px->p_nxtproc) {
             if (px->p_pid == pid) return px;
         }
+    }
     return NULL;
 }
 

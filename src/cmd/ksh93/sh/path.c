@@ -693,8 +693,9 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
 
             if (*stkptr(shp->stk, PATH_OFFSET) == '/' &&
                 (np = nv_search(stkptr(shp->stk, PATH_OFFSET), shp->bltin_tree, 0)) &&
-                !nv_isattr(np, BLT_DISABLE))
+                !nv_isattr(np, BLT_DISABLE)) {
                 return oldpp;
+            }
             if ((oldpp->flags & PATH_BIN) && (bp = strrchr(oldpp->name, '/'))) {
                 bp = stkptr(shp->stk, PATH_OFFSET + bp - oldpp->name);
                 if (!(np = nv_search(bp, shp->bltin_tree, 0))) {
@@ -915,7 +916,8 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
     timerdel(NULL);
     // Find first path that has a library component.
     while (pp && (pp->flags & PATH_SKIP)) pp = pp->next;
-    if (pp || slash) do {
+    if (pp || slash) {
+        do {
             sh_sigcheck(shp);
             libpath = pp;
             if (libpath) {
@@ -939,6 +941,7 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
             }
             while (pp && (pp->flags & PATH_FPATH)) pp = path_nextcomp(shp, pp, arg0, 0);
         } while (pp);
+    }
     // Force an exit.
     ((struct checkpt *)shp->jmplist)->mode = SH_JMPEXIT;
     if (not_executable) {

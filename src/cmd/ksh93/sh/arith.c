@@ -425,9 +425,10 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                             lvalue->isfloat = TYPE_LD;
                             goto skip2;
                         }
-                        if (shp->namref_root && !(lvalue->emode & ARITH_COMP))
+                        if (shp->namref_root && !(lvalue->emode & ARITH_COMP)) {
                             np = nv_open(*ptr, shp->namref_root,
                                          NV_NOREF | NV_VARNAME | NV_NOSCOPE | NV_NOADD | dot);
+                        }
                         if (!np) {
                             np = nv_open(*ptr, root, NV_NOREF | NV_VARNAME | dot);
                         }

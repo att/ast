@@ -295,8 +295,9 @@ void sh_sigdone(Shell_t *shp) {
     while (--sig >= 0) {
         flag = shp->sigflag[sig];
         if ((flag & (SH_SIGDONE | SH_SIGIGNORE | SH_SIGINTERACTIVE)) &&
-            !(flag & (SH_SIGFAULT | SH_SIGOFF)))
+            !(flag & (SH_SIGFAULT | SH_SIGOFF))) {
             sh_sigtrap(shp, sig);
+        }
     }
 }
 
@@ -540,12 +541,14 @@ __attribute__((noreturn)) void sh_done(void *ptr, int sig) {
     if (shp->var_tree) nv_scan(shp->var_tree, array_notify, NULL, NV_ARRAY, NV_ARRAY);
     sh_freeup(shp);
     if (mbwide() || sh_isoption(shp, SH_EMACS) || sh_isoption(shp, SH_VI) ||
-        sh_isoption(shp, SH_GMACS))
+        sh_isoption(shp, SH_GMACS)) {
         tty_cooked(-1);
+    }
 #ifdef JOBS
     if ((sh_isoption(shp, SH_INTERACTIVE) && shp->login_sh) ||
-        (!sh_isoption(shp, SH_INTERACTIVE) && (sig == SIGHUP)))
+        (!sh_isoption(shp, SH_INTERACTIVE) && (sig == SIGHUP))) {
         job_walk(shp, sfstderr, job_terminate, SIGHUP, NULL);
+    }
 #endif  // JOBS
     job_close(shp);
     sfsync((Sfio_t *)sfstdin);
@@ -655,8 +658,9 @@ void sh_siglist(Shell_t *shp, Sfio_t *iop, int flag) {
         trapcom = (shp->st.otrapcom ? shp->st.otrapcom : shp->st.trapcom);
         while (--sig >= 0) {
             if (!(trap = trapcom[sig])) continue;
-            if (sig >= shp->gd->sigmax || !(sname = (char *)names[sig]))
+            if (sig >= shp->gd->sigmax || !(sname = (char *)names[sig])) {
                 sname = sig_name(shp, sig, name, 1);
+            }
             sfprintf(iop, trapfmt, sh_fmtq(trap), sname);
         }
         for (sig = SH_DEBUGTRAP; sig >= 0; sig--) {

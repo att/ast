@@ -92,10 +92,11 @@ static_fn void sigalrm(int sig, siginfo_t *info, void *context) {
 
     set_trapinfo(shp, sig, info);
 
-    if (time_state & SIGALRM_CALL)
+    if (time_state & SIGALRM_CALL) {
         time_state &= ~SIGALRM_CALL;
-    else if (alarm(0))
+    } else if (alarm(0)) {
         kill(getpid(), SIGALRM | SH_TRAP);
+    }
     if (time_state) {
         if (time_state & IN_ADDTIMEOUT) time_state |= DEFER_SIGALRM;
         errno = EINTR;

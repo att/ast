@@ -422,8 +422,9 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
 
     for (fp = np->nvfun; fp; fp = fp->next) {
         if ((typep = fp->type) ||
-            (fp->disc && fp->disc->typef && (typep = (*fp->disc->typef)(np, fp))))
+            (fp->disc && fp->disc->typef && (typep = (*fp->disc->typef)(np, fp)))) {
             break;
+        }
     }
     if (np == typep) {
         fp = 0;

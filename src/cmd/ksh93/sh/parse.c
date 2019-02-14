@@ -1154,9 +1154,10 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
                 if (sh_lex(lexp)) {
                     if (lexp->token != NL && lexp->token != ';') sh_syntax(lexp);
                     // Some Linux scripts assume this.
-                    if (sh_isoption(lexp->sh, SH_NOEXEC))
+                    if (sh_isoption(lexp->sh, SH_NOEXEC)) {
                         errormsg(SH_DICT, ERROR_warn(0), e_lexemptyfor,
                                  lexp->sh->inlineno - (lexp->token == '\n'));
+                    }
                     t->for_.forlst = (struct comnod *)getnode(comnod);
                     (t->for_.forlst)->comarg = 0;
                     (t->for_.forlst)->comset = 0;
@@ -1165,8 +1166,9 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
                     (t->for_.forlst)->comstate = 0;
                     (t->for_.forlst)->comio = 0;
                     (t->for_.forlst)->comtyp = 0;
-                } else
+                } else {
                     t->for_.forlst = (struct comnod *)simple(lexp, SH_NOIO, NULL);
+                }
                 if (lexp->token != NL && lexp->token != ';') sh_syntax(lexp);
                 tok = skipnl(lexp, 0);
             } else if (tok == ';') {  // 'for i;do cmd' is valid syntax
@@ -1382,8 +1384,9 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
                     sfseek(stkp, (Sfoff_t)-1, SEEK_CUR);
 
                     if (np && FETCH_VT(np->nvalue, bfp) != (Nambfp_f)b_alias &&
-                        strchr(stkptr(stkp, ARGVAL), '['))
+                        strchr(stkptr(stkp, ARGVAL), '[')) {
                         sfputc(stkp, '@');
+                    }
                     ap = (struct argnod *)stkfreeze(stkp, 1);
                     ap->argflag = ARG_RAW;
                     ap->argchn.ap = 0;

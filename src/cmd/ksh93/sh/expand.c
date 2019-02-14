@@ -265,7 +265,8 @@ again:
                                 fmt.form = endc;
                                 fmt.extf = checkfmt;
                                 sfprintf(sfstdout, "%!", &fmt);
-                                if (!(fmt.flags & (SFFMT_LLONG | SFFMT_LDOUBLE))) switch (fmt.fmt) {
+                                if (!(fmt.flags & (SFFMT_LLONG | SFFMT_LDOUBLE))) {
+                                    switch (fmt.fmt) {
                                         case 'c':
                                         case 'd':
                                         case 'i':
@@ -279,6 +280,7 @@ again:
                                         }
                                         default: { break; }
                                     }
+                                }
                             } else {
                                 format = "%d";
                             }
@@ -298,8 +300,9 @@ again:
                     if (*cp == '.') {
                         incr = strtol(cp + 2, &endc, 0);
                         cp = endc;
-                    } else if (first > last)
+                    } else if (first > last) {
                         incr = -1;
+                    }
                     if (incr && *cp == '}') {
                         cp++;
                         range = 1;

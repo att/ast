@@ -656,16 +656,18 @@ int sh_lex(Lex_t *lp) {
                     if (endchar(lp) != '$') goto err;
                     if (oldmode(lp) == ST_QUOTE)  // $' within "" or ``
                     {
-                        if (lp->lexd.warn)
+                        if (lp->lexd.warn) {
                             errormsg(SH_DICT, ERROR_warn(0), e_lexslash, shp->inlineno);
+                        }
                         mode = ST_LIT;
                     }
                 }
                 if (mode != ST_LIT) {
                     if (lp->lexd.warn && lp->lex.last_quote && shp->inlineno > lp->lastline &&
-                        fcpeek(-2) != '$')
+                        fcpeek(-2) != '$') {
                         errormsg(SH_DICT, ERROR_warn(0), e_lexlongquote, lp->lastline,
                                  lp->lex.last_quote);
+                    }
                     lp->lex.last_quote = 0;
                     lp->lastline = shp->inlineno;
                     if (mode != ST_DOL) pushlevel(lp, '\'', mode);
@@ -937,8 +939,9 @@ int sh_lex(Lex_t *lp) {
                 continue;
             }
             case S_META: {
-                if (lp->lexd.warn && endchar(lp) == RBRACE && !lp->lexd.nested_tilde)
+                if (lp->lexd.warn && endchar(lp) == RBRACE && !lp->lexd.nested_tilde) {
                     errormsg(SH_DICT, ERROR_warn(0), e_lexusequote, shp->inlineno, c);
+                }
                 continue;
             }
             case S_PUSH: {
@@ -976,8 +979,9 @@ int sh_lex(Lex_t *lp) {
                 }
                 if (c == RBRACE) lp->lexd.nested_tilde = 0;
                 if (c == ';' && n != ';') {
-                    if (lp->lexd.warn && n == RBRACE)
+                    if (lp->lexd.warn && n == RBRACE) {
                         errormsg(SH_DICT, ERROR_warn(0), e_lexusequote, shp->inlineno, c);
+                    }
                     continue;
                 }
                 if (mode == ST_QNEST) {

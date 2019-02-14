@@ -67,9 +67,9 @@ char *nv_getv(Namval_t *np, Namfun_t *nfp) {
         if (!fp->disc || (!fp->disc->getnum && !fp->disc->getval)) continue;
         if (!nv_isattr(np, NV_NODISC) || fp == (Namfun_t *)nv_arrayptr(np)) break;
     }
-    if (fp && fp->disc->getval)
+    if (fp && fp->disc->getval) {
         cp = (*fp->disc->getval)(np, fp);
-    else if (fp && fp->disc->getnum) {
+    } else if (fp && fp->disc->getnum) {
         sfprintf(shp->strbuf, "%.*Lg", 12, (*fp->disc->getnum)(np, fp));
         cp = sfstruse(shp->strbuf);
     } else {

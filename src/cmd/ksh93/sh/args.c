@@ -181,10 +181,11 @@ static_fn int numsort(const char *s1, const char *s2) {
     d1 = nv_getnum(sp->np);
     nv_putsub(sp->np, NULL, ((struct Node *)s2)->index, 0);
     d2 = nv_getnum(sp->np);
-    if (d2 < d1)
+    if (d2 < d1) {
         r = 1;
-    else if (d2 > d1)
+    } else if (d2 > d1) {
         r = -1;
+    }
     if (sp->flags[0] & SORT_reverse) r = -r;
     return r;
 }
@@ -334,9 +335,11 @@ int sh_argopts(int argc, char *argv[], void *context) {
 #endif
             case -6: {  // --default
                 const Shtable_t *tp;
-                for (tp = shtab_options; (o = tp->sh_number); tp++)
-                    if (!(o & SH_COMMANDLINE) && is_option(&newflags, o & 0xff))
+                for (tp = shtab_options; (o = tp->sh_number); tp++) {
+                    if (!(o & SH_COMMANDLINE) && is_option(&newflags, o & 0xff)) {
                         off_option(&newflags, o & 0xff);
+                    }
+                }
                 continue;
             }
             case -7: {
@@ -1007,8 +1010,9 @@ static_fn int arg_expand(Shell_t *shp, struct argnod *argp, struct argnod **argc
             ap->argflag |= ARG_RAW;
             ap->argflag &= ~ARG_EXP;
             *argchain = ap;
-        } else
+        } else {
             count = sh_macexpand(shp, argp, argchain, flag);
+        }
     } else {
         argp->argchn.ap = *argchain;
         *argchain = argp;

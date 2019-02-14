@@ -1049,8 +1049,9 @@ Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
             return np;
         }
         (*ap->namarr.fun)(np, sp, (flags & ARRAY_ADD) ? ASSOC_OP_ADD : ASSOC_OP_ADD2);
-        if (!(flags & (ARRAY_SCAN | ARRAY_ADD)) && !(*ap->namarr.fun)(np, NULL, ASSOC_OP_CURRENT))
+        if (!(flags & (ARRAY_SCAN | ARRAY_ADD)) && !(*ap->namarr.fun)(np, NULL, ASSOC_OP_CURRENT)) {
             np = NULL;
+        }
     } else if (flags & ARRAY_SCAN) {
         (*ap->namarr.fun)(np, (char *)np, ASSOC_OP_ADD2);
     } else if (flags & ARRAY_UNDEF) {

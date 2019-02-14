@@ -1156,10 +1156,11 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                 ap->argchn.ap = (struct argnod *)fname;
                 ap = sh_argprocsub(shp, ap);
                 fname = ap->argval;
-            } else
+            } else {
                 fname = sh_mactrim(
                     shp, fname,
                     (!sh_isoption(shp, SH_NOGLOB) && sh_isoption(shp, SH_INTERACTIVE)) ? 2 : 0);
+            }
         }
         errno = 0;
         np = 0;
@@ -1350,9 +1351,9 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     if (tname) o_mode |= O_EXCL;
                 } else {
                     o_mode |= O_TRUNC;
-                    if (iof & IOCLOB)
+                    if (iof & IOCLOB) {
                         io_op[2] = '|';
-                    else if (sh_isoption(shp, SH_NOCLOBBER)) {
+                    } else if (sh_isoption(shp, SH_NOCLOBBER)) {
                         struct stat sb;
                         if (sh_stat(fname, &sb) >= 0) {
                             if (S_ISREG(sb.st_mode)) {
@@ -2099,8 +2100,9 @@ static_fn ssize_t slowread(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *handl
         }
 
         if (!(rsize && *(char *)buff != '\n' && shp->nextprompt == 1 &&
-              sh_isoption(shp, SH_HISTEXPAND)))
+              sh_isoption(shp, SH_HISTEXPAND))) {
             break;
+        }
 
         ((char *)buff)[rsize] = '\0';
         if (xp) {

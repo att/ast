@@ -323,8 +323,9 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                 }
                 error_info.line = fp->fortyp - shp->st.firstline;
                 if (!array && tp->tre.tretyp != TLST && tp->com.comset && !tp->com.comarg &&
-                    tp->com.comset->argval[0] == 0 && tp->com.comset->argval[1] == '[')
+                    tp->com.comset->argval[0] == 0 && tp->com.comset->argval[1] == '[') {
                     array |= (tp->com.comset->argflag & ARG_MESSAGE) ? NV_IARRAY : NV_ARRAY;
+                }
                 if (prefix && tp->com.comset && *cp == '[') {
                     shp->prefix = 0;
                     np = nv_open(prefix, shp->var_tree, flag);
@@ -502,8 +503,9 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                             }
                         }
                         if (!nv_isnull(np) && FETCH_VT(np->nvalue, const_cp) != Empty &&
-                            !nv_isvtree(np))
+                            !nv_isvtree(np)) {
                             sub = 1;
+                        }
                     } else if (((FETCH_VT(np->nvalue, const_cp) &&
                                  FETCH_VT(np->nvalue, const_cp) != Empty) ||
                                 nv_isvtree(np) || nv_arrayptr(np)) &&
@@ -1416,8 +1418,9 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
         return;
     }
     up = &np->nvalue;
-    if (FETCH_VT(np->nvalue, up) && nv_isarray(np) && nv_arrayptr(np))
+    if (FETCH_VT(np->nvalue, up) && nv_isarray(np) && nv_arrayptr(np)) {
         up = FETCH_VT(np->nvalue, up);
+    }
     if (up && FETCH_VTP(up, const_cp) == Empty) STORE_VTP(up, const_cp, NULL);
     if (nv_isattr(np, NV_EXPORT)) nv_offattr(np, NV_IMPORT);
     if (nv_isattr(np, NV_INTEGER)) {
@@ -1939,8 +1942,9 @@ static_fn int scanfilter(Dt_t *dict, void *arg, void *data) {
     if (!is_abuiltin(np) && tp && tp->tp && nv_type(np) != tp->tp) return 0;
     if (sp->scanmask == NV_TABLE && nv_isvtree(np)) k = NV_TABLE;
     if (!(sp->scanmask ? (k & sp->scanmask) == sp->scanflags
-                       : (!sp->scanflags || (k & sp->scanflags))))
+                       : (!sp->scanflags || (k & sp->scanflags)))) {
         return 0;
+    }
 
     if (tp && tp->mapname) {
         if (sp->scanflags == NV_FUNCTION || sp->scanflags == (NV_NOFREE | NV_BINARY | NV_RAW)) {
@@ -2185,8 +2189,9 @@ void _nv_unset(Namval_t *np, int flags) {
     }
     if (up && FETCH_VTP(up, cp)) {
         if (FETCH_VTP(up, cp) != Empty && FETCH_VTP(up, cp) != EmptyStr &&
-            !nv_isattr(np, NV_NOFREE))
+            !nv_isattr(np, NV_NOFREE)) {
             free(FETCH_VTP(up, cp));
+        }
         STORE_VTP(up, cp, NULL);
     }
 
@@ -3122,11 +3127,12 @@ char *nv_name(const Namval_t *np) {
         shp->last_table = nv_parent(np);
     } else if (!nv_isref(np)) {
     skip:
-        for (fp = np->nvfun; fp; fp = fp->next)
+        for (fp = np->nvfun; fp; fp = fp->next) {
             if (fp->disc && fp->disc->namef) {
                 if (np == shp->last_table) shp->last_table = 0;
                 return (*fp->disc->namef)(np, fp);
             }
+        }
     }
     // The `if (!np->nvname) goto skip;` above means we can reach this juncture with `np->nvname`
     // being the NULL pointer. Tell the compiler and lint tools this can't happen via an assert.

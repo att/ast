@@ -399,11 +399,11 @@ Sfdouble_t arith_exec(Arith_t *ep) {
                 if (type || tp[-1]) {
                     num = sp[-1] / num;
                     type = type > tp[-1] ? type : tp[-1];
-                } else if ((Sfulong_t)(num < 0 ? -num : num) == 0)
+                } else if ((Sfulong_t)(num < 0 ? -num : num) == 0) {
                     arith_error(e_divzero, ep->expr, ep->emode);
-                else if (type == TYPE_U || tp[-1] == TYPE_U)
+                } else if (type == TYPE_U || tp[-1] == TYPE_U) {
                     num = U2F((Sfulong_t)(sp[-1]) / (Sfulong_t)(num));
-                else {
+                } else {
                     Sfdouble_t x = floorl(sp[-1]);
                     Sfdouble_t y = floorl(num);
                     num = floorl(x / y);
