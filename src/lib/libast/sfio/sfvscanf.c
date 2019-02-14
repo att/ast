@@ -867,7 +867,7 @@ loop_fmt:
 #endif
 #if !_ast_intmax_long
                 } else if (size == sizeof(Sflong_t)) {
-                    * ((Sflong_t *)value) = argv.ll;
+                    *((Sflong_t *)value) = argv.ll;
 #endif
                 } else if (size == sizeof(long)) {
                     if (fmt == 'd' || fmt == 'i') {
