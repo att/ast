@@ -403,8 +403,9 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                                         if (copy) {
                                             empty = 0;
                                             c = cp - copy;
-                                            if (c > 0 && sfwrite(fdout, (char *)copy, c) < 0)
+                                            if (c > 0 && sfwrite(fdout, (char *)copy, c) < 0) {
                                                 goto failed;
+                                            }
                                         }
                                         for (i = 0; i <= (ep - cp); i++) mb[i] = cp[i];
                                         bp = (unsigned char *)sfreserve(fdin, SF_UNBOUND, -1);
@@ -458,8 +459,9 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                         break;
                     }
                 } else {
-                    while (!(c = sp[*cp++]))
+                    while (!(c = sp[*cp++])) {
                         ;
+                    }
                     wp = cp - 1;
                 }
                 /* check for end-of-line */
@@ -622,9 +624,9 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
     cp = *argv;
     if (cp) argv++;
     do {
-        if (!cp || !strcmp(cp, "-"))
+        if (!cp || !strcmp(cp, "-")) {
             fp = sfstdin;
-        else if (!(fp = sfopen(NULL, cp, "r"))) {
+        } else if (!(fp = sfopen(NULL, cp, "r"))) {
             error(ERROR_system(0), "%s: cannot open", cp);
             continue;
         }

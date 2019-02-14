@@ -138,13 +138,15 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, int flags) {
     raw = !mbwide();
     for (;;) {
         cur = cp;
-        if (raw)
-            while (!(n = states[*cp++]))
+        if (raw) {
+            while (!(n = states[*cp++])) {
                 ;
-        else
+            }
+        } else {
             for (;;) {
-                while (!(n = states[*cp++]))
+                while (!(n = states[*cp++])) {
                     ;
+                }
                 if (n < T_CONTROL) break;
                 pp = cp - 1;
                 m = mblen((char *)pp, MB_LEN_MAX);
@@ -207,6 +209,7 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, int flags) {
                     break;
                 }
             }
+        }
         c = *--cp;
         m = cp - cur;
         if (m || n >= T_CONTROL) {
@@ -403,10 +406,11 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
                 __builtin_unreachable();
         }
         if (!n) break;
-        if (opt_info.num)
+        if (opt_info.num) {
             flags |= n;
-        else
+        } else {
             flags &= ~n;
+        }
     }
     argv += opt_info.index;
     if (error_info.errors) {

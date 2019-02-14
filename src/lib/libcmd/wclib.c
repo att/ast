@@ -56,9 +56,9 @@ Wc_t *wc_init(int mode) {
     Wc_t *wp;
     wp = (Wc_t *)stakalloc(sizeof(Wc_t));
     if (!wp) return 0;
-    if (!mbwide())
+    if (!mbwide()) {
         wp->mb = 0;
-    else if (!(mode & WC_NOUTF8) && ast.locale.is_utf8) {
+    } else if (!(mode & WC_NOUTF8) && ast.locale.is_utf8) {
         wp->mb = 1;
     } else {
         wp->mb = -1;
@@ -228,11 +228,12 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                 } else {
                     *endbuff = '\n';
                 }
-                for (;;)
+                for (;;) {
                     if (*cp++ == '\n') {
                         if (cp > endbuff) break;
                         nlines++;
                     }
+                }
             }
         } else {
             while ((cp = buff = (unsigned char *)sfreserve(fd, SF_UNBOUND, 0)) &&
@@ -265,8 +266,9 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                         c = type[*cp++];
                     } while (c);
                     /* skip over word characters */
-                    while (!(c = type[*cp++]))
+                    while (!(c = type[*cp++])) {
                         ;
+                    }
                     nwords++;
                 }
             beob:
@@ -329,8 +331,9 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                         /* check for end of buffer */
                         if (cp > endbuff) goto eob;
                         if (wp->mode & WC_LONGEST) {
-                            if ((cp - start) - adjust > longest)
+                            if ((cp - start) - adjust > longest) {
                                 longest = (cp - start) - adjust - 1;
+                            }
                             start = cp;
                         }
                         nlines++;
@@ -396,8 +399,9 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                     }
                 }
                 /* skip over word characters */
-                while (!(c = type[*cp++]))
+                while (!(c = type[*cp++])) {
                     ;
+                }
                 if (mbc(c)) goto mbyte;
                 nwords++;
             }

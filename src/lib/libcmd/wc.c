@@ -136,8 +136,9 @@ int b_wc(int argc, char **argv, Shbltin_t *context) {
         if (!mbwide()) mode &= ~WC_MBYTE;
         mode |= WC_CHARS;
     }
-    if (!(mode & (WC_WORDS | WC_CHARS | WC_LINES | WC_MBYTE | WC_LONGEST)))
+    if (!(mode & (WC_WORDS | WC_CHARS | WC_LINES | WC_MBYTE | WC_LONGEST))) {
         mode |= (WC_WORDS | WC_CHARS | WC_LINES);
+    }
     wp = wc_init(mode);
     if (!wp) error(3, "internal error");
     cp = *argv;

@@ -126,9 +126,9 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
         } else if (!pflag || !(errno == ENOENT || errno == EEXIST || errno == ENOTDIR)) {
             error(ERROR_system(0), "%s:", path);
             continue;
-        } else if (errno == EEXIST)
+        } else if (errno == EEXIST) {
             continue;
-        else {
+        } else {
             /*
              * -p option, preserve intermediates
              * first eliminate trailing /'s

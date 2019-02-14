@@ -303,8 +303,9 @@ defer:
         st0.st_dev == st1.st_dev;
     m = 0;
     do {
-        for (t = s; *s && *s != ':'; s++)
+        for (t = s; *s && *s != ':'; s++) {
             ;
+        }
         if ((n = s - t) && *t == '/') {
             if (q) {
                 for (i = 0; i < 2; i++) {
@@ -341,12 +342,14 @@ defer:
         }
     }
     s = getenv("PATH");
-    if (s) do {
-            for (t = s; *s && *s != ':'; s++)
+    if (s) {
+        do {
+            for (t = s; *s && *s != ':'; s++) {
                 ;
+            }
             n = s - t;
             if (n && *t == '/') {
-                for (p = std; p < e; p++)
+                for (p = std; p < e; p++) {
                     if (p->len == n && !strncmp(t, p->path, n)) {
                         sfsprintf(buf, sizeof(buf), "%-*.*s/%s", n, n, t, error_info.id);
                         if (!access(buf, X_OK)) {
@@ -354,9 +357,11 @@ defer:
                             goto found;
                         }
                     }
+                }
             }
             while (*s == ':') s++;
         } while (*s);
+    }
 
     /*
      * defer to the first getconf on the standard PATH

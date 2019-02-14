@@ -71,28 +71,33 @@ static const char usage[] =
 static void l_dirname(Sfio_t *outfile, const char *pathname) {
     const char *last;
     /* go to end of path */
-    for (last = pathname; *last; last++)
+    for (last = pathname; *last; last++) {
         ;
+    }
     /* back over trailing '/' */
-    while (last > pathname && *--last == '/')
+    while (last > pathname && *--last == '/') {
         ;
+    }
     /* back over non-slash chars */
-    for (; last > pathname && *last != '/'; last--)
+    for (; last > pathname && *last != '/'; last--) {
         ;
+    }
     if (last == pathname) {
         /* all '/' or "" */
         if (*pathname != '/') last = pathname = ".";
     } else {
         /* back over trailing '/' */
-        for (; *last == '/' && last > pathname; last--)
+        for (; *last == '/' && last > pathname; last--) {
             ;
+        }
     }
     /* preserve // */
     if (last != pathname && pathname[0] == '/' && pathname[1] == '/') {
         while (pathname[2] == '/' && pathname < last) pathname++;
         if (last != pathname && pathname[0] == '/' && pathname[1] == '/' &&
-            *astconf("PATH_LEADING_SLASHES", NULL, NULL) != '1')
+            *astconf("PATH_LEADING_SLASHES", NULL, NULL) != '1') {
             pathname++;
+        }
     }
     sfwrite(outfile, pathname, last + 1 - pathname);
     sfputc(outfile, '\n');

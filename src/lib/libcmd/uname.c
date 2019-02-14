@@ -284,12 +284,13 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         }
         if (flags & OPT_operating_system) {
             s = astconf("OPERATING_SYSTEM", NULL, NULL);
-            if (!*s)
+            if (!*s) {
 #ifdef _UNAME_os_DEFAULT
                 s = _UNAME_os_DEFAULT;
 #else
                 s = ut.sysname;
 #endif
+            }
             output(OPT_operating_system, s, "operating-system");
         }
         if (flags & OPT_extended_release) {

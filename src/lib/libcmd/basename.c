@@ -71,20 +71,26 @@ static const char usage[] =
 static void namebase(Sfio_t *outfile, char *pathname, char *suffix) {
     char *first, *last;
     int n = 0;
-    for (first = last = pathname; *last; last++)
+    for (first = last = pathname; *last; last++) {
         ;
+    }
     /* back over trailing '/' */
-    if (last > first)
-        while (*--last == '/' && last > first)
+    if (last > first) {
+        while (*--last == '/' && last > first) {
             ;
+        }
+    }
     if (last == first && *last == '/') {
         /* all '/' or "" */
-        if (*first == '/')
-            if (*++last == '/') /* keep leading // */
+        if (*first == '/') {
+            if (*++last == '/') { /* keep leading // */
                 last++;
+            }
+        }
     } else {
-        for (first = last++; first > pathname && *first != '/'; first--)
+        for (first = last++; first > pathname && *first != '/'; first--) {
             ;
+        }
         if (*first == '/') first++;
         /* check for trailing suffix */
         if (suffix && (n = strlen(suffix)) && n < (last - first)) {
