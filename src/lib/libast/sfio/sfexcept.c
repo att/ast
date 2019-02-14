@@ -103,14 +103,16 @@ chk_stack:
 
         /* pop and close */
         pf = (*_Sfstack)(f, NULL);
-        if ((ev = sfclose(pf)) < 0) /* can't close, restack */
+        if ((ev = sfclose(pf)) < 0) { /* can't close, restack */
             (*_Sfstack)(f, pf);
+        }
 
         if (lock) SFLOCK(f, 0)
 
         ev = ev < 0 ? SF_EDONE : SF_ESTACK;
-    } else
+    } else {
         ev = SF_EDONE;
+    }
 
     SFMTXRETURN(f, ev)
 }

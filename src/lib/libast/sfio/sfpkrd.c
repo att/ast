@@ -157,17 +157,18 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
         if (!(t & SOCKET_PEEK)) continue;
 
         while ((t & SOCKET_PEEK) && (r = recv(fd, (char *)buf, n, MSG_PEEK)) < 0) {
-            if (errno == EINTR)
+            if (errno == EINTR) {
                 return -1;
-            else if (errno == EAGAIN)
+            } else if (errno == EAGAIN) {
                 errno = 0;
-            else
+            } else {
                 t &= ~SOCKET_PEEK;
+            }
         }
         if (r >= 0) {
-            if (r > 0)
+            if (r > 0) {
                 break;
-            else /* read past eof */
+            } else /* read past eof */
             {
                 if (action <= 0) r = read(fd, buf, 1);
                 return r;
@@ -183,8 +184,9 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
         r = 0;
         while ((t = read(fd, buf, action)) > 0) {
             r += t;
-            for (endbuf = buf + t; buf < endbuf;)
+            for (endbuf = buf + t; buf < endbuf;) {
                 if (*buf++ == rc) action -= 1;
+            }
             if (action == 0 || (int)(n - r) < action) break;
         }
         return r == 0 ? t : r;
@@ -195,9 +197,11 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
         char *sp;
 
         t = action == 0 ? 1 : action < 0 ? -action : action;
-        for (endbuf = (sp = buf) + r; sp < endbuf;)
-            if (*sp++ == rc)
+        for (endbuf = (sp = buf) + r; sp < endbuf;) {
+            if (*sp++ == rc) {
                 if ((t -= 1) == 0) break;
+            }
+        }
         r = sp - buf;
     }
 

@@ -114,13 +114,13 @@ static_fn int _sfphead(Sfpool_t *p, Sfio_t *f, int n) {
         assert(f->next == f->data);
 
         v = head->next - head->data; /* pending data		*/
-        if ((k = v - (f->endb - f->data)) <= 0)
+        if ((k = v - (f->endb - f->data)) <= 0) {
             k = 0;
-        else /* try to write out amount exceeding f's capacity */
+        } else /* try to write out amount exceeding f's capacity */
         {
-            if ((w = SFWR(head, head->data, k, head->disc)) == k)
+            if ((w = SFWR(head, head->data, k, head->disc)) == k) {
                 v -= k;
-            else /* write failed, recover buffer then quit */
+            } else /* write failed, recover buffer then quit */
             {
                 if (w > 0) {
                     v -= w;
@@ -166,8 +166,9 @@ static_fn int _sfpdelete(Sfpool_t *p, Sfio_t *f, int n) {
     }
 
     /* !_Sfpool, make sure head stream is an open stream */
-    for (n = 0; n < p->n_sf; ++n)
+    for (n = 0; n < p->n_sf; ++n) {
         if (!SFFROZEN(p->sf[n])) break;
+    }
     if (n < p->n_sf && n > 0) {
         f = p->sf[n];
         p->sf[n] = p->sf[0];
@@ -249,10 +250,13 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
 
     if (!pf) /* deleting f from its current pool */
     {
-        if ((p = f->pool) != NULL && p != &_Sfpool)
-            for (k = 0; k < p->n_sf && pf == NULL; ++k)
-                if (p->sf[k] != f) /* a stream != f represents the pool */
+        if ((p = f->pool) != NULL && p != &_Sfpool) {
+            for (k = 0; k < p->n_sf && pf == NULL; ++k) {
+                if (p->sf[k] != f) { /* a stream != f represents the pool */
                     pf = p->sf[k];
+                }
+            }
+        }
         if (!pf) /* already isolated */
         {
             rv = f; /* just return self */
@@ -261,32 +265,37 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
 
         if (_sfpmove(f, -1) < 0 || _sfsetpool(f) < 0) goto done; /* can't delete */
 
-        if (!pf->pool || pf->pool == &_Sfpool || pf->pool->n_sf <= 0)
+        if (!pf->pool || pf->pool == &_Sfpool || pf->pool->n_sf <= 0) {
             rv = pf;
-        else
+        } else {
             rv = pf->pool->sf[0]; /* return head of old pool */
+        }
         goto done;
     }
 
-    if (pf->pool && pf->pool != &_Sfpool) /* always use current mode */
+    if (pf->pool && pf->pool != &_Sfpool) { /* always use current mode */
         mode = pf->pool->mode;
+    }
 
     if (mode & SF_SHARE) /* can only have write streams */
     {
         if (SFMODE(f, 1) != SF_WRITE && _sfmode(f, SF_WRITE, 1) < 0) goto done;
         if (SFMODE(pf, 1) != SF_WRITE && _sfmode(pf, SF_WRITE, 1) < 0) goto done;
-        if (f->next > f->data && SFSYNC(f) < 0) /* start f clean */
+        if (f->next > f->data && SFSYNC(f) < 0) { /* start f clean */
             goto done;
+        }
     }
 
-    if (_sfpmove(f, -1) < 0) /* isolate f from current pool */
+    if (_sfpmove(f, -1) < 0) { /* isolate f from current pool */
         goto done;
+    }
 
     if (!(p = pf->pool) || p == &_Sfpool) /* making a new pool */
     {
         if (!(p = newpool(mode))) goto done;
-        if (_sfpmove(pf, -1) < 0) /* isolate pf from its current pool */
+        if (_sfpmove(pf, -1) < 0) { /* isolate pf from its current pool */
             goto done;
+        }
         pf->pool = p;
         p->sf[0] = pf;
         p->n_sf += 1;
@@ -298,8 +307,9 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
     assert(p->sf[0] == pf && p->sf[p->n_sf - 1] == f);
     SFOPEN(pf)
     SFOPEN(f)
-    if (_sfpmove(f, 0) < 0) /* make f head of pool */
+    if (_sfpmove(f, 0) < 0) { /* make f head of pool */
         goto done;
+    }
     rv = pf;
 
 done:

@@ -68,8 +68,9 @@ Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type) {
     if ((int)SFMODE(f, local) != (mode = f->mode & SF_RDWR)) {
         int flags = f->flags;
 
-        if (hardseek & SF_PUBLIC) /* seek ptr must follow file descriptor */
+        if (hardseek & SF_PUBLIC) { /* seek ptr must follow file descriptor */
             f->flags |= SF_SHARE | SF_PUBLIC;
+        }
         mode = _sfmode(f, mode, local);
         if (hardseek & SF_PUBLIC) f->flags = flags;
 
@@ -103,12 +104,13 @@ Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type) {
     while (f->flags & SF_STRING) {
         SFSTRSIZE(f);
 
-        if (type == SEEK_CUR)
+        if (type == SEEK_CUR) {
             r = p + (f->next - f->data);
-        else if (type == SEEK_END)
+        } else if (type == SEEK_END) {
             r = p + f->extent;
-        else
+        } else {
             r = p;
+        }
 
         if (r >= 0 && r <= f->size) {
             p = r;
@@ -145,9 +147,9 @@ Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type) {
     }
 
     if (type == SEEK_END || (f->mode & SF_WRITE)) {
-        if ((hardseek & SF_PUBLIC) || type == SEEK_END)
+        if ((hardseek & SF_PUBLIC) || type == SEEK_END) {
             p = SFSK(f, p, type, f->disc);
-        else {
+        } else {
             r = p + (type == SEEK_CUR ? f->here : 0);
             p = (hardseek || r != f->here) ? SFSK(f, r, SEEK_SET, f->disc) : r;
         }
@@ -163,9 +165,9 @@ Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type) {
         if ((hardseek || (type == SEEK_CUR && p == 0))) {
             if ((s = SFSK(f, (Sfoff_t)0, SEEK_CUR, f->disc)) == f->here ||
                 (s >= 0 && !(hardseek & SF_PUBLIC) &&
-                 (s = SFSK(f, f->here, SEEK_SET, f->disc)) == f->here))
+                 (s = SFSK(f, f->here, SEEK_SET, f->disc)) == f->here)) {
                 goto near_done;
-            else if (s < 0) {
+            } else if (s < 0) {
                 p = -1;
                 goto done;
             } else {
@@ -203,9 +205,9 @@ Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type) {
         if ((r = s - f->size) < 0) r = 0;
     }
     /* try to align buffer to block boundary to enhance I/O speed */
-    else if (f->blksz > 0 && f->size >= 2 * f->blksz)
+    else if (f->blksz > 0 && f->size >= 2 * f->blksz) {
         r = p - (p % f->blksz);
-    else {
+    } else {
         r = p;
 
         /* seeking around and wasting data, be conservative */
@@ -213,8 +215,9 @@ Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type) {
     }
 
     if ((hardseek || r != f->here) && (f->here = SFSK(f, r, SEEK_SET, f->disc)) != r) {
-        if (r < p) /* now try to just get to p */
+        if (r < p) { /* now try to just get to p */
             f->here = SFSK(f, p, SEEK_SET, f->disc);
+        }
         if (f->here != p) p = -1;
         goto done;
     }
@@ -222,9 +225,9 @@ Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type) {
     if (r < p) /* read to cover p */
     {
         (void)SFRD(f, f->data, f->size, f->disc);
-        if (p <= f->here && p >= (f->here - (f->endb - f->data)))
+        if (p <= f->here && p >= (f->here - (f->endb - f->data))) {
             f->next = f->endb - (size_t)(f->here - p);
-        else /* recover from read failure by just seeking to p */
+        } else /* recover from read failure by just seeking to p */
         {
             f->next = f->endb = f->data;
             if ((f->here = SFSK(f, p, SEEK_SET, f->disc)) != p) p = -1;

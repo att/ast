@@ -61,9 +61,9 @@ int sfclose(Sfio_t *f) {
     }
 
     rv = 0;
-    if (f->disc == _Sfudisc) /* closing the ungetc stream */
+    if (f->disc == _Sfudisc) { /* closing the ungetc stream */
         f->disc = NULL;
-    else if (f->file >= 0) /* sync file pointer */
+    } else if (f->file >= 0) /* sync file pointer */
     {
         f->bits |= SF_ENDING;
         rv = sfsync(f);
@@ -100,10 +100,11 @@ int sfclose(Sfio_t *f) {
     }
 
     if (f->data && (!local || (f->flags & SF_STRING) || (f->bits & SF_MMAP))) { /* free buffer */
-        if (f->bits & SF_MMAP)
+        if (f->bits & SF_MMAP) {
             SFMUNMAP(f, f->data, f->endb - f->data);
-        else if (f->flags & SF_MALLOC)
+        } else if (f->flags & SF_MALLOC) {
             data = (void *)f->data;
+        }
 
         f->data = NULL;
         f->size = -1;
@@ -113,9 +114,9 @@ int sfclose(Sfio_t *f) {
     if (_Sfnotify) (*_Sfnotify)(f, SF_CLOSING, (void *)((long)f->file));
     if (f->file >= 0 && !(f->flags & SF_STRING)) {
         while (close(f->file) < 0) {
-            if (errno == EINTR)
+            if (errno == EINTR) {
                 errno = 0;
-            else {
+            } else {
                 rv = -1;
                 break;
             }
@@ -153,9 +154,9 @@ int sfclose(Sfio_t *f) {
             goto done;
         }
 
-        if (!(f->flags & SF_STATIC))
+        if (!(f->flags & SF_STATIC)) {
             free(f);
-        else {
+        } else {
             f->disc = NULL;
             f->stdio = NULL;
             f->mode = SF_AVAIL;

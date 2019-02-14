@@ -67,16 +67,19 @@ static_fn ssize_t _dccaread(Sfio_t *f, void *buf, size_t size, Sfdisc_t *disc) {
     Sfdisc_t *prev;
     Dccache_t *dcca;
 
-    if (!f) /* bad stream */
+    if (!f) { /* bad stream */
         return -1;
+    }
 
     /* make sure that this is on the discipline stack */
-    for (prev = f->disc; prev; prev = prev->disc)
+    for (prev = f->disc; prev; prev = prev->disc) {
         if (prev->disc == disc) break;
+    }
     if (!prev) return -1;
 
-    if (size <= 0) /* nothing to do */
+    if (size <= 0) { /* nothing to do */
         return size;
+    }
 
     /* read from available data */
     dcca = (Dccache_t *)disc;
@@ -194,16 +197,18 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
         } while (d != f->disc);
 
         /* make sure we are not creating an infinite loop */
-        for (; d; d = d->disc)
+        for (; d; d = d->disc) {
             if (d == disc) goto done;
+        }
 
         /* set new disc */
         if (dcca) /* insert the discipline with cached data */
         {
             dcca->disc.disc = f->disc;
             disc->disc = &dcca->disc;
-        } else
+        } else {
             disc->disc = f->disc;
+        }
         f->disc = disc;
         rdisc = disc;
     }
@@ -225,11 +230,11 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
         if (reinit) {
             SETLOCAL(f);
             f->bits &= ~SF_NULL; /* turn off /dev/null handling */
-            if ((f->bits & SF_MMAP) || (f->mode & SF_INIT))
+            if ((f->bits & SF_MMAP) || (f->mode & SF_INIT)) {
                 sfsetbuf(f, NULL, (size_t)SF_UNBOUND);
-            else if (f->data == f->tiny)
+            } else if (f->data == f->tiny) {
                 sfsetbuf(f, NULL, 0);
-            else {
+            } else {
                 int flags = f->flags;
                 sfsetbuf(f, (void *)f->data, f->size);
                 f->flags |= (flags & SF_MALLOC);

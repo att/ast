@@ -66,16 +66,20 @@ Sfio_t *sfswap(Sfio_t *f1, Sfio_t *f2) {
         f2mode = SF_AVAIL;
     }
 
-    if (!f1->pool)
+    if (!f1->pool) {
         f1pool = -1;
-    else
-        for (f1pool = f1->pool->n_sf - 1; f1pool >= 0; --f1pool)
+    } else {
+        for (f1pool = f1->pool->n_sf - 1; f1pool >= 0; --f1pool) {
             if (f1->pool->sf[f1pool] == f1) break;
-    if (!f2->pool)
+        }
+    }
+    if (!f2->pool) {
         f2pool = -1;
-    else
-        for (f2pool = f2->pool->n_sf - 1; f2pool >= 0; --f2pool)
+    } else {
+        for (f2pool = f2->pool->n_sf - 1; f2pool >= 0; --f2pool) {
             if (f2->pool->sf[f2pool] == f2) break;
+        }
+    }
 
     f1flags = f1->flags;
     f2flags = f2->flags;
@@ -87,15 +91,17 @@ Sfio_t *sfswap(Sfio_t *f1, Sfio_t *f2) {
     if (f2pool >= 0) f1->pool->sf[f2pool] = f1;
     if (f1pool >= 0) f2->pool->sf[f1pool] = f2;
 
-    if (f2flags & SF_STATIC)
+    if (f2flags & SF_STATIC) {
         f2->flags |= SF_STATIC;
-    else
+    } else {
         f2->flags &= ~SF_STATIC;
+    }
 
-    if (f1flags & SF_STATIC)
+    if (f1flags & SF_STATIC) {
         f1->flags |= SF_STATIC;
-    else
+    } else {
         f1->flags &= ~SF_STATIC;
+    }
 
     if (f2mode & SF_AVAIL) /* swapping to a closed stream */
     {

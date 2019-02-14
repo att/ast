@@ -56,15 +56,17 @@ Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
             {
                 f->flags = (f->flags & ~SF_RDWR) | sflags;
 
-                if ((f->flags & SF_RDWR) == SF_RDWR)
+                if ((f->flags & SF_RDWR) == SF_RDWR) {
                     f->bits |= SF_BOTH;
-                else
+                } else {
                     f->bits &= ~SF_BOTH;
+                }
 
-                if (f->flags & SF_READ)
+                if (f->flags & SF_READ) {
                     f->mode = (f->mode & ~SF_WRITE) | SF_READ;
-                else
+                } else {
                     f->mode = (f->mode & ~SF_READ) | SF_WRITE;
+                }
             }
         } else /* make sure there is no buffered data */
         {
@@ -91,17 +93,20 @@ Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
     } else {
         if (!file) return NULL;
 
-        if (cwd == AT_FDCWD)
+        if (cwd == AT_FDCWD) {
             while ((fd = open((char *)file, oflags, SF_CREATMODE)) < 0 && errno == EINTR) errno = 0;
-        else
-            while ((fd = openat(cwd, (char *)file, oflags, SF_CREATMODE)) < 0 && errno == EINTR)
+        } else {
+            while ((fd = openat(cwd, (char *)file, oflags, SF_CREATMODE)) < 0 && errno == EINTR) {
                 errno = 0;
+            }
+        }
         if (fd < 0) return NULL;
 
         /* we may have to reset the file descriptor to its old value */
         oldfd = f ? f->file : -1;
-        if ((f = sfnew(f, NULL, (size_t)SF_UNBOUND, fd, sflags)) && oldfd >= 0)
+        if ((f = sfnew(f, NULL, (size_t)SF_UNBOUND, fd, sflags)) && oldfd >= 0) {
             (void)sfsetfd(f, oldfd);
+        }
     }
 
     return f;

@@ -50,7 +50,7 @@ static_fn ssize_t sfoutput(Sfio_t *f, char *buf, size_t n) {
         {
             buf += n;
             s = n = 0;
-        } else
+        } else {
             while ((ssize_t)n >= _Sfpage) { /* see if a hole of 0's starts here */
                 sp = buf + 1;
                 if (buf[0] == 0 &&
@@ -77,13 +77,15 @@ static_fn ssize_t sfoutput(Sfio_t *f, char *buf, size_t n) {
                 }
 
             chk_hole:
-                if ((s = sp - buf) >= _Sfpage) /* found a hole */
+                if ((s = sp - buf) >= _Sfpage) { /* found a hole */
                     break;
+                }
 
                 /* skip a dirty page */
                 n -= _Sfpage;
                 buf += _Sfpage;
             }
+        }
 
         /* write out current dirty pages */
         if (buf > wbuf) {
@@ -142,16 +144,16 @@ ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
         f->flags &= ~(SF_EOF | SF_ERROR);
 
         dc = disc;
-        if (f->flags & SF_STRING) /* just asking to extend buffer */
+        if (f->flags & SF_STRING) { /* just asking to extend buffer */
             w = n + (f->next - f->data);
-        else { /* warn that a write is about to happen */
+        } else { /* warn that a write is about to happen */
             SFDISC(f, dc, writef);
             if (dc && dc->exceptf && (f->flags & SF_IOCHECK)) {
                 int rv;
                 if (local) SETLOCAL(f);
-                if ((rv = _sfexcept(f, SF_WRITE, n, dc)) > 0)
+                if ((rv = _sfexcept(f, SF_WRITE, n, dc)) > 0) {
                     n = rv;
-                else if (rv < 0) {
+                } else if (rv < 0) {
                     f->flags |= SF_ERROR;
                     SFMTXRETURN(f, rv)
                 }
@@ -163,8 +165,9 @@ ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
                         f->here = SFSK(f, (Sfoff_t)0, SEEK_END, dc);
                         f->extent = f->here;
                     }
-                } else if ((f->flags & SF_SHARE) && !(f->flags & SF_PUBLIC))
+                } else if ((f->flags & SF_SHARE) && !(f->flags & SF_PUBLIC)) {
                     f->here = SFSK(f, f->here, SEEK_SET, dc);
+                }
             }
 
             oerrno = errno;
@@ -172,12 +175,12 @@ ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
 
             if (dc && dc->writef) {
                 SFDCWR(f, buf, n, dc, w);
-            } else if (SFISNULL(f))
+            } else if (SFISNULL(f)) {
                 w = n;
-            else if (f->flags & SF_WHOLE)
+            } else if (f->flags & SF_WHOLE) {
                 goto do_write;
-            else if ((ssize_t)n >= _Sfpage && !(f->flags & (SF_SHARE | SF_APPENDWR)) &&
-                     f->here == f->extent && (f->here % _Sfpage) == 0) {
+            } else if ((ssize_t)n >= _Sfpage && !(f->flags & (SF_SHARE | SF_APPENDWR)) &&
+                       f->here == f->extent && (f->here % _Sfpage) == 0) {
                 if ((w = sfoutput(f, (char *)buf, n)) <= 0) goto do_write;
             } else {
             do_write:
@@ -189,10 +192,11 @@ ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
 
             if (w > 0) {
                 if (!(f->bits & SF_DCDOWN)) {
-                    if ((f->flags & (SF_APPENDWR | SF_PUBLIC)) && f->extent >= 0)
+                    if ((f->flags & (SF_APPENDWR | SF_PUBLIC)) && f->extent >= 0) {
                         f->here = SFSK(f, (Sfoff_t)0, SEEK_CUR, dc);
-                    else
+                    } else {
                         f->here += w;
+                    }
                     if (f->extent >= 0 && f->here > f->extent) f->extent = f->here;
                 }
 
@@ -215,8 +219,9 @@ ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
         }
 
     do_continue:
-        for (dc = f->disc; dc; dc = dc->disc)
+        for (dc = f->disc; dc; dc = dc->disc) {
             if (dc == disc) break;
+        }
         disc = dc;
     }
 }

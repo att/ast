@@ -162,9 +162,9 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
         if (f >= (Sfdouble_t)CVT_LDBL_MAXINT) { /* scale to a small enough number to fit an int */
             v = SF_MAXEXP10 - 1;
             do {
-                if (f < _Sfpos10[v])
+                if (f < _Sfpos10[v]) {
                     v -= 1;
-                else {
+                } else {
                     f *= _Sfneg10[v];
                     if ((n += (1 << v)) >= SF_IDIGITS) return SF_INF(buf, format, size);
                 }
@@ -175,8 +175,9 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
                 if (f <= _Sfneg10[v]) {
                     f *= _Sfpos10[v];
                     if ((n += (1 << v)) >= SF_IDIGITS) return SF_INF(buf, format, size);
-                } else if (--v < 0)
+                } else if (--v < 0) {
                     break;
+                }
             } while (f < 0.1);
             n = -n;
         }
@@ -192,8 +193,9 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
             if ((*decpt += (int)n) >= SF_IDIGITS) return SF_INF(buf, format, size);
             b = sp;
             sp = buf + SF_INTPART;
-        } else
+        } else {
             n = 0;
+        }
 
         /* remaining number of digits to compute; add 1 for later rounding */
         n = (((format & SFFMT_EFORMAT) || *decpt <= 0) ? 1 : *decpt + 1) - n;
@@ -212,9 +214,9 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
         }
 
         if ((ep = (sp + n)) > (endsp = buf + (size - 2))) ep = endsp;
-        if (sp > ep)
+        if (sp > ep) {
             sp = ep;
-        else {
+        } else {
             if ((format & SFFMT_EFORMAT) && *decpt == 0 && f > 0.) {
                 Sfdouble_t d;
                 while ((long)(d = f * 10.) == 0) {
@@ -302,9 +304,9 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
         if (f >= (double)CVT_DBL_MAXINT) { /* scale to a small enough number to fit an int */
             v = SF_MAXEXP10 - 1;
             do {
-                if (f < _Sfpos10[v])
+                if (f < _Sfpos10[v]) {
                     v -= 1;
-                else {
+                } else {
                     f *= _Sfneg10[v];
                     if ((n += (1 << v)) >= SF_IDIGITS) return SF_INF(buf, format, size);
                 }
@@ -315,8 +317,9 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
                 if (f <= _Sfneg10[v]) {
                     f *= _Sfpos10[v];
                     if ((n += (1 << v)) >= SF_IDIGITS) return SF_INF(buf, format, size);
-                } else if (--v < 0)
+                } else if (--v < 0) {
                     break;
+                }
             } while (f < 0.1);
             n = -n;
         }
@@ -332,8 +335,9 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
             if ((*decpt += (int)n) >= SF_IDIGITS) return SF_INF(buf, format, size);
             b = sp;
             sp = buf + SF_INTPART;
-        } else
+        } else {
             n = 0;
+        }
 
         /* remaining number of digits to compute; add 1 for later rounding */
         n = (((format & SFFMT_EFORMAT) || *decpt <= 0) ? 1 : *decpt + 1) - n;
@@ -352,9 +356,9 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
         }
 
         if ((ep = (sp + n)) > (endsp = buf + (size - 2))) ep = endsp;
-        if (sp > ep)
+        if (sp > ep) {
             sp = ep;
-        else {
+        } else {
             if ((format & SFFMT_EFORMAT) && *decpt == 0 && f > 0.) {
                 double d;
                 while ((long)(d = f * 10.) == 0) {
@@ -383,15 +387,15 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
         }
     }
 
-    if (ep <= b)
+    if (ep <= b) {
         ep = b + 1;
-    else if (ep < endsp) { /* round the last digit */
+    } else if (ep < endsp) { /* round the last digit */
         *--sp += 5;
         while (*sp > '9') {
             *sp = '0';
-            if (sp > b)
+            if (sp > b) {
                 *--sp += 1;
-            else { /* next power of 10 */
+            } else { /* next power of 10 */
                 *sp = '1';
                 *decpt += 1;
                 if (!(format & SFFMT_EFORMAT)) { /* add one more 0 for %f precision */

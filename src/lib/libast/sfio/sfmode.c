@@ -96,8 +96,9 @@ static_fn void _sfcleanup(void) {
             pool = f->mode & SF_POOL;
             f->mode &= ~SF_POOL;
             if ((f->flags & SF_WRITE) && !(f->mode & SF_WRITE)) (void)_sfmode(f, SF_WRITE, 1);
-            if (f->data && ((f->bits & SF_MMAP) || ((f->mode & SF_WRITE) && f->next == f->data)))
+            if (f->data && ((f->bits & SF_MMAP) || ((f->mode & SF_WRITE) && f->next == f->data))) {
                 (void)SFSETBUF(f, NULL, 0);
+            }
             f->mode |= pool;
 
             SFMTXUNLOCK(f)
@@ -159,9 +160,9 @@ Sfrsrv_t *_sfrsrv(Sfio_t *f, ssize_t size) {
     /* make buffer if nothing yet */
     size = ((size + SF_GRAIN - 1) / SF_GRAIN) * SF_GRAIN;
     if (!(rsrv = f->rsrv) || size > rsrv->size) {
-        if (!(rs = (Sfrsrv_t *)malloc(size + sizeof(Sfrsrv_t))))
+        if (!(rs = (Sfrsrv_t *)malloc(size + sizeof(Sfrsrv_t)))) {
             size = -1;
-        else {
+        } else {
             if (rsrv) {
                 if (rsrv->slen > 0) memcpy(rs, rsrv, sizeof(Sfrsrv_t) + rsrv->slen);
                 free(rsrv);
@@ -199,8 +200,9 @@ int _sfpopen(Sfio_t *f, int fd, int pid, int stdio) {
         sig_t handler;
 
         (void)vtmtxlock(_Sfmutex);
-        if ((handler = signal(SIGPIPE, ignoresig)) != SIG_DFL && handler != ignoresig)
+        if ((handler = signal(SIGPIPE, ignoresig)) != SIG_DFL && handler != ignoresig) {
             signal(SIGPIPE, handler); /* honor user handler */
+        }
         _Sfsigp += 1;
         (void)vtmtxunlock(_Sfmutex);
     }
@@ -218,16 +220,17 @@ int _sfpclose(Sfio_t *f) {
 
     if (p->rdata) free(p->rdata);
 
-    if (p->pid < 0)
+    if (p->pid < 0) {
         status = 0;
-    else { /* close the associated stream */
+    } else { /* close the associated stream */
         if (p->file >= 0) CLOSE(p->file);
 
         /* wait for process termination */
         sigcritical(SIG_REG_EXEC | SIG_REG_PROC);
         status = -1;
-        while (waitpid(p->pid, &status, 0) == -1 && errno == EINTR)
+        while (waitpid(p->pid, &status, 0) == -1 && errno == EINTR) {
             ;
+        }
         status = status == -1 ? EXIT_QUIT
                               : WIFSIGNALED(status) ? EXIT_TERM(WTERMSIG(status))
                                                     : EXIT_CODE(WEXITSTATUS(status));
@@ -237,8 +240,9 @@ int _sfpclose(Sfio_t *f) {
         (void)vtmtxlock(_Sfmutex);
         if (p->sigp && (_Sfsigp -= 1) <= 0) {
             sig_t handler;
-            if ((handler = signal(SIGPIPE, SIG_DFL)) != SIG_DFL && handler != ignoresig)
+            if ((handler = signal(SIGPIPE, SIG_DFL)) != SIG_DFL && handler != ignoresig) {
                 signal(SIGPIPE, handler); /* honor user handler */
+            }
             _Sfsigp = 0;
         }
         (void)vtmtxunlock(_Sfmutex);
@@ -258,9 +262,9 @@ static_fn int _sfpmode(Sfio_t *f, int type) {
         p->ndata = f->endb - f->next;
         if (p->ndata > p->size) {
             if (p->rdata) free(p->rdata);
-            if ((p->rdata = (uchar *)malloc(p->ndata)))
+            if ((p->rdata = (uchar *)malloc(p->ndata))) {
                 p->size = p->ndata;
-            else {
+            } else {
                 p->size = 0;
                 return -1;
             }
@@ -268,8 +272,9 @@ static_fn int _sfpmode(Sfio_t *f, int type) {
         if (p->ndata > 0) memcpy((void *)p->rdata, (void *)f->next, p->ndata);
         f->endb = f->data;
     } else {                    /* restore read data */
-        if (p->ndata > f->size) /* may lose data!!! */
+        if (p->ndata > f->size) { /* may lose data!!! */
             p->ndata = f->size;
+        }
         if (p->ndata > 0) {
             memcpy((void *)f->data, (void *)p->rdata, p->ndata);
             f->endb = f->data + p->ndata;
@@ -315,10 +320,12 @@ int _sfmode(Sfio_t *f, int wanted, int local) {
                 if (rv == 0) {
                     local = 1;
                     goto err_notify;
-                } else
+                } else {
                     continue;
-            } else
+                }
+            } else {
                 break;
+            }
         }
     }
 
@@ -338,8 +345,9 @@ int _sfmode(Sfio_t *f, int wanted, int local) {
         }
     }
 
-    if (f->mode & SF_STDIO) /* synchronizing with stdio pointers */
+    if (f->mode & SF_STDIO) { /* synchronizing with stdio pointers */
         (*_Sfstdsync)(f);
+    }
 
     if (f->disc == _Sfudisc && wanted == SF_WRITE && sfclose((*_Sfstack)(f, NULL)) < 0) {
         local = 1;
@@ -374,10 +382,11 @@ int _sfmode(Sfio_t *f, int wanted, int local) {
             f->here = 0;
             f->endb = f->data + f->size;
             f->next = f->endr = f->endw = f->data;
-            if (f->mode & SF_READ)
+            if (f->mode & SF_READ) {
                 f->endr = f->endb;
-            else
+            } else {
                 f->endw = f->endb;
+            }
         } else {
             n = f->flags;
             (void)SFSETBUF(f, f->data, f->size);
@@ -390,9 +399,9 @@ int _sfmode(Sfio_t *f, int wanted, int local) {
     switch (SFMODE(f, 1)) {
         case SF_WRITE: /* switching to SF_READ */
             if (wanted == 0 || wanted == SF_WRITE) break;
-            if (!(f->flags & SF_READ))
+            if (!(f->flags & SF_READ)) {
                 goto err_notify;
-            else if (f->flags & SF_STRING) {
+            } else if (f->flags & SF_STRING) {
                 SFSTRSIZE(f);
                 f->endb = f->data + f->extent;
                 f->mode = SF_READ;
@@ -438,11 +447,11 @@ int _sfmode(Sfio_t *f, int wanted, int local) {
             /* fall thru */
 
         case SF_READ: /* switching to SF_WRITE */
-            if (wanted != SF_WRITE)
+            if (wanted != SF_WRITE) {
                 break;
-            else if (!(f->flags & SF_WRITE))
+            } else if (!(f->flags & SF_WRITE)) {
                 goto err_notify;
-            else if (f->flags & SF_STRING) {
+            } else if (f->flags & SF_STRING) {
                 f->endb = f->data + f->size;
                 f->mode = SF_WRITE | SF_LOCK;
                 break;
@@ -470,21 +479,24 @@ int _sfmode(Sfio_t *f, int wanted, int local) {
             if (f->data == f->tiny) {
                 f->endb = f->data = f->next = NULL;
                 f->size = 0;
-            } else
+            } else {
                 f->endb = (f->next = f->data) + f->size;
+            }
 
             break;
 
         default: /* unknown case */
         err_notify:
-            if ((wanted &= SF_RDWR) == 0 && (wanted = f->flags & SF_RDWR) == SF_RDWR)
+            if ((wanted &= SF_RDWR) == 0 && (wanted = f->flags & SF_RDWR) == SF_RDWR) {
                 wanted = SF_READ;
+            }
 
             /* set errno for operations that access wrong stream type */
             if (wanted != (f->mode & SF_RDWR) && f->file >= 0) errno = EBADF;
 
-            if (_Sfnotify) /* notify application of the error */
+            if (_Sfnotify) { /* notify application of the error */
                 (*_Sfnotify)(f, wanted, (void *)((long)f->file));
+            }
 
             rv = -1;
             break;

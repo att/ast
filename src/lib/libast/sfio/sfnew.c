@@ -56,8 +56,9 @@ Sfio_t *sfnew(Sfio_t *oldf, void *buf, size_t size, int file, int flags) {
         } else { /* reopening an open stream, close it first */
             sflags = f->flags;
 
-            if (((f->mode & SF_RDWR) != f->mode && _sfmode(f, 0, 0) < 0) || SFCLOSE(f) < 0)
+            if (((f->mode & SF_RDWR) != f->mode && _sfmode(f, 0, 0) < 0) || SFCLOSE(f) < 0) {
                 return NULL;
+            }
 
             if (f->data && ((flags & SF_STRING) || size != (size_t)SF_UNBOUND)) {
                 if (sflags & SF_MALLOC) free(f->data);
@@ -74,8 +75,9 @@ Sfio_t *sfnew(Sfio_t *oldf, void *buf, size_t size, int file, int flags) {
                 if (f->mode & SF_AVAIL) {
                     sflags = f->flags;
                     SFCLEAR(f, f->mutex);
-                } else
+                } else {
                     f = NULL;
+                }
             }
         }
 

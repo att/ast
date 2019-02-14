@@ -89,20 +89,22 @@ Sfdouble_t _sfstrtod(const char *s, char **retp) {
     while (*s) {                                  /* accumulate a handful of the digits */
         for (m = BATCH, n = 0; m > 0; --m, ++s) { /* get and process a char */
             c = *s;
-            if (isdigit(c))
+            if (isdigit(c)) {
                 n = 10 * n + (c - '0');
-            else
+            } else {
                 break;
+            }
         }
 
         /* number of digits accumulated */
         m = BATCH - m;
 
         if (mode == IPART) { /* doing the integer part */
-            if (dval == 0.)
+            if (dval == 0.) {
                 dval = (Sfdouble_t)n;
-            else
+            } else {
                 dval = dval * sfpow10(m) + (Sfdouble_t)n;
+            }
         } else if (mode == FPART) { /* doing the fractional part */
             fexp -= m;
             if (n > 0) dval += n * sfpow10(fexp);
@@ -123,8 +125,9 @@ Sfdouble_t _sfstrtod(const char *s, char **retp) {
                 mode = EPART;
                 c = *++s;
                 if ((expsign = (c == '-')) || c == '+') s += 1;
-            } else
+            } else {
                 break;
+            }
         }
     }
 

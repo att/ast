@@ -80,9 +80,9 @@ int sfputwc(Sfio_t *f, int w) {
 
     n = mbconv(buf, w, SFMBSTATE(f));
 
-    if (n > 8 || SFWPEEK(f, s, m) < n)
+    if (n > 8 || SFWPEEK(f, s, m) < n) {
         n = SFWRITE(f, (void *)s, n); /* write the hard way */
-    else {
+    } else {
         b = buf;
         switch (n) {
             case 8:

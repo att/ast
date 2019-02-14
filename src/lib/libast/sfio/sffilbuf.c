@@ -77,18 +77,20 @@ int _sffilbuf(Sfio_t *f, int n) {
                 f->next = f->data + (s - r);
                 f->endb = f->data + s;
             }
-        } else if (!(f->flags & SF_STRING) && !(f->bits & SF_MMAP))
+        } else if (!(f->flags & SF_STRING) && !(f->bits & SF_MMAP)) {
             f->next = f->endb = f->endr = f->data;
+        }
 
-        if (f->bits & SF_MMAP)
+        if (f->bits & SF_MMAP) {
             r = n > 0 ? n : f->size;
-        else if (!(f->flags & SF_STRING)) {
+        } else if (!(f->flags & SF_STRING)) {
             r = f->size - (f->endb - f->data); /* available buffer */
             if (n > 0) {
-                if (r > n && f->extent < 0 && (f->flags & SF_SHARE))
+                if (r > n && f->extent < 0 && (f->flags & SF_SHARE)) {
                     r = n; /* read only as much as requested */
-                else if (justseek && n <= f->iosz && f->iosz <= f->size)
+                } else if (justseek && n <= f->iosz && f->iosz <= f->size) {
                     r = f->iosz; /* limit buffer filling */
+                }
             }
         }
 

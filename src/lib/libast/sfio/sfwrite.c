@@ -105,15 +105,17 @@ ssize_t sfwrite(Sfio_t *f, const void *buf, size_t n) {
                     if (!(f->flags & SF_STRING)) /* maybe sftmp */
                     {
                         if (f->next > f->data) goto fls_buf;
-                    } else if (w == 0)
+                    } else if (w == 0) {
                         break;
+                    }
                 }
             } else if (f->next > f->data) {
             fls_buf:
                 (void)SFFLSBUF(f, -1);
                 if ((w = f->endb - f->next) < (ssize_t)n && (f->flags & SF_WHOLE) &&
-                    f->next > f->data)
+                    f->next > f->data) {
                     break;
+                }
             }
         }
 
@@ -122,8 +124,9 @@ ssize_t sfwrite(Sfio_t *f, const void *buf, size_t n) {
             if ((w = SFWR(f, s, n, f->disc)) <= 0) break;
         } else {
             if (w > (ssize_t)n) w = (ssize_t)n;
-            if (w <= 0) /* no forward progress possible */
+            if (w <= 0) { /* no forward progress possible */
                 break;
+            }
             memmove(f->next, s, w);
             f->next += w;
         }
@@ -133,10 +136,11 @@ ssize_t sfwrite(Sfio_t *f, const void *buf, size_t n) {
     }
 
     /* always flush buffer for share streams */
-    if (f->extent < 0 && (f->flags & SF_SHARE) && !(f->flags & SF_PUBLIC)) (void)SFFLSBUF(f, -1);
+    if (f->extent < 0 && (f->flags & SF_SHARE) && !(f->flags & SF_PUBLIC)) {
+        (void)SFFLSBUF(f, -1);
 
-    /* check to see if buffer should be flushed */
-    else if (n == 0 && (f->flags & SF_LINE) && !(f->flags & SF_STRING)) {
+        /* check to see if buffer should be flushed */
+    } else if (n == 0 && (f->flags & SF_LINE) && !(f->flags & SF_STRING)) {
         if ((ssize_t)(n = f->next - f->data) > (w = s - begs)) n = w;
         if (n > 0 && n < HIFORLINE) {
             for (next = f->next - 1; n > 0; --n, --next) {

@@ -252,8 +252,9 @@ loop_fmt:
             n = form - sp;
             SFwrite(f, sp, n);
             continue;
-        } else
+        } else {
             form += 1;
+        }
 
         flags = 0;
         scale = 0;
@@ -287,16 +288,18 @@ loop_fmt:
                             continue;
                         case RIGHTP: /* decreasing nested level */
                             if ((v -= 1) != 0) continue;
-                            if (*t_str != '*')
+                            if (*t_str != '*') {
                                 n_str = (form - 1) - t_str;
-                            else {
+                            } else {
                                 t_str = (*_Sffmtintf)(t_str + 1, &n);
                                 if (*t_str == '$') {
-                                    if (!fp && !(fp = (*_Sffmtposf)(f, oform, oargs, ft, 0)))
+                                    if (!fp && !(fp = (*_Sffmtposf)(f, oform, oargs, ft, 0))) {
                                         goto pop_fmt;
+                                    }
                                     n = FP_SET(n, argn);
-                                } else
+                                } else {
                                     n = FP_SET(-1, argn);
+                                }
 
                                 if (fp) {
                                     t_str = fp[n].argv.s;
@@ -306,8 +309,9 @@ loop_fmt:
                                     n = (*ft->extf)(f, (void *)&argv, ft);
                                     if (n < 0) goto pop_fmt;
                                     if (!(ft->flags & SFFMT_VALUE)) goto t_arg;
-                                    if ((t_str = argv.s) && (n_str = (int)ft->size) < 0)
+                                    if ((t_str = argv.s) && (n_str = (int)ft->size) < 0) {
                                         n_str = strlen(t_str);
+                                    }
                                 } else {
                                 t_arg:
                                     if ((t_str = va_arg(args, char *))) n_str = strlen(t_str);
@@ -322,8 +326,9 @@ loop_fmt:
                     dot = 0;
                     precis = -1;
                     flags |= SFFMT_CHOP;
-                } else
+                } else {
                     flags = (flags & ~(SFFMT_CENTER | SFFMT_ZERO)) | SFFMT_LEFT;
+                }
                 goto loop_flags;
             case '0':
                 if (!(flags & (SFFMT_LEFT | SFFMT_CENTER))) flags |= SFFMT_ZERO;
@@ -361,9 +366,9 @@ loop_fmt:
                     if (*form && !isalnum(*form)) {
                         v = form[1] == 'l' ? form[2] : form[1];
                         if (v == 'c' || v == 'C' || v == 's' || v == 'S') {
-                            if (*form == '*')
+                            if (*form == '*') {
                                 goto do_star;
-                            else {
+                            } else {
                                 base = *form++;
                                 goto loop_flags;
                             }
@@ -374,8 +379,9 @@ loop_fmt:
                 if (isdigit(*form)) {
                     fmt = *form++;
                     goto dot_size;
-                } else if (*form != '*')
+                } else if (*form != '*') {
                     goto loop_flags;
+                }
             do_star:
                 form += 1;  // fall thru for '*'
             // FALLTHRU
@@ -385,8 +391,9 @@ loop_fmt:
                     form += 1;
                     if (!fp && !(fp = (*_Sffmtposf)(f, oform, oargs, ft, 0))) goto pop_fmt;
                     n = FP_SET(n, argn);
-                } else
+                } else {
                     n = FP_SET(-1, argn);
+                }
 
                 if (fp) {
                     v = fp[n].argv.i;
@@ -432,10 +439,11 @@ loop_fmt:
                         width = -width;
                         flags = (flags & ~(SFFMT_CENTER | SFFMT_ZERO)) | SFFMT_LEFT;
                     }
-                } else if (dot == 1)
+                } else if (dot == 1) {
                     precis = v;
-                else if (dot == 2)
+                } else if (dot == 2) {
                     base = v;
+                }
                 goto loop_flags;
 
             /* 2012-06-27 I* will be deprecated and POSIX will probably settle on one of L* or z* */
@@ -450,25 +458,28 @@ loop_fmt:
                         form += 1;
                         if (!fp && !(fp = (*_Sffmtposf)(f, oform, oargs, ft, 0))) goto pop_fmt;
                         n = FP_SET(n, argn);
-                    } else
+                    } else {
                         n = FP_SET(-1, argn);
+                    }
 
-                    if (fp) /* use position list */
+                    if (fp) { /* use position list */
                         size = fp[n].argv.i;
-                    else if (ft && ft->extf) {
+                    } else if (ft && ft->extf) {
                         FMTSET(ft, form, args, 'I', sizeof(int), 0, 0, 0, 0, NULL, 0);
                         if ((*ft->extf)(f, (void *)(&argv), ft) < 0) goto pop_fmt;
-                        if (ft->flags & SFFMT_VALUE)
+                        if (ft->flags & SFFMT_VALUE) {
                             size = argv.i;
-                        else
+                        } else {
                             size = va_arg(args, int);
-                    } else
+                        }
+                    } else {
                         size = va_arg(args, int);
-                } else if (fmt == 'L')
+                    }
+                } else if (fmt == 'L') {
                     flags = (flags & ~SFFMT_TYPES) | SFFMT_LDOUBLE;
-                else if (fmt == 'z')
+                } else if (fmt == 'z') {
                     flags = (flags & ~SFFMT_TYPES) | SFFMT_ZFLAG;
-                else if (isdigit(*form)) {
+                } else if (isdigit(*form)) {
                     for (size = 0, n = *form; isdigit(n); n = *++form) size = size * 10 + (n - '0');
                 }
                 goto loop_flags;
@@ -479,8 +490,9 @@ loop_fmt:
                 if (*form == 'l') {
                     form += 1;
                     flags |= SFFMT_LLONG;
-                } else
+                } else {
                     flags |= SFFMT_LONG;
+                }
                 goto loop_flags;
             case 'h':
                 size = -1;
@@ -488,8 +500,9 @@ loop_fmt:
                 if (*form == 'h') {
                     form += 1;
                     flags |= SFFMT_SSHORT;
-                } else
+                } else {
                     flags |= SFFMT_SHORT;
+                }
                 goto loop_flags;
             case 'j':
                 size = -1;
@@ -506,36 +519,39 @@ loop_fmt:
         /* set object size for scalars */
         if (flags & SFFMT_TYPES) {
             if ((_Sftype[fmt] & (SFFMT_INT | SFFMT_UINT)) || fmt == 'n') {
-                if (flags & SFFMT_LONG)
+                if (flags & SFFMT_LONG) {
                     size = sizeof(long);
-                else if (flags & SFFMT_SHORT)
+                } else if (flags & SFFMT_SHORT) {
                     size = sizeof(short);
-                else if (flags & SFFMT_SSHORT)
+                } else if (flags & SFFMT_SSHORT) {
                     size = sizeof(char);
-                else if (flags & SFFMT_TFLAG)
+                } else if (flags & SFFMT_TFLAG) {
                     size = sizeof(ptrdiff_t);
-                else if (flags & SFFMT_ZFLAG)
+                } else if (flags & SFFMT_ZFLAG) {
                     size = sizeof(size_t);
-                else if (flags & (SFFMT_LLONG | SFFMT_JFLAG))
+                } else if (flags & (SFFMT_LLONG | SFFMT_JFLAG)) {
                     size = sizeof(Sflong_t);
-                else if (flags & SFFMT_IFLAG) {
+                } else if (flags & SFFMT_IFLAG) {
                     if (size <= 0 || size == sizeof(Sflong_t) * CHAR_BIT) size = sizeof(Sflong_t);
-                } else if (size < 0)
+                } else if (size < 0) {
                     size = sizeof(int);
+                }
             } else if (_Sftype[fmt] & SFFMT_FLOAT) {
-                if (flags & SFFMT_LDOUBLE)
+                if (flags & SFFMT_LDOUBLE) {
                     size = sizeof(Sfdouble_t);
-                else if (flags & (SFFMT_LONG | SFFMT_LLONG))
+                } else if (flags & (SFFMT_LONG | SFFMT_LLONG)) {
                     size = sizeof(double);
-                else if (flags & SFFMT_IFLAG) {
+                } else if (flags & SFFMT_IFLAG) {
                     if (size <= 0) size = sizeof(Sfdouble_t);
-                } else if (size < 0)
+                } else if (size < 0) {
                     size = sizeof(float);
+                }
             } else if (_Sftype[fmt] & SFFMT_CHAR) {
                 if ((flags & SFFMT_LONG) || fmt == 'C') {
                     size = sizeof(wchar_t) > sizeof(int) ? sizeof(wchar_t) : sizeof(int);
-                } else if (size < 0)
+                } else if (size < 0) {
                     size = sizeof(int);
+                }
             }
         }
 
@@ -553,9 +569,9 @@ loop_fmt:
             SFLOCK(f, 0)
             SFBUF(f);
 
-            if (v < 0) /* no further processing */
+            if (v < 0) { /* no further processing */
                 goto pop_fmt;
-            else if (v > 0) /* extf output v bytes */
+            } else if (v > 0) /* extf output v bytes */
             {
                 n_output += v;
                 continue;
@@ -563,19 +579,21 @@ loop_fmt:
             {
                 FMTGET(ft, form, args, fmt, size, flags, width, precis, base);
 
-                if (!(ft->flags & SFFMT_VALUE))
+                if (!(ft->flags & SFFMT_VALUE)) {
                     goto arg_list;
-                else if (_Sftype[fmt] & (SFFMT_INT | SFFMT_UINT)) {
+                } else if (_Sftype[fmt] & (SFFMT_INT | SFFMT_UINT)) {
                     if (size == sizeof(short)) {
-                        if (_Sftype[fmt] & SFFMT_INT)
+                        if (_Sftype[fmt] & SFFMT_INT) {
                             argv.i = argv.h;
-                        else
+                        } else {
                             argv.i = argv.uh;
+                        }
                     } else if (size == sizeof(char)) {
-                        if (_Sftype[fmt] & SFFMT_INT)
+                        if (_Sftype[fmt] & SFFMT_INT) {
                             argv.i = argv.c;
-                        else
+                        } else {
                             argv.i = argv.uc;
+                        }
                     }
                 } else if (_Sftype[fmt] & SFFMT_FLOAT) {
                     if (size == sizeof(float)) argv.d = argv.f;
@@ -593,18 +611,20 @@ loop_fmt:
                         argv.ll = va_arg(args, Sflong_t);
                     else
 #endif
-                        if (size == sizeof(long))
+                        if (size == sizeof(long)) {
                         argv.l = va_arg(args, long);
-                    else
+                    } else {
                         argv.i = va_arg(args, int);
+                    }
                     break;
                 case SFFMT_FLOAT:
 #if !_ast_fltmax_double
-                    if (size == sizeof(Sfdouble_t))
+                    if (size == sizeof(Sfdouble_t)) {
                         argv.ld = va_arg(args, Sfdouble_t);
-                    else
+                    } else {
 #endif
                         argv.d = va_arg(args, double);
+                    }
                     break;
                 case SFFMT_POINTER:
                     argv.vp = va_arg(args, void *);
@@ -635,10 +655,11 @@ loop_fmt:
                 continue;
 
             case '!': /* stacking a new environment */
-                if (!fp)
+                if (!fp) {
                     fp = (*_Sffmtposf)(f, oform, oargs, ft, 0);
-                else
+                } else {
                     goto pop_fmt;
+                }
 
                 if (!argv.ft) goto pop_fmt;
                 if (!argv.ft->form && ft) /* change extension functions */
@@ -668,8 +689,9 @@ loop_fmt:
                         fp = NULL;
                         oform = (char *)form;
                         va_copy(oargs, args);
-                    } else
+                    } else {
                         fm->form = NULL;
+                    }
 
                     fm->eventf = ft->eventf;
                     fm->next = fmstk;
@@ -712,8 +734,9 @@ loop_fmt:
                                     if (precis >= 0 && (w + n_w) > precis) break;
                                     w += n_w;
                                 }
-                            } else if (precis >= 0 && (v + n_s) > precis)
+                            } else if (precis >= 0 && (v + n_s) > precis) {
                                 break;
+                            }
                             v += n_s;
                         }
                         if (!wc) w = v;
@@ -735,9 +758,11 @@ loop_fmt:
                         }
                         v = ssp - sp;
                     } else {
-                        if ((v = size) < 0)
-                            for (v = 0; v != precis && sp[v]; ++v)
+                        if ((v = size) < 0) {
+                            for (v = 0; v != precis && sp[v]; ++v) {
                                 ;
+                            }
+                        }
                         if (precis >= 0 && v > precis) v = precis;
                         w = v;
                     }
@@ -793,9 +818,9 @@ loop_fmt:
                     if (n > 0) {
                         SFnputc(f, ' ', n);
                     }
-                    if (!(sp = *++ls))
+                    if (!(sp = *++ls)) {
                         break;
-                    else if (base > 0) {
+                    } else if (base > 0) {
                         SFputc(f, base);
                     }
                 }
@@ -806,13 +831,15 @@ loop_fmt:
             // FALLTHRU
             case 'c':
                 wc = (flags & SFFMT_LDOUBLE) && mbwide();
-                if (precis <= 0) /* # of times to repeat a character */
+                if (precis <= 0) { /* # of times to repeat a character */
                     precis = 1;
+                }
                 if (flags & SFFMT_LONG) {
                     if (base >= 0) {
                         if (!(wsp = (wchar_t *)argv.s)) continue;
-                        for (size = 0; wsp[size]; ++size)
+                        for (size = 0; wsp[size]; ++size) {
                             ;
+                        }
                     } else {
                         wsp = &argv.wc;
                         size = 1;
@@ -886,14 +913,15 @@ loop_fmt:
                     *((Sflong_t *)argv.vp) = (Sflong_t)n_output;
                 else
 #endif
-                    if (size == sizeof(long))
+                    if (size == sizeof(long)) {
                     *((long *)argv.vp) = (long)n_output;
-                else if (size == sizeof(short))
+                } else if (size == sizeof(short)) {
                     *((short *)argv.vp) = (short)n_output;
-                else if (size == sizeof(uchar))
+                } else if (size == sizeof(uchar)) {
                     *((uchar *)argv.vp) = (uchar)n_output;
-                else
+                } else {
                     *((int *)argv.vp) = (int)n_output;
+                }
 
                 continue;
 
@@ -943,14 +971,16 @@ loop_fmt:
                 }
                 if (base < 2 || base > SF_RADIX) base = 10;
                 if ((base & (n_s = base - 1)) == 0) {
-                    if (base < 8)
+                    if (base < 8) {
                         n = base < 4 ? 1 : 2;
-                    else if (base < 32)
+                    } else if (base < 32) {
                         n = base < 16 ? 3 : 4;
-                    else
+                    } else {
                         n = base < 64 ? 5 : 6;
-                } else
+                    }
+                } else {
                     n_s = base == 10 ? -1 : 0;
+                }
 
             int_arg:
 #if !_ast_intmax_long || _more_long_int || _more_void_int
@@ -958,10 +988,11 @@ loop_fmt:
                     lv = argv.ll;
                     goto long_cvt;
                 } else if (sizeof(long) < sizeof(Sflong_t) && size == sizeof(long)) {
-                    if (fmt == 'd')
+                    if (fmt == 'd') {
                         lv = (Sflong_t)argv.l;
-                    else
+                    } else {
                         lv = (Sflong_t)argv.ul;
+                    }
                 long_cvt:
                     if (scale) {
                         sp = fmtscale(lv, scale);
@@ -975,8 +1006,9 @@ loop_fmt:
                         {
                             lv = (Sflong_t)(HIGHBITL / base);
                             *--sp = _Sfdigits[HIGHBITL - ((Sfulong_t)lv) * base];
-                        } else
+                        } else {
                             lv = -lv;
+                        }
                     }
                     if (n_s < 0) /* base 10 */
                     {
@@ -996,15 +1028,16 @@ loop_fmt:
                 } else
 #endif
                     if (sizeof(short) < sizeof(int) && size == sizeof(short)) {
-                    if (fmt == 'd')
+                    if (fmt == 'd') {
                         v = (int)((short)argv.i);
-                    else
+                    } else {
                         v = (int)((ushort)argv.i);
+                    }
                     goto int_cvt;
                 } else if (size == sizeof(char)) {
-                    if (fmt != 'd')
+                    if (fmt != 'd') {
                         v = (int)((uchar)argv.i);
-                    else {
+                    } else {
                         v = (int)((signed char)argv.i);
                     }
                     goto int_cvt;
@@ -1054,8 +1087,9 @@ loop_fmt:
                 }
 
                 /* zero padding for precision if have room in buffer */
-                if (precis > 0 && (precis -= (endsp - sp)) < (sp - buf) - 64)
+                if (precis > 0 && (precis -= (endsp - sp)) < (sp - buf) - 64) {
                     while (precis-- > 0) *--sp = '0';
+                }
 
                 if (flags & SFFMT_ALTER) /* prefix */
                 {
@@ -1063,12 +1097,13 @@ loop_fmt:
                         if (*sp != '0') *--sp = '0';
                     } else {
                         if (width > 0 && (flags & SFFMT_ZERO)) { /* do 0 padding first */
-                            if (fmt == 'x' || fmt == 'X')
+                            if (fmt == 'x' || fmt == 'X') {
                                 n = 0;
-                            else if (dot < 2)
+                            } else if (dot < 2) {
                                 n = width;
-                            else
+                            } else {
                                 n = base < 10 ? 2 : 3;
+                            }
                             n += (flags & (SFFMT_MINUS | SFFMT_SIGN)) ? 1 : 0;
                             n = width - (n + (endsp - sp));
                             while (n-- > 0) *--sp = '0';
@@ -1078,9 +1113,9 @@ loop_fmt:
                             *--sp = '0';
                         } else if (dot >= 2) { /* base#value notation */
                             *--sp = '#';
-                            if (base < 10)
+                            if (base < 10) {
                                 *--sp = (char)('0' + base);
-                            else {
+                            } else {
                                 *--sp = _Sfdec[(base <<= 1) + 1];
                                 *--sp = _Sfdec[base];
                             }
@@ -1128,10 +1163,11 @@ loop_fmt:
                     if (fmt == 'A') v |= SFFMT_UPPER;
                     v |= SFFMT_AFORMAT;
                     if (precis < 0) {
-                        if (v & SFFMT_LDOUBLE)
+                        if (v & SFFMT_LDOUBLE) {
                             precis = 2 * (sizeof(Sfdouble_t) - 2);
-                        else
+                        } else {
                             precis = 2 * (sizeof(double) - 2);
+                        }
                     }
                     n = precis + 1;
                     ep = _sfcvt(valp, tmp + 1, sizeof(tmp) - 1, min(n, SF_FDIGITS), &decpt, &sign,
@@ -1149,18 +1185,21 @@ loop_fmt:
                     v |= SFFMT_EFORMAT;
                     ep = _sfcvt(valp, tmp + 1, sizeof(tmp) - 1, min(precis, SF_FDIGITS), &decpt,
                                 &sign, &n_s, v);
-                    if (dval == 0.)
+                    if (dval == 0.) {
                         decpt = 1;
-                    else if (*ep == 'I')
+                    } else if (*ep == 'I') {
                         goto infinite;
+                    }
 
                     if (!(flags & SFFMT_ALTER)) { /* zap trailing 0s */
                         if ((n = n_s) > precis) n = precis;
-                        while ((n -= 1) >= 1 && ep[n] == '0')
+                        while ((n -= 1) >= 1 && ep[n] == '0') {
                             ;
+                        }
                         n += 1;
-                    } else
+                    } else {
                         n = precis;
+                    }
 
                     if (decpt < -3 || decpt > precis) {
                         precis = n - 1;
@@ -1184,8 +1223,9 @@ loop_fmt:
                 if (precis > 0 || (flags & SFFMT_ALTER)) *endsp++ = decimal;
                 ssp = endsp;
                 endep = ep + precis;
-                while ((*endsp++ = *ep++) && ep <= endep)
+                while ((*endsp++ = *ep++) && ep <= endep) {
                     ;
+                }
                 precis -= (endsp -= 1) - ssp;
 
                 /* build the exponent */
@@ -1197,11 +1237,14 @@ loop_fmt:
                         n /= 10;
                         *--ep = (char)('0' + (v - n * 10));
                     }
-                } else
+                } else {
                     n = 0;
+                }
                 *--ep = (char)('0' + n);
-                while ((endep - ep) < base && ep > (buf + 2)) /* at least base digits in exponent */
+                while ((endep - ep) < base &&
+                       ep > (buf + 2)) { /* at least base digits in exponent */
                     *--ep = '0';
+                }
 
                 /* the e/Exponent separator and sign */
                 *--ep = (decpt > 0 || dval == 0.) ? '+' : '-';
@@ -1231,8 +1274,9 @@ loop_fmt:
                         }
                     }
                 } else {
-                    while (ep < endep && (*endsp++ = *ep++))
+                    while (ep < endep && (*endsp++ = *ep++)) {
                         ;
+                    }
                 }
                 if (endsp == sp) *endsp++ = '0';
 
@@ -1246,8 +1290,9 @@ loop_fmt:
 
                 ssp = endsp;
                 endep = ep + precis;
-                while ((*endsp++ = *ep++) && ep <= endep)
+                while ((*endsp++ = *ep++) && ep <= endep) {
                     ;
+                }
                 precis -= (endsp -= 1) - ssp;
                 ep = endep;
             end_aefg:
@@ -1258,18 +1303,19 @@ loop_fmt:
 
         if (flags == 0 && width <= 0) goto do_output;
 
-        if (flags & SFFMT_PREFIX)
+        if (flags & SFFMT_PREFIX) {
             fmt = (flags & SFFMT_MINUS) ? '-' : (flags & SFFMT_SIGN) ? '+' : ' ';
+        }
 
         n = (endsp - sp) + (endep - ep) + (precis <= 0 ? 0 : precis) +
             ((flags & SFFMT_PREFIX) ? 1 : 0);
-        if ((v = width - n) <= 0)
+        if ((v = width - n) <= 0) {
             v = 0;
-        else if (!(flags & SFFMT_ZERO)) /* right padding */
+        } else if (!(flags & SFFMT_ZERO)) /* right padding */
         {
-            if (flags & SFFMT_LEFT)
+            if (flags & SFFMT_LEFT) {
                 v = -v;
-            else if (flags & SFFMT_PREFIX) /* blank padding, output prefix now */
+            } else if (flags & SFFMT_PREFIX) /* blank padding, output prefix now */
             {
                 *--sp = fmt;
                 flags &= ~SFFMT_PREFIX;
@@ -1318,10 +1364,11 @@ pop_fmt:
     while ((fm = fmstk)) /* pop the format stack and continue */
     {
         if (fm->eventf) {
-            if (!form || !form[0])
+            if (!form || !form[0]) {
                 (*fm->eventf)(f, SF_FINAL, NULL, ft);
-            else if ((*fm->eventf)(f, SF_DPOP, (void *)form, ft) < 0)
+            } else if ((*fm->eventf)(f, SF_DPOP, (void *)form, ft) < 0) {
                 goto loop_fmt;
+            }
         }
 
         fmstk = fm->next;
@@ -1353,10 +1400,11 @@ done:
     f->next = f->data;
 
     if ((((flags = f->flags) & SF_SHARE) && !(flags & SF_PUBLIC)) ||
-        (n > 0 && (sp == data || (flags & SF_LINE))))
+        (n > 0 && (sp == data || (flags & SF_LINE)))) {
         (void)SFWRITE(f, (void *)sp, n);
-    else
+    } else {
         f->next += n;
+    }
 
     va_end(oargs);
     SFOPEN(f)

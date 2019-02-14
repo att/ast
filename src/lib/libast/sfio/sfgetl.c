@@ -50,9 +50,9 @@ Sflong_t sfgetl(Sfio_t *f) {
         }
         for (ends = s + p; s < ends;) {
             c = *s++;
-            if (c & SF_MORE)
+            if (c & SF_MORE) {
                 v = ((Sfulong_t)v << SF_UBITS) | SFUVALUE(c);
-            else { /* special translation for this byte */
+            } else { /* special translation for this byte */
                 v = ((Sfulong_t)v << SF_SBITS) | SFSVALUE(c);
                 f->next = s;
                 v = (c & SF_SIGN) ? -v - 1 : v;

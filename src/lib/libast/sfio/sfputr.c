@@ -56,8 +56,9 @@ ssize_t sfputr(Sfio_t *f, const char *s, int rc) {
         SFWPEEK(f, ps, p);
         f->bits &= ~SF_PUTR; /* remove any trace of this */
 
-        if (p < 0) /* something not right about buffering */
+        if (p < 0) { /* something not right about buffering */
             break;
+        }
 
         if (p == 0 || (f->flags & SF_WHOLE)) {
             n = sn < 0 ? strlen(s) : sn - (s - ss);
@@ -76,9 +77,9 @@ ssize_t sfputr(Sfio_t *f, const char *s, int rc) {
                 Sfrsrv_t *rsrv;
 
                 p = n + (rc >= 0 ? 1 : 0);
-                if (!(rsrv = _sfrsrv(f, p)))
+                if (!(rsrv = _sfrsrv(f, p))) {
                     n = 0;
-                else {
+                } else {
                     if (n > 0) memcpy(rsrv->data, s, n);
                     if (rc >= 0) rsrv->data[n] = rc;
                     if ((n = SFWRITE(f, rsrv->data, p)) < 0) n = 0;
@@ -101,18 +102,20 @@ ssize_t sfputr(Sfio_t *f, const char *s, int rc) {
          * `ps` and `s` buffers may overlap or even point to the same
          * buffer. See issue #42 and #78.
          */
-        for (; p > 0; --p, ++ps, ++s)
+        for (; p > 0; --p, ++ps, ++s) {
             if ((*ps = *s) == 0) break;
+        }
 
         w += ps - f->next;
         f->next = ps;
     }
 
     /* sync unseekable shared streams */
-    if (f->extent < 0 && (f->flags & SF_SHARE)) (void)SFFLSBUF(f, -1);
+    if (f->extent < 0 && (f->flags & SF_SHARE)) {
+        (void)SFFLSBUF(f, -1);
 
-    /* check for line buffering */
-    else if ((f->flags & SF_LINE) && !(f->flags & SF_STRING) && (n = f->next - f->data) > 0) {
+        /* check for line buffering */
+    } else if ((f->flags & SF_LINE) && !(f->flags & SF_STRING) && (n = f->next - f->data) > 0) {
         if (n > w) n = w;
         f->next -= n;
         (void)SFWRITE(f, (void *)f->next, n);

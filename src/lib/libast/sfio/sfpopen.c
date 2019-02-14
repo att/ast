@@ -45,8 +45,9 @@ Sfio_t *sfpopen(Sfio_t *f, const char *command, const char *mode) {
     if (f == (Sfio_t *)(-1)) { /* stdio compatibility mode */
         f = NULL;
         pflags = 1;
-    } else
+    } else {
         pflags = 0;
+    }
 
     flags = 0;
     if (sflags & SF_READ) flags |= PROC_READ;

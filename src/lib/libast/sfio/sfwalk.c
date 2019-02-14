@@ -47,8 +47,9 @@ int sfwalk(Sfwalk_f walkf, void *data, int type) {
 
             if ((rv = (*walkf)(f, data)) < 0) return rv;
 
-            if (p->sf[n] == f) /* move forward to next stream */
+            if (p->sf[n] == f) { /* move forward to next stream */
                 n += 1;
+            }
             /* else - a sfclose() was done on current stream */
         }
     }

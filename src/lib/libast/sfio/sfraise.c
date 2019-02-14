@@ -36,8 +36,9 @@ static_fn int _sfraiseall(int type, void *data) {
 
     rv = 0;
     for (p = &_Sfpool; p; p = next) {
-        for (next = p->next; next; next = next->next)
+        for (next = p->next; next; next = next->next) {
             if (next->n_sf > 0) break;
+        }
         for (n = 0; n < p->n_sf; ++n) {
             f = p->sf[n];
             if (sfraise(f, type, data) < 0) rv -= 1;
@@ -77,8 +78,9 @@ int sfraise(Sfio_t *f, int type, void *data) {
         }
 
         if ((disc = next)) { /* make sure that "next" hasn't been popped */
-            for (d = f->disc; d; d = d->disc)
+            for (d = f->disc; d; d = d->disc) {
                 if (d == disc) break;
+            }
             if (!d) disc = f->disc;
         }
     }

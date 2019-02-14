@@ -153,8 +153,9 @@ static_fn int _tmpexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
 
     /* the discipline needs to change only under the following exceptions */
     if (type != SF_WRITE && type != SF_SEEK && type != SF_DPUSH && type != SF_DPOP &&
-        type != SF_DBUFFER)
+        type != SF_DBUFFER) {
         return 0;
+    }
 
     /* try to create the temp file */
     SFCLEAR(&newf, NULL);
@@ -178,8 +179,9 @@ static_fn int _tmpexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     }
 
     /* make sure that new stream has the same mode */
-    if ((m = f->flags & (SF_READ | SF_WRITE)) != (SF_READ | SF_WRITE))
+    if ((m = f->flags & (SF_READ | SF_WRITE)) != (SF_READ | SF_WRITE)) {
         sfset(sf, ((~m) & (SF_READ | SF_WRITE)), 0);
+    }
     sfset(sf, (f->mode & (SF_READ | SF_WRITE)), 1);
 
     /* now remake the old stream into the new image */
@@ -239,8 +241,9 @@ Sfio_t *sftmp(size_t s) {
     _Sfnotify = notify;
     if (!f) return NULL;
 
-    if (s != (size_t)SF_UNBOUND) /* set up a discipline for out-of-bound, etc. */
+    if (s != (size_t)SF_UNBOUND) { /* set up a discipline for out-of-bound, etc. */
         f->disc = &Tmpdisc;
+    }
 
     if (s == 0) /* make the file now */
     {

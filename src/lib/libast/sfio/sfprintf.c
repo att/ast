@@ -57,10 +57,11 @@ ssize_t sfvsprintf(char *s, size_t n, const char *form, va_list args) {
 
     if ((rv = sfvprintf(f, form, args)) < 0) return -1;
     if (s && n > 0) {
-        if ((rv + 1) >= n)
+        if ((rv + 1) >= n) {
             n--;
-        else
+        } else {
             n = rv;
+        }
         memcpy(s, f->data, n);
         s[n] = 0;
     }

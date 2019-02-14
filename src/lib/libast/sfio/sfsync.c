@@ -43,8 +43,9 @@ static_fn int _sfall(void) {
     for (loop = 0; loop < MAXLOOP; ++loop) {
         rv = nsync = count = 0;
         for (p = &_Sfpool; p; p = next) { /* find the next legitimate pool */
-            for (next = p->next; next; next = next->next)
+            for (next = p->next; next; next = next->next) {
                 if (next->n_sf > 0) break;
+            }
 
             /* walk the streams for _Sfpool only */
             for (n = 0; n < ((p == &_Sfpool) ? p->n_sf : 1); ++n) {
@@ -54,10 +55,12 @@ static_fn int _sfall(void) {
                 if (f->flags & SF_STRING) goto did_sync;
                 if (SFFROZEN(f)) continue;
                 if ((f->mode & SF_READ) && (f->mode & SF_SYNCED)) goto did_sync;
-                if ((f->mode & SF_READ) && !(f->bits & SF_MMAP) && f->next == f->endb)
+                if ((f->mode & SF_READ) && !(f->bits & SF_MMAP) && f->next == f->endb) {
                     goto did_sync;
-                if ((f->mode & SF_WRITE) && !(f->bits & SF_HOLE) && f->next == f->data)
+                }
+                if ((f->mode & SF_WRITE) && !(f->bits & SF_HOLE) && f->next == f->data) {
                     goto did_sync;
+                }
 
                 if (sfsync(f) < 0) rv = -1;
 
@@ -83,14 +86,16 @@ int sfsync(Sfio_t *f) {
 
     GETLOCAL(origf, local);
 
-    if (origf->disc == _Sfudisc) /* throw away ungetc */
+    if (origf->disc == _Sfudisc) { /* throw away ungetc */
         (void)sfclose((*_Sfstack)(origf, NULL));
+    }
 
     rv = 0;
 
     lock = origf->mode & SF_LOCK;
-    if (origf->mode == (SF_SYNCED | SF_READ)) /* already synced */
+    if (origf->mode == (SF_SYNCED | SF_READ)) { /* already synced */
         goto done;
+    }
 
     if ((origf->mode & SF_RDWR) != SFMODE(origf, local) && _sfmode(origf, 0, local) < 0) {
         rv = -1;
@@ -98,8 +103,9 @@ int sfsync(Sfio_t *f) {
     }
 
     for (; f; f = f->push) {
-        if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf)
+        if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf) {
             (void)(*f->disc->exceptf)(f, SF_SYNC, (void *)((int)1), f->disc);
+        }
 
         SFLOCK(f, local)
 
@@ -142,13 +148,15 @@ int sfsync(Sfio_t *f) {
         f->mode |= mode;
         if (!local) SFOPEN(f)
 
-        if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf)
+        if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf) {
             (void)(*f->disc->exceptf)(f, SF_SYNC, (void *)((int)0), f->disc);
+        }
     }
 
 done:
-    if (!local && f && (f->mode & SF_POOL) && f->pool && f != f->pool->sf[0])
+    if (!local && f && (f->mode & SF_POOL) && f->pool && f != f->pool->sf[0]) {
         SFSYNC(f->pool->sf[0]);
+    }
 
     SFMTXRETURN(origf, rv)
 }

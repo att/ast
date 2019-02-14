@@ -49,9 +49,9 @@ int _sfputu(Sfio_t *f, Sfulong_t v) {
     while ((v >>= SF_UBITS)) *--s = (uchar)(SFUVALUE(v) | SF_MORE);
     n = (ps - s) + 1;
 
-    if (n > 8 || SFWPEEK(f, ps, p) < n)
+    if (n > 8 || SFWPEEK(f, ps, p) < n) {
         n = SFWRITE(f, (void *)s, n); /* write the hard way */
-    else {
+    } else {
         switch (n) {
             case 8:
                 *ps++ = *s++;

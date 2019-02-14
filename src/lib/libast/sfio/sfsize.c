@@ -54,24 +54,28 @@ Sfoff_t sfsize(Sfio_t *f) {
 
     if (f->extent >= 0) {
         if (f->flags & (SF_SHARE | SF_APPENDWR)) {
-            for (disc = f->disc; disc; disc = disc->disc)
+            for (disc = f->disc; disc; disc = disc->disc) {
                 if (disc->seekf) break;
+            }
             if (disc) {
                 Sfoff_t e;
                 if ((e = SFSK(f, 0, SEEK_END, disc)) >= 0) f->extent = e;
-                if (SFSK(f, f->here, SEEK_SET, disc) != f->here)
+                if (SFSK(f, f->here, SEEK_SET, disc) != f->here) {
                     f->here = SFSK(f, (Sfoff_t)0, SEEK_CUR, disc);
+                }
             } else {
                 struct stat st;
-                if (fstat(f->file, &st) < 0)
+                if (fstat(f->file, &st) < 0) {
                     f->extent = -1;
-                else if ((f->extent = st.st_size) < f->here)
+                } else if ((f->extent = st.st_size) < f->here) {
                     f->here = SFSK(f, (Sfoff_t)0, SEEK_CUR, disc);
+                }
             }
         }
 
-        if ((f->flags & (SF_SHARE | SF_PUBLIC)) == (SF_SHARE | SF_PUBLIC))
+        if ((f->flags & (SF_SHARE | SF_PUBLIC)) == (SF_SHARE | SF_PUBLIC)) {
             f->here = SFSK(f, (Sfoff_t)0, SEEK_CUR, f->disc);
+        }
     }
 
     if (f->here != s && (f->mode & SF_READ)) { /* buffered data is known to be invalid */
@@ -82,15 +86,16 @@ Sfoff_t sfsize(Sfio_t *f) {
         f->next = f->endb = f->endr = f->endw = f->data;
     }
 
-    if (f->here < 0)
+    if (f->here < 0) {
         f->extent = -1;
-    else if (f->extent < f->here)
+    } else if (f->extent < f->here) {
         f->extent = f->here;
+    }
 
     if ((s = f->extent) >= 0) {
-        if (f->flags & SF_APPENDWR)
+        if (f->flags & SF_APPENDWR) {
             s += (f->next - f->data);
-        else if (f->mode & SF_WRITE) {
+        } else if (f->mode & SF_WRITE) {
             s = f->here + (f->next - f->data);
             if (s < f->extent) s = f->extent;
         }

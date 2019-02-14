@@ -49,10 +49,11 @@ Sfoff_t sftell(Sfio_t *f) {
     if (f->flags & SF_STRING) SFMTXRETURN(f, (Sfoff_t)(f->next - f->data))
 
     /* let sfseek() handle the hard case */
-    if (f->extent >= 0 && (f->flags & (SF_SHARE | SF_APPENDWR)))
+    if (f->extent >= 0 && (f->flags & (SF_SHARE | SF_APPENDWR))) {
         p = sfseek(f, (Sfoff_t)0, SEEK_CUR);
-    else
+    } else {
         p = f->here + ((f->mode & SF_WRITE) ? f->next - f->data : f->next - f->endb);
+    }
 
     SFMTXRETURN(f, p)
 }

@@ -42,8 +42,9 @@ int sfset(Sfio_t *f, int flags, int set) {
         if (set && (flags & (SF_LINE | SF_WCWIDTH)) && !(f->flags & (SF_LINE | SF_WCWIDTH))) {
             tflags = (SF_LINE | SF_WCWIDTH);
             f->flags |= tflags;
-        } else
+        } else {
             tflags = 0;
+        }
         rv = _sfmode(f, oflags, 0);
         if (tflags) f->flags &= ~tflags;
         if (rv < 0) SFMTXRETURN(f, 0)
@@ -57,10 +58,11 @@ int sfset(Sfio_t *f, int flags, int set) {
     if (!(f->bits & SF_BOTH) || (flags & SF_RDWR) == SF_RDWR) flags &= ~SF_RDWR;
 
     /* set the flag */
-    if (set)
+    if (set) {
         f->flags |= (flags & SF_SETS);
-    else
+    } else {
         f->flags &= ~(flags & SF_SETS);
+    }
 
     /* must have at least one of read/write */
     if (!(f->flags & SF_RDWR)) f->flags |= (oflags & SF_RDWR);
@@ -70,14 +72,16 @@ int sfset(Sfio_t *f, int flags, int set) {
     /* turn to appropriate mode as necessary */
     if ((flags &= SF_RDWR)) {
         if (!set) {
-            if (flags == SF_READ)
+            if (flags == SF_READ) {
                 flags = SF_WRITE;
-            else
+            } else {
                 flags = SF_READ;
+            }
         }
         if ((flags == SF_WRITE && !(f->mode & SF_WRITE)) ||
-            (flags == SF_READ && !(f->mode & (SF_READ | SF_SYNCED))))
+            (flags == SF_READ && !(f->mode & (SF_READ | SF_SYNCED)))) {
             (void)_sfmode(f, flags, 1);
+        }
     }
 
     /* if not shared or unseekable, public means nothing */

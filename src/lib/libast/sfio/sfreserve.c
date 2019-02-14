@@ -43,10 +43,11 @@ void *sfreserve(Sfio_t *f, ssize_t size, int type) {
     sz = size < 0 ? -size : size;
 
     /* see if we need to bias toward SF_WRITE instead of the default SF_READ */
-    if (type < 0)
+    if (type < 0) {
         mode = 0;
-    else if ((mode = type & SF_WRITE))
+    } else if ((mode = type & SF_WRITE)) {
         type &= ~SF_WRITE;
+    }
 
     /* return the last record */
     if (type == SF_LASTR) {
@@ -66,9 +67,9 @@ void *sfreserve(Sfio_t *f, ssize_t size, int type) {
     }
 
     if (type > 0) {
-        if (type == 1) /* upward compatibility mode */
+        if (type == 1) { /* upward compatibility mode */
             type = SF_LOCKR;
-        else if (type != SF_LOCKR)
+        } else if (type != SF_LOCKR)
             SFMTXRETURN(f, NULL)
     }
 
@@ -94,28 +95,30 @@ void *sfreserve(Sfio_t *f, ssize_t size, int type) {
         SFLOCK(f, local)
 
         if ((n = now = f->endb - f->next) < 0) n = 0;
-        if (n > 0 && n >= sz) /* all done */
+        if (n > 0 && n >= sz) { /* all done */
             break;
+        }
 
         /* set amount to perform IO */
-        if (size == 0 || (f->mode & SF_WRITE))
+        if (size == 0 || (f->mode & SF_WRITE)) {
             iosz = -1;
-        else if (size < 0 && n == 0 && f->push) /* maybe stack-pop */
+        } else if (size < 0 && n == 0 && f->push) /* maybe stack-pop */
         {
             if ((iosz = f->push->endb - f->push->next) == 0) iosz = f->push->size;
             if (iosz < sz) iosz = sz; /* so only get what is asked for */
         } else {
             iosz = sz - n; /* get enough to fulfill requirement */
             if (size < 0 && iosz < (f->size - n)) iosz = f->size - n; /* get as much as possible */
-            if (iosz <= 0)                                            /* nothing to do */
+            if (iosz <= 0) {                                          /* nothing to do */
                 break;
+            }
         }
 
         /* do a buffer refill or flush */
         now = n;
-        if (f->mode & SF_WRITE)
+        if (f->mode & SF_WRITE) {
             (void)SFFLSBUF(f, iosz);
-        else if (type == SF_LOCKR && f->extent < 0 && (f->flags & SF_SHARE)) {
+        } else if (type == SF_LOCKR && f->extent < 0 && (f->flags & SF_SHARE)) {
             if (n == 0) /* peek-read only if there is no buffered data */
             {
                 f->mode |= SF_RV;
@@ -136,11 +139,13 @@ void *sfreserve(Sfio_t *f, ssize_t size, int type) {
 
         if ((n = f->endb - f->next) <= 0) n = 0;
 
-        if (n >= sz) /* got it */
+        if (n >= sz) { /* got it */
             break;
+        }
 
-        if (n == now || sferror(f) || sfeof(f)) /* no progress */
+        if (n == now || sferror(f) || sfeof(f)) { /* no progress */
             break;
+        }
 
         /* request was only to assess data availability */
         if (type == SF_LOCKR && size > 0 && n > 0) break;
@@ -149,13 +154,14 @@ void *sfreserve(Sfio_t *f, ssize_t size, int type) {
 done: /* compute the buffer to be returned */
     data = NULL;
     if (size == 0 || n == 0) {
-        if (n > 0) /* got data */
+        if (n > 0) { /* got data */
             data = (void *)f->next;
-        else if (type == SF_LOCKR && size == 0 && (rsrv = _sfrsrv(f, 0)))
+        } else if (type == SF_LOCKR && size == 0 && (rsrv = _sfrsrv(f, 0))) {
             data = (void *)rsrv->data;
-    } else if (n >= sz) /* got data */
+        }
+    } else if (n >= sz) { /* got data */
         data = (void *)f->next;
-    else if (f->flags & SF_STRING) /* try extending string buffer */
+    } else if (f->flags & SF_STRING) /* try extending string buffer */
     {
         if ((f->mode & SF_WRITE) && (f->flags & SF_MALLOC)) {
             (void)SFWR(f, f->next, sz, f->disc);
@@ -165,10 +171,11 @@ done: /* compute the buffer to be returned */
     {
         if (type == SF_LOCKR && (rsrv = _sfrsrv(f, sz))) data = (void *)rsrv->data;
     } else if (type != SF_LOCKR && sz > f->size && (rsrv = _sfrsrv(f, sz))) {
-        if ((n = SFREAD(f, (void *)rsrv->data, sz)) >= sz) /* read side buffer */
+        if ((n = SFREAD(f, (void *)rsrv->data, sz)) >= sz) { /* read side buffer */
             data = (void *)rsrv->data;
-        else
+        } else {
             rsrv->slen = -n;
+        }
     }
 
     SFOPEN(f)
@@ -176,8 +183,9 @@ done: /* compute the buffer to be returned */
     if (data) {
         if (type == SF_LOCKR) {
             f->mode |= SF_PEEK;
-            if ((f->mode & SF_READ) && size == 0 && data != f->next)
+            if ((f->mode & SF_READ) && size == 0 && data != f->next) {
                 f->mode |= SF_GETR; /* so sfread() will unlock */
+            }
             f->endr = f->endw = f->data;
         } else {
             if (data == (void *)f->next) f->next += (size >= 0 ? size : n);

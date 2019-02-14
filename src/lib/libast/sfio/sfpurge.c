@@ -40,8 +40,9 @@ int sfpurge(Sfio_t *f) {
     if ((mode = f->mode & SF_RDWR) != (int)f->mode && _sfmode(f, mode | SF_SYNCED, 0) < 0)
         SFMTXRETURN(f, -1)
 
-    if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf)
+    if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf) {
         (void)(*f->disc->exceptf)(f, SF_PURGE, (void *)((int)1), f->disc);
+    }
 
     if (f->disc == _Sfudisc) (void)sfclose((*_Sfstack)(f, NULL));
 
@@ -84,8 +85,9 @@ int sfpurge(Sfio_t *f) {
     SFOPEN(f)
 
 done:
-    if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf)
+    if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf) {
         (void)(*f->disc->exceptf)(f, SF_PURGE, (void *)((int)0), f->disc);
+    }
 
     SFMTXRETURN(f, 0)
 }

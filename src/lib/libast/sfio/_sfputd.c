@@ -50,14 +50,16 @@ int _sfputd(Sfio_t *f, Sfdouble_t v) {
     if (v < 0.) {
         v = -v;
         n = 1;
-    } else
+    } else {
         n = 0;
+    }
 
     /* make the magnitude of v < 1 */
-    if (v != 0.)
+    if (v != 0.) {
         v = frexpl(v, &exp);
-    else
+    } else {
         exp = 0;
+    }
 
     /* code the sign of v and exp */
     if ((w = exp) < 0) {

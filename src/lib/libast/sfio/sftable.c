@@ -56,10 +56,11 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
     int argp, argn, maxp, need[FP_INDEX];
     SFMBDCL(fmbs)
 
-    if (type < 0)
+    if (type < 0) {
         fp = NULL;
-    else if (!(fp = sffmtpos(f, form, args, ft, -1)))
+    } else if (!(fp = sffmtpos(f, form, args, ft, -1))) {
         return NULL;
+    }
 
     dollar = decimal = thousand = 0;
     argn = maxp = -1;
@@ -94,8 +95,9 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
             if (*sp == '$') {
                 dollar = 1;
                 form = sp + 1;
-            } else
+            } else {
                 argp = -1;
+            }
         }
 
         flags = dot = 0;
@@ -123,10 +125,11 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
                             n_str = form - t_str;
                             if (*t_str == '*') {
                                 t_str = sffmtint(t_str + 1, &n);
-                                if (*t_str == '$')
+                                if (*t_str == '$') {
                                     dollar = 1;
-                                else
+                                } else {
                                     n = -1;
+                                }
                                 if ((n = FP_SET(n, argn)) > maxp) maxp = n;
                                 if (fp && fp[n].ft.fmt == 0) {
                                     fp[n].ft.fmt = LEFTP;
@@ -177,8 +180,9 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
                 if (*form == '$') {
                     dollar = 1;
                     form += 1;
-                } else
+                } else {
                     n = -1;
+                }
                 if ((n = FP_SET(n, argn)) > maxp) maxp = n;
                 if (fp && fp[n].ft.fmt == 0) {
                     fp[n].ft.fmt = '.';
@@ -198,14 +202,16 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
             case '8':
             case '9':
             dot_size:
-                for (v = fmt - '0', fmt = *form; isdigit(fmt); fmt = *++form)
+                for (v = fmt - '0', fmt = *form; isdigit(fmt); fmt = *++form) {
                     v = v * 10 + (fmt - '0');
-                if (dot == 0)
+                }
+                if (dot == 0) {
                     width = v;
-                else if (dot == 1)
+                } else if (dot == 1) {
                     precis = v;
-                else if (dot == 2)
+                } else if (dot == 2) {
                     base = v;
+                }
                 goto loop_flags;
 
             case 'I': /* object length */
@@ -218,8 +224,9 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
                     if (*form == '$') {
                         dollar = 1;
                         form += 1;
-                    } else
+                    } else {
                         n = -1;
+                    }
                     if ((n = FP_SET(n, argn)) > maxp) maxp = n;
                     if (fp && fp[n].ft.fmt == 0) {
                         fp[n].ft.fmt = 'I';
@@ -236,8 +243,9 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
                 if (*form == 'l') {
                     form += 1;
                     flags |= SFFMT_LLONG;
-                } else
+                } else {
                     flags |= SFFMT_LONG;
+                }
                 goto loop_flags;
             case 'h':
                 size = -1;
@@ -245,8 +253,9 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
                 if (*form == 'h') {
                     form += 1;
                     flags |= SFFMT_SSHORT;
-                } else
+                } else {
                     flags |= SFFMT_SHORT;
+                }
                 goto loop_flags;
             case 'L':
                 size = -1;
@@ -257,31 +266,33 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
         /* set object size for scalars */
         if (flags & SFFMT_TYPES) {
             if ((_Sftype[fmt] & (SFFMT_INT | SFFMT_UINT)) || fmt == 'n') {
-                if (flags & SFFMT_LONG)
+                if (flags & SFFMT_LONG) {
                     size = sizeof(long);
-                else if (flags & SFFMT_SHORT)
+                } else if (flags & SFFMT_SHORT) {
                     size = sizeof(short);
-                else if (flags & SFFMT_SSHORT)
+                } else if (flags & SFFMT_SSHORT) {
                     size = sizeof(char);
-                else if (flags & SFFMT_TFLAG)
+                } else if (flags & SFFMT_TFLAG) {
                     size = sizeof(ptrdiff_t);
-                else if (flags & SFFMT_ZFLAG)
+                } else if (flags & SFFMT_ZFLAG) {
                     size = sizeof(size_t);
-                else if (flags & (SFFMT_LLONG | SFFMT_JFLAG))
+                } else if (flags & (SFFMT_LLONG | SFFMT_JFLAG)) {
                     size = sizeof(Sflong_t);
-                else if (flags & SFFMT_IFLAG) {
+                } else if (flags & SFFMT_IFLAG) {
                     if (size <= 0 || size == sizeof(Sflong_t) * CHAR_BIT) size = sizeof(Sflong_t);
-                } else if (size < 0)
+                } else if (size < 0) {
                     size = sizeof(int);
+                }
             } else if (_Sftype[fmt] & SFFMT_FLOAT) {
-                if (flags & (SFFMT_LONG | SFFMT_LLONG))
+                if (flags & (SFFMT_LONG | SFFMT_LLONG)) {
                     size = sizeof(double);
-                else if (flags & SFFMT_LDOUBLE)
+                } else if (flags & SFFMT_LDOUBLE) {
                     size = sizeof(Sfdouble_t);
-                else if (flags & SFFMT_IFLAG) {
+                } else if (flags & SFFMT_IFLAG) {
                     if (size <= 0) size = sizeof(Sfdouble_t);
-                } else if (size < 0)
+                } else if (size < 0) {
                     size = sizeof(float);
+                }
             } else if (_Sftype[fmt] & SFFMT_CHAR) {
                 if ((flags & SFFMT_LONG) || fmt == 'C') {
                     size = sizeof(wchar_t) > sizeof(int) ? sizeof(wchar_t) : sizeof(int);
@@ -355,19 +366,21 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
                 ft = NULL;
             }
 
-            if (!(fp[n].ft.flags & SFFMT_VALUE))
+            if (!(fp[n].ft.flags & SFFMT_VALUE)) {
                 goto arg_list;
-            else if (_Sftype[fp[n].ft.fmt] & (SFFMT_INT | SFFMT_UINT)) {
+            } else if (_Sftype[fp[n].ft.fmt] & (SFFMT_INT | SFFMT_UINT)) {
                 if (fp[n].ft.size == sizeof(short)) {
-                    if (_Sftype[fp[n].ft.fmt] & SFFMT_INT)
+                    if (_Sftype[fp[n].ft.fmt] & SFFMT_INT) {
                         fp[n].argv.i = fp[n].argv.h;
-                    else
+                    } else {
                         fp[n].argv.i = fp[n].argv.uh;
+                    }
                 } else if (fp[n].ft.size == sizeof(char)) {
-                    if (_Sftype[fp[n].ft.fmt] & SFFMT_INT)
+                    if (_Sftype[fp[n].ft.fmt] & SFFMT_INT) {
                         fp[n].argv.i = fp[n].argv.c;
-                    else
+                    } else {
                         fp[n].argv.i = fp[n].argv.uc;
+                    }
                 }
             } else if (_Sftype[fp[n].ft.fmt] & SFFMT_FLOAT) {
                 if (fp[n].ft.size == sizeof(float)) fp[n].argv.d = fp[n].argv.f;
@@ -377,16 +390,16 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
             if (fp[n].ft.fmt == LEFTP) {
                 fp[n].argv.s = va_arg(args, char *);
                 fp[n].ft.size = strlen(fp[n].argv.s);
-            } else if (fp[n].ft.fmt == '.' || fp[n].ft.fmt == 'I')
+            } else if (fp[n].ft.fmt == '.' || fp[n].ft.fmt == 'I') {
                 fp[n].argv.i = va_arg(args, int);
-            else if (fp[n].ft.fmt == '!') {
+            } else if (fp[n].ft.fmt == '!') {
                 if (ft) memcpy(ft, &savft, sizeof(Sffmt_t));
                 fp[n].argv.ft = ft = va_arg(args, Sffmt_t *);
                 if (ft->form) ft = NULL;
                 if (ft) memcpy(&savft, ft, sizeof(Sffmt_t));
-            } else if (type > 0) /* from sfvscanf */
+            } else if (type > 0) { /* from sfvscanf */
                 fp[n].argv.vp = va_arg(args, void *);
-            else
+            } else {
                 switch (_Sftype[fp[n].ft.fmt]) {
                     case SFFMT_INT:
                     case SFFMT_UINT:
@@ -395,26 +408,28 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
                             fp[n].argv.ll = va_arg(args, Sflong_t);
                         else
 #endif
-                            if (size == sizeof(long))
+                            if (size == sizeof(long)) {
                             fp[n].argv.l = va_arg(args, long);
-                        else
+                        } else {
                             fp[n].argv.i = va_arg(args, int);
+                        }
                         break;
                     case SFFMT_FLOAT:
 #if !_ast_fltmax_double
-                        if (size == sizeof(Sfdouble_t))
+                        if (size == sizeof(Sfdouble_t)) {
                             fp[n].argv.ld = va_arg(args, Sfdouble_t);
-                        else
+                        } else {
 #endif
                             fp[n].argv.d = va_arg(args, double);
+                        }
                         break;
                     case SFFMT_POINTER:
                         fp[n].argv.vp = va_arg(args, void *);
                         break;
                     case SFFMT_CHAR:
-                        if (fp[n].ft.base >= 0)
+                        if (fp[n].ft.base >= 0) {
                             fp[n].argv.s = va_arg(args, char *);
-                        else if ((fp[n].ft.flags & SFFMT_LONG) || fp[n].ft.fmt == 'C') {
+                        } else if ((fp[n].ft.flags & SFFMT_LONG) || fp[n].ft.fmt == 'C') {
 #if _wchar_t_is_int
                             fp[n].argv.wc = va_arg(args, wchar_t);
 #else   // _wchar_t_is_int
@@ -422,12 +437,14 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
 #endif  // _wchar_t_is_int
                         }
                         /* observe promotion rule */
-                        else
+                        else {
                             fp[n].argv.i = va_arg(args, int);
+                        }
                         break;
                     default: /* unknown pattern */
                         break;
                 }
+            }
         }
     }
 

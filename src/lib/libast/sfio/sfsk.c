@@ -58,12 +58,13 @@ Sfoff_t sfsk(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc) {
         dc = disc;
         if (f->flags & SF_STRING) {
             SFSTRSIZE(f);
-            if (type == SEEK_SET)
+            if (type == SEEK_SET) {
                 s = (ssize_t)addr;
-            else if (type == SEEK_CUR)
+            } else if (type == SEEK_CUR) {
                 s = (ssize_t)(addr + f->here);
-            else
+            } else {
                 s = (ssize_t)(addr + f->extent);
+            }
         } else {
             SFDISC(f, dc, seekf);
             if (dc && dc->seekf) {
@@ -86,8 +87,9 @@ Sfoff_t sfsk(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc) {
         }
 
     do_continue:
-        for (dc = f->disc; dc; dc = dc->disc)
+        for (dc = f->disc; dc; dc = dc->disc) {
             if (dc == disc) break;
+        }
         disc = dc;
     }
 }

@@ -46,8 +46,9 @@ int _sfputl(Sfio_t *f, Sflong_t v) {
     if (v < 0) { /* add 1 to avoid 2-complement problems with -SF_MAXINT */
         v = -(v + 1);
         *s = (uchar)(SFSVALUE(v) | SF_SIGN);
-    } else
+    } else {
         *s = (uchar)(SFSVALUE(v));
+    }
     v = (Sfulong_t)v >> SF_SBITS;
 
     while (v > 0) {
@@ -56,9 +57,9 @@ int _sfputl(Sfio_t *f, Sflong_t v) {
     }
     n = (ps - s) + 1;
 
-    if (n > 8 || SFWPEEK(f, ps, p) < n)
+    if (n > 8 || SFWPEEK(f, ps, p) < n) {
         n = SFWRITE(f, (void *)s, n);  // write the hard way
-    else {
+    } else {
         switch (n) {
             case 8:
                 *ps++ = *s++;

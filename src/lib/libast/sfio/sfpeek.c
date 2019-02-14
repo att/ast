@@ -43,12 +43,13 @@ ssize_t sfpeek(Sfio_t *f, void **bp, size_t size) {
         if ((f->flags & SF_RDWRSTR) == SF_RDWRSTR) {
             SFSTRSIZE(f);
             n = (f->data + f->here) - f->next;
-        } else
+        } else {
             n = f->endb - f->next;
+        }
 
-        if (!bp)
+        if (!bp) {
             return n;
-        else if (n > 0) /* size == 0 */
+        } else if (n > 0) /* size == 0 */
         {
             *bp = (void *)f->next;
             return 0;

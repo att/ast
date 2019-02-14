@@ -59,9 +59,9 @@ int _sfflsbuf(Sfio_t *f, int c) {
 
             /* !(f->flags&SF_STRING) is required because exception
                handlers may turn a string stream to a file stream */
-            if (f->next < f->endb || !(f->flags & SF_STRING))
+            if (f->next < f->endb || !(f->flags & SF_STRING)) {
                 n = f->next - (data = f->data);
-            else {
+            } else {
                 if (!local) SFOPEN(f)
                 SFMTXRETURN(f, -1)
             }
@@ -73,8 +73,9 @@ int _sfflsbuf(Sfio_t *f, int c) {
                 if (c == '\n' && (f->flags & SF_LINE) && !(f->flags & SF_STRING)) {
                     c = -1;
                     n += 1;
-                } else
+                } else {
                     break;
+                }
             } else if (n == 0) { /* unbuffered io */
                 outc = (uchar)c;
                 data = &outc;
@@ -87,25 +88,27 @@ int _sfflsbuf(Sfio_t *f, int c) {
 
         isall = SFISALL(f, isall);
         if ((w = SFWR(f, data, n, f->disc)) > 0) {
-            if ((n -= w) > 0) /* save unwritten data, then resume */
+            if ((n -= w) > 0) { /* save unwritten data, then resume */
                 memmove((char *)f->data, (char *)data + w, n);
+            }
             written += w;
             f->next = f->data + n;
             if (c < 0 && (!isall || n == 0)) break;
         } else if (w == 0) {
-            if (written > 0) /* some buffer was cleared */
+            if (written > 0) { /* some buffer was cleared */
                 break;       /* do normal exit below */
-            else             /* nothing was done, returning failure */
+            } else           /* nothing was done, returning failure */
             {
                 if (!local) SFOPEN(f)
                 SFMTXRETURN(f, -1)
             }
         } else /* w < 0 means SF_EDISC or SF_ESTACK in sfwr() */
         {
-            if (c < 0) /* back to the calling write operation */
+            if (c < 0) { /* back to the calling write operation */
                 break;
-            else
+            } else {
                 continue; /* try again to write out c */
+            }
         }
     }
 

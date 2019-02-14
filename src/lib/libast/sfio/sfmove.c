@@ -55,9 +55,9 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
     for (n_move = 0; n != 0;) {
         if (rc >= 0) /* moving records, let sfgetr() deal with record reading */
         {
-            if (!(cp = (uchar *)sfgetr(fr, rc, 0)))
+            if (!(cp = (uchar *)sfgetr(fr, rc, 0))) {
                 n = 0;
-            else {
+            } else {
                 r = sfvalue(fr);
                 if (fw && (w = SFWRITE(fw, cp, r)) != r) {
                     if (fr->extent >= 0) (void)SFSEEK(fr, (Sfoff_t)(-r), SEEK_CUR);
@@ -81,8 +81,9 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
             if (fw->mode != SF_WRITE && _sfmode(fw, SF_WRITE, 0) < 0) break;
             SFLOCK(fw, 0)
             if (fw->next >= fw->endb || (fw->next > fw->data && fr->extent < 0 &&
-                                         (fw->extent < 0 || (fw->flags & SF_SHARE))))
+                                         (fw->extent < 0 || (fw->flags & SF_SHARE)))) {
                 if (SFFLSBUF(fw, -1) < 0) break;
+            }
         } else if ((cur = SFSEEK(fr, (Sfoff_t)0, SEEK_CUR)) >= 0) {
             sk = n > 0 ? SFSEEK(fr, n, SEEK_CUR) : SFSEEK(fr, 0, SEEK_END);
             if (sk > cur) /* safe to skip over data in current stream */
@@ -108,12 +109,13 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
         } else if ((r = fr->endb - (next = fr->next)) <=
                    0) { /* amount of data remained to be read */
             if ((w = n > MAX_SSIZE ? MAX_SSIZE : (ssize_t)n) < 0) {
-                if (fr->extent < 0)
+                if (fr->extent < 0) {
                     w = fr->data == fr->tiny ? SF_GRAIN : fr->size;
-                else if ((fr->extent - fr->here) > SF_NMAP * SF_PAGE)
+                } else if ((fr->extent - fr->here) > SF_NMAP * SF_PAGE) {
                     w = SF_NMAP * SF_PAGE;
-                else
+                } else {
                     w = (ssize_t)(fr->extent - fr->here);
+                }
             }
 
             /* use a decent buffer for data transfer but make sure
@@ -127,10 +129,11 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
                     w = fw->endb - (next = fw->next);
                     direct = SF_WRITE;
                 } else if (w > fr->size && maxw > fr->size) { /* making our own buffer */
-                    if (w >= maxw)
+                    if (w >= maxw) {
                         w = maxw;
-                    else
+                    } else {
                         w = ((w + fr->size - 1) / fr->size) * fr->size;
+                    }
                     if (rsize <= 0 && (rbuf = (uchar *)malloc(w))) rsize = w;
                     if (rbuf) {
                         next = rbuf;
@@ -143,19 +146,21 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
             if (!direct) { /* make sure we don't read too far ahead */
                 if (n > 0 && fr->extent < 0 && (fr->flags & SF_SHARE)) {
                     if ((Sfoff_t)(r = fr->size) > n) r = (ssize_t)n;
-                } else
+                } else {
                     r = -1;
+                }
                 if ((r = SFFILBUF(fr, r)) <= 0) break;
                 next = fr->next;
             } else { /* actual amount to be read */
                 if (n > 0 && n < w) w = (ssize_t)n;
 
-                if ((r = SFRD(fr, next, w, fr->disc)) > 0)
+                if ((r = SFRD(fr, next, w, fr->disc)) > 0) {
                     fr->next = fr->endb = fr->endr = fr->data;
-                else if (r == 0)
+                } else if (r == 0) {
                     break; /* eof */
-                else
+                } else {
                     goto again; /* popped stack */
+                }
             }
         }
 
@@ -168,9 +173,9 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
         n_move += r;
         cp = next + r;
 
-        if (!direct)
+        if (!direct) {
             fr->next += r;
-        else if ((w = endb - cp) > 0) { /* move left-over to read stream */
+        } else if ((w = endb - cp) > 0) { /* move left-over to read stream */
             if (w > fr->size) w = fr->size;
             memcpy((void *)fr->data, (void *)cp, w);
             fr->endb = fr->data + w;
@@ -178,9 +183,9 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
         }
 
         if (fw) {
-            if (direct == SF_WRITE)
+            if (direct == SF_WRITE) {
                 fw->next += r;
-            else if (r <= (fw->endb - fw->next)) {
+            } else if (r <= (fw->endb - fw->next)) {
                 memcpy((void *)fw->next, (void *)next, r);
                 fw->next += r;
             } else if ((w = SFWRITE(fw, (void *)next, r)) != r) { /* a write error happened */
