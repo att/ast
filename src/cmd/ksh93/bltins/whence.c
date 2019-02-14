@@ -250,8 +250,9 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                     cp = "builtin";
                 }
                 sfputr(sfstdout, cp, '\n');
-            } else
+            } else {
                 sfprintf(sfstdout, "%s%s\n", name, sh_translate(cp));
+            }
             if (!aflag) continue;
             cp = 0;
             aflag++;

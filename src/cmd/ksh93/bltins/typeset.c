@@ -626,8 +626,9 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                     } else if (tp->aflag == '+') {
                         nv_offattr(np, flag);
                     }
-                } else
+                } else {
                     r++;
+                }
                 if (tp->help) {
                     int offset = stktell(shp->stk);
                     if (!np) {

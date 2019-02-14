@@ -104,12 +104,13 @@ int b_trap(int argc, char *argv[], Shbltin_t *context) {
             clear = (arg != action && *arg == 0);
             if (!clear) {
                 ++argv;
-                if (*action == '-' && action[1] == 0) clear++;
-                //
-                // NOTE: 2007-11-26: workaround for tests/signal.sh. If function semantics can be
-                // worked out then it may merit a -d,--default option.
-                //
-                else if (*action == '+' && action[1] == 0 && shp->st.self == &shp->global) {
+                if (*action == '-' && action[1] == 0) {
+                    clear++;
+                    //
+                    // NOTE: 2007-11-26: workaround for tests/signal.sh. If function semantics can
+                    // be worked out then it may merit a -d,--default option.
+                    //
+                } else if (*action == '+' && action[1] == 0 && shp->st.self == &shp->global) {
                     clear++;
                     dflag = true;
                 }

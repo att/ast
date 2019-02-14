@@ -639,8 +639,9 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                             x++;
                         }
                         if ((size -= x) > 0 && (up >= cur || z < 0) &&
-                            ((flags & NN_FLAG) || z < 0 || m > c))
+                            ((flags & NN_FLAG) || z < 0 || m > c)) {
                             continue;
+                        }
                     }
                 }
                 if (!binary && mbwide() && (up == var || ((flags & NN_FLAG) && size))) cur = var;
@@ -715,10 +716,11 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
             }
             case S_QUOTE: {
                 c = shp->ifstable[*cp++];
-                if (inquote && c == S_QUOTE)
+                if (inquote && c == S_QUOTE) {
                     c = -1;
-                else
+                } else {
                     inquote = !inquote;
+                }
                 if (val) {
                     sfputr(shp->stk, val, -1);
                     use_stak = 1;
@@ -732,10 +734,11 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
             }
             case S_ESC: {
                 // Process escape character.
-                if ((c = shp->ifstable[*cp++]) == S_NL)
+                if ((c = shp->ifstable[*cp++]) == S_NL) {
                     was_escape = 1;
-                else
+                } else {
                     c = 0;
+                }
                 if (val) {
                     sfputr(shp->stk, val, -1);
                     use_stak = 1;

@@ -126,12 +126,14 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
     opt_info.disc = 0;
     // Default to -f.
     limit = argv[opt_info.index];
-    if (hit == 0)
-        for (n = 0; shtab_limits[n].option; n++)
+    if (hit == 0) {
+        for (n = 0; shtab_limits[n].option; n++) {
             if (shtab_limits[n].index == RLIMIT_FSIZE) {
                 hit |= (1L << n);
                 break;
             }
+        }
+    }
     // Only one option at a time for setting.
     label = (hit & (hit - 1));
     if (error_info.errors || (limit && label) || argc > opt_info.index + 1) {
