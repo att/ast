@@ -1415,8 +1415,13 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
         return;
     }
     up = &np->nvalue;
-    if (FETCH_VT(np->nvalue, up) && nv_isarray(np) && nv_arrayptr(np)) {
-        up = FETCH_VT(np->nvalue, up);
+    if (IS_VT(np->nvalue, up) && nv_isarray(np) && nv_arrayptr(np)) {
+        // The conditional assignment below is suspicious. But the original
+        // version of this code didn't test the assigned type was `up`. It
+        // simply tested that the pointer was non-NULL. And in most cases the
+        // assigned type was not `up`. Making the test whether the pointer was
+        // non-NULL doubly suspicious.
+        if (FETCH_VT(np->nvalue, up)) up = FETCH_VT(np->nvalue, up);
     }
     if (up && FETCH_VTP(up, const_cp) == Empty) STORE_VTP(up, const_cp, NULL);
     if (nv_isattr(np, NV_EXPORT)) nv_offattr(np, NV_IMPORT);

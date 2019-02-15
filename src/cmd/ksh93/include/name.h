@@ -113,73 +113,88 @@ struct Value {
 //       `struct Value` above have been eliminated.
 #if 1 || !DEBUG_BUILD
 
-// Non-debugging versions of the struct Value getter/setter functions.
+// Non-debugging versions of the struct Value getter functions.
 #define fetch_vt(line, value_obj, which) (value_obj)._val.which
 #define fetch_vtp(line, value_objp, which) (value_objp)->_val.which
-#define store_vt(line, value_obj, which, val) \
-    do {                                      \
-        (value_obj)._val.which = val;         \
-    } while (0)
-#define store_vtp(line, value_objp, which, val) \
-    do {                                        \
-        (value_objp)->_val.which = val;         \
-    } while (0)
 
 #else
 
-// Debugging versions of the struct Value getter/setter functions.
+// Debugging versions of the struct Value getter functions.
 #define fetch_abort() 0      // abort()
 #define fetch_backtrace() 0  // dump_backtrace(0)
 
 #define fetch_vt(line, value_obj, which)                                                          \
     (((value_obj).type == VT_##which || (VT_##which == VT_const_cp && (value_obj).type == VT_cp)) \
          ? (value_obj)._val.which                                                                 \
-         : (fprintf(stderr, "Error: Fetching value type \"%s\" @ %s:%d in %s()\n",                \
-                    value_type_names[VT_##which], __FILE__, line, __FUNCTION__),                  \
-            fprintf(stderr, "Error: Stored   value type \"%s\" @ %s:%d in %s()\n",                \
-                    value_type_names[(value_obj).type],                                           \
+         : (DPRINTF("fetched value type != stored type:"),                                        \
+            DPRINTF("fetching \"%s\"", value_type_names[VT_##which]),                             \
+            DPRINTF("stored   \"%s\" @ %s:%d in %s()", value_type_names[(value_obj).type],        \
                     (value_obj).filename ? (value_obj).filename : "undef", (value_obj).line_num,  \
                     (value_obj).funcname ? (value_obj).funcname : "undef"),                       \
             fetch_backtrace(), fetch_abort(), (value_obj)._val.which))
 
-#define fetch_vtp(line, value_objp, which)                                         \
-    (((value_objp)->type == VT_##which ||                                          \
-      (VT_##which == VT_const_cp && (value_objp)->type == VT_cp))                  \
-         ? (value_objp)->_val.which                                                \
-         : (fprintf(stderr, "Error: Fetching value type \"%s\" @ %s:%d in %s()\n", \
-                    value_type_names[VT_##which], __FILE__, line, __FUNCTION__),   \
-            fprintf(stderr, "Error: Stored   value type \"%s\" @ %s:%d in %s()\n", \
-                    value_type_names[(value_objp)->type],                          \
-                    (value_objp)->filename ? (value_objp)->filename : "undef",     \
-                    (value_objp)->line_num,                                        \
-                    (value_objp)->funcname ? (value_objp)->funcname : "undef"),    \
+#define fetch_vtp(line, value_objp, which)                                                   \
+    (((value_objp)->type == VT_##which ||                                                    \
+      (VT_##which == VT_const_cp && (value_objp)->type == VT_cp))                            \
+         ? (value_objp)->_val.which                                                          \
+         : (DPRINTF("fetched value type != stored type:"),                                   \
+            DPRINTF("fetching \"%s\"", value_type_names[VT_##which]),                        \
+            DPRINTF("stored   \"%s\" @ %s:%d in %s()", value_type_names[(value_objp)->type], \
+                    (value_objp)->filename ? (value_objp)->filename : "undef",               \
+                    (value_objp)->line_num,                                                  \
+                    (value_objp)->funcname ? (value_objp)->funcname : "undef"),              \
             fetch_backtrace(), fetch_abort(), (value_objp)->_val.which))
 
-#define store_vt(line, value_obj, which, val) \
-    do {                                      \
-        (value_obj).funcname = __FUNCTION__;  \
-        (value_obj).filename = __FILE__;      \
-        (value_obj).line_num = line;          \
-        (value_obj).type = VT_##which;        \
-        (value_obj)._val.which = val;         \
-    } while (0)
-
-#define store_vtp(line, value_objp, which, val) \
-    do {                                        \
-        (value_objp)->funcname = __FUNCTION__;  \
-        (value_objp)->filename = __FILE__;      \
-        (value_objp)->line_num = line;          \
-        (value_objp)->type = VT_##which;        \
-        (value_objp)->_val.which = val;         \
-    } while (0)
-
 #endif
+
+#define dprint_vt(value_obj)                                                                \
+    DPRINTF("stored value type \"%s\" @ %s:%d in %s()", value_type_names[(value_obj).type], \
+            (value_obj).filename ? (value_obj).filename : "undef", (value_obj).line_num,    \
+            (value_obj).funcname ? (value_obj).funcname : "undef")
+
+#define dprint_vtp(value_objp)                                                                 \
+    DPRINTF("stored value type \"%s\" @ %s:%d in %s()", value_type_names[(value_objp)->type],  \
+            (value_objp)->filename ? (value_objp)->filename : "undef", (value_objp)->line_num, \
+            (value_objp)->funcname ? (value_objp)->funcname : "undef")
+
+#define is_vt(value_obj, which) ((value_obj).type == VT_##which)
+
+#define is_vtp(value_objp, which) ((value_objp)->type == VT_##which)
+
+// Always store all the meta data. Even if building without the getter checks enabled. That's
+// because a) the info may be useful when debugging core dumps, and b) the value type is needed for
+// the IS_VT macro.
+#define store_vt(line, value_obj, which, val)              \
+    do {                                                   \
+        (value_obj).funcname = __FUNCTION__;               \
+        (value_obj).filename = strrchr(__FILE__, '/') + 1; \
+        (value_obj).line_num = line;                       \
+        (value_obj).type = VT_##which;                     \
+        (value_obj)._val.which = val;                      \
+    } while (0)
+
+#define store_vtp(line, value_objp, which, val)              \
+    do {                                                     \
+        (value_objp)->funcname = __FUNCTION__;               \
+        (value_objp)->filename = strrchr(__FILE__, '/') + 1; \
+        (value_objp)->line_num = line;                       \
+        (value_objp)->type = VT_##which;                     \
+        (value_objp)->_val.which = val;                      \
+    } while (0)
 
 // These four macros must be used when retrieving or storing a value in a `struct Value` object.
 #define FETCH_VT(value_obj, which) fetch_vt(__LINE__, value_obj, which)
 #define FETCH_VTP(value_objp, which) fetch_vtp(__LINE__, value_objp, which)
 #define STORE_VT(value_obj, which, val) store_vt(__LINE__, value_obj, which, val)
 #define STORE_VTP(value_objp, which, val) store_vtp(__LINE__, value_objp, which, val)
+
+// Debug print of a `struct Value` object.
+#define DPRINT_VT(value_obj) dprint_vt(value_obj)
+#define DPRINT_VTP(value_objp) dprint_vtp(value_objp)
+
+// These two macros can be used to test the type of the value stored in the `struct Value` object.
+#define IS_VT(value_obj, which) is_vt(value_obj, which)
+#define IS_VTP(value_objp, which) is_vtp(value_objp, which)
 
 #ifndef _SHCMD_H
 typedef struct Namval Namval_t;
