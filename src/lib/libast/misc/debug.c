@@ -52,20 +52,22 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     // resolution deltas but that is also too fine grained.
     uint64_t ds = time_delta / 1000000000;
     uint64_t dms = (time_delta % 1000000000) / 1000000;
-    char buf[512];
-    int n = snprintf(buf, sizeof(buf), "### %d %3" PRIu64 ".%03" PRIu64 " %4d %-12s %15s() ",
-                     getpid(), ds, dms, lineno, strrchr(fname, '/') + 1, funcname);
-    (void)vsnprintf(buf + n, sizeof(buf) - n, fmt, ap);
-    n = strlen(buf);
-    assert(n < sizeof(buf));
-    if (n < sizeof(buf) - 1) {
-        buf[n] = '\n';
-        buf[n + 1] = '\0';
+    char buf1[64];
+    (void)snprintf(buf1, sizeof(buf1), "%s:%d", strrchr(fname, '/') + 1, lineno);
+    char buf2[512];
+    int n = snprintf(buf2, sizeof(buf2), "### %d %3" PRIu64 ".%03" PRIu64 " %-18s %15s() ",
+                     getpid(), ds, dms, buf1, funcname);
+    (void)vsnprintf(buf2 + n, sizeof(buf2) - n, fmt, ap);
+    n = strlen(buf2);
+    assert(n < sizeof(buf2));
+    if (n < sizeof(buf2) - 1) {
+        buf2[n] = '\n';
+        buf2[n + 1] = '\0';
         ++n;
     } else {
-        buf[n] = '\n';
+        buf2[n] = '\n';
     }
-    write(2, buf, n);
+    write(2, buf2, n);
 
     va_end(ap);
 }
