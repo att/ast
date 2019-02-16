@@ -667,7 +667,7 @@ do_insert: /**/
     if (lnk) {
         lnk->_hash = hsh;         /* memoize hash for fast compares */
         lnkp = HLNKP(opnt, opnp); /**/
-        assert(*lnkp == NULL);
+        assert(!*lnkp);
         asocasptr(lnkp, NULL, lnk);
     }
 

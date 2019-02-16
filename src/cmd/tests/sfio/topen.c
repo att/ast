@@ -46,7 +46,7 @@ tmain() {
         // fails.
 #if 0
     sfclose(f);
-    if (sfopen(f, "123", "s") != NULL) terror("can't reopen a closed stream!");
+    if (sfopen(f, "123", "s")) terror("can't reopen a closed stream!");
 #endif
 
     memset(&sf, 0, sizeof(sf));

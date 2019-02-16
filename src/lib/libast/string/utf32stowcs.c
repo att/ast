@@ -58,7 +58,7 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
             ast.mb_uc2wc = iconv_open(nl_langinfo(CODESET), "UTF-8");
             if (ast.mb_uc2wc == (iconv_t)-1) ast.mb_uc2wc = NULL;
         }
-        if (ast.mb_uc2wc == NULL) return -1;
+        if (!ast.mb_uc2wc) return -1;
         (void)iconv(ast.mb_uc2wc, NULL, NULL, NULL, NULL);
         if (n == 1) {
             char tmp_in[UTF8_LEN_MAX + 1];

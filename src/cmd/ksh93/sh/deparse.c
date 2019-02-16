@@ -307,7 +307,7 @@ static_fn void p_tree(const Shnode_t *t, int tflags) {
                 }
                 p_arg(&(t->lst.lstlef->arg), ' ', 0);
                 if (t->tre.tretyp & TBINARY) {
-                    assert(cp != NULL);
+                    assert(cp);
                     sfputr(outfile, cp, ' ');
                     p_arg(&(t->lst.lstrit->arg), ' ', 0);
                 }

@@ -604,7 +604,7 @@ int sh_open(const char *path, int flags, ...) {
     mode = (flags & O_CREAT) ? va_arg(ap, int) : 0;
     va_end(ap);
 
-    if (path == NULL) {
+    if (!path) {
         errno = EFAULT;
         return -1;
     }

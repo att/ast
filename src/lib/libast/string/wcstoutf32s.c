@@ -62,7 +62,7 @@ ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
             ast.mb_wc2uc = iconv_open("UTF-8", nl_langinfo(CODESET));
             if (ast.mb_wc2uc == (iconv_t)-1) ast.mb_wc2uc = NULL;
         }
-        if (ast.mb_wc2uc == NULL) return -1;
+        if (!ast.mb_wc2uc) return -1;
         inbytesleft = n * MB_CUR_MAX;
         outbytesleft = n * sizeof(uint32_t);
         inbuf_start = malloc(inbytesleft + 2 + outbytesleft);

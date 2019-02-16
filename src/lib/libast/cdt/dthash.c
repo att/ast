@@ -183,7 +183,7 @@ static_fn void *dthash_hflatten(Dt_t *dt, int type) {
     // Restoring a previous flattened list.
     head = hash->here;
     for (endt = (tbl = hash->htbl) + hash->tblz; tbl < endt; ++tbl) {
-        if (*tbl == NULL) continue;
+        if (!*tbl) continue;
 
         // Find the tail of the list for this slot.
         for (lnk = head; lnk && lnk != *tbl; lnk = lnk->_rght) {

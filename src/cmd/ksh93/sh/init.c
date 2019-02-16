@@ -922,7 +922,7 @@ static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
 
     // Find the second '.' and set it to NULL, so minor version string is set to 0
     dot = strchr(minor_str, '.');
-    assert(dot != NULL);
+    assert(dot);
     *dot = 0;
 
     // Patch number starts after second '.'
@@ -1692,7 +1692,7 @@ static_fn void siginfo_init(Shell_t *shp) {
 
 static_fn const char *siginfocode2str(int sig, int code) {
     const struct shtable4 *sc;
-    for (sc = shtab_siginfo_codes; sc->str != NULL; sc++) {
+    for (sc = shtab_siginfo_codes; sc->str; sc++) {
         if (((sc->sig == sig) || (sc->sig == 0)) && (sc->code == code)) return sc->str;
     }
     return NULL;

@@ -3110,7 +3110,7 @@ char *nv_name(const Namval_t *np) {
     if (!np->nvname) goto skip;
     if (!nv_isattr(np, NV_MINIMAL | NV_EXPORT) && np->nvenv) {
         Namval_t *nq = shp->last_table, *mp = (Namval_t *)np->nvenv;
-        if (mp && (mp->nvname == NULL || *mp->nvname == 0)) mp = NULL;
+        if (mp && (!mp->nvname || *mp->nvname == 0)) mp = NULL;
         if (mp && (!strchr(np->nvname, '.') || (np->nvfun && nv_type(mp)) ||
                    (nv_isarray(mp) && (cp = nv_getsub(mp)) && strcmp(np->nvname, cp) == 0))) {
             if (np == shp->last_table) shp->last_table = 0;

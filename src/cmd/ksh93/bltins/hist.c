@@ -298,7 +298,7 @@ static_fn void hist_subst(Shell_t *shp, const char *command, int fd, const char 
     string[c] = 0;
     char *sp = sh_substitute(shp, string, oldp, newp);
     free(oldp);
-    if (sp == NULL) {
+    if (!sp) {
         errormsg(SH_DICT, ERROR_exit(1), e_subst, command);
         __builtin_unreachable();
     }

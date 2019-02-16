@@ -112,7 +112,7 @@ void *llist(Dt_t *dt, Dtlink_t *lnk, int type) {
         }
     } else /* if(type&DT_RESTORE) */
     {
-        if (list->link != NULL) return NULL;
+        if (list->link) return NULL;
 
         list->link = lnk;
 

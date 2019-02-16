@@ -119,7 +119,8 @@ char *sfgetr(Sfio_t *f, int rc, int type) {
         /* get internal buffer */
         if (!rsrv || rsrv->size < un + n + 1) {
             if (rsrv) rsrv->slen = un;
-            if ((rsrv = _sfrsrv(f, un + n + 1)) != NULL) {
+            rsrv = _sfrsrv(f, un + n + 1);
+            if (rsrv) {
                 us = rsrv->data;
             } else {
                 us = NULL;

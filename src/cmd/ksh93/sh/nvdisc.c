@@ -61,7 +61,8 @@ char *nv_getv(Namval_t *np, Namfun_t *nfp) {
     Namfun_t *fp;
     char *cp;
 
-    if ((fp = nfp) != NULL && !nv_local) fp = nfp = nfp->next;
+    fp = nfp;
+    if (nfp && !nv_local) fp = nfp = nfp->next;
     nv_local = false;
     for (; fp; fp = fp->next) {
         if (!fp->disc || (!fp->disc->getnum && !fp->disc->getval)) continue;
@@ -88,7 +89,8 @@ Sfdouble_t nv_getn(Namval_t *np, Namfun_t *nfp) {
     Shell_t *shp = sh_ptr(np);
     char *str;
 
-    if ((fp = nfp) != NULL && !nv_local) fp = nfp = nfp->next;
+    fp = nfp;
+    if (nfp && !nv_local) fp = nfp = nfp->next;
     nv_local = false;
     for (; fp; fp = fp->next) {
         if (!fp->disc || (!fp->disc->getnum && !fp->disc->getval)) continue;
@@ -124,7 +126,8 @@ void nv_putv(Namval_t *np, const void *value, int flags, Namfun_t *nfp) {
     Namfun_t *fp, *fpnext;
     Namarr_t *ap;
 
-    if ((fp = nfp) != NULL && !nv_local) fp = nfp = nfp->next;
+    fp = nfp;
+    if (nfp && !nv_local) fp = nfp = nfp->next;
     nv_local = false;
     if (flags & NV_NODISC) fp = 0;
     for (; fp; fp = fpnext) {

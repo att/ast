@@ -200,12 +200,14 @@ tmain() {
                        obj->key, obj->ord, o->key, o->ord);
             }
 
-            if ((o = dtremove(dt, obj)) != NULL) {
+            o = dtremove(dt, obj);
+            if (o) {
                 terror("%s: dtremove (key=%d,ord=%d) wrongly yielded (key=%d,ord=%d)", name,
                        obj->key, obj->ord, o->key, o->ord);
             }
 
-            if ((o = dtdelete(dt, obj)) != NULL) {
+            o = dtdelete(dt, obj);
+            if (o) {
                 n_mid += 1;
             } else {
                 terror("%s: dtdelete matching object to (key=%d,ord=%d) failed", name, obj->key,

@@ -1352,7 +1352,7 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
     while (lexp->token == 0) {
         was_assign = 0;
         argp = lexp->arg;
-        assert(argp != NULL);
+        assert(argp);
         if (*argp->argval == LBRACE && (flag & SH_FUNDEF) && argp->argval[1] == 0) {
             lexp->token = LBRACE;
             break;

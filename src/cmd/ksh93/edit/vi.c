@@ -1214,7 +1214,7 @@ static_fn int mvcursor(Vi_t *vp, int motion) {
             int nextmotion;
             int nextc;
             tcur_virt = cur_virt;
-            while (tcur_virt <= last_virt && strchr(paren_chars, virtual[tcur_virt]) == NULL) {
+            while (tcur_virt <= last_virt && !strchr(paren_chars, virtual[tcur_virt])) {
                 tcur_virt++;
             }
             if (tcur_virt > last_virt) return 0;

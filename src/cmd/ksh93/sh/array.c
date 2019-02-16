@@ -163,7 +163,7 @@ int array_maxindex(Namval_t *np) {
     struct index_array *ap = (struct index_array *)nv_arrayptr(np);
     int i = ap->maxi;
     if (is_associative(&ap->namarr)) return -1;
-    while (--i >= 0 && FETCH_VT(ap->val[i], const_cp) == NULL) {
+    while (--i >= 0 && !FETCH_VT(ap->val[i], const_cp)) {
         ;  // empty loop
     }
     return i + 1;
@@ -1191,7 +1191,7 @@ int nv_aimax(Namval_t *np) {
         return -1;
     }
     sub = ap->maxi;
-    while (--sub > 0 && FETCH_VT(ap->val[sub], const_cp) == NULL) {
+    while (--sub > 0 && !FETCH_VT(ap->val[sub], const_cp)) {
         ;  // empty loop
     }
     return sub;

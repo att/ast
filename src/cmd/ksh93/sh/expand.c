@@ -357,7 +357,7 @@ endloop1:
             } else {
                 *(rescan - 1) = 0;
                 pat = tmp;
-                assert(format != NULL);
+                assert(format);
                 sfsprintf(pat, sizeof(tmp), format, first);
                 *(rescan - 1) = '}';
                 *(cp = end) = 0;

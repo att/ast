@@ -45,7 +45,7 @@ tmain() {
 
     if (!(f2 = sfopen(NULL, tstfile("sf", 0), "r"))) terror("Can't open for read");
 
-    if (sfswap(f1, f2) != NULL) terror("sfswap should have failed");
+    if (sfswap(f1, f2)) terror("sfswap should have failed");
 
     texit(0);
 }

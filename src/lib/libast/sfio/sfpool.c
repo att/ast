@@ -250,8 +250,9 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
 
     if (!pf) /* deleting f from its current pool */
     {
-        if ((p = f->pool) != NULL && p != &_Sfpool) {
-            for (k = 0; k < p->n_sf && pf == NULL; ++k) {
+        p = f->pool;
+        if (p && p != &_Sfpool) {
+            for (k = 0; k < p->n_sf && !pf; ++k) {
                 if (p->sf[k] != f) { /* a stream != f represents the pool */
                     pf = p->sf[k];
                 }

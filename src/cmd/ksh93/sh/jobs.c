@@ -849,14 +849,14 @@ int job_walk(Shell_t *shp, Sfio_t *file, int (*fun)(struct process *, int), int 
 
     job_waitsafe(SIGCHLD, NULL, NULL);
 
-    if (jobs == NULL) {
+    if (!jobs) {
         // Do all jobs.
         for (; pw; pw = px) {
             px = pw->p_nxtjob;
             if (pw->p_env != shp->jobenv) continue;
             if ((*fun)(pw, arg)) r = 2;
         }
-    } else if (*jobs == NULL) {  // current job
+    } else if (!*jobs) {  // current job
         // Skip over non-stop jobs.
         while (pw && (pw->p_env != shp->jobenv || pw->p_pgrp == 0)) pw = pw->p_nxtjob;
         if ((*fun)(pw, arg)) r = 2;
@@ -985,7 +985,7 @@ int job_list(struct process *pw, int flag) {
             hist_list(shgd->hist_ptr, outfile, pw->p_name, dir ? '\n' : 0, ";");
             if (dir) {
                 char *tilde = "";
-                assert(home != NULL);
+                assert(home);
                 if (!strncmp(dir, home, len) && (dir[len] == '/' || dir[len] == 0)) {
                     tilde = "~";
                     dir += len;
