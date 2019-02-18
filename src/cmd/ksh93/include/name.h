@@ -81,9 +81,7 @@ struct Value {
         char *cp;
         const char *const_cp;
         int *ip;
-        char c;
         int i;
-        unsigned int u;
         int32_t *lp;
         pid_t *pidp;
         uid_t *uidp;
@@ -92,9 +90,7 @@ struct Value {
         int16_t *i16p;
         double *dp;              // for floating point arithmetic
         Sfdouble_t *ldp;         // for long floating point arithmetic
-        float f;                 // for short floating point
         float *fp;               // for short floating point
-        struct Namarray *array;  // for array node
         struct Namval *np;       // for Namval_t node
         struct Value *up;        // for indirect node
         struct Ufunction *rp;    // shell user defined functions
