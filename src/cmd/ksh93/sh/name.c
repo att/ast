@@ -1438,12 +1438,12 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                 } else {
                     ld = sh_arith(shp, vp);
                 }
-                if (!FETCH_VTP(up, ldp)) {
-                    STORE_VTP(up, ldp, calloc(1, sizeof(Sfdouble_t)));
+                if (!FETCH_VTP(up, sfdoublep)) {
+                    STORE_VTP(up, sfdoublep, calloc(1, sizeof(Sfdouble_t)));
                 } else if (flags & NV_APPEND) {
-                    old = *FETCH_VTP(up, ldp);
+                    old = *FETCH_VTP(up, sfdoublep);
                 }
-                *FETCH_VTP(up, ldp) = old ? ld + old : ld;
+                *FETCH_VTP(up, sfdoublep) = old ? ld + old : ld;
             } else {
                 double d, od = 0;
                 if (flags & NV_INTEGER) {
@@ -2360,7 +2360,7 @@ char *nv_getval(Namval_t *np) {
             double d;
             char *format;
             if (nv_isattr(np, NV_LONG)) {
-                ld = *FETCH_VTP(up, ldp);
+                ld = *FETCH_VTP(up, sfdoublep);
                 if (nv_isattr(np, NV_EXPNOTE)) {
                     format = "%.*Lg";
                 } else if (nv_isattr(np, NV_HEXFLOAT)) {
@@ -2479,7 +2479,7 @@ Sfdouble_t nv_getnum(Namval_t *np) {
             r = 0;
         } else if (nv_isattr(np, NV_DOUBLE) == NV_DOUBLE) {
             if (nv_isattr(np, NV_LONG)) {
-                r = *FETCH_VTP(up, ldp);
+                r = *FETCH_VTP(up, sfdoublep);
             } else if (nv_isattr(np, NV_SHORT)) {
                 r = *FETCH_VTP(up, fp);
             } else {

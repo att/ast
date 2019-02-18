@@ -133,7 +133,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
         np = nv_open(cp, root, assign | NV_VARNAME | NV_NOADD | NV_NOFAIL);
         if ((!np || nv_isnull(np)) && sh_macfun(shp, cp, offset = stktell(shp->stk))) {
             Fun = sh_arith(shp, sub = stkptr(shp->stk, offset));
-            STORE_VT(FunNode.nvalue, ldp, &Fun);
+            STORE_VT(FunNode.nvalue, sfdoublep, &Fun);
             FunNode.nvshell = shp;
             nv_onattr(&FunNode, NV_NOFREE | NV_LDOUBLE | NV_RDONLY);
             cp[flag] = d;
@@ -401,14 +401,14 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                     if ((cp[0] == 'i' || cp[0] == 'I') && (cp[1] == 'n' || cp[1] == 'N') &&
                         (cp[2] == 'f' || cp[2] == 'F') && cp[3] == 0) {
                         Inf = strtold("Inf", NULL);
-                        STORE_VT(Infnod.nvalue, ldp, &Inf);
+                        STORE_VT(Infnod.nvalue, sfdoublep, &Inf);
                         np = &Infnod;
                         np->nvshell = shp;
                         nv_onattr(np, NV_NOFREE | NV_LDOUBLE | NV_RDONLY);
                     } else if ((cp[0] == 'n' || cp[0] == 'N') && (cp[1] == 'a' || cp[1] == 'A') &&
                                (cp[2] == 'n' || cp[2] == 'N') && cp[3] == 0) {
                         NaN = strtold("NaN", NULL);
-                        STORE_VT(NaNnod.nvalue, ldp, &NaN);
+                        STORE_VT(NaNnod.nvalue, sfdoublep, &NaN);
                         np = &NaNnod;
                         np->nvshell = shp;
                         nv_onattr(np, NV_NOFREE | NV_LDOUBLE | NV_RDONLY);

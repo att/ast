@@ -2693,21 +2693,21 @@ Sfdouble_t sh_mathfun(Shell_t *shp, void *fp, int nargs, Sfdouble_t *arg) {
     SH_VALNOD->nvfun = 0;
     SH_VALNOD->nvenv = 0;
     nv_setattr(SH_VALNOD, NV_LDOUBLE | NV_NOFREE);
-    STORE_VT(SH_VALNOD->nvalue, ldp, NULL);
+    STORE_VT(SH_VALNOD->nvalue, sfdoublep, NULL);
     for (i = 0; i < nargs; i++) {
         *nr++ = mp = nv_namptr(shp->mathnodes, i);
-        STORE_VT(mp->nvalue, ldp, arg++);
+        STORE_VT(mp->nvalue, sfdoublep, arg++);
     }
     *nr = 0;
-    STORE_VT(SH_VALNOD->nvalue, ldp, &d);
+    STORE_VT(SH_VALNOD->nvalue, sfdoublep, &d);
     argv[0] = np->nvname;
     argv[1] = 0;
     sh_funscope(shp, 1, argv, 0, &funenv, 0);
-    while ((mp = *nr++)) STORE_VT(mp->nvalue, ldp, NULL);
+    while ((mp = *nr++)) STORE_VT(mp->nvalue, sfdoublep, NULL);
     SH_VALNOD->nvfun = node.nvfun;
     nv_setattr(SH_VALNOD, node.nvflag);
     SH_VALNOD->nvenv = node.nvenv;
-    STORE_VT(SH_VALNOD->nvalue, ldp, FETCH_VT(node.nvalue, ldp));
+    STORE_VT(SH_VALNOD->nvalue, sfdoublep, FETCH_VT(node.nvalue, sfdoublep));
     return d;
 }
 
@@ -3147,7 +3147,7 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
                             // we're now doing. But when spelled out like this it is obvious there
                             // is a problem.
                             FETCH_VT(np->nvalue, nrp)->np =
-                                (void *)((uintptr_t)*FETCH_VT(nq->nvalue, ldp));
+                                (void *)((uintptr_t)*FETCH_VT(nq->nvalue, sfdoublep));
                             nv_onattr(nq, NV_LDOUBLE);
                         }
                         nv_onattr(np, NV_REF | NV_NOFREE);

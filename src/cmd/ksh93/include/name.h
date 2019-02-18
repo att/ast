@@ -89,8 +89,8 @@ struct Value {
         int32_t *i32p;
         int64_t *i64p;
         double *dp;
-        Sfdouble_t *ldp;
         float *fp;
+        Sfdouble_t *sfdoublep;
         struct Namval *np;
         struct Value *up;
         struct Ufunction *rp;
