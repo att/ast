@@ -80,16 +80,16 @@ struct Value {
         void *vp;
         char *cp;
         const char *const_cp;
-        int *ip;
+
         int i;
-        pid_t *pidp;
-        uid_t *uidp;
         int16_t i16;
+        int *ip;
         int16_t *i16p;
         int32_t *i32p;
         int64_t *i64p;
         double *dp;
         float *fp;
+
         Sfdouble_t *sfdoublep;
         struct Namval *np;
         struct Value *up;
@@ -98,6 +98,9 @@ struct Value {
         struct Namref *nrp;
         Nambfp_f bfp;  // builtin entry point function pointer
         struct pathcomp *pathcomp;
+
+        pid_t *pidp;
+        uid_t *uidp;
     } _val;
 };
 
