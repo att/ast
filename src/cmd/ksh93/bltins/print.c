@@ -759,14 +759,14 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                 Namval_t *np = nv_open(argp, shp->var_tree, NV_VARNAME | NV_NOARRAY);
                 _nv_unset(np, 0);
                 nv_onattr(np, NV_INTEGER);
-                STORE_VT(np->nvalue, lp, calloc(1, sizeof(int32_t)));
+                STORE_VT(np->nvalue, i32p, calloc(1, sizeof(int32_t)));
                 nv_setsize(np, 10);
 #if _ast_sizeof_int == _ast_sizeof_int32_t
-                value->ip = FETCH_VT(np->nvalue, lp);
+                value->ip = FETCH_VT(np->nvalue, i32p);
 #else
                 int32_t sl = 1;
-                value->ip =
-                    (int *)((char *)FETCH_VT(np->nvalue, lp) + (*((char *)&sl) ? 0 : sizeof(int)));
+                value->ip = (int *)((char *)FETCH_VT(np->nvalue, i32p) +
+                                    (*((char *)&sl) ? 0 : sizeof(int)));
 #endif
                 nv_close(np);
                 break;

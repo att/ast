@@ -257,7 +257,7 @@ static_fn void put_optindex(Namval_t *np, const void *val, int flags, Namfun_t *
 static_fn Sfdouble_t nget_optindex(Namval_t *np, Namfun_t *fp) {
     UNUSED(fp);
 
-    return *FETCH_VT(np->nvalue, lp);
+    return *FETCH_VT(np->nvalue, i32p);
 }
 
 static_fn Namfun_t *clone_optindex(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
@@ -265,7 +265,7 @@ static_fn Namfun_t *clone_optindex(Namval_t *np, Namval_t *mp, int flags, Namfun
     Namfun_t *dp = (Namfun_t *)malloc(sizeof(Namfun_t));
 
     memcpy((void *)dp, (void *)fp, sizeof(Namfun_t));
-    STORE_VT(mp->nvalue, lp, FETCH_VT(np->nvalue, lp));
+    STORE_VT(mp->nvalue, i32p, FETCH_VT(np->nvalue, i32p));
     dp->nofree = 0;
     return dp;
 }
@@ -517,7 +517,7 @@ static_fn void put_rand(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
     }
     srand((unsigned int)seedf & RANDMASK);
     rp->rand_last = -1;
-    if (!FETCH_VT(np->nvalue, lp)) STORE_VT(np->nvalue, lp, &rp->rand_last);
+    if (!FETCH_VT(np->nvalue, i32p)) STORE_VT(np->nvalue, i32p, &rp->rand_last);
 }
 
 //
@@ -525,13 +525,13 @@ static_fn void put_rand(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
 // Never pick same number twice in a row.
 //
 static_fn Sfdouble_t nget_rand(Namval_t *np, Namfun_t *fp) {
-    long cur, last = *FETCH_VT(np->nvalue, lp);
+    long cur, last = *FETCH_VT(np->nvalue, i32p);
     UNUSED(fp);
 
     do {
         cur = (rand() >> rand_shift) & RANDMASK;
     } while (cur == last);
-    *FETCH_VT(np->nvalue, lp) = cur;
+    *FETCH_VT(np->nvalue, i32p) = cur;
     return (Sfdouble_t)cur;
 }
 
@@ -1849,9 +1849,9 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     nv_stack(LCNUMNOD, &ip->LC_NUM_init);
     nv_stack(LANGNOD, &ip->LANG_init);
     STORE_VT((PPIDNOD)->nvalue, pidp, &shp->gd->ppid);
-    STORE_VT((TMOUTNOD)->nvalue, lp, &shp->st.tmout);
-    STORE_VT((MCHKNOD)->nvalue, lp, &sh_mailchk);
-    STORE_VT((OPTINDNOD)->nvalue, lp, &shp->st.optindex);
+    STORE_VT((TMOUTNOD)->nvalue, i32p, &shp->st.tmout);
+    STORE_VT((MCHKNOD)->nvalue, i32p, &sh_mailchk);
+    STORE_VT((OPTINDNOD)->nvalue, i32p, &shp->st.optindex);
     // Set up the seconds clock.
     shp->alias_tree = inittree(shp, shtab_aliases);
     dtuserdata(shp->alias_tree, shp, 1);

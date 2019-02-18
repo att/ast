@@ -812,7 +812,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                                 }
                                 if (nq == OPTINDNOD) {
                                     np->nvfun = nq->nvfun;
-                                    STORE_VT(np->nvalue, lp, &shp->st.optindex);
+                                    STORE_VT(np->nvalue, i32p, &shp->st.optindex);
                                     nv_onattr(np, NV_INTEGER | NV_NOFREE);
                                 }
                             }
@@ -1560,12 +1560,12 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                     }
                     nv_onattr(np, NV_NOFREE);
                 } else {
-                    if (!FETCH_VTP(up, lp)) {
-                        STORE_VTP(up, lp, calloc(1, sizeof(int32_t)));
+                    if (!FETCH_VTP(up, i32p)) {
+                        STORE_VTP(up, i32p, calloc(1, sizeof(int32_t)));
                     } else if (flags & NV_APPEND) {
-                        ol = *FETCH_VTP(up, lp);
+                        ol = *FETCH_VTP(up, i32p);
                     }
-                    *FETCH_VTP(up, lp) = l + ol;
+                    *FETCH_VTP(up, i32p) = l + ol;
                 }
             }
         }
@@ -2395,7 +2395,7 @@ char *nv_getval(Namval_t *np) {
                     ll = (uint16_t)FETCH_VTP(up, i16);
                 }
             } else {
-                ll = *(uint32_t *)FETCH_VTP(up, lp);
+                ll = *(uint32_t *)FETCH_VTP(up, i32p);
             }
         } else if (nv_isattr(np, NV_LONG)) {
             ll = *FETCH_VTP(up, i64p);
@@ -2406,7 +2406,7 @@ char *nv_getval(Namval_t *np) {
                 ll = FETCH_VTP(up, i16);
             }
         } else {
-            ll = *FETCH_VTP(up, lp);
+            ll = *FETCH_VTP(up, i32p);
         }
         if ((numeric = nv_size(np)) == 10) {
             if (nv_isattr(np, NV_UNSIGN)) {
@@ -2475,7 +2475,7 @@ Sfdouble_t nv_getnum(Namval_t *np) {
             __builtin_unreachable();
         }
         up = &np->nvalue;
-        if (!FETCH_VTP(up, lp) || FETCH_VTP(up, const_cp) == Empty) {
+        if (!FETCH_VTP(up, i32p) || FETCH_VTP(up, const_cp) == Empty) {
             r = 0;
         } else if (nv_isattr(np, NV_DOUBLE) == NV_DOUBLE) {
             if (nv_isattr(np, NV_LONG)) {
@@ -2495,7 +2495,7 @@ Sfdouble_t nv_getnum(Namval_t *np) {
                     r = (Sfulong_t)FETCH_VTP(up, i16);
                 }
             } else {
-                r = *((uint32_t *)FETCH_VTP(up, lp));
+                r = *((uint32_t *)FETCH_VTP(up, i32p));
             }
         } else {
             if (nv_isattr(np, NV_LONG)) {
@@ -2507,7 +2507,7 @@ Sfdouble_t nv_getnum(Namval_t *np) {
                     r = FETCH_VTP(up, i16);
                 }
             } else {
-                r = *FETCH_VTP(up, lp);
+                r = *FETCH_VTP(up, i32p);
             }
         }
     } else if ((str = nv_getval(np)) && *str != 0) {

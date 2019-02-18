@@ -82,11 +82,11 @@ struct Value {
         const char *const_cp;
         int *ip;
         int i;
-        int32_t *lp;
         pid_t *pidp;
         uid_t *uidp;
         int16_t i16;
         int16_t *i16p;
+        int32_t *i32p;
         int64_t *i64p;
         double *dp;
         Sfdouble_t *ldp;

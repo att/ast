@@ -1268,7 +1268,7 @@ openok:
     if (shp->gd->hist_ptr && (path = nv_getval(HISTFILE)) &&
         strcmp(path, shp->gd->hist_ptr->histname)) {
         hist_close(shp->gd->hist_ptr);
-        STORE_VT((HISTCUR)->nvalue, lp, NULL);
+        STORE_VT((HISTCUR)->nvalue, i32p, NULL);
     }
     sh_offstate(shp, SH_FORKED);
     if (shp->sigflag[SIGCHLD] == SH_SIGOFF) shp->sigflag[SIGCHLD] = SH_SIGFAULT;
