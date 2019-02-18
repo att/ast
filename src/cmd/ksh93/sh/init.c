@@ -1863,10 +1863,10 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     dtuserdata(shp->fun_tree, shp, 1);
     dtview(shp->fun_tree, shp->bltin_tree);
     nv_mount(DOTSHNOD, "type", shp->typedict = dtopen(&_Nvdisc, Dtoset));
-    nv_adddisc(DOTSHNOD, shdiscnames, (Namval_t **)0);
+    nv_adddisc(DOTSHNOD, shdiscnames, NULL);
     STORE_VT(DOTSHNOD->nvalue, const_cp, Empty);
     nv_onattr(DOTSHNOD, NV_RDONLY);
-    STORE_VT(SH_LINENO->nvalue, llp, &shp->st.lineno);
+    STORE_VT(SH_LINENO->nvalue, i64p, &shp->st.lineno);
     STORE_VT(SH_PWDFD->nvalue, ip, &shp->pwdfd);
     struct Namref *nrp = calloc(1, sizeof(struct Namref));
     STORE_VT(VERSIONNOD->nvalue, nrp, nrp);

@@ -71,7 +71,7 @@ const char *value_type_names[] = {
     "lp",          // VT_lp
     "pidp",        // VT_pidp
     "uidp",        // VT_uidp
-    "llp",         // VT_llp
+    "i64p",        // VT_i64p
     "i16",         // VT_i16
     "i16p",        // VT_i16p
     "dp",          // VT_dp
@@ -1504,12 +1504,12 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                 } else if (vp) {
                     ll = sh_arith(shp, vp);
                 }
-                if (!FETCH_VTP(up, llp)) {
-                    STORE_VTP(up, llp, calloc(1, sizeof(Sflong_t)));
+                if (!FETCH_VTP(up, i64p)) {
+                    STORE_VTP(up, i64p, calloc(1, sizeof(Sflong_t)));
                 } else if (flags & NV_APPEND) {
-                    oll = *FETCH_VTP(up, llp);
+                    oll = *FETCH_VTP(up, i64p);
                 }
-                *FETCH_VTP(up, llp) = ll + oll;
+                *FETCH_VTP(up, i64p) = ll + oll;
             } else {
                 int32_t l = 0, ol = 0;
                 if (flags & NV_INTEGER) {
@@ -2387,7 +2387,7 @@ char *nv_getval(Namval_t *np) {
             return sfstruse(shp->strbuf);
         } else if (nv_isattr(np, NV_UNSIGN)) {
             if (nv_isattr(np, NV_LONG)) {
-                ll = *(Sfulong_t *)FETCH_VTP(up, llp);
+                ll = *(Sfulong_t *)FETCH_VTP(up, i64p);
             } else if (nv_isattr(np, NV_SHORT)) {
                 if (nv_isattr(np, NV_INT16P) == NV_INT16P) {
                     ll = *(uint16_t *)FETCH_VTP(up, i16p);
@@ -2398,7 +2398,7 @@ char *nv_getval(Namval_t *np) {
                 ll = *(uint32_t *)FETCH_VTP(up, lp);
             }
         } else if (nv_isattr(np, NV_LONG)) {
-            ll = *FETCH_VTP(up, llp);
+            ll = *FETCH_VTP(up, i64p);
         } else if (nv_isattr(np, NV_SHORT)) {
             if (nv_isattr(np, NV_INT16P) == NV_INT16P) {
                 ll = *FETCH_VTP(up, i16p);
@@ -2487,7 +2487,7 @@ Sfdouble_t nv_getnum(Namval_t *np) {
             }
         } else if (nv_isattr(np, NV_UNSIGN)) {
             if (nv_isattr(np, NV_LONG)) {
-                r = (Sfulong_t) * ((Sfulong_t *)FETCH_VTP(up, llp));
+                r = (Sfulong_t) * ((Sfulong_t *)FETCH_VTP(up, i64p));
             } else if (nv_isattr(np, NV_SHORT)) {
                 if (nv_isattr(np, NV_INT16P) == NV_INT16P) {
                     r = (Sfulong_t)*FETCH_VTP(up, i16p);
@@ -2499,7 +2499,7 @@ Sfdouble_t nv_getnum(Namval_t *np) {
             }
         } else {
             if (nv_isattr(np, NV_LONG)) {
-                r = *FETCH_VTP(up, llp);
+                r = *FETCH_VTP(up, i64p);
             } else if (nv_isattr(np, NV_SHORT)) {
                 if (nv_isattr(np, NV_INT16P) == NV_INT16P) {
                     r = *FETCH_VTP(up, i16p);

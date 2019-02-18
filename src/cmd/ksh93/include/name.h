@@ -85,18 +85,18 @@ struct Value {
         int32_t *lp;
         pid_t *pidp;
         uid_t *uidp;
-        int64_t *llp;  // for long long arithmetic
         int16_t i16;
         int16_t *i16p;
-        double *dp;              // for floating point arithmetic
-        Sfdouble_t *ldp;         // for long floating point arithmetic
-        float *fp;               // for short floating point
-        struct Namval *np;       // for Namval_t node
-        struct Value *up;        // for indirect node
-        struct Ufunction *rp;    // shell user defined functions
-        struct Namfun *funp;     // discipline pointer
-        struct Namref *nrp;      // name reference
-        Nambfp_f bfp;            // builtin entry point function pointer
+        int64_t *i64p;
+        double *dp;
+        Sfdouble_t *ldp;
+        float *fp;
+        struct Namval *np;
+        struct Value *up;
+        struct Ufunction *rp;
+        struct Namfun *funp;
+        struct Namref *nrp;
+        Nambfp_f bfp;  // builtin entry point function pointer
         struct pathcomp *pathcomp;
     } _val;
 };
