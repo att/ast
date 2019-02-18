@@ -38,27 +38,25 @@ typedef int (*Nambfp_f)(int, char **, void *);
 struct pathcomp;
 
 // Nodes can have all kinds of values. We track the type last stored and check the type is what we
-// expect on retrieval. When this list is changed the `value_type_names` array has to be updated.
+// expect on retrieval.
+//
+// This list must be kept in sync with the `value_type_names` array in module "name.c". These values
+// do not have to be in the same order as the elements of the union in `struct Value` but keeping
+// them in the same order is a good idea.
 enum value_type {
     VT_do_not_use = 0,
     VT_vp,
     VT_cp,
     VT_const_cp,
-    VT_ip,
-    VT_c,
     VT_i,
-    VT_u,
-    VT_lp,
-    VT_pidp,
-    VT_uidp,
-    VT_llp,
     VT_i16,
+    VT_ip,
     VT_i16p,
+    VT_i32p,
+    VT_i64p,
     VT_dp,
-    VT_ldp,
-    VT_f,
     VT_fp,
-    VT_array,
+    VT_sfdoublep,
     VT_np,
     VT_up,
     VT_rp,
@@ -66,6 +64,9 @@ enum value_type {
     VT_nrp,
     VT_bfp,
     VT_pathcomp,
+    VT_pidp,
+    VT_uidp,
+    VT_sentinal  // this has to be the last member of this enum
 };
 
 // The following array in name.c must be kept in sync with enum value_type.
@@ -83,6 +84,7 @@ struct Value {
 
         int i;
         int16_t i16;
+
         int *ip;
         int16_t *i16p;
         int32_t *i32p;

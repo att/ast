@@ -58,34 +58,31 @@ static Dtdisc_t _Refdisc = {.key = offsetof(struct Namref, np),
                             .size = sizeof(struct Namval_t *),
                             .link = sizeof(struct Namref)};
 
-// The following array of strings must be kept in sync with enum value_type in name.h.
+// The following array of strings must be kept in sync with enum value_type in file "name.h".
 const char *value_type_names[] = {
-    "do_not_use",  // VT_do_not_use = 0
-    "vp",          // VT_vp
-    "cp",          // VT_cp
-    "const_cp",    // VT_const_cp
-    "ip",          // VT_ip
-    "c",           // VT_c
-    "i",           // VT_i
-    "u",           // VT_u
-    "lp",          // VT_lp
-    "pidp",        // VT_pidp
-    "uidp",        // VT_uidp
-    "i64p",        // VT_i64p
-    "i16",         // VT_i16
-    "i16p",        // VT_i16p
-    "dp",          // VT_dp
-    "ldp",         // VT_ldp
-    "f",           // VT_f
-    "fp",          // VT_fp
-    "array",       // VT_array
-    "np",          // VT_np
-    "up",          // VT_up
-    "rp",          // VT_rp
-    "funp",        // VT_funp
-    "nrp",         // VT_nrp
-    "bfp",         // VT_bfp
-    "pathcomp",    // VT_pathcomp
+    "vt_do_not_use",  // VT_do_not_use = 0
+    "vp",             // VT_vp
+    "cp",             // VT_cp
+    "const_cp",       // VT_const_cp
+    "i",              // VT_i
+    "i16",            // VT_i16
+    "ip",             // VT_ip
+    "i16p",           // VT_i16p
+    "i32p",           // VT_i16p
+    "i64p",           // VT_i64p
+    "dp",             // VT_dp
+    "fp",             // VT_fp
+    "sfdoublep",      // VT_sfdoublep
+    "np",             // VT_np
+    "up",             // VT_up
+    "rp",             // VT_rp
+    "funp",           // VT_funp
+    "nrp",            // VT_nrp
+    "bfp",            // VT_bfp
+    "pathcomp",       // VT_pathcomp
+    "pidp",           // VT_pidp
+    "uidp",           // VT_uidp
+    "vt_sentinal"     // VT_sentinal
 };
 
 static_fn void attstore(Namval_t *, void *);
