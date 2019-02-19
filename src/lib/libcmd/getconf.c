@@ -146,7 +146,6 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
     char *pattern;
     char *native;
     char *cmd;
-    char *dev;
     Path_t *e;
     Path_t *p;
     int flags;
@@ -156,7 +155,6 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
     int q;
     char **oargv;
     char buf[PATH_MAX];
-    char devbuf[64];
     Path_t std[64];
     struct stat st0;
     struct stat st1;
@@ -168,7 +166,6 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
     oargv = argv;
     native = astconf("GETCONF", NULL, NULL);
     if (*native != '/') native = 0;
-    dev = 0;
     flags = 0;
     pattern = 0;
     for (;;) {
@@ -185,10 +182,6 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
                 continue;
             case 'd':
                 flags |= ASTCONF_defined;
-                continue;
-            case 'f':
-                dev = devbuf;
-                sfsprintf(dev, sizeof(devbuf), "/dev/file/flags@@/dev/fd/%d", (int)opt_info.num);
                 continue;
             case 'l':
                 flags |= ASTCONF_lower;
@@ -238,11 +231,7 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
         path = *++argv;
         if (path) {
             argv++;
-            if (!strcmp(path, empty)) {
-                path = 0;
-            } else {
-                path = dev;
-            }
+            path = 0;
         }
     }
     if (error_info.errors || (!name && *argv)) {
@@ -255,11 +244,11 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
         if (native) flags |= (ASTCONF_system | ASTCONF_error);
         do {
             if (!(path = *++argv)) {
-                path = dev;
+                path = 0;
                 value = 0;
             } else {
                 if (!strcmp(path, empty)) {
-                    path = dev;
+                    path = 0;
                     flags = 0;
                 }
                 if ((value = *++argv) && !strcmp(value, empty)) {
