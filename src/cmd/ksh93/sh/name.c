@@ -2408,9 +2408,16 @@ char *nv_getval(Namval_t *np) {
                 ll = FETCH_VTP(up, i16);
             }
         } else {
-            ll = *FETCH_VTP(up, i32p);
+            if (IS_VTP(up, pidp)) {
+                ll = *FETCH_VTP(up, pidp);
+            } else if (IS_VTP(up, uidp)) {
+                ll = *FETCH_VTP(up, uidp);
+            } else {
+                ll = *FETCH_VTP(up, i32p);  // presumably it's a pointer to a 32 bit int
+            }
         }
-        if ((numeric = nv_size(np)) == 10) {
+        numeric = nv_size(np);
+        if (numeric == 10) {
             if (nv_isattr(np, NV_UNSIGN)) {
                 sfprintf(shp->strbuf, "%I*u", sizeof(ll), ll);
                 return sfstruse(shp->strbuf);
