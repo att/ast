@@ -123,18 +123,19 @@ struct Value {
 #define fetch_abort() 0      // abort()
 #define fetch_backtrace() 0  // dump_backtrace(0)
 
-#define fetch_vt(line, value_obj, which)                                                          \
-    (((value_obj).type == VT_##which || (VT_##which == VT_const_cp && (value_obj).type == VT_cp)) \
-         ? (value_obj)._val.which                                                                 \
-         : (DPRINTF("fetched value type != stored type:"),                                        \
-            DPRINTF("fetching \"%s\"", value_type_names[VT_##which]),                             \
-            DPRINTF("stored   \"%s\" @ %s:%d in %s()", value_type_names[(value_obj).type],        \
-                    (value_obj).filename ? (value_obj).filename : "undef", (value_obj).line_num,  \
-                    (value_obj).funcname ? (value_obj).funcname : "undef"),                       \
+#define fetch_vt(line, value_obj, which)                                                         \
+    (((value_obj).type == VT_##which || (VT_##which == VT_vp) ||                                 \
+      (VT_##which == VT_const_cp && (value_obj).type == VT_cp))                                  \
+         ? (value_obj)._val.which                                                                \
+         : (DPRINTF("fetched value type != stored type:"),                                       \
+            DPRINTF("fetching \"%s\"", value_type_names[VT_##which]),                            \
+            DPRINTF("stored   \"%s\" @ %s:%d in %s()", value_type_names[(value_obj).type],       \
+                    (value_obj).filename ? (value_obj).filename : "undef", (value_obj).line_num, \
+                    (value_obj).funcname ? (value_obj).funcname : "undef"),                      \
             fetch_backtrace(), fetch_abort(), (value_obj)._val.which))
 
 #define fetch_vtp(line, value_objp, which)                                                   \
-    (((value_objp)->type == VT_##which ||                                                    \
+    (((value_objp)->type == VT_##which || (VT_##which == VT_vp) ||                           \
       (VT_##which == VT_const_cp && (value_objp)->type == VT_cp))                            \
          ? (value_objp)->_val.which                                                          \
          : (DPRINTF("fetched value type != stored type:"),                                   \
@@ -440,7 +441,7 @@ extern Sfdouble_t nv_getnum(Namval_t *);
 extern char *nv_getv(Namval_t *, Namfun_t *);
 extern char *nv_getval(Namval_t *);
 extern Namfun_t *nv_hasdisc(const Namval_t *, const Namdisc_t *);
-extern int nv_isnull(Namval_t *);
+extern bool nv_isnull(Namval_t *);
 extern Namfun_t *nv_isvtree(Namval_t *);
 extern Namval_t *nv_lastdict(void *);
 extern Namval_t *nv_mkinttype(char *, size_t, int, const char *, Namdisc_t *);

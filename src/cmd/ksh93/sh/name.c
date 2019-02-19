@@ -2356,7 +2356,7 @@ char *nv_getval(Namval_t *np) {
     if (numeric) {
         Sflong_t ll;
         if (nv_isattr(np, NV_NOTSET) == NV_NOTSET) return NULL;
-        if (!FETCH_VTP(up, const_cp)) return "0";
+        if (!FETCH_VTP(up, vp)) return "0";
         if (nv_isattr(np, NV_DOUBLE) == NV_DOUBLE) {
             Sfdouble_t ld;
             double d;
@@ -3166,16 +3166,17 @@ Namval_t *nv_lastdict(void *context) {
 //
 void *nv_context(Namval_t *np) { return np->nvfun; }
 
-int nv_isnull(Namval_t *np) {
-    if (FETCH_VT(np->nvalue, cp)) return 0;
-    if (np == IFSNOD) return 1;
+bool nv_isnull(Namval_t *np) {
+    if (FETCH_VT(np->nvalue, vp)) return false;
+    // Why is IFSNOD special-cased but not any of the other *NOD objects (e.g., PWDNOD)?
+    if (np == IFSNOD) return true;
     if (nv_isattr(np, NV_INT16) == NV_INT16 && !np->nvfun) {
         return nv_isattr(np, NV_NOTSET) == NV_NOTSET;
     }
     if (!nv_attr(np) || nv_isattr(np, NV_NOTSET) != NV_NOTSET) {
         return !np->nvfun || !np->nvfun->disc || !nv_hasget(np);
     }
-    return 0;
+    return false;
 }
 
 #undef nv_setsize
