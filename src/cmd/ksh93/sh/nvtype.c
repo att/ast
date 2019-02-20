@@ -1115,20 +1115,26 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                 for (fp = nq->nvfun; fp; fp = fp->next) fp->nofree |= 1;
             }
             STORE_VT(nq->nvalue, const_cp, FETCH_VT(np->nvalue, cp));
-            if (dsize && (FETCH_VT(np->nvalue, const_cp) || !nv_isarray(np))) {
-                STORE_VT(nq->nvalue, const_cp, pp->data + offset);
-                sp = (char *)FETCH_VT(np->nvalue, const_cp);
+            if (dsize && (FETCH_VT(np->nvalue, vp) || !nv_isarray(np))) {
                 if (!nv_isarray(np) && nv_isattr(np, NV_INT16P) == NV_INT16) {
-                    sp = (char *)&np->nvalue;
+                    assert(dsize == 2);
+                    STORE_VT(nq->nvalue, i16p, (int16_t *)(pp->data + offset));
+                    *FETCH_VT(nq->nvalue, i16p) = FETCH_VT(np->nvalue, i16);
                     nv_onattr(nq, NV_INT16P);
                     j = 1;
+                } else {
+                    STORE_VT(nq->nvalue, const_cp, pp->data + offset);
+                    void *vp = FETCH_VT(np->nvalue, vp);
+                    if (vp) {
+                        memcpy(pp->data + offset, vp, dsize);
+                    } else if (nv_isattr(np, NV_LJUST | NV_RJUST)) {
+                        memset(pp->data + offset, ' ', dsize);
+                    }
                 }
-                if (sp) {
-                    memcpy(FETCH_VT(nq->nvalue, cp), sp, dsize);
-                } else if (nv_isattr(np, NV_LJUST | NV_RJUST)) {
-                    memset(FETCH_VT(nq->nvalue, cp), ' ', dsize);
+                if (!j) {
+                    free(FETCH_VT(np->nvalue, vp));
+                    STORE_VT(np->nvalue, vp, NULL);
                 }
-                if (!j) free(FETCH_VT(np->nvalue, cp));
             }
             if (!FETCH_VT(nq->nvalue, const_cp) && nq->nvfun == &pp->childfun.fun) {
                 if (nv_isattr(np, NV_ARRAY | NV_NOFREE) == (NV_ARRAY | NV_NOFREE)) {
