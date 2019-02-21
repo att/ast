@@ -279,25 +279,22 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
 // string old replaced by new.
 //
 static_fn void hist_subst(Shell_t *shp, const char *command, int fd, const char *old_and_new) {
-    int c;
-    off_t size;
-    char *string;
+    off_t size = sh_seek(fd, 0, SEEK_END);
+    if (size < 0) return;
+    sh_seek(fd, 0, SEEK_SET);
+    int c = (int)size;
+    char *string = stakalloc(c + 1);
+    if (read(fd, string, c) != c) return;
+    string[c] = 0;
 
     // Split the "old=new" string into two pieces.
     const char *newp = strchr(old_and_new, '=');
     assert(newp);
     newp++;
     char *oldp = strndup(old_and_new, newp - old_and_new - 1);
-
-    size = sh_seek(fd, (off_t)0, SEEK_END);
-    if (size < 0) return;
-    sh_seek(fd, (off_t)0, SEEK_SET);
-    c = (int)size;
-    string = stakalloc(c + 1);
-    if (read(fd, string, c) != c) return;
-    string[c] = 0;
     char *sp = sh_substitute(shp, string, oldp, newp);
     free(oldp);
+
     if (!sp) {
         errormsg(SH_DICT, ERROR_exit(1), e_subst, command);
         __builtin_unreachable();
