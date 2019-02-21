@@ -591,6 +591,12 @@ static_fn Namval_t *next_type(Namval_t *np, Dt_t *root, Namfun_t *fp) {
     return nv_namptr(dp->nodes, dp->current);
 }
 
+// TODO: Figure out if this function should be removed. See https://github.com/att/ast/issues/1176.
+// Specifically, because it stores to the `funp` Value type member but that member is never fetched.
+// Simply adding an `abort();` to the top of the function results in no failures (or core dumps)
+// when running the unit tests. Which means it is never invoked. The question is whether there is a
+// scenario that would invoke this function. If so, what is that scenario? And why isn't there a
+// unit test for it?
 static_fn Namfun_t *clone_inttype(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     UNUSED(flags);
     Namfun_t *pp = (Namfun_t *)malloc(fp->dsize);
