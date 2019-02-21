@@ -43,6 +43,9 @@ None at this time.
 
 ## Notable fixes and improvements
 
+- Mention of the `getconf` builtin has been removed from the main ksh man
+  page. That command has never been enabled by default and is now deprecated
+  in favor of the platform command of the same name (issue #1118).
 - The `test` command no longer silently fails all uses of the `=~` operator.
   Instead an error is printed suggesting the use of `[[...]]` (issue #1152).
 - Doing `[ -t1 ]` inside a command substitution behaves correctly
