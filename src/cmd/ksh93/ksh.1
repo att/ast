@@ -6197,28 +6197,6 @@ See
 for a description of the format of
 .IR job .
 .TP
-\f3getconf\fP \*(OK \f2name\^\fP \*(OK \f2pathname\^\fP \*(CK \*(CK
-Prints the current value of the configuration parameter given by
-.IR name .
-The configuration parameters are defined by the IEEE POSIX 1003.1
-and IEEE POSIX 1003.2 standards.
-(See
-.IR pathconf (2)
-and
-.IR sysconf (2).)
-The
-.I pathname
-argument is required for parameters whose value depends on
-the location in the file system.
-If no arguments are given,
-.B getconf
-prints the names and values of the current configuration
-parameters.
-The pathname
-.B /
-is used for each of the parameters that requires
-.IR pathname .
-.TP
 \f3getopts\fP \*(OK \f3\ \-a\fP \f2name\^\fP \*(CK \f2optstring vname\^\fP \*(OK \f2arg\^\fP .\|.\|. \*(CK
 Checks
 .I arg
