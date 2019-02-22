@@ -1086,7 +1086,7 @@ Namval_t *sh_addbuiltin(Shell_t *shp, const char *path, Shbltin_f bltin, void *e
     if (extra == builtin_delete) {
         name = path;
     } else if ((name = path_basename(path)) == path &&
-               bltin != (Shbltin_f)FETCH_VT(SYSTYPESET->nvalue, bfp) &&
+               bltin != FETCH_VT(SYSTYPESET->nvalue, shbltinp) &&
                (nq = nv_bfsearch(name, shp->bltin_tree, (Namval_t **)0, &cp))) {
         path = name = stkptr(shp->stk, offset);
     } else if (shp->bltin_dir && extra != builtin_delete) {
@@ -1117,7 +1117,7 @@ Namval_t *sh_addbuiltin(Shell_t *shp, const char *path, Shbltin_f bltin, void *e
             // Exists probably with different path so delete it.
             if (strcmp(path, nv_name(np))) {
                 if (nv_isattr(np, BLT_SPC)) return np;
-                if (!bltin) bltin = (Shbltin_f)FETCH_VT(np->nvalue, bfp);
+                if (!bltin) bltin = FETCH_VT(np->nvalue, shbltinp);
                 if (extra == builtin_delete) {
                     dtdelete(shp->bltin_tree, np);
                     return NULL;
@@ -1136,7 +1136,7 @@ Namval_t *sh_addbuiltin(Shell_t *shp, const char *path, Shbltin_f bltin, void *e
     np->nvenv = 0;
     np->nvfun = 0;
     if (bltin) {
-        STORE_VT(np->nvalue, bfp, (Nambfp_f)bltin);
+        STORE_VT(np->nvalue, shbltinp, bltin);
         nv_onattr(np, NV_BLTIN | NV_NOFREE);
         np->nvfun = extra;
     }

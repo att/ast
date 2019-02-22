@@ -1383,7 +1383,7 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
                     sfputc(stkp, 0);
                     sfseek(stkp, (Sfoff_t)-1, SEEK_CUR);
 
-                    if (np && FETCH_VT(np->nvalue, bfp) != (Nambfp_f)b_alias &&
+                    if (np && FETCH_VT(np->nvalue, shbltinp) != b_alias &&
                         strchr(stkptr(stkp, ARGVAL), '[')) {
                         sfputc(stkp, '@');
                     }
@@ -1419,7 +1419,7 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
                         cmdarg++;
                     } else if (np == SYSEXEC) {
                         lexp->inexec = 1;
-                    } else if (FETCH_VT(np->nvalue, bfp) == (Nambfp_f)b_getopts) {
+                    } else if (FETCH_VT(np->nvalue, shbltinp) == b_getopts) {
                         opt_get |= FOPTGET;
                     }
                 }

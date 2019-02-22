@@ -34,7 +34,11 @@
 #include "cdt.h"
 #include "option.h"
 
-typedef int (*Nambfp_f)(int, char **, void *);
+#ifndef _SHCMD_H
+typedef struct Shbltin_s Shbltin_t;
+typedef int (*Shbltin_f)(int, char **, Shbltin_t *);
+#endif
+
 struct pathcomp;
 
 // Nodes can have all kinds of values. We track the type last stored and check the type is what we
@@ -62,7 +66,7 @@ enum value_type {
     VT_rp,
     VT_funp,
     VT_nrp,
-    VT_bfp,
+    VT_shbltinp,
     VT_pathcomp,
     VT_pidp,
     VT_uidp,
@@ -98,7 +102,7 @@ struct Value {
         struct Ufunction *rp;
         struct Namfun *funp;
         struct Namref *nrp;
-        Nambfp_f bfp;  // builtin entry point function pointer
+        Shbltin_f shbltinp;
         struct pathcomp *pathcomp;
 
         pid_t *pidp;
@@ -560,7 +564,7 @@ struct argnod;
 #define is_abuiltin(n) (nv_isattr(n, NV_BLTIN | NV_INTEGER) == NV_BLTIN)
 #define is_afunction(n) (nv_isattr(n, NV_FUNCTION | NV_REF) == NV_FUNCTION)
 #define nv_funtree(n) FETCH_VT((n)->nvalue, rp)->ptree
-#define funptr(n) FETCH_VT((n)->nvalue, bfp)
+#define funptr(n) FETCH_VT((n)->nvalue, shbltinp)
 
 #define NV_SUBQUOTE (NV_ADD << 1)  // used with nv_endsubscript
 
