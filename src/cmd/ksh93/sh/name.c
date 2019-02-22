@@ -78,7 +78,7 @@ const char *value_type_names[] = {
     "rp",             // VT_rp
     "funp",           // VT_funp
     "nrp",            // VT_nrp
-    "bfp",            // VT_bfp
+    "shbltinp",       // VT_shbltinp
     "pathcomp",       // VT_pathcomp
     "pidp",           // VT_pidp
     "uidp",           // VT_uidp

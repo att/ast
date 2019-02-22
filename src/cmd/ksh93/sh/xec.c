@@ -321,7 +321,7 @@ static_fn int xec_p_comarg(Shell_t *shp, struct comnod *com) {
         // Was bp->flags = SH_END_OPTIM but no builtin actually uses the flags structure member
         // and it's companion symbols, SH_BEGIN_OPTIM, isn't used anywhere.
         bp->flags = 0;
-        ((Shbltin_f)funptr(np))(0, (char **)0, bp);
+        funptr(np)(0, NULL, bp);
         bp->ptr = save_ptr;
         bp->data = save_data;
     }
@@ -980,8 +980,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         }
                     }
 #endif  // SHOPT_BASH
-                    if (np == SYSTYPESET ||
-                        (np && FETCH_VT(np->nvalue, bfp) == FETCH_VT(SYSTYPESET->nvalue, bfp))) {
+                    if (np == SYSTYPESET || (np && FETCH_VT(np->nvalue, shbltinp) ==
+                                                       FETCH_VT(SYSTYPESET->nvalue, shbltinp))) {
                         if (np != SYSTYPESET) {
                             shp->typeinit = np;
                             tp = nv_type(np);
@@ -1151,7 +1151,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             }
                             shp->redir0 = 1;
                             sh_redirect(shp, io,
-                                        type | (FETCH_VT(np->nvalue, bfp) == (Nambfp_f)b_dot_cmd
+                                        type | (FETCH_VT(np->nvalue, shbltinp) == b_dot_cmd
                                                     ? 0
                                                     : IOHERESTRING | IOUSEVEX));
                             for (item = buffp->olist; item; item = item->next) item->strm = 0;
@@ -1182,7 +1182,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         opt_info.disc = 0;
                         error_info.id = *com;
                         if (argn) shp->exitval = 0;
-                        shp->bltinfun = (Shbltin_f)funptr(np);
+                        shp->bltinfun = funptr(np);
                         bp->bnode = np;
                         bp->vnode = nq;
                         bp->ptr = nv_context(np);
@@ -2811,7 +2811,7 @@ int sh_fun(Shell_t *shp, Namval_t *np, Namval_t *nq, char *argv[]) {
             opt_info.index = opt_info.offset = 0;
             opt_info.disc = 0;
             shp->exitval = 0;
-            shp->exitval = ((Shbltin_f)funptr(np))(n, argv, bp);
+            shp->exitval = (funptr(np))(n, argv, bp);
         }
         sh_popcontext(shp, buffp);
         if (jmpval > SH_JMPCMD) siglongjmp(*shp->jmplist, jmpval);

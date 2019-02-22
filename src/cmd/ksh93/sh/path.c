@@ -712,7 +712,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                 }
 
                 if (np) {
-                    addr = (Shbltin_f)FETCH_VT(np->nvalue, bfp);
+                    addr = FETCH_VT(np->nvalue, shbltinp);
                     np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NULL);
                     if (np) return oldpp;
                 }
@@ -769,7 +769,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                 if (dll) sh_addlib(shp, dll, stkptr(shp->stk, m), oldpp);
                 if (dll && (addr = (Shbltin_f)dlllook(dll, stkptr(shp->stk, n))) &&
                     (!(np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), NULL, NULL)) ||
-                     FETCH_VT(np->nvalue, bfp) != (Nambfp_f)addr) &&
+                     FETCH_VT(np->nvalue, shbltinp) != addr) &&
                     (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NULL))) {
                     np->nvenv = dll;
                     goto found;
@@ -804,7 +804,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
             if (np) {
                 n = np->nvflag;
                 np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET),
-                                   (Shbltin_f)FETCH_VT(np->nvalue, bfp), nv_context(np));
+                                   FETCH_VT(np->nvalue, shbltinp), nv_context(np));
                 nv_setattr(np, n);
             }
         }

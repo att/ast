@@ -55,8 +55,10 @@ struct Shbltin_s {
     int pwdfd;
 };
 
+#if !defined(_NAME_H)
 typedef struct Shbltin_s Shbltin_t;
 typedef int (*Shbltin_f)(int, char **, Shbltin_t *);
+#endif
 
 // The following symbols used to have a `sh_` prefix and were meant to mask the functions of the
 // same name when used in a builtin (e.g., code in src/lib/libcmd). That has been changed because

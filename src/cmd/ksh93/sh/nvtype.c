@@ -38,7 +38,6 @@
 #include "error.h"
 #include "fault.h"
 #include "history.h"
-#include "io.h"
 #include "name.h"
 #include "option.h"
 #include "sfio.h"
@@ -815,7 +814,7 @@ void nv_addtype(Namval_t *np, const char *optstr, void *op, size_t optsz) {
     if ((bp = nv_search(name, shp->fun_tree, NV_NOSCOPE)) && !FETCH_VT(bp->nvalue, ip)) {
         nv_delete(bp, shp->fun_tree, 0);
     }
-    bp = sh_addbuiltin(shp, name, (Shbltin_f)FETCH_VT(mp->nvalue, bfp), cp);
+    bp = sh_addbuiltin(shp, name, FETCH_VT(mp->nvalue, shbltinp), cp);
     nv_onattr(bp, mp->nvflag);
     nv_onattr(np, NV_RDONLY);
 }

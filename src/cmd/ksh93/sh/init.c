@@ -645,7 +645,7 @@ static_fn void astbin_update(Shell_t *shp, const char *from, const char *to) {
         if (mp) {
             nv_offattr(mp, BLT_DISABLE);
         } else {
-            sh_addbuiltin(shp, path, (Shbltin_f)FETCH_VT(np->nvalue, bfp), 0);
+            sh_addbuiltin(shp, path, FETCH_VT(np->nvalue, shbltinp), 0);
         }
     }
     if (strcmp(from, SH_CMDLIB_DIR) == 0) path_cmdlib(shp, from, false);
@@ -1912,7 +1912,7 @@ static_fn Dt_t *inittree(Shell_t *shp, const struct shtable2 *name_vals) {
         np->nvenv = 0;
         np->nvshell = (void *)shp;
         if (name_vals == (const struct shtable2 *)shtab_builtins) {
-            STORE_VT(np->nvalue, bfp, (Nambfp_f)((struct shtable3 *)tp)->sh_value);
+            STORE_VT(np->nvalue, shbltinp, ((struct shtable3 *)tp)->sh_value);
         } else {
             if (name_vals == shtab_variables) np->nvfun = &shp->nvfun;
             STORE_VT(np->nvalue, const_cp, tp->sh_value);

@@ -1062,7 +1062,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
             np = nv_search(arg, context->shp->bltin_tree, 0);
             if (np) {
                 if (nv_isattr(np, BLT_SPC)) errmsg = "restricted name";
-                addr = (Shbltin_f)FETCH_VT(np->nvalue, bfp);
+                addr = FETCH_VT(np->nvalue, shbltinp);
             }
         }
         if (!disable && !addr) {
