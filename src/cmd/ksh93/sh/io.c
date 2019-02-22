@@ -1624,7 +1624,7 @@ static_fn int io_heredoc(Shell_t *shp, struct ionod *iop, const char *name, int 
     Sfoff_t off;
 
     if (!(iop->iofile & IOSTRG) && (!shp->heredocs || iop->iosize == 0)) {
-        return sh_open(e_devnull, O_RDONLY);
+        return sh_open("/dev/null", O_RDONLY);
     }
     // Create an unnamed temporary file.
     outfile = sftmp((traceon & IOHERESTRING) ? PIPE_BUF : 0);
@@ -2170,7 +2170,7 @@ int sh_iocheckfd(Shell_t *shp, int fd, int fn) {
         static ino_t null_ino;
         static dev_t null_dev;
         shp->sftable[fd] = 0;
-        if (null_ino == 0 && sh_stat(e_devnull, &statb) >= 0) {
+        if (null_ino == 0 && sh_stat("/dev/null", &statb) >= 0) {
             null_ino = statb.st_ino;
             null_dev = statb.st_dev;
         }

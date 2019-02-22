@@ -679,7 +679,7 @@ static_fn Sfio_t *openstream(Shell_t *shp, struct ionod *iop, int *save) {
     if (fd == 0) fd = savein;
     sp = sfnew(NULL, NULL, SF_UNBOUND, fd, SF_READ);
     close(0);
-    if (sh_open(e_devnull, O_RDONLY | O_CLOEXEC) != 0) abort();
+    if (sh_open("/dev/null", O_RDONLY | O_CLOEXEC) != 0) abort();
     shp->offsets[0] = -1;
     shp->offsets[1] = 0;
     *save = savein;
@@ -756,7 +756,7 @@ __attribute__((noreturn)) static_fn void forked_child(Shell_t *shp, const Shnode
         shp->sigflag[SIGQUIT] = SH_SIGOFF;
         if (!shp->st.ioset) {
             if (sh_close(0) >= 0) {
-                int tmp_fd = sh_open(e_devnull, O_RDONLY, 0);
+                int tmp_fd = sh_open("/dev/null", O_RDONLY, 0);
                 assert(tmp_fd == 0);
             }
         }

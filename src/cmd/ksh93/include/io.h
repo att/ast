@@ -96,7 +96,6 @@ extern const char e_badpattern[];
 extern const char e_toomany[];
 extern const char e_pipe[];
 extern const char e_unknown[];
-extern const char e_devnull[];
 extern const char e_profile[];
 extern const char e_sysprofile[];
 extern const char e_sysrc[];

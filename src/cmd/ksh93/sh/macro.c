@@ -1985,7 +1985,7 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
                 (r = sigsetjmp(buff.buff, 0)) == 0) {
                 fd = sh_redirect(mp->shp, ip, 3);
             } else {
-                fd = sh_chkopen(e_devnull);
+                fd = sh_chkopen("/dev/null");
             }
             sh_popcontext(mp->shp, &buff);
             if (r == 0 && ip && (ip->iofile & IOLSEEK)) {

@@ -168,7 +168,6 @@ const char e_toupper[] = "toupper";
 const char e_defpath[] = "/bin:/usr/bin:";
 const char e_defedit[] = _pth_ed;
 const char e_unknown[] = "<command unknown>";
-const char e_devnull[] = "/dev/null";
 const char e_traceprompt[] = "+ ";
 const char e_supprompt[] = "# ";
 const char e_stdprompt[] = "$ ";

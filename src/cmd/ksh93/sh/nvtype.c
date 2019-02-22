@@ -1495,7 +1495,7 @@ void nv_mkstat(Shell_t *shp) {
     fp->type = tp;
     fp->disc = &stat_disc;
     nv_disc(tp, fp, DISC_OP_FIRST);
-    nv_putval(tp, e_devnull, 0);
+    nv_putval(tp, "/dev/null", 0);
     nv_onattr(tp, NV_RDONLY);
 }
 
