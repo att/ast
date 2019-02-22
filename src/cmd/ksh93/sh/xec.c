@@ -755,7 +755,10 @@ __attribute__((noreturn)) static_fn void forked_child(Shell_t *shp, const Shnode
         shp->sigflag[SIGINT] = SH_SIGOFF;
         shp->sigflag[SIGQUIT] = SH_SIGOFF;
         if (!shp->st.ioset) {
-            if (sh_close(0) >= 0) sh_open(e_devnull, O_RDONLY, 0);
+            if (sh_close(0) >= 0) {
+                int tmp_fd = sh_open(e_devnull, O_RDONLY, 0);
+                assert(tmp_fd == 0);
+            }
         }
     }
     sh_offstate(shp, SH_MONITOR);

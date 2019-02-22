@@ -30,8 +30,11 @@ int main(int argc, char *argv[]) {
     for (int fd = 0; fd < 3; ++fd) {
         errno = 0;
         if (fcntl(fd, F_GETFD, NULL) == -1 || errno == EBADF) {
+            // We don't bother to check the fd returned because there isn't anything we can do if
+            // it unexpectedly fails. And that should be a "can't happen" situation.
+            //
             // cppcheck-suppress leakReturnValNotUsed
-            open("/dev/null", O_RDWR);
+            (void)open("/dev/null", O_RDWR);
         }
     }
 
