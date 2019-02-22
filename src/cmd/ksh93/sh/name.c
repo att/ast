@@ -3167,12 +3167,6 @@ Namval_t *nv_lastdict(void *context) {
     return shp->last_table;
 }
 
-#undef nv_context
-//
-// Returns the data context for a builtin.
-//
-void *nv_context(Namval_t *np) { return np->nvfun; }
-
 bool nv_isnull(Namval_t *np) {
     if (FETCH_VT(np->nvalue, vp)) return false;
     // Why is IFSNOD special-cased but not any of the other *NOD objects (e.g., PWDNOD)?

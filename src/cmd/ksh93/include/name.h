@@ -432,7 +432,6 @@ extern Namval_t *nv_opensub(Namval_t *);
 extern bool nv_adddisc(Namval_t *, const char **, Namval_t **);
 extern int nv_clone(Namval_t *, Namval_t *, int);
 extern void nv_close(Namval_t *);
-extern void *nv_context(Namval_t *);
 extern Namval_t *nv_create(const char *, Dt_t *, int, Namfun_t *);
 extern void nv_delete(Namval_t *, Dt_t *, int);
 extern Dt_t *nv_dict(Namval_t *);
@@ -568,18 +567,18 @@ struct argnod;
 // NAMNOD macros.
 //
 // ... for attributes.
-#define nv_context(n) ((void *)(n)->nvfun)  // for builtins
+#define nv_context(_np) ((void *)(_np)->nvfun)
 // The following are for name references.
-#define nv_refnode(n) FETCH_VT((n)->nvalue, nrp)->np
-#define nv_reftree(n) FETCH_VT((n)->nvalue, nrp)->root
-#define nv_reftable(n) FETCH_VT((n)->nvalue, nrp)->table
-#define nv_refsub(n) FETCH_VT((n)->nvalue, nrp)->sub
-#define nv_refoldnp(n) FETCH_VT((n)->nvalue, nrp)->oldnp
+#define nv_refnode(_np) FETCH_VT((_np)->nvalue, nrp)->np
+#define nv_reftree(_np) FETCH_VT((_np)->nvalue, nrp)->root
+#define nv_reftable(_np) FETCH_VT((_np)->nvalue, nrp)->table
+#define nv_refsub(_np) FETCH_VT((_np)->nvalue, nrp)->sub
+#define nv_refoldnp(_np) FETCH_VT((_np)->nvalue, nrp)->oldnp
 // ... for etc.
-#define nv_setsize(n, s) ((n)->nvsize = ((s)*4) | 2)
+#define nv_setsize(_np, s) ((_np)->nvsize = ((s)*4) | 2)
 #undef nv_size
-#define nv_size(np) ((np)->nvsize >> 2)
-#define nv_attr(np) ((np)->nvflag & ~NV_MINIMAL)
+#define nv_size(_np) ((_np)->nvsize >> 2)
+#define nv_attr(_np) ((_np)->nvflag & ~NV_MINIMAL)
 // ... for arrays.
 #define array_elem(ap) ((ap)->nelem)
 // An array is associative if it has a function pointer else it is a simple indexed array.
