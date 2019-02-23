@@ -1009,5 +1009,6 @@ done:
 
     if (n_assign == 0 && inp < 0) n_assign = -1;
 
+    va_end(oargs);
     SFMTXRETURN(f, n_assign)
 }
