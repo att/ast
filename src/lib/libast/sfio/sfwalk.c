@@ -35,9 +35,9 @@ int sfwalk(Sfwalk_f walkf, void *data, int type) {
     int n, rv;
 
     /* truly initializing std-streams before walking */
-    if (sfstdin->mode & SF_INIT) _sfmode(sfstdin, (sfstdin->mode & SF_RDWR), 0);
-    if (sfstdout->mode & SF_INIT) _sfmode(sfstdout, (sfstdout->mode & SF_RDWR), 0);
-    if (sfstderr->mode & SF_INIT) _sfmode(sfstderr, (sfstderr->mode & SF_RDWR), 0);
+    if (sfstdin->mode & SF_INIT) (void)_sfmode(sfstdin, (sfstdin->mode & SF_RDWR), 0);
+    if (sfstdout->mode & SF_INIT) (void)_sfmode(sfstdout, (sfstdout->mode & SF_RDWR), 0);
+    if (sfstderr->mode & SF_INIT) (void)_sfmode(sfstderr, (sfstderr->mode & SF_RDWR), 0);
 
     for (rv = 0, p = &_Sfpool; p; p = p->next) {
         for (n = 0; n < p->n_sf;) {
