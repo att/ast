@@ -1080,7 +1080,7 @@ pid_t path_spawn(Shell_t *shp, const char *opath, char **argv, char **envp, Path
             xp = 0;
         }
     }
-    if (!opath) opath = stkptr(shp->stk, PATH_OFFSET);
+
     envp[0] = (char *)opath - (PATH_OFFSET + pidsize);
     envp[0][0] = '_';
     envp[0][1] = '=';
