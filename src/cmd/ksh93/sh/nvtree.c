@@ -416,9 +416,9 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
     const Shtable_t *tp;
     char *cp;
     unsigned val, mask, attr;
-    char *ip = 0;
-    Namfun_t *fp = 0;
-    Namval_t *typep = 0;
+    char *ip = NULL;
+    Namfun_t *fp = NULL;
+    Namval_t *typep = NULL;
 
     for (fp = np->nvfun; fp; fp = fp->next) {
         if ((typep = fp->type) ||
@@ -427,8 +427,8 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
         }
     }
     if (np == typep) {
-        fp = 0;
-        typep = 0;
+        fp = NULL;
+        typep = NULL;
     }
     if (!fp && !nv_isattr(np, ~(NV_MINIMAL | NV_NOFREE))) {
         if (prefix && *prefix) {
@@ -461,7 +461,7 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
                     cp = typep->nvname;
                 }
                 sfputr(out, cp, ' ');
-                fp = 0;
+                fp = NULL;
             }
         } else if (prefix && *prefix) {
             sfputr(out, prefix, ' ');
@@ -481,7 +481,7 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
             if ((attr & mask) == val) {
                 if (val == NV_ARRAY) {
                     Namarr_t *ap = nv_arrayptr(np);
-                    char **xp = 0;
+                    char **xp = NULL;
                     if (ap && is_associative(ap)) {
                         if (tp->sh_name[1] != 'A') continue;
                     } else if (tp->sh_name[1] == 'A') {
@@ -505,7 +505,7 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
                     if (*tp->sh_name == '-') sfprintf(out, "%.2s ", tp->sh_name);
                     if (ip) {
                         sfprintf(out, "[%s] ", ip);
-                        ip = 0;
+                        ip = NULL;
                     }
                 } else {
                     sfputr(out, tp->sh_name + 2, ' ');
@@ -541,9 +541,8 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
             }
             break;
         }
-        if (fp) outtype(np, fp, out, prefix);
-        if (noname) return;
-        sfputr(out, nv_name(np), '\n');
+
+        if (!noname) sfputr(out, nv_name(np), '\n');
     }
 }
 
