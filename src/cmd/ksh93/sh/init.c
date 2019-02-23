@@ -1038,7 +1038,10 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
     Shell_t *shp = sh_ptr(np);
     Namval_t *mp, fake;
     char *name;
-    int getname = 0, off = stktell(shp->stk);
+    int off = stktell(shp->stk);
+#if 0
+    bool getname = false;
+#endif
 
     memset(&fake, 0, sizeof(fake));
     fake.nvname = nv_name(np);
@@ -1056,7 +1059,7 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
             mp = (Namval_t *)dtprev(shp->fun_tree, &fake);
             return (char *)dtnext(shp->fun_tree, mp);
         }
-        getname = 1;
+        getname = true;
     }
 #endif
     sfputr(shp->stk, fake.nvname, '.');
@@ -1064,7 +1067,9 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
     name = stkptr(shp->stk, off);
     mp = nv_search(name, shp->fun_tree, action ? NV_ADD : 0);
     stkseek(shp->stk, off);
+#if 0
     if (getname) return mp ? (char *)dtnext(shp->fun_tree, mp) : 0;
+#endif
     if (action == np) action = mp;
     return action ? (char *)action : "";
 }
