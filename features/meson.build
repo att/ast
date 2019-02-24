@@ -10,6 +10,12 @@ feature_data.set_quoted('BASH_MACHTYPE', bash_machtype)
 wsl_result = run_command('detect_wsl.sh')
 feature_data.set10('_WSL_', wsl_result.returncode() == 0)
 
+# Several unit tests need to know how many processors are available. For those
+# tests to run reliably, especially on a VM which might have only one or two
+# cpus, it is important to not let the test use a potentially large default.
+nproc_result = run_command('detect_nproc.sh')
+feature_data.set('N_PROC', nproc_result.returncode())
+
 # void ptr is larger than int
 feature_data.set10('_more_void_int', ptr_size > int_size)
 

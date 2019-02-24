@@ -38,6 +38,7 @@
 #mesondefine STAT_ST_MTIM
 #mesondefine STAT_ST_MTIMESPEC
 #mesondefine CONF_LIBPATH
+#mesondefine N_PROC
 #mesondefine _PROC_PROG
 #mesondefine _DARWIN_C_SOURCE
 #mesondefine _WSL_
