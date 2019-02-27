@@ -1546,7 +1546,7 @@ static_fn Namval_t *create_sig(Namval_t *np, const char *name, int flag, Namfun_
 #endif
 
 typedef struct Svars {
-    Namfun_t hdr;
+    Namfun_t namfun;
     Shell_t *sh;
     Namval_t *parent;
     char *nodes;
@@ -1579,7 +1579,7 @@ static_fn Namval_t *create_svar(Namval_t *np, const void *vp, int flag, Namfun_t
     for (int i = 0; i < sp->numnodes; i++) {
         Namval_t *nq = nv_namptr(sp->nodes, i);
         if (strcmp(name, nq->nvname) == 0) {
-            sp->hdr.last = (char *)name + strlen(name);
+            sp->namfun.last = (char *)name + strlen(name);
             shp->last_table = sp->parent;
             return nq;
         }
@@ -1600,7 +1600,7 @@ static_fn Namfun_t *clone_svar(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     dp->nodes = (char *)(dp + 1);
     dp->data = (void *)((char *)dp + fp->dsize + sizeof(void *));
     memcpy(dp->data, sp->data, sp->dsize);
-    dp->hdr.nofree = (flags & NV_RDONLY ? 1 : 0);
+    dp->namfun.nofree = (flags & NV_RDONLY ? 1 : 0);
     for (i = dp->numnodes; --i >= 0;) {
         np = nv_namptr(sp->nodes, i);
         mp = nv_namptr(dp->nodes, i);
@@ -1615,7 +1615,7 @@ static_fn Namfun_t *clone_svar(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
             nv_putval(mp, cp, 0);
         }
     }
-    return &dp->hdr;
+    return &dp->namfun;
 }
 
 static const Namdisc_t svar_disc = {
@@ -1664,10 +1664,10 @@ static_fn int svar_init(Shell_t *shp, Namval_t *pp, const Shtable_t *tab, size_t
         nv_onattr(np, tab[i].sh_number);
         if (tab[i].sh_number & NV_INTEGER) nv_setsize(np, 10);
     }
-    sp->hdr.dsize = sizeof(struct Svars) + nnodes * (sizeof(int) + NV_MINSZ);
-    sp->hdr.disc = &svar_disc;
-    nv_stack(pp, &sp->hdr);
-    sp->hdr.nofree = 1;
+    sp->namfun.dsize = sizeof(struct Svars) + nnodes * (sizeof(int) + NV_MINSZ);
+    sp->namfun.disc = &svar_disc;
+    nv_stack(pp, &sp->namfun);
+    sp->namfun.nofree = 1;
     nv_setvtree(pp);
     return nnodes;
 }
