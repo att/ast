@@ -110,7 +110,7 @@ struct seconds {
 };
 
 struct rand {
-    Namfun_t hdr;
+    Namfun_t namfun;
     Shell_t *sh;
     int32_t rand_last;
 };
@@ -1787,8 +1787,8 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     ip->OPTINDEX_init.nofree = 1;
     ip->SECONDS_init.namfun.disc = &SECONDS_disc;
     ip->SECONDS_init.namfun.nofree = 1;
-    ip->RAND_init.hdr.disc = &RAND_disc;
-    ip->RAND_init.hdr.nofree = 1;
+    ip->RAND_init.namfun.disc = &RAND_disc;
+    ip->RAND_init.namfun.nofree = 1;
     ip->RAND_init.sh = shp;
     ip->SH_MATCH_init.hdr.disc = &SH_MATCH_disc;
     ip->SH_MATCH_init.hdr.nofree = 1;
@@ -1836,7 +1836,7 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     nv_stack(SECONDS, &ip->SECONDS_init.namfun);
     nv_stack(L_ARGNOD, &ip->L_ARG_init);
     nv_putval(SECONDS, (char *)&d, NV_DOUBLE);
-    nv_stack(RANDNOD, &ip->RAND_init.hdr);
+    nv_stack(RANDNOD, &ip->RAND_init.namfun);
     d = (shp->gd->pid & RANDMASK);
     nv_putval(RANDNOD, (char *)&d, NV_DOUBLE);
     nv_stack(LINENO, &ip->LINENO_init);
