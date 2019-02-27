@@ -78,8 +78,8 @@ struct _dtlink_s {
 
 /* private structure to hold an object */
 struct _dthold_s {
-    Dtlink_t hdr; /* header to hold obj	*/
-    void *obj;    /* application object	*/
+    Dtlink_t dtlink;  // header to hold obj
+    void *obj;        // application object
 };
 
 /* method to manipulate dictionary structure */
