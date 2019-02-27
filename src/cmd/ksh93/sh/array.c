@@ -82,15 +82,15 @@ struct assoc_array {
 static_fn struct index_array *array_scope(Namval_t *np, struct index_array *aq, int flags) {
     Shell_t *shp = sh_ptr(np);
     struct index_array *ar;
-    size_t size = aq->namarr.hdr.dsize;
+    size_t size = aq->namarr.namfun.dsize;
 
-    if (size == 0) size = aq->namarr.hdr.disc->dsize;
+    if (size == 0) size = aq->namarr.namfun.disc->dsize;
     ar = malloc(size);
     memcpy(ar, aq, size);
     if (flags & NV_RDONLY) {
-        ar->namarr.hdr.nofree |= 1;
+        ar->namarr.namfun.nofree |= 1;
     } else {
-        ar->namarr.hdr.nofree &= ~1;
+        ar->namarr.namfun.nofree &= ~1;
     }
     if (is_associative(&ar->namarr)) {
         ar->namarr.scope = (void *)dtopen(&_Nvdisc, Dtoset);
@@ -135,10 +135,10 @@ static_fn bool array_covered(Namval_t *np, struct index_array *ap) {
 static_fn void array_setptr(Namval_t *np, struct index_array *old, struct index_array *new) {
     Namfun_t **fp = &np->nvfun;
 
-    while (*fp && *fp != &old->namarr.hdr) fp = &((*fp)->next);
+    while (*fp && *fp != &old->namarr.namfun) fp = &((*fp)->next);
     if (*fp) {
-        new->namarr.hdr.next = (*fp)->next;
-        *fp = &new->namarr.hdr;
+        new->namarr.namfun.next = (*fp)->next;
+        *fp = &new->namarr.namfun;
     } else {
         sfprintf(sfstderr, "discipline not replaced\n");
     }
@@ -216,7 +216,7 @@ bool nv_arrayisset(Namval_t *np, Namarr_t *arp) {
     if (ap->cur >= ap->maxi) return false;
     up = &(ap->val[ap->cur]);
     if (FETCH_VTP(up, const_cp) == Empty) {
-        Namfun_t *fp = &arp->hdr;
+        Namfun_t *fp = &arp->namfun;
         for (fp = fp->next; fp; fp = fp->next) {
             if (fp->disc && (fp->disc->getnum || fp->disc->getval)) return true;
         }
@@ -400,7 +400,7 @@ static_fn Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t 
     if (flg & ARRAY_NOCLONE) return 0;
     if ((flags & NV_TYPE) && !ap->scope) {
         aq = array_scope(np, aq, flags);
-        return &aq->namarr.hdr;
+        return &aq->namarr.namfun;
     }
     ap = (Namarr_t *)nv_clone_disc(fp, 0);
     if (flags & NV_COMVAR) {
@@ -466,7 +466,7 @@ skip:
     }
     aq->namarr.flags = ap->flags = flg;
     ap->nelem = aq->namarr.nelem;
-    return &ap->hdr;
+    return &ap->namfun;
 }
 
 static_fn char *array_getval(Namval_t *np, Namfun_t *disc) {
@@ -478,7 +478,7 @@ static_fn char *array_getval(Namval_t *np, Namfun_t *disc) {
     if (mp != np) {
         if (!mp && !is_associative(ap) && (aq = (Namarr_t *)ap->scope)) {
             array_syncsub(aq, ap);
-            if ((mp = array_find(np, aq, ARRAY_LOOKUP)) == np) return nv_getv(np, &aq->hdr);
+            if ((mp = array_find(np, aq, ARRAY_LOOKUP)) == np) return nv_getv(np, &aq->namfun);
         }
         if (mp) {
             cp = nv_getval(mp);
@@ -486,7 +486,7 @@ static_fn char *array_getval(Namval_t *np, Namfun_t *disc) {
         }
         return cp;
     }
-    return nv_getv(np, &ap->hdr);
+    return nv_getv(np, &ap->namfun);
 }
 
 static_fn Sfdouble_t array_getnum(Namval_t *np, Namfun_t *disc) {
@@ -497,11 +497,11 @@ static_fn Sfdouble_t array_getnum(Namval_t *np, Namfun_t *disc) {
     if (mp != np) {
         if (!mp && !is_associative(ap) && (aq = (Namarr_t *)ap->scope)) {
             array_syncsub(aq, ap);
-            if ((mp = array_find(np, aq, ARRAY_LOOKUP)) == np) return nv_getn(np, &aq->hdr);
+            if ((mp = array_find(np, aq, ARRAY_LOOKUP)) == np) return nv_getn(np, &aq->namfun);
         }
         return mp ? nv_getnum(mp) : 0;
     }
-    return nv_getn(np, &ap->hdr);
+    return nv_getn(np, &ap->namfun);
 }
 
 static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_t *dp) {
@@ -526,8 +526,8 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
             }
             if (!xfree) nv_putval(mp, string, flags);
             if (string) {
-                if (ap->hdr.type && ap->hdr.type != nv_type(mp)) {
-                    nv_arraysettype(np, ap->hdr.type, nv_getsub(np), 0);
+                if (ap->namfun.type && ap->namfun.type != nv_type(mp)) {
+                    nv_arraysettype(np, ap->namfun.type, nv_getsub(np), 0);
                 }
                 continue;
             }
@@ -571,7 +571,7 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
             STORE_VTP(up, const_cp, NULL);
         }
         if (nv_isarray(np)) STORE_VT(np->nvalue, up, up);
-        nv_putv(np, string, flags, &ap->hdr);
+        nv_putv(np, string, flags, &ap->namfun);
         if (nofree && !FETCH_VTP(up, const_cp)) STORE_VTP(up, const_cp, Empty);
         if (!is_associative(ap)) {
             if (string) {
@@ -580,8 +580,8 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
                 STORE_VT(aq->val[aq->cur], const_cp, NULL);
             }
         }
-        if (string && ap->hdr.type && nv_isvtree(np)) {
-            nv_arraysettype(np, ap->hdr.type, nv_getsub(np), 0);
+        if (string && ap->namfun.type && nv_isvtree(np)) {
+            nv_arraysettype(np, ap->namfun.type, nv_getsub(np), 0);
         }
     } while (!string && nv_nextsub(np));
     if (ap) ap->flags &= ~ARRAY_NOSCOPE;
@@ -596,8 +596,9 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
             _nv_unset(nv_namptr(aq->xp, 0), NV_RDONLY);
             free(aq->xp);
         }
-        if ((nfp = nv_disc(np, (Namfun_t *)ap, DISC_OP_POP)) && !(nfp->nofree & 1)) {
-            ap = 0;
+        nfp = nv_disc(np, &ap->namfun, DISC_OP_POP);
+        if (nfp && !(nfp->nofree & 1)) {
+            ap = NULL;
             free(nfp);
         }
         if (!nv_isnull(np)) {
@@ -656,7 +657,7 @@ static_fn struct index_array *array_grow(Namval_t *np, struct index_array *arp, 
     memset(ap->bits, ARRAY_UNSET, newsize);
     if (arp) {
         ap->namarr = arp->namarr;
-        ap->namarr.hdr.dsize = sizeof(*ap) + size;
+        ap->namarr.namfun.dsize = sizeof(*ap) + size;
         ap->last = arp->last;
         for (i = 0; i < arp->maxi; i++) {
             ap->bits[i] = arp->bits[i];
@@ -668,7 +669,7 @@ static_fn struct index_array *array_grow(Namval_t *np, struct index_array *arp, 
     } else {
         int flags = 0;
         Namval_t *mp = NULL;
-        ap->namarr.hdr.dsize = sizeof(*ap) + size;
+        ap->namarr.namfun.dsize = sizeof(*ap) + size;
         i = 0;
         ap->namarr.fun = NULL;
         if ((nv_isnull(np) || FETCH_VT(np->nvalue, const_cp) == Empty) &&
@@ -706,12 +707,12 @@ static_fn struct index_array *array_grow(Namval_t *np, struct index_array *arp, 
         ap->last = i;
         ap->namarr.nelem = i;
         ap->namarr.flags = flags;
-        ap->namarr.hdr.disc = &array_disc;
+        ap->namarr.namfun.disc = &array_disc;
         nv_disc(np, (Namfun_t *)ap, DISC_OP_FIRST);
         nv_onattr(np, NV_ARRAY);
         if (mp) {
             array_copytree(np, mp);
-            ap->namarr.hdr.nofree &= ~1;
+            ap->namarr.namfun.nofree &= ~1;
         }
     }
     for (; i < newsize; i++) STORE_VT(ap->val[i], const_cp, NULL);
@@ -769,7 +770,7 @@ static_fn Namarr_t *nv_changearray(Namval_t *np,
 
     if (!fun || !(ap = nv_arrayptr(np)) || is_associative(ap)) return NULL;
 
-    nv_stack(np, &ap->hdr);
+    nv_stack(np, &ap->namfun);
     save_ap = (struct index_array *)nv_stack(np, 0);
     ap = (Namarr_t *)((*fun)(np, NULL, ASSOC_OP_INIT));
     ap->nelem = 0;
@@ -1213,10 +1214,10 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                 dtuserdata(ap->namarr.table, shp, 1);
                 ap->cur = 0;
                 ap->pos = 0;
-                ap->namarr.hdr.disc = &array_disc;
+                ap->namarr.namfun.disc = &array_disc;
                 nv_disc(np, (Namfun_t *)ap, DISC_OP_FIRST);
-                ap->namarr.hdr.dsize = sizeof(struct assoc_array);
-                ap->namarr.hdr.nofree &= ~1;
+                ap->namarr.namfun.dsize = sizeof(struct assoc_array);
+                ap->namarr.namfun.nofree &= ~1;
             }
             return (void *)ap;
         }

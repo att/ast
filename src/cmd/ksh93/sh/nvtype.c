@@ -1280,7 +1280,7 @@ int nv_settype(Namval_t *np, Namval_t *tp, int flags) {
     }
     if ((ap = nv_arrayptr(np)) && ap->nelem > 0) {
         nv_putsub(np, NULL, 0, ARRAY_SCAN);
-        ap->hdr.type = tp;
+        ap->namfun.type = tp;
         do {
             Namval_t *mp = nv_opensub(np);
             if (mp && nv_isarray(mp)) {
@@ -1316,7 +1316,7 @@ int nv_settype(Namval_t *np, Namval_t *tp, int flags) {
     }
     if (ap) {
         int nofree;
-        nv_disc(np, &ap->hdr, DISC_OP_POP);
+        nv_disc(np, &ap->namfun, DISC_OP_POP);
         STORE_VT(np->nvalue, up, NULL);
         nv_clone(tp, np, flags | NV_NOFREE);
         if (FETCH_VT(np->nvalue, const_cp) && FETCH_VT(np->nvalue, const_cp) != Empty &&
@@ -1324,11 +1324,11 @@ int nv_settype(Namval_t *np, Namval_t *tp, int flags) {
             free(FETCH_VT(np->nvalue, cp));
         }
         STORE_VT(np->nvalue, up, NULL);
-        nofree = ap->hdr.nofree;
-        ap->hdr.nofree = 0;
-        ap->hdr.type = tp;
-        nv_disc(np, &ap->hdr, DISC_OP_FIRST);
-        ap->hdr.nofree = nofree;
+        nofree = ap->namfun.nofree;
+        ap->namfun.nofree = 0;
+        ap->namfun.type = tp;
+        nv_disc(np, &ap->namfun, DISC_OP_FIRST);
+        ap->namfun.nofree = nofree;
         nv_onattr(np, NV_ARRAY);
         if (nelem) {
             ap->nelem++;

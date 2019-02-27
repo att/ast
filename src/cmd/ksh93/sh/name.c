@@ -371,7 +371,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                     !np->nvfun && !tp->com.comset && !tp->com.comarg) {
                     array = NV_IARRAY;
                 }
-                if (array && (!ap || !ap->hdr.type)) {
+                if (array && (!ap || !ap->namfun.type)) {
                     if (!(arg->argflag & ARG_APPEND)) _nv_unset(np, NV_EXPORT);
                     if (array & NV_ARRAY) {
                         nv_setarray(np, nv_associative);
@@ -2604,9 +2604,9 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
             mp = nv_opensub(np);
             if (mp) {
                 if (trans) {
-                    nv_disc(np, &ap->hdr, DISC_OP_POP);
+                    nv_disc(np, &ap->namfun, DISC_OP_POP);
                     nv_clone(np, mp, 0);
-                    nv_disc(np, &ap->hdr, DISC_OP_FIRST);
+                    nv_disc(np, &ap->namfun, DISC_OP_FIRST);
                     nv_offattr(mp, NV_ARRAY);
                 }
                 nv_newattr(mp, newatts & ~NV_ARRAY, size);

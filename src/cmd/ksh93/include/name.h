@@ -273,7 +273,7 @@ extern const Nvassoc_op_t ASSOC_OP_SETSUB;
 
 // This is an array template header.
 struct Namarray {
-    Namfun_t hdr;
+    Namfun_t namfun;
     long nelem;                                            // number of elements
     void *(*fun)(Namval_t *, const char *, Nvassoc_op_t);  // associative array ops
     Dt_t *table;                                           // for subscripts
