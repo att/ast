@@ -116,7 +116,7 @@ struct rand {
 };
 
 struct ifs {
-    Namfun_t hdr;
+    Namfun_t namfun;
     Namval_t *ifsnp;
 };
 
@@ -1764,7 +1764,7 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     shp->nvfun.nofree = 1;
     shp->var_base = shp->var_tree = inittree(shp, shtab_variables);
     STORE_VT(SHLVL->nvalue, ip, &shlvl);
-    ip->IFS_init.hdr.disc = &IFS_disc;
+    ip->IFS_init.namfun.disc = &IFS_disc;
     ip->PATH_init.disc = &RESTRICTED_disc;
     ip->PATH_init.nofree = 1;
     ip->FPATH_init.disc = &RESTRICTED_disc;
@@ -1821,8 +1821,8 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     ip->LANG_init.nofree = 1;
     ip->OPTIONS_init.disc = &OPTIONS_disc;
     ip->OPTastbin_init.disc = &OPTastbin_disc;
-    nv_stack(IFSNOD, &ip->IFS_init.hdr);
-    ip->IFS_init.hdr.nofree = 1;
+    nv_stack(IFSNOD, &ip->IFS_init.namfun);
+    ip->IFS_init.namfun.nofree = 1;
     nv_stack(PATHNOD, &ip->PATH_init);
     nv_stack(FPATHNOD, &ip->FPATH_init);
     nv_stack(CDPNOD, &ip->CDPATH_init);
