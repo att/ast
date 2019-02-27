@@ -2025,7 +2025,7 @@ static_fn void env_init(Shell_t *shp) {
 // This code is for character mapped variables with wctrans().
 //
 struct Mapchar {
-    Namfun_t hdr;
+    Namfun_t namfun;
     const char *name;
     wctrans_t trans;
 };
@@ -2073,9 +2073,9 @@ Namfun_t *nv_mapchar(Namval_t *np, const char *name) {
     int low = strcmp(name, e_tolower);
     if (low && strcmp(name, e_toupper)) n += strlen(name) + 1;
     if (mp) {
-        if (strcmp(name, mp->name) == 0) return &mp->hdr;
-        nv_disc(np, &mp->hdr, DISC_OP_POP);
-        if (!(mp->hdr.nofree & 1)) free(mp);
+        if (strcmp(name, mp->name) == 0) return &mp->namfun;
+        nv_disc(np, &mp->namfun, DISC_OP_POP);
+        if (!(mp->namfun.nofree & 1)) free(mp);
     }
     mp = calloc(1, sizeof(struct Mapchar) + n);
     mp->trans = trans;
@@ -2087,6 +2087,6 @@ Namfun_t *nv_mapchar(Namval_t *np, const char *name) {
         mp->name = (char *)(mp + 1);
         strcpy((char *)mp->name, name);
     }
-    mp->hdr.disc = &TRANS_disc;
-    return &mp->hdr;
+    mp->namfun.disc = &TRANS_disc;
+    return &mp->namfun;
 }
