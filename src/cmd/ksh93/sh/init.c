@@ -121,7 +121,7 @@ struct ifs {
 };
 
 struct match {
-    Namfun_t hdr;
+    Namfun_t namfun;
     const char *v;
     char *val;
     char *rval[2];
@@ -718,7 +718,7 @@ static_fn void match2d(Shell_t *shp, struct match *mp) {
     int i;
     Namarr_t *ap;
 
-    nv_disc(SH_MATCHNOD, &mp->hdr, DISC_OP_POP);
+    nv_disc(SH_MATCHNOD, &mp->namfun, DISC_OP_POP);
     np = nv_namptr(mp->nodes, 0);
     for (i = 0; i < mp->nmatch; i++) {
         np->nvname = mp->names + 3 * i;
@@ -755,7 +755,7 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
         np = nv_namptr(mp->nodes, 0);
         if (mp->index == 0) match2d(shp, mp);
         for (i = 0; i < mp->nmatch; i++) {
-            nv_disc(np, &mp->hdr, DISC_OP_LAST);
+            nv_disc(np, &mp->namfun, DISC_OP_LAST);
             nv_putsub(np, NULL, mp->index, 0);
             for (x = mp->index; x >= 0; x--) {
                 n = i + x * mp->nmatch;
@@ -775,7 +775,7 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
         if (mp->nodes) {
             np = nv_namptr(mp->nodes, 0);
             for (i = 0; i < mp->nmatch; i++) {
-                if (np->nvfun && np->nvfun != &mp->hdr) {
+                if (np->nvfun && np->nvfun != &mp->namfun) {
                     free(np->nvfun);
                     np->nvfun = 0;
                 }
@@ -785,7 +785,7 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
             mp->nodes = 0;
         }
         mp->vlen = 0;
-        if (ap && ap->namfun.next != &mp->hdr) free(ap);
+        if (ap && ap->namfun.next != &mp->namfun) free(ap);
         STORE_VT(SH_MATCHNOD->nvalue, const_cp, NULL);
         SH_MATCHNOD->nvfun = 0;
         if (!(mp->nmatch = nmatch) && !v) {
@@ -794,7 +794,7 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
         }
         mp->nodes = (char *)calloc(mp->nmatch * (NV_MINSZ + sizeof(void *) + 3), 1);
         mp->names = mp->nodes + mp->nmatch * (NV_MINSZ + sizeof(void *));
-        nv_disc(SH_MATCHNOD, &mp->hdr, DISC_OP_LAST);
+        nv_disc(SH_MATCHNOD, &mp->namfun, DISC_OP_LAST);
         for (i = nmatch; --i >= 0;) {
             if (match[2 * i] >= 0) nv_putsub(SH_MATCHNOD, Empty, i, ARRAY_ADD);
         }
@@ -1790,8 +1790,8 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     ip->RAND_init.namfun.disc = &RAND_disc;
     ip->RAND_init.namfun.nofree = 1;
     ip->RAND_init.sh = shp;
-    ip->SH_MATCH_init.hdr.disc = &SH_MATCH_disc;
-    ip->SH_MATCH_init.hdr.nofree = 1;
+    ip->SH_MATCH_init.namfun.disc = &SH_MATCH_disc;
+    ip->SH_MATCH_init.namfun.nofree = 1;
     ip->SH_MATH_init.disc = &SH_MATH_disc;
     ip->SH_MATH_init.nofree = 1;
 #if SHOPT_COSHELL
@@ -1840,7 +1840,7 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     d = (shp->gd->pid & RANDMASK);
     nv_putval(RANDNOD, (char *)&d, NV_DOUBLE);
     nv_stack(LINENO, &ip->LINENO_init);
-    SH_MATCHNOD->nvfun = &ip->SH_MATCH_init.hdr;
+    SH_MATCHNOD->nvfun = &ip->SH_MATCH_init.namfun;
     nv_putsub(SH_MATCHNOD, NULL, 10, 0);
     nv_stack(SH_MATHNOD, &ip->SH_MATH_init);
     nv_stack(SH_VERSIONNOD, &ip->SH_VERSION_init);
