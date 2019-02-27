@@ -105,7 +105,7 @@ extern char **environ;
 #endif
 
 struct seconds {
-    Namfun_t hdr;
+    Namfun_t namfun;
     Shell_t *sh;
 };
 
@@ -1785,8 +1785,8 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     ip->HISTSIZE_init.nofree = 1;
     ip->OPTINDEX_init.disc = &OPTINDEX_disc;
     ip->OPTINDEX_init.nofree = 1;
-    ip->SECONDS_init.hdr.disc = &SECONDS_disc;
-    ip->SECONDS_init.hdr.nofree = 1;
+    ip->SECONDS_init.namfun.disc = &SECONDS_disc;
+    ip->SECONDS_init.namfun.nofree = 1;
     ip->RAND_init.hdr.disc = &RAND_disc;
     ip->RAND_init.hdr.nofree = 1;
     ip->RAND_init.sh = shp;
@@ -1833,7 +1833,7 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     nv_stack(HISTFILE, &ip->HISTFILE_init);
     nv_stack(HISTSIZE, &ip->HISTSIZE_init);
     nv_stack(OPTINDNOD, &ip->OPTINDEX_init);
-    nv_stack(SECONDS, &ip->SECONDS_init.hdr);
+    nv_stack(SECONDS, &ip->SECONDS_init.namfun);
     nv_stack(L_ARGNOD, &ip->L_ARG_init);
     nv_putval(SECONDS, (char *)&d, NV_DOUBLE);
     nv_stack(RANDNOD, &ip->RAND_init.hdr);
