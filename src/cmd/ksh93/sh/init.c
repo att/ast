@@ -785,7 +785,7 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
             mp->nodes = 0;
         }
         mp->vlen = 0;
-        if (ap && ap->hdr.next != &mp->hdr) free(ap);
+        if (ap && ap->namfun.next != &mp->hdr) free(ap);
         STORE_VT(SH_MATCHNOD->nvalue, const_cp, NULL);
         SH_MATCHNOD->nvfun = 0;
         if (!(mp->nmatch = nmatch) && !v) {
