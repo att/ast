@@ -160,7 +160,7 @@ struct subfile {
 };
 
 struct Eof {
-    Namfun_t hdr;
+    Namfun_t namfun;
     int fd;
 };
 
@@ -884,10 +884,10 @@ static_fn Sfoff_t file_offset(Shell_t *shp, int fd, char *fname) {
 
     memset(&endf, 0, sizeof(struct Eof));
     endf.fd = fd;
-    endf.hdr.disc = &EOF_disc;
-    endf.hdr.nofree = 1;
-    if (mp) nv_stack(mp, &endf.hdr);
-    if (pp) nv_stack(pp, &endf.hdr);
+    endf.namfun.disc = &EOF_disc;
+    endf.namfun.nofree = 1;
+    if (mp) nv_stack(mp, &endf.namfun);
+    if (pp) nv_stack(pp, &endf.namfun);
     if (sp) sfsync(sp);
     off = sh_strnum(shp, fname, &cp, 0);
     if (mp) nv_stack(mp, NULL);
