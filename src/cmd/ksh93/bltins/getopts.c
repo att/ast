@@ -72,12 +72,13 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
     volatile int extended, r = -1;
     struct checkpt buff, *pp;
     struct {
-        Optdisc_t hdr;
+        Optdisc_t optdisc;
         Shell_t *sh;
     } disc;
+
     memset(&disc, 0, sizeof(disc));
-    disc.hdr.version = OPT_VERSION;
-    disc.hdr.infof = getopts_infof;
+    disc.optdisc.version = OPT_VERSION;
+    disc.optdisc.infof = getopts_infof;
     disc.sh = shp;
     value[1] = 0;
     key[1] = 0;
@@ -132,7 +133,7 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
         pp->mode = SH_JMPERREXIT;
         sh_exit(shp, 2);
     }
-    opt_info.disc = &disc.hdr;
+    opt_info.disc = &disc.optdisc;
     switch (opt_info.index >= 0 && opt_info.index <= argc
                 ? (opt_info.num = LONG_MIN, flag = optget(argv, options))
                 : 0) {
