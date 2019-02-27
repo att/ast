@@ -97,10 +97,7 @@ static const char hosttype[] = HOSTTYPE;
 #define OPT_ALL 8
 
 #define OPT_hostid (1 << 8)
-#define OPT_vendor (1 << 9)
 #define OPT_domain (1 << 10)
-#define OPT_machine_type (1 << 11)
-#define OPT_base (1 << 12)
 #define OPT_extended_release (1 << 13)
 
 #define OPT_TOTAL 14
@@ -145,12 +142,6 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             case 'a':
                 flags |= OPT_all | ((1L << OPT_ALL) - 1);
                 continue;
-            case 'b':
-                flags |= OPT_base;
-                continue;
-            case 'c':
-                flags |= OPT_vendor;
-                continue;
             case 'd':
                 flags |= OPT_domain;
                 continue;
@@ -180,9 +171,6 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
                 continue;
             case 's':
                 flags |= OPT_system;
-                continue;
-            case 't':
-                flags |= OPT_machine_type;
                 continue;
             case 'v':
                 flags |= OPT_version;
@@ -308,10 +296,6 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             output(OPT_hostid, s, "hostid");
         }
 #endif
-        if (flags & OPT_vendor) {
-            s = astconf("HW_PROVIDER", NULL, NULL);
-            output(OPT_vendor, s, "vendor");
-        }
         if (flags & OPT_domain) {
             s = astconf("SRPC_DOMAIN", NULL, NULL);
             if (!(*s)) getdomainname(s, sizeof(buf));
@@ -323,13 +307,11 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
 #else
         s = astconf("MACHINE", NULL, NULL);
 #endif
-        output(OPT_machine_type, s, "m_type");
 #if _mem_base_rel_utsname
         s = ut.base_rel;
 #else
         s = astconf("BASE", NULL, NULL);
 #endif
-        output(OPT_base, s, "base_rel");
         if (sep) sfputc(sfstdout, '\n');
     }
 
