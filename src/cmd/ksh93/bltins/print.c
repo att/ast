@@ -65,7 +65,7 @@ union types_t {
 };
 
 struct printf {
-    Sffmt_t hdr;
+    Sffmt_t sffmt;
     int argsize;
     int intvar;
     char **nextarg;
@@ -358,14 +358,14 @@ printv:
         struct printf pdata;
         memset(&pdata, 0, sizeof(pdata));
         pdata.sh = shp;
-        pdata.hdr.version = SFIO_VERSION;
-        pdata.hdr.extf = extend;
+        pdata.sffmt.version = SFIO_VERSION;
+        pdata.sffmt.extf = extend;
         pdata.nextarg = argv;
         sh_offstate(shp, SH_STOPOK);
         pool = sfpool(sfstderr, NULL, SF_WRITE);
         do {
             if (shp->trapnote & SH_SIGSET) break;
-            pdata.hdr.form = format;
+            pdata.sffmt.form = format;
             sfprintf(outfile, "%!", &pdata);
         } while (*pdata.nextarg && pdata.nextarg != argv);
         if (pdata.nextarg == nullarg && pdata.argsize > 0) {
