@@ -2222,7 +2222,7 @@ Namval_t *sh_scoped(Shell_t *shp, Namval_t *np) {
 }
 
 struct optimize {
-    Namfun_t hdr;
+    Namfun_t namfun;
     Shell_t *sh;
     char **ptr;
     struct optimize *next;
@@ -2287,14 +2287,14 @@ void nv_optimize(Namval_t *np) {
         op->ptr = shp->argaddr;
         op->np = np;
         if (xp) {
-            op->hdr.disc = 0;
+            op->namfun.disc = 0;
             op->next = xp->next;
             xp->next = op;
         } else {
-            op->hdr.disc = &OPTIMIZE_disc;
+            op->namfun.disc = &OPTIMIZE_disc;
             op->next = (struct optimize *)shp->optlist;
             shp->optlist = (void *)op;
-            nv_stack(np, &op->hdr);
+            nv_stack(np, &op->namfun);
         }
     }
 }
@@ -2303,8 +2303,8 @@ void sh_optclear(Shell_t *shp, void *old) {
     struct optimize *op, *opnext;
     for (op = (struct optimize *)shp->optlist; op; op = opnext) {
         opnext = op->next;
-        if (op->ptr && op->hdr.disc) {
-            nv_stack(op->np, &op->hdr);
+        if (op->ptr && op->namfun.disc) {
+            nv_stack(op->np, &op->namfun);
             nv_stack(op->np, NULL);
         }
         op->next = opt_free;
