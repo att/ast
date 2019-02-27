@@ -105,7 +105,7 @@ static const char enum_type[] =
     "[+SEE ALSO?\benum\b(1), \btypeset\b(1)]";
 
 struct Enum {
-    Namfun_t hdr;
+    Namfun_t namfun;
     char node[NV_MINSZ + sizeof(char *)];
     int64_t nelem;
     bool iflag;
@@ -140,7 +140,7 @@ static_fn Namfun_t *clone_enum(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     struct Enum *ep, *pp = (struct Enum *)fp;
     ep = calloc(1, sizeof(struct Enum) + pp->nelem * sizeof(char *));
     memcpy((void *)ep, (void *)pp, sizeof(struct Enum) + pp->nelem * sizeof(char *));
-    return &ep->hdr;
+    return &ep->namfun;
 }
 
 static_fn void put_enum(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
@@ -150,8 +150,8 @@ static_fn void put_enum(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
     int n;
     if (!val && !(flags & NV_INTEGER)) {
         nv_putv(np, val, flags, fp);
-        nv_disc(np, &ep->hdr, DISC_OP_POP);
-        if (!ep->hdr.nofree) free(ep);
+        nv_disc(np, &ep->namfun, DISC_OP_POP);
+        if (!ep->namfun.nofree) free(ep);
         return;
     }
     if (flags & NV_INTEGER) {
@@ -337,11 +337,11 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
             memcpy(cp, sp, n + 1);
             cp += n + 1;
         } while (nv_nextsub(np));
-        ep->hdr.dsize = sizeof(struct Enum) + sz;
-        ep->hdr.disc = &ENUM_disc;
-        ep->hdr.type = tp;
+        ep->namfun.dsize = sizeof(struct Enum) + sz;
+        ep->namfun.disc = &ENUM_disc;
+        ep->namfun.type = tp;
         nv_onattr(tp, NV_RDONLY);
-        nv_disc(tp, &ep->hdr, DISC_OP_FIRST);
+        nv_disc(tp, &ep->namfun, DISC_OP_FIRST);
         memset(&optdisc, 0, sizeof(optdisc));
         optdisc.opt.infof = enuminfo;
         optdisc.np = tp;
