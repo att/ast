@@ -682,7 +682,7 @@ Namfun_t *nv_hasdisc(const Namval_t *np, const Namdisc_t *dp) {
 }
 
 struct notify {
-    Namfun_t hdr;
+    Namfun_t namfun;
     char **ptr;
 };
 
@@ -717,8 +717,8 @@ bool nv_setnotify(Namval_t *np, char **addr) {
 
     if (!pp) return false;
     pp->ptr = addr;
-    pp->hdr.disc = &notify_disc;
-    nv_stack(np, &pp->hdr);
+    pp->namfun.disc = &notify_disc;
+    nv_stack(np, &pp->namfun);
     return true;
 }
 
