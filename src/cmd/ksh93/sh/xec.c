@@ -469,7 +469,7 @@ static_fn void out_string(Sfio_t *iop, const char *cp, int c, int quoted) {
 }
 
 struct Level {
-    Namfun_t hdr;
+    Namfun_t namfun;
     short maxlevel;
 };
 
@@ -513,8 +513,8 @@ static_fn struct Level *init_level(Shell_t *shp, int level) {
     nv_onattr(SH_LEVELNOD, NV_INT16 | NV_NOFREE);
     shp->last_root = nv_dict(DOTSHNOD);
     nv_putval(SH_LEVELNOD, (char *)&lp->maxlevel, NV_INT16);
-    lp->hdr.disc = &level_disc;
-    nv_disc(SH_LEVELNOD, &lp->hdr, DISC_OP_FIRST);
+    lp->namfun.disc = &level_disc;
+    nv_disc(SH_LEVELNOD, &lp->namfun, DISC_OP_FIRST);
     return lp;
 }
 
@@ -2723,7 +2723,7 @@ static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], stru
 
     shp->pipepid = 0;
     sh_stats(STAT_FUNCT);
-    if (!lp->hdr.disc) lp = init_level(shp, 0);
+    if (!lp->namfun.disc) lp = init_level(shp, 0);
     if ((struct sh_scoped *)shp->topscope != shp->st.self) sh_setscope(shp, shp->topscope);
     level = lp->maxlevel = shp->dot_depth + shp->fn_depth + 1;
     STORE_VT(SH_LEVELNOD->nvalue, i16, lp->maxlevel);
