@@ -73,7 +73,7 @@ all_tests = [
     ['quoting2'], ['read'], ['readcsv'], ['recttype'], ['restricted'], ['return'], ['rksh'],
     ['select'], ['set'], ['sh_match'], ['sigchld', 100], ['signal'], ['sleep'], ['statics'],
     ['subshell', 100], ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
-    ['ulimit'], ['variables'], ['vartree1'], ['vartree2'], ['whence'], ['uname'],
+    ['ulimit'], ['variables'], ['vartree1'], ['vartree2'], ['wc'], ['whence'], ['uname'],
     # Test non-special builtins; i.e., those that have to be enabled explicitly.
     ['chmod'],
     # These are interactive tests to be run via the `expect` utility.
@@ -91,7 +91,7 @@ all_tests = [
 # This is a list of tests to be skipped because they are known to be broken when
 # compiled by `shcomp`.
 # TODO: Fix these tests.
-shcomp_tests_to_skip = ['io', 'namespace', 'treemove', 'printf', 'set']
+shcomp_tests_to_skip = ['io', 'namespace', 'treemove', 'printf', 'set', 'wc']
 macos_tests_to_skip = ['jobs.exp' ]
 
 # The test cases are executed in parallel by default
