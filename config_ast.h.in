@@ -256,4 +256,13 @@ int mkostemp(char *template, int oflags);
 extern void _dprintf(const char *fname, int lineno, const char *funcname, const char *fmt, ...);
 #define DPRINTF(fmt, ...) _dprintf(__FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
 
+// Debug print of a `struct Value` object.
+//
+// Note that the function prototype uses a `const void*` because we can't use
+// `struct Value*` here as the src/ksh93/include/name.h header which defines
+// it can't be included before this header.
+extern void _dprint_vtp(const char *fname, int lineno, const char *funcname, const void *vp);
+#define DPRINT_VT(vt) _dprint_vtp(__FILE__, __LINE__, __FUNCTION__, &(vt))
+#define DPRINT_VTP(vtp) _dprint_vtp(__FILE__, __LINE__, __FUNCTION__, vtp)
+
 #endif

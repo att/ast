@@ -3,6 +3,7 @@ ksh93_files += [
     'sh/arith.c',
     'sh/array.c',
     'sh/bash.c',
+    'sh/debug.c',
     'sh/defs.c',
     'sh/deparse.c',
     'sh/expand.c',

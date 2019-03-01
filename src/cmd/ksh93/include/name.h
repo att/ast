@@ -46,7 +46,8 @@ struct pathcomp;
 //
 // This list must be kept in sync with the `value_type_names` array in module "name.c". These values
 // do not have to be in the same order as the elements of the union in `struct Value` but keeping
-// them in the same order is a good idea.
+// them in the same order is a good idea. You also have to update the `dprint_vtp_dispatch` array in
+// module "debug.c" if this list is changed.
 enum value_type {
     VT_do_not_use = 0,
     VT_vp,
@@ -192,10 +193,6 @@ struct Value {
 #define FETCH_VTP(value_objp, which) fetch_vtp(__LINE__, value_objp, which)
 #define STORE_VT(value_obj, which, val) store_vt(__LINE__, value_obj, which, val)
 #define STORE_VTP(value_objp, which, val) store_vtp(__LINE__, value_objp, which, val)
-
-// Debug print of a `struct Value` object.
-#define DPRINT_VT(value_obj) dprint_vt(value_obj)
-#define DPRINT_VTP(value_objp) dprint_vtp(value_objp)
 
 // These two macros can be used to test the type of the value stored in the `struct Value` object.
 #define IS_VT(value_obj, which) is_vt(value_obj, which)
