@@ -298,8 +298,10 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
 #endif
         if (flags & OPT_domain) {
             s = astconf("SRPC_DOMAIN", NULL, NULL);
-            if (!(*s)) getdomainname(s, sizeof(buf));
-
+            if (!(*s)) {
+                getdomainname(buf, sizeof(buf));
+                s = buf;
+            }
             output(OPT_domain, s, "domain");
         }
 #if _mem_m_type_utsname
