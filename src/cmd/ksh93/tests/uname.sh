@@ -76,10 +76,9 @@ expect=$($bin_uname -o)
 uname -h | grep -q -v "[0-9a-f]*" && log_error "'uname -h' failed"
 
 # ==========
-# https://github.com/att/ast/issues/1184
 #   -d, --domain    The domain name returned by getdomainname(2).
-# actual=$(uname -d)
-# [[ "$expect" =~ "$actual" ]] || log_error "'uname -d' failed"
+actual=$(uname -d)
+[[ ! -z "$actual" ]] || log_error "'uname -d' failed"
 
 # ==========
 #   -R, --extended-release
@@ -90,11 +89,10 @@ expect=$(uname)
 
 # ==========
 #   -A, --everything
-# https://github.com/att/ast/issues/1184
 #                   Equivalent to -snrvmpiohdR.
-# actual=$(uname -A)
-# expect=$(uname)
-# [[ "$actual" =~ "$expect" ]] || log_error "'uname -R' failed" "$expect" "$actual"
+actual=$(uname -A)
+expect=$(uname -snrvmpiohdR)
+[[ "$actual" = "$expect" ]] || log_error "'uname -A' failed" "$expect" "$actual"
 
 # ==========
 #   -f, --list      List all sysinfo(2) names and values, one per line.
