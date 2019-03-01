@@ -302,7 +302,7 @@ static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
             cp = sfstruse(shp->strbuf);
             mp = nv_search(cp, ap->namarr.table, NV_ADD);
             assert(mp);  // it is theoretically possible for that nv_search() to fail
-            mp->nvenv = (char *)np;
+            mp->nvenv = np;
             nv_arraychild(np, mp, 0);
         }
         struct Namval *up_np = FETCH_VTP(up, np);
@@ -391,7 +391,7 @@ static_fn Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t 
         if ((flags & NV_COMVAR) && nv_putsub(np, NULL, 0, ARRAY_SCAN)) {
             do {
                 nq = nv_opensub(np);
-                if (nq) nq->nvenv = (void *)mp;
+                if (nq) nq->nvenv = mp;
             } while (nv_nextsub(np));
         }
         return fp;
@@ -436,7 +436,7 @@ static_fn Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t 
         nq = nv_opensub(np);
         if (nq) {
             mq = nv_search(name, ap->table, NV_ADD);
-            if (flags & NV_COMVAR) mq->nvenv = (char *)mp;
+            if (flags & NV_COMVAR) mq->nvenv = mp;
         }
         if (nq && (((flags & NV_COMVAR) && nv_isvtree(nq)) || nv_isarray(nq))) {
             STORE_VT(mq->nvalue, const_cp, NULL);
@@ -629,7 +629,7 @@ static_fn void array_copytree(Namval_t *np, Namval_t *mp) {
     nv_disc(np, (Namfun_t *)fp, DISC_OP_FIRST);
     fp->nofree |= 1;
     nv_onattr(np, NV_ARRAY);
-    mp->nvenv = (char *)np;
+    mp->nvenv = np;
 }
 
 //
@@ -865,7 +865,7 @@ Namval_t *nv_arraychild(Namval_t *np, Namval_t *nq, int c) {
     tp = nv_type(np);
     if (tp || c) {
         ap->flags |= ARRAY_NOCLONE;
-        nq->nvenv = (char *)np;
+        nq->nvenv = np;
         if (c == 't') {
             assert(tp);
             nv_clone(tp, nq, 0);
@@ -875,7 +875,7 @@ Namval_t *nv_arraychild(Namval_t *np, Namval_t *nq, int c) {
         nv_offattr(nq, NV_ARRAY);
         ap->flags &= ~ARRAY_NOCLONE;
     }
-    nq->nvenv = (char *)np;
+    nq->nvenv = np;
     nq->nvshell = np->nvshell;
     if ((fp = nq->nvfun) && fp->disc && fp->disc->setdisc && (fp = nv_disc(nq, fp, DISC_OP_POP))) {
         free(fp);
@@ -1024,7 +1024,7 @@ Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
                     sfprintf(shp->strbuf, "%d", ap->cur);
                     cp = sfstruse(shp->strbuf);
                     mp = nv_search(cp, ap->namarr.table, NV_ADD);
-                    mp->nvenv = (char *)np;
+                    mp->nvenv = np;
                     nv_arraychild(np, mp, 0);
                     nv_setvtree(mp);
                 } else {
@@ -1280,7 +1280,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
             return (void *)ap->cur;
         }
         case ASSOC_OP_CURRENT_val: {
-            if (ap->cur) ap->cur->nvenv = (char *)np;
+            if (ap->cur) ap->cur->nvenv = np;
             return (void *)ap->cur;
         }
         case ASSOC_OP_NAME_val: {
@@ -1313,7 +1313,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                     op.val == ASSOC_OP_ADD_val) {
                     mp->nvshell = np->nvshell;
                     nv_onattr(mp, type);
-                    mp->nvenv = (char *)np;
+                    mp->nvenv = np;
                     if (op.val == ASSOC_OP_ADD_val && nv_type(np)) nv_arraychild(np, mp, 0);
                     if (shp->subshell) sh_assignok(np, 1);
                     if (type & NV_INTEGER) {

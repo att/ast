@@ -118,11 +118,16 @@ static void test_dprint_nv() {
     STORE_VT(nval1.nvalue, i, 111);
     nval2.nvname = "dvar2";
     nval2.nvsize = 66;
-    nval2.nvenv = (char *)&nval1;
+    nval2.nvenv = &nval1;
     STORE_VT(nval2.nvalue, cp, cp);
 
     SET_BASE_ADDR(&cp, 4);
     DPRINT_NV(nval2);
+
+    nval1.nvsize = 99;
+    nval1.nvenv = (Namval_t *)"nvenv is a string";
+    nval1.nvenv_is_cp = true;
+    DPRINT_NV(nval1);
 }
 
 int main() {

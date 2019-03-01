@@ -464,7 +464,7 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
         }
         if (shp->mktype) nv_addnode(nr, 1);
         if (pp->strsize < 0) continue;
-        if (nr != (Namval_t *)np->nvenv) {
+        if (nr != np->nvenv) {
             _nv_unset(nr, 0);
             if (!nv_isattr(nr, NV_MINIMAL)) nv_delete(nr, shp->last_root, 0);
         }
@@ -607,7 +607,7 @@ static_fn Namfun_t *clone_inttype(Namval_t *np, Namval_t *mp, int flags, Namfun_
     } else {
         STORE_VT(mp->nvalue, funp, fp + 1);
     }
-    if (!nv_isattr(mp, NV_MINIMAL)) mp->nvenv = 0;
+    if (!nv_isattr(mp, NV_MINIMAL)) mp->nvenv = NULL;
     nv_offattr(mp, NV_RDONLY);
     return pp;
 }
@@ -1028,13 +1028,15 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
         nq->nvshell = mp->nvshell;
         if (np->nvenv) {
             // Need to save the string pointer.
+            assert(np->nvenv_is_cp);
             nv_offattr(np, NV_EXPORT);
             help[k - 1] = cp;
-            cp = stpcpy(cp, np->nvenv);
+            cp = stpcpy(cp, (char *)np->nvenv);
             j = *help[k - 1];
             if (islower(j)) *help[k - 1] = toupper(j);
             *cp++ = 0;
-            np->nvenv = 0;
+            np->nvenv = NULL;
+            np->nvenv_is_cp = false;
         }
         nq->nvname = cp;
         dsize = nv_datasize(np, &offset);
@@ -1198,7 +1200,8 @@ Namval_t *nv_mkinttype(char *name, size_t size, int sign, const char *help, Namd
     fp->disc = dp;
     STORE_VT(mp->nvalue, const_cp, (char *)(fp + 1) + sizeof(Namdisc_t));
     nv_setsize(mp, 10);
-    mp->nvenv = (char *)help;
+    mp->nvenv = (Namval_t *)help;
+    mp->nvenv_is_cp = true;
     nv_onattr(mp, NV_NOFREE | NV_RDONLY | NV_INTEGER | NV_EXPORT);
     if (size == 16) {
         nv_onattr(mp, NV_INT16P);

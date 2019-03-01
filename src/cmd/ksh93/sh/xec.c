@@ -620,8 +620,7 @@ static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Na
     Namarr_t *ap;
     Namval_t *np;
 
-    if (!nv_isattr(nq, NV_MINIMAL | NV_EXPORT | NV_ARRAY) && (np = (Namval_t *)nq->nvenv) &&
-        nv_isarray(np)) {
+    if (!nv_isattr(nq, NV_MINIMAL | NV_EXPORT | NV_ARRAY) && (np = nq->nvenv) && nv_isarray(np)) {
         nq = np;
     } else if (nv_isattr(nq, NV_MINIMAL) == NV_MINIMAL && !nv_type(nq) &&
                (np = nv_typeparent(nq))) {
@@ -2289,7 +2288,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 slp = t->funct.functstak;
                 sh_funstaks(slp->slchild, 1);
                 stklink(slp->slptr);
-                np->nvenv = (char *)slp;
+                np->nvenv = (Namval_t *)slp;
                 nv_funtree(np) = (int *)(t->funct.functtre);
                 FETCH_VT(np->nvalue, rp)->hoffset = t->funct.functloc;
                 FETCH_VT(np->nvalue, rp)->lineno = t->funct.functline;
@@ -2691,10 +2690,10 @@ Sfdouble_t sh_mathfun(Shell_t *shp, void *fp, int nargs, Sfdouble_t *arg) {
     np = (Namval_t *)fp;
     funenv.node = np;
     funenv.nref = nref;
-    funenv.env = 0;
+    funenv.env = NULL;
     memcpy(&node, SH_VALNOD, sizeof(node));
-    SH_VALNOD->nvfun = 0;
-    SH_VALNOD->nvenv = 0;
+    SH_VALNOD->nvfun = NULL;
+    SH_VALNOD->nvenv = NULL;
     nv_setattr(SH_VALNOD, NV_LDOUBLE | NV_NOFREE);
     STORE_VT(SH_VALNOD->nvalue, sfdoublep, NULL);
     for (i = 0; i < nargs; i++) {
@@ -2704,7 +2703,7 @@ Sfdouble_t sh_mathfun(Shell_t *shp, void *fp, int nargs, Sfdouble_t *arg) {
     *nr = 0;
     STORE_VT(SH_VALNOD->nvalue, sfdoublep, &d);
     argv[0] = np->nvname;
-    argv[1] = 0;
+    argv[1] = NULL;
     sh_funscope(shp, 1, argv, 0, &funenv, 0);
     while ((mp = *nr++)) STORE_VT(mp->nvalue, sfdoublep, NULL);
     SH_VALNOD->nvfun = node.nvfun;

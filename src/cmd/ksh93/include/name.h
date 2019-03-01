@@ -298,7 +298,8 @@ struct Namval {
     Namfun_t *nvfun;      // pointer to trap functions
     struct Value nvalue;  // value field
     void *nvshell;        // shell pointer
-    char *nvenv;          // pointer to environment name
+    Namval_t *nvenv;      // pointer to environment name
+    bool nvenv_is_cp;
 };
 
 #define NV_CLASS ".sh.type"

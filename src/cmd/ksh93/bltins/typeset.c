@@ -482,7 +482,8 @@ endargs:
         } else if (nv_isnull(tdata.tp)) {
             nv_newtype(tdata.tp);
         }
-        tdata.tp->nvenv = tdata.help;
+        tdata.tp->nvenv = (Namval_t *)tdata.help;
+        tdata.tp->nvenv_is_cp = true;
         flag &= ~NV_TYPE;
         if (nv_isattr(tdata.tp, NV_TAGGED)) {
             nv_offattr(tdata.tp, NV_TAGGED);
@@ -655,9 +656,8 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             if (!np) continue;
             if (nv_isnull(np) && !nv_isarray(np) && nv_isattr(np, NV_NOFREE)) {
                 nv_offattr(np, NV_NOFREE);
-            } else if (tp->tp && !nv_isattr(np, NV_MINIMAL | NV_EXPORT) &&
-                       (mp = (Namval_t *)np->nvenv) && (ap = nv_arrayptr(mp)) &&
-                       (ap->flags & ARRAY_TREE)) {
+            } else if (tp->tp && !nv_isattr(np, NV_MINIMAL | NV_EXPORT) && (mp = np->nvenv) &&
+                       (ap = nv_arrayptr(mp)) && (ap->flags & ARRAY_TREE)) {
                 errormsg(SH_DICT, ERROR_exit(1), e_typecompat, nv_name(np));
                 __builtin_unreachable();
             } else if ((ap = nv_arrayptr(np)) && nv_aindex(np) > 0 && ap->nelem == 1 &&
@@ -805,7 +805,8 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                 }
             }
             if (tp->help && !nv_isattr(np, NV_MINIMAL | NV_EXPORT)) {
-                np->nvenv = tp->help;
+                np->nvenv = (Namval_t *)tp->help;
+                np->nvenv_is_cp = true;
                 nv_onattr(np, NV_EXPORT);
             }
             if (last) *last = '=';

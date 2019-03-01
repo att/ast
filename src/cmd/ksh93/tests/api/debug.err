@@ -39,3 +39,8 @@
 ### 1234   0.000 debug.c:125         test_dprint_nv() np 0x88 ->nvalue is:
 ### 1234   0.000 debug.c:125         test_dprint_nv() type "i" stored @ debug.c:118 in test_dprint_nv()
 ### 1234   0.000 debug.c:125         test_dprint_nv() value is int 111 (0x6F)
+### 1234   0.000 debug.c:130         test_dprint_nv() np 0x88 ->nvname |dvar1|  ->nvsize 99
+### 1234   0.000 debug.c:130         test_dprint_nv() np 0x88 ->nvalue is:
+### 1234   0.000 debug.c:130         test_dprint_nv() type "i" stored @ debug.c:118 in test_dprint_nv()
+### 1234   0.000 debug.c:130         test_dprint_nv() value is int 111 (0x6F)
+### 1234   0.000 debug.c:130         test_dprint_nv() np 0x88 ->nvenv is 0x88 |nvenv is a string|
