@@ -197,7 +197,7 @@ static_fn Namval_t *create_enum(Namval_t *np, const void *vp, int flags, Namfun_
     const char *v;
     int i, n;
     mp = nv_namptr(ep->node, 0);
-    mp->nvenv = (char *)np;
+    mp->nvenv = np;
     for (i = 0; (v = ep->values[i]); i++) {
         if (ep->iflag) {
             n = strcasecmp(v, name);

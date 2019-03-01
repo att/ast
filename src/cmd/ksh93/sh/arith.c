@@ -210,7 +210,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
                     dtuserdata(ap->table, shp, 1);
                 }
                 if (ap && ap->table && (nq = nv_search(nv_getsub(np), ap->table, NV_ADD))) {
-                    nq->nvenv = (char *)np;
+                    nq->nvenv = np;
                 }
                 if (nq && nv_isnull(nq)) np = nv_arraychild(np, nq, 0);
             }

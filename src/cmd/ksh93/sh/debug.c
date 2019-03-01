@@ -198,8 +198,13 @@ void _dprint_nvp(const char *fname, const int lineno, const char *funcname, cons
     _dprintf(fname, lineno, funcname, "np %p ->nvalue is:", NP_BASE_ADDR(np));
     _dprint_vtp(fname, lineno, funcname, &np->nvalue);
     if (np->nvenv) {
-        _dprintf(fname, lineno, funcname, "np %p ->nvenv is %p:", NP_BASE_ADDR(np),
-                 NP_BASE_ADDR(np->nvenv));
-        _dprint_nvp(fname, lineno, funcname, np->nvenv);
+        if (np->nvenv_is_cp) {
+            _dprintf(fname, lineno, funcname, "np %p ->nvenv is %p |%s|", NP_BASE_ADDR(np),
+                     NP_BASE_ADDR(np->nvenv), np->nvenv);
+        } else {
+            _dprintf(fname, lineno, funcname, "np %p ->nvenv is %p:", NP_BASE_ADDR(np),
+                     NP_BASE_ADDR(np->nvenv));
+            _dprint_nvp(fname, lineno, funcname, np->nvenv);
+        }
     }
 }

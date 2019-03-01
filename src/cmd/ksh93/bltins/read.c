@@ -478,11 +478,11 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
             if ((ap = nv_arrayptr(np)) && !ap->fun) ap->nelem--;
             nv_putsub(np, NULL, 0L, 0);
         } else if (flags & C_FLAG) {
-            char *sp = np->nvenv;
+            Namval_t *nvenv = np->nvenv;
             if (strchr(name, '[')) nq = np;
             delim = -1;
             nv_unset(np);
-            if (!nv_isattr(np, NV_MINIMAL)) np->nvenv = sp;
+            if (!nv_isattr(np, NV_MINIMAL)) np->nvenv = nvenv;
             nv_setvtree(np);
             *(void **)(np->nvfun + 1) = readfn;
         } else {
@@ -664,7 +664,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                 if (var == buf) var = memdup(var, c + 1);
                 nv_putval(np, var, NV_RAW);
                 nv_setsize(np, c);
-                if (!nv_isattr(np, NV_IMPORT | NV_EXPORT) && (mp = (Namval_t *)np->nvenv)) {
+                if (!nv_isattr(np, NV_IMPORT | NV_EXPORT) && (mp = np->nvenv)) {
                     nv_setsize(mp, c);
                 }
             }

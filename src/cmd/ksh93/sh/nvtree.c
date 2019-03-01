@@ -736,8 +736,8 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
             (void)nv_stack(np, fp);
             fp = nv_stack(np, NULL);
             if (fp) free(fp);
-            np->nvfun = 0;
-            if (!nv_isattr(np, NV_MINIMAL)) np->nvenv = 0;
+            np->nvfun = NULL;
+            if (!nv_isattr(np, NV_MINIMAL)) np->nvenv = NULL;
             return;
         }
         for (xp = fp->next; xp; xp = xp->next) {
@@ -1077,7 +1077,7 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
             shp->var_tree = dp;
             if (nq && mq) {
                 struct nvdir *dp = (struct nvdir *)dir;
-                char *nvenv = mq->nvenv;
+                Namval_t *nvenv = mq->nvenv;
                 // Related to the TODO above this condition appears to only ever be true if
                 // flags&NV_MOVE is true.
                 if (dp->table == nq) {

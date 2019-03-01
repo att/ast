@@ -827,7 +827,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                 top = 0;
                 if (np && !nv_isattr(np, NV_MINIMAL) && shp->oldnp && !np->nvenv &&
                     shp->oldnp != np && !(flags & NV_ARRAY)) {
-                    np->nvenv = (char *)shp->oldnp;
+                    np->nvenv = shp->oldnp;
                 }
                 shp->oldnp = np;
                 if (isref) {
@@ -844,7 +844,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                         shp->last_table = nv_reftable(np);
                         sub = nv_refsub(np);
                         shp->oldnp = nv_refoldnp(np);
-                        if (shp->oldnp) shp->oldnp = (Namval_t *)shp->oldnp->nvenv;
+                        if (shp->oldnp) shp->oldnp = shp->oldnp->nvenv;
                         np = nv_refnode(np);
                         if (sub && c != '.') nv_putsub(np, sub, 0L, 0);
                         flags |= NV_NOSCOPE;
@@ -1009,7 +1009,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                                     dtuserdata(ap->table, shp, 1);
                                 }
                                 if (ap && ap->table && (nq = nv_search(sub, ap->table, n))) {
-                                    nq->nvenv = (char *)np;
+                                    nq->nvenv = np;
                                 }
                                 if (nq && nv_isnull(nq)) nq = nv_arraychild(np, nq, c);
                             }
@@ -1884,7 +1884,8 @@ static_fn void pushnam(Namval_t *np, void *data) {
     ap->sh = sh_ptr(np);
     ap->tp = 0;
     if (nv_isattr(np, NV_IMPORT) && np->nvenv) {
-        *ap->argnam++ = np->nvenv;
+        assert(np->nvenv_is_cp);
+        *ap->argnam++ = (char *)np->nvenv;
     } else if ((value = nv_getval(np))) {
         *ap->argnam++ = staknam(ap->sh, np, value);
     }
@@ -2204,7 +2205,7 @@ done:
             if (nv_isattr(np, NV_EXPORT) && !strchr(np->nvname, '[')) {
                 env_delete(shp->env, nv_name(np));
             }
-            if (!(flags & NV_EXPORT) || nv_isattr(np, NV_EXPORT)) np->nvenv = 0;
+            if (!(flags & NV_EXPORT) || nv_isattr(np, NV_EXPORT)) np->nvenv = NULL;
             nv_setattr(np, 0);
         } else {
             nv_setattr(np, NV_MINIMAL);
@@ -2745,7 +2746,8 @@ bool nv_rename(Namval_t *np, int flags) {
     Namval_t *last_table = shp->last_table;
     Dt_t *last_root = shp->last_root;
     Dt_t *hp = NULL;
-    char *nvenv = 0, *prefix = shp->prefix;
+    Namval_t *nvenv = NULL;
+    char *prefix = shp->prefix;
     Namarr_t *ap;
 
     if (nv_isattr(np, NV_PARAM) && shp->st.prevst) {
@@ -2798,11 +2800,11 @@ bool nv_rename(Namval_t *np, int flags) {
         if (mp) {
             ap = nv_arrayptr(np);
             if (ap) ap->nelem++;
-            mp->nvenv = nvenv = (void *)np;
+            mp->nvenv = nvenv = np;
         }
     }
     if (mp) {
-        nvenv = (char *)np;
+        nvenv = np;
         np = mp;
     }
     if (nr == np) {
@@ -2830,7 +2832,7 @@ bool nv_rename(Namval_t *np, int flags) {
             }
             if (ap->table) mp = nv_search(nv_getsub(np), ap->table, NV_ADD);
             nv_arraychild(np, mp, 0);
-            nvenv = (void *)np;
+            nvenv = np;
         } else {
             mp = np;
         }
@@ -2856,7 +2858,7 @@ bool nv_rename(Namval_t *np, int flags) {
         assert(mp);
         mp->nvenv = nvenv;
         if (flags & NV_MOVE) {
-            if (arraynr && !nv_isattr(nr, NV_MINIMAL) && (mp = (Namval_t *)nr->nvenv) &&
+            if (arraynr && !nv_isattr(nr, NV_MINIMAL) && (mp = nr->nvenv) &&
                 (ap = nv_arrayptr(mp))) {
                 nv_putsub(mp, nr->nvname, 0, 0);
                 _nv_unset(mp, 0);
@@ -2865,8 +2867,7 @@ bool nv_rename(Namval_t *np, int flags) {
         }
     } else {
         if (flags & NV_MOVE) {
-            if (!nv_isattr(nr, NV_MINIMAL) && (mp = (Namval_t *)(nr->nvenv)) &&
-                (ap = nv_arrayptr(mp))) {
+            if (!nv_isattr(nr, NV_MINIMAL) && (mp = nr->nvenv) && (ap = nv_arrayptr(mp))) {
                 ap->nelem--;
             }
             if (!nv_isarray(np) && !nv_isarray(nr)) {
@@ -3118,7 +3119,8 @@ char *nv_name(const Namval_t *np) {
     }
     if (!np->nvname) goto skip;
     if (!nv_isattr(np, NV_MINIMAL | NV_EXPORT) && np->nvenv) {
-        Namval_t *nq = shp->last_table, *mp = (Namval_t *)np->nvenv;
+        Namval_t *nq = shp->last_table;
+        Namval_t *mp = np->nvenv;
         if (mp && (!mp->nvname || *mp->nvname == 0)) mp = NULL;
         if (mp && (!strchr(np->nvname, '.') || (np->nvfun && nv_type(mp)) ||
                    (nv_isarray(mp) && (cp = nv_getsub(mp)) && strcmp(np->nvname, cp) == 0))) {

@@ -307,7 +307,7 @@ static_fn void assign(Namval_t *np, const void *val, int flags, Namfun_t *handle
         int n;
 
         block(bp, type);
-        if (!nv_isattr(np, NV_MINIMAL)) pp = (Namval_t *)np->nvenv;
+        if (!nv_isattr(np, NV_MINIMAL)) pp = np->nvenv;
         nv_putv(np, val, flags, handle);
         if (!nv_isarray(np) || array_isempty(np)) nv_disc(np, handle, DISC_OP_POP);
         if (shp->subshell) goto done;
@@ -813,7 +813,7 @@ int nv_clone(Namval_t *np, Namval_t *mp, int flags) {
         Shell_t *shp = (Shell_t *)np->nvshell;
         Namval_t *last_table = shp->last_table;
         if (nv_isattr(mp, NV_EXPORT | NV_MINIMAL) == (NV_EXPORT | NV_MINIMAL)) {
-            mp->nvenv = 0;
+            mp->nvenv = NULL;
             nv_offattr(mp, NV_MINIMAL);
         }
         if (!(flags & NV_COMVAR) && !nv_isattr(np, NV_MINIMAL) && np->nvenv &&
@@ -856,7 +856,7 @@ int nv_clone(Namval_t *np, Namval_t *mp, int flags) {
         if (!nv_isattr(np, NV_MINIMAL) || nv_isattr(mp, NV_EXPORT)) {
             mp->nvenv = np->nvenv;
             if (nv_isattr(np, NV_MINIMAL)) {
-                np->nvenv = 0;
+                np->nvenv = NULL;
                 nv_setattr(np, NV_EXPORT);
             } else {
                 nv_setattr(np, 0);
@@ -1060,8 +1060,8 @@ Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last)
         return np;
     }
     while (nv_isarray(nq) && !nv_isattr(nq, NV_MINIMAL | NV_EXPORT) && nq->nvenv &&
-           nv_isarray((Namval_t *)nq->nvenv)) {
-        nq = (Namval_t *)nq->nvenv;
+           nv_isarray(nq->nvenv)) {
+        nq = nq->nvenv;
     }
     return (Namval_t *)nv_setdisc(nq, dname, nq, (Namfun_t *)nq);
 done:
@@ -1133,8 +1133,8 @@ Namval_t *sh_addbuiltin(Shell_t *shp, const char *path, Shbltin_f bltin, void *e
         if (extra) np->nvfun = extra;
         return np;
     }
-    np->nvenv = 0;
-    np->nvfun = 0;
+    np->nvenv = NULL;
+    np->nvfun = NULL;
     if (bltin) {
         STORE_VT(np->nvalue, shbltinp, bltin);
         nv_onattr(np, NV_BLTIN | NV_NOFREE);

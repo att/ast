@@ -607,7 +607,7 @@ static_fn void put_lastarg(Namval_t *np, const void *val, int flags, Namfun_t *f
     }
     shp->lastarg = (char *)val;
     nv_offattr(np, NV_EXPORT);
-    np->nvenv = 0;
+    np->nvenv = NULL;
 }
 
 static_fn void astbin_update(Shell_t *shp, const char *from, const char *to) {
@@ -1914,7 +1914,7 @@ static_fn Dt_t *inittree(Shell_t *shp, const struct shtable2 *name_vals) {
             np->nvname = (char *)tp->sh_name;
             treep = base_treep;
         }
-        np->nvenv = 0;
+        np->nvenv = NULL;
         np->nvshell = (void *)shp;
         if (name_vals == (const struct shtable2 *)shtab_builtins) {
             STORE_VT(np->nvalue, shbltinp, ((struct shtable3 *)tp)->sh_value);
@@ -1963,7 +1963,8 @@ static_fn void env_init(Shell_t *shp) {
                 np = nv_open(cp, shp->var_tree, (NV_EXPORT | NV_IDENT | NV_ASSIGN | NV_NOFAIL));
                 if (np) {
                     nv_onattr(np, NV_IMPORT);
-                    np->nvenv = cp;
+                    np->nvenv = (Namval_t *)cp;
+                    np->nvenv_is_cp = true;
                     nv_close(np);
                 } else {
                     // Swap with front
