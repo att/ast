@@ -57,4 +57,5 @@ ld_library_path = 'LD_LIBRARY_PATH=' + ':'.join(
 # Sample loadable builtin will be loaded from this path in builtins test cases
 libsample_path = 'LIBSAMPLE_PATH=' + libsample.full_path()
 
+subdir('tests/api')
 subdir('tests')

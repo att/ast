@@ -19,16 +19,30 @@ function log_error {
 }
 alias log_error='log_error $LINENO'
 
+export BUILD_DIR=$PWD
+
+api_test=false
+api_binary=false
 shcomp=false
-if [[ $# -eq 2 && $1 == shcomp ]]
+if [[ $1 == shcomp ]]
 then
+    # Run a ksh script test after compiling it.
     shcomp=true
     shift 1
+elif [[ $1 == api ]]
+then
+    # Run a ksh binary API test.
+    api_test=true
+    api_binary=$BUILD_DIR/$2
+    shift 2
+else
+    # Run a ksh script test without compiling it.
+    :
 fi
 
 if [[ $# -ne 1 ]]
 then
-    log_error "Expected one arg (the test name) possibly preceded by 'shcomp', got $#: $@"
+    log_error "Expected one arg (the test name) possibly preceded by 'shcomp' or 'api', got $#: $@"
     exit 99
 fi
 
@@ -45,19 +59,26 @@ then
     exit 0
 fi
 
+
 #
 # Setup the environment for the unit test.
 #
 export TEST_SRC_DIR=${0%/*/*}  # capture the parent directory containing this script
+
 readonly test_name=$1
 if [[ $test_name == *.exp ]]
 then
     readonly test_path=$TEST_SRC_DIR/$test_name
+elif [[ $api_test == true ]]
+then
+    readonly test_path=$api_binary
+    # Ugh! This is somewhat ugly. There should be a better way to figure out the directory that
+    # contains auxiliary files. One option is to put everything, not just API tests, one level below
+    # the parent dir of this script.
+    TEST_SRC_DIR=$TEST_SRC_DIR/api
 else
     readonly test_path=$TEST_SRC_DIR/$test_name.sh
 fi
-readonly test_script=$test_name.sh
-export BUILD_DIR=$PWD
 
 if [[ ! -f $test_path ]]
 then
@@ -113,6 +134,53 @@ export HISTFILE=$TEST_DIR/sh_history
 # This is used to capture the `expect` based test line that failed.
 typeset -a failure_lines
 
+# Run a ksh API test. Modeled loosely on the older run_interactive function.
+function run_api {
+    $test_path >$test_name.out 2>$test_name.err
+    exit_status=$?
+
+    if [[ -e $TEST_SRC_DIR/$test_name.out ]]
+    then
+        if ! diff -q $TEST_SRC_DIR/$test_name.out $test_name.out >/dev/null
+        then
+            log_error "Stdout for $test_name had unexpected differences:"
+            diff -U3 $TEST_SRC_DIR/$test_name.out $test_name.out >&2
+            exit_status=1
+        fi
+    elif [[ -s $test_name.out ]]
+    then
+            log_error "Stdout for $test_name should have been empty:"
+            cat $test_name.out >&2
+            exit_status=1
+    fi
+
+    if [[ -e $TEST_SRC_DIR/$test_name.err ]]
+    then
+        if ! diff -q $TEST_SRC_DIR/$test_name.err $test_name.err >/dev/null
+        then
+            log_error "Stderr for $test_name had unexpected differences:"
+            diff -U3 $TEST_SRC_DIR/$test_name.err $test_name.err >&2
+            exit_status=1
+        fi
+    elif [[ -s $test_name.err ]]
+    then
+            log_error "Stderr for $test_name should have been empty:"
+            cat $test_name.err >&2
+            exit_status=1
+    fi
+
+    if [[ $exit_status -eq 0 ]]
+    then
+        # We only remove the temp test dir if the test is successful. Otherwise we leave it since
+        # it may contain useful clues about why the test failed.
+        cd /tmp
+        rm -rf $TEST_DIR
+    fi
+
+    return $exit_status
+}
+
+# Run an interactive ksh test that utilizes `expect`.
 function run_interactive {
     final_iteration=$1
     # This is a no-op on the first invocation. It is needed so retries have a clean slate.
@@ -256,11 +324,17 @@ then
         fi
     fi
     exit $status
+elif [[ $api_test == true ]]
+then
+    run_api
+    status=$?
+    exit $status
 else
     # Non-interactive test.
     #
     # Create the actual unit test script by concatenating the stock preamble and postscript to the
     # unit test. Then run the composed script.
+    readonly test_script=$test_name.sh
     echo "#!$SHELL"                       > $test_script
     cat $TEST_SRC_DIR/util/preamble.sh   >> $test_script
     cat $test_path                       >> $test_script

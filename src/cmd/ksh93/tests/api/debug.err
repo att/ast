@@ -1,0 +1,2 @@
+### 1234   0.000 debug.c:18          test_dprint_vt() type "vp" stored @ debug.c:17 in test_dprint_vt()
+### 1234   0.000 debug.c:18          test_dprint_vt() value is void* 0x1234
