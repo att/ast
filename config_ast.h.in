@@ -249,6 +249,11 @@ int eaccess(const char *pathname, int mode);
 int mkostemp(char *template, int oflags);
 #endif
 
+// It is useful for some API unit tests to be able to make _dprintf() output deterministic with
+// respect to portions of each log line it writes that would otherwise vary with each invocation
+// (e.g., the pid). This is a private API solely for use by unit tests.
+extern bool _dprintf_debug;
+
 // This is useful for printing debugging messages that are tagged with useful
 // information such as the current file, line number, function name, and
 // duration since the previous debug message. You must pass a format string

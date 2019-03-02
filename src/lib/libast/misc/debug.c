@@ -29,6 +29,11 @@
 // because we want to ignore the frame for the `dump_backtrace()` and still dump 20 frames.
 #define MAX_FRAMES 21
 
+// It is useful for some API unit tests to be able to make _dprintf() output deterministic with
+// respect to portions of each log line it writes that would otherwise vary with each invocation
+// (e.g., the pid).
+bool _dprintf_debug = false;
+
 // This value is used by the dump_backtrace() code.
 static const char *ksh_pathname = NULL;
 
@@ -44,7 +49,7 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     va_start(ap, fmt);
 
     if (_dprintf_base_time == TMX_NOTIME) _dprintf_base_time = tmxgettime();
-    Time_t time_delta = tmxgettime() - _dprintf_base_time;
+    Time_t time_delta = _dprintf_debug ? 0.0 : tmxgettime() - _dprintf_base_time;
 
     // The displayed timestamp will be seconds+milliseconds since the first DPRINTF(). The
     // tmxgettime() return value has a theoretical resolution of nanoseconds but that is more
@@ -55,8 +60,9 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     char buf1[64];
     (void)snprintf(buf1, sizeof(buf1), "%s:%d", strrchr(fname, '/') + 1, lineno);
     char buf2[512];
-    int n = snprintf(buf2, sizeof(buf2), "### %d %3" PRIu64 ".%03" PRIu64 " %-18s %15s() ",
-                     getpid(), ds, dms, buf1, funcname);
+    pid_t pid = _dprintf_debug ? 1234 : getpid();
+    int n = snprintf(buf2, sizeof(buf2), "### %d %3" PRIu64 ".%03" PRIu64 " %-18s %15s() ", pid, ds,
+                     dms, buf1, funcname);
     (void)vsnprintf(buf2 + n, sizeof(buf2) - n, fmt, ap);
     n = strlen(buf2);
     assert(n < sizeof(buf2));
