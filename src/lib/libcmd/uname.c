@@ -304,16 +304,6 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             }
             output(OPT_domain, s, "domain");
         }
-#if _mem_m_type_utsname
-        s = ut.m_type;
-#else
-        s = astconf("MACHINE", NULL, NULL);
-#endif
-#if _mem_base_rel_utsname
-        s = ut.base_rel;
-#else
-        s = astconf("BASE", NULL, NULL);
-#endif
         if (sep) sfputc(sfstdout, '\n');
     }
 
