@@ -32,6 +32,7 @@
 #include "ast.h"
 #include "defs.h"
 #include "error.h"
+#include "name.h"
 #include "option.h"
 #include "sfio.h"
 

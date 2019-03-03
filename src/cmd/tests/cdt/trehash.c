@@ -19,7 +19,6 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <fcntl.h>
 #include <sched.h>
 #include <signal.h>
 #include <stdint.h>
