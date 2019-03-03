@@ -4,10 +4,17 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <inttypes.h>
+#include <stddef.h>
 #include <sys/types.h>
 
 #include "ast_assert.h"
 #include "name.h"
+
+// This is to give unit tests some control over the addresses displayed. Setting this to the
+// address of the first var in the unit test module will cause all pointers to be displayed as
+// offsets to that var.
+void *_dprint_vt_base_addr = NULL;
+#define BASE_ADDR(p) (char *)((char *)(p) - (char *)_dprint_vt_base_addr)
 
 typedef void(vtp_dprintf)(const char *, int, const char *, const struct Value *);
 
@@ -19,119 +26,127 @@ static_fn void _dprint_VT_do_not_use(const char *fname, int lineno, const char *
 
 static_fn void _dprint_VT_vp(const char *fname, int lineno, const char *funcname,
                              const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is void* %p", FETCH_VTP(vtp, vp));
+    _dprintf(fname, lineno, funcname, "value is void* %p", BASE_ADDR(FETCH_VTP(vtp, vp)));
 }
 
 static_fn void _dprint_VT_cp(const char *fname, int lineno, const char *funcname,
                              const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is char* |%s|", FETCH_VTP(vtp, cp));
+    _dprintf(fname, lineno, funcname, "value is char* %p |%s|", BASE_ADDR(FETCH_VTP(vtp, cp)),
+             FETCH_VTP(vtp, cp));
 }
 
 static_fn void _dprint_VT_const_cp(const char *fname, int lineno, const char *funcname,
                                    const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is char* |%s|", FETCH_VTP(vtp, const_cp));
+    _dprintf(fname, lineno, funcname, "value is char* %p |%s|", BASE_ADDR(FETCH_VTP(vtp, const_cp)),
+             FETCH_VTP(vtp, const_cp));
 }
 
 static_fn void _dprint_VT_i(const char *fname, int lineno, const char *funcname,
                             const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is int %i", FETCH_VTP(vtp, i));
+    _dprintf(fname, lineno, funcname, "value is int %i (0x%X)", FETCH_VTP(vtp, i),
+             FETCH_VTP(vtp, i));
 }
 
 static_fn void _dprint_VT_i16(const char *fname, int lineno, const char *funcname,
                               const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is int16_t " PRIi16, FETCH_VTP(vtp, i16));
+    _dprintf(fname, lineno, funcname, "value is int16_t %" PRIi16 "(0x%" PRIX16 ")",
+             FETCH_VTP(vtp, i16), FETCH_VTP(vtp, i16));
 }
 
 static_fn void _dprint_VT_ip(const char *fname, int lineno, const char *funcname,
                              const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is int* %p => %i", FETCH_VTP(vtp, ip),
-             *FETCH_VTP(vtp, ip));
+    _dprintf(fname, lineno, funcname, "value is int* %p => %i (0x%X)",
+             BASE_ADDR(FETCH_VTP(vtp, ip)), *FETCH_VTP(vtp, ip), *FETCH_VTP(vtp, ip));
 }
 
 static_fn void _dprint_VT_i16p(const char *fname, int lineno, const char *funcname,
                                const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is int16_t* %p => " PRIi16, FETCH_VTP(vtp, i16p),
-             *FETCH_VTP(vtp, i16p));
+    _dprintf(fname, lineno, funcname, "value is int16_t* %p => %" PRIi16 " (0x%" PRIX16 ")",
+             BASE_ADDR(FETCH_VTP(vtp, i16p)), *FETCH_VTP(vtp, i16p), *FETCH_VTP(vtp, i16p));
 }
 
 static_fn void _dprint_VT_i32p(const char *fname, int lineno, const char *funcname,
                                const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is int32_t* %p => " PRIi32, FETCH_VTP(vtp, i32p),
-             *FETCH_VTP(vtp, i32p));
+    _dprintf(fname, lineno, funcname, "value is int32_t* %p => %" PRIi32 " (0x%" PRIX32 ")",
+             BASE_ADDR(FETCH_VTP(vtp, i32p)), *FETCH_VTP(vtp, i32p), *FETCH_VTP(vtp, i32p));
 }
 
 static_fn void _dprint_VT_i64p(const char *fname, int lineno, const char *funcname,
                                const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is int64_t* %p => " PRIi64, FETCH_VTP(vtp, i64p),
-             *FETCH_VTP(vtp, i64p));
+    _dprintf(fname, lineno, funcname, "value is int64_t* %p => %" PRIi64 " (0x%" PRIX64 ")",
+             BASE_ADDR(FETCH_VTP(vtp, i64p)), *FETCH_VTP(vtp, i64p), *FETCH_VTP(vtp, i64p));
 }
 
 static_fn void _dprint_VT_dp(const char *fname, int lineno, const char *funcname,
                              const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is double* %p => %g", FETCH_VTP(vtp, dp),
+    _dprintf(fname, lineno, funcname, "value is double* %p => %g", BASE_ADDR(FETCH_VTP(vtp, dp)),
              *FETCH_VTP(vtp, dp));
 }
 
 static_fn void _dprint_VT_fp(const char *fname, int lineno, const char *funcname,
                              const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is float* %p => %g", FETCH_VTP(vtp, fp),
+    _dprintf(fname, lineno, funcname, "value is float* %p => %g", BASE_ADDR(FETCH_VTP(vtp, fp)),
              *FETCH_VTP(vtp, fp));
 }
 
 static_fn void _dprint_VT_sfdoublep(const char *fname, int lineno, const char *funcname,
                                     const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is Sfdouble_t* %p => %g", FETCH_VTP(vtp, fp),
-             *FETCH_VTP(vtp, fp));
+    _dprintf(fname, lineno, funcname, "value is Sfdouble_t* %p => %Lg",
+             BASE_ADDR(FETCH_VTP(vtp, sfdoublep)), *FETCH_VTP(vtp, sfdoublep));
 }
 
 static_fn void _dprint_VT_np(const char *fname, int lineno, const char *funcname,
                              const struct Value *vtp) {
     // TODO: Use a function to dump a Namval_t when it becomes available.
-    _dprintf(fname, lineno, funcname, "value is Namval_t* %p", FETCH_VTP(vtp, np));
+    _dprintf(fname, lineno, funcname, "value is Namval_t* %p", BASE_ADDR(FETCH_VTP(vtp, np)));
 }
 
 static_fn void _dprint_VT_up(const char *fname, int lineno, const char *funcname,
                              const struct Value *vtp) {
     _dprintf(fname, lineno, funcname,
-             "value is struct Value* %p which has this value:", FETCH_VTP(vtp, up));
+             "value is struct Value* %p which has this value:", BASE_ADDR(FETCH_VTP(vtp, up)));
     _dprint_vtp(fname, lineno, funcname, FETCH_VTP(vtp, up));
 }
 
 static_fn void _dprint_VT_rp(const char *fname, int lineno, const char *funcname,
                              const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is struct Ufunction* %p", FETCH_VTP(vtp, rp));
+    _dprintf(fname, lineno, funcname, "value is struct Ufunction* %p",
+             BASE_ADDR(FETCH_VTP(vtp, rp)));
 }
 
 static_fn void _dprint_VT_funp(const char *fname, int lineno, const char *funcname,
                                const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is struct Namfun* %p", FETCH_VTP(vtp, funp));
+    _dprintf(fname, lineno, funcname, "value is struct Namfun* %p",
+             BASE_ADDR(FETCH_VTP(vtp, funp)));
 }
 
 static_fn void _dprint_VT_nrp(const char *fname, int lineno, const char *funcname,
                               const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is struct Namref* %p", FETCH_VTP(vtp, nrp));
+    _dprintf(fname, lineno, funcname, "value is struct Namref* %p", BASE_ADDR(FETCH_VTP(vtp, nrp)));
 }
 
 static_fn void _dprint_VT_shbltinp(const char *fname, int lineno, const char *funcname,
                                    const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is struct Shbltin_f %p", FETCH_VTP(vtp, shbltinp));
+    _dprintf(fname, lineno, funcname, "value is struct Shbltin_f %p",
+             BASE_ADDR(FETCH_VTP(vtp, shbltinp)));
 }
 
 static_fn void _dprint_VT_pathcomp(const char *fname, int lineno, const char *funcname,
                                    const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is struct pathcomp* %p", FETCH_VTP(vtp, pathcomp));
+    _dprintf(fname, lineno, funcname, "value is struct pathcomp* %p",
+             BASE_ADDR(FETCH_VTP(vtp, pathcomp)));
 }
 
 static_fn void _dprint_VT_pidp(const char *fname, int lineno, const char *funcname,
                                const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is pid_t* %p => " PRIu64, FETCH_VTP(vtp, pidp),
-             (uint64_t)*FETCH_VTP(vtp, pidp));
+    _dprintf(fname, lineno, funcname, "value is pid_t* %p => %" PRIu64,
+             BASE_ADDR(FETCH_VTP(vtp, pidp)), (uint64_t)*FETCH_VTP(vtp, pidp));
 }
 
 static_fn void _dprint_VT_uidp(const char *fname, int lineno, const char *funcname,
                                const struct Value *vtp) {
-    _dprintf(fname, lineno, funcname, "value is uid_t* %p => " PRIu64, FETCH_VTP(vtp, uidp),
-             (uint64_t)*FETCH_VTP(vtp, uidp));
+    _dprintf(fname, lineno, funcname, "value is uid_t* %p => %" PRIu64,
+             BASE_ADDR(FETCH_VTP(vtp, uidp)), (uint64_t)*FETCH_VTP(vtp, uidp));
 }
 
 static_fn void _dprint_VT_dummy(const char *fname, int lineno, const char *funcname,

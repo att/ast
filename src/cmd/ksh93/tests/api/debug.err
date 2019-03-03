@@ -1,2 +1,32 @@
-### 1234   0.000 debug.c:18          test_dprint_vt() type "vp" stored @ debug.c:17 in test_dprint_vt()
-### 1234   0.000 debug.c:18          test_dprint_vt() value is void* 0x1234
+### 1234   0.000 debug.c:39         test_dprint_vt1() type "vp" stored @ debug.c:38 in test_dprint_vt1()
+### 1234   0.000 debug.c:39         test_dprint_vt1() value is void* 0x4
+### 1234   0.000 debug.c:45         test_dprint_vt1() type "up" stored @ debug.c:44 in test_dprint_vt1()
+### 1234   0.000 debug.c:45         test_dprint_vt1() value is struct Value* 0x4 which has this value:
+### 1234   0.000 debug.c:45         test_dprint_vt1() type "i" stored @ debug.c:43 in test_dprint_vt1()
+### 1234   0.000 debug.c:45         test_dprint_vt1() value is int 789 (0x315)
+### 1234   0.000 debug.c:49         test_dprint_vt1() type "cp" stored @ debug.c:48 in test_dprint_vt1()
+### 1234   0.000 debug.c:49         test_dprint_vt1() value is char* 0x8 |str|
+### 1234   0.000 debug.c:53         test_dprint_vt1() type "const_cp" stored @ debug.c:52 in test_dprint_vt1()
+### 1234   0.000 debug.c:53         test_dprint_vt1() value is char* 0xc |const str|
+### 1234   0.000 debug.c:56         test_dprint_vt1() type "i" stored @ debug.c:55 in test_dprint_vt1()
+### 1234   0.000 debug.c:56         test_dprint_vt1() value is int 321 (0x141)
+### 1234   0.000 debug.c:59         test_dprint_vt1() type "i16" stored @ debug.c:58 in test_dprint_vt1()
+### 1234   0.000 debug.c:59         test_dprint_vt1() value is int16_t 357(0x165)
+### 1234   0.000 debug.c:66         test_dprint_vt2() type "ip" stored @ debug.c:65 in test_dprint_vt2()
+### 1234   0.000 debug.c:66         test_dprint_vt2() value is int* 0x10 => 111 (0x6F)
+### 1234   0.000 debug.c:71         test_dprint_vt2() type "i16p" stored @ debug.c:70 in test_dprint_vt2()
+### 1234   0.000 debug.c:71         test_dprint_vt2() value is int16_t* 0x14 => 1616 (0x650)
+### 1234   0.000 debug.c:76         test_dprint_vt2() type "i32p" stored @ debug.c:75 in test_dprint_vt2()
+### 1234   0.000 debug.c:76         test_dprint_vt2() value is int32_t* 0x18 => 3232 (0xCA0)
+### 1234   0.000 debug.c:81         test_dprint_vt2() type "i64p" stored @ debug.c:80 in test_dprint_vt2()
+### 1234   0.000 debug.c:81         test_dprint_vt2() value is int64_t* 0x1c => 4294967299 (0x100000003)
+### 1234   0.000 debug.c:86         test_dprint_vt2() type "dp" stored @ debug.c:85 in test_dprint_vt2()
+### 1234   0.000 debug.c:86         test_dprint_vt2() value is double* 0x20 => 2.71828
+### 1234   0.000 debug.c:91         test_dprint_vt2() type "fp" stored @ debug.c:90 in test_dprint_vt2()
+### 1234   0.000 debug.c:91         test_dprint_vt2() value is float* 0x24 => 3.14159
+### 1234   0.000 debug.c:96         test_dprint_vt2() type "sfdoublep" stored @ debug.c:95 in test_dprint_vt2()
+### 1234   0.000 debug.c:96         test_dprint_vt2() value is Sfdouble_t* 0x28 => 1.23457e+37
+### 1234   0.000 debug.c:101        test_dprint_vt2() type "pidp" stored @ debug.c:100 in test_dprint_vt2()
+### 1234   0.000 debug.c:101        test_dprint_vt2() value is pid_t* 0x2c => 98765
+### 1234   0.000 debug.c:106        test_dprint_vt2() type "uidp" stored @ debug.c:105 in test_dprint_vt2()
+### 1234   0.000 debug.c:106        test_dprint_vt2() value is uid_t* 0x30 => 54321
