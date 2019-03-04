@@ -83,6 +83,10 @@
 #ifndef _STRTOI_H
 #define _STRTOI_H 1
 
+#if !defined(S2I_multiplier)
+#error "You must define S2I_multiplier before including this header"
+#endif
+
 #include <ctype.h>
 #include <errno.h>
 
@@ -225,16 +229,7 @@ S2I_function(const char *a, char **e, int base)
     int qualifier = 0;
 #endif
 
-#if S2I_multiplier
     base = basep ? *((unsigned char *)basep) : 0;
-#else
-    if (base > 36 && base <= SF_RADIX) {
-        static int conformance = -1;
-
-        if (conformance < 0) conformance = !strcmp(astconf("CONFORMANCE", NULL, NULL), "standard");
-        if (conformance) base = 1;
-    }
-#endif
     if (base && (base < 2 || base > SF_RADIX)) {
         errno = EINVAL;
         return 0;
