@@ -4,8 +4,8 @@ libast_files += [
     'misc/errorx.c', 'misc/fgetcwd.c', 'misc/glob.c',
     'misc/optget.c', 'misc/procclose.c', 'misc/procfree.c',
     'misc/procopen.c', 'misc/sigcrit.c',
-    'misc/stack.c', 'misc/state.c',
-    'misc/stk.c', 'misc/translate.c', 'misc/univdata.c',
+    'misc/state.c', 'misc/stk.c',
+     'misc/translate.c', 'misc/univdata.c',
     'misc/fts.c', 'misc/vmbusy.c', 'misc/fallbacks.c'
 ]
 
