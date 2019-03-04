@@ -149,7 +149,6 @@ extern Tm_info_t *_tm_infop_;
 #define tm_data (*_tm_datap_)
 #define tm_info (*_tm_infop_)
 
-extern time_t tmdate(const char *, char **, time_t *);
 extern int tmequiv(Tm_t *);
 extern Tm_t *tmfix(Tm_t *);
 extern char *tmfmt(char *, size_t, const char *, time_t *);
