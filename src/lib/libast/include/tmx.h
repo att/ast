@@ -42,7 +42,6 @@ extern Time_t tmxdate(const char *, char **, Time_t);
 extern char *tmxfmt(char *, size_t, const char *, Time_t);
 extern Tm_t *tmxmake(Time_t);
 extern Time_t tmxscan(const char *, char **, const char *, char **, Time_t, long);
-extern int tmxsleep(Time_t);
 extern Time_t tmxtime(Tm_t *, int);
 extern Tm_t *tmxtm(Tm_t *, Time_t, Tm_zone_t *);
 extern struct tm *tmlocaltime(const time_t *);
