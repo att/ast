@@ -326,8 +326,8 @@ void bash_init(Shell_t *shp, int mode) {
         sh_onoption(shp, SH_CMDHIST);
         sh_onoption(shp, SH_LITHIST);
         sh_onoption(shp, SH_NOEMPTYCMDCOMPL);
+        sh_onoption(shp, SH_POSIX);
         if (shp->login_sh == 2) sh_onoption(shp, SH_LOGIN_SHELL);
-        if (strcmp(astconf("CONFORMANCE", 0, 0), "standard") == 0) sh_onoption(shp, SH_POSIX);
         if (strcmp(astconf("UNIVERSE", 0, 0), "att") == 0) {
             sh_onoption(shp, SH_XPG_ECHO);
         } else {
