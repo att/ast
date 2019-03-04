@@ -167,7 +167,8 @@ static vtp_dprintf *dprint_vtp_dispatch[] = {
     _dprint_VT_pidp,       _dprint_VT_uidp, _dprint_VT_dummy  // must be last
 };
 
-void _dprint_vtp(const char *fname, int lineno, const char *funcname, const void *vp) {
+// Diagnostic print a struct Value object.
+void _dprint_vtp(const char *fname, int const lineno, const char *funcname, const void *vp) {
     const struct Value *vtp = vp;
 
     // We do this rather than a sizeof(dprint_vtp_dispatch) check because the latter is a constant
@@ -180,4 +181,25 @@ void _dprint_vtp(const char *fname, int lineno, const char *funcname, const void
              vtp->funcname ? vtp->funcname : "undef");
 
     (dprint_vtp_dispatch[vtp->type])(fname, lineno, funcname, vtp);
+}
+
+// If a unit test has set a base addr for struct Value objects just use a constant for the printed
+// address of a Namval_t*. This is needed because different environments have different padding and
+// alignment of these structures. That makes it impossible to emit a consistent address in the
+// diagnostic message.
+#define NP_BASE_ADDR(np) (_dprint_vt_base_addr ? (void *)0x88 : (void *)np)
+
+// Diagnostic print a struct Namval (aka Namval_t) object.
+void _dprint_nvp(const char *fname, const int lineno, const char *funcname, const void *vp) {
+    const Namval_t *np = vp;
+
+    _dprintf(fname, lineno, funcname, "np %p ->nvname |%s|  ->nvsize %d", NP_BASE_ADDR(np),
+             np->nvname, np->nvsize);
+    _dprintf(fname, lineno, funcname, "np %p ->nvalue is:", NP_BASE_ADDR(np));
+    _dprint_vtp(fname, lineno, funcname, &np->nvalue);
+    if (np->nvenv) {
+        _dprintf(fname, lineno, funcname, "np %p ->nvenv is %p:", NP_BASE_ADDR(np),
+                 NP_BASE_ADDR(np->nvenv));
+        _dprint_nvp(fname, lineno, funcname, np->nvenv);
+    }
 }

@@ -9,6 +9,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stdbool.h>
+#include <string.h>
 #include <sys/types.h>
 
 #include "name.h"
@@ -106,9 +107,28 @@ static void test_dprint_vt2() {
     DPRINT_VT(v1);
 }
 
+static char cp[] = "dval2";
+static Namval_t nval1, nval2;
+
+static void test_dprint_nv() {
+    memset(&nval1, 0, sizeof(nval1));
+    memset(&nval2, 0, sizeof(nval2));
+    nval1.nvname = "dvar1";
+    nval1.nvsize = 33;
+    STORE_VT(nval1.nvalue, i, 111);
+    nval2.nvname = "dvar2";
+    nval2.nvsize = 66;
+    nval2.nvenv = (char *)&nval1;
+    STORE_VT(nval2.nvalue, cp, cp);
+
+    SET_BASE_ADDR(&cp, 4);
+    DPRINT_NV(nval2);
+}
+
 int main() {
     _dprintf_debug = true;
     test_dprint_vt1();
     test_dprint_vt2();
+    test_dprint_nv();
     return 0;
 }
