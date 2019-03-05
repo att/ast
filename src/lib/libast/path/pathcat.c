@@ -54,7 +54,7 @@ char *pathcat(const char *root, int separator, const char *path1, const char *pa
         *current++ = *root++;
     }
 
-    // If `root` is empty or `separator` is at beginning, put a `/` at the beginning of `concat_path`
+    // Append a '/' before concatenating `path1`
     if (current != concat_path) {
         if (current >= end) return NULL;
         *current++ = '/';
