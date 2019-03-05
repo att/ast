@@ -130,7 +130,7 @@ extern void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info);
 
 extern __attribute__((noreturn)) void sh_done(void *, int);
 extern void sh_siginit(Shell_t *shp);
-extern void *sh_timeradd(unsigned long, int, void (*)(void *), void *);
+extern Timer_t *sh_timeradd(unsigned long, int, void (*)(void *), void *);
 extern void timerdel(void *);
 
 extern const char e_alarm[];

@@ -446,7 +446,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
     volatile int keytrap;
     int rel, wrd;
     long array_index = 0;
-    void *timeslot = NULL;
+    Timer_t *timeslot = NULL;
     int delim = '\n';
     int jmpval = 0;
     int binary;

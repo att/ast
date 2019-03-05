@@ -89,7 +89,7 @@ static_fn pid_t sh_ntfork(Shell_t *, const Shnode_t *, char *[], int *, int);
 static_fn void sh_funct(Shell_t *, Namval_t *, int, char *[], struct argnod *, int);
 static_fn void coproc_init(Shell_t *, int pipes[]);
 
-static void *timeout;
+static Timer_t *timeout;
 static char nlock;
 static char pipejob;
 static int restorefd;
@@ -767,7 +767,7 @@ __attribute__((noreturn)) static_fn void forked_child(Shell_t *shp, const Shnode
 #if !has_dev_fd
     if (shp->fifo && (type & (FPIN | FPOU))) {
         int fn, fd = (type & FPIN) ? 0 : 1;
-        void *fifo_timer = sh_timeradd(500, 1, fifo_check, shp);
+        Timer_t *fifo_timer = sh_timeradd(500, 1, fifo_check, shp);
         fn = sh_open(shp->fifo, fd ? O_WRONLY : O_RDONLY);
         timerdel(fifo_timer);
         sh_iorenumber(shp, fn, fd);
@@ -2511,7 +2511,7 @@ bool sh_trace(Shell_t *shp, char *argv[], int nl) {
 //
 static_fn void timed_out(void *handle) {
     UNUSED(handle);
-    timeout = 0;
+    timeout = NULL;
 }
 
 //
@@ -2531,7 +2531,7 @@ pid_t _sh_fork(Shell_t *shp, pid_t parent, int flags, int *jobid) {
             errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_nofork);
             __builtin_unreachable();
         }
-        timeout = (void *)sh_timeradd(forkcnt, 0, timed_out, NULL);
+        timeout = sh_timeradd(forkcnt, 0, timed_out, NULL);
         nochild = job_wait((pid_t)1);
         if (timeout) {
             if (nochild) {
@@ -2540,7 +2540,7 @@ pid_t _sh_fork(Shell_t *shp, pid_t parent, int flags, int *jobid) {
                 forkcnt /= 2;
             }
             timerdel(timeout);
-            timeout = 0;
+            timeout = NULL;
         }
         return -1;
     }

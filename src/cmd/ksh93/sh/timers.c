@@ -29,13 +29,13 @@
 #include "error.h"
 #include "fault.h"
 
-typedef struct _timer {
+struct _timer {
     double wakeup;
     double incr;
     struct _timer *next;
     void (*action)(void *);
     void *handle;
-} Timer_t;
+};
 
 #define IN_ADDTIMEOUT 1
 #define IN_SIGALRM 2
@@ -166,7 +166,7 @@ static_fn void oldalrm(void *handle) {
     (*fn)(SIGALRM, NULL, NULL);
 }
 
-void *sh_timeradd(unsigned long msec, int flags, void (*action)(void *), void *handle) {
+Timer_t *sh_timeradd(unsigned long msec, int flags, void (*action)(void *), void *handle) {
     Timer_t *tp;
     double t;
     sh_sigfun_t fn;
@@ -193,7 +193,7 @@ void *sh_timeradd(unsigned long msec, int flags, void (*action)(void *), void *h
             sh_sigfun_t *hp = malloc(sizeof(sh_sigfun_t));
             if (hp) {
                 *hp = fn;
-                sh_timeradd((long)(1000 * t), 0, oldalrm, (void *)hp);
+                sh_timeradd((long)(1000 * t), 0, oldalrm, hp);
             }
         }
         tp = tptop;
@@ -206,7 +206,7 @@ void *sh_timeradd(unsigned long msec, int flags, void (*action)(void *), void *h
         kill(getpid(), SIGALRM);
         if (tp != tptop) tp = 0;
     }
-    return (void *)tp;
+    return tp;
 }
 
 //
