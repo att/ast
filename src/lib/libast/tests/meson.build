@@ -1,6 +1,6 @@
 misc_test_files = [ 'base64.c', 'opt.c', 'strelapsed.c' ]
 
-incdir = include_directories('../../lib/libast/include/')
+incdir = include_directories('../include/')
 
 foreach file: misc_test_files
     misc_test_target = executable(file, file, c_args: shared_c_args,

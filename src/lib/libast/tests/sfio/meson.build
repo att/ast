@@ -22,7 +22,7 @@ sfio_test_files =[ 'talarm.c', 'talign.c', 'tappend.c', 'tatexit.c',
 # 'tdisc.c'
 
 
-incdir = include_directories('..', '../../../lib/libast/include/', '../../../lib/libast/sfio/')
+incdir = include_directories('..', '../../include/', '../../sfio/')
 
 foreach file: sfio_test_files
     sfio_test_target = executable(file, file,
