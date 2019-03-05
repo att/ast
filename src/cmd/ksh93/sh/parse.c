@@ -221,8 +221,8 @@ static_fn void check_typedef(Lex_t *lp, struct comnod *tp) {
         }
     }
     if (cp) {
-        Namval_t *mp = (Namval_t *)tp->comnamp, *bp;
-        bp = sh_addbuiltin(lp->sh, cp, b_typeset, NULL);
+        Namval_t *bp = sh_addbuiltin(lp->sh, cp, b_typeset, NULL);
+        Namval_t *mp = tp->comnamp;
         nv_onattr(bp, mp->nvflag);
     }
 }

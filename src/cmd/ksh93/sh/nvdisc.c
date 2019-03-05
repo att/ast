@@ -522,7 +522,7 @@ static_fn char *setdisc(Namval_t *np, const void *vp, Namval_t *action, Namfun_t
         action = bp->bltins[type];
     } else if (action) {
         Namval_t *tp = nv_type(np);
-        if (tp && (np = (Namval_t *)bp->bltins[type]) && nv_isattr(np, NV_STATICF)) {
+        if (tp && (np = bp->bltins[type]) && nv_isattr(np, NV_STATICF)) {
             errormsg(SH_DICT, ERROR_exit(1), e_staticfun, name, tp->nvname);
         }
         bp->bltins[type] = action;
@@ -955,7 +955,7 @@ Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
             Dt_t *next;
             while ((next = dtvnext(root))) root = next;
         }
-        np = (Namval_t *)dtinsert(root, newnode(name));
+        np = dtinsert(root, newnode(name));
         np->nvshell = shp;
     }
     if (dp) dtview(root, dp);
@@ -984,7 +984,7 @@ Namval_t *nv_search_namval(const Namval_t *mp, Dt_t *root, int mode) {
             Dt_t *next;
             while ((next = dtvnext(root))) root = next;
         }
-        np = (Namval_t *)dtinsert(root, newnode(name));
+        np = dtinsert(root, newnode(name));
         np->nvshell = shp;
     }
     if (dp) dtview(root, dp);
@@ -1111,8 +1111,7 @@ Namval_t *sh_addbuiltin(Shell_t *shp, const char *path, Shbltin_f bltin, void *e
         }
         if (!bltin) return np;
     } else {
-        for (np = (Namval_t *)dtfirst(shp->bltin_tree); np;
-             np = (Namval_t *)dtnext(shp->bltin_tree, np)) {
+        for (np = dtfirst(shp->bltin_tree); np; np = dtnext(shp->bltin_tree, np)) {
             if (strcmp(name, path_basename(nv_name(np)))) continue;
             // Exists probably with different path so delete it.
             if (strcmp(path, nv_name(np))) {
@@ -1158,8 +1157,8 @@ struct table {
 
 static_fn Namval_t *next_table(Namval_t *np, Dt_t *root, Namfun_t *fp) {
     struct table *tp = (struct table *)fp;
-    if (root) return (Namval_t *)dtnext(root, np);
-    return (Namval_t *)dtfirst(tp->dict);
+    if (root) return dtnext(root, np);
+    return dtfirst(tp->dict);
 }
 
 static_fn Namval_t *create_table(Namval_t *np, const void *name, int flags, Namfun_t *fp) {
@@ -1179,8 +1178,8 @@ static_fn Namfun_t *clone_table(Namval_t *np, Namval_t *mp, int flags, Namfun_t 
     memcpy(ntp, fp, sizeof(struct table));
     ntp->dict = nroot;
     ntp->parent = nv_lastdict(mp->nvshell);
-    for (np = (Namval_t *)dtfirst(oroot); np; np = (Namval_t *)dtnext(oroot, np)) {
-        mp = (Namval_t *)dtinsert(nroot, newnode(np->nvname));
+    for (np = dtfirst(oroot); np; np = dtnext(oroot, np)) {
+        mp = dtinsert(nroot, newnode(np->nvname));
         mp->nvshell = dtuserdata(nroot, 0, 0);
         nv_clone(np, mp, flags);
     }
@@ -1217,9 +1216,9 @@ static_fn void put_table(Namval_t *np, const void *val, int flags, Namfun_t *fp)
     data.sh = ((struct table *)fp)->shp;
     nv_scan(data.sh->fun_tree, delete_fun, (void *)&data, NV_FUNCTION, NV_FUNCTION | NV_NOSCOPE);
     dtview(root, 0);
-    for (mp = (Namval_t *)dtfirst(root); mp; mp = nq) {
+    for (mp = dtfirst(root); mp; mp = nq) {
         _nv_unset(mp, flags);
-        nq = (Namval_t *)dtnext(root, mp);
+        nq = dtnext(root, mp);
         dtdelete(root, mp);
         free(mp);
     }
@@ -1242,7 +1241,7 @@ static_fn char *get_table(Namval_t *np, Namfun_t *fp) {
     } else {
         out = sfnew(NULL, NULL, -1, -1, SF_WRITE | SF_STRING);
     }
-    for (np = (Namval_t *)dtfirst(root); np; np = (Namval_t *)dtnext(root, np)) {
+    for (np = dtfirst(root); np; np = dtnext(root, np)) {
         if (!nv_isnull(np) || np->nvfun || nv_isattr(np, ~NV_NOFREE)) {
             if (!first) {
                 sfputc(out, ' ');

@@ -804,7 +804,7 @@ void nv_addtype(Namval_t *np, const char *optstr, void *op, size_t optsz) {
     } else {
         name = np->nvname;
     }
-    bp = (Namval_t *)shp->namespace;
+    bp = shp->namespace;
     if (bp) {
         Namtype_t *tp = (Namtype_t *)nv_hasdisc(np, &type_disc);
         if (tp) tp->nsp = bp;
@@ -1540,14 +1540,14 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
     STORE_VT(L_ARGNOD->nvalue, const_cp, NULL);
     dp = nv_dict(mp);
     if (indent == 0) {
-        for (tp = (Namval_t *)dtfirst(dp); tp; tp = (Namval_t *)dtnext(dp, tp)) {
+        for (tp = dtfirst(dp); tp; tp = dtnext(dp, tp)) {
             // Skip over enums.
             if (tp->nvfun && !nv_isvtree(tp)) continue;
             if (!nv_search(tp->nvname, shp->bltin_tree, 0)) continue;
             sfprintf(out, "typeset -T %s\n", tp->nvname);
         }
     }
-    for (tp = (Namval_t *)dtfirst(dp); tp; tp = (Namval_t *)dtnext(dp, tp)) {
+    for (tp = dtfirst(dp); tp; tp = dtnext(dp, tp)) {
         if (nv_isnull(tp) || !nv_isvtree(tp)) continue;
         if (indent && (strncmp(tp->nvname, shp->prefix, n - 1) || tp->nvname[n - 1] != '.' ||
                        strchr(tp->nvname + n, '.'))) {

@@ -621,8 +621,7 @@ static_fn void astbin_update(Shell_t *shp, const char *from, const char *to) {
     if (tobin) to = "/usr/bin";
     len = strlen(from);
     tolen = strlen(to);
-    for (np = (Namval_t *)dtfirst(shp->bltin_tree); np;
-         np = (Namval_t *)dtnext(shp->bltin_tree, np)) {
+    for (np = dtfirst(shp->bltin_tree); np; np = dtnext(shp->bltin_tree, np)) {
         flen = len;
         if (bin && strncmp(from + 4, np->nvname, len - 4) == 0) {
             flen -= 4;
@@ -1023,8 +1022,8 @@ static_fn char *get_math(Namval_t *np, Namfun_t *fp) {
     memset(&fake, 0, sizeof(fake));
     fake.nvname = ".sh.math.";
 
-    mp = (Namval_t *)dtprev(shp->fun_tree, &fake);
-    while ((mp = (Namval_t *)dtnext(shp->fun_tree, mp))) {
+    mp = dtprev(shp->fun_tree, &fake);
+    while ((mp = dtnext(shp->fun_tree, mp))) {
         if (strncmp(mp->nvname, ".sh.math.", 9)) break;
         if (first++) sfputc(shp->strbuf, ' ');
         sfputr(shp->strbuf, mp->nvname + 9, -1);
@@ -1056,7 +1055,7 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
 #if 0
     if (!event) {
         if (!action) {
-            mp = (Namval_t *)dtprev(shp->fun_tree, &fake);
+            mp = dtprev(shp->fun_tree, &fake);
             return (char *)dtnext(shp->fun_tree, mp);
         }
         getname = true;
@@ -1460,7 +1459,7 @@ int sh_reinit(Shell_t *shp, char *argv[]) {
     } data;
     for (np = dtfirst(shp->fun_tree); np; np = npnext) {
         if ((dp = shp->fun_tree)->walk) dp = dp->walk;
-        npnext = (Namval_t *)dtnext(shp->fun_tree, np);
+        npnext = dtnext(shp->fun_tree, np);
         if (np >= shgd->bltin_cmds && np < &shgd->bltin_cmds[nbltins]) continue;
         if (is_abuiltin(np) && nv_isattr(np, NV_EXPORT)) continue;
         if (*np->nvname == '/') continue;
@@ -1897,7 +1896,7 @@ static_fn Dt_t *inittree(Shell_t *shp, const struct shtable2 *name_vals) {
     Dt_t *dict = NULL;
 
     for (tp = name_vals; *tp->sh_name; tp++) n++;
-    np = (Namval_t *)calloc(n, sizeof(Namval_t));
+    np = calloc(n, sizeof(Namval_t));
     if (!shgd->bltin_nodes) {
         shgd->bltin_nodes = np;
         shgd->bltin_nnodes = n;

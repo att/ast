@@ -187,21 +187,21 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
     if (*name) {
         memset(&fake, 0, sizeof(fake));
         fake.nvname = (char *)name;
-        dp->hp = (Namval_t *)dtprev(dp->root, &fake);
+        dp->hp = dtprev(dp->root, &fake);
         if (dp->hp) {
             char *cp = nv_name(dp->hp);
             c = strlen(cp);
             if (strncmp(name, cp, c) || name[c] != '[') {
-                dp->hp = (Namval_t *)dtnext(dp->root, dp->hp);
+                dp->hp = dtnext(dp->root, dp->hp);
             } else {
                 np = dp->hp;
                 last = 0;
             }
         } else {
-            dp->hp = (Namval_t *)dtfirst(dp->root);
+            dp->hp = dtfirst(dp->root);
         }
     } else {
-        dp->hp = (Namval_t *)dtfirst(dp->root);
+        dp->hp = dtfirst(dp->root);
     }
     while (1) {
         if (!last) {
@@ -223,7 +223,7 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
             }
         }
         if (next) *next = c;
-        if (np == dp->hp && !next) dp->hp = (Namval_t *)dtnext(dp->root, dp->hp);
+        if (np == dp->hp && !next) dp->hp = dtnext(dp->root, dp->hp);
         if (np && ((nfp = nextdisc(np)) || nv_istable(np))) {
             save = calloc(1, sizeof(struct nvdir));
             if (!save) return NULL;
@@ -264,7 +264,7 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
 static_fn Namval_t *nextnode(struct nvdir *dp) {
     if (dp->nextnode) return (*dp->nextnode)(dp->hp, dp->root, dp->fun);
     if (dp->len && strncmp(dp->data, dp->hp->nvname, dp->len)) return NULL;
-    return (Namval_t *)dtnext(dp->root, dp->hp);
+    return dtnext(dp->root, dp->hp);
 }
 
 char *nv_dirnext(void *dir) {
@@ -312,7 +312,7 @@ char *nv_dirnext(void *dir) {
 			if(dp->table && dp->otable && !nv_isattr(dp->table,NV_MINIMAL))
 				dp->table->nvenv = sptr;
 #endif
-            if (dp->nextnode && !dp->hp && (nq = (Namval_t *)dp->table)) {
+            if (dp->nextnode && !dp->hp && (nq = dp->table)) {
                 Namarr_t *aq = nv_arrayptr(nq);
                 if (aq && (aq->flags & ARRAY_SCAN) && nv_nextsub(nq)) {
                     dp->hp = (*dp->nextnode)(np, NULL, dp->fun);

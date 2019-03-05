@@ -180,7 +180,7 @@ static_fn struct Value *array_getup(Namval_t *np, Namarr_t *arp, int update) {
     if (!arp) return &np->nvalue;
     if (is_associative(&ap->namarr)) {
         Namval_t *mp;
-        mp = (Namval_t *)((*arp->fun)(np, NULL, ASSOC_OP_CURRENT));
+        mp = (*arp->fun)(np, NULL, ASSOC_OP_CURRENT);
         if (mp) {
             nofree = nv_isattr(mp, NV_NOFREE);
             up = &(mp->nvalue);  // parens are to silence false positive from cppcheck
@@ -258,7 +258,7 @@ static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
     }
     if (nv_isattr(np, NV_NOTSET) == NV_NOTSET) nv_offattr(np, NV_BINARY);
     if (is_associative(&ap->namarr)) {
-        mp = (Namval_t *)((*arp->fun)(np, NULL, ASSOC_OP_CURRENT));
+        mp = (*arp->fun)(np, NULL, ASSOC_OP_CURRENT);
         if (!mp) {
             static struct Value dummy_value;
             STORE_VT(dummy_value, cp, NULL);
@@ -839,7 +839,7 @@ Namarr_t *nv_setarray(Namval_t *np, void *(*fun)(Namval_t *, const char *, Nvass
         if (value) {
             nv_putval(np, value, 0);
         } else {
-            Namval_t *mp = (Namval_t *)((*fun)(np, NULL, ASSOC_OP_CURRENT));
+            Namval_t *mp = (*fun)(np, NULL, ASSOC_OP_CURRENT);
             array_copytree(np, mp);
         }
     }
@@ -1040,7 +1040,7 @@ Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
             }
             if (sp && !(flags & ARRAY_ADD) && !FETCH_VT(ap->val[size], const_cp)) np = 0;
         }
-        return (Namval_t *)np;
+        return np;
     }
     ap->namarr.flags &= ~ARRAY_UNDEF;
     if (!(flags & ARRAY_FILL)) ap->namarr.flags &= ~ARRAY_SCAN;
@@ -1110,7 +1110,7 @@ Namval_t *nv_opensub(Namval_t *np) {
 
     if (!ap) return NULL;
     if (is_associative(&ap->namarr)) {
-        return (Namval_t *)((*ap->namarr.fun)(np, NULL, ASSOC_OP_CURRENT));
+        return (*ap->namarr.fun)(np, NULL, ASSOC_OP_CURRENT);
     } else if (array_isbit(ap->bits, ap->cur, ARRAY_CHILD)) {
         return FETCH_VT(ap->val[ap->cur], np);
     }
@@ -1255,12 +1255,12 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                     ap->namarr.scope = dtvnext(ap->namarr.table);
                     ap->namarr.table->view = 0;
                 }
-                if (!(ap->pos = ap->cur)) ap->pos = (Namval_t *)dtfirst(ap->namarr.table);
+                if (!(ap->pos = ap->cur)) ap->pos = dtfirst(ap->namarr.table);
             } else {
                 ap->pos = ap->nextpos;
             }
             for (; (ap->cur = ap->pos); ap->pos = ap->nextpos) {
-                ap->nextpos = (Namval_t *)dtnext(ap->namarr.table, ap->pos);
+                ap->nextpos = dtnext(ap->namarr.table, ap->pos);
                 if (!nv_isnull(ap->cur)) {
                     if ((ap->namarr.flags & ARRAY_NOCHILD) && nv_isattr(ap->cur, NV_CHILD)) {
                         continue;
@@ -1329,8 +1329,8 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                     Namval_t fake;
                     memset(&fake, 0, sizeof(fake));
                     fake.nvname = (char *)sp;
-                    ap->pos = mp = (Namval_t *)dtprev(ap->namarr.table, &fake);
-                    ap->nextpos = (Namval_t *)dtnext(ap->namarr.table, mp);
+                    ap->pos = mp = dtprev(ap->namarr.table, &fake);
+                    ap->nextpos = dtnext(ap->namarr.table, mp);
                 } else if (!mp && *sp && mode == 0) {
                     mp = nv_search(sp, ap->namarr.table, NV_ADD | NV_NOSCOPE);
                     if (!FETCH_VT(mp->nvalue, const_cp)) mp->nvsize |= 1;
