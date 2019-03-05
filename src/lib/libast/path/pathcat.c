@@ -19,49 +19,70 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Bell Laboratories
- *
- * single dir support for pathaccess()
- */
+//
+// Glenn Fowler
+// AT&T Bell Laboratories
+//
+// Single dir support for pathaccess()
+//
+
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stddef.h>
 
 #include "ast.h"  // IWYU pragma: keep
 
-char *pathcat(const char *dirs, int sep, const char *a, const char *b, char *path, size_t size) {
-    char *s;
-    char *e;
+// This function:
+// - Splits `root` path at first `separator` and adds string before `separator` to `concat_path`.
+// - Appends `path1` and `path2` to `concat_path` separated by '/'. Both `path1` and `path2` may be
+// 0.
+// - A pointer to string after `separator` in `root` is returned, 0 when there are no more
+// components.
+// `pathcat` is used by `pathaccess`.
 
-    s = path;
-    e = path + size;
-    while (*dirs && *dirs != sep) {
-        if (s >= e) return NULL;
-        *s++ = *dirs++;
-    }
-    if (s != path) {
-        if (s >= e) return NULL;
-        *s++ = '/';
-    }
-    if (a) {
-        while ((*s = *a++)) {
-            if (++s >= e) return NULL;
-        }
-        if (b) {
-            if (s >= e) return NULL;
-            *s++ = '/';
-        }
-    } else if (!b) {
-        b = ".";
+char *pathcat(const char *root, int separator, const char *path1, const char *path2,
+              char *concat_path, size_t size) {
+    char *current;
+    char *end;
+
+    current = concat_path;
+    end = concat_path + size;
+
+    // Split `root` at first `separator`
+    while (*root && *root != separator) {
+        if (current >= end) return NULL;
+        *current++ = *root++;
     }
 
-    if (b) {
+    // If `root` is empty or `separator` is at beginning, put a `/` at the beginning of `concat_path`
+    if (current != concat_path) {
+        if (current >= end) return NULL;
+        *current++ = '/';
+    }
+
+    // Append `path1` to `concat_path`
+    if (path1) {
+        while ((*current = *path1++)) {
+            if (++current >= end) return NULL;
+        }
+
+        // If `path2` is not NULL, add a `/` before appending it
+        if (path2) {
+            if (current >= end) return NULL;
+            *current++ = '/';
+        }
+    } else if (!path2) {
+        // TODO: Why is a `.` appended here ?
+        path2 = ".";
+    }
+
+    // Append `path2` to `concat_path`
+    if (path2) {
         do {
-            if (s >= e) return NULL;
-        } while ((*s++ = *b++));
+            if (current >= end) return NULL;
+        } while ((*current++ = *path2++));
     }
 
-    return *dirs ? (char *)++dirs : NULL;
+    // Return pointer to next separated components in `root` after first `separator`.
+    return *root ? (char *)++root : NULL;
 }
