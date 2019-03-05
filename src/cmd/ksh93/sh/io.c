@@ -855,7 +855,7 @@ static_fn int io_patseek(Shell_t *shp, regex_t *rp, Sfio_t *sp, int flags) {
         m = n = sfvalue(sp);
         while (n > 0 && cp[n - 1] != '\n') n--;
         if (n) m = n;
-        r = regrexec(rp, cp, m, 0, NULL, 0, '\n', (void *)&match, pat_seek);
+        r = regrexec(rp, cp, m, 0, NULL, 0, '\n', &match, pat_seek);
         if (r < 0) {
             m = match - cp;
         } else if (r == 2) {
@@ -1078,7 +1078,7 @@ static_fn int iovex_rename(void *context, uint64_t origfd, uint64_t fd2) {
 
     io_usename(shp, fname, NULL, origfd, shp->exitval ? 2 : 1);
     free(context);
-    if (shp->sftable[origfd]) iovex_stream((void *)shp, origfd, fd2);
+    if (shp->sftable[origfd]) iovex_stream(shp, origfd, fd2);
     return 0;
 }
 #endif
@@ -1553,7 +1553,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     if (fn <= 2) iovex_stdstream(shp, fn);
 #endif
                 } else if (vex) {
-                    void *arg = (void *)shp;
+                    void *arg = shp;
                     if (fn == fd) {
                         fd = sh_fcntl(fn, F_DUPFD_CLOEXEC, fn);
                         close(fn);
@@ -1644,7 +1644,7 @@ static_fn int io_heredoc(Shell_t *shp, struct ionod *iop, const char *name, int 
         struct flock lock;
         int fno = sffileno(shp->heredocs);
         if (fno >= 0) {
-            memset((void *)&lock, 0, sizeof(lock));
+            memset(&lock, 0, sizeof(lock));
             lock.l_type = F_WRLCK;
             lock.l_whence = SEEK_SET;
             fcntl(fno, F_SETLKW, &lock);
@@ -2666,7 +2666,7 @@ Sfio_t *sh_iogetiop(int fd, int mode) {
     }
     switch (fd) {
         case SH_IOHISTFILE: {
-            if (!sh_histinit((void *)shp)) return iop;
+            if (!sh_histinit(shp)) return iop;
             fd = sffileno(shp->gd->hist_ptr->histfp);
             break;
         }
