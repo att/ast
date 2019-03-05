@@ -500,7 +500,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
         if (sh_isoption(shp, SH_HISTORY)) sh_onstate(shp, SH_HISTORY);
         job.waitall = job.curpgid = 0;
         error_info.flags |= ERROR_INTERACTIVE;
-        t = (Shnode_t *)sh_parse(shp, iop, 0);
+        t = sh_parse(shp, iop, 0);
         if (!sh_isstate(shp, SH_INTERACTIVE) && !sh_isoption(shp, SH_CFLAG)) {
             error_info.flags &= ~ERROR_INTERACTIVE;
         }

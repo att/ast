@@ -302,7 +302,7 @@ static_fn Shnode_t *makelist(Lex_t *lexp, int type, Shnode_t *l, Shnode_t *r) {
 //
 // Entry to shell parser. Flag can be the union of SH_EOF|SH_NL.
 //
-void *sh_parse(Shell_t *shp, Sfio_t *iop, int flag) {
+Shnode_t *sh_parse(Shell_t *shp, Sfio_t *iop, int flag) {
     Shnode_t *t;
     Lex_t *lexp = shp->lex_context;
     Fcin_t sav_input;
@@ -310,7 +310,7 @@ void *sh_parse(Shell_t *shp, Sfio_t *iop, int flag) {
     int sav_prompt = shp->nextprompt;
 
     if (shp->binscript && (sffileno(iop) == shp->infd || (flag & SH_FUNEVAL))) {
-        return (void *)sh_trestore(shp, iop);
+        return sh_trestore(shp, iop);
     }
     fcsave(&sav_input);
     shp->st.staklist = 0;
@@ -350,7 +350,7 @@ void *sh_parse(Shell_t *shp, Sfio_t *iop, int flag) {
                     t = makelist(lexp, TLST, t, tt);
                 }
             }
-            return (void *)t;
+            return t;
         }
     }
     flag &= ~SH_FUNEVAL;
@@ -373,7 +373,7 @@ void *sh_parse(Shell_t *shp, Sfio_t *iop, int flag) {
         shp->inlineno = lexp->inlineno;
     }
     stkseek(shp->stk, 0);
-    return (void *)t;
+    return t;
 }
 
 //
@@ -1257,7 +1257,7 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
                 memset(t, 0, sizeof(struct comnod));
                 t->com.comline = sh_getlineno(lexp);
             } else {
-                t = (Shnode_t *)simple(lexp, SH_NOIO, NULL);
+                t = simple(lexp, SH_NOIO, NULL);
             }
             t->com.comtyp |= FAMP;
             if (lexp->token == '&' || lexp->token == '|') sh_syntax(lexp);
@@ -1278,7 +1278,7 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
         }
         // FALLTHRU
         case 0: {  // simple command
-            t = (Shnode_t *)simple(lexp, flag, io);
+            t = simple(lexp, flag, io);
             if (t->com.comarg && lexp->intypeset) check_typedef(lexp, &t->com);
             lexp->intypeset = 0;
             lexp->inexec = 0;

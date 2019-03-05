@@ -3239,7 +3239,7 @@ int sh_eval(Shell_t *shp, Sfio_t *iop, int mode) {
             traceon = sh_isoption(shp, SH_XTRACE);
             if (traceon) sh_offoption(shp, SH_XTRACE);
         }
-        t = (Shnode_t *)sh_parse(shp, iop,
+        t = sh_parse(shp, iop,
                                  (mode & (SH_READEVAL | SH_FUNEVAL)) ? mode & SH_FUNEVAL : SH_NL);
         if (!(mode & SH_FUNEVAL) || !sfreserve(iop, 0, 0)) {
             if (!(mode & SH_READEVAL)) sfclose(iop);

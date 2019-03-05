@@ -1964,7 +1964,7 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
         sp = sfnew(NULL, str, c, -1, SF_STRING | SF_READ);
         c = mp->shp->inlineno;
         mp->shp->inlineno = error_info.line + mp->shp->st.firstline;
-        t = (Shnode_t *)sh_parse(mp->shp, sp, SH_EOF | SH_NL);
+        t = sh_parse(mp->shp, sp, SH_EOF | SH_NL);
         mp->shp->inlineno = c;
         type = 1;
     }
