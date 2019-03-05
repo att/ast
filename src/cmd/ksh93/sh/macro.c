@@ -67,8 +67,7 @@
 static int Skip;
 #endif  //__CYGWIN__
 
-static int _c_;
-typedef struct _mac_ {
+struct _mac_ {
     Shell_t *shp;             // pointer to shell interpreter
     Sfio_t *sp;               // stream pointer for here-document
     struct argnod **arghead;  // address of head of argument list
@@ -92,14 +91,14 @@ typedef struct _mac_ {
     char maccase;             // set to 1 when expanding case pattern
     int dotdot;               // set for .. in subscript
     void *nvwalk;             // for name space walking
-} Mac_t;
+};
 
 #undef ESCAPE
 #define ESCAPE '\\'
 #define isescchar(s) ((s) > S_QUOTE)
 #define isqescchar(s) ((s) >= S_QUOTE)
 #define isbracechar(c) \
-    ((c) == RBRACE || (_c_ = sh_lexstates[ST_BRACE][c]) == S_MOD1 || _c_ == S_MOD2)
+    ((c) == RBRACE || sh_lexstates[ST_BRACE][c] == S_MOD1 || sh_lexstates[ST_BRACE][c] == S_MOD2)
 #define ltos(x) fmtbase((long)(x), 0, 0)
 
 // Type of macro expansions.
@@ -127,11 +126,10 @@ static_fn char *mac_getstring(char *);
 static_fn int charlen(const char *, int);
 static_fn char *lastchar(const char *, const char *);
 
-void *sh_macopen(Shell_t *shp) {
-    void *addr = calloc(1, sizeof(Mac_t));
-    Mac_t *mp = (Mac_t *)addr;
+Mac_t *sh_macopen(Shell_t *shp) {
+    Mac_t *mp = calloc(1, sizeof(Mac_t));
     mp->shp = shp;
-    return addr;
+    return mp;
 }
 
 //
@@ -159,7 +157,7 @@ char *sh_mactry(Shell_t *shp, char *string) {
 // assignment are applied.
 //
 char *sh_mactrim(Shell_t *shp, char *str, int mode) {
-    Mac_t *mp = (Mac_t *)shp->mac_context;
+    Mac_t *mp = shp->mac_context;
     Stk_t *stkp = shp->stk;
     Mac_t savemac;
 
@@ -205,7 +203,7 @@ char *sh_mactrim(Shell_t *shp, char *str, int mode) {
 int sh_macexpand(Shell_t *shp, struct argnod *argp, struct argnod **arghead, int flag) {
     int flags = argp->argflag;
     char *str = NULL;
-    Mac_t *mp = (Mac_t *)shp->mac_context;
+    Mac_t *mp = shp->mac_context;
     char **saveargaddr = shp->argaddr;
     Mac_t savemac;
     Stk_t *stkp = shp->stk;
@@ -268,7 +266,7 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
     int c, n;
     const char *state = sh_lexstates[ST_QUOTE];
     char *cp;
-    Mac_t *mp = (Mac_t *)shp->mac_context;
+    Mac_t *mp = shp->mac_context;
     Lex_t *lp = mp->shp->lex_context;
     Fcin_t save;
     Mac_t savemac;
@@ -1003,7 +1001,7 @@ bool sh_macfun(Shell_t *shp, const char *name, int offset) {
         d.dol.dolnum = 1;
         d.dol.dolval[0] = strdup(name);
         stkseek(shp->stk, offset);
-        comsubst((Mac_t *)shp->mac_context, &t.node, 2);
+        comsubst(shp->mac_context, &t.node, 2);
         free(d.dol.dolval[0]);
         return true;
     }

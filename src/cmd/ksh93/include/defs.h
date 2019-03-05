@@ -247,7 +247,7 @@ extern char *sh_mactrim(Shell_t *, char *, int);
 extern int sh_macexpand(Shell_t *, struct argnod *, struct argnod **, int);
 extern bool sh_macfun(Shell_t *, const char *, int);
 extern void sh_machere(Shell_t *, Sfio_t *, Sfio_t *, char *);
-extern void *sh_macopen(Shell_t *);
+extern Mac_t *sh_macopen(Shell_t *);
 extern char *sh_macpat(Shell_t *, struct argnod *, int);
 extern Sfdouble_t sh_mathfun(Shell_t *, void *, int, Sfdouble_t *);
 extern int sh_outtype(Shell_t *, Sfio_t *);
