@@ -175,7 +175,7 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
             dp->table = shp->last_table;
             shp->last_table = 0;
             if (*(last = (char *)name) == 0) break;
-            if (!(next = nextdot(last, (void *)shp))) break;
+            if (!(next = nextdot(last, shp))) break;
             *next = 0;
             np = nv_open(name, dp->root, NV_NOFAIL);
             *next = '.';
@@ -206,7 +206,7 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
     while (1) {
         if (!last) {
             next = 0;
-        } else if ((next = nextdot(last, (void *)shp))) {
+        } else if ((next = nextdot(last, shp))) {
             c = *next;
             *next = 0;
         }
@@ -258,7 +258,7 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
         nq = np;
         np = 0;
     }
-    return (void *)dp;
+    return dp;
 }
 
 static_fn Namval_t *nextnode(struct nvdir *dp) {
@@ -375,7 +375,7 @@ char *nv_dirnext(void *dir) {
 
 void nv_dirclose(void *dir) {
     struct nvdir *dp = (struct nvdir *)dir;
-    if (dp->prev) nv_dirclose((void *)dp->prev);
+    if (dp->prev) nv_dirclose(dp->prev);
     free(dir);
 }
 
@@ -849,7 +849,7 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
     wp->flags &= ~NV_ARRAY;
     if (n == 0) {
         m = strlen(prefix);
-    } else if ((cp = nextdot(prefix, (void *)shp))) {
+    } else if ((cp = nextdot(prefix, shp))) {
         m = cp - prefix;
     } else {
         m = strlen(prefix) - 1;
@@ -872,7 +872,7 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
             r = 0;
             if (*cp == '.') cp++, r++;
             if (wp->indent < 0 && argv[1] == 0) wp->indent--;
-            nextcp = nextdot(cp, (void *)shp);
+            nextcp = nextdot(cp, shp);
             if (nextcp) {
                 if (outfile) {
                     *nextcp = 0;
@@ -936,7 +936,7 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
                 if (wp->indent > 0) sfputc(outfile, '\n');
             } else if (outfile && *cp == '[' && cp[-1] != '.') {
                 // Skip multi-dimensional arrays.
-                if (*nv_endsubscript(NULL, cp, 0, (void *)shp) == '[') continue;
+                if (*nv_endsubscript(NULL, cp, 0, shp) == '[') continue;
                 if (wp->indent > 0) sfnputc(outfile, '\t', wp->indent);
                 if (cp[-1] == '.') cp--;
                 sfputr(outfile, cp, '=');
@@ -1042,7 +1042,7 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
         name += len + 1;
     }
     len = strlen(name);
-    dir = nv_diropen(mp, name, (void *)shp);
+    dir = nv_diropen(mp, name, shp);
     walk.root = shp->last_root ? shp->last_root : shp->var_tree;
     if (subscript) name[strlen(name) - 1] = 0;
 
