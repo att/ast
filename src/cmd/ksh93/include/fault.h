@@ -108,7 +108,7 @@ typedef struct siginfo_ll siginfo_ll_t;
 #if USE_SPAWN
 #define sh_pushcontext(shp, bp, n)                                                           \
     ((bp)->mode = (n), (bp)->olist = 0, (bp)->topfd = shp->topfd, (bp)->prev = shp->jmplist, \
-     (bp)->vexi = ((Spawnvex_t *)shp->vexp)->cur, (bp)->err = *ERROR_CONTEXT_BASE,           \
+     (bp)->vexi = shp->vexp->cur, (bp)->err = *ERROR_CONTEXT_BASE,           \
      shp->jmplist = (sigjmp_buf *)(&(bp)->buff))
 
 #else  // USE_SPAWN

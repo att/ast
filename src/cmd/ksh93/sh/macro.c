@@ -2439,7 +2439,7 @@ static_fn char *sh_tilde(Shell_t *shp, const char *string) {
         size_t len;
         int fd, offset = stktell(shp->stk);
 #if USE_SPAWN
-        Spawnvex_t *vc = (Spawnvex_t *)shp->vex;
+        Spawnvex_t *vc = shp->vex;
         if (!vc && (vc = spawnvex_open(0))) shp->vex = (void *)vc;
 #endif
         if (!(s2 = strchr(string++, '}'))) return NULL;

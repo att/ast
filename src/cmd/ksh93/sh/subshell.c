@@ -751,7 +751,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     if (!argsav || argsav->dolrefcnt == argcnt) sh_argfree(shp, argsav);
     if (shp->topfd != buff.topfd) sh_iorestore(shp, buff.topfd | IOSUBSHELL, jmpval);
 #if USE_SPAWN
-    if ((vp = (Spawnvex_t *)shp->vexp) && vp->cur) sh_vexrestore(shp, buff.vexi);
+    if ((vp = shp->vexp) && vp->cur) sh_vexrestore(shp, buff.vexi);
 #endif
     if (sp->sig) {
         if (sp->prev) {
