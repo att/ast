@@ -1340,11 +1340,10 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
     }
     t = (struct comnod *)getnode(comnod);
     t->comio = io;  // initial io chain
-    // Set command line number for error messages.
-    t->comline = sh_getlineno(lexp);
+    t->comline = sh_getlineno(lexp);  // set command line number for error messages
     argtail = &(t->comarg);
     t->comset = 0;
-    t->comnamp = 0;
+    t->comnamp = NULL;
     t->comnamq = 0;
     t->comstate = 0;
     settail = &(t->comset);
@@ -1405,7 +1404,7 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
                     np = nv_bfsearch(argp->argval, lexp->sh->fun_tree, (Namval_t **)&t->comnamq,
                                      NULL);
                 }
-                if (cmdarg == 0) t->comnamp = (void *)np;
+                if (cmdarg == 0) t->comnamp = np;
                 if (np && is_abuiltin(np)) {
                     if (nv_isattr(np, BLT_DCL)) {
                         assignment = 1 + !strcmp(argp->argval, "alias");
