@@ -132,7 +132,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     sh_onoption(shp, SH_BRACEEXPAND);
     if ((beenhere++) == 0) {
         sh_onstate(shp, SH_PROFILE);
-        ((Lex_t *)shp->lex_context)->nonstandard = 0;
+        shp->lex_context->nonstandard = 0;
         if (shp->gd->ppid == 1) shp->login_sh++;
         if (shp->login_sh >= 2) sh_onoption(shp, SH_LOGIN_SHELL);
         // Decide whether shell is interactive.

@@ -231,7 +231,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
     Shell_t *shp = context;
     int n, o;
     Arg_t *ap = shp->arg_context;
-    Lex_t *lp = (Lex_t *)(shp->lex_context);
+    Lex_t *lp = shp->lex_context;
     Shopt_t newflags;
     int setflag = 0, action = 0, trace = (int)sh_isoption(shp, SH_XTRACE);
     Namval_t *np = NULL;

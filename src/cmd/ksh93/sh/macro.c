@@ -269,7 +269,7 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
     const char *state = sh_lexstates[ST_QUOTE];
     char *cp;
     Mac_t *mp = (Mac_t *)shp->mac_context;
-    Lex_t *lp = (Lex_t *)mp->shp->lex_context;
+    Lex_t *lp = mp->shp->lex_context;
     Fcin_t save;
     Mac_t savemac;
     Stk_t *stkp = shp->stk;
@@ -428,7 +428,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
     const char *state = sh_lexstates[ST_MACRO];
     char *cp, *first;
     Shell_t *shp = mp->shp;
-    Lex_t *lp = (Lex_t *)shp->lex_context;
+    Lex_t *lp = shp->lex_context;
     int tilde = -1;
     int oldquote = mp->quote;
     int ansi_c = 0;
@@ -1040,7 +1040,7 @@ static_fn bool varsub(Mac_t *mp) {
     char *v, *argp = 0;
     Namval_t *np = NULL;
     int dolg = 0, mode = 0;
-    Lex_t *lp = (Lex_t *)mp->shp->lex_context;
+    Lex_t *lp = mp->shp->lex_context;
     Namarr_t *ap = 0;
     int dolmax = 0, vsize = -1, offset = -1, nulflg, replen = 0, bysub = 0;
     char idbuff[3], *id = idbuff, *pattern = 0, *repstr = 0, *arrmax = 0;
@@ -1916,7 +1916,7 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
     if (type) {
         sp = 0;
         fcseek(-1);
-        if (!t) t = sh_dolparen((Lex_t *)mp->shp->lex_context);
+        if (!t) t = sh_dolparen(mp->shp->lex_context);
         if (t && t->tre.tretyp == TARITH) {
             mp->shp->inarith = 1;
             fcsave(&save);

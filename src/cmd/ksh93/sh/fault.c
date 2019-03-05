@@ -568,7 +568,7 @@ __attribute__((noreturn)) void sh_done(void *ptr, int sig) {
         kill(getpid(), sig);
         pause();
     }
-    if (sh_isoption(shp, SH_NOEXEC)) kiaclose((Lex_t *)shp->lex_context);
+    if (sh_isoption(shp, SH_NOEXEC)) kiaclose(shp->lex_context);
     if (shp->pwdfd >= 0) close(shp->pwdfd);
 
     // Return POSIX exit code if last process exits due to signal.

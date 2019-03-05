@@ -1256,7 +1256,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     shp->gd = shgd;
     shp->mac_context = sh_macopen(shp);
     shp->arg_context = sh_argopen(shp);
-    shp->lex_context = (void *)sh_lexopen(0, shp, 1);
+    shp->lex_context = sh_lexopen(0, shp, 1);
     shp->strbuf = sfstropen();
     shp->stk = stkstd;
     sfsetbuf(shp->strbuf, NULL, 64);

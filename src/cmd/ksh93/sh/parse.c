@@ -304,7 +304,7 @@ static_fn Shnode_t *makelist(Lex_t *lexp, int type, Shnode_t *l, Shnode_t *r) {
 //
 void *sh_parse(Shell_t *shp, Sfio_t *iop, int flag) {
     Shnode_t *t;
-    Lex_t *lexp = (Lex_t *)shp->lex_context;
+    Lex_t *lexp = shp->lex_context;
     Fcin_t sav_input;
     struct argnod *sav_arg = lexp->arg;
     int sav_prompt = shp->nextprompt;
@@ -1946,7 +1946,7 @@ unsigned long kiaentity(Lex_t *lexp, const char *name, int len, int type, int fi
 
 static_fn void kia_add(Namval_t *np, void *data) {
     char *name = nv_name(np);
-    Lex_t *lp = (Lex_t *)data;
+    Lex_t *lp = data;
     UNUSED(data);
 
     kiaentity(lp, name + 1, -1, *name, 0, -1, (*name == 'p' ? lp->unknown : lp->script),

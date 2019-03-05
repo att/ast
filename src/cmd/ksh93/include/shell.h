@@ -209,7 +209,7 @@ struct Shell_s {
     Env_t *env;
     void *init_context;
     void *mac_context;
-    void *lex_context;
+    Lex_t *lex_context;
     struct Shell_arg *arg_context;
     void *job_context;
     void *pathlist;

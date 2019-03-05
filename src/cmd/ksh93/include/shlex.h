@@ -69,7 +69,7 @@ struct lexstate {
     char nestedbrace;  // ${var op {...}}
 };
 
-typedef struct _shlex_ {
+struct _shlex_ {
     Shell_t *sh;            // pointer to the interpreter
     struct argnod *arg;     // current word
     struct ionod *heredoc;  // pending here document list
@@ -101,7 +101,7 @@ typedef struct _shlex_ {
     Dt_t *entity_tree;      // for entity ids
     struct lexdata lexd;
     struct lexstate lex;
-} Lex_t;
+};
 
 // Symbols for parsing.
 #define NL '\n'

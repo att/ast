@@ -215,6 +215,7 @@
 typedef struct Namval Namval_t;   // from #include "name.h"
 typedef struct Shell_s Shell_t;   // from #include "shell.h"
 typedef struct Shbltin_s Shbltin_t;
+typedef struct _shlex_ Lex_t;     // from #inclulde "shlex.h"
 typedef union Shnode_u Shnode_t;  // from #include "shnodes.h"
 typedef int (*Shbltin_f)(int, char **, Shbltin_t *);
 
