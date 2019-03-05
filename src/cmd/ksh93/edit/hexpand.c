@@ -523,7 +523,7 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
 
                 if (c == 's') {
                     // Preset old with match from !?string?.
-                    if (!sb.str[0] && wm) sb.str[0] = strdup(sfsetbuf(wm, (void *)1, 0));
+                    if (!sb.str[0] && wm) sb.str[0] = strdup(sfgetbuf(wm));
                     cp = parse_subst(shp, cp, &sb);
                 }
 
@@ -536,9 +536,7 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
                     DONE();
                 }
 
-                // Need pointer for strstr().
-                str = sfsetbuf(tmp, (void *)1, 0);
-
+                str = sfgetbuf(tmp);  // need pointer for strstr()
                 flag |= HIST_SUBSTITUTE;
                 while (flag & HIST_SUBSTITUTE) {
                     // Find string.
