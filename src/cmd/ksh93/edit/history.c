@@ -239,7 +239,7 @@ retry:
     }
     sfdisc(hp->histfp, &hp->histdisc);
     STORE_VT((HISTCUR)->nvalue, i32p, &hp->histind);
-    sh_timeradd(1000L * (HIST_RECENT - 30), 1, hist_touch, (void *)hp->histname);
+    sh_timeradd(1000L * (HIST_RECENT - 30), 1, hist_touch, hp->histname);
     hp->auditfp = 0;
 
     char buff[SF_BUFSIZE];
@@ -646,7 +646,7 @@ static int hist_write(Sfio_t *iop, const void *buff, int insize, Sfdisc_t *handl
     c = hist_ind(hp, ++hp->histind);
     hp->histcmds[c] = hp->histcnt;
     if (hp->histflush > HIST_MARKSZ && hp->histcnt > hp->histmarker + HIST_BSIZE / 2) {
-        memcpy((void *)saveptr, (void *)bufptr, HIST_MARKSZ);
+        memcpy(saveptr, bufptr, HIST_MARKSZ);
         saved = 1;
         hp->histcnt += HIST_MARKSZ;
         hist_marker(bufptr, hp->histind);
@@ -655,7 +655,7 @@ static int hist_write(Sfio_t *iop, const void *buff, int insize, Sfdisc_t *handl
     }
     errno = 0;
     size = write(sffileno(iop), (char *)buff, size);
-    if (saved) memcpy((void *)bufptr, (void *)saveptr, HIST_MARKSZ);
+    if (saved) memcpy(bufptr, saveptr, HIST_MARKSZ);
     if (size >= 0) {
         hp->histwfail = 0;
         return insize;
