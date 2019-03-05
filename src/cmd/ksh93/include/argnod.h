@@ -115,7 +115,7 @@ struct argnod {
 #define ARG_CASE 0x2000     // expanding case patterns
 
 extern struct dolnod *sh_argcreate(char *[]);
-extern char *sh_argdolminus(void *);
+extern char *sh_argdolminus(Shell_t *);
 extern int sh_argopts(int, char *[], void *);
 
 extern const char e_heading[];

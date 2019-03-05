@@ -341,7 +341,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
             }
             (void)fcntl(fno, F_SETFD, FD_CLOEXEC);
             shp->fdstatus[fno] |= IOCLEX;
-            iop = sh_iostream((void *)shp, fno, fno);
+            iop = sh_iostream(shp, fno, fno);
         } else {
             iop = sfstdin;
         }
@@ -354,7 +354,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
             nv_putval(PS1NOD, (shp->gd->euserid ? e_stdprompt : e_supprompt), NV_RDONLY);
         }
         sh_sigdone(shp);
-        if (sh_histinit((void *)shp)) sh_onoption(shp, SH_HISTORY);
+        if (sh_histinit(shp)) sh_onoption(shp, SH_HISTORY);
     } else {
         if (!sh_isstate(shp, SH_PROFILE)) {
             buff.mode = SH_JMPEXIT;
@@ -369,7 +369,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
     jmpval = sigsetjmp(buff.buff, 0);
     if (jmpval) {
         Sfio_t *top;
-        sh_iorestore((void *)shp, 0, jmpval);
+        sh_iorestore(shp, 0, jmpval);
         hist_flush(shp->gd->hist_ptr);
         sfsync(shp->outpool);
         shp->st.execbrk = shp->st.breakcnt = 0;

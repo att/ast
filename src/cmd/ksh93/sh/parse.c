@@ -944,7 +944,7 @@ static_fn struct argnod *parse_assign(Lex_t *lexp, struct argnod *ap, int type) 
     if ((n = skipnl(lexp, 0)) == RPAREN || n == LPAREN) {
         struct argnod *ar, *aq, **settail;
         ac = (struct comnod *)getnode(comnod);
-        memset((void *)ac, 0, sizeof(*ac));
+        memset(ac, 0, sizeof(*ac));
     comarray:
         settail = &ac->comset;
         ac->comline = sh_getlineno(lexp);

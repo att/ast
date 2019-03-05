@@ -264,7 +264,7 @@ static_fn Namfun_t *clone_optindex(Namval_t *np, Namval_t *mp, int flags, Namfun
     UNUSED(flags);
     Namfun_t *dp = (Namfun_t *)malloc(sizeof(Namfun_t));
 
-    memcpy((void *)dp, (void *)fp, sizeof(Namfun_t));
+    memcpy(dp, fp, sizeof(Namfun_t));
     STORE_VT(mp->nvalue, i32p, FETCH_VT(np->nvalue, i32p));
     dp->nofree = 0;
     return dp;
@@ -1482,7 +1482,7 @@ int sh_reinit(Shell_t *shp, char *argv[]) {
     nv_scan(shp->var_tree, sh_envnolocal, (void *)&data, NV_ARRAY, NV_ARRAY);
     sh_offstate(shp, SH_INIT);
     memset(shp->st.trapcom, 0, (shp->st.trapmax + 1) * sizeof(char *));
-    memset((void *)&opt, 0, sizeof(opt));
+    memset(&opt, 0, sizeof(opt));
     if (shp->namespace) {
         dp = nv_dict(shp->namespace);
         if (dp == shp->var_tree) shp->var_tree = dtview(dp, 0);
@@ -1914,7 +1914,7 @@ static_fn Dt_t *inittree(Shell_t *shp, const struct shtable2 *name_vals) {
             treep = base_treep;
         }
         np->nvenv = NULL;
-        np->nvshell = (void *)shp;
+        np->nvshell = shp;
         if (name_vals == (const struct shtable2 *)shtab_builtins) {
             STORE_VT(np->nvalue, shbltinp, ((struct shtable3 *)tp)->sh_value);
         } else {

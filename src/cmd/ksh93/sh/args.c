@@ -655,8 +655,7 @@ void sh_applyopts(Shell_t *shp, Shopt_t newflags) {
 }
 
 // Returns the value of $-.
-char *sh_argdolminus(void *context) {
-    Shell_t *shp = context;
+char *sh_argdolminus(Shell_t *shp) {
     Arg_t *ap = shp->arg_context;
     const char *cp = optksh;
     char *flagp = ap->flagadr;

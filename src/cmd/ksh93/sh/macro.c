@@ -2546,7 +2546,7 @@ static_fn char *special(Shell_t *shp, int c) {
             return nv_getval(SH_DOLLARNOD);
         }
         case '-': {
-            return sh_argdolminus((void *)shp);
+            return sh_argdolminus(shp);
         }
         case '?': {
             return ltos(shp->savexit);
