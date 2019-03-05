@@ -274,7 +274,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
 
     if (maketype) {
         shtp.previous = shp->mktype;
-        shp->mktype = (void *)&shtp;
+        shp->mktype = &shtp;
         shtp.numnodes = 0;
         shtp.maxnodes = 20;
         shtp.rp = 0;
@@ -592,7 +592,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
             char *sub = 0;
             int append = 0;
             if (nv_isarray(np)) sub = savesub;
-            cp = lastdot(sp, '=', (void *)shp);
+            cp = lastdot(sp, '=', shp);
             if (cp) {
                 if (cp[-1] == '+') append = ARG_APPEND;
                 cp++;
@@ -717,7 +717,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                     dp->last = cp;
                     return np;
                 }
-                cp = nv_endsubscript(NULL, sp, 0, (void *)shp);
+                cp = nv_endsubscript(NULL, sp, 0, shp);
                 if (sp == name || sp[-1] == '.') c = *(sp = cp);
                 goto skip;
             }
@@ -1098,10 +1098,10 @@ void nv_delete(Namval_t *np, Dt_t *root, int flags) {
         if (!(flags & NV_FUNCTION) && Refdict) {
             Namval_t **key = &np;
             struct Namref *rp;
-            while ((rp = (struct Namref *)dtmatch(Refdict, (void *)key))) {
+            while ((rp = (struct Namref *)dtmatch(Refdict, key))) {
                 if (rp->sub) free(rp->sub);
                 rp->sub = 0;
-                rp = dtremove(Refdict, (void *)rp);
+                rp = dtremove(Refdict, rp);
                 if (rp) rp->np = &NullNode;
             }
         }
@@ -1665,7 +1665,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                 if (!nv_isattr(np, NV_ZFILL) || nv_size(np) == 0) {
                     nv_setsize(np, dot);
                 } else if (nv_isattr(np, NV_ZFILL) && (size > dot)) {
-                    memset((void *)&cp[dot], 0, size - dot);
+                    memset(&cp[dot], 0, size - dot);
                 }
                 return;
             }
@@ -1702,7 +1702,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                     nv_onattr(np, NV_NOFREE);
                 } else {
                     if (tofree && tofree != Empty && tofree != EmptyStr) {
-                        cp = (char *)realloc((void *)tofree, ((unsigned)dot + append + 8));
+                        cp = (char *)realloc(tofree, ((unsigned)dot + append + 8));
                         tofree = 0;
                     } else {
                         cp = (char *)malloc(((unsigned)dot + 8));
@@ -1914,7 +1914,7 @@ char **sh_envgen(Shell_t *shp) {
     namec += shp->nenv;
     er = (char **)stkalloc(shp->stk, (namec + 4) * sizeof(char *));
     data.argnam = (er += 2) + shp->nenv;
-    if (shp->nenv) memcpy((void *)er, environ, shp->nenv * sizeof(char *));
+    if (shp->nenv) memcpy(er, environ, shp->nenv * sizeof(char *));
     nv_scan(shp->var_tree, pushnam, &data, NV_EXPORT, NV_EXPORT);
     *data.argnam = (char *)stkalloc(shp->stk, data.attsize);
     cp = data.attval = stpcpy(*data.argnam, e_envmarker);
@@ -2294,7 +2294,7 @@ void nv_optimize(Namval_t *np) {
         } else {
             op->namfun.disc = &OPTIMIZE_disc;
             op->next = (struct optimize *)shp->optlist;
-            shp->optlist = (void *)op;
+            shp->optlist = op;
             nv_stack(np, &op->namfun);
         }
     }
@@ -2766,7 +2766,7 @@ bool nv_rename(Namval_t *np, int flags) {
     } else if (!(cp = nv_getval(np))) {
         return false;
     }
-    if (lastdot(cp, 0, (void *)shp) && nv_isattr(np, NV_MINIMAL)) {
+    if (lastdot(cp, 0, shp) && nv_isattr(np, NV_MINIMAL)) {
         errormsg(SH_DICT, ERROR_exit(1), e_varname, nv_name(np));
         __builtin_unreachable();
     }
@@ -2908,7 +2908,7 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
         nv_onattr(np, NV_REF);
         return;
     }
-    if ((ep = lastdot(cp, 0, (void *)shp)) && nv_isattr(np, NV_MINIMAL)) {
+    if ((ep = lastdot(cp, 0, shp)) && nv_isattr(np, NV_MINIMAL)) {
         errormsg(SH_DICT, ERROR_exit(1), e_badref, nv_name(np));
         __builtin_unreachable();
     }
