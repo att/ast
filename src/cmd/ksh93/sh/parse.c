@@ -1961,7 +1961,7 @@ int kiaclose(Lex_t *lexp) {
         kiaentity(lexp, lexp->scriptname, -1, 'p', -1, lexp->sh->inlineno - 1, 0, 's', 0, "");
     kiaentity(lexp, lexp->scriptname, -1, 'p', 1, lexp->sh->inlineno - 1, r, 's', 0, "");
     kiaentity(lexp, lexp->scriptname, -1, 'f', 1, lexp->sh->inlineno - 1, r, 's', 0, "");
-    nv_scan(lexp->entity_tree, kia_add, (void *)lexp, NV_TAGGED, 0);
+    nv_scan(lexp->entity_tree, kia_add, lexp, NV_TAGGED, 0);
     off1 = sfseek(lexp->kiafile, (off_t)0, SEEK_END);
     sfseek(lexp->kiatmp, (off_t)0, SEEK_SET);
     sfmove(lexp->kiatmp, lexp->kiafile, SF_UNBOUND, -1);

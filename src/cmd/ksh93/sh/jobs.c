@@ -1819,7 +1819,7 @@ void *job_subsave(void) {
     bck.list = 0;
     bck.prev = bp;
     job_unlock();
-    return (void *)bp;
+    return bp;
 }
 
 void job_subrestore(Shell_t *shp, void *ptr) {

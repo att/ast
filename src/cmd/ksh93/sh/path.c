@@ -190,8 +190,8 @@ static_fn pid_t path_xargs(Shell_t *shp, const char *path, char *argv[], char *c
         if (xv == &argv[shp->xargmin]) {
             n = nlast * sizeof(char *);
             saveargs = (char **)malloc(n);
-            memcpy((void *)saveargs, (void *)av, n);
-            memcpy((void *)av, (void *)avlast, n);
+            memcpy(saveargs, av, n);
+            memcpy(av, avlast, n);
         } else {
             for (n = shp->xargmin; xv < av; xv++) argv[n++] = *xv;
             for (xv = avlast; *xv; xv++) argv[n++] = *xv;
@@ -203,7 +203,7 @@ static_fn pid_t path_xargs(Shell_t *shp, const char *path, char *argv[], char *c
             job_wait(pid);
             if (shp->exitval > exitval) exitval = shp->exitval;
             if (saveargs) {
-                memcpy((void *)av, saveargs, n);
+                memcpy(av, saveargs, n);
                 free(saveargs);
                 saveargs = 0;
             }
@@ -317,9 +317,9 @@ static_fn char *path_lib(Shell_t *shp, Pathcomp_t *pp, char *path) {
     if (last) pcomp.len = last - path;
 
     char save[8];
-    memcpy((void *)save, (void *)stkptr(shp->stk, PATH_OFFSET + pcomp.len), sizeof(save));
+    memcpy(save, stkptr(shp->stk, PATH_OFFSET + pcomp.len), sizeof(save));
     if (path_chkpaths(shp, NULL, NULL, &pcomp, PATH_OFFSET)) return stkfreeze(shp->stk, 1);
-    memcpy((void *)stkptr(shp->stk, PATH_OFFSET + pcomp.len), (void *)save, sizeof(save));
+    memcpy(stkptr(shp->stk, PATH_OFFSET + pcomp.len), save, sizeof(save));
     return NULL;
 }
 
@@ -516,10 +516,10 @@ char *path_fullname(Shell_t *shp, const char *name) {
     }
     path = (char *)malloc(len + dirlen);
     if (dirlen) {
-        memcpy((void *)path, (void *)pwd, dirlen);
+        memcpy(path, pwd, dirlen);
         path[dirlen - 1] = '/';
     }
-    memcpy((void *)&path[dirlen], (void *)name, len);
+    memcpy(&path[dirlen], name, len);
     pathcanon(path, len + dirlen, 0);
     return path;
 }
@@ -534,7 +534,7 @@ static_fn void funload(Shell_t *shp, int fno, const char *name) {
     int savestates = sh_getstate(shp), oldload = shp->funload;
 
     pname = path_fullname(shp, stkptr(shp->stk, PATH_OFFSET));
-    if (shp->fpathdict && (rp = dtmatch(shp->fpathdict, (void *)pname))) {
+    if (shp->fpathdict && (rp = dtmatch(shp->fpathdict, pname))) {
         Dt_t *funtree = sh_subfuntree(shp, 1);
         while (1) {
             rpfirst = dtprev(shp->fpathdict, rp);
@@ -1007,7 +1007,7 @@ pid_t path_spawn(Shell_t *shp, const char *opath, char **argv, char **envp, Path
     if (spawn > 1) {
         spawnvex_add(shp->vex, SPAWN_pgrp, spawn >> 1, 0, 0);
     }
-    spawnvex_add(shp->vex, SPAWN_noexec, 0, vexexec, (void *)shp);
+    spawnvex_add(shp->vex, SPAWN_noexec, 0, vexexec, shp);
 #endif  // USE_SPAWN
     // Leave room for inserting _= pathname in environment.
     envp--;
@@ -1395,10 +1395,10 @@ static_fn bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, P
             } else if (m) {
                 size_t z;
                 pp->lib = (char *)malloc(z = cp - sp + pp->len + 2);
-                memcpy((void *)pp->lib, (void *)sp, m);
-                memcpy((void *)&pp->lib[m], stkptr(shp->stk, offset), pp->len);
+                memcpy(pp->lib, sp, m);
+                memcpy(&pp->lib[m], stkptr(shp->stk, offset), pp->len);
                 pp->lib[k = m + pp->len] = '/';
-                strcpy((void *)&pp->lib[k + 1], ep);
+                strcpy(&pp->lib[k + 1], ep);
                 pathcanon(&pp->lib[m], z, 0);
                 if (!first) {
                     stkseek(shp->stk, 0);

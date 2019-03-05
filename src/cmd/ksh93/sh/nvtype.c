@@ -372,9 +372,9 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     dp = (Namtype_t *)malloc(size + pp->nref * sizeof(struct Namref));
     if (pp->nref) {
         nrp = (struct Namref *)((char *)dp + size);
-        memset((void *)nrp, 0, pp->nref * sizeof(struct Namref));
+        memset(nrp, 0, pp->nref * sizeof(struct Namref));
     }
-    memcpy((void *)dp, (void *)pp, size);
+    memcpy(dp, pp, size);
 #if 0
 	dp->parent = nv_lastdict(np->nvshell);
 #else
@@ -601,7 +601,7 @@ static_fn Namfun_t *clone_inttype(Namval_t *np, Namval_t *mp, int flags, Namfun_
     UNUSED(flags);
     Namfun_t *pp = (Namfun_t *)malloc(fp->dsize);
 
-    memcpy((void *)pp, (void *)fp, fp->dsize);
+    memcpy(pp, fp, fp->dsize);
     fp->nofree &= ~1;
     if (nv_isattr(mp, NV_NOFREE) && FETCH_VT(mp->nvalue, const_cp)) {
         memcpy(FETCH_VT(mp->nvalue, cp), FETCH_VT(np->nvalue, const_cp), fp->dsize - sizeof(*fp));
@@ -795,7 +795,7 @@ void nv_addtype(Namval_t *np, const char *optstr, void *op, size_t optsz) {
         cp->optstring = sh_opttype;
     }
     memcpy(dp, op, optsz);
-    cp->optinfof = (void *)dp;
+    cp->optinfof = dp;
     cp->tp = np;
     mp = nv_search("typeset", shp->bltin_tree, 0);
     name = strrchr(np->nvname, '.');
@@ -1491,7 +1491,7 @@ static const Namdisc_t stat_disc = {.dsize = 0, .putval = put_stat};
 void nv_mkstat(Shell_t *shp) {
     Namval_t *tp;
     Namfun_t *fp;
-    tp = nv_mkstruct("stat_t", sizeof(struct stat), stat_fields, (void *)shp);
+    tp = nv_mkstruct("stat_t", sizeof(struct stat), stat_fields, shp);
     nv_offattr(tp, NV_RDONLY);
     nv_setvtree(tp);
     fp = calloc(1, sizeof(Namfun_t));
