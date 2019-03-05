@@ -163,7 +163,7 @@ static int textmod(Vi_t *, int, int);
 // If reedit is non-zero, initialize edit buffer with reedit chars.
 //
 int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
-    Edit_t *ed = (Edit_t *)context;
+    Edit_t *ed = context;
     int i;  // general variable
     Vi_t *vp = ed->e_vi;
     char prompt[PRSIZE + 2];        // prompt

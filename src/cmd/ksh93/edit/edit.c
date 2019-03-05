@@ -86,7 +86,7 @@ static const char bellchr[] = "\a";  // bell char
 // This routine returns true if fd refers to a terminal. This should be equivalent to isatty.
 //
 int tty_check(int fd) {
-    Edit_t *ep = (Edit_t *)(shgd->ed_context);
+    Edit_t *ep = shgd->ed_context;
     struct termios tty;
     ep->e_savefd = -1;
     return tty_get(fd, &tty) == 0;
@@ -97,7 +97,7 @@ int tty_check(int fd) {
 // if it is called again without an intervening tty_set().
 //
 int tty_get(int fd, struct termios *tty) {
-    Edit_t *ep = (Edit_t *)(shgd->ed_context);
+    Edit_t *ep = shgd->ed_context;
 
     if (fd == ep->e_savefd) {
         *tty = ep->e_savetty;
@@ -119,7 +119,7 @@ int tty_get(int fd, struct termios *tty) {
 // Set the terminal attributes. If fd<0, then current attributes are invalidated.
 //
 int tty_set(int fd, int action, struct termios *tty) {
-    Edit_t *ep = (Edit_t *)(shgd->ed_context);
+    Edit_t *ep = shgd->ed_context;
 
     if (fd >= 0) {
 #if 0
@@ -140,7 +140,7 @@ int tty_set(int fd, int action, struct termios *tty) {
 // This routine will set the tty in cooked mode. It is also called by error.done().
 //
 void tty_cooked(int fd) {
-    Edit_t *ep = (Edit_t *)(shgd->ed_context);
+    Edit_t *ep = shgd->ed_context;
 
     if (ep->sh->st.trap[SH_KEYTRAP] && savelex) {
         memcpy(ep->sh->lex_context, savelex, ep->sh->lexsize);
@@ -159,7 +159,7 @@ void tty_cooked(int fd) {
 //
 int tty_raw(int fd, int echomode) {
     int echo = echomode;
-    Edit_t *ep = (Edit_t *)(shgd->ed_context);
+    Edit_t *ep = shgd->ed_context;
 
     if (ep->e_raw == RAWMODE) {
         return echo ? -1 : 0;
@@ -504,7 +504,7 @@ static void ed_nputchar(Edit_t *ep, int n, int c) {
 //
 int ed_read(void *context, int fd, char *buff, int size, int reedit) {
     UNUSED(reedit);
-    Edit_t *ep = (Edit_t *)context;
+    Edit_t *ep = context;
     int rv = -1;
     int delim = ((ep->e_raw & RAWMODE) ? nttyparm.c_cc[VEOL] : '\n');
     Shell_t *shp = ep->sh;

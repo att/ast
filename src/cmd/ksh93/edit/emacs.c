@@ -154,7 +154,7 @@ static void show_info(Emacs_t *, const char *);
 static void xcommands(Emacs_t *, int);
 
 int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
-    Edit_t *ed = (Edit_t *)context;
+    Edit_t *ed = context;
     int c;
     int i;
     genchar *out;

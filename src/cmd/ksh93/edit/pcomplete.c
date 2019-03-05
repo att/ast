@@ -472,13 +472,13 @@ again:
 
 static bool delete_and_add(const char *name, struct Complete *comp) {
     struct Complete *old = 0;
-    Dt_t *compdict = ((Edit_t *)(shgd->ed_context))->compdict;
+    Dt_t *compdict = shgd->ed_context->compdict;
 
     if (compdict && (old = (struct Complete *)dtmatch(compdict, name))) {
         dtdelete(compdict, old);
         free(old);
     } else if (comp && !compdict) {
-        ((Edit_t *)(shgd->ed_context))->compdict = compdict = dtopen(&_Compdisc, Dtoset);
+        shgd->ed_context->compdict = compdict = dtopen(&_Compdisc, Dtoset);
     }
     if (!comp && old) return false;
     if (!comp) return true;
@@ -699,7 +699,7 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
     if (complete) {
         char *name;
         struct Complete *cp;
-        Dt_t *compdict = ((Edit_t *)(shgd->ed_context))->compdict;
+        Dt_t *compdict = shgd->ed_context->compdict;
         if (!empty && !argv[0]) {
             if (!print && !delete) {
                 errormsg(SH_DICT, ERROR_usage(0), "complete requires command name");
