@@ -240,7 +240,7 @@ subdir('src/lib/libdll')
 
 # Check if api tests should be built
 if get_option('build-api-tests') == true
-    subdir('src/cmd/tests')
+    subdir('src/lib/libast/tests/')
 endif
 
 subdir('src/cmd/ksh93')

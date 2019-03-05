@@ -14,7 +14,7 @@ cdt_test_files = [ ['tannounce.c'], ['tbags.c'], ['tdeque.c'], ['tevent.c'],
                  ]
 
 incdir = include_directories('..',
-                             '../../../lib/libast/include/')
+                             '../../include/')
 
 foreach testspec: cdt_test_files
     testname = testspec[0]
