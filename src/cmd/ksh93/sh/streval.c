@@ -493,7 +493,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
                     arg[0] = num;
                     arg[1] = 0;
                     array_args(shp, tp + 1, 1);
-                    num = sh_mathfun(shp, (void *)funx, 1, arg);
+                    num = sh_mathfun(shp, funx, 1, arg);
                     node.userfn = 0;
                     break;
                 }
@@ -517,7 +517,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
                     arg[2] = 0;
                     array_args(shp, tp + 1, 2);
                     Math_2f_i funx = *(Math_2f_i *)(ep->code + (int)(*sp));
-                    num = sh_mathfun(shp, (void *)funx, 2, arg);
+                    num = sh_mathfun(shp, funx, 2, arg);
                     node.userfn = 0;
                     break;
                 }
@@ -555,7 +555,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
                     arg[2] = num;
                     arg[3] = 0;
                     array_args(shp, tp + 1, 3);
-                    num = sh_mathfun(shp, (void *)funx, 3, arg);
+                    num = sh_mathfun(shp, funx, 3, arg);
                     node.userfn = 0;
                     break;
                 }
@@ -973,7 +973,7 @@ Arith_t *arith_compile(Shell_t *shp, const char *string, char **last,
     int offset;
     int nounset = sh_isoption(shp, SH_NOUNSET);
 
-    memset((void *)&cur, 0, sizeof(cur));
+    memset(&cur, 0, sizeof(cur));
     cur.shp = shp;
     cur.expr = cur.nextchr = string;
     cur.convert = fun;

@@ -767,7 +767,7 @@ __attribute__((noreturn)) static_fn void forked_child(Shell_t *shp, const Shnode
 #if !has_dev_fd
     if (shp->fifo && (type & (FPIN | FPOU))) {
         int fn, fd = (type & FPIN) ? 0 : 1;
-        void *fifo_timer = sh_timeradd(500, 1, fifo_check, (void *)shp);
+        void *fifo_timer = sh_timeradd(500, 1, fifo_check, shp);
         fn = sh_open(shp->fifo, fd ? O_WRONLY : O_RDONLY);
         timerdel(fifo_timer);
         sh_iorenumber(shp, fn, fd);
@@ -1203,7 +1203,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             }
                         }
                         if (argn) {
-                            shp->exitval = (*shp->bltinfun)(argn, com, (void *)bp);
+                            shp->exitval = (*shp->bltinfun)(argn, com, bp);
                             sfsync(NULL);
                         }
                         if (error_info.flags & ERROR_INTERACTIVE) tty_check(STDERR_FILENO);

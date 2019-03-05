@@ -583,7 +583,7 @@ bool nv_adddisc(Namval_t *np, const char **names, Namval_t **funs) {
     vp->fun.nofree |= 2;
     vp->num = n;
     if (funs) {
-        memcpy((void *)vp->bltins, (void *)funs, n * sizeof(Namval_t *));
+        memcpy(vp->bltins, funs, n * sizeof(Namval_t *));
     } else {
         while (n >= 0) vp->bltins[n--] = 0;
     }
@@ -947,7 +947,7 @@ Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
     if (mode & NV_NOSCOPE) dp = dtview(root, 0);
     if (*name == '.' && root == shp->var_tree && !dp) root = shp->var_base;
 
-    Namval_t *np = dtmatch(root, (void *)name);
+    Namval_t *np = dtmatch(root, name);
     if (!np && (mode & NV_ADD)) {
         if (shp->namespace && !(mode & NV_NOSCOPE) && root == shp->var_tree) {
             root = nv_dict(shp->namespace);
@@ -1010,7 +1010,7 @@ Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last)
         if (*sp == '=') return 0;
         if (*sp == '[') {
             while (*sp == '[') {
-                sp = nv_endsubscript(NULL, (char *)sp, 0, (void *)shp);
+                sp = nv_endsubscript(NULL, (char *)sp, 0, shp);
                 if (sp[-1] != ']') return 0;
             }
             if (*sp == 0) break;
@@ -1214,7 +1214,7 @@ static_fn void put_table(Namval_t *np, const void *val, int flags, Namfun_t *fp)
     memset(&data, 0, sizeof(data));
     data.mapname = nv_name(np);
     data.sh = ((struct table *)fp)->shp;
-    nv_scan(data.sh->fun_tree, delete_fun, (void *)&data, NV_FUNCTION, NV_FUNCTION | NV_NOSCOPE);
+    nv_scan(data.sh->fun_tree, delete_fun, &data, NV_FUNCTION, NV_FUNCTION | NV_NOSCOPE);
     dtview(root, 0);
     for (mp = dtfirst(root); mp; mp = nq) {
         _nv_unset(mp, flags);
