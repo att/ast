@@ -98,7 +98,7 @@ int b_readonly(int argc, char *argv[], Shbltin_t *context) {
     struct tdata tdata;
     UNUSED(argc);
 
-    memset((void *)&tdata, 0, sizeof(tdata));
+    memset(&tdata, 0, sizeof(tdata));
     tdata.sh = context->shp;
     tdata.aflag = '-';
     // Do not change size.
@@ -150,7 +150,7 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
     struct tdata tdata;
     UNUSED(argc);
 
-    memset((void *)&tdata, 0, sizeof(tdata));
+    memset(&tdata, 0, sizeof(tdata));
     tdata.sh = context->shp;
     troot = tdata.sh->alias_tree;
     if (*argv[0] == 'h') flag = NV_TAGGED;
@@ -228,7 +228,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
 #endif  // SHOPT_BASH
     UNUSED(argc);
 
-    memset((void *)&tdata, 0, sizeof(tdata));
+    memset(&tdata, 0, sizeof(tdata));
     tdata.sh = context->shp;
     if (ntp) {
         tdata.tp = ntp->tp;
@@ -1366,7 +1366,7 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, bool omit_attrs, struct t
 //
 static_fn void print_all(Sfio_t *file, Dt_t *root, struct tdata *tp) {
     tp->outfile = file;
-    nv_scan(root, print_attribute, (void *)tp, 0, 0);
+    nv_scan(root, print_attribute, tp, 0, 0);
 }
 
 //
@@ -1401,7 +1401,7 @@ static_fn void print_scan(Sfio_t *file, int flag, Dt_t *root, bool omit_attrs, s
     if (root == tp->sh->bltin_tree) tp->scanmask |= BLT_DISABLE;
     namec = nv_scan(root, NULL, tp, tp->scanmask, flag & ~NV_IARRAY);
     argv = tp->argnam = (char **)stkalloc(tp->sh->stk, (namec + 1) * sizeof(char *));
-    namec = nv_scan(root, pushname, (void *)tp, tp->scanmask, flag & ~NV_IARRAY);
+    namec = nv_scan(root, pushname, tp, tp->scanmask, flag & ~NV_IARRAY);
     strsort(argv, namec, strcoll);
     if (namec == 0 && tp->sh->namespace && nv_dict(tp->sh->namespace) == root) {
         sfnputc(file, '\t', tp->indent);

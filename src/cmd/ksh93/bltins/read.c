@@ -376,7 +376,7 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
         r = 0;
     }
     if (argc == fixargs && (rp = calloc(1, sizeof(struct read_save)))) {
-        context->data = (void *)rp;
+        context->data = rp;
         rp->fd = fd;
         rp->flags = flags;
         rp->timeout = timeout;
@@ -561,7 +561,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
             static struct timeout tmout;
             tmout.shp = shp;
             tmout.iop = iop;
-            timeslot = (void *)sh_timeradd(timeout, 0, timedout, (void *)&tmout);
+            timeslot = sh_timeradd(timeout, 0, timedout, &tmout);
         }
     }
     if (flags & (N_FLAG | NN_FLAG)) {
@@ -625,7 +625,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                         cur = var + cx;
                         up = var + ux;
                     }
-                    if (cur != (char *)cp) memcpy((void *)cur, cp, c);
+                    if (cur != (char *)cp) memcpy(cur, cp, c);
                     if (f) sfread(iop, cp, c);
                     cur += c;
                     if (!binary && mbwide()) {
@@ -684,7 +684,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
     }
     if (timeslot) timerdel(timeslot);
     if ((flags & S_FLAG) && !shp->gd->hist_ptr) {
-        sh_histinit((void *)shp);
+        sh_histinit(shp);
         if (!shp->gd->hist_ptr) flags &= ~S_FLAG;
     }
     if (cp) {

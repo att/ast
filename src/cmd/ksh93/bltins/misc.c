@@ -341,7 +341,7 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
     }
     if (shp->st.self != &savst) *shp->st.self = shp->st;
     // Only restore the top Shscope_t portion for posix functions.
-    memcpy((void *)&shp->st, (void *)prevscope, sizeof(Shscope_t));
+    memcpy(&shp->st, prevscope, sizeof(Shscope_t));
     shp->topscope = (Shscope_t *)prevscope;
     nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
     if (jmpval && jmpval != SH_JMPFUN) siglongjmp(*shp->jmplist, jmpval);

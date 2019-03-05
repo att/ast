@@ -115,7 +115,7 @@ struct shared {
     char **sigmsg;
     char *rcfile;
     char **login_files;
-    void *ed_context;
+    Edit_t *ed_context;
     void *init_context;
     void *job_context;
     int *stats;

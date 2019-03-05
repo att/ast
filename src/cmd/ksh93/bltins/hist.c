@@ -65,7 +65,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     int pflag = 0;
     Histloc_t location;
 
-    if (!sh_histinit((void *)shp)) {
+    if (!sh_histinit(shp)) {
         errormsg(SH_DICT, ERROR_system(1), e_histopen);
         __builtin_unreachable();
     }

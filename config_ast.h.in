@@ -218,6 +218,7 @@ typedef struct Shbltin_s Shbltin_t;  // from shcmd.h
 typedef struct _shlex_ Lex_t;        // from shlex.h
 typedef struct _mac_ Mac_t;          // from macro.c
 typedef struct pathcomp Pathcomp_t;  // from path.h
+typedef struct edit Edit_t;          // from edit.h
 typedef union Shnode_u Shnode_t;     // from shnodes.h
 typedef int (*Shbltin_f)(int, char **, Shbltin_t *);
 

@@ -139,7 +139,7 @@ static_fn Namfun_t *clone_enum(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     UNUSED(flags);
     struct Enum *ep, *pp = (struct Enum *)fp;
     ep = calloc(1, sizeof(struct Enum) + pp->nelem * sizeof(char *));
-    memcpy((void *)ep, (void *)pp, sizeof(struct Enum) + pp->nelem * sizeof(char *));
+    memcpy(ep, pp, sizeof(struct Enum) + pp->nelem * sizeof(char *));
     return &ep->namfun;
 }
 

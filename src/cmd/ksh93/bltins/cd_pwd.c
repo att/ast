@@ -169,7 +169,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
             if (dp) {
                 cdpath = path_addpath(shp, NULL, dp, PATH_CDPATH);
                 if (cdpath) {
-                    shp->cdpathlist = (void *)cdpath;
+                    shp->cdpathlist = cdpath;
                     cdpath->shp = shp;
                 }
             }

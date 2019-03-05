@@ -26,6 +26,7 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -173,7 +174,6 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
     const char *cp;
     int aflag, r = 0;
     const char *msg;
-    int tofree;
     Dt_t *root;
     Namval_t *nq;
     char *notused;
@@ -182,7 +182,9 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
 
     if (flags & Q_FLAG) flags &= ~A_FLAG;
     while ((name = *argv++)) {
-        tofree = 0;
+        bool tofree = false;
+        char *sp = NULL;
+
         aflag = ((flags & A_FLAG) != 0);
         cp = 0;
         np = 0;
@@ -272,8 +274,9 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                 if (*cp == 0) {
                     cp = 0;
                 } else if (*cp != '/') {
-                    cp = path_fullname(shp, cp);
-                    tofree = 1;
+                    tofree = true;
+                    sp = path_fullname(shp, cp);
+                    cp = sp;
                 }
             }
             if (flags & Q_FLAG) {
@@ -315,8 +318,8 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                     pp = 0;
                 }
                 if (tofree) {
-                    free((void *)cp);
-                    tofree = 0;
+                    free(sp);
+                    tofree = false;
                 }
             } else if (aflag <= 1) {
                 r |= 1;

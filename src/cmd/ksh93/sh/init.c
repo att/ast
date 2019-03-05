@@ -1245,7 +1245,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
         if (shgd->lim.arg_max <= 0) shgd->lim.arg_max = ARG_MAX;
         if (shgd->lim.child_max <= 0) shgd->lim.child_max = CHILD_MAX;
         if (shgd->lim.clk_tck <= 0) shgd->lim.clk_tck = CLK_TCK;
-        shgd->ed_context = (void *)ed_open(shp);
+        shgd->ed_context = ed_open(shp);
         error_info.exit = no_shell_context_sh_exit;
         error_info.id = path_basename(argv[0]);
     } else {

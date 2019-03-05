@@ -1247,11 +1247,11 @@ void ed_histlist(Edit_t *ep, int n) {
     ed_flush(ep);
 }
 
-void *ed_open(Shell_t *shp) {
+Edit_t *ed_open(Shell_t *shp) {
     Edit_t *ed = calloc(1, sizeof(Edit_t));
     ed->sh = shp;
     strcpy(ed->e_macro, "_??");
-    return (void *)ed;
+    return ed;
 }
 
 #undef tcgetattr

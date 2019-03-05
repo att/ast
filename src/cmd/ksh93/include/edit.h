@@ -54,7 +54,7 @@ typedef struct Histmatch {
     char data[1];
 } Histmatch_t;
 
-typedef struct edit {
+struct edit {
     struct termios e_ttyparm;   // initial tty parameters
     struct termios e_nttyparm;  // raw tty parameters
     int e_raw;                  // set when in raw mode or alt mode
@@ -134,7 +134,7 @@ typedef struct edit {
     char hpat[40];
     char *hstak;
     Dt_t *compdict;
-} Edit_t;
+};
 
 struct Complete {
     Dtlink_t link;
@@ -219,7 +219,7 @@ extern char **ed_pcomplete(struct Complete *, const char *, const char *, int);
 extern int ed_macro(Edit_t *, int);
 extern int ed_expand(Edit_t *, char[], int *, int *, int, int);
 extern int ed_fulledit(Edit_t *);
-extern void *ed_open(Shell_t *);
+extern Edit_t *ed_open(Shell_t *);
 extern int ed_internal(const char *, genchar *);
 extern int ed_external(const genchar *, char *);
 extern void ed_gencpy(genchar *, const genchar *);

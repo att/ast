@@ -41,7 +41,7 @@ struct Shbltin_s {
     unsigned char nosfio;
     Namval_t *bnode;
     Namval_t *vnode;
-    char *data;
+    void *data;
     int flags;
     int invariant;
     int pwdfd;

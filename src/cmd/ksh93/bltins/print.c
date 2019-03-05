@@ -220,7 +220,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
             }
             case 's': {
                 // Print to history file.
-                if (!sh_histinit((void *)shp)) {
+                if (!sh_histinit(shp)) {
                     errormsg(SH_DICT, ERROR_system(1), e_history);
                     __builtin_unreachable();
                 }
@@ -567,7 +567,7 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
                 number.i = (int)d;
             }
         }
-        return sfwrite(iop, (void *)&number, size);
+        return sfwrite(iop, &number, size);
     }
     if (nv_isattr(np, NV_BINARY))
 #if 1
@@ -1054,7 +1054,7 @@ static_fn int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
     }
     if (c == 0) return -1;
     c = --cp - string;
-    if (c > 0) sfwrite(shp->stk, (void *)string, c);
+    if (c > 0) sfwrite(shp->stk, string, c);
     for (; (c = *cp); cp++) {
         if (mbwide() && ((chlen = mblen(cp, MB_CUR_MAX)) > 1)) {
             sfwrite(shp->stk, cp, chlen);
