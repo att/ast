@@ -172,7 +172,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
         while (1) {
             Namarr_t *ap;
             Namval_t *nq;
-            cp = nv_endsubscript(np, cp, 0, (void *)shp);
+            cp = nv_endsubscript(np, cp, 0, shp);
             if (c || *cp == '.') {
                 c = '.';
                 while (*cp == '.') {
@@ -308,7 +308,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
             Namval_t *np = (Namval_t *)(lvalue->value);
             np = scope(np, lvalue, 1);
             nv_putval(np, (char *)&n, NV_LDOUBLE);
-            if (lvalue->eflag) lvalue->ptr = (void *)nv_hasdisc(np, &ENUM_disc);
+            if (lvalue->eflag) lvalue->ptr = nv_hasdisc(np, &ENUM_disc);
             lvalue->eflag = 0;
             r = nv_getnum(np);
             lvalue->value = (char *)np;
@@ -380,7 +380,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                     cp = str;
                     while (c == '[' || c == '.') {
                         if (c == '[') {
-                            str = nv_endsubscript(np, str, 0, (void *)shp);
+                            str = nv_endsubscript(np, str, 0, shp);
                             c = *str;
                             if (c != '[' && c != '.') {
                                 str = cp;
@@ -486,7 +486,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
             }
             lvalue->ovalue = (char *)np;
             if (lvalue->eflag) {
-                lvalue->ptr = (void *)nv_hasdisc(np, &ENUM_disc);
+                lvalue->ptr = nv_hasdisc(np, &ENUM_disc);
             } else if ((Namfun_t *)lvalue->ptr && !nv_hasdisc(np, &ENUM_disc) &&
                        !nv_isattr(np, NV_INTEGER)) {
                 // TODO: The calloc() below should be considered a bandaid and may not be correct.
@@ -562,7 +562,7 @@ void *sh_arithcomp(Shell_t *shp, char *str) {
 
     ep = arith_compile(shp, str, (char **)&ptr, arith, ARITH_COMP | 1);
     if (*ptr) errormsg(SH_DICT, ERROR_exit(1), e_lexbadchar, *ptr, str);
-    return (void *)ep;
+    return ep;
 }
 
 // Convert number defined by string to a Sfdouble_t.

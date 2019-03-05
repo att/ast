@@ -289,11 +289,10 @@ static_fn void r_comarg(Shell_t *shp, struct comnod *com) {
     com->comnamq = 0;
     if (cmdname) {
         char *cp;
-        com->comnamp = (void *)nv_search(cmdname, shp->fun_tree, 0);
+        com->comnamp = nv_search(cmdname, shp->fun_tree, 0);
         if (com->comnamp && (cp = strrchr(cmdname + 1, '.'))) {
             *cp = 0;
-            com->comnamp =
-                (void *)nv_open(cmdname, shp->var_tree, NV_VARNAME | NV_NOADD | NV_NOARRAY);
+            com->comnamp = nv_open(cmdname, shp->var_tree, NV_VARNAME | NV_NOADD | NV_NOARRAY);
             *cp = '.';
         }
     } else {

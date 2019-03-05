@@ -1219,7 +1219,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                 ap->namarr.namfun.dsize = sizeof(struct assoc_array);
                 ap->namarr.namfun.nofree &= ~1;
             }
-            return (void *)ap;
+            return ap;
         }
         case ASSOC_OP_DELETE_val: {
             if (ap->cur) {
@@ -1231,7 +1231,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                 nv_delete(ap->cur, ap->namarr.table, 0);
                 ap->cur = 0;
             }
-            return (void *)ap;
+            return ap;
         }
         case ASSOC_OP_FREE_val: {
             ap->pos = 0;
@@ -1246,7 +1246,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                 dtclose(ap->namarr.table);
                 ap->namarr.table = 0;
             }
-            return (void *)ap;
+            return ap;
         }
         case ASSOC_OP_NEXT_val: {
             if (!ap->pos) {
@@ -1265,7 +1265,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                     if ((ap->namarr.flags & ARRAY_NOCHILD) && nv_isattr(ap->cur, NV_CHILD)) {
                         continue;
                     }
-                    return (void *)ap;
+                    return ap;
                 }
             }
             if ((ap->namarr.flags & ARRAY_NOSCOPE) && ap->namarr.scope &&
@@ -1277,16 +1277,16 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
         }
         case ASSOC_OP_SETSUB_val: {
             ap->cur = (Namval_t *)sp;
-            return (void *)ap->cur;
+            return ap->cur;
         }
         case ASSOC_OP_CURRENT_val: {
             if (ap->cur) ap->cur->nvenv = np;
-            return (void *)ap->cur;
+            return ap->cur;
         }
         case ASSOC_OP_NAME_val: {
             if (ap->cur) {
                 if (!shp->instance && nv_isnull(ap->cur)) return NULL;
-                return (void *)ap->cur->nvname;
+                return ap->cur->nvname;
             }
             return NULL;
         }

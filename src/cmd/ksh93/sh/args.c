@@ -950,7 +950,7 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
     shp->subshell = 0;
 #if has_dev_fd
 #if USE_SPAWN
-    if (shp->vex || (shp->vex = (void *)spawnvex_open(0))) {
+    if (shp->vex || (shp->vex = spawnvex_open(0))) {
         spawnvex_add(shp->vex, pv[fd], pv[fd], 0, 0);
     } else
 #endif  // USE_SPAWN
