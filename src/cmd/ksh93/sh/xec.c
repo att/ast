@@ -905,8 +905,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 argp = t->com.comarg;
                 if (argp && *com && !(argp->argflag & ARG_RAW)) sh_sigcheck(shp);
             }
-            np = (Namval_t *)(t->com.comnamp);
-            nq = (Namval_t *)(t->com.comnamq);
+            np = t->com.comnamp;
+            nq = t->com.comnamq;
             if (np && shp->namespace && nq != shp->namespace &&
                 nv_isattr(np, NV_BLTIN | NV_INTEGER | BLT_SPC) != (NV_BLTIN | BLT_SPC)) {
                 Namval_t *mp;
@@ -2261,7 +2261,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 if (rp->sdict) {
                     Namval_t *nq;
                     shp->last_root = rp->sdict;
-                    for (mp = (Namval_t *)dtfirst(rp->sdict); mp; mp = nq) {
+                    for (mp = dtfirst(rp->sdict); mp; mp = nq) {
                         _nv_unset(mp, NV_RDONLY);
                         nq = dtnext(rp->sdict, mp);
                         nv_delete(mp, rp->sdict, 0);
@@ -2682,12 +2682,12 @@ Sfdouble_t sh_mathfun(Shell_t *shp, void *fp, int nargs, Sfdouble_t *arg) {
     // sh_funscope() call below. But this stops lint tools from complaining that we're returning
     // garbage from an uninitialized var.
     Sfdouble_t d = 0.0;
-    Namval_t node, *mp, *np, *nref[9], **nr = nref;
+    Namval_t node, *mp, *nref[9], **nr = nref;
     char *argv[2];
     struct funenv funenv;
     int i;
 
-    np = (Namval_t *)fp;
+    Namval_t *np = fp;
     funenv.node = np;
     funenv.nref = nref;
     funenv.env = NULL;
