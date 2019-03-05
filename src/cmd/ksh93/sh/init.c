@@ -288,20 +288,20 @@ static_fn void put_restricted(Namval_t *np, const void *val, int flags, Namfun_t
     const char *cp = FETCH_VT(np->nvalue, const_cp);
     if (val && !(flags & NV_RDONLY) && cp && strcmp(val, cp) == 0) return;
     if (np == FPATHNOD || (fpath_scoped = (strcmp(name, FPATHNOD->nvname) == 0))) {
-        shp->pathlist = (void *)path_unsetfpath(shp);
+        shp->pathlist = path_unsetfpath(shp);
     }
     nv_putv(np, val, flags, fp);
     shp->universe = 0;
     if (shp->pathlist) {
         val = FETCH_VT(np->nvalue, const_cp);
         if (np == PATHNOD || path_scoped) {
-            pp = (void *)path_addpath(shp, (Pathcomp_t *)shp->pathlist, val, PATH_PATH);
+            pp = path_addpath(shp, shp->pathlist, val, PATH_PATH);
         } else if (val && (np == FPATHNOD || fpath_scoped)) {
-            pp = (void *)path_addpath(shp, (Pathcomp_t *)shp->pathlist, val, PATH_FPATH);
+            pp = path_addpath(shp, shp->pathlist, val, PATH_FPATH);
         } else {
             return;
         }
-        shp->pathlist = (void *)pp;
+        shp->pathlist = pp;
         if (pp) pp->shp = shp;
         if (!val && (flags & NV_NOSCOPE)) {
             Namval_t *mp = dtsearch(shp->var_tree, np);
@@ -309,7 +309,7 @@ static_fn void put_restricted(Namval_t *np, const void *val, int flags, Namfun_t
         }
 #if 0
 sfprintf(sfstderr,"%d: name=%s val=%s\n",getpid(),name,val);
-path_dump((Pathcomp_t*)shp->pathlist);
+path_dump(shp->pathlist);
 #endif
     }
 }
@@ -321,8 +321,8 @@ static_fn void put_cdpath(Namval_t *np, const void *val, int flags, Namfun_t *fp
     nv_putv(np, val, flags, fp);
     if (!shp->cdpathlist) return;
     val = FETCH_VT(np->nvalue, const_cp);
-    pp = (void *)path_addpath(shp, (Pathcomp_t *)shp->cdpathlist, val, PATH_CDPATH);
-    shp->cdpathlist = (void *)pp;
+    pp = path_addpath(shp, shp->cdpathlist, val, PATH_CDPATH);
+    shp->cdpathlist = pp;
     if (pp) pp->shp = shp;
 }
 

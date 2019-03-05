@@ -163,7 +163,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     if (dirfd == shp->pwdfd && *dir != '/')
 #endif  // __CYGWIN__
     {
-        cdpath = (Pathcomp_t *)shp->cdpathlist;
+        cdpath = shp->cdpathlist;
         if (!cdpath) {
             dp = FETCH_VT(sh_scoped(shp, CDPNOD)->nvalue, const_cp);
             if (dp) {

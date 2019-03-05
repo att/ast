@@ -43,7 +43,7 @@
 //
 // Path component structure for path searching.
 //
-typedef struct pathcomp {
+struct pathcomp {
     struct pathcomp *next;
     int refcount;
     dev_t dev;
@@ -56,7 +56,7 @@ typedef struct pathcomp {
     unsigned short len;
     unsigned short flags;
     Shell_t *shp;
-} Pathcomp_t;
+};
 
 #ifndef ARG_RAW
 struct argnod;

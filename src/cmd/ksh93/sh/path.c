@@ -354,7 +354,7 @@ static_fn void path_checkdup(Shell_t *shp, Pathcomp_t *pp) {
     pp->ino = statb.st_ino;
     pp->dev = statb.st_dev;
     if (*name == '/' && onstdpath(shp, name)) flag = PATH_STD_DIR;
-    first = (pp->flags & PATH_CDPATH) ? (Pathcomp_t *)shp->cdpathlist : path_get(shp, "");
+    first = (pp->flags & PATH_CDPATH) ? shp->cdpathlist : path_get(shp, "");
     for (oldpp = first; oldpp && oldpp != pp; oldpp = oldpp->next) {
         if (pp->ino == oldpp->ino && pp->dev == oldpp->dev && pp->mtime == oldpp->mtime) {
             flag |= PATH_SKIP;
@@ -423,30 +423,30 @@ static_fn Pathcomp_t *defpath_init(Shell_t *shp) {
 static_fn void path_init(Shell_t *shp) {
     const char *val = FETCH_VT(sh_scoped(shp, PATHNOD)->nvalue, const_cp);
     if (val) {
-        shp->pathlist = path_addpath(shp, (Pathcomp_t *)shp->pathlist, val, PATH_PATH);
+        shp->pathlist = path_addpath(shp, shp->pathlist, val, PATH_PATH);
     } else {
         Pathcomp_t *pp = shp->defpathlist;
         if (!pp) pp = defpath_init(shp);
         shp->pathlist = path_dup(pp);
     }
     val = FETCH_VT(sh_scoped(shp, FPATHNOD)->nvalue, const_cp);
-    if (val) (void)path_addpath(shp, (Pathcomp_t *)shp->pathlist, val, PATH_FPATH);
+    if (val) (void)path_addpath(shp, shp->pathlist, val, PATH_FPATH);
 }
 
 //
 // Returns that pathlist to search.
 //
 Pathcomp_t *path_get(Shell_t *shp, const char *name) {
-    Pathcomp_t *pp = 0;
+    Pathcomp_t *pp = NULL;
 
     if (*name && strchr(name, '/')) return 0;
     if (!sh_isstate(shp, SH_DEFPATH)) {
         if (!shp->pathlist) path_init(shp);
-        pp = (Pathcomp_t *)shp->pathlist;
+        pp = shp->pathlist;
     }
     if ((!pp && !(FETCH_VT(sh_scoped(shp, PATHNOD)->nvalue, const_cp))) ||
         sh_isstate(shp, SH_DEFPATH)) {
-        pp = (Pathcomp_t *)shp->defpathlist;
+        pp = shp->defpathlist;
         if (!pp) pp = defpath_init(shp);
     }
     return pp;
@@ -1445,13 +1445,13 @@ Pathcomp_t *path_addpath(Shell_t *shp, Pathcomp_t *first, const char *path, int 
     }
     if (old) {
         if (!first && !path) {
-            Pathcomp_t *pp = (Pathcomp_t *)shp->defpathlist;
+            Pathcomp_t *pp = shp->defpathlist;
             if (!pp) pp = defpath_init(shp);
             first = path_dup(pp);
         }
         cp = FETCH_VT(sh_scoped(shp, FPATHNOD)->nvalue, const_cp);
         if (cp) {
-            first = (void *)path_addpath(shp, (Pathcomp_t *)first, cp, PATH_FPATH);
+            first = path_addpath(shp, first, cp, PATH_FPATH);
         }
         path_delete(old);
     }
@@ -1524,7 +1524,7 @@ void path_newdir(Shell_t *shp, Pathcomp_t *first) {
 }
 
 Pathcomp_t *path_unsetfpath(Shell_t *shp) {
-    Pathcomp_t *first = (Pathcomp_t *)shp->pathlist;
+    Pathcomp_t *first = shp->pathlist;
     Pathcomp_t *pp = first, *old = 0;
 
     if (shp->fpathdict) {

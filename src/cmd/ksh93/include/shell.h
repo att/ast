@@ -212,9 +212,9 @@ struct Shell_s {
     Lex_t *lex_context;
     struct Shell_arg *arg_context;
     void *job_context;
-    void *pathlist;
-    void *defpathlist;
-    void *cdpathlist;
+    Pathcomp_t *pathlist;
+    Pathcomp_t *defpathlist;
+    Pathcomp_t *cdpathlist;
     char **argaddr;
     void *optlist;
     siginfo_ll_t **siginfo;

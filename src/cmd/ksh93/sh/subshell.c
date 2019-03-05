@@ -510,7 +510,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     sp->subshare = shp->subshare;
     sp->comsub = shp->comsub;
     shp->subshare = comsub == 2 || (comsub && sh_isoption(shp, SH_SUBSHARE));
-    if (!shp->subshare) sp->pathlist = path_dup((Pathcomp_t *)shp->pathlist);
+    if (!shp->subshare) sp->pathlist = path_dup(shp->pathlist);
     if (comsub) {
         shp->comsub = comsub;
     }
@@ -666,8 +666,8 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         shp->fdstatus[1] = sp->fdstatus;
     }
     if (!shp->subshare) {
-        path_delete((Pathcomp_t *)shp->pathlist);
-        shp->pathlist = (void *)sp->pathlist;
+        path_delete(shp->pathlist);
+        shp->pathlist = sp->pathlist;
     }
     job_subrestore(shp, sp->jobs);
     shp->jobenv = savecurenv;
