@@ -51,7 +51,7 @@ typedef struct {
     char *histname;     // name of history file
     int32_t histind;    // current command number index
     int histsize;       // number of accessible history lines
-    void *histshell;
+    Shell_t *histshell;
     off_t histcnt;                  // offset into history file
     off_t histmarker;               // offset of last command marker
     int histflush;                  // set if flushed outside of hflush()

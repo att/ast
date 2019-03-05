@@ -120,12 +120,6 @@ typedef struct siginfo_ll siginfo_ll_t;
 
 #define sh_popcontext(shp, bp) (shp->jmplist = (bp)->prev, errorpop(&((bp)->err)))
 
-// Bit of a chicken and egg problem here. If we've already included shell.h then this typedef
-// already exists and depending on the compiler defining it here may cause a warning or an error.
-#if !defined(_SHELL_H) && !defined(_SHCMD_H)
-typedef struct Shell_s Shell_t;
-#endif
-
 typedef void (*sh_sigfun_t)(int, siginfo_t *, void *);
 extern sh_sigfun_t sh_signal(int, sh_sigfun_t);
 extern void sh_fault(int, siginfo_t *, void *);

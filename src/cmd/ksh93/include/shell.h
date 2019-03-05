@@ -31,13 +31,6 @@
 
 #define SH_VERSION 20120720
 
-// Bit of a chicken and egg problem here. If we've already included fault.h or shcmd.h then this
-// typedef already exists and depending on the compiler defining it here may cause a warning or an
-// error.
-#if !defined(_FAULT_H) && !defined(_SHCMD_H)
-typedef struct Shell_s Shell_t;
-#endif
-
 #include "ast.h"
 #include "cdt.h"
 #include "defs.h"

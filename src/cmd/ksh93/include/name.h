@@ -34,11 +34,6 @@
 #include "cdt.h"
 #include "option.h"
 
-#ifndef _SHCMD_H
-typedef struct Shbltin_s Shbltin_t;
-typedef int (*Shbltin_f)(int, char **, Shbltin_t *);
-#endif
-
 struct pathcomp;
 
 // Nodes can have all kinds of values. We track the type last stored and check the type is what we
@@ -198,9 +193,6 @@ struct Value {
 #define IS_VT(value_obj, which) is_vt(value_obj, which)
 #define IS_VTP(value_objp, which) is_vtp(value_objp, which)
 
-#ifndef _SHCMD_H
-typedef struct Namval Namval_t;
-#endif
 typedef struct Namfun Namfun_t;
 typedef struct Namdisc Namdisc_t;
 typedef struct Nambfun Nambfun_t;
@@ -297,7 +289,7 @@ struct Namval {
 #endif
     Namfun_t *nvfun;      // pointer to trap functions
     struct Value nvalue;  // value field
-    void *nvshell;        // shell pointer
+    Shell_t *nvshell;     // shell pointer
     Namval_t *nvenv;      // pointer to environment name
     bool nvenv_is_cp;
 };

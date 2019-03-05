@@ -350,7 +350,7 @@ static_fn int fixnode(Namtype_t *np1, Namtype_t *np2, int i, struct Namref *nrp,
 
 static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     Namtype_t *dp, *pp = (Namtype_t *)fp;
-    Shell_t *shp = (Shell_t *)np->nvshell;
+    Shell_t *shp = np->nvshell;
     int i;
     Namval_t *nq, *nr;
     size_t size = fp->dsize;
@@ -1366,7 +1366,7 @@ static stat_fields_t stat_fields[] = {FIELD(dev, dev),    FIELD(ino, ino),    FI
                                       FIELD(ctime, time), {NULL, NULL, 0}};
 
 Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *context) {
-    Shell_t *shp = (Shell_t *)context;
+    Shell_t *shp = context;
     Namval_t *mp, *nq, *nr, *tp;
     stat_fields_t *fp;
     Namtype_t *dp, *pp;

@@ -149,7 +149,7 @@ static_fn Namfun_t *nextdisc(Namval_t *np) {
 }
 
 void *nv_diropen(Namval_t *np, const char *name, void *context) {
-    Shell_t *shp = (Shell_t *)context;
+    Shell_t *shp = context;
     const char *last;
     char *next;
     size_t c, len = strlen(name);
@@ -567,7 +567,7 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
     int saveI = Indent, dot = -1;
     bool json = (special & NV_JSON);
     bool json_last = (special & NV_JSON_LAST);
-    Shell_t *shp = (Shell_t *)np->nvshell;
+    Shell_t *shp = np->nvshell;
 
     special &= ~(NV_JSON | NV_JSON_LAST);
     Indent = indent;

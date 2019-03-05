@@ -577,7 +577,7 @@ done:
 }
 
 static_fn int onintr(struct addrinfo *addr, void *handle) {
-    Shell_t *sh = (Shell_t *)handle;
+    Shell_t *sh = handle;
 
     if (sh->trapnote & SH_SIGSET) {
         Shell_t *shp = sh_getinterp();
@@ -977,7 +977,7 @@ void sh_vexrestore(Shell_t *shp, int n) {
 // Set up standard stream in the child.
 //
 static_fn int iovex_child(void *context, uint64_t fd1, uint64_t fd2) {
-    Shell_t *shp = (Shell_t *)context;
+    Shell_t *shp = context;
     Sfio_t *sp = shp->sftable[fd2];
 #if 1
     char buff[256];
@@ -1020,7 +1020,7 @@ static_fn void iovex_stdstream(Shell_t *shp, int fn) {
 //
 static_fn int iovex_stream(void *context, uint64_t origfd, uint64_t fd2) {
     UNUSED(fd2);
-    Shell_t *shp = (Shell_t *)context;
+    Shell_t *shp = context;
     Sfio_t *sp, *sporig = shp->sftable[origfd];
 
     if (sporig) {
@@ -1057,7 +1057,7 @@ static_fn int iovex_stream(void *context, uint64_t origfd, uint64_t fd2) {
 }
 
 static_fn int iovex_trunc(void *context, uint64_t origfd, uint64_t fd2) {
-    Shell_t *shp = (Shell_t *)context;
+    Shell_t *shp = context;
     int r = 0;
     errno = 0;
 
@@ -2026,7 +2026,7 @@ static_fn int slowexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
 // Called when slowread times out.
 //
 static_fn void time_grace(void *handle) {
-    Shell_t *shp = (Shell_t *)handle;
+    Shell_t *shp = handle;
     timeout = NULL;
 
     if (sh_isstate(shp, SH_GRACE)) {

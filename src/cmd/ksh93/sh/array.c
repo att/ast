@@ -1070,7 +1070,7 @@ Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
 char *nv_endsubscript(Namval_t *np, char *cp, int mode, void *context) {
     int count = 1, quoted = 0, c;
     char *sp = cp + 1;
-    Shell_t *shp = (Shell_t *)context;
+    Shell_t *shp = context;
 
     // First find matching ']'.
     while (count > 0 && (c = *++cp)) {

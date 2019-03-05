@@ -810,7 +810,7 @@ int nv_clone(Namval_t *np, Namval_t *mp, int flags) {
     mp->nvfun = fp;
     fp = np->nvfun;
     if (fp) {
-        Shell_t *shp = (Shell_t *)np->nvshell;
+        Shell_t *shp = np->nvshell;
         Namval_t *last_table = shp->last_table;
         if (nv_isattr(mp, NV_EXPORT | NV_MINIMAL) == (NV_EXPORT | NV_MINIMAL)) {
             mp->nvenv = NULL;

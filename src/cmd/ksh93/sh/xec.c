@@ -121,7 +121,7 @@ static_fn int io_usevex(struct ionod *iop) {
 
 #if !has_dev_fd
 static_fn void fifo_check(void *handle) {
-    Shell_t *shp = (Shell_t *)handle;
+    Shell_t *shp = handle;
     pid_t pid = getppid();
     if (pid == 1) {
         unlink(shp->fifo);

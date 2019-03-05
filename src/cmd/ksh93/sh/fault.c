@@ -520,7 +520,7 @@ static_fn void array_notify(Namval_t *np, void *data) {
 // This is the exit routine for the shell.
 //
 __attribute__((noreturn)) void sh_done(void *ptr, int sig) {
-    Shell_t *shp = (Shell_t *)ptr;
+    Shell_t *shp = ptr;
     char *t;
     int savxit = shp->exitval;
 

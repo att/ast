@@ -109,7 +109,7 @@ static void hist_touch(void *handle) { tvtouch(handle, NULL, NULL, NULL, 0); }
 // hist_open() returns 1, if history file is opened.
 //
 int sh_histinit(void *sh_context) {
-    Shell_t *shp = (Shell_t *)sh_context;
+    Shell_t *shp = sh_context;
     int fd;
     History_t *hp;
     char *histname;
@@ -190,7 +190,7 @@ retry:
     }
 
     shgd->hist_ptr = hist_ptr = hp;
-    hp->histshell = (void *)shp;
+    hp->histshell = shp;
     hp->histsize = maxlines;
     hp->histmask = histmask;
     hp->histfp = sfnew(NULL, NULL, HIST_BSIZE, fd, SF_READ | SF_WRITE | SF_APPENDWR | SF_SHARE);
@@ -587,7 +587,7 @@ void hist_flush(History_t *hp) {
         if (sfsync(hp->histfp) < 0) {
             Shell_t *shp = hp->histshell;
             hist_close(hp);
-            if (!sh_histinit(shp)) sh_offoption((Shell_t *)shp, SH_HISTORY);
+            if (!sh_histinit(shp)) sh_offoption(shp, SH_HISTORY);
         } else {
             hp->histflush = 0;
         }
@@ -759,7 +759,7 @@ Histloc_t hist_find(History_t *hp, char *string, int index1, int flag, int direc
             return location;
         }
         // Allow a search to be aborted.
-        if (((Shell_t *)hp->histshell)->trapnote & SH_SIGSET) break;
+        if (hp->histshell->trapnote & SH_SIGSET) break;
     }
     return location;
 }

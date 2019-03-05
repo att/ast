@@ -1854,7 +1854,7 @@ static_fn char *staknam(Shell_t *shp, Namval_t *np, char *value) {
 static_fn void attstore(Namval_t *np, void *data) {
     int flag = np->nvflag;
     struct adata *ap = (struct adata *)data;
-    ap->sh = (Shell_t *)data;
+    ap->sh = data;
     ap->tp = 0;
     if (!(flag & NV_EXPORT) || (flag & NV_FUNCT)) return;
     if ((flag & (NV_UTOL | NV_LTOU | NV_INTEGER)) == (NV_UTOL | NV_LTOU)) {
@@ -3165,7 +3165,7 @@ char *nv_name(const Namval_t *np) {
 }
 
 Namval_t *nv_lastdict(void *context) {
-    Shell_t *shp = (Shell_t *)context;
+    Shell_t *shp = context;
     return shp->last_table;
 }
 

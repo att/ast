@@ -41,9 +41,6 @@
 #define sh_envput(e, p) env_change()
 #define env_delete(e, p) env_change()
 
-union Shnode_u;
-typedef union Shnode_u Shnode_t;
-
 // Shell options.
 typedef uint_fast64_t Shopt_t_data_t;
 typedef struct {

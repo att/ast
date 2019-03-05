@@ -966,7 +966,7 @@ static_fn int vexexec(void *ptr, uint64_t fd1, uint64_t fd2) {
     char *devfd;
     int fd = -1;
     Spawnvex_noexec_t *ep = (Spawnvex_noexec_t *)ptr;
-    Shell_t *shp = (Shell_t *)ep->handle;
+    Shell_t *shp = ep->handle;
     char **argv = (char **)ep->argv;
 
     if (fd2 != ENOEXEC) return (int)fd2;
@@ -975,7 +975,7 @@ static_fn int vexexec(void *ptr, uint64_t fd1, uint64_t fd2) {
     if (ep->msgfd >= 0) close(ep->msgfd);
     spawnvex_apply(ep->vex, 0, SPAWN_RESET);
     if (!shp->subshell) {
-        exscript((Shell_t *)ep->handle, (char *)ep->path, argv, ep->envv);
+        exscript(ep->handle, (char *)ep->path, argv, ep->envv);
         return ENOEXEC;
     }
 

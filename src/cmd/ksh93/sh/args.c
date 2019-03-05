@@ -228,7 +228,7 @@ static_fn int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
 // The -o option is used to set option by name.
 // This routine returns the number of non-option arguments.
 int sh_argopts(int argc, char *argv[], void *context) {
-    Shell_t *shp = (Shell_t *)context;
+    Shell_t *shp = context;
     int n, o;
     Arg_t *ap = shp->arg_context;
     Lex_t *lp = (Lex_t *)(shp->lex_context);
@@ -656,7 +656,7 @@ void sh_applyopts(Shell_t *shp, Shopt_t newflags) {
 
 // Returns the value of $-.
 char *sh_argdolminus(void *context) {
-    Shell_t *shp = (Shell_t *)context;
+    Shell_t *shp = context;
     Arg_t *ap = shp->arg_context;
     const char *cp = optksh;
     char *flagp = ap->flagadr;
