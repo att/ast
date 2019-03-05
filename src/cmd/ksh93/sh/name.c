@@ -1990,11 +1990,11 @@ int nv_scan(Dt_t *root, void (*fn)(Namval_t *, void *), void *data, int mask, in
     sdata.scancount = 0;
     sdata.scandata = data;
     hashfn = scanfilter;
-    if (flags & NV_NOSCOPE) base = dtview((Dt_t *)root, 0);
+    if (flags & NV_NOSCOPE) base = dtview(root, 0);
     for (np = (Namval_t *)dtfirst(root); np; np = (Namval_t *)dtnext(root, np)) {
         hashfn(root, np, &sdata);
     }
-    if (base) dtview((Dt_t *)root, base);
+    if (base) dtview(root, base);
     return sdata.scancount;
 }
 
@@ -2009,7 +2009,7 @@ void sh_scope(Shell_t *shp, struct argnod *envlist, int fun) {
     newscope = dtopen(&_Nvdisc, Dtoset);
     dtuserdata(newscope, shp, 1);
     if (envlist) {
-        dtview(newscope, (Dt_t *)shp->var_tree);
+        dtview(newscope, shp->var_tree);
         shp->var_tree = newscope;
         sh_setlist(shp, envlist, NV_EXPORT | NV_NOSCOPE | NV_IDENT | NV_ASSIGN, 0);
         if (!fun) return;
@@ -2019,7 +2019,7 @@ void sh_scope(Shell_t *shp, struct argnod *envlist, int fun) {
         dtview(rp->sdict, newroot);
         newroot = rp->sdict;
     }
-    dtview(newscope, (Dt_t *)newroot);
+    dtview(newscope, newroot);
     shp->var_tree = newscope;
 }
 
@@ -2751,10 +2751,11 @@ bool nv_rename(Namval_t *np, int flags) {
     Namarr_t *ap;
 
     if (nv_isattr(np, NV_PARAM) && shp->st.prevst) {
-        if (!(hp = (Dt_t *)shp->st.prevst->save_tree)) hp = dtvnext(shp->var_tree);
+        hp = shp->st.prevst->save_tree;
+        if (!hp) hp = dtvnext(shp->var_tree);
     }
     if (!nv_isattr(np, NV_MINIMAL)) nvenv = np->nvenv;
-    mp = nv_isarray(np) ? nv_opensub(np) : 0;
+    mp = nv_isarray(np) ? nv_opensub(np) : NULL;
     if (flags & NV_MOVE) {
         cp = (char *)FETCH_VT((mp ? mp : np)->nvalue, const_cp);
         if (!cp) {

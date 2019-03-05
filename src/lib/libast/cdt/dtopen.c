@@ -76,7 +76,7 @@ Dt_t *dtopen(Dtdisc_t *disc, Dtmethod_t *meth) {
     /* now allocate/initialize the actual dictionary structure */
     if (pdt.data->type & DT_INDATA) {
         dt = &pdt.data->dict;
-    } else if (!(dt = (Dt_t *)malloc(sizeof(Dt_t)))) {
+    } else if (!(dt = malloc(sizeof(Dt_t)))) {
         (void)(*meth->eventf)(&pdt, DT_CLOSE, NULL);
         DTERROR(&pdt, "Error in allocating a new dictionary");
         return NULL;

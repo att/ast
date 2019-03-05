@@ -266,7 +266,7 @@ struct Namarray {
     long nelem;                                            // number of elements
     void *(*fun)(Namval_t *, const char *, Nvassoc_op_t);  // associative array ops
     Dt_t *table;                                           // for subscripts
-    void *scope;                                           // non-NULL when scoped
+    Dt_t *scope;                                           // non-NULL when scoped
     int flags;
 };
 

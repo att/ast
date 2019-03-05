@@ -813,9 +813,9 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             // Set or unset references.
             if (ref) {
                 if (tp->aflag == '-') {
-                    Dt_t *hp = 0;
+                    Dt_t *hp = NULL;
                     if (nv_isattr(np, NV_PARAM) && shp->st.prevst) {
-                        hp = (Dt_t *)shp->st.prevst->save_tree;
+                        hp = shp->st.prevst->save_tree;
                         if (!hp) hp = dtvnext(shp->var_tree);
                     }
                     if (tp->sh->mktype) {

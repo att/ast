@@ -3168,7 +3168,7 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
     sh_popcontext(shp, buffp);
     sh_unscope(shp);
     shp->namespace = nspace;
-    shp->var_tree = (Dt_t *)prevscope->save_tree;
+    shp->var_tree = prevscope->save_tree;
     sh_argreset(shp, argsav, saveargfor);
     trap = shp->st.trapcom[0];
     shp->st.trapcom[0] = 0;

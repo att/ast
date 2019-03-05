@@ -64,7 +64,7 @@ struct _glob_ {
 
     int gl_delim;
 
-    void *gl_handle;
+    Pathcomp_t *gl_handle;
     DIR *(*gl_diropen)(glob_t *, const char *);
     char *(*gl_dirnext)(glob_t *, DIR *);
     int (*gl_dirclose)(glob_t *, DIR *);

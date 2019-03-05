@@ -93,13 +93,13 @@ static_fn struct index_array *array_scope(Namval_t *np, struct index_array *aq, 
         ar->namarr.namfun.nofree &= ~1;
     }
     if (is_associative(&ar->namarr)) {
-        ar->namarr.scope = (void *)dtopen(&_Nvdisc, Dtoset);
+        ar->namarr.scope = dtopen(&_Nvdisc, Dtoset);
         dtuserdata(ar->namarr.scope, shp, 1);
-        dtview((Dt_t *)ar->namarr.scope, ar->namarr.table);
-        ar->namarr.table = (Dt_t *)ar->namarr.scope;
+        dtview(ar->namarr.scope, ar->namarr.table);
+        ar->namarr.table = ar->namarr.scope;
         return ar;
     }
-    ar->namarr.scope = aq;
+    ar->namarr.scope = (Dt_t *)aq;
     memset(ar->val, 0, ar->maxi * sizeof(char *));
     ar->bits = (unsigned char *)&ar->val[ar->maxi];
     return ar;
@@ -1270,7 +1270,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
             }
             if ((ap->namarr.flags & ARRAY_NOSCOPE) && ap->namarr.scope &&
                 !dtvnext(ap->namarr.table)) {
-                ap->namarr.table->view = (Dt_t *)ap->namarr.scope;
+                ap->namarr.table->view = ap->namarr.scope;
                 ap->namarr.scope = ap->namarr.table;
             }
             return NULL;

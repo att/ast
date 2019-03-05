@@ -58,13 +58,13 @@ static_fn int scantree(Shell_t *, Dt_t *, const char *, struct argnod **);
 
 static_fn char *nextdir(glob_t *gp, char *dir) {
     Shell_t *shp = sh_getinterp();
-    Pathcomp_t *pp = (Pathcomp_t *)gp->gl_handle;
+    Pathcomp_t *pp = gp->gl_handle;
     if (!dir) {
         pp = path_get(shp, "");
     } else {
         pp = pp->next;
     }
-    gp->gl_handle = (void *)pp;
+    gp->gl_handle = pp;
     if (pp) return pp->name;
     return NULL;
 }

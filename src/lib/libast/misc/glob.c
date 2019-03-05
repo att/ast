@@ -503,7 +503,7 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
             gp->gl_suffix = 0;
             gp->gl_intr = 0;
             gp->gl_delim = 0;
-            gp->gl_handle = 0;
+            gp->gl_handle = NULL;
             gp->gl_diropen = 0;
             gp->gl_dirnext = 0;
             gp->gl_dirclose = 0;
