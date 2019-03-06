@@ -253,7 +253,7 @@ void sh_siginit(Shell_t *shp) {
         }
         if (sig >= 0) {
             shp->sigflag[sig] = n;
-            if (*tp->sh_name) shp->gd->sigmsg[sig] = (char *)tp->sh_value;
+            if (*tp->sh_name) shp->gd->sigmsg[sig] = tp->sh_value;
         }
     }
 

@@ -112,7 +112,7 @@ struct shared {
     History_t *hist_ptr;
     char *shpath;
     char *user;
-    char **sigmsg;
+    const char **sigmsg;
     char *rcfile;
     char **login_files;
     Edit_t *ed_context;

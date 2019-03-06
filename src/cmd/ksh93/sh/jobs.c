@@ -150,7 +150,7 @@ struct back_save {
 static_fn int job_chksave(pid_t, long);
 static_fn struct process *job_bypid(pid_t);
 static_fn struct process *job_byjid(int);
-static_fn char *job_sigmsg(Shell_t *, int);
+static_fn const char *job_sigmsg(Shell_t *, int);
 static_fn int job_alloc(Shell_t *);
 static_fn void job_free(int);
 static_fn struct process *job_unpost(Shell_t *, struct process *, int);
@@ -1741,7 +1741,7 @@ static_fn void job_free(int n) {
     job.freejobs[j] &= ~mask;
 }
 
-static_fn char *job_sigmsg(Shell_t *shp, int sig) {
+static_fn const char *job_sigmsg(Shell_t *shp, int sig) {
     UNUSED(shp);
     static char signo[40];
 
