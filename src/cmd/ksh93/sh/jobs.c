@@ -312,7 +312,7 @@ int job_cowalk(int (*fun)(struct process *, int), int arg, char *name) {
     job_reap(SIGCHLD);
     for (n = 0, pw = job.pwlist; pw; pw = pwnext) {
         pwnext = pw->p_nxtjob;
-        if ((cp && val == pw->p_pid) || (pw->p_cojob && pw->p_cojob->local == (void *)csp)) {
+        if ((cp && val == pw->p_pid) || (pw->p_cojob && pw->p_cojob->local == csp)) {
             if (fun) {
                 if (pw->p_flag & P_DONE) continue;
                 r |= (*fun)(pw, arg);

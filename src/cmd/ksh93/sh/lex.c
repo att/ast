@@ -126,7 +126,7 @@ static_fn void lex_advance(Sfio_t *iop, const char *buff, int size, void *contex
     // Write to history file and to stderr if necessary.
     if (!sfstacked(iop)) {
         if (sh_isstate(shp, SH_HISTORY) && shp->gd->hist_ptr) log = shp->gd->hist_ptr->histfp;
-        sfwrite(log, (void *)buff, size);
+        sfwrite(log, buff, size);
         if (sh_isstate(shp, SH_VERBOSE)) sfwrite(sfstderr, buff, size);
     }
     if (lp->lexd.nocopy) return;
@@ -135,7 +135,7 @@ static_fn void lex_advance(Sfio_t *iop, const char *buff, int size, void *contex
         sfwrite(shp->strbuf, lp->lexd.docend, n);
         lp->lexd.docextra += n;
         if (sffileno(iop) >= 0) {
-            lp->lexd.docend = sfsetbuf(iop, (void *)iop, 0);
+            lp->lexd.docend = sfsetbuf(iop, iop, 0);
         } else {
             lp->lexd.docend = fcfirst();
         }

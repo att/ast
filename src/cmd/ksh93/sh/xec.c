@@ -1227,7 +1227,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             }
                         }
                         if (shp->bltinfun && (error_info.flags & ERROR_NOTIFY)) {
-                            (*shp->bltinfun)(-2, com, (void *)bp);
+                            (*shp->bltinfun)(-2, com, bp);
                             sfsync(NULL);
                         }
                         // Failure on special built-ins fatal.

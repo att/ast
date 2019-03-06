@@ -791,7 +791,7 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
             shp->subshell = savesub;
             return;
         }
-        mp->nodes = (char *)calloc(mp->nmatch * (NV_MINSZ + sizeof(void *) + 3), 1);
+        mp->nodes = calloc(mp->nmatch * (NV_MINSZ + sizeof(void *) + 3), 1);
         mp->names = mp->nodes + mp->nmatch * (NV_MINSZ + sizeof(void *));
         nv_disc(SH_MATCHNOD, &mp->namfun, DISC_OP_LAST);
         for (i = nmatch; --i >= 0;) {
@@ -1403,7 +1403,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     // Return here for shell script execution but not for parenthesis subshells.
     //
     error_info.id = strdup(shp->st.dolv[0]);  // error_info.id is $0
-    shp->jmpbuffer = (void *)&shp->checkbase;
+    shp->jmpbuffer = &shp->checkbase;
 #if USE_SPAWN
     shp->vex = spawnvex_open(0);
     shp->vexp = spawnvex_open(0);
@@ -1478,8 +1478,8 @@ int sh_reinit(Shell_t *shp, char *argv[]) {
     sh_onstate(shp, SH_INIT);
     memset(&data, 0, sizeof(data));
     data.sh = shp;
-    nv_scan(shp->var_tree, sh_envnolocal, (void *)&data, NV_EXPORT, 0);
-    nv_scan(shp->var_tree, sh_envnolocal, (void *)&data, NV_ARRAY, NV_ARRAY);
+    nv_scan(shp->var_tree, sh_envnolocal, &data, NV_EXPORT, 0);
+    nv_scan(shp->var_tree, sh_envnolocal, &data, NV_ARRAY, NV_ARRAY);
     sh_offstate(shp, SH_INIT);
     memset(shp->st.trapcom, 0, (shp->st.trapmax + 1) * sizeof(char *));
     memset(&opt, 0, sizeof(opt));
@@ -1597,7 +1597,7 @@ static_fn Namfun_t *clone_svar(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     dp = malloc(fp->dsize + sp->dsize + sizeof(void *));
     memcpy(dp, sp, fp->dsize);
     dp->nodes = (char *)(dp + 1);
-    dp->data = (void *)((char *)dp + fp->dsize + sizeof(void *));
+    dp->data = (char *)dp + fp->dsize + sizeof(void *);
     memcpy(dp->data, sp->data, sp->dsize);
     dp->namfun.nofree = (flags & NV_RDONLY ? 1 : 0);
     for (i = dp->numnodes; --i >= 0;) {
@@ -1678,7 +1678,7 @@ static_fn void stat_init(Shell_t *shp) {
     n = svar_init(shp, SH_STATS, shtab_stats, 0);
     shgd->stats = (int *)calloc(sizeof(int), n + 1);
     sp = (struct Svars *)SH_STATS->nvfun->next;
-    sp->data = (void *)shgd->stats;
+    sp->data = shgd->stats;
     sp->dsize = (n + 1) * sizeof(shgd->stats[0]);
     for (i = 0; i < n; i++) {
         np = nv_namptr(sp->nodes, i);
@@ -1713,7 +1713,7 @@ void sh_setsiginfo(siginfo_t *sip) {
     if (!fp) return;  // this should probably be an abort() or errormsg(SH_DICT, ERROR_exit(1), ...)
 
     sp = (struct Svars *)fp;
-    sp->data = (void *)((char *)sp + fp->dsize + sizeof(void *));
+    sp->data = (char *)sp + fp->dsize + sizeof(void *);
     signame = (char *)sp->data + sizeof(siginfo_t);
     memcpy(sp->data, sip, sizeof(siginfo_t));
     sip = (siginfo_t *)sp->data;
