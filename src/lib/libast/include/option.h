@@ -38,12 +38,12 @@ struct Optdisc_s;
 
 typedef int (*Optinfo_f)(struct Opt_s *, Sfio_t *, const char *, struct Optdisc_s *);
 
-typedef struct Optdisc_s {
+struct Optdisc_s {
     unsigned long version; /* OPT_VERSION			*/
     unsigned long flags;   /* OPT_* flags			*/
     char *catalog;         /* error catalog id		*/
     Optinfo_f infof;       /* runtime info function	*/
-} Optdisc_t;
+};
 
 // NOTE: Opt_t member order fixed by a previous binary release
 typedef struct Opt_s {

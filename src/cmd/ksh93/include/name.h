@@ -274,7 +274,7 @@ struct Namarray {
 struct Namdecl {
     Namval_t *tp;  // point to type
     const char *optstring;
-    void *optinfof;
+    Optdisc_t *optinfof;
 };
 
 // This defines the attributes for a name-value node.

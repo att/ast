@@ -220,6 +220,7 @@ typedef struct _mac_ Mac_t;          // from macro.c
 typedef struct pathcomp Pathcomp_t;  // from path.h
 typedef struct edit Edit_t;          // from edit.h
 typedef struct _timer Timer_t;       // from timers.c
+typedef struct Optdisc_s Optdisc_t;  // from option.h
 typedef union Shnode_u Shnode_t;     // from shnodes.h
 typedef int (*Shbltin_f)(int, char **, Shbltin_t *);
 

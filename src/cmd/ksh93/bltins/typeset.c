@@ -232,7 +232,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
     tdata.sh = context->shp;
     if (ntp) {
         tdata.tp = ntp->tp;
-        opt_info.disc = (Optdisc_t *)ntp->optinfof;
+        opt_info.disc = ntp->optinfof;
         optstring = ntp->optstring;
     }
     troot = tdata.sh->var_tree;
