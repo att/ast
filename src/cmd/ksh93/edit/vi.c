@@ -38,7 +38,6 @@
 #include "ast.h"
 #include "defs.h"
 #include "edit.h"
-#include "fault.h"
 #include "history.h"
 #include "sfio.h"
 #include "stk.h"

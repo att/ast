@@ -35,7 +35,6 @@
 #include "ast_glob.h"
 #include "cdt.h"
 #include "defs.h"
-#include "fault.h"
 #include "name.h"
 #include "path.h"
 #include "sfio.h"

@@ -45,6 +45,7 @@
 #include "jobs.h"
 #include "name.h"
 #include "sfio.h"
+#include "shcmd.h"
 #include "shlex.h"
 #include "shnodes.h"
 #include "shtable.h"

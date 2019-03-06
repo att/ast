@@ -50,7 +50,6 @@
 #include "name.h"
 #include "path.h"
 #include "sfio.h"
-#include "shcmd.h"
 #include "shlex.h"
 #include "shnodes.h"
 #include "stak.h"

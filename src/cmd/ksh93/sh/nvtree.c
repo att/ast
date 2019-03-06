@@ -36,7 +36,6 @@
 #include "ast_assert.h"
 #include "cdt.h"
 #include "defs.h"
-#include "fault.h"
 #include "name.h"
 #include "sfio.h"
 #include "shtable.h"

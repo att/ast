@@ -28,10 +28,10 @@
 #include "cdt.h"
 #include "defs.h"
 #include "error.h"
-#include "fault.h"
 #include "name.h"
 #include "option.h"
 #include "sfio.h"
+#include "shcmd.h"
 #include "stk.h"
 
 static const char enum_usage[] =

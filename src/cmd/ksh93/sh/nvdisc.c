@@ -33,7 +33,6 @@
 #include "name.h"
 #include "path.h"
 #include "sfio.h"
-#include "shcmd.h"
 #include "stk.h"
 #include "variables.h"
 

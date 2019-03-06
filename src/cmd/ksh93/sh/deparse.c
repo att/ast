@@ -30,7 +30,6 @@
 #include "argnod.h"
 #include "ast_assert.h"
 #include "defs.h"
-#include "fault.h"
 #include "sfio.h"
 #include "shnodes.h"
 #include "shtable.h"

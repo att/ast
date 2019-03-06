@@ -40,7 +40,6 @@
 #include "ast_assert.h"
 #include "defs.h"
 #include "error.h"
-#include "fault.h"
 #include "fcin.h"
 #include "history.h"
 #include "lexstates.h"

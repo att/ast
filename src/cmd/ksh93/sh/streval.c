@@ -37,7 +37,6 @@
 #include "ast_float.h"
 #include "defs.h"
 #include "error.h"
-#include "fault.h"
 #include "name.h"
 #include "sfio.h"
 #include "stak.h"

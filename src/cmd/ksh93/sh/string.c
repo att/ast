@@ -36,7 +36,6 @@
 #include "ast.h"
 #include "defs.h"
 #include "error.h"
-#include "fault.h"
 #include "lexstates.h"
 #include "sfio.h"
 #include "shtable.h"

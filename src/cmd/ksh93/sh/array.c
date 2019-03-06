@@ -35,7 +35,6 @@
 #include "cdt.h"
 #include "defs.h"
 #include "error.h"
-#include "fault.h"
 #include "name.h"
 #include "sfio.h"
 #include "stk.h"

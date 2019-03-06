@@ -37,7 +37,6 @@
 #include "cdt.h"
 #include "defs.h"
 #include "error.h"
-#include "fault.h"
 #include "history.h"
 #include "name.h"
 #include "option.h"
