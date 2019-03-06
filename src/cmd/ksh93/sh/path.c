@@ -265,7 +265,7 @@ char *path_pwd(Shell_t *shp) {
     }
 skip:
     nv_onattr(PWDNOD, NV_NOFREE | NV_EXPORT);
-    shp->pwd = (char *)FETCH_VT(PWDNOD->nvalue, const_cp);
+    shp->pwd = FETCH_VT(PWDNOD->nvalue, const_cp);
     return cp;
 }
 
@@ -515,7 +515,7 @@ char *path_fullname(Shell_t *shp, const char *name) {
         pwd = path_pwd(shp);
         dirlen = strlen(pwd) + 1;
     }
-    path = (char *)malloc(len + dirlen);
+    path = malloc(len + dirlen);
     if (dirlen) {
         memcpy(path, pwd, dirlen);
         path[dirlen - 1] = '/';
@@ -1308,7 +1308,7 @@ static_fn Pathcomp_t *path_addcomp(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *
     pp = calloc(1, sizeof(Pathcomp_t) + len + 1);
     pp->shp = shp;
     pp->refcount = 1;
-    memcpy((char *)(pp + 1), name, len + 1);
+    memcpy(pp + 1, name, len + 1);
     pp->name = (char *)(pp + 1);
     pp->len = len;
     if (oldpp) {
@@ -1395,7 +1395,7 @@ static_fn bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, P
                 pp->flags |= PATH_BIN;
             } else if (m) {
                 size_t z;
-                pp->lib = (char *)malloc(z = cp - sp + pp->len + 2);
+                pp->lib = malloc(z = cp - sp + pp->len + 2);
                 memcpy(pp->lib, sp, m);
                 memcpy(&pp->lib[m], stkptr(shp->stk, offset), pp->len);
                 pp->lib[k = m + pp->len] = '/';
