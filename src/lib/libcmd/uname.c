@@ -238,8 +238,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         }
         output(OPT_system, ut.sysname, "sysname");
         if (flags & OPT_nodename) {
-            if (sizeof(ut.nodename) > 9 || gethostname(s, sizeof(buf))) s = ut.nodename;
-            output(OPT_nodename, s, "nodename");
+            output(OPT_nodename, ut.nodename, "nodename");
         }
         output(OPT_release, ut.release, "release");
         output(OPT_version, ut.version, "version");
