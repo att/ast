@@ -317,8 +317,8 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
     if (shp->winch) {
         int rows = 0, cols = 0;
         astwinsize(2, &rows, &cols);
-        if (cols) nv_putval(COLUMNS, (char *)&cols, NV_INT32 | NV_RDONLY);
-        if (rows) nv_putval(LINES, (char *)&rows, NV_INT32 | NV_RDONLY);
+        if (cols) nv_putval(COLUMNS, &cols, NV_INT32 | NV_RDONLY);
+        if (rows) nv_putval(LINES, &rows, NV_INT32 | NV_RDONLY);
         shp->winch = 0;
     }
 #endif
@@ -441,14 +441,14 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
     if (fd == sffileno(sfstderr)) {
         // Can't use output buffer when reading from stderr.
         static char *buff;
-        if (!buff) buff = (char *)malloc(MAXLINE);
+        if (!buff) buff = malloc(MAXLINE);
         ep->e_outbase = ep->e_outptr = buff;
         ep->e_outlast = ep->e_outptr + MAXLINE;
         return;
     }
     qlen = sfset(sfstderr, SF_READ, 0);
     // Make sure SF_READ not on.
-    ep->e_outbase = ep->e_outptr = (char *)sfreserve(sfstderr, SF_UNBOUND, SF_LOCKR);
+    ep->e_outbase = ep->e_outptr = sfreserve(sfstderr, SF_UNBOUND, SF_LOCKR);
     ep->e_outlast = ep->e_outptr + sfvalue(sfstderr);
     if (qlen) sfset(sfstderr, SF_READ, 1);
     sfwrite(sfstderr, ep->e_outptr, 0);
@@ -481,7 +481,7 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
         ep->e_default = 0;
     }
     if (ep->sh->st.trap[SH_KEYTRAP]) {
-        if (!savelex) savelex = (char *)malloc(shp->lexsize);
+        if (!savelex) savelex = malloc(shp->lexsize);
         if (savelex) memcpy(savelex, ep->sh->lex_context, ep->sh->lexsize);
     }
 }
@@ -1056,8 +1056,8 @@ static_fn int keytrap(Edit_t *ep, char *inbuff, int insize, int bufsize, int mod
         *ep->e_vi_insert = 0;
     }
     nv_putval(ED_CHRNOD, inbuff, NV_NOFREE);
-    nv_putval(ED_COLNOD, (char *)&ep->e_col, NV_NOFREE | NV_INTEGER);
-    nv_putval(ED_TXTNOD, (char *)cp, NV_NOFREE);
+    nv_putval(ED_COLNOD, &ep->e_col, NV_NOFREE | NV_INTEGER);
+    nv_putval(ED_TXTNOD, cp, NV_NOFREE);
     nv_putval(ED_MODENOD, ep->e_vi_insert, NV_NOFREE);
     savexit = shp->savexit;
     sh_trap(shp, shp->st.trap[SH_KEYTRAP], 0);
