@@ -1339,7 +1339,7 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
         associative = 1;
     }
     t = (struct comnod *)getnode(comnod);
-    t->comio = io;  // initial io chain
+    t->comio = io;                    // initial io chain
     t->comline = sh_getlineno(lexp);  // set command line number for error messages
     argtail = &(t->comarg);
     t->comset = 0;
