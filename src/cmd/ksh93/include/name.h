@@ -48,7 +48,13 @@ enum value_type {
     VT_vp,
     VT_cp,
     VT_const_cp,
+    VT_pp,
+    VT_uc,
+    VT_h,
     VT_i,
+    VT_l,
+    VT_d,
+    VT_f,
     VT_i16,
     VT_ip,
     VT_i16p,
@@ -81,8 +87,14 @@ struct Value {
         void *vp;
         char *cp;
         const char *const_cp;
+        char **pp;
 
+        unsigned char uc;
+        short h;
         int i;
+        long l;
+        double d;
+        float f;
         int16_t i16;
 
         int *ip;

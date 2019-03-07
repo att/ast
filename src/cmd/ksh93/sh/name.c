@@ -64,7 +64,13 @@ const char *value_type_names[] = {
     "vp",             // VT_vp
     "cp",             // VT_cp
     "const_cp",       // VT_const_cp
+    "pp",             // VT_pp
+    "uc",             // VT_uc
+    "h",              // VT_h
     "i",              // VT_i
+    "l",              // VT_l
+    "d",              // VT_d
+    "f",              // VT_f
     "i16",            // VT_i16
     "ip",             // VT_ip
     "i16p",           // VT_i16p

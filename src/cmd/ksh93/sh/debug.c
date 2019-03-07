@@ -41,10 +41,43 @@ static_fn void _dprint_VT_const_cp(const char *fname, int lineno, const char *fu
              FETCH_VTP(vtp, const_cp));
 }
 
+static_fn void _dprint_VT_uc(const char *fname, int lineno, const char *funcname,
+                             const struct Value *vtp) {
+    _dprintf(fname, lineno, funcname, "value is unsigned char %hhu (0x%hhX)", FETCH_VTP(vtp, uc),
+             FETCH_VTP(vtp, uc));
+}
+
+static_fn void _dprint_VT_pp(const char *fname, int lineno, const char *funcname,
+                             const struct Value *vtp) {
+    _dprintf(fname, lineno, funcname, "value is char** %p", BASE_ADDR(FETCH_VTP(vtp, pp)));
+}
+
+static_fn void _dprint_VT_h(const char *fname, int lineno, const char *funcname,
+                            const struct Value *vtp) {
+    _dprintf(fname, lineno, funcname, "value is short %hi (0x%hX)", FETCH_VTP(vtp, h),
+             FETCH_VTP(vtp, h));
+}
+
 static_fn void _dprint_VT_i(const char *fname, int lineno, const char *funcname,
                             const struct Value *vtp) {
     _dprintf(fname, lineno, funcname, "value is int %i (0x%X)", FETCH_VTP(vtp, i),
              FETCH_VTP(vtp, i));
+}
+
+static_fn void _dprint_VT_l(const char *fname, int lineno, const char *funcname,
+                            const struct Value *vtp) {
+    _dprintf(fname, lineno, funcname, "value is int %li (0x%lX)", FETCH_VTP(vtp, l),
+             FETCH_VTP(vtp, l));
+}
+
+static_fn void _dprint_VT_d(const char *fname, int lineno, const char *funcname,
+                            const struct Value *vtp) {
+    _dprintf(fname, lineno, funcname, "value is double %g", FETCH_VTP(vtp, d));
+}
+
+static_fn void _dprint_VT_f(const char *fname, int lineno, const char *funcname,
+                            const struct Value *vtp) {
+    _dprintf(fname, lineno, funcname, "value is float %g", FETCH_VTP(vtp, f));
 }
 
 static_fn void _dprint_VT_i16(const char *fname, int lineno, const char *funcname,
@@ -149,8 +182,8 @@ static_fn void _dprint_VT_uidp(const char *fname, int lineno, const char *funcna
              BASE_ADDR(FETCH_VTP(vtp, uidp)), (uint64_t)*FETCH_VTP(vtp, uidp));
 }
 
-static_fn void _dprint_VT_dummy(const char *fname, int lineno, const char *funcname,
-                                const struct Value *vtp) {
+static_fn void _dprint_VT_sentinal(const char *fname, int lineno, const char *funcname,
+                                   const struct Value *vtp) {
     UNUSED(fname);
     UNUSED(lineno);
     UNUSED(funcname);
@@ -159,12 +192,35 @@ static_fn void _dprint_VT_dummy(const char *fname, int lineno, const char *funcn
 
 // This must be kept in the same order as the `enum value_type` in "name.h".
 static vtp_dprintf *dprint_vtp_dispatch[] = {
-    _dprint_VT_do_not_use, _dprint_VT_vp,   _dprint_VT_cp,       _dprint_VT_const_cp,
-    _dprint_VT_i,          _dprint_VT_i16,  _dprint_VT_ip,       _dprint_VT_i16p,
-    _dprint_VT_i32p,       _dprint_VT_i64p, _dprint_VT_dp,       _dprint_VT_fp,
-    _dprint_VT_sfdoublep,  _dprint_VT_np,   _dprint_VT_up,       _dprint_VT_rp,
-    _dprint_VT_funp,       _dprint_VT_nrp,  _dprint_VT_shbltinp, _dprint_VT_pathcomp,
-    _dprint_VT_pidp,       _dprint_VT_uidp, _dprint_VT_dummy  // must be last
+    _dprint_VT_do_not_use,  // VT_do_not_use
+    _dprint_VT_vp,          // VT_vp
+    _dprint_VT_cp,          // VT_cp
+    _dprint_VT_const_cp,    // VT_const_cp
+    _dprint_VT_pp,          // VT_pp
+    _dprint_VT_uc,          // VT_uc
+    _dprint_VT_h,           // VT_h
+    _dprint_VT_i,           // VT_i
+    _dprint_VT_l,           // VT_l
+    _dprint_VT_d,           // VT_d
+    _dprint_VT_f,           // VT_f
+    _dprint_VT_i16,         // VT_i16
+    _dprint_VT_ip,          // VT_ip
+    _dprint_VT_i16p,        // VT_i16p
+    _dprint_VT_i32p,        // VT_i32p
+    _dprint_VT_i64p,        // VT_i64p
+    _dprint_VT_dp,          // VT_dp
+    _dprint_VT_fp,          // VT_fp
+    _dprint_VT_sfdoublep,   // VT_sfdoublep
+    _dprint_VT_np,          // VT_np
+    _dprint_VT_up,          // VT_up
+    _dprint_VT_rp,          // VT_rp
+    _dprint_VT_funp,        // VT_funp
+    _dprint_VT_nrp,         // VT_nrp
+    _dprint_VT_shbltinp,    // VT_shbltinp
+    _dprint_VT_pathcomp,    // VT_pathcomp
+    _dprint_VT_pidp,        // VT_pidp
+    _dprint_VT_uidp,        // VT_uidp
+    _dprint_VT_sentinal     // must be last
 };
 
 // Diagnostic print a struct Value object.
@@ -173,7 +229,7 @@ void _dprint_vtp(const char *fname, int const lineno, const char *funcname, cons
 
     // We do this rather than a sizeof(dprint_vtp_dispatch) check because the latter is a constant
     // expression that causes lint warnings.
-    assert(dprint_vtp_dispatch[VT_sentinal] == _dprint_VT_dummy);
+    assert(dprint_vtp_dispatch[VT_sentinal] == _dprint_VT_sentinal);
     assert(vtp->type >= VT_do_not_use && vtp->type < VT_sentinal);
 
     _dprintf(fname, lineno, funcname, "type \"%s\" stored @ %s:%d in %s()",
