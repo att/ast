@@ -226,7 +226,7 @@ Namval_t *nv_addnode(Namval_t *np, int remove) {
     if (remove) return np;
     if (sp->numnodes == sp->maxnodes) {
         sp->maxnodes += 20;
-        sp->nodes = (Namval_t **)realloc(sp->nodes, sizeof(Namval_t *) * sp->maxnodes);
+        sp->nodes = realloc(sp->nodes, sizeof(Namval_t *) * sp->maxnodes);
     }
     sp->nodes[sp->numnodes++] = np;
     return np;
@@ -1702,7 +1702,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                     nv_onattr(np, NV_NOFREE);
                 } else {
                     if (tofree && tofree != Empty && tofree != EmptyStr) {
-                        cp = (char *)realloc(tofree, ((unsigned)dot + append + 8));
+                        cp = realloc(tofree, (unsigned)dot + append + 8);
                         tofree = 0;
                     } else {
                         cp = malloc((unsigned)dot + 8);

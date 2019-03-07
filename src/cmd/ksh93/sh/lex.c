@@ -2206,8 +2206,7 @@ static_fn void setupalias(Lex_t *lp, const char *string, Namval_t *np) {
 static_fn bool stack_grow(Lex_t *lp) {
     lp->lexd.lex_max += STACK_ARRAY;
     if (lp->lexd.lex_match) {
-        lp->lexd.lex_match =
-            (int *)realloc((char *)lp->lexd.lex_match, sizeof(int) * lp->lexd.lex_max);
+        lp->lexd.lex_match = realloc(lp->lexd.lex_match, sizeof(int) * lp->lexd.lex_max);
     } else {
         lp->lexd.lex_match = malloc(sizeof(int) * STACK_ARRAY);
     }

@@ -1732,7 +1732,8 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
         char *oldend = (char *)&filemap[filemapsize];
         long moved;
         filemapsize += 8;
-        if (!(filemap = (struct fdsave *)realloc(filemap, filemapsize * sizeof(struct fdsave)))) {
+        filemap = realloc(filemap, filemapsize * sizeof(struct fdsave));
+        if (!filemap) {
             errormsg(SH_DICT, ERROR_exit(4), e_nospace);
             __builtin_unreachable();
         }

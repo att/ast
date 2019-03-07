@@ -812,7 +812,7 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
         i = (index + 2 * mp->nmatch) * sizeof(match[0]);
         if (i >= mp->msize) {
             if (mp->msize) {
-                mp->match = (int *)realloc(mp->match, 2 * i);
+                mp->match = realloc(mp->match, 2 * i);
             } else {
                 mp->match = malloc(2 * i);
             }
