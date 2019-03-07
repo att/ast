@@ -1207,7 +1207,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
 
     switch (op.val) {
         case ASSOC_OP_INIT_val: {
-            ap = (struct assoc_array *)calloc(1, sizeof(struct assoc_array));
+            ap = calloc(1, sizeof(struct assoc_array));
             if (ap) {
                 ap->namarr.table = dtopen(&_Nvdisc, Dtoset);
                 dtuserdata(ap->namarr.table, shp, 1);

@@ -2283,7 +2283,7 @@ void nv_optimize(Namval_t *np) {
         if (op) {
             opt_free = op->next;
         } else {
-            op = (struct optimize *)calloc(1, sizeof(struct optimize));
+            op = calloc(1, sizeof(struct optimize));
         }
         op->ptr = shp->argaddr;
         op->np = np;

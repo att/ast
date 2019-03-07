@@ -199,8 +199,7 @@ bool sh_iovalidfd(Shell_t *shp, int fd) {
     n = (fd + 16) & ~0xf;
     if (n++ > max) n = max + 1;
     max = shp->gd->lim.open_max;
-    shp->sftable =
-        (Sfio_t **)calloc((n + 1) * (sizeof(int *) + sizeof(Sfio_t *) + sizeof(*fdstatus)), 1);
+    shp->sftable = calloc((n + 1) * (sizeof(int *) + sizeof(Sfio_t *) + sizeof(*fdstatus)), 1);
 
     if (sftable) {
         --sftable;

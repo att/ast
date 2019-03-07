@@ -986,7 +986,7 @@ static_fn void math_init(Shell_t *shp) {
     char *name;
     int i;
 
-    shp->mathnodes = (char *)calloc(1, MAX_MATH_ARGS * (NV_MINSZ + 5));
+    shp->mathnodes = calloc(1, MAX_MATH_ARGS * (NV_MINSZ + 5));
     name = shp->mathnodes + MAX_MATH_ARGS * NV_MINSZ;
     for (i = 0; i < MAX_MATH_ARGS; i++) {
         np = nv_namptr(shp->mathnodes, i);
@@ -1677,7 +1677,7 @@ static_fn void stat_init(Shell_t *shp) {
     struct Svars *sp;
     int i, n;
     n = svar_init(shp, SH_STATS, shtab_stats, 0);
-    shgd->stats = (int *)calloc(sizeof(int), n + 1);
+    shgd->stats = calloc(sizeof(int), n + 1);
     sp = (struct Svars *)SH_STATS->nvfun->next;
     sp->data = shgd->stats;
     sp->dsize = (n + 1) * sizeof(shgd->stats[0]);
