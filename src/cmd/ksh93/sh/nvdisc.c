@@ -1111,18 +1111,19 @@ Namval_t *sh_addbuiltin(Shell_t *shp, const char *path, Shbltin_f bltin, void *e
         if (!bltin) return np;
     } else {
         for (np = dtfirst(shp->bltin_tree); np; np = dtnext(shp->bltin_tree, np)) {
-            if (strcmp(name, path_basename(nv_name(np)))) continue;
-            // Exists probably with different path so delete it.
-            if (strcmp(path, nv_name(np))) {
-                if (nv_isattr(np, BLT_SPC)) return np;
-                if (!bltin) bltin = FETCH_VT(np->nvalue, shbltinp);
-                if (extra == builtin_delete) {
-                    dtdelete(shp->bltin_tree, np);
-                    return NULL;
+            if (!strcmp(name, path_basename(nv_name(np)))) {
+                // Exists probably with different path so delete it.
+                if (strcmp(path, nv_name(np))) {
+                    if (nv_isattr(np, BLT_SPC)) return np;
+                    if (!bltin) bltin = FETCH_VT(np->nvalue, shbltinp);
+                    if (extra == builtin_delete) {
+                        dtdelete(shp->bltin_tree, np);
+                        return NULL;
+                    }
+                    np = NULL;
                 }
-                np = NULL;
+                break;
             }
-            break;
         }
     }
     if (!np && !(np = nv_search(path, shp->bltin_tree, bltin ? NV_ADD : 0))) return NULL;
@@ -1273,15 +1274,18 @@ Dt_t *nv_dict(Namval_t *np) {
     struct table *tp = (struct table *)nv_hasdisc(np, &table_disc);
     if (tp) return tp->dict;
     np = shp->last_table;
+#if 1
+    if (np) {
+        tp = (struct table *)nv_hasdisc(np, &table_disc);
+        if (tp) return tp->dict;
+    }
+#else
     while (np) {
         tp = (struct table *)nv_hasdisc(np, &table_disc);
         if (tp) return tp->dict;
-#if 0
-		np = nv_create(np,(const char*)0, NV_FIRST, (Namfun_t*)0);
-#else
-        break;
-#endif
+        np = nv_create(np,(const char*)0, NV_FIRST, (Namfun_t*)0);
     }
+#endif
     return shp->var_tree;
 }
 
