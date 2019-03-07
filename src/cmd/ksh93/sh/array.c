@@ -417,7 +417,7 @@ static_fn Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t 
             dtview(ap->table, otable->view);
         }
     }
-    mp->nvfun = (Namfun_t *)ap;
+    mp->nvfun = &ap->namfun;
     mp->nvflag &= NV_MINIMAL;
     mp->nvflag |= (np->nvflag & ~(NV_MINIMAL | NV_NOFREE));
     if (!(flg & (ARRAY_SCAN | ARRAY_UNDEF)) && (sub = nv_getsub(np))) sub = strdup(sub);

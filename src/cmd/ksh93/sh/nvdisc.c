@@ -160,7 +160,7 @@ void nv_putv(Namval_t *np, const void *value, int flags, Namfun_t *nfp) {
 #define LOOKUPN 4
 
 struct vardisc {
-    Namfun_t fun;
+    Namfun_t namfun;
     Namval_t *disc[5];
 };
 
@@ -409,10 +409,12 @@ char *nv_setdisc(Namval_t *np, const void *event, Namval_t *action, Namfun_t *fp
     char *empty = "";
 
     while (vp) {
-        if (vp->fun.disc && (vp->fun.disc->setdisc || vp->fun.disc->putval == assign)) break;
-        vp = (struct vardisc *)vp->fun.next;
+        if (vp->namfun.disc && (vp->namfun.disc->setdisc || vp->namfun.disc->putval == assign)) {
+            break;
+        }
+        vp = (struct vardisc *)vp->namfun.next;
     }
-    if (vp && !vp->fun.disc) vp = 0;
+    if (vp && !vp->namfun.disc) vp = 0;
     if (np == (Namval_t *)fp) {
         const char *name;
         int getname = 0;
@@ -430,7 +432,7 @@ char *nv_setdisc(Namval_t *np, const void *event, Namval_t *action, Namfun_t *fp
             if (name && !(name = nv_discnames[++type])) action = 0;
         }
         if (!name) {
-            for (fp = (Namfun_t *)vp; fp; fp = fp->next) {
+            for (fp = &vp->namfun; fp; fp = fp->next) {
                 if (fp->disc && fp->disc->setdisc) {
                     return (*fp->disc->setdisc)(np, event, action, fp);
                 }
@@ -448,25 +450,26 @@ char *nv_setdisc(Namval_t *np, const void *event, Namval_t *action, Namfun_t *fp
         return NULL;
     }
     // Handle GET/SET/APPEND/UNSET disc.
-    if (vp && vp->fun.disc->putval != assign) vp = NULL;
+    if (vp && vp->namfun.disc->putval != assign) vp = NULL;
     if (!vp) {
         Namdisc_t *dp;
         if (action == np) return (char *)action;
         vp = calloc(1, sizeof(struct vardisc) + sizeof(Namdisc_t));
         if (!vp) return NULL;
         dp = (Namdisc_t *)(vp + 1);
-        vp->fun.disc = dp;
+        vp->namfun.disc = dp;
         memset(dp, 0, sizeof(*dp));
         dp->dsize = sizeof(struct vardisc);
         dp->putval = assign;
         if (nv_isarray(np) && !nv_arrayptr(np)) nv_putsub(np, NULL, 1, 0);
-        nv_stack(np, (Namfun_t *)vp);
+        nv_stack(np, &vp->namfun);
     }
     if (action == np) {
         action = vp->disc[type];
         empty = 0;
     } else if (action) {
-        Namdisc_t *dp = (Namdisc_t *)vp->fun.disc;
+        // The cast is because `vp->namfun.disc` is const. Why are we modifying a const struct?
+        Namdisc_t *dp = (Namdisc_t *)vp->namfun.disc;
         if (type == LOOKUPS) {
             dp->getval = lookups;
         } else if (type == LOOKUPN) {
@@ -1283,7 +1286,7 @@ Dt_t *nv_dict(Namval_t *np) {
     while (np) {
         tp = (struct table *)nv_hasdisc(np, &table_disc);
         if (tp) return tp->dict;
-        np = nv_create(np,(const char*)0, NV_FIRST, (Namfun_t*)0);
+        np = nv_create(np, NULL, NV_FIRST, NULL);
     }
 #endif
     return shp->var_tree;
