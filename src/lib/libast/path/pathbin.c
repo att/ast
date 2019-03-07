@@ -19,28 +19,34 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Bell Laboratories
- *
- * return current PATH
- */
+//
+//  Glenn Fowler
+//  AT&T Bell Laboratories
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <string.h>
 
 #include "ast.h"
 
+//  Return current PATH
+//
 char *pathbin(void) {
-    char *bin;
+    char *path;
+    // Used to restore value of saved astconf path from earlier function call
+    static char *astconf_path = NULL;
 
-    static char *val;
+    path = getenv("PATH");
+    if (!path || !*path) path = astconf_path;
 
-    if ((!(bin = getenv("PATH")) || !*bin) && !(bin = val)) {
-        if (!*(bin = astconf("PATH", NULL, NULL)) || !(bin = strdup(bin))) {
-            bin = "/bin:/usr/bin:/usr/local/bin";
+    if (!path) {
+        path = astconf("PATH", NULL, NULL);
+        if (path && *path) path = strdup(path);
+        if (!path) {
+            path = "/bin:/usr/bin:/usr/local/bin";
         }
-        val = bin;
+        astconf_path = path;
     }
-    return bin;
+
+    return path;
 }
