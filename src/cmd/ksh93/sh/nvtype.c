@@ -317,8 +317,11 @@ static_fn int fixnode(Namtype_t *np1, Namtype_t *np2, int i, struct Namref *nrp,
             if (fp) nv_disc(np, fp, DISC_OP_LAST);
         }
 #if 0
-		if(FETCH_VT(nq->nvalue, const_cp) >=  np2->data && FETCH_VT(nq->nvalue, const_cp) < (char*)np2 +np2->fun.dsize)
-			FETCH_VT(nq->nvalue, const_cp) = np1->data + (FETCH_VT(nq->nvalue, const_cp) - np2->data);
+        if (FETCH_VT(nq->nvalue, const_cp) >= np2->data &&
+            FETCH_VT(nq->nvalue, const_cp) < (char *)np2 + np2->fun.dsize) {
+            FETCH_VT(nq->nvalue, const_cp) =
+                np1->data + (FETCH_VT(nq->nvalue, const_cp) - np2->data);
+        }
 #else
         if (data >= np2->data && data < (char *)np2 + np2->fun.dsize) {
             STORE_VT(nq->nvalue, const_cp, np1->data + (data - np2->data));
