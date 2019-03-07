@@ -583,24 +583,24 @@ static_fn int gettok(vars_t *vp) {
     int c, op;
 
     vp->errchr = vp->nextchr;
-    while (1) {
+    while (true) {
         c = getchr(vp);
         op = getop(c);
         switch (op) {
             case 0: {
                 vp->errchr = vp->nextchr;
-                continue;
+                break;
             }
             case A_EOF: {
                 vp->nextchr--;
-                break;
+                return op;
             }
             case A_COMMA: {
                 if (vp->shp->decomma && (c = peekchr(vp)) >= '0' && c <= '9') {
                     op = A_DIG;
                     ungetchr(vp);
                 }
-                break;
+                return op;
             }
             case A_DOT: {
                 if ((c = peekchr(vp)) >= '0' && c <= '9') {
@@ -608,27 +608,28 @@ static_fn int gettok(vars_t *vp) {
                 } else {
                     op = A_REG;
                 }
+                ungetchr(vp);
+                return op;
             }
-            // FALLTHRU
             case A_DIG:
             case A_REG:
             case A_LIT: {
                 ungetchr(vp);
-                break;
+                return op;
             }
             case A_QUEST: {
                 if (peekchr(vp) == ':') {
                     nxtchr(vp);
                     op = A_QCOLON;
                 }
-                break;
+                return op;
             }
             case A_LT:
             case A_GT: {
                 if (peekchr(vp) == c) {
                     nxtchr(vp);
                     op -= 2;
-                    break;
+                    return op;
                 }
             }
             // FALLTHRU
@@ -647,10 +648,11 @@ static_fn int gettok(vars_t *vp) {
                     nxtchr(vp);
                     op--;
                 }
+                return op;
             }
-            default: { break; }
+            // This handles all the tokens that don't need special fixups; e.g., A_LPAR.
+            default: { return op; }
         }
-        return op;
     }
 }
 
