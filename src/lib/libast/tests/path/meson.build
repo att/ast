@@ -1,4 +1,4 @@
-path_test_files =['pathcat.c']
+path_test_files =['pathcat.c', 'pathbin.c']
 
 incdir = include_directories('..',
                              '../../include/')
