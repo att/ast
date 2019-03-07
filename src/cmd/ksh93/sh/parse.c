@@ -1538,20 +1538,21 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
             // Convert break/continue labels to numbers.
             tok = 0;
             for (argp = label_list; argp != label_last; argp = argp->argnxt.ap) {
-                if (strcmp(cp, argp->argval)) continue;
-                tok = loop_level - argp->argflag;
-                if (tok >= 1) {
-                    argp = t->comarg->argnxt.ap;
-                    if (tok > 9) {
-                        argp->argval[1] = '0' + tok % 10;
-                        argp->argval[2] = 0;
-                        tok /= 10;
-                    } else {
-                        argp->argval[1] = 0;
+                if (!strcmp(cp, argp->argval)) {
+                    tok = loop_level - argp->argflag;
+                    if (tok >= 1) {
+                        argp = t->comarg->argnxt.ap;
+                        if (tok > 9) {
+                            argp->argval[1] = '0' + tok % 10;
+                            argp->argval[2] = 0;
+                            tok /= 10;
+                        } else {
+                            argp->argval[1] = 0;
+                        }
+                        *argp->argval = '0' + tok;
                     }
-                    *argp->argval = '0' + tok;
+                    break;
                 }
-                break;
             }
             if (sh_isoption(lexp->sh, SH_NOEXEC) && tok == 0) {
                 errormsg(SH_DICT, ERROR_warn(0), e_lexlabunknown,
