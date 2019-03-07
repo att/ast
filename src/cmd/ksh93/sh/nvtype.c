@@ -371,7 +371,7 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     }
     if (flags & NV_TYPE) return nv_clone_disc(fp, flags);
     if (size == 0 && (!fp->disc || (size = fp->disc->dsize) == 0)) size = sizeof(Namfun_t);
-    dp = (Namtype_t *)malloc(size + pp->nref * sizeof(struct Namref));
+    dp = malloc(size + pp->nref * sizeof(struct Namref));
     if (pp->nref) {
         nrp = (struct Namref *)((char *)dp + size);
         memset(nrp, 0, pp->nref * sizeof(struct Namref));
@@ -601,7 +601,7 @@ static_fn Namval_t *next_type(Namval_t *np, Dt_t *root, Namfun_t *fp) {
 // unit test for it?
 static_fn Namfun_t *clone_inttype(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     UNUSED(flags);
-    Namfun_t *pp = (Namfun_t *)malloc(fp->dsize);
+    Namfun_t *pp = malloc(fp->dsize);
 
     memcpy(pp, fp, fp->dsize);
     fp->nofree &= ~1;

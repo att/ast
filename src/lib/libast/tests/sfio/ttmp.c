@@ -54,7 +54,8 @@ tmain() {
     int pid;
     char *buf;
 
-    if (!(buf = (char *)malloc(TEST_BUFSIZE))) terror("malloc(%ld) failed", TEST_BUFSIZE);
+    buf = malloc(TEST_BUFSIZE);
+    if (!buf) terror("malloc(%ld) failed", TEST_BUFSIZE);
     /* test to see if transforming to file is ok with sfwrite */
     memset(buf, 1, TEST_BUFSIZE);
     if (!(f = sftmp(1024))) terror("sftmp failed");

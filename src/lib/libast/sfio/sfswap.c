@@ -54,7 +54,8 @@ Sfio_t *sfswap(Sfio_t *f1, Sfio_t *f2) {
     } else {
         f2 = f1->file == 0 ? sfstdin : f1->file == 1 ? sfstdout : f1->file == 2 ? sfstderr : NULL;
         if ((!f2 || !(f2->mode & SF_AVAIL))) {
-            if (!(f2 = (Sfio_t *)malloc(sizeof(Sfio_t)))) {
+            f2 = malloc(sizeof(Sfio_t));
+            if (!f2) {
                 f1->mode = f1mode;
                 SFOPEN(f1)
                 return NULL;

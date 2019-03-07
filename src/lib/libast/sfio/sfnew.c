@@ -82,7 +82,8 @@ Sfio_t *sfnew(Sfio_t *oldf, void *buf, size_t size, int file, int flags) {
         }
 
         if (!f) {
-            if (!(f = (Sfio_t *)malloc(sizeof(Sfio_t)))) return NULL;
+            f = malloc(sizeof(Sfio_t));
+            if (!f) return NULL;
             SFCLEAR(f, NULL);
         }
     }

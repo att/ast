@@ -420,13 +420,11 @@ setbuf:
             obuf = NULL;
             sf_malloc = (oflags & SF_MALLOC);
         }
-        if (!buf) { /* do allocation */
+        if (!buf) {  // do allocation
             while (!buf && size > 0) {
-                if ((buf = (void *)malloc(size))) {
-                    break;
-                } else {
-                    size /= 2;
-                }
+                buf = malloc(size);
+                if (buf) break;
+                size /= 2;
             }
             if (size > 0) sf_malloc = SF_MALLOC;
         }

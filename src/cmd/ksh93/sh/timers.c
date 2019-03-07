@@ -176,7 +176,7 @@ Timer_t *sh_timeradd(unsigned long msec, int flags, void (*action)(void *), void
     tp = tpfree;
     if (tp) {
         tpfree = tp->next;
-    } else if (!(tp = (Timer_t *)malloc(sizeof(Timer_t)))) {
+    } else if (!(tp = malloc(sizeof(Timer_t)))) {
         return NULL;
     }
     tp->wakeup = getnow() + t;

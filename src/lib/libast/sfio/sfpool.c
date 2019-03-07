@@ -66,7 +66,8 @@ static_fn Sfpool_t *newpool(int mode) {
     if (!p) {
         POOLMTXLOCK(last);
 
-        if (!(p = (Sfpool_t *)malloc(sizeof(Sfpool_t)))) {
+        p = malloc(sizeof(Sfpool_t));
+        if (!p) {
             POOLMTXUNLOCK(last);
             return NULL;
         }

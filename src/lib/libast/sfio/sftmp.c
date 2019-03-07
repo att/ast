@@ -115,7 +115,8 @@ static_fn int _rmtmp(Sfio_t *f, char *file) {
 
     if (!File) atexit(_rmfiles);
 
-    if (!(ff = (File_t *)malloc(sizeof(File_t) + strlen(file)))) return -1;
+    ff = malloc(sizeof(File_t) + strlen(file));
+    if (!ff) return -1;
     (void)vtmtxlock(_Sfmutex);
     ff->f = f;
     strcpy(ff->name, file);

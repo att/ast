@@ -134,7 +134,7 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
                     } else {
                         w = ((w + fr->size - 1) / fr->size) * fr->size;
                     }
-                    if (rsize <= 0 && (rbuf = (uchar *)malloc(w))) rsize = w;
+                    if (rsize <= 0 && (rbuf = malloc(w))) rsize = w;
                     if (rbuf) {
                         next = rbuf;
                         w = rsize;

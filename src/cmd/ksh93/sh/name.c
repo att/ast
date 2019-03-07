@@ -278,7 +278,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
         shtp.numnodes = 0;
         shtp.maxnodes = 20;
         shtp.rp = 0;
-        shtp.nodes = (Namval_t **)malloc(shtp.maxnodes * sizeof(Namval_t *));
+        shtp.nodes = malloc(shtp.maxnodes * sizeof(Namval_t *));
     }
     if (shp->namespace && nv_dict(shp->namespace) == shp->var_tree) flags |= NV_NOSCOPE;
     flags &= ~(NV_TYPE | NV_ARRAY | NV_IARRAY);
@@ -1705,7 +1705,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                         cp = (char *)realloc(tofree, ((unsigned)dot + append + 8));
                         tofree = 0;
                     } else {
-                        cp = (char *)malloc(((unsigned)dot + 8));
+                        cp = malloc((unsigned)dot + 8);
                     }
                     cp[dot + append] = 0;
                     nv_offattr(np, NV_NOFREE);

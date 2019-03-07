@@ -225,7 +225,7 @@ bool sh_inuse(Shell_t *shp, int fd) { return fd < shp->gd->lim.open_max && shp->
 
 void sh_ioinit(Shell_t *shp) {
     filemapsize = 8;
-    filemap = (struct fdsave *)malloc(filemapsize * sizeof(struct fdsave));
+    filemap = malloc(filemapsize * sizeof(struct fdsave));
     if (!sh_iovalidfd(shp, 16)) abort();
     shp->sftable[0] = sfstdin;
     shp->sftable[1] = sfstdout;
@@ -236,8 +236,8 @@ void sh_ioinit(Shell_t *shp) {
     sh_iostream(shp, 2, 2);
     // All write steams are in the same pool and share outbuff.
     shp->outpool = sfopen(NULL, NULL, "sw");  // pool identifier
-    shp->outbuff = (char *)malloc(IOBSIZE + 4);
-    shp->errbuff = (char *)malloc(IOBSIZE / 4);
+    shp->outbuff = malloc(IOBSIZE + 4);
+    shp->errbuff = malloc(IOBSIZE / 4);
     sfsetbuf(sfstderr, shp->errbuff, IOBSIZE / 4);
     sfsetbuf(sfstdout, shp->outbuff, IOBSIZE);
     sfpool(sfstdout, shp->outpool, SF_WRITE);
@@ -328,7 +328,7 @@ Sfio_t *sh_iostream(Shell_t *shp, int fd, int fn) {
         if (shp->bltinfun && shp->bltinfun != b_read && shp->bltindata.bnode &&
             !nv_isattr(shp->bltindata.bnode, BLT_SPC)) {
             bp = 0;
-        } else if (!(bp = (char *)malloc(IOBSIZE + 1))) {
+        } else if (!(bp = malloc(IOBSIZE + 1))) {
             return NULL;
         }
         if (bp) bp[IOBSIZE] = 0;
@@ -2444,9 +2444,8 @@ static_fn Sfio_t *subopen(Shell_t *shp, Sfio_t *sp, off_t offset, long size) {
     struct subfile *disp;
 
     if (sfseek(sp, offset, SEEK_SET) < 0) return NULL;
-    if (!(disp = (struct subfile *)malloc(sizeof(struct subfile) + IOBSIZE + 1))) {
-        return NULL;
-    }
+    disp = malloc(sizeof(struct subfile) + IOBSIZE + 1);
+    if (!disp) return NULL;
     disp->disc = sub_disc;
     disp->oldsp = sp;
     disp->offset = offset;

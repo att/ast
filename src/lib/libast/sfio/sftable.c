@@ -324,7 +324,7 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
 
     if (!fp) /* constructing position array only */
     {
-        if (!dollar || !(fp = (Fmtpos_t *)malloc((maxp + 1) * sizeof(Fmtpos_t)))) return NULL;
+        if (!dollar || !(fp = malloc((maxp + 1) * sizeof(Fmtpos_t)))) return NULL;
         for (n = 0; n <= maxp; ++n) fp[n].ft.fmt = 0;
         return fp;
     }

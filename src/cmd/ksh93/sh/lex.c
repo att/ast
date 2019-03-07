@@ -2173,7 +2173,7 @@ done:
 
 static_fn void setupalias(Lex_t *lp, const char *string, Namval_t *np) {
     Sfio_t *iop, *base;
-    struct alias *ap = (struct alias *)malloc(sizeof(struct alias));
+    struct alias *ap = malloc(sizeof(struct alias));
 
     ap->disc = alias_disc;
     ap->lp = lp;
@@ -2209,7 +2209,7 @@ static_fn bool stack_grow(Lex_t *lp) {
         lp->lexd.lex_match =
             (int *)realloc((char *)lp->lexd.lex_match, sizeof(int) * lp->lexd.lex_max);
     } else {
-        lp->lexd.lex_match = (int *)malloc(sizeof(int) * STACK_ARRAY);
+        lp->lexd.lex_match = malloc(sizeof(int) * STACK_ARRAY);
     }
     return lp->lexd.lex_match != 0;
 }

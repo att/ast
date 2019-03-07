@@ -292,7 +292,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                         }
                         // Try sh -c 'name "$@"'.
                         sh_onoption(shp, SH_CFLAG);
-                        shp->comdiv = (char *)malloc(strlen(name) + 7);
+                        shp->comdiv = malloc(strlen(name) + 7);
                         name = stpcpy(shp->comdiv, name);
                         if (shp->st.dolc) stpcpy(name, " \"$@\"");
                         goto shell_c;

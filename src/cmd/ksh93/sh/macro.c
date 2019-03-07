@@ -939,8 +939,7 @@ static_fn char *prefix(Shell_t *shp, char *id) {
         np = nv_refnode(np);
         if (sub) nv_putsub(np, sub, 0, 0L);
     }
-    id = (char *)malloc(strlen(cp) + 1 + (n = strlen(sp = nv_name(np))) +
-                        (sub ? strlen(sub) + 3 : 1));
+    id = malloc(strlen(cp) + 1 + (n = strlen(sp = nv_name(np))) + (sub ? strlen(sub) + 3 : 1));
     memcpy(id, sp, n);
     if (sub) {
         id[n++] = '[';
@@ -1998,7 +1997,7 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
             }
             if (!(sp = mp->shp->sftable[fd]) ||
                 (sffileno(sp) != fd && !(sfset(sp, 0, 0) & SF_STRING))) {
-                sp = sfnew(NULL, (char *)malloc(IOBSIZE + 1), IOBSIZE, fd, SF_READ | SF_MALLOC);
+                sp = sfnew(NULL, malloc(IOBSIZE + 1), IOBSIZE, fd, SF_READ | SF_MALLOC);
             }
             type = 3;
         } else {

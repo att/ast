@@ -174,7 +174,7 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
 
     if (!vp) {
         ed->e_vi = vp = calloc(1, sizeof(Vi_t));
-        vp->lastline = (genchar *)malloc(MAXLINE * CHARSIZE);
+        vp->lastline = malloc(MAXLINE * CHARSIZE);
         vp->direction = -1;
         vp->ed = ed;
     }
@@ -216,7 +216,7 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
     window = Window;
     window[0] = '\0';
 
-    if (!yankbuf) yankbuf = (genchar *)malloc(MAXLINE * CHARSIZE);
+    if (!yankbuf) yankbuf = malloc(MAXLINE * CHARSIZE);
     if (vp->last_cmd == '\0') {
         // First time for this shell.
         vp->last_cmd = 'i';

@@ -190,7 +190,7 @@ static_fn pid_t path_xargs(Shell_t *shp, const char *path, char *argv[], char *c
         if (left < 0 && (avlast - av) < 2) av--;
         if (xv == &argv[shp->xargmin]) {
             n = nlast * sizeof(char *);
-            saveargs = (char **)malloc(n);
+            saveargs = malloc(n);
             memcpy(saveargs, av, n);
             memcpy(av, avlast, n);
         } else {

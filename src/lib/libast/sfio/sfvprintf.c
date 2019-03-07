@@ -668,7 +668,8 @@ loop_fmt:
                     fmstk->ft = ft = argv.ft;
                 } else /* stack a new environment */
                 {
-                    if (!(fm = (Fmt_t *)malloc(sizeof(Fmt_t)))) goto done;
+                    fm = malloc(sizeof(Fmt_t));
+                    if (!fm) goto done;
 
                     ft = fm->ft = argv.ft;
                     SFMBSET(ft->mbs, &fmbs);

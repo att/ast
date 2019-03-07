@@ -1206,7 +1206,7 @@ void job_clear(Shell_t *shp) {
     job.waitall = 0;
     job.curpgid = 0;
     job.toclear = 0;
-    if (!job.freejobs) job.freejobs = (unsigned char *)malloc((unsigned)(j + 1));
+    if (!job.freejobs) job.freejobs = malloc(j + 1);
     while (j >= 0) job.freejobs[j--] = 0;
     job_unlock();
 }

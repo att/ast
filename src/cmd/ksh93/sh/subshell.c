@@ -273,7 +273,7 @@ Namval_t *sh_assignok(Namval_t *np, int add) {
         if (lp->node == np) return np;
     }
     // First two pointers use linkage from np.
-    lp = (struct Link *)malloc(sizeof(*np) + 2 * sizeof(void *));
+    lp = malloc(sizeof(*np) + 2 * sizeof(void *));
     memset(lp, 0, sizeof(*mp) + 2 * sizeof(void *));
     lp->node = np;
     if (!add && nv_isvtree(np)) {

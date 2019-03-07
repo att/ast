@@ -72,7 +72,7 @@ int _sfexcept(Sfio_t *f, int type, ssize_t io, Sfdisc_t *disc) {
         if (f->size > 0) {
             data = (uchar *)realloc((char *)f->data, size);
         } else {
-            data = (uchar *)malloc(size);
+            data = malloc(size);
         }
         if (!data) goto chk_stack;
         f->endb = data + size;

@@ -263,7 +263,7 @@ static_fn Sfdouble_t nget_optindex(Namval_t *np, Namfun_t *fp) {
 
 static_fn Namfun_t *clone_optindex(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     UNUSED(flags);
-    Namfun_t *dp = (Namfun_t *)malloc(sizeof(Namfun_t));
+    Namfun_t *dp = malloc(sizeof(Namfun_t));
 
     memcpy(dp, fp, sizeof(Namfun_t));
     STORE_VT(mp->nvalue, i32p, FETCH_VT(np->nvalue, i32p));
@@ -814,15 +814,15 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
             if (mp->msize) {
                 mp->match = (int *)realloc(mp->match, 2 * i);
             } else {
-                mp->match = (int *)malloc(2 * i);
+                mp->match = malloc(2 * i);
             }
             mp->msize = 2 * i;
         }
         if (vsize >= mp->vsize) {
             if (mp->vsize) {
-                mp->val = (char *)realloc(mp->val, x = 2 * vsize);
+                mp->val = realloc(mp->val, x = 2 * vsize);
             } else {
-                mp->val = (char *)malloc(x = vsize + 1);
+                mp->val = malloc(x = vsize + 1);
             }
             mp->vsize = x;
         }
@@ -859,7 +859,7 @@ static_fn char *get_match(Namval_t *np, Namfun_t *fp) {
         free(mp->rval[i]);
         mp->rval[i] = 0;
     }
-    mp->rval[i] = (char *)malloc(n + 1);
+    mp->rval[i] = malloc(n + 1);
     mp->lastsub[i] = sub;
     memcpy(mp->rval[i], val, n);
     mp->rval[i][n] = 0;
@@ -1364,7 +1364,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 #if _lib_pathposix
                     char *p;
 
-                    if ((n = pathposix(name, NULL, 0)) > 0 && (p = (char *)malloc(++n))) {
+                    if ((n = pathposix(name, NULL, 0)) > 0 && (p = malloc(++n))) {
                         pathposix(name, p, n);
                         name = p;
                     } else
