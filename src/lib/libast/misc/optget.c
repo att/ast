@@ -615,9 +615,9 @@ static_fn void *optget_search(const void *tab, size_t num, size_t siz, char *s) 
     char *e;
 
     for (e = (p = (char *)tab) + num * siz; p < e; p += siz) {
-        if (optget_match(s, *((char **)p), -1, NULL, NULL)) return (void *)p;
+        if (optget_match(s, *((char **)p), -1, NULL, NULL)) return p;
     }
-    return 0;
+    return NULL;
 }
 
 /*

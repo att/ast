@@ -455,7 +455,7 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
             error_info.errors = 1;
             continue;
         }
-        if (flags & U_FLAG) sfsetbuf(fp, (void *)fp, -1);
+        if (flags & U_FLAG) sfsetbuf(fp, fp, -1);
         if (dovcat) {
             n = vcat(states, fp, sfstdout, flags);
         } else if (sfmove(fp, sfstdout, SF_UNBOUND, -1) >= 0 && sfeof(fp)) {
