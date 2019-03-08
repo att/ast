@@ -146,7 +146,7 @@ extern int fts_flags();
 int b_chmod(int argc, char **argv, Shbltin_t *context) {
     int mode;
     int force = 0;
-    int flags;
+    int flag, flags;
     char *amode = 0;
     FTS *fts;
     FTSENT *ent;
@@ -163,60 +163,63 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
     if (cmdinit(argc, argv, context, ERROR_NOTIFY)) return -1;
     flags = fts_flags() | FTS_COMFOLLOW;
 
-    /*
-     * NOTE: we diverge from the normal optget boilerplate
-     *	 to allow `chmod -x etc' to fall through
-     */
-
-    for (;;) {
-        switch (optget(argv, usage)) {
+    //
+    // NOTE: we diverge from the normal optget boilerplate to allow `chmod -x path`, and similar
+    // invocations, to terminate the loop even though they look like unrecognized short flags.
+    //
+    bool optget_done = false;
+    while (!optget_done && (flag = optget(argv, usage))) {
+        switch (flag) {
             case 'c':
                 notify = 1;
-                continue;
+                break;
             case 'f':
                 force = 1;
-                continue;
+                break;
             case 'h':
                 chlink = 1;
-                continue;
+                break;
             case 'i':
                 ignore = 1;
-                continue;
+                break;
             case 'n':
                 show = 1;
-                continue;
+                break;
             case 'v':
                 notify = 2;
-                continue;
+                break;
             case 'F':
                 if (stat(opt_info.arg, &st)) error(ERROR_exit(1), "%s: cannot stat", opt_info.arg);
                 mode = st.st_mode;
                 amode = "";
-                continue;
+                break;
             case 'H':
                 flags |= FTS_COMFOLLOW | FTS_PHYSICAL;
                 logical = 0;
-                continue;
+                break;
             case 'L':
                 flags &= ~(FTS_COMFOLLOW | FTS_PHYSICAL);
                 logical = 0;
-                continue;
+                break;
             case 'P':
                 flags &= ~FTS_COMFOLLOW;
                 flags |= FTS_PHYSICAL;
                 logical = 0;
-                continue;
+                break;
             case 'R':
                 // Standard fts_open() does not support this flag, so instead use a different flag
                 // flags &= ~FTS_TOP;
                 recursive = 1;
                 logical = 0;
-                continue;
+                break;
+            case ':':
+                optget_done = true;  // probably a negative permission like `-x` or similar
+                break;
             case '?':
-                error(ERROR_usage(2), "%s", opt_info.arg);
+                error(ERROR_usage(2), "WTF2 %s", opt_info.arg);
                 __builtin_unreachable();
+            default: { break; }
         }
-        break;
     }
     argv += opt_info.index;
     if (error_info.errors || !*argv || (!amode && !*(argv + 1))) {
