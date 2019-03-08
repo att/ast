@@ -263,27 +263,26 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
     } optdisc;
 
     if (cmdinit(argc, argv, context, ERROR_NOTIFY)) return -1;
-    for (;;) {
-        switch (optget(argv, enum_usage)) {
+    while ((n = optget(argv, enum_usage))) {
+        switch (n) {
             case 'p': {
                 pflag = true;
-                continue;
+                break;
             }
             case 'i': {
                 iflag = true;
-                continue;
-            }
-            case '?': {
-                error(ERROR_USAGE | 4, "%s", opt_info.arg);
                 break;
             }
             case ':': {
-                error(2, "%s", opt_info.arg);
+                errormsg(SH_DICT, 2, "%s", opt_info.arg);
                 break;
+            }
+            case '?': {
+                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
+                __builtin_unreachable();
             }
             default: { break; }
         }
-        break;
     }
 
     argv += opt_info.index;
