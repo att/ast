@@ -105,25 +105,26 @@ int b_basename(int argc, char **argv, Shbltin_t *context) {
     char *string;
     char *suffix = 0;
     int all = 0;
+    int n;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    for (;;) {
-        switch (optget(argv, usage)) {
+    while ((n = optget(argv, usage))) {
+        switch (n) {
             case 'a':
                 all = 1;
-                continue;
+                break;
             case 's':
                 all = 1;
                 suffix = opt_info.arg;
-                continue;
+                break;
             case ':':
                 error(2, "%s", opt_info.arg);
                 break;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
+            default: { break; }
         }
-        break;
     }
     argv += opt_info.index;
     argc -= opt_info.index;
