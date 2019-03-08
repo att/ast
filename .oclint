@@ -10,14 +10,24 @@ rule-configurations:
     # The default limit for the length of variable names is 20. Long names are
     # problematic but twenty chars results in way too many errors. So increase
     # the limit to something more reasonable.
-    #
     - key: LONG_VARIABLE_NAME
       value: 30
 
+    # TODO: Return this to a saner value such as 60 (or even 100) once the
+    # truly obscene functions have been refactored.
+    #
     # We're slightly more persmissive regarding the total number of lines in a
     # function. Default is 50.
     - key: LONG_METHOD
-      value: 60
+      value: 500
+
+    # TODO: Return this to the default of 5 once the more egregious nested
+    # blocks have been eliminated.
+    #
+    # We're slightly more persmissive regarding the nested block depth.
+    # Default is 5.
+    - key: NESTED_BLOCK_DEPTH
+      value: 7
 
     # We're slightly more persmissive regarding the number of non-comment
     # lines in a function. Default is 30.
