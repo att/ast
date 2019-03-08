@@ -341,7 +341,7 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, int flags) {
 }
 
 int b_cat(int argc, char **argv, Shbltin_t *context) {
-    int n;
+    int n, flag;
     int flags = 0;
     char *cp;
     Sfio_t *fp;
@@ -353,9 +353,9 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
     if (cmdinit(argc, argv, context, 0)) return -1;
     att = !strcmp(astconf("UNIVERSE", NULL, NULL), "att");
     mode = "r";
-    for (;;) {
+    while ((flag = optget(argv, usage))) {
         n = 0;
-        switch (optget(argv, usage)) {
+        switch (flag) {
             case 'A':
                 n = T_FLAG | E_FLAG | V_FLAG;
                 break;
