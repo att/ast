@@ -19,17 +19,18 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Bell Laboratories
- *
- * return path to file a/b with access mode using : separated dirs
- * both a and b may be 0
- * if a==".." then relative paths in dirs are ignored
- * if (mode&PATH_REGULAR) then path must not be a directory
- * if (mode&PATH_ABSOLUTE) then path must be rooted
- * path returned in path buffer
- */
+//
+// Glenn Fowler
+// AT&T Bell Laboratories
+//
+// Return path to file path1/path2 with access mode using `:` separated dirs
+// both path1 and path2 may be NULL
+// If path1==".." then relative paths in dirs are ignored
+// If (mode&PATH_REGULAR) then path must not be a directory
+// If (mode&PATH_ABSOLUTE) then path must be rooted
+// path returned in path buffer
+//
+
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <limits.h>
@@ -38,19 +39,21 @@
 
 #include "ast.h"
 
-char *pathaccess(const char *dirs, const char *a, const char *b, int mode, char *path,
+char *pathaccess(const char *dirs, const char *path1, const char *path2, int mode, char *path,
                  size_t size) {
-    int sib = a && a[0] == '.' && a[1] == '.' && a[2] == 0;
-    int sep = ':';
+    bool is_path1_parentdir = path1 && !strcmp(path1, "..");
+    int separator = ':';
     char cwd[PATH_MAX];
 
     do {
-        dirs = pathcat(dirs, sep, a, b, path, size);
+        dirs = pathcat(dirs, separator, path1, path2, path, size);
+        // Remove extra `.` and `/`. Resolve `..`.
         pathcanon(path, size, 0);
-        if ((!sib || *path == '/') && pathexists(path, mode)) {
+        if ((!is_path1_parentdir || *path == '/') && pathexists(path, mode)) {
             if (*path == '/' || !(mode & PATH_ABSOLUTE)) return path;
+            // If path is relative, try to resolve it with current directory.
             dirs = getcwd(cwd, sizeof(cwd));
-            sep = 0;
+            separator = 0;
         }
     } while (dirs);
 
