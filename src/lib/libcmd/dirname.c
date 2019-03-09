@@ -105,20 +105,21 @@ static void l_dirname(Sfio_t *outfile, const char *pathname) {
 
 int b_dirname(int argc, char **argv, Shbltin_t *context) {
     int mode = 0;
+    int n;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    for (;;) {
-        switch (optget(argv, usage)) {
+    while ((n = optget(argv, usage))) {
+        switch (n) {
             case 'f':
                 mode |= PATH_REGULAR;
-                continue;
+                break;
             case 'r':
                 mode &= ~PATH_REGULAR;
                 mode |= PATH_READ;
-                continue;
+                break;
             case 'x':
                 mode |= PATH_EXECUTE;
-                continue;
+                break;
             case ':':
                 error(2, "%s", opt_info.arg);
                 break;
@@ -126,7 +127,6 @@ int b_dirname(int argc, char **argv, Shbltin_t *context) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
         }
-        break;
     }
     argv += opt_info.index;
     argc -= opt_info.index;
