@@ -168,50 +168,50 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
     if (*native != '/') native = 0;
     flags = 0;
     pattern = 0;
-    for (;;) {
-        switch (optget(argv, usage)) {
+    while ((n = optget(argv, usage))) {
+        switch (n) {
             case 'a':
                 if (native) goto defer;
-                continue;
+                break;
             case 'b':
                 flags |= ASTCONF_base;
-                continue;
+                break;
             case 'c':
                 flags |= ASTCONF_matchcall;
                 pattern = opt_info.arg;
-                continue;
+                break;
             case 'd':
                 flags |= ASTCONF_defined;
-                continue;
+                break;
             case 'l':
                 flags |= ASTCONF_lower;
-                continue;
+                break;
             case 'n':
                 flags |= ASTCONF_matchname;
                 pattern = opt_info.arg;
-                continue;
+                break;
             case 'p':
                 flags |= ASTCONF_parse;
-                continue;
+                break;
             case 'q':
                 flags |= ASTCONF_quote;
-                continue;
+                break;
             case 'r':
                 flags |= ASTCONF_read;
-                continue;
+                break;
             case 's':
                 flags |= ASTCONF_matchstandard;
                 pattern = opt_info.arg;
-                continue;
+                break;
             case 't':
                 flags |= ASTCONF_table;
-                continue;
+                break;
             case 'v':
                 if (native) goto defer;
-                continue;
+                break;
             case 'w':
                 flags |= ASTCONF_write;
-                continue;
+                break;
             case ':':
                 if (native) goto defer;
                 error(2, "%s", opt_info.arg);
@@ -220,7 +220,6 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
         }
-        break;
     }
     argv += opt_info.index;
     name = *argv;
@@ -275,7 +274,6 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
     return error_info.errors != 0;
 
 defer:
-
     /*
      * defer to argv[0] if absolute and it exists
      */
