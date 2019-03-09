@@ -80,19 +80,19 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
     struct stat st;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    for (;;) {
-        switch (optget(argv, usage)) {
+    while ((n = optget(argv, usage))) {
+        switch (n) {
             case 'm':
                 mflag = 1;
                 mode = strperm(opt_info.arg, &part, mode);
                 if (*part) error(ERROR_exit(0), "%s: invalid mode", opt_info.arg);
-                continue;
+                break;
             case 'p':
                 pflag = 1;
-                continue;
+                break;
             case 'v':
                 vflag = 1;
-                continue;
+                break;
             case ':':
                 error(2, "%s", opt_info.arg);
                 break;
@@ -100,7 +100,6 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
         }
-        break;
     }
     argv += opt_info.index;
     if (error_info.errors || !*argv) {
