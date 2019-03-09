@@ -533,15 +533,13 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
     wdelim.chr = '\t';
     ldelim.chr = '\n';
     wdelim.len = ldelim.len = 1;
-    for (;;) {
-        switch (optget(argv, usage)) {
-            case 0:
-                break;
+    while ((n = optget(argv, usage))) {
+        switch (n) {
             case 'b':
             case 'c':
                 if (mode & C_FIELDS) {
                     error(2, "f option already specified");
-                    continue;
+                    break;
                 }
                 cp = opt_info.arg;
                 if (opt_info.option[1] == 'b') {
@@ -549,7 +547,7 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
                 } else {
                     mode |= C_CHARS;
                 }
-                continue;
+                break;
             case 'D':
                 ldelim.str = opt_info.arg;
                 if (mbwide()) {
@@ -557,12 +555,12 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
                     ldelim.chr = mb1char(s);
                     if ((n = s - opt_info.arg) > 1) {
                         ldelim.len = n;
-                        continue;
+                        break;
                     }
                 }
                 ldelim.chr = *(unsigned char *)opt_info.arg;
                 ldelim.len = 1;
-                continue;
+                break;
             case 'd':
                 wdelim.str = opt_info.arg;
                 if (mbwide()) {
@@ -571,33 +569,33 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
                     n = s - opt_info.arg;
                     if (n > 1) {
                         wdelim.len = n;
-                        continue;
+                        break;
                     }
                 }
                 wdelim.chr = *(unsigned char *)opt_info.arg;
                 wdelim.len = 1;
-                continue;
+                break;
             case 'f':
                 if (mode & (C_CHARS | C_BYTES)) {
                     error(2, "c option already specified");
-                    continue;
+                    break;
                 }
                 cp = opt_info.arg;
                 mode |= C_FIELDS;
-                continue;
+                break;
             case 'n':
                 mode |= C_NOSPLIT;
-                continue;
+                break;
             case 'N':
                 mode |= C_NONEWLINE;
-                continue;
+                break;
             case 'R':
             case 'r':
                 if (opt_info.num > 0) reclen = opt_info.num;
-                continue;
+                break;
             case 's':
                 mode |= C_SUPRESS;
-                continue;
+                break;
             case ':':
                 error(2, "%s", opt_info.arg);
                 break;
@@ -605,7 +603,6 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
         }
-        break;
     }
     argv += opt_info.index;
     if (error_info.errors) {
