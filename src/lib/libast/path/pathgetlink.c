@@ -19,10 +19,10 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Bell Laboratories
- */
+//
+// Glenn Fowler
+// AT&T Bell Laboratories
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
@@ -31,19 +31,19 @@
 #include <unistd.h>
 #endif
 
-/*
- * return external representation for symbolic link text of name in buf
- * the link text string length is returned
- */
-
-int pathgetlink(const char *name, char *buf, int siz) {
+//
+// Return external representation for symbolic link text of name in `buff`
+// the link text string length is returned
+//
+int pathgetlink(const char *name, char *buff, int buffsize) {
     int n;
 
-    if ((n = readlink(name, buf, siz)) < 0) return -1;
-    if (n >= siz) {
+    if ((n = readlink(name, buff, buffsize)) < 0) return -1;
+    if (n >= buffsize) {
         errno = EINVAL;
         return -1;
     }
-    buf[n] = 0;
+
+    buff[n] = 0;
     return n;
 }
