@@ -83,10 +83,11 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
     off_t moved;
     int header = 1;
     char *format = (char *)header_fmt + 1;
+    int n;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    for (;;) {
-        switch (optget(argv, usage)) {
+    while ((n = optget(argv, usage))) {
+        switch (n) {
             case 'c':
                 delim = -1;
                 /*FALLTHROUGH*/
@@ -100,24 +101,23 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
                     error(2, "%s: %I*d: positive numeric option argument expected", opt_info.name,
                           sizeof(keep), keep);
                 }
-                continue;
+                break;
             case 'q':
                 header = argc;
-                continue;
+                break;
             case 'v':
                 header = 0;
-                continue;
+                break;
             case 's':
                 skip = opt_info.number;
-                continue;
+                break;
+            case ':':
+                error(2, "%s", opt_info.arg);
+                break;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
-            case ':':
-                error(2, "%s", opt_info.arg);
-                continue;
         }
-        break;
     }
     argv += opt_info.index;
     argc -= opt_info.index;
