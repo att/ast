@@ -246,18 +246,18 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
     int flags = 0;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    for (;;) {
-        switch (optget(argv, usage)) {
+    while ((n = optget(argv, usage))) {
+        switch (n) {
             case 'b':
                 flags |= CMP_BYTES;
-                continue;
+                break;
             case 'c':
                 flags |= CMP_CHARS;
-                continue;
+                break;
             case 'd':
                 flags |= CMP_VERBOSE;
                 differences = opt_info.number;
-                continue;
+                break;
             case 'i':
                 o1 = strtoll(opt_info.arg, &e, 0);
                 if (*e == ':') {
@@ -267,18 +267,19 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
                 }
                 if (*e) {
                     error(2, "%s: skip1:skip2 expected", opt_info.arg);
-                    break;
+                    error(ERROR_usage(2), "%s", optusage(NULL));
+                    __builtin_unreachable();
                 }
-                continue;
+                break;
             case 'l':
                 flags |= CMP_VERBOSE;
-                continue;
+                break;
             case 'n':
                 count = opt_info.number;
-                continue;
+                break;
             case 's':
                 flags |= CMP_SILENT;
-                continue;
+                break;
             case ':':
                 error(2, "%s", opt_info.arg);
                 break;
@@ -286,7 +287,6 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
         }
-        break;
     }
     argv += opt_info.index;
     if (error_info.errors || !(file1 = *argv++) || !(file2 = *argv++)) {
