@@ -24,15 +24,15 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-/*
- * physical stat if logical fails
- */
+//
+// First try `stat()` and if that fails try `lstat()`
+//
+int pathstat(const char *path, struct stat *statbuf) {
+    int old_errno;
 
-int pathstat(const char *path, struct stat *st) {
-    int oerrno;
-
-    oerrno = errno;
-    if (!stat(path, st)) return 0;
-    errno = oerrno;
-    return lstat(path, st);
+    old_errno = errno;
+    if (!stat(path, statbuf)) return 0;
+    errno = old_errno;
+    // If symbolic link is broken then return information about symlink file
+    return lstat(path, statbuf);
 }
