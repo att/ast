@@ -85,37 +85,38 @@ static void printout(Wc_t *wp, char *name, int mode) {
 
 int b_wc(int argc, char **argv, Shbltin_t *context) {
     char *cp;
-    int mode = 0, n;
+    int mode = 0;
+    int n;
     Wc_t *wp;
     Sfio_t *fp;
     Sfoff_t tlines = 0, twords = 0, tchars = 0;
     struct stat statb;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    for (;;) {
-        switch (optget(argv, usage)) {
+    while ((n = optget(argv, usage))) {
+        switch (n) {
             case 'c':
                 mode |= WC_CHARS;
-                continue;
+                break;
             case 'l':
                 mode |= WC_LINES;
-                continue;
+                break;
             case 'L':
                 mode |= WC_LONGEST;
-                continue;
+                break;
             case 'N':
                 if (!opt_info.num) mode |= WC_NOUTF8;
-                continue;
+                break;
             case 'm':
             case 'C':
                 mode |= WC_MBYTE;
-                continue;
+                break;
             case 'q':
                 mode |= WC_QUIET;
-                continue;
+                break;
             case 'w':
                 mode |= WC_WORDS;
-                continue;
+                break;
             case ':':
                 error(2, "%s", opt_info.arg);
                 break;
@@ -123,7 +124,6 @@ int b_wc(int argc, char **argv, Shbltin_t *context) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
         }
-        break;
     }
     argv += opt_info.index;
     if (error_info.errors) {
