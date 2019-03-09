@@ -137,53 +137,53 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
     char buf[257];
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    for (;;) {
-        switch (optget(argv, usage)) {
+    while ((n = optget(argv, usage))) {
+        switch (n) {
             case 'a':
                 flags |= OPT_all | ((1L << OPT_ALL) - 1);
-                continue;
+                break;
             case 'd':
                 flags |= OPT_domain;
-                continue;
+                break;
             case 'f':
                 list = 1;
-                continue;
+                break;
             case 'h':
                 flags |= OPT_hostid;
-                continue;
+                break;
             case 'i':
                 flags |= OPT_implementation;
-                continue;
+                break;
             case 'm':
                 flags |= OPT_machine;
-                continue;
+                break;
             case 'n':
                 flags |= OPT_nodename;
-                continue;
+                break;
             case 'o':
                 flags |= OPT_operating_system;
-                continue;
+                break;
             case 'p':
                 flags |= OPT_processor;
-                continue;
+                break;
             case 'r':
                 flags |= OPT_release;
-                continue;
+                break;
             case 's':
                 flags |= OPT_system;
-                continue;
+                break;
             case 'v':
                 flags |= OPT_version;
-                continue;
+                break;
             case 'A':
                 flags |= OPT_total | ((1L << OPT_TOTAL) - 1);
-                continue;
+                break;
             case 'R':
                 flags |= OPT_extended_release;
-                continue;
+                break;
             case 'S':
                 sethost = opt_info.arg;
-                continue;
+                break;
             case ':':
                 s = "/usr/bin/uname";
                 if (strcmp(argv[0], s) != 0 && (!eaccess(s, X_OK) || !eaccess(s += 4, X_OK))) {
@@ -196,7 +196,6 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
         }
-        break;
     }
     argv += opt_info.index;
     if (error_info.errors || (*argv && (flags || sethost)) || (sethost && flags)) {
