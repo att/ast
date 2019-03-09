@@ -31,7 +31,7 @@
 #include "sfio.h"
 #include "shcmd.h"
 
-static const char optsync[] =
+static const char usage[] =
     "[-?\n@(#)$Id: sync (AT&T Research) 2013-09-22 $\n]" USAGE_LICENSE
     "[+NAME?sync - schedule file/file system updates]"
     "[+DESCRIPTION?\bsync\b(1) transfers buffered modifications of file "
@@ -73,13 +73,14 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
     int syncfs_fd = -1;
     bool do_sfsync = 0;
     bool do_sync = 0;
+    int n;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    for (;;) {
-        switch (optget(argv, optsync)) {
+    while ((n = optget(argv, usage))) {
+        switch (n) {
             case 'f':
                 do_sfsync = 1;
-                continue;
+                break;
             case 's':
                 fsync_fd = opt_info.num;
                 break;
@@ -97,7 +98,6 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
         }
-        break;
     }
     argv += opt_info.index;
     if (error_info.errors || *argv) {
