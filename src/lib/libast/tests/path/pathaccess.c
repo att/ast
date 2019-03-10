@@ -13,8 +13,9 @@ tmain() {
     if (strcmp(path, "/usr")) terror("pathaccess() failed to resolve path");
 
     paths = "this_path_does_not_exist";
-    
-    if (pathaccess(paths, 0, 0, PATH_ABSOLUTE, path, PATH_MAX)) terror("pathaccess() returns path to a file that does not exist");
+
+    if (pathaccess(paths, 0, 0, PATH_ABSOLUTE, path, PATH_MAX))
+        terror("pathaccess() returns path to a file that does not exist");
 
     texit(0);
 }
