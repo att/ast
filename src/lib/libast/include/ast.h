@@ -32,6 +32,7 @@
 #include <sys/stat.h>
 #include <wchar.h>
 
+#include "ast_errorf.h"
 #include "ast_sys.h"
 #include "sfio.h"
 
@@ -179,12 +180,6 @@ extern _Ast_info_t _ast_info;
 typedef int (*Ast_confdisc_f)(const char *, const char *, const char *);
 typedef int (*Strcmp_context_f)(const char *, const char *, void *);
 typedef int (*Strcmp_f)(const char *, const char *);
-
-#include "ast_errorf.h"
-
-#ifndef _VMALLOC_H
-struct Vmdisc_s;
-#endif
 
 extern char *ast_setlocale(int, const char *);
 extern char *astgetconf(const char *, const char *, const char *, int, Error_f);
