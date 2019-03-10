@@ -26,6 +26,10 @@ option('audit-file', type : 'string', value : '/etc/ksh_audit')
 #   meson -Dbuild-api-tests=false
 option('build-api-tests', type : 'boolean', value : true)
 
+# To build api tests only, set build-api-tests-only option to true:
+#   meson -Dbuild-api-tests-only=true
+option('build-api-tests-only', type : 'boolean', value : false)
+
 # This number is used when git is not available
 #   meson -Dfallback-version-number='x.y.z'
 option('fallback-version-number', type : 'string', value : '0.0.0')

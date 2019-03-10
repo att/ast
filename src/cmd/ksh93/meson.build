@@ -58,4 +58,7 @@ ld_library_path = 'LD_LIBRARY_PATH=' + ':'.join(
 libsample_path = 'LIBSAMPLE_PATH=' + libsample.full_path()
 
 subdir('tests/api')
-subdir('tests')
+# Check if only api tests should be built
+if get_option('build-api-tests-only') == false
+    subdir('tests')
+endif
