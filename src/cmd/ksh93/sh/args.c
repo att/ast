@@ -31,6 +31,7 @@
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "builtins.h"
 #include "cdt.h"
 #include "defs.h"
@@ -726,6 +727,7 @@ struct dolnod *sh_argcreate(char *argv[]) {
     sp = (char *)dp + sizeof(struct dolnod) + n * sizeof(char *);
     while (n--) {
         *pp++ = sp;
+        assert(*argv);
         sp = stpcpy(sp, *argv++) + 1;
     }
     *pp = NULL;
