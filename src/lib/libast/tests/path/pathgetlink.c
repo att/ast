@@ -16,9 +16,9 @@ tmain() {
     const char *filename = "foobarbaz";
     char smallbuff[4];
 
-    if (open(filename, O_CREAT, 0666) < 0) {
-        terror("Failed to create test file");
-    }
+    int fd = open(filename, O_CREAT, 0666);
+    if (fd == -1) terror("Failed to create test file");
+    close(fd);
 
     if (symlink(filename, linkname) < 0) {
         terror("Failed to create symbolic link");

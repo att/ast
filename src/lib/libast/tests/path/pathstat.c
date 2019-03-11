@@ -20,7 +20,9 @@ tmain() {
 
     struct stat statbuf;
 
-    if (open(temp_file, O_CREAT, 0666) < 0) terror("Failed to create temp file");
+    int fd = open(temp_file, O_CREAT, 0666);
+    if (fd == -1) terror("Failed to create temp file");
+    close(fd);
 
     if (pathstat(temp_file, &statbuf) && statbuf.st_mode == 0666) {
         terror("Failed to stat() %s", temp_file);
