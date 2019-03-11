@@ -26,6 +26,7 @@
 
 #include <ctype.h>
 #include <limits.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -822,24 +823,26 @@ static_fn int regcomp_magic(Cenv_t *env, int c, int escaped) {
 group:
     sp = (char *)env->cursor + env->token.len;
     switch (*sp++) {
-        case ')':
+        case ')': {
             break;
-        case '#':
-            for (;;) {
+        }
+        case '#': {
+            bool done = false;
+            while (!done) {
                 switch (*sp++) {
                     case 0:
                         env->error = REG_EPAREN;
                         return T_BAD;
                     case ')':
+                        done = true;
                         break;
                     default:
-                        continue;
+                        break;
                 }
-                break;
             }
             break;
-        default:
-            return T_GROUP;
+        }
+        default: { return T_GROUP; }
     }
     env->cursor = (unsigned char *)sp;
     return regcomp_token(env);
