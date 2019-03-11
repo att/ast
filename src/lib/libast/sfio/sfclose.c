@@ -80,11 +80,11 @@ int sfclose(Sfio_t *f) {
 
             POOLMTXLOCK(&_Sfpool);
             for (n = 0; n < _Sfpool.n_sf; ++n) {
-                if (_Sfpool.sf[n] != f) continue;
-                /* found it */
-                _Sfpool.n_sf -= 1;
-                for (; n < _Sfpool.n_sf; ++n) _Sfpool.sf[n] = _Sfpool.sf[n + 1];
-                break;
+                if (_Sfpool.sf[n] == f) {  // found it
+                    _Sfpool.n_sf -= 1;
+                    for (; n < _Sfpool.n_sf; ++n) _Sfpool.sf[n] = _Sfpool.sf[n + 1];
+                    break;
+                }
             }
             POOLMTXUNLOCK(&_Sfpool);
         } else {
