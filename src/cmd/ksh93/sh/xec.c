@@ -64,7 +64,6 @@
 #include "shcmd.h"
 #include "shnodes.h"
 #include "shtable.h"
-#include "stak.h"
 #include "stk.h"
 #include "streval.h"
 #include "terminal.h"
@@ -3273,7 +3272,7 @@ int sh_run(Shell_t *shp, int argn, char *argv[]) {
     struct dolnod *dp;
     struct comnod *t = (struct comnod *)stkalloc(shp->stk, sizeof(struct comnod));
     int savtop = stktell(shp->stk);
-    char *savptr = stakfreeze(0);
+    char *savptr = stkfreeze(stkstd, 0);
     Shbltin_t bltindata;
 
     bltindata = shp->bltindata;
