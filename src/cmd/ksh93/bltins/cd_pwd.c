@@ -47,7 +47,6 @@
 #include "path.h"
 #include "sfio.h"
 #include "shcmd.h"
-#include "stak.h"
 #include "stk.h"
 #include "variables.h"
 
@@ -195,28 +194,30 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         dp = cdpath ? cdpath->name : "";
         cdpath = path_nextcomp(shp, cdpath, dir, 0);
 #if __CYGWIN__
-        if (*stakptr(PATH_OFFSET + 1) == ':' && isalpha(*stakptr(PATH_OFFSET))) {
-            *stakptr(PATH_OFFSET + 1) = *stakptr(PATH_OFFSET);
-            *stakptr(PATH_OFFSET) = '/';
+        if (*stkptr(stkstd, PATH_OFFSET + 1) == ':' && isalpha(*stkptr(stkstd, PATH_OFFSET))) {
+            *stkptr(stkstd, PATH_OFFSET + 1) = *stkptr(stkstd, PATH_OFFSET);
+            *stkptr(stkstd, PATH_OFFSET) = '/';
         }
 #endif  // __CYGWIN__
-        if (*stakptr(PATH_OFFSET) != '/' && dirfd == shp->pwdfd) {
-            char *last = (char *)stakfreeze(1);
-            stakseek(PATH_OFFSET);
-            stakputs(oldpwd);
+        if (*stkptr(stkstd, PATH_OFFSET) != '/' && dirfd == shp->pwdfd) {
+            char *last = (char *)stkfreeze(stkstd, 1);
+            stkseek(stkstd, PATH_OFFSET);
+            sfputr(stkstd, oldpwd, 0);
+            --stkstd->next;
             // Don't add '/' of oldpwd is / itself.
-            if (*oldpwd != '/' || oldpwd[1]) stakputc('/');
-            stakputs(last + PATH_OFFSET);
-            stakputc(0);
+            if (*oldpwd != '/' || oldpwd[1]) sfputc(stkstd, '/');
+            sfputr(stkstd, last + PATH_OFFSET, 0);
+            --stkstd->next;
+            sfputc(stkstd, 0);
         }
         if (!fflag && !pflag) {
             char *cp;
-            stakseek(PATH_MAX + PATH_OFFSET);
-            cp = stakptr(PATH_OFFSET);
+            stkseek(stkstd, PATH_MAX + PATH_OFFSET);
+            cp = stkptr(stkstd, PATH_OFFSET);
             if (*cp == '/' && !pathcanon(cp, PATH_MAX, PATH_ABSOLUTE | PATH_DOTDOT)) continue;
         }
 
-        newdirfd = sh_diropenat(shp, dirfd, path_relative(shp, stakptr(PATH_OFFSET)));
+        newdirfd = sh_diropenat(shp, dirfd, path_relative(shp, stkptr(stkstd, PATH_OFFSET)));
         if (newdirfd >= 0) {
             // chdir for directories on HSM/tapeworms may take minutes.
             rval = sh_fchdir(newdirfd);
@@ -230,7 +231,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
 #if O_SEARCH
             rval = newdirfd;
 #else
-            rval = sh_chdir(path_relative(shp, stakptr(PATH_OFFSET)));
+            rval = sh_chdir(path_relative(shp, stkptr(stkstd, PATH_OFFSET)));
             if (rval >= 0 && shp->pwdfd >= 0) {
                 sh_close(shp->pwdfd);
                 shp->pwdfd = AT_FDCWD;
@@ -240,7 +241,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         if (saverrno == 0) saverrno = errno;
     } while (cdpath);
 
-    if (rval < 0 && *dir == '/' && *(path_relative(shp, stakptr(PATH_OFFSET))) != '/') {
+    if (rval < 0 && *dir == '/' && *(path_relative(shp, stkptr(stkstd, PATH_OFFSET))) != '/') {
         rval = newdirfd = sh_diropenat(shp, shp->pwdfd, dir);
         if (newdirfd >= 0) {
             // chdir for directories on HSM/tapeworms may take minutes.
@@ -272,16 +273,16 @@ success:
         dp = dir;  // print out directory for cd -
     }
     if (pflag) {
-        dir = stakptr(PATH_OFFSET);
+        dir = stkptr(stkstd, PATH_OFFSET);
         dir = pathcanon(dir, PATH_MAX, PATH_ABSOLUTE | PATH_PHYSICAL);
         if (!dp) {
-            dir = stakptr(PATH_OFFSET);
+            dir = stkptr(stkstd, PATH_OFFSET);
             errormsg(SH_DICT, ERROR_system(1), "%s:", dir);
             __builtin_unreachable();
         }
-        stakseek(dir - stakptr(0));
+        stkseek(stkstd, dir - stkptr(stkstd, 0));
     }
-    dir = (char *)stakfreeze(1) + PATH_OFFSET;
+    dir = (char *)stkfreeze(stkstd, 1) + PATH_OFFSET;
     if (*dp && (*dp != '.' || dp[1]) && strchr(dir, '/')) sfputr(sfstdout, dir, '\n');
     if (*dir != '/') {
         if (!fflag) return 0;
@@ -353,7 +354,7 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
     }
     if (pflag) {
         cp = path_pwd(shp);
-        cp = strcpy(stakseek(strlen(cp) + PATH_MAX), cp);
+        cp = strcpy(stkseek(stkstd, strlen(cp) + PATH_MAX), cp);
         pathcanon(cp, PATH_MAX, PATH_ABSOLUTE | PATH_PHYSICAL);
     } else {
         cp = path_pwd(shp);
