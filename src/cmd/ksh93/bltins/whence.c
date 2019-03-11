@@ -40,7 +40,6 @@
 #include "sfio.h"
 #include "shcmd.h"
 #include "shtable.h"
-#include "stak.h"
 #include "stk.h"
 
 #define P_FLAG (1 << 0)
@@ -270,7 +269,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                 cp = name;
                 if ((flags & P_FLAG) && *cp != '/') cp = 0;
             } else {
-                cp = stakptr(PATH_OFFSET);
+                cp = stkptr(stkstd, PATH_OFFSET);
                 if (*cp == 0) {
                     cp = 0;
                 } else if (*cp != '/') {
