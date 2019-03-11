@@ -35,7 +35,7 @@
 #include "ast.h"
 #include "error.h"
 #include "sfio.h"
-#include "stak.h"
+#include "stk.h"
 #include "wc.h"
 
 #include <wchar.h>
@@ -54,7 +54,7 @@ Wc_t *wc_init(int mode) {
     int n;
     int w;
     Wc_t *wp;
-    wp = (Wc_t *)stakalloc(sizeof(Wc_t));
+    wp = (Wc_t *)stkalloc(stkstd, sizeof(Wc_t));
     if (!wp) return 0;
     if (!mbwide()) {
         wp->mb = 0;
