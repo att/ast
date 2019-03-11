@@ -39,7 +39,6 @@
 #include "error.h"
 #include "name.h"
 #include "sfio.h"
-#include "stak.h"
 #include "stk.h"
 #include "streval.h"
 
@@ -736,7 +735,7 @@ again:
         if (lvalue.value && (op != A_ASSIGN)) {
             if (vp->staksize++ >= vp->stakmaxsize) vp->stakmaxsize = vp->staksize;
             if (op == A_EQ || op == A_NEQ) sfputc(shp->stk, A_ENUM);
-            stakputc(assignop.value ? A_ASSIGNOP1 : A_PUSHV);
+            sfputc(stkstd, assignop.value ? A_ASSIGNOP1 : A_PUSHV);
             stkpush(shp->stk, vp, lvalue.value, char *);
             if (lvalue.flag < 0) lvalue.flag = 0;
             stkpush(shp->stk, vp, lvalue.flag, short);
