@@ -34,7 +34,6 @@
 #include "name.h"
 #include "sfio.h"
 #include "shnodes.h"
-#include "stak.h"
 #include "stk.h"
 
 static_fn struct dolnod *r_comlist(Shell_t *);
@@ -143,15 +142,15 @@ static_fn Shnode_t *r_tree(Shell_t *shp) {
             break;
         }
         case TFUN: {
-            Stak_t *savstak;
+            Sfio_t *savstk;
             struct slnod *slp;
             struct functnod *fp;
             t = getnode(shp->stk, functnod);
             t->funct.functloc = -1;
             t->funct.functline = sfgetu(infile);
             t->funct.functnam = r_string(shp->stk);
-            savstak = stakcreate(STAK_SMALL);
-            savstak = stakinstall(savstak, 0);
+            savstk = stkopen(STK_SMALL);
+            savstk = stkinstall(savstk, 0);
             slp =
                 (struct slnod *)stkalloc(shp->stk, sizeof(struct slnod) + sizeof(struct functnod));
             slp->slchild = 0;
@@ -164,7 +163,7 @@ static_fn Shnode_t *r_tree(Shell_t *shp) {
             t->funct.functtre = r_tree(shp);
             t->funct.functstak = slp;
             t->funct.functargs = (struct comnod *)r_tree(shp);
-            slp->slptr = stakinstall(savstak, 0);
+            slp->slptr = stkinstall(savstk, 0);
             slp->slchild = shp->st.staklist;
             break;
         }
