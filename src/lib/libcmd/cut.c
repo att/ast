@@ -37,7 +37,7 @@
 #include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
-#include "stak.h"
+#include "stk.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: cut (AT&T Research) 2010-08-11 $\n]" USAGE_LICENSE
@@ -136,7 +136,7 @@ static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, siz
     int range = 0;
     char *cp = str;
     Cut_t *cut;
-    cut = (Cut_t *)stakalloc(sizeof(Cut_t) + strlen(cp) * sizeof(int));
+    cut = (Cut_t *)stkalloc(stkstd, sizeof(Cut_t) + strlen(cp) * sizeof(int));
     if (!cut) error(ERROR_exit(1), "out of space");
     cut->mb = mbwide();
     if (cut->mb) {
