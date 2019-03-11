@@ -27,6 +27,7 @@
 
 #include <ctype.h>
 #include <limits.h>
+#include <stdbool.h>
 #include <string.h>
 #include <sys/types.h>
 #include <wchar.h>
@@ -590,36 +591,38 @@ static_fn int collelt(Celt_t *ce, char *key, int c, int x) {
     Ckey_t elt = {0};
 
     mbxfrm(elt, key, COLL_KEY_MAX);
-    for (;; ce++) {
+    for (bool done = false; !done; ce++) {
         switch (ce->typ) {
             case COLL_call:
                 if (!x && (*ce->fun)(c)) return 1;
-                continue;
+                break;
             case COLL_char:
                 if (!strcmp((char *)ce->beg, (char *)elt)) return 1;
-                continue;
+                break;
             case COLL_range:
                 if (strcmp((char *)ce->beg, (char *)elt) <= ce->min &&
                     strcmp((char *)elt, (char *)ce->end) <= ce->max) {
                     return 1;
                 }
-                continue;
+                break;
             case COLL_range_lc:
                 if (strcmp((char *)ce->beg, (char *)elt) <= ce->min &&
                     strcmp((char *)elt, (char *)ce->end) <= ce->max &&
                     (iswlower(c) || !iswupper(c))) {
                     return 1;
                 }
-                continue;
+                break;
             case COLL_range_uc:
                 if (strcmp((char *)ce->beg, (char *)elt) <= ce->min &&
                     strcmp((char *)elt, (char *)ce->end) <= ce->max &&
                     (iswupper(c) || !iswlower(c))) {
                     return 1;
                 }
-                continue;
+                break;
+            default:
+                done = true;
+                break;
         }
-        break;
     }
     return 0;
 }
