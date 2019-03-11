@@ -31,7 +31,8 @@
 #include <stdlib.h>
 
 #include "ast_regex.h"
-#include "stak.h"
+#include "sfio.h"
+#include "stk.h"
 
 struct stat;
 
@@ -91,7 +92,7 @@ struct _glob_ {
     char *gl_nextpath;
     globlist_t *gl_rescan;
     globlist_t *gl_match;
-    Stak_t *gl_stak;
+    Sfio_t *gl_stak;
     int re_flags;
     int re_first;
     regex_t *gl_ignore;

@@ -24,7 +24,8 @@
 #ifndef _ARGNOD_H
 #define _ARGNOD_H 1
 
-#include "stak.h"
+#include "sfio.h"
+#include "stk.h"
 
 struct ionod {
     unsigned iofile;
@@ -56,7 +57,7 @@ struct comnod {
 struct slnod {  // struct for link list of stacks
     struct slnod *slnext;
     struct slnod *slchild;
-    Stak_t *slptr;
+    Sfio_t *slptr;
     // slpad aligns struct functnod = struct slnod + 1 on some architectures.
     struct slnod *slpad;
 };
