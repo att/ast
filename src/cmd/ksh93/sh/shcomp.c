@@ -35,7 +35,7 @@
 #include "option.h"
 #include "sfio.h"
 #include "shnodes.h"
-#include "stak.h"
+#include "stk.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: shcomp (AT&T Research) 2003-03-02 $\n]" USAGE_LICENSE
@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
     shp->inlineno = 1;
     sh_onoption(shp, SH_BRACEEXPAND);
     while (1) {
-        stakset(NULL, 0);
+        stkset(stkstd, NULL, 0);
         t = sh_parse(shp, in, 0);
         if (t) {
             if ((t->tre.tretyp & (COMMSK | COMSCAN)) == TCOM && t->com.comnamp &&
