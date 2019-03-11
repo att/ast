@@ -39,7 +39,6 @@
 #include "lexstates.h"
 #include "sfio.h"
 #include "shtable.h"
-#include "stak.h"
 #include "stk.h"
 
 #if !_lib_iswprint
@@ -225,26 +224,26 @@ static_fn char *sh_fmtcsv(const char *string) {
     int offset;
 
     if (!cp) return NULL;
-    offset = staktell();
+    offset = stktell(stkstd);
     while ((c = mb1char(cp)), isaname(c)) {
         ;  // empty loop
     }
     if (c == 0) return (char *)string;
-    stakputc('"');
-    stakwrite(string, cp - string);
-    if (c == '"') stakputc('"');
+    sfputc(stkstd, '"');
+    sfwrite(stkstd, string, cp - string);
+    if (c == '"') sfputc(stkstd, '"');
     string = cp;
     while ((c = mb1char(cp))) {
         if (c == '"') {
-            stakwrite(string, cp - string);
+            sfwrite(stkstd, string, cp - string);
             string = cp;
-            stakputc('"');
+            sfputc(stkstd, '"');
         }
     }
-    if (--cp > string) stakwrite(string, cp - string);
-    stakputc('"');
-    stakputc(0);
-    return stakptr(offset);
+    if (--cp > string) sfwrite(stkstd, string, cp - string);
+    sfputc(stkstd, '"');
+    sfputc(stkstd, 0);
+    return stkptr(stkstd, offset);
 }
 
 //
@@ -258,7 +257,7 @@ char *sh_fmtstr(const char *string, int quote) {
     bool lc_unicodeliterals;
 
     if (!cp) return NULL;
-    offset = staktell();
+    offset = stktell(stkstd);
     state = ((c = mb1char(cp)) == 0);
     lc_unicodeliterals = quote == 'u' ? 1 : 0;
     if (quote == '"') goto skip;
@@ -272,7 +271,7 @@ char *sh_fmtstr(const char *string, int quote) {
             if (*cp == 0) return (char *)string;
             if (*cp == '=') cp++;
             c = cp - string;
-            stakwrite(string, c);
+            sfwrite(stkstd, string, c);
             string = cp;
             c = mb1char(cp);
         }
@@ -290,17 +289,17 @@ char *sh_fmtstr(const char *string, int quote) {
         }
     }
     if (state < 2) {
-        if (state == 1) stakputc(quote);
+        if (state == 1) sfputc(stkstd, quote);
         c = --cp - string;
-        if (c) stakwrite(string, c);
-        if (state == 1) stakputc(quote);
+        if (c) sfwrite(stkstd, string, c);
+        if (state == 1) sfputc(stkstd, quote);
     } else {
         int lc_specifier = ast.locale.is_utf8 ? 'u' : 'w';
         bool widebyte;
         if (quote == '"') {
-            stakputc('"');
+            sfputc(stkstd, '"');
         } else {
-            stakwrite("$'", 2);
+            sfwrite(stkstd, "$'", 2);
         }
         cp = string;
         while (op = cp, c = mb1char(cp)) {
@@ -376,22 +375,22 @@ char *sh_fmtstr(const char *string, int quote) {
                             if (lc_specifier == 'u') {
                                 uc = c;
                             } else if (wcstoutf32s(&uc, &wc, 1) < 0) {
-                                sfprintf(staksp, "\\\\w[%lx]", (unsigned long)c);
+                                sfprintf(stkstd, "\\\\w[%lx]", (unsigned long)c);
                                 continue;
                             }
 
                             // We assume that all locales have ASCII as their base character set.
                             if (!iswprint(c) || uc > 127) {
-                                sfprintf(staksp, "\\u[%lx]", (unsigned long)uc);
+                                sfprintf(stkstd, "\\u[%lx]", (unsigned long)uc);
                                 continue;
                             }
                         } else if (mbwide() && !iswprint(c)) {
-                            sfprintf(staksp, "\\%c[%x]", lc_specifier, c);
+                            sfprintf(stkstd, "\\%c[%x]", lc_specifier, c);
                             continue;
                         }
                     }
                     if (widebyte || !iswprint(c)) {
-                        sfprintf(staksp, "\\x%.2x", c);
+                        sfprintf(stkstd, "\\x%.2x", c);
                         continue;
                     }
                     state = 0;
@@ -399,16 +398,16 @@ char *sh_fmtstr(const char *string, int quote) {
                 }
             }
             if (state) {
-                stakputc('\\');
-                stakputc(c);
+                sfputc(stkstd, '\\');
+                sfputc(stkstd, c);
             } else {
-                stakwrite(op, cp - op);
+                sfwrite(stkstd, op, cp - op);
             }
         }
-        stakputc(quote);
+        sfputc(stkstd, quote);
     }
-    stakputc(0);
-    return stakptr(offset);
+    sfputc(stkstd, 0);
+    return stkptr(stkstd, offset);
 }
 
 char *sh_fmtq(const char *string) { return sh_fmtstr(string, '\''); }
@@ -436,7 +435,7 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
     if (!cp || !*cp || !fold || (fold && strlen(string) < fold)) {
         return sh_fmtstr(cp, (flags & SFFMT_ZERO) ? 'U' : (flags & SFFMT_SIGN) ? 'u' : '\'');
     }
-    offset = staktell();
+    offset = stktell(stkstd);
     single = 3;
     c = mb1char(string);
     a = isaletter(c) ? '=' : 0;
@@ -455,7 +454,7 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
             if (c == '\n') {
                 q = 1;
             } else if (c == a) {
-                stakwrite(bp, cp - bp);
+                sfwrite(stkstd, bp, cp - bp);
                 bp = cp;
                 vp = cp + 1;
                 a = 0;
@@ -468,8 +467,8 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
             }
         }
         if (q & 2) {
-            stakputc('$');
-            stakputc('\'');
+            sfputc(stkstd, '$');
+            sfputc(stkstd, '\'');
             cp = bp;
             n = fold - 3;
             q = 1;
@@ -518,10 +517,10 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
                     default: {
                         if (!iswprint(c)) {
                             if ((n -= 4) <= 0) {
-                                stakwrite("'\\\n$'", 5);
+                                sfwrite(stkstd, "'\\\n$'", 5);
                                 n = fold - 7;
                             }
-                            sfprintf(staksp, "\\%03o", c);
+                            sfprintf(stkstd, "\\%03o", c);
                             continue;
                         }
                         q = 0;
@@ -530,24 +529,24 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
                 }
                 if ((n -= q + 1) <= 0) {
                     if (!q) {
-                        stakputc('\'');
+                        sfputc(stkstd, '\'');
                         cp = bp;
                         break;
                     }
-                    stakwrite("'\\\n$'", 5);
+                    sfwrite(stkstd, "'\\\n$'", 5);
                     n = fold - 5;
                 }
                 if (q) {
-                    stakputc('\\');
+                    sfputc(stkstd, '\\');
                 } else {
                     q = 1;
                 }
-                stakputc(c);
+                sfputc(stkstd, c);
                 bp = cp;
             }
-            if (!c) stakputc('\'');
+            if (!c) sfputc(stkstd, '\'');
         } else if (q & 1) {
-            stakputc('\'');
+            sfputc(stkstd, '\'');
             cp = bp;
             n = fold ? (fold - 2) : 0;
             while ((c = mb1char(cp))) {
@@ -555,48 +554,48 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
                     n = fold - 1;
                 } else if (n && --n <= 0) {
                     n = fold - 2;
-                    stakwrite(bp, --cp - bp);
+                    sfwrite(stkstd, bp, --cp - bp);
                     bp = cp;
-                    stakwrite("'\\\n'", 4);
+                    sfwrite(stkstd, "'\\\n'", 4);
                 } else if (n == 1 && *cp == '\'') {
                     n = fold - 5;
-                    stakwrite(bp, --cp - bp);
+                    sfwrite(stkstd, bp, --cp - bp);
                     bp = cp;
-                    stakwrite("'\\\n\\''", 6);
+                    sfwrite(stkstd, "'\\\n\\''", 6);
                 } else if (c == '\'') {
-                    stakwrite(bp, cp - bp - 1);
+                    sfwrite(stkstd, bp, cp - bp - 1);
                     bp = cp;
                     if (n && (n -= 4) <= 0) {
                         n = fold - 5;
-                        stakwrite("'\\\n\\''", 6);
+                        sfwrite(stkstd, "'\\\n\\''", 6);
                     } else {
-                        stakwrite("'\\''", 4);
+                        sfwrite(stkstd, "'\\''", 4);
                     }
                 }
             }
-            stakwrite(bp, cp - bp - 1);
-            stakputc('\'');
+            sfwrite(stkstd, bp, cp - bp - 1);
+            sfputc(stkstd, '\'');
         } else if ((n = fold)) {
             cp = bp;
             while ((c = mb1char(cp))) {
                 if (--n <= 0) {
                     n = fold;
-                    stakwrite(bp, --cp - bp);
+                    sfwrite(stkstd, bp, --cp - bp);
                     bp = cp;
-                    stakwrite("\\\n", 2);
+                    sfwrite(stkstd, "\\\n", 2);
                 }
             }
-            stakwrite(bp, cp - bp - 1);
+            sfwrite(stkstd, bp, cp - bp - 1);
         } else {
-            stakwrite(bp, cp - bp);
+            sfwrite(stkstd, bp, cp - bp);
         }
         if (c) {
-            stakputc('\\');
-            stakputc('\n');
+            sfputc(stkstd, '\\');
+            sfputc(stkstd, '\n');
         }
     } while (c);
-    stakputc(0);
-    return stakptr(offset);
+    sfputc(stkstd, 0);
+    return stkptr(stkstd, offset);
 }
 
 int sh_strchr(const char *string, const char *dp, size_t size) {
