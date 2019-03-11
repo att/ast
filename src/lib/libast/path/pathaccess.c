@@ -34,7 +34,9 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <limits.h>
+#include <stdbool.h>
 #include <stddef.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "ast.h"
