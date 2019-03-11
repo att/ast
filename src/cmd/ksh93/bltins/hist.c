@@ -38,7 +38,7 @@
 #include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
-#include "stak.h"
+#include "stk.h"
 #include "variables.h"
 
 #define HIST_RECURSE 5
@@ -283,7 +283,7 @@ static_fn void hist_subst(Shell_t *shp, const char *command, int fd, const char 
     if (size < 0) return;
     sh_seek(fd, 0, SEEK_SET);
     int c = (int)size;
-    char *string = stakalloc(c + 1);
+    char *string = stkalloc(stkstd, c + 1);
     if (read(fd, string, c) != c) return;
     string[c] = 0;
 
