@@ -52,7 +52,6 @@
 #include "sfio.h"
 #include "shlex.h"
 #include "shnodes.h"
-#include "stak.h"
 #include "stk.h"
 #include "test.h"
 
@@ -85,7 +84,7 @@ static int loop_level;
 static struct argnod *label_list;
 static struct argnod *label_last;
 
-#define getnode(type) ((Shnode_t *)stakalloc(sizeof(struct type)))
+#define getnode(type) ((Shnode_t *)stkalloc(stkstd, sizeof(struct type)))
 
 //
 // Write out entities for each item in the list type=='V' for variable assignment lists. Otherwise
@@ -438,9 +437,9 @@ void sh_funstaks(struct slnod *slp, int flag) {
         if (slp->slchild) sh_funstaks(slp->slchild, flag);
         slp = slp->slnext;
         if (flag <= 0) {
-            stakdelete(slpold->slptr);
+            stkclose(slpold->slptr);
         } else {
-            staklink(slpold->slptr);
+            stklink(slpold->slptr);
         }
     }
 }
@@ -580,7 +579,7 @@ static_fn struct regnod *syncase(Lex_t *lexp, int esym) {
     struct regnod *r;
 
     if (tok == esym) return NULL;
-    r = (struct regnod *)stakalloc(sizeof(struct regnod));
+    r = (struct regnod *)stkalloc(stkstd, sizeof(struct regnod));
     r->regptr = 0;
     r->regflag = 0;
     if (tok == LPAREN) skipnl(lexp, 0);
@@ -655,8 +654,9 @@ static_fn Shnode_t *arithfor(Lex_t *lexp, Shnode_t *tf) {
         }
     }
     while ((offset = fcpeek(0)) && isspace(offset)) fcseek(1);
-    stakputs(fcseek(0));
-    argp = (struct argnod *)stakfreeze(1);
+    sfputr(stkstd, fcseek(0), 0);
+    --stkstd->next;
+    argp = (struct argnod *)stkfreeze(stkstd, 1);
     fcrestore(&sav_input);
     if (n < 2) {
         lexp->token = RPAREN | SYMREP;
@@ -685,8 +685,8 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
     Shell_t *shp = lexp->sh;
     Shnode_t *t;
     int flag;
-    struct slnod *volatile slp = 0;
-    Stak_t *volatile savstak = 0;
+    struct slnod *volatile slp = NULL;
+    Sfio_t *volatile savstak = NULL;
     Sfoff_t first, last;
     struct functnod *volatile fp = NULL;
     Sfio_t *iop;
@@ -792,9 +792,9 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
     jmpval = sigsetjmp(buff.buff, 0);
     if (jmpval == 0) {
         // Create a new stak frame to compile the command.
-        savstak = stakcreate(STAK_SMALL);
-        savstak = stakinstall(savstak, 0);
-        slp = (struct slnod *)stakalloc(sizeof(struct slnod) + sizeof(struct functnod));
+        savstak = stkopen(STK_SMALL);
+        savstak = stkinstall(savstak, 0);
+        slp = (struct slnod *)stkalloc(stkstd, sizeof(struct slnod) + sizeof(struct functnod));
         slp->slchild = 0;
         slp->slnext = shp->st.staklist;
         shp->st.staklist = 0;
@@ -805,11 +805,11 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
         fp->functnam = 0;
         fp->functargs = 0;
         fp->functline = t->funct.functline;
-        if (shp->st.filename) fp->functnam = stakcopy(shp->st.filename);
+        if (shp->st.filename) fp->functnam = stkcopy(stkstd, shp->st.filename);
         loop_level = 0;
         label_last = label_list;
         if (size) {
-            struct dolnod *dp = (struct dolnod *)stakalloc(size);
+            struct dolnod *dp = (struct dolnod *)stkalloc(stkstd, size);
             char *cp, *sp, **argv;
             char **old = ((struct dolnod *)t->funct.functargs->comarg)->dolval + 1;
             argv = dp->dolval + 1;
@@ -825,7 +825,7 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
             // Copy current word token to current stak frame.
             struct argnod *ap;
             flag = ARGVAL + strlen(lexp->arg->argval);
-            ap = (struct argnod *)stakalloc(flag);
+            ap = (struct argnod *)stkalloc(stkstd, flag);
             memcpy(ap, lexp->arg, flag);
             lexp->arg = ap;
         }
@@ -843,14 +843,14 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
     label_last = savelabel;
     // Restore the old stack.
     if (slp) {
-        slp->slptr = stakinstall(savstak, 0);
+        slp->slptr = stkinstall(savstak, 0);
         slp->slchild = shp->st.staklist;
     }
     lexp->current = current;
     if (jmpval) {
         if (slp && slp->slptr) {
             shp->st.staklist = slp->slnext;
-            stakdelete(slp->slptr);
+            stkclose(slp->slptr);
         }
         siglongjmp(*shp->jmplist, jmpval);
     }
@@ -968,7 +968,8 @@ static_fn struct argnod *parse_assign(Lex_t *lexp, struct argnod *ap, int type) 
                 ar = (struct argnod *)stkseek(stkp, ARGVAL);
                 ar->argflag = ARG_ASSIGN;
                 sfprintf(stkp, "[%d]=", index++);
-                stakputs(lexp->arg->argval);
+                sfputr(stkstd, lexp->arg->argval, 0);
+                --stkstd->next;
                 ar = (struct argnod *)stkfreeze(stkp, 1);
                 ar->argnxt.ap = 0;
                 ar->argflag = lexp->arg->argflag;
@@ -1762,8 +1763,8 @@ static_fn struct argnod *qscan(Lex_t *lp, struct comnod *ac, int argn) {
         if (sh_isoption(lp->sh, SH_NOEXEC)) errormsg(SH_DICT, ERROR_warn(0), message, ac->comline);
     }
     // Leave space for an extra argument at the front.
-    dp = (struct dolnod *)stakalloc((unsigned)sizeof(struct dolnod) + ARG_SPARE * sizeof(char *) +
-                                    argn * sizeof(char *));
+    dp = (struct dolnod *)stkalloc(stkstd, (unsigned)sizeof(struct dolnod) +
+                                               ARG_SPARE * sizeof(char *) + argn * sizeof(char *));
     cp = dp->dolval + ARG_SPARE;
     dp->dolnum = argn;
     dp->dolbot = ARG_SPARE;
@@ -1925,7 +1926,7 @@ unsigned long kiaentity(Lex_t *lexp, const char *name, int len, int type, int fi
         }
     }
     sfputc(stkp, '\0');
-    np = nv_search(stakptr(offset), lexp->entity_tree, NV_ADD);
+    np = nv_search(stkptr(stkstd, offset), lexp->entity_tree, NV_ADD);
     stkseek(stkp, offset);
     STORE_VT(np->nvalue, i, pkind);
     nv_setsize(np, width);
