@@ -59,7 +59,6 @@
 #include "shcmd.h"
 #include "shlex.h"
 #include "shtable.h"
-#include "stak.h"
 #include "stk.h"
 #include "variables.h"
 #include "version.h"
@@ -190,7 +189,7 @@ static_fn void rehash(Namval_t *np, void *data) {
 }
 
 //
-// Out of memory routine for stak routines.
+// Out of memory routine for stk routines.
 //
 static_fn char *nospace(int unused) {
     UNUSED(unused);
@@ -1281,7 +1280,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 
     // Initialize signal handling.
     sh_siginit(shp);
-    stakinstall(NULL, nospace);
+    stkinstall(NULL, nospace);
     // Set up memory for name-value pairs.
     shp->init_context = nv_init(shp);
     // Read the environment.
@@ -1309,14 +1308,16 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
             if (*cp == '/') {
                 shp->gd->shpath = strdup(cp);
             } else if ((cp = nv_getval(PWDNOD))) {
-                int offset = staktell();
-                stakputs(cp);
-                stakputc('/');
-                stakputs(argv[0]);
-                n = staktell() - offset;
-                pathcanon(stakptr(offset), n, PATH_DOTDOT);
-                shp->gd->shpath = strdup(stakptr(offset));
-                stakseek(offset);
+                int offset = stktell(stkstd);
+                sfputr(stkstd, cp, 0);
+                --stkstd->next;
+                sfputc(stkstd, '/');
+                sfputr(stkstd, argv[0], 0);
+                --stkstd->next;
+                n = stktell(stdstk) - offset;
+                pathcanon(stkptr(stdstk, offset), n, PATH_DOTDOT);
+                shp->gd->shpath = strdup(stkptr(stkstd, offset));
+                stkseek(stkstd, offset);
             }
         }
     }
@@ -2034,29 +2035,31 @@ struct Mapchar {
 static_fn void put_trans(Namval_t *np, const void *vp, int flags, Namfun_t *fp) {
     const char *val = vp;
     struct Mapchar *mp = (struct Mapchar *)fp;
-    int c, offset = staktell(), off = offset;
+    int c;
+    int offset = stktell(stkstd);
+    int off = offset;
     if (val) {
         if (!mp->trans || (flags & NV_INTEGER)) goto skip;
         while ((c = mb1char(val))) {
             c = towctrans(c, mp->trans);
-            stakseek(off + c);
-            stakseek(off);
-            c = wctomb(stakptr(off), c);
+            stkseek(stkstd, off + c);
+            stkseek(stkstd, off);
+            c = wctomb(stkptr(stkstd, off), c);
             off += c;
-            stakseek(off);
+            stkseek(stkstd, off);
         }
-        stakputc(0);
-        val = stakptr(offset);
+        sfputc(stkstd, 0);
+        val = stkptr(stkstd, offset);
     } else {
         nv_putv(np, val, flags, fp);
         nv_disc(np, fp, DISC_OP_POP);
         if (!(fp->nofree & 1)) free(fp);
-        stakseek(offset);
+        stkseek(stkstd, offset);
         return;
     }
 skip:
     nv_putv(np, val, flags, fp);
-    stakseek(offset);
+    stkseek(stkstd, offset);
 }
 
 static const Namdisc_t TRANS_disc = {
