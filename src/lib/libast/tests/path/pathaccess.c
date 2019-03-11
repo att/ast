@@ -16,7 +16,7 @@ tmain() {
 
     char path[PATH_MAX];
     char cwd[PATH_MAX];
-    char expanded_relative_path[2*PATH_MAX];
+    char expanded_relative_path[2 * PATH_MAX];
 
     const char *paths = "/usr:/usr/bin:/usr/local/bin";
     pathaccess(paths, 0, 0, 0, path, sizeof(path));
