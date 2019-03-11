@@ -2146,9 +2146,10 @@ void _nv_unset(Namval_t *np, int flags) {
         if (rp->fname && shp->fpathdict &&
             (rq = (struct Ufunction *)nv_search(rp->fname, shp->fpathdict, 0))) {
             do {
-                if (rq->np != np) continue;
-                dtdelete(shp->fpathdict, rq);
-                break;
+                if (rq->np == np) {
+                    dtdelete(shp->fpathdict, rq);
+                    break;
+                }
             } while ((rq = (struct Ufunction *)dtnext(shp->fpathdict, rq)));
         }
         if (rp->sdict) {
