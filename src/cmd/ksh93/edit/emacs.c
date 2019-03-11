@@ -67,7 +67,7 @@
 #include "defs.h"
 #include "edit.h"
 #include "history.h"
-#include "stak.h"
+#include "stk.h"
 #include "terminal.h"
 
 #undef putchar
@@ -602,7 +602,7 @@ process:
     tty_cooked(STDERR_FILENO);
     if (ed->e_nlist) {
         ed->e_nlist = 0;
-        stakset(ed->e_stkptr, ed->e_stkoff);
+        stkset(stkstd, ed->e_stkptr, ed->e_stkoff);
     }
     if (c == '\n') {
         out[eol++] = '\n';
