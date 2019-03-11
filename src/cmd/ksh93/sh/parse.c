@@ -810,9 +810,9 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
         label_last = label_list;
         if (size) {
             struct dolnod *dp = (struct dolnod *)stakalloc(size);
-            char *cp, *sp, **argv,
-                **old = ((struct dolnod *)t->funct.functargs->comarg)->dolval + 1;
-            argv = ((char **)(dp->dolval)) + 1;
+            char *cp, *sp, **argv;
+            char **old = ((struct dolnod *)t->funct.functargs->comarg)->dolval + 1;
+            argv = dp->dolval + 1;
             dp->dolnum = ((struct dolnod *)t->funct.functargs->comarg)->dolnum;
             t->funct.functargs->comarg = (struct argnod *)dp;
             for (cp = (char *)&argv[nargs]; (sp = *old++); cp++) {
