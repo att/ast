@@ -40,7 +40,6 @@
 #include "lexstates.h"
 #include "name.h"
 #include "sfio.h"
-#include "stak.h"
 #include "stk.h"
 #include "variables.h"
 
@@ -644,12 +643,12 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
 //
 static_fn void stak_subscript(const char *sub, int last) {
     int c;
-    stakputc('[');
+    sfputc(stkstd, '[');
     while ((c = *sub++)) {
-        if (c == '[' || c == ']' || c == '\\') stakputc('\\');
-        stakputc(c);
+        if (c == '[' || c == ']' || c == '\\') sfputc(stkstd, '\\');
+        sfputc(stkstd, c);
     }
-    stakputc(last);
+    sfputc(stkstd, last);
 }
 
 //
@@ -2161,7 +2160,7 @@ void _nv_unset(Namval_t *np, int flags) {
             }
             dtclose(rp->sdict);
         }
-        stakdelete(slp->slptr);
+        stkclose(slp->slptr);
         free(FETCH_VT(np->nvalue, ip));
         STORE_VT(np->nvalue, ip, NULL);
         goto done;
