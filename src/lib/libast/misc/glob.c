@@ -30,6 +30,7 @@
 
 #include <dirent.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -59,17 +60,15 @@ static_fn DIR *gl_diropen(glob_t *gp, const char *path) { return (*gp->gl_opendi
  */
 
 static_fn char *gl_dirnext(glob_t *gp, DIR *handle) {
-    struct dirent *dp;
+    struct dirent *dp = (*gp->gl_readdir)(handle);
 
-    while ((dp = (struct dirent *)(*gp->gl_readdir)(handle))) {
+    if (!dp) return NULL;
 #ifdef D_TYPE
-        if (D_TYPE(dp) != DT_UNKNOWN && D_TYPE(dp) != DT_DIR && D_TYPE(dp) != DT_LNK)
-            gp->gl_status |= GLOB_NOTDIR;
-#endif
-        return dp->d_name;
+    if (D_TYPE(dp) != DT_UNKNOWN && D_TYPE(dp) != DT_DIR && D_TYPE(dp) != DT_LNK) {
+        gp->gl_status |= GLOB_NOTDIR;
     }
-
-    return NULL;
+#endif
+    return dp->d_name;
 }
 
 /*
@@ -270,11 +269,14 @@ static_fn void glob_dir(glob_t *gp, globlist_t *ap, int re_flags) {
     first = (rescan == prefix);
 again:
     bracket = 0;
-    for (;;) {
-        switch (c = *rescan++) {
+    bool done = false;
+    while (!done) {
+        c = *rescan++;
+        switch (c) {
             case 0:
                 if (meta) {
-                    rescan = 0;
+                    rescan = NULL;
+                    done = true;
                     break;
                 }
                 if (quote) {
@@ -297,33 +299,35 @@ again:
                     if (*rescan == '!' || *rescan == '^') rescan++;
                     if (*rescan == ']') rescan++;
                 }
-                continue;
+                break;
             case ']':
                 meta |= bracket;
-                continue;
+                break;
             case '(':
-                if (!(gp->gl_flags & GLOB_AUGMENTED)) continue;
+                if (!(gp->gl_flags & GLOB_AUGMENTED)) break;
             // FALLTHRU
             case '*':
             case '?':
                 meta = MATCH_META;
-                continue;
+                break;
             case '\\':
                 if (!(gp->gl_flags & GLOB_NOESCAPE)) {
                     quote = 1;
                     if (*rescan) rescan++;
                 }
-                continue;
+                break;
             default:
                 if (c == gp->gl_delim) {
-                    if (meta) break;
+                    if (meta) {
+                        done = true;
+                        break;
+                    }
                     pat = rescan;
                     bracket = 0;
                     savequote = quote;
                 }
-                continue;
+                break;
         }
-        break;
     }
     anymeta |= meta;
     if (matchdir) goto skip;
@@ -554,45 +558,47 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
         n = 1;
         x = 1;
         pat += 2;
-        for (;;) {
+        bool done = false;
+        while (!done) {
             switch (*pat++) {
                 case 0:
                 case ':':
+                    done = true;
                     break;
                 case '-':
                     n = 0;
-                    continue;
+                    break;
                 case '+':
                     n = 1;
-                    continue;
+                    break;
                 case 'i':
                     if (n) {
                         f |= GLOB_ICASE;
                     } else {
                         f &= ~GLOB_ICASE;
                     }
-                    continue;
+                    break;
                 case 'M':
                     if (n) {
                         f |= GLOB_BRACE;
                     } else {
                         f &= ~GLOB_BRACE;
                     }
-                    continue;
+                    break;
                 case 'N':
                     if (n) {
                         f &= ~GLOB_NOCHECK;
                     } else {
                         f |= GLOB_NOCHECK;
                     }
-                    continue;
+                    break;
                 case 'O':
                     if (n) {
                         f |= GLOB_STARSTAR;
                     } else {
                         f &= ~GLOB_STARSTAR;
                     }
-                    continue;
+                    break;
                 case ')':
                     flags = (gp->gl_flags = f) & 0xffff;
                     if (f & GLOB_ICASE) {
@@ -601,12 +607,12 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
                         gp->re_flags &= ~REG_ICASE;
                     }
                     if (x) optlen = pat - (char *)pattern;
+                    done = true;
                     break;
                 default:
                     x = 0;
-                    continue;
+                    break;
             }
-            break;
         }
     }
     top = ap = (globlist_t *)stkalloc(
