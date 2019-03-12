@@ -33,9 +33,8 @@ tmain() {
         terror("pathaccess() returns path to a file that does not exist");
 
     // Test for relative paths
-    if (open(relative_path, O_CREAT, 0666) < 0) {
-        terror("Failed to create test file");
-    }
+    int fd = open(relative_path, O_CREAT, 0666);
+    if (fd == -1) terror("Failed to create test file");
 
     atexit(cleanup_handler);
 
