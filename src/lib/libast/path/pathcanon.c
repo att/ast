@@ -19,27 +19,25 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * path name canonicalization -- preserves the logical view
- *
- *	remove redundant .'s and /'s
- *	move ..'s to the front
- *	/.. preserved (for pdu and newcastle hacks)
- *	if (flags&PATH_ABSOLUTE) then pwd prepended to relative paths
- *	if (flags&PATH_PHYSICAL) then symlinks resolved at each component
- *	if (flags&(PATH_DOTDOT|PATH_PHYSICAL)) then each .. checked for access
- *	if (flags&PATH_EXISTS) then path must exist at each component
- *	if (flags&PATH_VERIFIED(n)) then first n chars of path exist
- *
- * longer pathname possible if (flags&PATH_PHYSICAL) involved
- * 0 returned on error and if (flags&(PATH_DOTDOT|PATH_EXISTS)) then canon
- * will contain the components following the failure point
- *
- * pathcanon() return pointer to trailing 0 in canon
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// path name canonicalization -- preserves the logical view
+//
+//	Remove redundant `.`'s and `/`'s
+//	Move `..`'s to the front
+//	/.. preserved (for pdu and newcastle hacks)
+//	if (flags&PATH_PHYSICAL) then symlinks resolved at each component
+//	if (flags&(PATH_DOTDOT|PATH_PHYSICAL)) then each .. checked for access
+//	if (flags&PATH_EXISTS) then path must exist at each component
+//
+// Longer pathname possible if (flags&PATH_PHYSICAL) involved
+// 0 returned on error and if (flags&(PATH_DOTDOT|PATH_EXISTS)) then canon
+// will contain the components following the failure point
+//
+// pathcanon() return pointer to trailing 0 in canon
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
@@ -57,16 +55,20 @@
 
 char *pathcanon(char *path, size_t size, int flags) {
     char *p;
-    char *r;
-    char *s;
-    char *t;
-    char *v;
-    char *phys = path;
+    char *next_char_after_triple_dot;
+    // Next character to read from input path
+    char *next;
+    // This points to end of canonical path
+    char *canonical_path;
+    // Points to valid physical canonical path. This path is verfied to exist with `stat()`.
+    char *physical_canonical_path;
+    // Points to physical path
+    char *physical_path = path;
     int dots = 0;
     int loop = 0;
     int oerrno = errno;
 
-    v = path + ((flags >> 5) & 01777);
+    physical_canonical_path = path + ((flags >> 5) & 01777);
     if (!size) size = strlen(path) + 1;
     if (*path == '/') {
         if (*(path + 1) == '/' && *astconf("PATH_LEADING_SLASHES", NULL, NULL) == '1') {
@@ -76,109 +78,130 @@ char *pathcanon(char *path, size_t size, int flags) {
         }
         if (!path[1]) return path + 1;
     }
-    p = r = s = t = path;
+    p = next_char_after_triple_dot = next = canonical_path = path;
     for (;;) {
-        switch (*t++ = *s++) {
+        switch (*canonical_path++ = *next++) {
             case '.': {
                 dots++;
                 break;
             }
             case 0: {
-                s--;
+                // If we hit end of path, fall through to next block to canonicalize path
+                next--;
             }
             // FALLTHRU
             case '/': {
-                while (*s == '/') s++;
+                while (*next == '/') next++;
                 switch (dots) {
                     case 1: {
-                        t -= 2;
+                        // Path contains single dot
+                        // Single dot refers to current directory, move canonical_path pointer to 2
+                        // characters back i.e. `/foo/bar/.` becomes `/foo/bar`
+                        canonical_path -= 2;
                         break;
                     }
                     case 2: {
-                        if ((flags & (PATH_DOTDOT | PATH_EXISTS)) == PATH_DOTDOT && (t - 2) >= v) {
+                        // Path contains double dot
+                        if ((flags & (PATH_DOTDOT | PATH_EXISTS)) == PATH_DOTDOT &&
+                            (canonical_path - 2) >= physical_canonical_path) {
                             struct stat st;
 
-                            *(t - 2) = 0;
-                            if (stat(phys, &st)) {
-                                assert(size > strlen(s));
-                                strcpy(path, s);
+                            // If `PATH_DOTDOT` is set, try to verify if path actually exists.
+                            *(canonical_path - 2) = 0;
+                            if (stat(physical_path, &st)) {
+                                assert(size > strlen(next));
+                                strcpy(path, next);
                                 return 0;
                             }
-                            *(t - 2) = '.';
+                            *(canonical_path - 2) = '.';
                         }
-                        if (t - 5 < r) {
-                            if (t - 4 == r) {
-                                t = r + 1;
+                        if (canonical_path - 5 < next_char_after_triple_dot) {
+                            if (canonical_path - 4 == next_char_after_triple_dot) {
+                                canonical_path = next_char_after_triple_dot + 1;
                             } else {
-                                r = t;
+                                next_char_after_triple_dot = canonical_path;
                             }
                         } else {
-                            for (t -= 5; t > r && *(t - 1) != '/'; t--) {
+                            for (canonical_path -= 5; canonical_path > next_char_after_triple_dot &&
+                                                      *(canonical_path - 1) != '/';
+                                 canonical_path--) {
                                 ;  // empty loop
                             }
                         }
                         break;
                     }
                     case 3: {
-                        r = t;
+                        // Path contains triple dot
+                        next_char_after_triple_dot = canonical_path;
                         break;
                     }
                     default: {
-                        if ((flags & PATH_PHYSICAL) && loop < 32 && (t - 1) > path) {
+                        // Path does not contain any dots. Dots from previous paths should be
+                        // resolved by this point.
+                        if ((flags & PATH_PHYSICAL) && loop < 32 && (canonical_path - 1) > path) {
                             int c;
                             char buf[PATH_MAX];
 
-                            c = *(t - 1);
-                            *(t - 1) = 0;
-                            dots = pathgetlink(phys, buf, sizeof(buf));
-                            *(t - 1) = c;
+                            c = *(canonical_path - 1);
+                            *(canonical_path - 1) = 0;
+                            // Try to resolve symbolic link
+                            dots = pathgetlink(physical_path, buf, sizeof(buf));
+                            *(canonical_path - 1) = c;
                             if (dots > 0) {
+                                // Symbolic link refers to valid physcal path
                                 loop++;
-                                strcpy(buf + dots, s - (*s != 0));
-                                if (*buf == '/') p = r = path;
-                                v = s = t = p;
+                                strcpy(buf + dots, next - (*next != 0));
+                                if (*buf == '/') p = next_char_after_triple_dot = path;
+                                physical_canonical_path = next = canonical_path = p;
                                 strcpy(p, buf);
                             } else if (dots < 0 && errno == ENOENT) {
+                                // Symbolic link is broken
                                 if (flags & PATH_EXISTS) {
-                                    assert(size > strlen(s));
-                                    strcpy(path, s);
+                                    assert(size > strlen(next));
+                                    strcpy(path, next);
                                     return 0;
                                 }
                                 flags &= ~(PATH_PHYSICAL | PATH_DOTDOT);
                             }
+                            // All dots have been resolved
                             dots = 4;
                         }
                     }
                 }
-                if (dots >= 4 && (flags & PATH_EXISTS) && (t - 1) >= v &&
-                    (t > path + 1 || (t > path && *(t - 1) && *(t - 1) != '/'))) {
+                if (dots >= 4 && (flags & PATH_EXISTS) &&
+                    (canonical_path - 1) >= physical_canonical_path &&
+                    (canonical_path > path + 1 || (canonical_path > path && *(canonical_path - 1) &&
+                                                   *(canonical_path - 1) != '/'))) {
+                    // Check if a path exists
                     struct stat st;
 
-                    *(t - 1) = 0;
-                    if (stat(phys, &st)) {
-                        assert(size >= strlen(s));
-                        strcpy(path, s);
+                    *(canonical_path - 1) = 0;
+                    if (stat(physical_path, &st)) {
+                        assert(size >= strlen(next));
+                        strcpy(path, next);
                         return 0;
                     }
-                    v = t;
-                    if (*s) *(t - 1) = '/';
+                    physical_canonical_path = canonical_path;
+                    if (*next) *(canonical_path - 1) = '/';
                 }
-                if (!*s) {
-                    if (t > path && !*(t - 1)) t--;
-                    if (t == path) {
-                        *t++ = '.';
-                    } else if ((s <= path || *(s - 1) != '/') && t > path + 1 && *(t - 1) == '/') {
-                        t--;
+                if (!*next) {
+                    if (canonical_path > path && !*(canonical_path - 1)) canonical_path--;
+                    if (canonical_path == path) {
+                        *canonical_path++ = '.';
+                    } else if ((next <= path || *(next - 1) != '/') && canonical_path > path + 1 &&
+                               *(canonical_path - 1) == '/') {
+                        canonical_path--;
                     }
-                    *t = 0;
+                    *canonical_path = 0;
                     errno = oerrno;
-                    return t;
+                    return canonical_path;
                 }
                 dots = 0;
-                p = t;
+                p = canonical_path;
                 break;
             }
             default: {
+                // Character is not `/`, `.` or null character
                 dots = 4;
                 break;
             }
