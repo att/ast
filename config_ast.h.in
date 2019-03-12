@@ -114,7 +114,6 @@
 #mesondefine _lib_mkostemp
 #mesondefine _lib_open64
 #mesondefine _lib_opendir
-#mesondefine _lib_pathnative
 #mesondefine _lib_pathposix
 #mesondefine _lib_pipe2
 #mesondefine _lib_poll

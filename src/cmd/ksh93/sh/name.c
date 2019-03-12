@@ -1580,9 +1580,6 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
         char *tofree = NULL;
         int offset = 0;
         int append;
-#if _lib_pathnative
-        char buff[PATH_MAX];
-#endif  // _lib_pathnative
         if (flags & NV_INTEGER) {
             if ((flags & NV_DOUBLE) == NV_DOUBLE) {
                 if (flags & NV_LONG) {
@@ -1608,18 +1605,10 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
             }
             sp = sfstruse(shp->strbuf);
         }
+
+        // TODO: This if statement is noop, shall we remove this ?
         if (nv_isattr(np, NV_HOST | NV_INTEGER) == NV_HOST && sp) {
-#if _lib_pathnative
-            // Return the host file name given the UNIX name.
-            pathnative(sp, buff, sizeof(buff));
-            if (buff[1] == ':' && buff[2] == '/') {
-                buff[2] = '\\';
-                if (*buff >= 'A' && *buff <= 'Z') *buff += 'a' - 'A';
-            }
-            sp = buff;
-#else   // _lib_pathnative
             ;
-#endif  // _lib_pathnative
         } else if ((nv_isattr(np, NV_RJUST | NV_ZFILL | NV_LJUST)) && sp) {
             for (; *sp == ' ' || *sp == '\t'; sp++) {
                 ;  // empty loop
