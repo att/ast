@@ -2091,6 +2091,7 @@ static_fn ssize_t slowread(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *handl
         errno = EINTR;
         return -1;
     }
+
     while (1) {
         if (io_prompt(shp, iop, shp->nextprompt) < 0 && errno == EIO) return 0;
         if (shp->timeout) {
@@ -2123,18 +2124,17 @@ static_fn ssize_t slowread(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *handl
                 break;
             }
             reedit = rsize - 1;
-            continue;
-        }
-        if ((r & HIST_ERROR) && sh_isoption(shp, SH_HISTREEDIT)) {
+        } else if ((r & HIST_ERROR) && sh_isoption(shp, SH_HISTREEDIT)) {
             reedit = rsize - 1;
-            continue;
+        } else {
+            if (r & (HIST_ERROR | HIST_PRINT)) {
+                *(char *)buff = '\n';
+                rsize = 1;
+            }
+            break;
         }
-        if (r & (HIST_ERROR | HIST_PRINT)) {
-            *(char *)buff = '\n';
-            rsize = 1;
-        }
-        break;
     }
+
     return rsize;
 }
 

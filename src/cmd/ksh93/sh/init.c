@@ -1137,7 +1137,7 @@ int sh_type(const char *path) {
         s++;
         t |= SH_TYPE_LOGIN;
     }
-    for (;;) {
+    while (1) {
         if (!(t & (SH_TYPE_KSH | SH_TYPE_BASH))) {
             if (*s == 'k') {
                 s++;
@@ -1152,12 +1152,9 @@ int sh_type(const char *path) {
             }
 #endif
         }
-        if (!(t & (SH_TYPE_PROFILE | SH_TYPE_RESTRICTED)) && *s == 'r') {
-            s++;
-            t |= SH_TYPE_RESTRICTED;
-            continue;
-        }
-        break;
+        if ((t & (SH_TYPE_PROFILE | SH_TYPE_RESTRICTED)) || *s != 'r') break;
+        s++;
+        t |= SH_TYPE_RESTRICTED;
     }
     if (*s++ == 's' && (*s == 'h' || *s == 'u')) {
         s++;
