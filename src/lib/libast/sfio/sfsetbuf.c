@@ -115,28 +115,23 @@ static_fn int sfsetlinemode(void) {
                 } else {
                     z = 0;
                 }
-                for (;;) {
-                    switch (*++t) {
-                        case 0:
-                            break;
-                        case 'M': /* max map */
-                        case 'm':
-                            if (z) {
-                                if (z != (size_t)SF_UNBOUND) z = roundof(z, _Sfpage);
-                                _Sfmaxm = z;
-                                _Sftest &= ~SF_TEST_read;
-                            } else {
-                                _Sftest |= SF_TEST_read;
-                            }
-                            break;
-                        case 'R': /* max rec */
-                        case 'r':
-                            _Sfmaxr = z;
-                            break;
-                        default:
-                            continue;
+                while (1) {
+                    char c = *++t;
+                    if (c == 0) {
+                        break;
+                    } else if (c == 'm' || c == 'M') {  // max map
+                        if (z) {
+                            if (z != (size_t)SF_UNBOUND) z = roundof(z, _Sfpage);
+                            _Sfmaxm = z;
+                            _Sftest &= ~SF_TEST_read;
+                        } else {
+                            _Sftest |= SF_TEST_read;
+                        }
+                        break;
+                    } else if (c == 'r' || c == 'R') {  // max red
+                        _Sfmaxr = z;
+                        break;
                     }
-                    break;
                 }
                 break;
             case 'T':
