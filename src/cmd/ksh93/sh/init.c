@@ -1359,14 +1359,6 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
                 char *name;
                 name = shp->st.dolv[0];
                 if (name[1] == ':' && (name[2] == '/' || name[2] == '\\')) {
-#if _lib_pathposix
-                    char *p;
-
-                    if ((n = pathposix(name, NULL, 0)) > 0 && (p = malloc(++n))) {
-                        pathposix(name, p, n);
-                        name = p;
-                    } else
-#endif
                     {
                         name[1] = name[0];
                         name[0] = name[2] = '/';
