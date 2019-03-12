@@ -413,24 +413,20 @@ done:
 around:
     if (((m >> x) & 0xf) >= 8) {
         t = sp - 1;
-        for (;;) {
+        while (1) {
             if (--t <= b) {
                 (*decpt)++;
                 break;
             }
-            switch (*t) {
-                case 'f':
-                case 'F':
-                    *t = '0';
-                    continue;
-                case '9':
-                    *t = ep[10];
-                    break;
-                default:
-                    (*t)++;
-                    break;
+            if (*t == 'f' || *t == 'F') {
+                *t = '0';
+            } else if (*t == '9') {
+                *t = ep[10];
+                break;
+            } else {
+                (*t)++;
+                break;
             }
-            break;
         }
     }
     ep = sp + 1;
