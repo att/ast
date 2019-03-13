@@ -19,17 +19,17 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * return 1 if path exisis
- * maintains a cache to minimize stat(2) calls
- * path is modified in-place but restored on return
- * path components checked in pairs to cut stat()'s
- * in half by checking ENOTDIR vs. ENOENT
- * case ignorance infection unavoidable here
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// Return 1 if path exisis
+// Maintains a cache to minimize stat(2) calls
+// Path is modified in-place but restored on return
+// Path components checked in pairs to cut stat()'s
+// in half by checking ENOTDIR vs. ENOENT
+// Case ignorance infection unavoidable here
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
@@ -39,86 +39,114 @@
 
 #include "ast.h"
 
+// This tree caches name and modes of files and directories
 typedef struct Tree_s {
+    // `next` points to next subdirectory of parent directory
     struct Tree_s *next;
+    // If current node is a directory, `name` and `modes` of it's subdirectories and files are cached under this tree
     struct Tree_s *tree;
+    // Modes can be PATH_READ, PATH_WRITE and PATH_EXECUTE
     int mode;
     char name[1];
 } Tree_t;
 
 int pathexists(char *path, int mode) {
-    char *s;
-    char *e;
-    Tree_t *p;
-    Tree_t *t;
+    // Path is splitted by '/''s and each component is processed seaprately
+    // This variable points to current component of path that is being processed
+    char *current_path_component;
+
+    // Next path component
+    char *next_path_component;
+
+    // Points to next slash in path
+    char *next_slash;
+
+    // Points to parent directory
+    Tree_t *parent_tree;
+    Tree_t *current_tree;
+
     int c;
-    char *ee;
     int cc;
     int x;
-    struct stat st;
+    struct stat statbuf;
     int (*cmp)(const char *, const char *);
 
     static Tree_t tree;
 
-    t = &tree;
-    e = (c = *path) == '/' ? path + 1 : path;
+    current_tree = &tree;
+    // If path starts with `/`, initialize next slash character after first character
+    next_slash = (c = *path) == '/' ? path + 1 : path;
     cmp = strchr(astconf("PATH_ATTRIBUTES", path, NULL), 'c') ? strcasecmp : strcmp;
     while (c) {
-        p = t;
-        for (s = e; *e && *e != '/'; e++) {
+        parent_tree = current_tree;
+        // Try to search for next slash character
+        for (current_path_component = next_slash; *next_slash && *next_slash != '/'; next_slash++) {
             ;
         }
-        c = *e;
-        *e = 0;
-        for (t = p->tree; t && (*cmp)(s, t->name); t = t->next) {
+
+        // Save value pointed by `next_slash` variable
+        c = *next_slash;
+        // and put a null character there to mark end of path, so `foo/bar/baz` becomes `foo`
+        *next_slash = 0;
+        for (current_tree = parent_tree->tree; current_tree && (*cmp)(current_path_component, current_tree->name); current_tree = current_tree->next) {
             ;
         }
-        if (!t) {
-            t = calloc(1, sizeof(Tree_t) + strlen(s));
-            if (!t) {
-                *e = c;
+
+        // Path with name `current_path_name` does not exist in tree, time to create a new node.
+        if (!current_tree) {
+            current_tree = calloc(1, sizeof(Tree_t) + strlen(current_path_component));
+            if (!current_tree) {
+                *next_slash = c;
                 return 0;
             }
-            strcpy(t->name, s);
-            t->next = p->tree;
-            p->tree = t;
+            strcpy(current_tree->name, current_path_component);
+            current_tree->next = parent_tree->tree;
+            parent_tree->tree = current_tree;
+
+            // If `c` is set, we are not at end of path
             if (c) {
-                *e = c;
-                for (s = ee = e + 1; *ee && *ee != '/'; ee++) {
+                *next_slash = c;
+                for (current_path_component = next_path_component = next_slash + 1; *next_path_component && *next_path_component != '/'; next_path_component++) {
                     ;
                 }
-                cc = *ee;
-                *ee = 0;
+                cc = *next_path_component;
+                *next_path_component = 0;
             } else {
-                ee = 0;
+                next_path_component = 0;
             }
-            x = stat(path, &st);
-            if (ee) {
-                e = ee;
+            x = stat(path, &statbuf);
+
+            // Create a new node for subdirectory (or file)
+            if (next_path_component) {
+                Tree_t *new_tree;
+                next_slash = next_path_component;
                 c = cc;
-                if (!x || errno == ENOENT) t->mode = PATH_READ | PATH_EXECUTE;
-                p = calloc(1, sizeof(Tree_t) + strlen(s));
-                if (!p) {
-                    *e = c;
+                if (!x || errno == ENOENT) current_tree->mode = PATH_READ | PATH_EXECUTE;
+                new_tree = calloc(1, sizeof(Tree_t) + strlen(current_path_component));
+                if (!new_tree) {
+                    *next_slash = c;
                     return 0;
                 }
-                strcpy(p->name, s);
-                p->next = t->tree;
-                t->tree = p;
-                t = p;
+                strcpy(new_tree->name, current_path_component);
+                new_tree->next = current_tree->tree;
+                current_tree->tree = new_tree;
+                // Set new node as current node
+                current_tree = new_tree;
             }
             if (x) {
-                *e = c;
+                *next_slash = c;
                 return 0;
             }
-            if (st.st_mode & (S_IRUSR | S_IRGRP | S_IROTH)) t->mode |= PATH_READ;
-            if (st.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH)) t->mode |= PATH_WRITE;
-            if (st.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) t->mode |= PATH_EXECUTE;
-            if (!S_ISDIR(st.st_mode)) t->mode |= PATH_REGULAR;
+            if (statbuf.st_mode & (S_IRUSR | S_IRGRP | S_IROTH)) current_tree->mode |= PATH_READ;
+            if (statbuf.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH)) current_tree->mode |= PATH_WRITE;
+            if (statbuf.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) current_tree->mode |= PATH_EXECUTE;
+            if (!S_ISDIR(statbuf.st_mode)) current_tree->mode |= PATH_REGULAR;
         }
-        *e++ = c;
-        if (!t->mode || (c && (t->mode & PATH_REGULAR))) return 0;
+
+        // Restore `/` character
+        *next_slash++ = c;
+        if (!current_tree->mode || (c && (current_tree->mode & PATH_REGULAR))) return 0;
     }
     mode &= (PATH_READ | PATH_WRITE | PATH_EXECUTE | PATH_REGULAR);
-    return (t->mode & mode) == mode;
+    return (current_tree->mode & mode) == mode;
 }
