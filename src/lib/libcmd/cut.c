@@ -387,8 +387,9 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                                 continue;
                             case SP_WIDE:
                                 wp = --cp;
-                                while ((c = mbtowc(&w, (char *)cp, ep - cp)) <= 0) {
-                                    /* mb char possibly spanning buffer boundary -- fun stuff */
+                                c = mbtowc(&w, (char *)cp, ep - cp);
+                                if (c <= 0) {
+                                    // Mbchar possibly spanning buffer boundary -- fun stuff.
                                     if ((ep - cp) < MB_CUR_MAX) {
                                         int i;
                                         int j;
@@ -397,7 +398,7 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                                         if (lastchar != cut->eob) {
                                             *ep = lastchar;
                                             c = mbtowc(&w, (char *)cp, ep - cp);
-                                            if (c > 0) break;
+                                            if (c > 0) goto sp_wide_error_recovery;
                                         }
                                         if (copy) {
                                             empty = 0;
@@ -438,8 +439,8 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                                         w = *cp;
                                         c = 1;
                                     }
-                                    break;
                                 }
+sp_wide_error_recovery:
                                 cp += c;
                                 c = w;
                                 if (c == cut->wdelim.chr) {
