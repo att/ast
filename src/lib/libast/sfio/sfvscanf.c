@@ -234,24 +234,24 @@ static_fn int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, void *mbs
         }
 
         if (mbrtowc(wc, b, n, (mbstate_t *)mbs) == (size_t)(-1)) {
-            goto no_match; /* malformed multi-byte char */
-        } else {           /* multi-byte char converted successfully */
+            goto no_match;  // malformed multi-byte char
+        } else {            // multi-byte char converted successfully
             if (fmt == 'c') {
                 return 1;
             } else if (fmt == 's') {
                 if (n > 1 || (n == 1 && !isspace(b[0]))) return 1;
             } else if (fmt == '[') {
-                if ((n == 1 && ac->ok[b[0]]) || (n > 1 && _sfwaccept(*wc, ac))) return 1;
+                if (n == 1 && ac->ok[b[0]]) return 1;
+                if (n > 1 && _sfwaccept(*wc, ac)) return 1;
                 goto no_match;
-            } else /* if(fmt == '1') match a single wchar_t */
-            {
+            } else {  // if(fmt == '1') match a single wchar_t
                 if (*wc == ac->wc) return 1;
                 goto no_match;
             }
         }
     }
 
-no_match: /* this unget is lossy on a stream with small buffer */
+no_match:  // this unget is lossy on a stream with small buffer
     if ((sc->d -= n) < sc->data) sc->d = sc->data;
     return 0;
 }
