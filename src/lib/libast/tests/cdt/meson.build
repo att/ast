@@ -19,7 +19,7 @@ incdir = include_directories('..',
 foreach testspec: cdt_test_files
     testname = testspec[0]
     timeout = (testspec.length() == 2) ? testspec[1] : default_timeout
-    test_target = executable(testname, testname, c_args: shared_c_args,
+    test_target = executable('ctd_' + testname, testname, c_args: shared_c_args,
                              include_directories: [configuration_incdir, incdir],
                              link_with: [libast, libenv],
                              link_args: ['-lpthread'],
