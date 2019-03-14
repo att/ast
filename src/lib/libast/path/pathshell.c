@@ -35,71 +35,78 @@
 
 #include "ast.h"
 
-/*
- * return pointer to the full path name of the shell
- *
- * SHELL is read from the environment and must start with /
- *
- * if set-uid or set-gid then the executable and its containing
- * directory must not be owned by the real user/group
- *
- * root/administrator has its own test
- *
- * astconf("SH",NULL,NULL) is returned by default
- *
- * NOTE: csh is rejected because the bsh/csh differentiation is
- *       not done for `csh script arg ...'
- */
-
+//
+// Return pointer to the full path name of the shell
+//
+// SHELL is read from the environment and must start with /
+//
+// if set-uid or set-gid then the executable and its containing
+// directory must not be owned by the real user/group
+//
+// root/administrator has its own test
+//
+// astconf("SH",NULL,NULL) is returned by default
+//
+// NOTE: csh is rejected because the bsh/csh differentiation is
+//       not done for `csh script arg ...'
+//
 char *pathshell(void) {
-    char *sh;
-    int ru;
-    int eu;
-    int rg;
-    int eg;
-    struct stat st;
+    char *shell;
+    int real_uid;
+    int effective_uid;
+    int real_gid;
+    int effective_gid;
+    struct stat statbuf;
 
-    static char *val;
+    static char *val = NULL;
 
-    if ((sh = getenv("SHELL")) && *sh == '/' &&
-        strmatch(sh, "*/(sh|*[!cC]sh)*([[:digit:]])?(-+([.[:alnum:]]))?(.exe)")) {
-        if (!(ru = getuid()) || !eaccess("/bin", W_OK)) {
-            if (stat(sh, &st)) goto defshell;
-            if (ru != st.st_uid &&
-                !strmatch(sh, "?(/usr)?(/local)/?([ls])bin/?([[:lower:]])sh?(.exe)")) {
+    shell = getenv("SHELL");
+    if (shell && *shell == '/' &&
+        strmatch(shell, "*/(sh|*[!cC]sh)*([[:digit:]])?(-+([.[:alnum:]]))?(.exe)")) {
+        real_uid = getuid();
+        if (!real_uid || !eaccess("/bin", W_OK)) {
+            if (stat(shell, &statbuf)) goto defshell;
+            if (real_uid != statbuf.st_uid &&
+                !strmatch(shell, "?(/usr)?(/local)/?([ls])bin/?([[:lower:]])sh?(.exe)")) {
                 goto defshell;
             }
         } else {
-            eu = geteuid();
-            rg = getgid();
-            eg = getegid();
-            if (ru != eu || rg != eg) {
+            effective_uid = geteuid();
+            real_gid = getgid();
+            effective_gid = getegid();
+
+            // Check if we are executing in setuid or setgid mode
+            if (real_uid != effective_uid || real_gid != effective_gid) {
                 char *s;
                 char dir[PATH_MAX];
 
-                s = sh;
+                s = shell;
+
+                // Check the uid and gid on shell and it's parent directory
                 for (;;) {
-                    if (stat(s, &st)) goto defshell;
-                    if (ru != eu && st.st_uid == ru) goto defshell;
-                    if (rg != eg && st.st_gid == rg) goto defshell;
-                    if (s != sh) break;
+                    if (stat(s, &statbuf)) goto defshell;
+                    if (real_uid != effective_uid && statbuf.st_uid == real_uid) goto defshell;
+                    if (real_gid != effective_gid && statbuf.st_gid == real_gid) goto defshell;
+                    if (s != shell) break;
                     if (strlen(s) >= sizeof(dir)) goto defshell;
                     strcpy(dir, s);
-                    if (!(s = strrchr(dir, '/'))) break;
+                    s = strrchr(dir, '/');
+                    if (!s) break;
                     *s = 0;
                     s = dir;
                 }
             }
         }
-        return sh;
+        return shell;
     }
 defshell:
-    if (!(sh = val)) {
-        if (!*(sh = astconf("SH", NULL, NULL)) || *sh != '/' || eaccess(sh, X_OK) ||
-            !(sh = strdup(sh))) {
-            sh = "/bin/sh";
+    shell = val;
+    if (!shell) {
+        shell = astconf("SH", NULL, NULL);
+        if (!*shell || *shell != '/' || eaccess(shell, X_OK) || !(shell = strdup(shell))) {
+            shell = "/bin/sh";
         }
-        val = sh;
+        val = shell;
     }
-    return sh;
+    return shell;
 }
