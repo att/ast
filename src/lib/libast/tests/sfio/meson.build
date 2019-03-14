@@ -25,9 +25,9 @@ sfio_test_files =[ 'talarm.c', 'talign.c', 'tappend.c', 'tatexit.c',
 incdir = include_directories('..', '../../include/', '../../sfio/')
 
 foreach file: sfio_test_files
-    sfio_test_target = executable(file, file,
-                                  include_directories: [configuration_incdir, incdir],
-                                  link_with: [libast, libenv],
-                                  install: false)
-    test('API/' + file, sfio_test_target)
+    test_target = executable(file, file,
+                             include_directories: [configuration_incdir, incdir],
+                             link_with: [libast, libenv],
+                             install: false)
+    test('API/sfio/' + file, test_target)
 endforeach

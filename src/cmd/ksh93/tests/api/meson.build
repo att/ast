@@ -4,7 +4,7 @@
 api_default_timeout = 30
 
 api_tests = [
-    ['debug'],
+    ['debug.c'],
 ]
 
 foreach testspec : api_tests
@@ -20,15 +20,13 @@ foreach testspec : api_tests
     # Run the test without compiling the script (which is how most people use ksh).
     lang_var = 'LANG=en_US.UTF-8'
 
-    test_exe = executable(testname, testname + '.c', c_args: shared_c_args,
-                          include_directories: [configuration_incdir, ksh93_incdir],
-                          link_with: [libksh, libast, libcmd, libdll],
-                          dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
-                          install: false)
-
-    #test('API/' + testname, test_exe, timeout: timeout, is_parallel: parallel,
-    #     env: [shell_var, lang_var])
-    test('API/' + testname, ksh93_exe, timeout: timeout, is_parallel: parallel,
-         args: [test_driver, 'api', test_exe, testname],
+    test_target = executable(
+        testname, testname, c_args: shared_c_args,
+        include_directories: [configuration_incdir, ksh93_incdir],
+        link_with: [libksh, libast, libcmd, libdll],
+        dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
+        install: false)
+    test('API/ksh/' + testname, ksh93_exe, timeout: timeout, is_parallel: parallel,
+         args: [test_driver, 'api', test_target, testname],
          env: [shell_var, lang_var, ld_library_path, libsample_path])
 endforeach
