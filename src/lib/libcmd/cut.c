@@ -440,7 +440,7 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                                         c = 1;
                                     }
                                 }
-sp_wide_error_recovery:
+                            sp_wide_error_recovery:
                                 cp += c;
                                 c = w;
                                 if (c == cut->wdelim.chr) {
