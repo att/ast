@@ -362,6 +362,7 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
     }
 
     if (!((r = shp->fdstatus[fd]) & IOREAD) || !(r & (IOSEEK | IONOSEEK))) {
+        assert(fd >= 0);  // there is a theoretical path which could reach here with fd == -1
         r = sh_iocheckfd(shp, fd, fd);
     }
     if (fd < 0 || !(r & IOREAD)) {
