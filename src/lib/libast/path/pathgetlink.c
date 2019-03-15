@@ -26,10 +26,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
-
-#if _hdr_unistd
 #include <unistd.h>
-#endif
 
 //
 // Return external representation for symbolic link text of name in `buff`

@@ -33,10 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/utsname.h>
-
-#if _hdr_unistd
 #include <unistd.h>
-#endif
 
 #include "ast.h"
 #include "error.h"
