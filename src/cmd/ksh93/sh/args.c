@@ -872,20 +872,20 @@ char **sh_argbuild(Shell_t *shp, int *nargs, const struct comnod *comptr, int fl
     shp->lastpath = 0;
     procsub = shp->procsub;
     *nargs = 0;
-    if (ac) {
-        if (ac->comnamp == SYSLET) flag |= ARG_LET;
-        argp = ac->comarg;
-        while (argp) {
-            n = arg_expand(shp, argp, &arghead, flag);
-            if (n > 1) {
-                if (shp->xargmin == 0) shp->xargmin = *nargs;
-                shp->xargmax = *nargs + n;
-            }
-            *nargs += n;
-            argp = argp->argnxt.ap;
+
+    if (ac->comnamp == SYSLET) flag |= ARG_LET;
+    argp = ac->comarg;
+    while (argp) {
+        n = arg_expand(shp, argp, &arghead, flag);
+        if (n > 1) {
+            if (shp->xargmin == 0) shp->xargmin = *nargs;
+            shp->xargmax = *nargs + n;
         }
-        argp = arghead;
+        *nargs += n;
+        argp = argp->argnxt.ap;
     }
+    argp = arghead;
+
     if (procsub) *procsub = 0;
 
     char **comargn;
