@@ -28,6 +28,7 @@
 
 #include <ctype.h>
 #include <limits.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
@@ -380,11 +381,12 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
             do {
                 /* skip over non-delimiter characters */
                 if (cut->mb) {
-                    for (;;) {
+                    bool done = false;
+                    while (!done) {
                         c = sp[*(unsigned char *)cp++];
                         switch (c) {
                             case 0:
-                                continue;
+                                break;
                             case SP_WIDE:
                                 wp = --cp;
                                 c = mbtowc(&w, (char *)cp, ep - cp);
@@ -445,18 +447,17 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                                 c = w;
                                 if (c == cut->wdelim.chr) {
                                     c = SP_WORD;
-                                    break;
-                                }
-                                if (c == cut->ldelim.chr) {
+                                    done = true;
+                                } else if (c == cut->ldelim.chr) {
                                     c = SP_LINE;
-                                    break;
+                                    done = true;
                                 }
-                                continue;
+                                break;
                             default:
                                 wp = cp - 1;
+                                done = true;
                                 break;
                         }
-                        break;
                     }
                 } else {
                     while (!(c = sp[*cp++])) {
