@@ -332,7 +332,8 @@ static History_t *hist_trim(History_t *hp, int n) {
             tmpname = name;
         }
         fd = open(tmpname, O_RDONLY | O_CLOEXEC);
-        sfsetfd(hist_old->histfp, fd);
+        // What happens if this fails and returns -1? Coverity Scan #310940.
+        (void)sfsetfd(hist_old->histfp, fd);
         if (tmpname == name) {
             free(tmpname);
             tmpname = NULL;
