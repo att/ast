@@ -28,6 +28,9 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/utsname.h>
 
@@ -106,27 +109,29 @@ static const char hosttype[] = HOSTTYPE;
 #define OPT_total (1L << 30)
 #define OPT_standard ((1 << OPT_STANDARD) - 1)
 
-#define output(f, v, u)                                                                    \
-    do {                                                                                   \
-        if ((flags & (f)) &&                                                               \
-            (*(v) || ((flags & (OPT_all | OPT_total)) == OPT_all && ((f)&OPT_standard)) || \
-             !(flags & (OPT_all | OPT_total)))) {                                          \
-            if (sep) {                                                                     \
-                sfputc(sfstdout, ' ');                                                     \
-            } else {                                                                       \
-                sep = 1;                                                                   \
-            }                                                                              \
-            if (*(v)) {                                                                    \
-                sfputr(sfstdout, v, -1);                                                   \
-            } else {                                                                       \
-                sfprintf(sfstdout, "[%s]", u);                                             \
-            }                                                                              \
-        }                                                                                  \
-    } while (0)
+static bool output(bool sep, uint32_t flags, uint32_t flag, const char *value, const char *name) {
+    if (!(flags & flag)) return sep;
+
+    if (*value || ((flags & (OPT_all | OPT_total)) == OPT_all && (flag & OPT_standard)) ||
+        !(flags & (OPT_all | OPT_total))) {
+        if (sep) {
+            sfputc(sfstdout, ' ');
+        } else {
+            sep = true;
+        }
+        if (*value) {
+            sfputr(sfstdout, value, -1);
+        } else {
+            sfprintf(sfstdout, "[%s]", name);
+        }
+    }
+
+    return sep;
+}
 
 int b_uname(int argc, char **argv, Shbltin_t *context) {
     long flags = 0;
-    int sep = 0;
+    bool sep = false;
     int n;
     char *s;
     char *t;
@@ -195,6 +200,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
+            default: { abort(); }
         }
     }
     argv += opt_info.index;
@@ -235,17 +241,17 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             error(ERROR_usage(2), "information unavailable");
             __builtin_unreachable();
         }
-        output(OPT_system, ut.sysname, "sysname");
+        sep = output(sep, flags, OPT_system, ut.sysname, "sysname");
         if (flags & OPT_nodename) {
-            output(OPT_nodename, ut.nodename, "nodename");
+            sep = output(sep, flags, OPT_nodename, ut.nodename, "nodename");
         }
-        output(OPT_release, ut.release, "release");
-        output(OPT_version, ut.version, "version");
-        output(OPT_machine, ut.machine, "machine");
+        sep = output(sep, flags, OPT_release, ut.release, "release");
+        sep = output(sep, flags, OPT_version, ut.version, "version");
+        sep = output(sep, flags, OPT_machine, ut.machine, "machine");
         if (flags & OPT_processor) {
             s = astconf("ARCHITECTURE", NULL, NULL);
             if (!*s) s = ut.machine;
-            output(OPT_processor, s, "processor");
+            sep = output(sep, flags, OPT_processor, s, "processor");
         }
         if (flags & OPT_implementation) {
             s = astconf("PLATFORM", NULL, NULL);
@@ -266,7 +272,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
                     s = buf;
                 }
             }
-            output(OPT_implementation, s, "implementation");
+            sep = output(sep, flags, OPT_implementation, s, "implementation");
         }
         if (flags & OPT_operating_system) {
             s = astconf("OPERATING_SYSTEM", NULL, NULL);
@@ -277,21 +283,21 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
                 s = ut.sysname;
 #endif
             }
-            output(OPT_operating_system, s, "operating-system");
+            sep = output(sep, flags, OPT_operating_system, s, "operating-system");
         }
         if (flags & OPT_extended_release) {
             s = astconf("RELEASE", NULL, NULL);
-            output(OPT_extended_release, s, "extended-release");
+            sep = output(sep, flags, OPT_extended_release, s, "extended-release");
         }
 #if _mem_idnumber_utsname
-        output(OPT_hostid, ut.idnumber, "hostid");
+        sep = output(sep, flags, OPT_hostid, ut.idnumber, "hostid");
 #else
         if (flags & OPT_hostid) {
             s = astconf("HW_SERIAL", NULL, NULL);
             if (!(*s)) {
                 sfsprintf(s = buf, sizeof(buf), "%08x", gethostid());
             }
-            output(OPT_hostid, s, "hostid");
+            sep = output(sep, flags, OPT_hostid, s, "hostid");
         }
 #endif
         if (flags & OPT_domain) {
@@ -300,7 +306,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
                 getdomainname(buf, sizeof(buf));
                 s = buf;
             }
-            output(OPT_domain, s, "domain");
+            sep = output(sep, flags, OPT_domain, s, "domain");
         }
         if (sep) sfputc(sfstdout, '\n');
     }
