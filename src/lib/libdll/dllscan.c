@@ -423,7 +423,6 @@ found:
             scan->disc.size = 0;
             scan->disc.link = offsetof(Uniq_t, link);
             scan->dict = dtopen(&scan->disc, Dtset);
-            if (!scan) return 0;
             dtinsert(scan->dict, scan->uniq);
         }
         if (dtmatch(scan->dict, b)) goto again;
