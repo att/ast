@@ -155,7 +155,8 @@ void sh_subtmpfile(Shell_t *shp) {
             if (fd == 1) {
                 fcntl(1, F_SETFD, 0);
             } else {
-                sfsetfd(sfstdout, 1);
+                // What happens if this fails and returns -1? Coverity Scan #294193.
+                (void)sfsetfd(sfstdout, 1);
                 shp->fdstatus[1] = shp->fdstatus[fd];
                 shp->fdstatus[fd] = IOCLOSE;
             }
