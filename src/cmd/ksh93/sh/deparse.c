@@ -469,14 +469,9 @@ static_fn void p_comlist(const struct dolnod *dol, int endchar) {
     int flag = ' ', special;
 
     argv = dol->dolval + ARG_SPARE;
-    cp = *argv;
-    special = (cp[0] == '[' && cp[1] == 0);
+    cp = *argv++;
+    special = strcmp(cp, "[") == 0;
     do {
-        if (cp) {
-            argv++;
-        } else {
-            cp = "";
-        }
         if (*argv == 0) {
             flag = endchar;
             if (flag == '\n') begin_line = 1;
@@ -484,7 +479,7 @@ static_fn void p_comlist(const struct dolnod *dol, int endchar) {
         }
         sfputr(outfile, special ? cp : sh_fmtq(cp), flag);
         special = 0;
-        cp = *argv;
+        cp = *argv++;
     } while (cp);
 }
 
