@@ -1701,7 +1701,6 @@ void sh_setsiginfo(siginfo_t *sip) {
     char *signame;
 
     while (fp->disc->createf != create_svar) fp = fp->next;
-    if (!fp) return;  // this should probably be an abort() or errormsg(SH_DICT, ERROR_exit(1), ...)
 
     sp = (struct Svars *)fp;
     sp->data = (char *)sp + fp->dsize + sizeof(void *);
