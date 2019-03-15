@@ -24,10 +24,6 @@
 #include "sfio.h"
 #include "terror.h"
 
-#if _hdr_values
-#include <values.h>
-#endif
-
 #if _hdr_math
 #include <math.h>
 #endif

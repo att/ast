@@ -85,7 +85,6 @@
 #mesondefine _hdr_mman
 #mesondefine _hdr_rld_interface
 #mesondefine _hdr_stdlib
-#mesondefine _hdr_values
 
 #mesondefine _lib_clock_gettime
 #mesondefine _lib_creat64
