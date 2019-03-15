@@ -445,7 +445,8 @@ int sh_iorenumber(Shell_t *shp, int f1, int f2) {
         if (sp) shp->sftable[f1] = 0;
         if (shp->fdstatus[f1] != IOCLOSE) sh_close(f1);
     } else if (sp) {
-        sfsetfd(sp, f2);
+        // What happens if this fails and returns -1? Coverity Scan #294189.
+        (void)sfsetfd(sp, f2);
         if (f2 <= 2) sfset(sp, SF_SHARE | SF_PUBLIC, 1);
     }
     return f2;
