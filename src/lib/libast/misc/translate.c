@@ -33,6 +33,7 @@
 #include <string.h>
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "cdt.h"
 #include "error.h"
 #include "sfio.h"
@@ -246,6 +247,7 @@ static Message_t *match(const char *cat, const char *msg) {
                 s = (char *)memcpy(buf, s, n);
                 s[n] = 0;
                 t = strchr(s, ':');
+                assert(t);
             }
             *t = 0;
         }
