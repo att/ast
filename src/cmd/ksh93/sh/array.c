@@ -858,10 +858,11 @@ Namval_t *nv_arraychild(Namval_t *np, Namval_t *nq, int c) {
     struct Value *up;
     Namval_t *tp;
 
-    if (!nq) return ap ? array_find(np, ap, ARRAY_LOOKUP) : 0;
+    if (!nq) return ap ? array_find(np, ap, ARRAY_LOOKUP) : NULL;
     if (!ap) {
         nv_putsub(np, NULL, 0, ARRAY_FILL);
         ap = nv_arrayptr(np);
+        assert(ap);
     }
     if (!(up = array_getup(np, ap, 0))) return NULL;
     STORE_VT(np->nvalue, const_cp, FETCH_VTP(up, const_cp));
