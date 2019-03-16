@@ -997,6 +997,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
         if (qp) {
             Nambfun_t *bfp;
             dp = (Namtype_t *)nv_hasdisc(nv_type(np), &type_disc);
+            assert(dp);
             memcpy(pp->nodes, dp->nodes, dp->numnodes * NV_MINSZ);
             offset = nv_size(np);
             memcpy(pp->data, dp->data, offset);
