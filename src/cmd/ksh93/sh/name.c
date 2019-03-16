@@ -2833,6 +2833,7 @@ bool nv_rename(Namval_t *np, int flags) {
         } else {
             mp = np;
         }
+        assert(mp);
         if (nr == SH_MATCHNOD) {
             Sfio_t *iop;
             Dt_t *save_root = shp->var_tree;
@@ -2852,7 +2853,6 @@ bool nv_rename(Namval_t *np, int flags) {
             nv_clone(nr, mp, (flags & NV_MOVE) | NV_COMVAR);
             cache_purge(nv_name(nr));
         }
-        assert(mp);
         mp->nvenv = nvenv;
         if (flags & NV_MOVE) {
             if (arraynr && !nv_isattr(nr, NV_MINIMAL) && (mp = nr->nvenv) &&
