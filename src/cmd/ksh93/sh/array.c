@@ -1297,10 +1297,11 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
         }
         case ASSOC_OP_ADD_val:
         case ASSOC_OP_ADD2_val: {
+            assert(ap);
             if (sp) {
-                Namval_t *mp = 0;
-                ap->cur = 0;
-                if (sp == (char *)np) return 0;
+                Namval_t *mp = NULL;
+                ap->cur = NULL;
+                if (sp == (char *)np) return NULL;
                 type = nv_isattr(np, ~(NV_NOFREE | NV_ARRAY | NV_CHILD | NV_MINIMAL));
                 int mode = 0;
                 if (op.val == ASSOC_OP_ADD_val) {
@@ -1345,7 +1346,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                 if (ap->pos && ap->pos == np) {
                     ap->namarr.flags |= ARRAY_SCAN;
                 } else if (!(ap->namarr.flags & ARRAY_SCAN)) {
-                    ap->pos = 0;
+                    ap->pos = NULL;
                 }
                 ap->cur = np;
             }
