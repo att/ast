@@ -1024,6 +1024,7 @@ Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
                     sfprintf(shp->strbuf, "%d", ap->cur);
                     cp = sfstruse(shp->strbuf);
                     mp = nv_search(cp, ap->namarr.table, NV_ADD);
+                    assert(mp);
                     mp->nvenv = np;
                     nv_arraychild(np, mp, 0);
                     nv_setvtree(mp);
