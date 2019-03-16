@@ -146,7 +146,7 @@ static void workload(Dt_t *dt, Proc_t *proc, int p) {
     Pnum = p + 1; /* always positive */
 
     /* insert objects in 'p' */
-    asoincint(&State->insert);                  /* signaling that we are ready to go */
+    asoincint(&State->insert);                    /* signaling that we are ready to go */
     while (asogetint(&State->insert) != N_PROC) { /* wait until all processes are set */
         sched_yield();
     }
@@ -178,13 +178,13 @@ static void workload(Dt_t *dt, Proc_t *proc, int p) {
         }
     }
     tinfo("Process %d(%d): insertion done", p, pid);
-    asoincint(&State->idone);            /* signaling that this workload has been inserted */
+    asoincint(&State->idone);              /* signaling that this workload has been inserted */
     while (asogetint(&State->idone) > 0) { /* wait until parent signal ok to continue */
         sched_yield();
     }
 
     /* delete objects in 'p' and also in "foe" of p */
-    asoincint(&State->delete);                  /* signaling that we are ready to delete */
+    asoincint(&State->delete);                    /* signaling that we are ready to delete */
     while (asogetint(&State->delete) != N_PROC) { /* wait until all processes are set */
         sched_yield();
     }
