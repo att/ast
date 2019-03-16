@@ -335,10 +335,12 @@ bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
     Namval_t *nq;
     int rdonly = nv_isattr(np, NV_RDONLY);
     int xtrace = sh_isoption(shp, SH_XTRACE);
-    Namarr_t *ap = nv_arrayptr(np);
 
     shp->last_table = NULL;
     if (!tp->nvfun) return true;
+
+    Namarr_t *ap = nv_arrayptr(np);
+    assert(ap);
     if (!ap->table) {
         ap->table = dtopen(&_Nvdisc, Dtoset);
         dtuserdata(ap->table, shp, 1);
