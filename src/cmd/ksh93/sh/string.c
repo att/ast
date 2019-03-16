@@ -575,19 +575,22 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
             }
             sfwrite(stkstd, bp, cp - bp - 1);
             sfputc(stkstd, '\'');
-        } else if ((n = fold)) {
-            cp = bp;
-            while ((c = mb1char(cp))) {
-                if (--n <= 0) {
-                    n = fold;
-                    sfwrite(stkstd, bp, --cp - bp);
-                    bp = cp;
-                    sfwrite(stkstd, "\\\n", 2);
-                }
-            }
-            sfwrite(stkstd, bp, cp - bp - 1);
         } else {
-            sfwrite(stkstd, bp, cp - bp);
+            if (!fold) {
+                sfwrite(stkstd, bp, cp - bp);
+            } else {
+                n = fold;
+                cp = bp;
+                while ((c = mb1char(cp))) {
+                    if (--n <= 0) {
+                        n = fold;
+                        sfwrite(stkstd, bp, --cp - bp);
+                        bp = cp;
+                        sfwrite(stkstd, "\\\n", 2);
+                    }
+                }
+                sfwrite(stkstd, bp, cp - bp - 1);
+            }
         }
         if (c) {
             sfputc(stkstd, '\\');
