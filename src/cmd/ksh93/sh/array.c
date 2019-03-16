@@ -160,6 +160,7 @@ static_fn struct index_array *array_grow(Namval_t *, struct index_array *, int);
 // Return next index after the highest element in an array.
 int array_maxindex(Namval_t *np) {
     struct index_array *ap = (struct index_array *)nv_arrayptr(np);
+    assert(ap);
     int i = ap->maxi;
     if (is_associative(&ap->namarr)) return -1;
     while (--i >= 0 && !FETCH_VT(ap->val[i], const_cp)) {
