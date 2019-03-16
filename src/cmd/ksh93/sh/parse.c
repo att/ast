@@ -1927,6 +1927,7 @@ unsigned long kiaentity(Lex_t *lexp, const char *name, int len, int type, int fi
     }
     sfputc(stkp, '\0');
     np = nv_search(stkptr(stkstd, offset), lexp->entity_tree, NV_ADD);
+    assert(np);
     stkseek(stkp, offset);
     STORE_VT(np->nvalue, i, pkind);
     nv_setsize(np, width);
