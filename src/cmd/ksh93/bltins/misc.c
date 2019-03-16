@@ -311,7 +311,7 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
     prevscope->save_tree = shp->var_tree;
     if (np) {
         struct Ufunction *rp = FETCH_VT(np->nvalue, rp);
-        shp->st.filename = rp->fname ? strdup(rp->fname) : NULL;
+        shp->st.filename = strdup(rp->fname ? rp->fname : "");
     }
     nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
     shp->posix_fun = 0;
@@ -331,7 +331,10 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
     }
     sh_popcontext(shp, &buff);
     if (buffer) free(buffer);
-    if (!np) free(shp->st.filename);
+    if (!np) {
+        free(shp->st.filename);
+        shp->st.filename = NULL;
+    }
     shp->dot_depth--;
     if ((np || argv[1]) && jmpval != SH_JMPSCRIPT) {
         sh_argreset(shp, (struct dolnod *)argsave, saveargfor);

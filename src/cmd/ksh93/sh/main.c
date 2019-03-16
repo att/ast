@@ -532,8 +532,10 @@ done:
         sh_done(shp, 0);
     }
     if (fno > 0) sh_close(fno);
-    if (shp->st.filename) free(shp->st.filename);
-    shp->st.filename = 0;
+    if (shp->st.filename) {
+        free(shp->st.filename);
+        shp->st.filename = NULL;
+    }
 }
 
 // Prints out messages if files in list have been modified since last call.

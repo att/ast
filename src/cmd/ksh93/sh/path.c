@@ -573,8 +573,8 @@ static_fn void funload(Shell_t *shp, int fno, const char *name) {
     } else {
         pname = 0;
     }
-    free(shp->st.filename);
     shp->funload = oldload;
+    free(shp->st.filename);
     shp->st.filename = oldname;
     sh_setstate(shp, savestates);
     if (pname) errormsg(SH_DICT, ERROR_exit(ERROR_NOEXEC), e_funload, name, pname);
