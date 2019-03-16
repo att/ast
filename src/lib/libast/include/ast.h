@@ -82,9 +82,6 @@
 #define PATH_EXISTS 0x004
 #define PATH_ABSOLUTE 0x010 /* NOTE: shared with pathaccess() below */
 
-#define PATH_VERIFIED(n) (((n)&0xfffff) << 12)
-// #define PATH_GET_VERIFIED(n) (((n) >> 12) & 0xfffff)
-
 /*
  * pathaccess() flags
  */
