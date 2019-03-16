@@ -1970,6 +1970,7 @@ static_fn void env_init(Shell_t *shp) {
             next = strchr(++cp, '=');
             if (next) *next = 0;
             np = nv_search(cp + 2, shp->var_tree, NV_ADD);
+            assert(np);
             if (np == SHLVL) continue;
             if (!nv_isattr(np, NV_IMPORT | NV_EXPORT)) continue;
 
