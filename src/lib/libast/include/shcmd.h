@@ -51,7 +51,6 @@ struct Shbltin_s {
 // same name when used in a builtin (e.g., code in src/lib/libcmd). That has been changed because
 // that sort or redirection obfuscates what is actually happening and makes reasoning about the
 // code harder.
-#define bltin_exit(c, n) (c ? (*c->shexit)(c->shp, n) : exit(n))
 #define bltin_run(c, ac, av) (c ? (*c->shrun)(c->shp, ac, av) : -1)
 #define bltin_checksig(c) (c && c->sigset)
 
