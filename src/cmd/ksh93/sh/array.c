@@ -1332,6 +1332,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                     ap->nextpos = dtnext(ap->namarr.table, mp);
                 } else if (!mp && *sp && mode == 0) {
                     mp = nv_search(sp, ap->namarr.table, NV_ADD | NV_NOSCOPE);
+                    assert(mp);
                     if (!FETCH_VT(mp->nvalue, const_cp)) mp->nvsize |= 1;
                 }
                 np = mp;
