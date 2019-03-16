@@ -1427,7 +1427,11 @@ bool job_wait(pid_t pid) {
         }
         jobid = pw->p_job;
         if (!intr) pw->p_flag &= ~P_EXITSAVE;
-        if (pw->p_pgrp && job.parent != (pid_t)-1) job_set(job_byjid(jobid));
+        if (pw->p_pgrp && job.parent != (pid_t)-1) {
+            struct process *job = job_byjid(jobid);
+            assert(job);
+            job_set(job);
+        }
     }
     pwfg = pw;
 #ifdef DEBUG
