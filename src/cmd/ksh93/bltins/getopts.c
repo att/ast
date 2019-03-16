@@ -167,10 +167,10 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
             if (shp->st.opterror) {
                 char *com[2];
                 com[0] = "-?";
-                com[1] = 0;
+                com[1] = NULL;
                 flag = opt_info.index;
                 opt_info.index = 0;
-                optget(com, options);
+                (void)optget(com, options);
                 opt_info.index = flag;
                 if (!mode && strchr(options, ' ')) {
                     errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));

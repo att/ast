@@ -207,7 +207,7 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
                     av[0] = argv[0];
                     av[1] = argv[1];
                     av[2] = 0;
-                    optget(av, sh_opttest);
+                    (void)optget(av, sh_opttest);
                     errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                     __builtin_unreachable();
                 }

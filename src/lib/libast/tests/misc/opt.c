@@ -157,7 +157,7 @@ int main(int argc, char **argv) {
                          sizeof(opt_info.number), opt_info.number);
             }
             if (extra) {
-                for (n = 0; n < ext; n += 2) optget(NULL, extra[n]);
+                for (n = 0; n < ext; n += 2) (void)optget(NULL, extra[n]);
                 extra = 0;
             }
         }
