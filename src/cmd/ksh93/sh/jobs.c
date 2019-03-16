@@ -1243,10 +1243,14 @@ int job_post(Shell_t *shp, pid_t pid, pid_t join) {
             val = job.curjobid;
         }
         // If job to join is not first move it to front.
-        if (val && (pw = job_byjid(val)) != job.pwlist) {
-            job_unlink(pw);
-            pw->p_nxtjob = job.pwlist;
-            job.pwlist = pw;
+        if (val) {
+            pw = job_byjid(val);
+            assert(pw);
+            if (pw != job.pwlist) {
+                job_unlink(pw);
+                pw->p_nxtjob = job.pwlist;
+                job.pwlist = pw;
+            }
         }
     }
     pw = freelist;
