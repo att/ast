@@ -435,6 +435,7 @@ static_fn Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t 
         nq = nv_opensub(np);
         if (nq) {
             mq = nv_search(name, ap->table, NV_ADD);
+            assert(mq);
             if (flags & NV_COMVAR) mq->nvenv = mp;
         }
         if (nq && (((flags & NV_COMVAR) && nv_isvtree(nq)) || nv_isarray(nq))) {
