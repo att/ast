@@ -29,8 +29,9 @@ tmain() {
 
     paths = "this_path_does_not_exist";
 
-    if (pathaccess(paths, 0, 0, PATH_ABSOLUTE, path, sizeof(path)))
+    if (pathaccess(paths, 0, 0, PATH_ABSOLUTE, path, sizeof(path))) {
         terror("pathaccess() returns path to a file that does not exist");
+    }
 
     // Test for relative paths
     int fd = open(relative_path, O_CREAT, 0666);
@@ -43,8 +44,9 @@ tmain() {
     snprintf(expanded_relative_path, sizeof(expanded_relative_path), "%s/%s", cwd, relative_path);
 
     if (!pathaccess("", relative_path, 0, PATH_ABSOLUTE, path, PATH_MAX) ||
-        strcmp(path, expanded_relative_path))
+        strcmp(path, expanded_relative_path)) {
         terror("pathaccess() does not recognize relative paths");
+    }
 
     texit(0);
 }

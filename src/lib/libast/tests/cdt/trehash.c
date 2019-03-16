@@ -93,20 +93,24 @@ static void *memory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
     int k;
     Disc_t *dc = (Disc_t *)disc;
 
-    if (addr || size <= 0) /* no freeing */
+    if (addr || size <= 0) { /* no freeing */
         return NULL;
+    }
 
-    for (k = 0;; tmsleep(0, 1 << k), k = (k + 1) & 07)
-        if (asocasint(&dc->lock, 0, 1) == 0) /* get exclusive use first */
+    for (k = 0;; tmsleep(0, 1 << k), k = (k + 1) & 07) {
+        if (asocasint(&dc->lock, 0, 1) == 0) { /* get exclusive use first */
             break;
+        }
+    }
 
     size = ((size + sizeof(void *) - 1) / sizeof(void *)) * sizeof(void *);
     if (size <= dc->size) {
         addr = (void *)dc->addr;
         dc->addr += size;
         dc->size -= size;
-    } else
+    } else {
         terror("Out of shared memory");
+    }
 
     asocasint(&dc->lock, 1, 0); /* release exclusive use */
 
@@ -124,10 +128,11 @@ static void sigchild(int sig) {
         int sig = WTERMSIG(status);
         sprintf(buf, "signal %s", sig == 8 ? "fpe" : sig == 11 ? "segv" : "whatever");
         st = buf;
-    } else if (WCOREDUMP(status))
+    } else if (WCOREDUMP(status)) {
         st = "coredump";
-    else
+    } else {
         st = "normal";
+    }
 
     tinfo("Child process %d exited (%s)", pid, st);
     signal(SIGCHLD, sigchild);
@@ -142,18 +147,21 @@ static void workload(Dt_t *dt, Proc_t *proc, int p) {
 
     /* insert objects in 'p' */
     asoincint(&State->insert);                  /* signaling that we are ready to go */
-    while (asogetint(&State->insert) != N_PROC) /* wait until all processes are set */
+    while (asogetint(&State->insert) != N_PROC) { /* wait until all processes are set */
         sched_yield();
+    }
     for (k = 0; k < proc->objn; ++k) {
         if (k && k % PROGRESS == 0) tinfo("\tProcess %d(%d): insertion passing %d", p, pid, k);
 
         or = proc->obj + k;
-        if ((os = dtinsert(dt, or)) != or)
+        if ((os = dtinsert(dt, or)) != or) {
             tinfo("\t\tProcess %d(%d): Insert %s, get %0x", p, pid, or->str, os);
-        else
+        } else {
             os->flag |= INSERT;
-        if ((os = dtsearch(dt, or)) != or)
+        }
+        if ((os = dtsearch(dt, or)) != or) {
             tinfo("\t\tProcess %d(%d): Just inserted %s but not found", p, pid, or->str);
+        }
         Icount += 1;
 
         if (k > SEARCH) /* search a few elements known to be inserted */
@@ -162,21 +170,24 @@ static void workload(Dt_t *dt, Proc_t *proc, int p) {
                 ssize_t r = random() % k;
                 or = proc->obj + r;
                 os = dtsearch(dt, or);
-                if (os != or)
+                if (os != or) {
                     tinfo("\t\tProcess %d(%d): Srch %s(Max %s) get %0x", p, pid, or->str,
                           proc->obj[k].str, os);
+                }
             }
         }
     }
     tinfo("Process %d(%d): insertion done", p, pid);
     asoincint(&State->idone);            /* signaling that this workload has been inserted */
-    while (asogetint(&State->idone) > 0) /* wait until parent signal ok to continue */
+    while (asogetint(&State->idone) > 0) { /* wait until parent signal ok to continue */
         sched_yield();
+    }
 
     /* delete objects in 'p' and also in "foe" of p */
     asoincint(&State->delete);                  /* signaling that we are ready to delete */
-    while (asogetint(&State->delete) != N_PROC) /* wait until all processes are set */
+    while (asogetint(&State->delete) != N_PROC) { /* wait until all processes are set */
         sched_yield();
+    }
     for (k = 0; k < proc->objn; ++k) {
         if (k && k % PROGRESS == 0) tinfo("\tProcess %d(%d): deletion passing %d", p, pid, k);
 
@@ -251,11 +262,11 @@ tmain() {
 #else
     signal(SIGCHLD, sigchild);
     for (k = 0; k < N_PROC; ++k) {
-        if ((pid[k] = fork()) < 0)
+        if ((pid[k] = fork()) < 0) {
             terror("Can't create child process");
-        else if (pid[k] > 0) /* parent */
+        } else if (pid[k] > 0) { /* parent */
             tinfo("Just launched process %d (pid=%d)", k, pid[k]);
-        else {
+        } else {
             Pnum = k + 1;
             signal(SIGCHLD, SIG_IGN);
             workload(dt, Proc + k, k);
@@ -265,24 +276,29 @@ tmain() {
 #endif
 
     tinfo("\ttrehash: Insertion #procs=%d (free shared mem=%d)", k, Disc->size);
-    for (k = 0;; tmsleep(0, 1 << k), k = (k + 1) & 07)
+    for (k = 0;; tmsleep(0, 1 << k), k = (k + 1) & 07) {
         if (asogetint(&State->idone) == N_PROC) break;
+    }
     tinfo("\ttrehash: Insertion completed, checking integrity");
 
-    for (k = 0; k < N_OBJ; ++k)
+    for (k = 0; k < N_OBJ; ++k) {
         if (!dtsearch(dt, Obj + k)) terror("Failed to find object %s", Obj[k].str);
+    }
 
     asocasint(&State->idone, N_PROC, 0);
 
     tinfo("\ttrehash: Deletion (free shared mem=%d)", Disc->size);
-    for (k = 0;; tmsleep(0, 1 << k), k = (k + 1) & 07)
-        if (asogetint(&State->ddone) == N_PROC) /* wait until all are deleted */
+    for (k = 0;; tmsleep(0, 1 << k), k = (k + 1) & 07) {
+        if (asogetint(&State->ddone) == N_PROC) { /* wait until all are deleted */
             break;
+        }
+    }
     if (dtfirst(dt)) terror("Dictionary not empty after deletion!");
 
     z = 0;
-    for (k = 0; k < N_OBJ; ++k)
+    for (k = 0; k < N_OBJ; ++k) {
         if ((Obj[k].flag & DELETE)) z += 1;
+    }
     if (z != N_OBJ) twarn("Some deletion was not properly recorded?");
 
     tinfo("\ttrehash: All testing done.");
