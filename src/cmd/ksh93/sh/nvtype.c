@@ -274,6 +274,7 @@ static_fn Namval_t *findref(void *nodes, int n) {
         if (np->nvname[len] == 0) {
             tp = nv_type(np);
             pp = (Namtype_t *)nv_hasdisc(tp, &type_disc);
+            assert(pp);
             return nv_namptr(pp->nodes, n - i - 1);
         }
     }
