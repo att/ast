@@ -862,9 +862,12 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                     }
                     if (sub && c == 0) {
                         if (flags & NV_ARRAY) {
-                            ap = nv_arrayptr(np);
                             nq = nv_opensub(np);
-                            if ((flags & NV_ASSIGN) && (!nq || nv_isnull(nq))) ap->nelem++;
+                            if ((flags & NV_ASSIGN) && (!nq || nv_isnull(nq))) {
+                                ap = nv_arrayptr(np);
+                                assert(ap);
+                                ap->nelem++;
+                            }
                             if (!nq) {
                                 goto addsub;
                             } else {
