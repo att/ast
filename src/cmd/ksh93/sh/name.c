@@ -1331,6 +1331,7 @@ skip:
                         ap->flags |= ARRAY_TREE;
                         nv_putsub(np, NULL, nv_aindex(np), ARRAY_ADD);
                         np = nv_opensub(np);
+                        assert(np);
                         ap->flags &= ~ARRAY_TREE;
                     }
                 }
