@@ -70,13 +70,16 @@ tmain() {
     // Try to resolve physical path and check if it exists
     strcpy(path, "/tmp/..");
     pathcanon(path, PATH_MAX, PATH_PHYSICAL | PATH_EXISTS);
-    if (strcmp(path, tmp_parent_realpath))
+    if (strcmp(path, tmp_parent_realpath)) {
         terror("Failed to resolve `..` if `PATH_PHYSICAL | PATH_EXISTS` is set");
+    }
 
     // Try to resolve physical path
     strcpy(path, "/tmp/..");
     pathcanon(path, PATH_MAX, PATH_PHYSICAL);
-    if (strcmp(path, tmp_parent_realpath)) terror("Failed to resolve `..` if `PATH_PHYSICAL` is set");
+    if (strcmp(path, tmp_parent_realpath)) {
+        terror("Failed to resolve `..` if `PATH_PHYSICAL` is set");
+    }
 
     // This should not verify if each component in path is accessible
     strcpy(path, "/non_existing_path_after_root/..");
