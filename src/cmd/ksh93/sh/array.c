@@ -587,7 +587,7 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
             nv_arraysettype(np, ap->namfun.type, nv_getsub(np), 0);
         }
     } while (!string && nv_nextsub(np));
-    if (ap) ap->flags &= ~ARRAY_NOSCOPE;
+    ap->flags &= ~ARRAY_NOSCOPE;
     if (nofree) {
         nv_onattr(np, NV_NOFREE);
     } else {
