@@ -36,6 +36,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <setjmp.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -275,7 +276,10 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
         np = nv_search(script, shp->fun_tree, 0);
         if (np && is_afunction(np) && !nv_isattr(np, NV_FPOSIX)) {
             if (!FETCH_VT(np->nvalue, ip)) {
-                path_search(shp, script, NULL, 0);
+                // TODO: Replace this with a comment explaining why the return value of this
+                // path_search() call is ignored. At the time I wrote this (2019-03-16) no unit test
+                // exercises this statement. I added the void cast to silence Coverity Scan 253792.
+                (void)path_search(shp, script, NULL, 0);
                 if (FETCH_VT(np->nvalue, ip)) {
                     if (nv_isattr(np, NV_FPOSIX)) np = 0;
                 } else {
