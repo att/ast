@@ -151,7 +151,7 @@ void sh_subtmpfile(Shell_t *shp) {
             shp->fdstatus[fd] = IOREAD | IOWRITE;
             sfsync(sfstdout);
             if (fd == 1) {
-                fcntl(1, F_SETFD, 0);
+                (void)fcntl(1, F_SETFD, 0);  // this can't fail
             } else {
                 // What happens if this fails and returns -1? Coverity Scan #294193.
                 (void)sfsetfd(sfstdout, 1);
