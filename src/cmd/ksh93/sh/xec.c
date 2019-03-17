@@ -162,7 +162,7 @@ static_fn void iousepipe(Shell_t *shp) {
         for (i = 0; i < 10; i++) {
             if (subdup & (1 << i)) {
                 sh_close(i);
-                fcntl(1, F_DUPFD, i);
+                (void)fcntl(1, F_DUPFD, i);  // this can't fail
                 shp->fdstatus[i] = shp->fdstatus[1];
             }
         }
