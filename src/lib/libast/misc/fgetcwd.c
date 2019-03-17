@@ -37,6 +37,7 @@
 #include <unistd.h>
 
 #include "ast.h"
+#include "ast_assert.h"
 
 #include "ast_dir.h"
 
@@ -69,6 +70,7 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     char *s;
     DIR *dirp = NULL;
     int dd = 0;
+    bool dd_closed = false;
     int n;
     int x;
     size_t namlen;
@@ -139,7 +141,9 @@ char *fgetcwd(int fd, char *buf, size_t len) {
         }
         if (fstat(dd, par)) ERROR(errno)
         if (par->st_dev == cur->st_dev && par->st_ino == cur->st_ino) {
+            dd_closed = true;
             close(dd);
+            dd = INT_MIN;
             *--p = '/';
             break;
         }
@@ -212,7 +216,7 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     }
     if (env[0].path) free(env[0].path);
     env[0].path = strdup(buf);
-    if (dd != AT_FDCWD) fchdir(dd);
+    if (dd != AT_FDCWD && !dd_closed) fchdir(dd);
     if (dirp) closedir(dirp);
     return buf;
 
