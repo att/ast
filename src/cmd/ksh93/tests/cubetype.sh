@@ -120,7 +120,9 @@ do
     [[ ${c.name} == cube1 ]] || log_error '${c.name} != cube1 '
     [[ $(c.fun) == 'hello world' ]] || log_error '$(c.fun) != "hello world"'
     [[ ${c.fun} == 'hello world' ]] || log_error '${c.fun} != "hello world"'
-    (( abs(c.len - sqrt(90)) < 1e-10 )) || log_error 'c.len != sqrt(90)'
+    expect=$(( sqrt(90) ))
+    actual=${c.len}
+    (( abs(actual - expect) < 1e-10 )) || log_error 'c.len != sqrt(90)' "$expect" "$actual"
     (( c.count == 2 )) || log_error 'c.count != 2'
     (( c.count == b.count )) || log_error 'c.count != b.count'
     c.count=0
