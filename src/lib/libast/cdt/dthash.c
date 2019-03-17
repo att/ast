@@ -340,6 +340,7 @@ static_fn void *dthashchain(Dt_t *dt, void *obj, int type) {
     hsh = _DTHSH(dt, key, disc);
 
     tbl = hash->htbl + (hsh & (hash->tblz - 1));
+    assert(tbl);
     pp = ll = NULL; /* pp is the before, ll is the here */
     for (p = NULL, l = *tbl; l; p = l, l = l->_rght) {
         if (hsh == l->_hash) {
