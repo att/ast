@@ -763,9 +763,9 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
             argv0 = argv = ((struct dolnod *)ac->comarg)->dolval + ARG_SPARE;
             while ((cp = *argv++)) {
                 size += strlen(cp) + 1;
-                c = mb1char(cp);
+                c = mb1char(&cp);
                 if (isaletter(c)) {
-                    while (c = mb1char(cp), isaname(c)) {
+                    while (c = mb1char(&cp), isaname(c)) {
                         ;  // empty body
                     }
                 }

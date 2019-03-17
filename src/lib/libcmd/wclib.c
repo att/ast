@@ -186,7 +186,7 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                     if (c) memcpy(cp, buff, c);
                     endbuff = buff + n;
                     cp = side;
-                    x = mb1char(cp);
+                    x = mb1char((char **)&cp);
                     if ((cp - side) < o) {
                         cp = buff;
                         nchars += (cp - side) - 1;

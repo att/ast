@@ -351,7 +351,7 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
 
     {
         int c;
-        while (prev = last, c = mb1char(last)) {
+        while (prev = last, c = mb1char(&last)) {
             switch (c) {
                 case ESC: {
                     int skip = 0;
@@ -620,7 +620,7 @@ static int putstack(Edit_t *ep, char string[], int nbyte, int type) {
 #endif  // CBREAK
         } else {
         again:
-            if ((c = mb1char(p)) >= 0) {
+            if ((c = mb1char(&p)) >= 0) {
                 p--;  // incremented below
                 if (type) c = -c;
             }
@@ -948,7 +948,7 @@ int ed_internal(const char *src, genchar *dest) {
         ed_gencpy((genchar *)dp, buffer);
         return c;
     }
-    while (*cp) *dp++ = mb1char(cp);
+    while (*cp) *dp++ = mb1char((char **)&cp);
     *dp = 0;
     return dp - (wchar_t *)dest;
 }
@@ -1091,7 +1091,7 @@ static int ed_histlencopy(const char *cp, char *dp) {
     int c, n = 1, col = 1;
     const char *oldcp = cp;
 
-    for (n = 0; (c = mb1char(cp)); oldcp = cp, col++) {
+    for (n = 0; (c = mb1char((char **)&cp)); oldcp = cp, col++) {
         if (c == '\n' && *cp) {
             n += 2;
             if (dp) {

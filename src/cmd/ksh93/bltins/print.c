@@ -639,7 +639,7 @@ static_fn int varname(const char *str, ssize_t n) {
     }
     for (; n > 0; n -= len) {
         len = mblen(str, MB_CUR_MAX);
-        c = mb1char(str);
+        c = mb1char((char **)&str);
         if (dot && !(isalpha(c) || c == '_')) {
             break;
         } else if (dot == 0 && !(isalnum(c) || c == '_' || c == '.')) {
@@ -852,7 +852,7 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                     case '"': {
                         w = argp + 1;
                         if (mbwide() && mblen(w, MB_CUR_MAX) > 1) {
-                            value->ll = mb1char(w);
+                            value->ll = mb1char(&w);
                         } else {
                             value->ll = *(unsigned char *)w++;
                         }

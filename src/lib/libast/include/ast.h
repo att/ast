@@ -269,11 +269,28 @@ static inline wchar_t mbchar(wchar_t *w, char **s, size_t n, Mbstate_t *q) {
 // name, solely to facilitate removing the `ASTAPI()` macro. This allows us to avoid changing every
 // place in the ksh code that uses this legacy macro in a single change. With this in place we can
 // slowly convert the legacy API uses to the new one above.
-#define mb1char(p)                                                                   \
-    (mbwide() ? ((ast.tmp_int = mbtowc(&ast.tmp_wchar, (char *)(p), MB_CUR_MAX)) > 0 \
-                     ? ((p += ast.tmp_int), ast.tmp_wchar)                           \
-                     : (p += 1, ast.tmp_int))                                        \
-              : (*(unsigned char *)(p++)))
+//
+// #define mb1char(p)
+//     (mbwide() ? ((ast.tmp_int = mbtowc(&ast.tmp_wchar, (char *)(p), MB_CUR_MAX)) > 0
+//                      ? ((p += ast.tmp_int), ast.tmp_wchar)
+//                      : (p += 1, ast.tmp_int))
+//               : (*(unsigned char *)(p++)))
+//
+// As of 2019-03-16 it is now a static inlined function. The function does not special-case single
+// byte locales like ASCII or ISO 8859. In a Unicode world that special-casing ASCII like locales
+// is likely to increase code size with no benefit.
+static inline wchar_t mb1char(char **s) {
+    wchar_t wc;
+    int n = mbtowc(&wc, *s, MB_CUR_MAX);
+    if (n > 0) {
+        *s += n;
+        return wc;
+    }
+    // Decode not successful so bump by a single byte (in the hope that gets us back in sync with
+    // the encoded stream) and return the error.
+    *s += 1;
+    return n;
+}
 
 /* generic plugin version support */
 

@@ -261,7 +261,7 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                 if (opt_info.arg && *opt_info.arg != '\n') {
                     char *cp = opt_info.arg;
                     flags &= ((1 << (D_FLAG + 1)) - 1);
-                    flags |= (mb1char(cp) << (D_FLAG + 1)) | (1 << D_FLAG);
+                    flags |= (mb1char(&cp) << (D_FLAG + 1)) | (1 << D_FLAG);
                 }
                 break;
             }

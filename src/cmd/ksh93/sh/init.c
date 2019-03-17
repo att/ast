@@ -2029,7 +2029,7 @@ static_fn void put_trans(Namval_t *np, const void *vp, int flags, Namfun_t *fp) 
     int off = offset;
     if (val) {
         if (!mp->trans || (flags & NV_INTEGER)) goto skip;
-        while ((c = mb1char(val))) {
+        while ((c = mb1char((char **)&val))) {
             c = towctrans(c, mp->trans);
             stkseek(stkstd, off + c);
             stkseek(stkstd, off);

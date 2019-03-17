@@ -178,7 +178,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
                 while (*cp == '.') {
                     hasdot = 1;
                     cp++;
-                    while (c = mb1char(cp), isaname(c)) {
+                    while (c = mb1char(&cp), isaname(c)) {
                         ;  // empty body
                     }
                 }
@@ -319,13 +319,13 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
             char *xp = str;
             lvalue->value = NULL;
             if (c == '.') str++;
-            c = mb1char(str);
+            c = mb1char(&str);
             if (isaletter(c)) {
                 Namval_t *np = NULL;
                 int dot = 0;
                 while (1) {
                     xp = str;
-                    while (c = mb1char(str), isaname(c)) xp = str;
+                    while (c = mb1char(&str), isaname(c)) xp = str;
                     str = xp;
                     while (c == '[' && dot == NV_NOADD) {
                         str = nv_endsubscript(NULL, str, 0, shp);
@@ -391,7 +391,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                             dot = NV_NOADD | NV_NOFAIL;
                             str++;
                             xp = str;
-                            while (c = mb1char(str), isaname(c)) xp = str;
+                            while (c = mb1char(&str), isaname(c)) xp = str;
                             str = xp;
                         }
                     }
@@ -457,7 +457,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                     do {
                         while (c == '.') {
                             str++;
-                            while (xp = str, c = mb1char(str), isaname(c)) {
+                            while (xp = str, c = mb1char(&str), isaname(c)) {
                                 ;  // empty body
                             }
                             c = *(str = xp);

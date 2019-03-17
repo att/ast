@@ -1075,8 +1075,8 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                 shp->oldnp = np ? nq : qp;
                 qp = 0;
                 dp->last = cp;
-                if ((c = mb1char(cp)) && !isaletter(c)) return np;
-                while (xp = cp, c = mb1char(cp), isaname(c)) {
+                if ((c = mb1char(&cp)) && !isaletter(c)) return np;
+                while (xp = cp, c = mb1char(&cp), isaname(c)) {
                     ;  // empty loop
                 }
                 cp = xp;
@@ -1799,7 +1799,7 @@ static_fn int ja_size(char *str, int size, int type) {
 
     while (*cp) {
         oldn = n;
-        w = mb1char(cp);
+        w = mb1char(&cp);
         if ((outsize = wcwidth(w)) < 0) outsize = 0;
         size -= outsize;
         c = cp - oldcp;
@@ -2703,7 +2703,7 @@ static_fn char *lastdot(char *cp, int eq, void *context) {
     int c;
 
     if (eq) cp++;
-    while ((c = mb1char(cp))) {
+    while ((c = mb1char(&cp))) {
         if (c == '[') {
             if (*cp == ']') {
                 cp++;

@@ -45,12 +45,13 @@ static char *fmtx(Shell_t *shp, const char *string) {
     const unsigned char *norm_state = (const unsigned char *)sh_lexstates[ST_NORM];
     int offset = stktell(shp->stk);
     if (*cp == '#' || *cp == '~') sfputc(shp->stk, '\\');
-    while ((c = mb1char(cp)), (c > UCHAR_MAX) || (n = norm_state[c]) == 0 || n == S_EPAT) {
+    while ((c = mb1char((char **)&cp)),
+           (c > UCHAR_MAX) || (n = norm_state[c]) == 0 || n == S_EPAT) {
         ;  // empty loop
     }
     if (n == S_EOF && *string != '#') return (char *)string;
     sfwrite(shp->stk, string, --cp - string);
-    for (string = cp; (c = mb1char(cp)); string = cp) {
+    for (string = cp; (c = mb1char((char **)&cp)); string = cp) {
         if ((n = cp - string) == 1) {
             n = norm_state[c];
             if (n && n != S_EPAT) sfputc(shp->stk, '\\');
@@ -101,7 +102,7 @@ static char *find_begin(char outbuff[], char *last, int endchar, int *type) {
     *type = 0;
     while (cp < last) {
         xp = cp;
-        switch (c = mb1char(cp)) {
+        switch (c = mb1char(&cp)) {
             case '\'':
             case '"': {
                 if (!inquote) {
@@ -113,7 +114,7 @@ static char *find_begin(char outbuff[], char *last, int endchar, int *type) {
                 break;
             }
             case '\\': {
-                if (inquote != '\'') mb1char(cp);
+                if (inquote != '\'') (void)mb1char(&cp);
                 break;
             }
             case '$': {
@@ -123,14 +124,14 @@ static char *find_begin(char outbuff[], char *last, int endchar, int *type) {
                     int dot = '.';
                     if (c == '{') {
                         xp = cp;
-                        mb1char(cp);
+                        (void)mb1char(&cp);
                         c = *(unsigned char *)cp;
                         if (c != '.' && !isaletter(c)) break;
                     } else {
                         dot = 'a';
                     }
                     while (cp < last) {
-                        if ((c = mb1char(cp)), c != dot && !isaname(c)) break;
+                        if ((c = mb1char(&cp)), c != dot && !isaname(c)) break;
                     }
                     if (cp >= last) {
                         if (c == dot || isaname(c)) {
@@ -486,7 +487,7 @@ done:
         int c, n = 0;
         c = outbuff[*cur];
         outbuff[*cur] = 0;
-        for (out = outbuff; *out; n++) mb1char(out);
+        for (out = outbuff; *out; n++) mb1char(&out);
         outbuff[*cur] = c;
         *cur = n;
         outbuff[*eol + 1] = 0;
