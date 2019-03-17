@@ -27,6 +27,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include "ast_assert.h"
 #include "tm.h"
 
 /*
@@ -56,8 +57,13 @@ int tmlex(const char *s, char **e, char **tab, int ntab, char **suf, int nsuf) {
         if (suf && tab >= tm_info.format && tab < tm_info.format + TM_NFORM) {
             suf = tm_data.format + (suf - tm_info.format);
         }
-        for (p = tab, n = ntab; n-- && (x = *p); p++) {
-            if (*x && *x != '%' && tmword(s, e, x, suf, nsuf)) return p - tab;
+        for (p = tab, n = ntab; n-- && *p; p++) {
+            x = *p;
+            if (*x && *x != '%') {
+                fprintf(stderr, "WTF suf %p |%s|\n", suf, *suf);
+                assert(suf);
+                if (tmword(s, e, x, suf, nsuf)) return p - tab;
+            }
         }
     }
     return -1;
