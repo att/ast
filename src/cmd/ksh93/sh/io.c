@@ -44,6 +44,7 @@
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "ast_regex.h"
 #include "builtins.h"
 #include "defs.h"
@@ -1912,7 +1913,8 @@ void sh_iorestore(Shell_t *shp, int last, int jmpval) {
             return;
         }
         if (filemap[fd].tname == Empty && shp->exitval == 0) {
-            ftruncate(origfd, lseek(origfd, 0, SEEK_CUR));
+            off_t offset = lseek(origfd, 0, SEEK_CUR);
+            if (offset >= 0) ftruncate(origfd, offset);
         } else if (filemap[fd].tname) {
             io_usename(shp, filemap[fd].tname, NULL, origfd, shp->exitval ? 2 : 1);
         }
