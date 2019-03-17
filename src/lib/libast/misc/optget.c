@@ -1364,6 +1364,7 @@ static_fn void optget_args(Sfio_t *sp, char *p, int n, int flags, int style, Sfi
             if (!t) break;
             i = ++t - p;
             if (i) {
+                assert(b);
                 sfputr(sp, b, -1);
                 if (X(catalog)) {
                     sfwrite(ip, p, i);
