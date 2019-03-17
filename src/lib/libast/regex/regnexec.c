@@ -1716,9 +1716,9 @@ int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatc
     int j;
     int k;
     int m;
-    int advance;
     Env_t *env;
     Rex_t *e;
+    bool advance = false;
 
     DEBUG_INIT();
     DEBUG_CODE(0x0001, sfprintf(sfstdout, "AHA#%04d 0x%04x regnexec %d 0x%08x `%-.*s'\n", __LINE__,
@@ -1735,7 +1735,6 @@ int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatc
     env->end = env->beg + len;
     env->flags &= ~REG_EXEC;
     env->flags |= (flags & REG_EXEC);
-    advance = 0;
     stknew(env->mst, &env->stk);
     env->stack = env->hard || (!(env->flags & REG_NOSUB) && nmatch);
     if (env->stack) {
@@ -1751,7 +1750,7 @@ int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatc
         env->best[0].rm_so = 0;
         env->best[0].rm_eo = -1;
         for (i = 0; i <= n; i++) env->match[i] = state.nomatch;
-        if (flags & REG_ADVANCE) advance = 1;
+        if (flags & REG_ADVANCE) advance = true;
     }
     DEBUG_CODE(0x1000, regnexec_list(env, env->rex));
     k = REG_NOMATCH;
@@ -1824,7 +1823,8 @@ int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatc
     j = env->once || (flags & REG_LEFT);
     DEBUG_CODE(0x0080, sfprintf(sfstdout, "AHA#%04d parse once=%d\n", __LINE__, j));
     while ((i = regnexec_parse(env, e, &env->done, (unsigned char *)s)) == NONE ||
-           (advance && !env->best[0].rm_eo && !(advance = 0))) {
+           (advance && !env->best[0].rm_eo)) {
+        advance = false;
         if (j) goto done;
         i = MBSIZE(env, s);
         s += i;
