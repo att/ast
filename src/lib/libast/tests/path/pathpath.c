@@ -41,7 +41,8 @@ tmain() {
     // Tests for serching paths through `FPATH`
     setenv("PATH", "", 1);
     setenv("FPATH", "/bin:/usr/bin:/usr/local/bin", 1);
-    if (!pathpath("cat", NULL, PATH_EXECUTE, path, sizeof(path))) terror("Failed to search path through `FPATH`");
+    if (!pathpath("cat", NULL, PATH_EXECUTE, path, sizeof(path)))
+        terror("Failed to search path through `FPATH`");
 
     texit(0);
 }
