@@ -217,7 +217,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 optget_done = true;  // probably a negative permission like `-x` or similar
                 break;
             case '?':
-                error(ERROR_usage(2), "WTF2 %s", opt_info.arg);
+                error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             default: { break; }
         }
