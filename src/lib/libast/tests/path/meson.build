@@ -1,5 +1,6 @@
 path_test_files = [ 'pathaccess.c', 'pathbin.c', 'pathcanon.c', 'pathcat.c',
-                    'pathexists.c', 'pathgetlink.c', 'pathshell.c', 'pathstat.c' ]
+                    'pathexists.c', 'pathgetlink.c', 'pathprog.c',
+                    'pathshell.c', 'pathstat.c' ]
 
 incdir = include_directories('..',
                              '../../include/')
