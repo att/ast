@@ -19,18 +19,18 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * return full path to p with mode access using $PATH
- * a!=0 enables related root search
- * a!=0 && a!="" searches a dir first
- * the related root must have a bin subdir
- * p==0 sets the cached relative dir to a
- * full path returned in path buffer
- * if path==0 then the space is malloc'd
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// Full path to `path_to_search` is searched in `$PATH` and `$FPATH` with `mode` access
+// path_to_search2!=0 enables related root search - ????
+// path_to_search2!=0 && path_to_search2!="" searches a dir first - ????
+// the related root must have a bin subdir - ????
+// path_to_search==0 sets the cached relative dir to a
+// full path returned in path buffer - ????
+//
+
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <limits.h>
@@ -42,60 +42,71 @@
 #include "ast_assert.h"
 #include "sfio.h"
 
-char *pathpath(const char *p, const char *a, int mode, char *path, size_t size) {
-    char *s;
-    char *x;
+char *pathpath(const char *path_to_search, const char *path_to_search2, int mode, char *path, size_t size) {
+    char *result_path;
 
-    static char *cmd;
+    // Colon separated list of paths to search
+    char *search_path;
+
+    // Saved command from previous invocation
+    static char *cached_path;
 
     assert(path && size);
-    if (!p) {
-        if (cmd) free(cmd);
-        cmd = a ? strdup(a) : NULL;
+
+    // If path to search is empty, save path from `path_to_search2` into `cached_path`.
+    // I am not sure what this cached path is supposed to do.
+    if (!path_to_search) {
+        if (cached_path) free(cached_path);
+        cached_path = path_to_search2 ? strdup(path_to_search2) : NULL;
         return NULL;
     }
-    if (strlen(p) < size) {
-        strcpy(path, p);
+
+    if (strlen(path_to_search) < size) {
+        strcpy(path, path_to_search);
         if (pathexists(path, mode)) {
-            if (*p != '/' && (mode & PATH_ABSOLUTE)) {
+            // If mode is `PATH_ABSOLUTE` expand path without beginning `/` to current directory
+            if (*path_to_search != '/' && (mode & PATH_ABSOLUTE)) {
                 char buf[PATH_MAX];
 
                 getcwd(buf, sizeof(buf));
-                s = buf + strlen(buf);
-                sfsprintf(s, sizeof(buf) - (s - buf), "/%s", p);
+                result_path = buf + strlen(buf);
+                sfsprintf(result_path, sizeof(buf) - (result_path - buf), "/%s", path_to_search);
                 strcpy(path, buf);
             }
             return path;
         }
     }
-    if (*p == '/') {
-        a = 0;
+
+    if (*path_to_search == '/') {
+        path_to_search2 = 0;
     } else {
-        s = (char *)a;
-        if (s) {
-            if (strchr(p, '/')) {
-                a = p;
-                p = "..";
+        // This code block seems a bit out of this world
+        result_path = (char *)path_to_search2;
+        if (result_path) {
+            if (strchr(path_to_search, '/')) {
+                path_to_search2 = path_to_search;
+                path_to_search = "..";
             } else {
-                a = 0;
+                path_to_search2 = 0;
             }
-            if ((!cmd || *cmd) && (strchr(s, '/') || (s = cmd))) {
-                if (!cmd && *s == '/') cmd = strdup(s);
-                size_t slen = strlen(s);
+            if ((!cached_path || *cached_path) && (strchr(result_path, '/') || (result_path = cached_path))) {
+                if (!cached_path && *result_path == '/') cached_path = strdup(result_path);
+                size_t slen = strlen(result_path);
                 if (slen < size - 6) {
-                    (void)strlcpy(path, s, slen + 1);
-                    s += slen;
+                    (void)strlcpy(path, result_path, slen + 1);
+                    result_path += slen;
                     for (;;) {
                         do {
-                            if (s <= path) goto normal;
-                        } while (*--s == '/');
+                            // TODO: In what situation this condition will be false ?
+                            if (result_path <= path) goto normal;
+                        } while (*--result_path == '/');
                         do {
-                            if (s <= path) goto normal;
-                        } while (*--s != '/');
-                        strcpy(s + 1, "bin");
+                            if (result_path <= path) goto normal;
+                        } while (*--result_path != '/');
+                        strcpy(result_path + 1, "bin");
                         if (pathexists(path, PATH_EXECUTE)) {
-                            s = pathaccess(path, p, a, mode, path, size);
-                            if (s) return s;
+                            result_path = pathaccess(path, path_to_search, path_to_search2, mode, path, size);
+                            if (result_path) return result_path;
                             goto normal;
                         }
                     }
@@ -105,9 +116,13 @@ char *pathpath(const char *p, const char *a, int mode, char *path, size_t size) 
         }
     }
 
-    x = !a && strchr(p, '/') ? "" : pathbin();
-    if (!(s = pathaccess(x, p, a, mode, path, size)) && !*x && (x = getenv("FPATH"))) {
-        s = pathaccess(x, p, a, mode, path, size);
+    search_path = !path_to_search2 && strchr(path_to_search, '/') ? "" : pathbin();
+    result_path = pathaccess(search_path, path_to_search, path_to_search2, mode, path, size);
+
+    // If search path was empty, search for it in `$FPATH`
+    if (!result_path && !*search_path && (search_path = getenv("FPATH"))) {
+        result_path = pathaccess(search_path, path_to_search, path_to_search2, mode, path, size);
     }
-    return s;
+
+    return result_path;
 }
