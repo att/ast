@@ -35,6 +35,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdbool.h>
 #include <sys/stat.h>
 
 #include "modex.h"
@@ -90,37 +91,39 @@ int strperm(const char *aexpr, char **e, int perm) {
                 case '|':
                 case '-':
                 case '&':
-                case '^':
+                case '^': {
                     op = c;
-                    for (;;) {
-                        switch (c = *expr++) {
+                    bool done = false;
+                    while (!done) {
+                        c = *expr++;
+                        switch (c) {
                             case 'r':
                                 typ |= S_IRUSR | S_IRGRP | S_IROTH;
-                                continue;
+                                break;
                             case 'w':
                                 typ |= S_IWUSR | S_IWGRP | S_IWOTH;
-                                continue;
+                                break;
                             case 'X':
-                                if (!S_ISDIR(perm) && !(perm & (S_IXUSR | S_IXGRP | S_IXOTH))) {
-                                    continue;
+                                if (S_ISDIR(perm) || (perm & (S_IXUSR | S_IXGRP | S_IXOTH))) {
+                                    typ |= S_IXUSR | S_IXGRP | S_IXOTH;
                                 }
-                                /*FALLTHROUGH*/
+                                break;
                             case 'x':
                                 typ |= S_IXUSR | S_IXGRP | S_IXOTH;
-                                continue;
+                                break;
                             case 's':
                                 typ |= S_ISUID | S_ISGID;
-                                continue;
+                                break;
                             case 't':
                                 typ |= S_ISVTX;
-                                continue;
+                                break;
                             case 'l':
                                 if (perm & S_IXGRP) {
                                     if (e) *e = expr - 1;
                                     return perm & ALLPERMS;
                                 }
                                 typ |= S_ISGID;
-                                continue;
+                                break;
                             case '=':
                             case '+':
                             case '|':
@@ -148,13 +151,6 @@ int strperm(const char *aexpr, char **e, int perm) {
                                     }
                                 }
                                 switch (op) {
-                                    default:
-                                        if (who) {
-                                            perm &= ~who;
-                                        } else {
-                                            perm = 0;
-                                        }
-                                        /*FALLTHROUGH*/
                                     case '+':
                                     case '|':
                                         perm |= typ;
@@ -193,20 +189,26 @@ int strperm(const char *aexpr, char **e, int perm) {
                                             typ = 0;
                                         }
                                         break;
-                                }
-                                switch (c) {
-                                    case '=':
-                                    case '+':
-                                    case '|':
-                                    case '-':
-                                    case '&':
-                                    case '^':
-                                        op = c;
+                                    default:
+                                        if (who) {
+                                            perm &= ~who;
+                                        } else {
+                                            perm = 0;
+                                        }
+                                        perm |= typ;
                                         typ = 0;
-                                        continue;
+                                        break;
                                 }
-                                if (c) break;
-                                /*FALLTHROUGH*/
+                                if (c == '=' || c == '+' || c == '|' || c == '-' || c == '&' ||
+                                    c == '^') {
+                                    op = c;
+                                    typ = 0;
+                                    break;
+                                } else if (c) {
+                                    done = true;
+                                    break;
+                                }
+                                // FALLTHRU
                             default:
                                 if (c < '0' || c > '7') {
                                     if (e) *e = expr - 1;
@@ -227,11 +229,11 @@ int strperm(const char *aexpr, char **e, int perm) {
                                     typ |= modei(num);
                                     num = 0;
                                 }
-                                continue;
+                                break;
                         }
-                        break;
                     }
                     break;
+                }
             }
             break;
         }
