@@ -618,6 +618,16 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
     }
     if (!*cp) error(3, "non-empty b, c or f option must be specified");
     if ((mode & (C_FIELDS | C_SUPRESS)) == C_SUPRESS) error(3, "s option requires f option");
+    if (ldelim.chr < 0) {
+        // This is probably impossible but be paranoid and make linters like Coverity happy.
+        error(ERROR_usage(2), "-D option value is invalid");
+        __builtin_unreachable();
+    }
+    if (wdelim.chr < 0) {
+        // This is probably impossible but be paranoid and make linters like Coverity happy.
+        error(ERROR_usage(2), "-d option value is invalid");
+        __builtin_unreachable();
+    }
     cut = cutinit(mode, cp, &wdelim, &ldelim, reclen);
     cp = *argv;
     if (cp) argv++;
