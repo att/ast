@@ -31,13 +31,13 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 #include "ast.h"
-#include "ast_assert.h"
 
 #include "ast_dir.h"
 
