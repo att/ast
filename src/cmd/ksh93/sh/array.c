@@ -1289,6 +1289,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
             return ap->cur;
         }
         case ASSOC_OP_NAME_val: {
+            assert(ap);
             if (ap->cur) {
                 if (!shp->instance && nv_isnull(ap->cur)) return NULL;
                 return ap->cur->nvname;
