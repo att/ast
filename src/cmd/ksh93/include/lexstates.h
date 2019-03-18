@@ -20,6 +20,7 @@
 #ifndef _LEXSTATES_H
 #define _LEXSTATES_H 1
 
+#include <stdbool.h>
 #include <wchar.h>
 #include <wctype.h>
 
@@ -87,13 +88,6 @@
 #undef LEN
 #define LEN _Fcin.fclen
 #define STATE(s, c) (s[mbwide() ? ((c = fcmbget(&LEN)), LEN > 1 ? 'a' : c) : (c = fcget())])
-#define isaname(c) ((c) < 0 ? 0 : ((c) > 0x7f ? iswalpha(c) : sh_lexstates[ST_NAME][(c)] == S_NOP))
-#define isaletter(c) \
-    ((c) < 0 ? 0 : ((c) > 0x7f ? iswalpha(c) : sh_lexstates[ST_DOL][(c)] == S_ALP && (c) != '.'))
-#define isadigit(c) ((c) < 0 ? 0 : sh_lexstates[ST_DOL][c] == S_DIG)
-#define isastchar(c) ((c) == '@' || (c) == '*')
-#define isexp(c) ((c) < 0 ? 0 : (sh_lexstates[ST_MACRO][c] == S_PAT || (c) == '$' || (c) == '`'))
-#define ismeta(c) ((c) < 0 ? 0 : sh_lexstates[ST_NAME][c] == S_BREAK)
 
 extern const char *sh_lexstates[ST_NONE];
 extern const char e_lexversion[];
@@ -127,5 +121,37 @@ extern const char e_lexzerobyte[];
 extern const char e_lexemptyfor[];
 extern const char e_lextypeset[];
 extern const char e_lexcharclass[];
+
+static inline bool isaname(int c) {
+    if (c < 0) return false;
+    if (c > 0x7F) return iswalpha(c);
+    return sh_lexstates[ST_NAME][c] == S_NOP;
+}
+
+static inline bool isaletter(int c) {
+    if (c < 0) return false;
+    if (c > 0x7F) return iswalpha(c);
+    return sh_lexstates[ST_DOL][c] == S_ALP && c != '.';
+}
+
+static inline bool isadigit(int c) {
+    if (c < 0) return false;
+    return sh_lexstates[ST_DOL][c] == S_DIG;
+}
+
+static inline bool isastchar(int c) {
+    if (c < 0) return false;
+    return c == '@' || c == '*';
+}
+
+static inline bool isexp(int c) {
+    if (c < 0) return false;
+    return sh_lexstates[ST_MACRO][c] == S_PAT || (c) == '$' || (c) == '`';
+}
+
+static inline bool ismeta(int c) {
+    if (c < 0) return false;
+    return sh_lexstates[ST_NAME][c] == S_BREAK;
+}
 
 #endif  // _LEXSTATES_H

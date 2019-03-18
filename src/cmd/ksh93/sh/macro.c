@@ -1063,7 +1063,8 @@ retry1:
         // FALLTHRU
         case S_SPC1: {
             if (type == M_BRACE) {
-                if (isaletter(mode = fcpeek(0)) || mode == '.') {
+                mode = fcpeek(0);
+                if (isaletter(mode) || mode == '.') {
                     if (c == '#') {
                         type = M_SIZE;
                     } else if (c == '@') {
