@@ -42,7 +42,8 @@
 #include "ast_assert.h"
 #include "sfio.h"
 
-char *pathpath(const char *path_to_search, const char *path_to_search2, int mode, char *path, size_t size) {
+char *pathpath(const char *path_to_search, const char *path_to_search2, int mode, char *path,
+               size_t size) {
     char *result_path;
 
     // Colon separated list of paths to search
@@ -89,7 +90,8 @@ char *pathpath(const char *path_to_search, const char *path_to_search2, int mode
             } else {
                 path_to_search2 = 0;
             }
-            if ((!cached_path || *cached_path) && (strchr(result_path, '/') || (result_path = cached_path))) {
+            if ((!cached_path || *cached_path) &&
+                (strchr(result_path, '/') || (result_path = cached_path))) {
                 if (!cached_path && *result_path == '/') cached_path = strdup(result_path);
                 size_t slen = strlen(result_path);
                 if (slen < size - 6) {
@@ -105,7 +107,8 @@ char *pathpath(const char *path_to_search, const char *path_to_search2, int mode
                         } while (*--result_path != '/');
                         strcpy(result_path + 1, "bin");
                         if (pathexists(path, PATH_EXECUTE)) {
-                            result_path = pathaccess(path, path_to_search, path_to_search2, mode, path, size);
+                            result_path =
+                                pathaccess(path, path_to_search, path_to_search2, mode, path, size);
                             if (result_path) return result_path;
                             goto normal;
                         }

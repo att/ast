@@ -43,7 +43,8 @@
 typedef struct Tree_s {
     // `next` points to next subdirectory of parent directory
     struct Tree_s *next;
-    // If current node is a directory, `name` and `modes` of it's subdirectories and files are cached under this tree
+    // If current node is a directory, `name` and `modes` of it's subdirectories and files are
+    // cached under this tree
     struct Tree_s *tree;
     // Modes can be PATH_READ, PATH_WRITE and PATH_EXECUTE
     int mode;
@@ -88,7 +89,9 @@ int pathexists(char *path, int mode) {
         c = *next_slash;
         // and put a null character there to mark end of path, so `foo/bar/baz` becomes `foo`
         *next_slash = 0;
-        for (current_tree = parent_tree->tree; current_tree && (*cmp)(current_path_component, current_tree->name); current_tree = current_tree->next) {
+        for (current_tree = parent_tree->tree;
+             current_tree && (*cmp)(current_path_component, current_tree->name);
+             current_tree = current_tree->next) {
             ;
         }
 
@@ -106,7 +109,8 @@ int pathexists(char *path, int mode) {
             // If `c` is set, we are not at end of path
             if (c) {
                 *next_slash = c;
-                for (current_path_component = next_path_component = next_slash + 1; *next_path_component && *next_path_component != '/'; next_path_component++) {
+                for (current_path_component = next_path_component = next_slash + 1;
+                     *next_path_component && *next_path_component != '/'; next_path_component++) {
                     ;
                 }
                 cc = *next_path_component;

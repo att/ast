@@ -30,7 +30,8 @@ tmain() {
 
     if (pathexists(path, PATH_READ) != 1) terror("Path should be readable");
     // Second call to same path should pick up permissions from cache
-    if (pathexists(path, PATH_READ) != 1)  terror("pathexists() fails to get permissions from cache");
+    if (pathexists(path, PATH_READ) != 1)
+        terror("pathexists() fails to get permissions from cache");
 
     // https://github.com/att/ast/issues/1215 - `pathexists()` function does not invalidate cache
     // Uncomment following test case when this bug has been fixed.
