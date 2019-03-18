@@ -188,7 +188,7 @@ void sh_iounpipe(Shell_t *shp) {
         for (n = 0; n < 10; n++) {
             if (subdup & (1 << n)) {
                 sh_close(n);
-                fcntl(1, F_DUPFD, n);
+                (void)fcntl(1, F_DUPFD, n);  // this can't fail so we don't check the return value
                 shp->fdstatus[n] = shp->fdstatus[1];
             }
         }
