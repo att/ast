@@ -123,11 +123,16 @@ found:
     return n;
 }
 
+// Returns full path to currently executing binary
 size_t pathprog(const char *command, char *path, size_t size) {
     char *rel;
     ssize_t n;
 
     n = path_prog(command, path, size);
+
+    // If `path_prog()` function fails to find absolute path to current binary
+    // do a regular path search. This might be a source of bugs in future.
+    // https://github.com/att/ast/issues/1229
     if (n > 0 && n < size && *path != '/') {
         rel = strdup(path);
         if (rel) {
