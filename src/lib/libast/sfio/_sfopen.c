@@ -74,10 +74,11 @@ Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
         }
 
         if (f->file >= 0) {
-            if ((oflags &= (O_TEXT | O_BINARY | O_APPEND)) != 0) { /* set file access control */
+            oflags &= O_TEXT | O_BINARY | O_APPEND;
+            if (oflags) {  // set file access control
                 int ctl = fcntl(f->file, F_GETFL, 0);
                 ctl = (ctl & ~(O_TEXT | O_BINARY | O_APPEND)) | oflags;
-                fcntl(f->file, F_SETFL, ctl);
+                (void)fcntl(f->file, F_SETFL, ctl);  // it should be impossible for this to fail
             }
 #ifndef O_CLOEXEC
             if (fflags & SF_FD_CLOEXEC) SETCLOEXEC(f->file);
