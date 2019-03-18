@@ -170,8 +170,10 @@ static_fn void iousepipe(Shell_t *shp) {
 }
 
 void sh_iounpipe(Shell_t *shp) {
-    int fd = sffileno(sfstdout), n;
+    int n;
     char buff[SF_BUFSIZE];
+    int fd = sffileno(sfstdout);
+
     if (!usepipe) return;
     --usepipe;
     if (shp->comsub > 1) {
@@ -181,8 +183,11 @@ void sh_iounpipe(Shell_t *shp) {
         }
         goto done;
     }
+
     close(fd);
-    fcntl(subpipe[2], F_DUPFD, fd);
+    n = fcntl(subpipe[2], F_DUPFD, fd);
+    assert(n != -1);  // it should be impossible for the fcntl() to fail
+
     shp->fdstatus[1] = shp->fdstatus[subpipe[2]];
     if (subdup) {
         for (n = 0; n < 10; n++) {
