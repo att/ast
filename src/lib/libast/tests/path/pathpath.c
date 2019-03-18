@@ -16,9 +16,10 @@ tmain() {
     UNUSED(argv);
 
     char path[PATH_MAX];
+    char absolute_path[PATH_MAX];
     char absolute_test_path[PATH_MAX];
 
-    getcwd(absolute_test_path, PATH_MAX);
+    getcwd(absolute_test_path, sizeof(absolute_test_path));
     strcat(absolute_test_path, "/");
     strcat(absolute_test_path, "foo");
 
@@ -27,21 +28,20 @@ tmain() {
     atexit(cleanup_handler);
 
     // Search this path in current directory and expand it
-    pathpath("foo", NULL, PATH_ABSOLUTE, path, PATH_MAX);
+    pathpath("foo", NULL, PATH_ABSOLUTE, path, sizeof(path));
     if (strcmp(path, absolute_test_path))
         terror("Failed to expand path of file in current directory");
 
-    if (!pathpath("cat", NULL, PATH_EXECUTE, path, PATH_MAX))
+    if (!pathpath("cat", NULL, PATH_EXECUTE, absolute_path, sizeof(absolute_path)))
         terror("Failed to find `cat` in current $PATH");
 
-    if (!pathpath(path, NULL, PATH_EXECUTE, path, PATH_MAX))
+    if (!pathpath(absolute_path, NULL, PATH_EXECUTE, path, sizeof(path)))
         terror("Failed to find `%s` with absolute path", path);
 
     // Tests for serching paths through `FPATH`
     setenv("PATH", "", 1);
     setenv("FPATH", "/bin:/usr/bin:/usr/local/bin", 1);
-    if (!pathpath("cat", NULL, PATH_EXECUTE, path, PATH_MAX))
-        terror("Failed to search path through `FPATH`");
+    if (!pathpath("cat", NULL, PATH_EXECUTE, path, sizeof(path))) terror("Failed to search path through `FPATH`");
 
     texit(0);
 }
