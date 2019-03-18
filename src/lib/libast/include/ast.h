@@ -307,7 +307,6 @@ extern unsigned long plugin_version(void);
 
 #undef strcat
 #undef strcpy
-#undef strncpy
 #undef strlcat
 #undef strlcpy
 #undef memcpy
