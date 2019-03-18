@@ -431,7 +431,11 @@ int sh_iorenumber(Shell_t *shp, int f1, int f2) {
         if (f2 <= 2 && sp) {
             Sfio_t *spnew = sh_iostream(shp, f1, f1);
             shp->fdstatus[f2] = (shp->fdstatus[f1] & ~IOCLEX);
-            sfsetfd(spnew, f2);
+            // It should be impossible for this call to fail; thus returning -1. But rather than
+            // simply add a (void) cast check the return value. That's because I'm uncomfortable
+            // trusting SFIO to behave as I expect. Coverity Scan CID #294189.
+            int n = sfsetfd(spnew, f2);
+            assert(n != -1);
             if (sfswap(spnew, sp) != sp) abort();
             sfset(sp, SF_SHARE | SF_PUBLIC, 1);
         } else {
