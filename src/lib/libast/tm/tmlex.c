@@ -60,7 +60,6 @@ int tmlex(const char *s, char **e, char **tab, int ntab, char **suf, int nsuf) {
         for (p = tab, n = ntab; n-- && *p; p++) {
             x = *p;
             if (*x && *x != '%') {
-                fprintf(stderr, "WTF suf %p |%s|\n", suf, *suf);
                 assert(suf);
                 if (tmword(s, e, x, suf, nsuf)) return p - tab;
             }
