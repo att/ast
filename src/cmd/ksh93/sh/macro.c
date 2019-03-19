@@ -42,6 +42,7 @@
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "cdt.h"
 #include "defs.h"
 #include "error.h"
@@ -1035,7 +1036,8 @@ static_fn char *nextname(Mac_t *mp, const char *prefix, int len) {
 static_fn bool varsub(Mac_t *mp) {
     int c;
     int type = 0; /* M_xxx */
-    char *v, *argp = 0;
+    char *v;
+    char *argp = NULL;
     Namval_t *np = NULL;
     int dolg = 0, mode = 0;
     Lex_t *lp = mp->shp->lex_context;
@@ -1640,7 +1642,7 @@ skip:
         }
         if (*ptr) mac_error(np);
         stkseek(stkp, offset);
-        argp = 0;
+        argp = NULL;
     }
     // Check for substring operations.
     else if (sh_lexstates[ST_BRACE][c] == S_MOD2) {
@@ -1648,12 +1650,14 @@ skip:
             if (type == '/' || type == '#' || type == '%') {
                 c = type;
                 type = '/';
+                assert(argp);
                 argp++;
             } else {
                 type = 0;
             }
         } else {
             if (type == c) {  // ## or %%
+                assert(argp);
                 argp++;
             } else {
                 type = 0;
