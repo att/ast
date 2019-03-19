@@ -56,30 +56,33 @@ int strperm(const char *aexpr, char **e, int perm) {
         mask = ~0;
     } else {
         masked = 0;
+        mask = 0;
     }
-    for (;;) {
+
+    while (true) {
         num = who = typ = 0;
-        for (;;) {
+        bool done1 = false;
+        while (!done1) {
             switch (c = *expr++) {
                 case 'u':
                     who |= S_ISVTX | S_ISUID | S_IRWXU;
-                    continue;
+                    break;
                 case 'g':
                     who |= S_ISVTX | S_ISGID | S_IRWXG;
-                    continue;
+                    break;
                 case 'o':
                     who |= S_ISVTX | S_IRWXO;
-                    continue;
+                    break;
                 case 'a':
                     who = S_ISVTX | S_ISUID | S_ISGID | S_IRWXU | S_IRWXG | S_IRWXO;
-                    continue;
+                    break;
                 default:
                     if (c >= '0' && c <= '7') {
                         if (!who) who = S_ISVTX | S_ISUID | S_ISGID | S_IRWXU | S_IRWXG | S_IRWXO;
                         c = '=';
                     }
                     expr--;
-                    /*FALLTHROUGH*/
+                    // FALLTHRU
                 case '=':
                     if (who) {
                         perm &= ~who;
@@ -93,8 +96,8 @@ int strperm(const char *aexpr, char **e, int perm) {
                 case '&':
                 case '^': {
                     op = c;
-                    bool done = false;
-                    while (!done) {
+                    bool done2 = false;
+                    while (!done2) {
                         c = *expr++;
                         switch (c) {
                             case 'r':
@@ -205,7 +208,7 @@ int strperm(const char *aexpr, char **e, int perm) {
                                     typ = 0;
                                     break;
                                 } else if (c) {
-                                    done = true;
+                                    done2 = true;
                                     break;
                                 }
                                 // FALLTHRU
@@ -232,10 +235,10 @@ int strperm(const char *aexpr, char **e, int perm) {
                                 break;
                         }
                     }
+                    done1 = true;
                     break;
                 }
             }
-            break;
         }
     }
 }
