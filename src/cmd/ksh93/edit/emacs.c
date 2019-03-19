@@ -956,20 +956,20 @@ static void xcommands(Emacs_t *ep, int count) {
         case cntl('H'): {                 // ^X^H show history info
             char hbuf[MAXLINE];
 
-            strcpy(hbuf, "Current command ");
-            strcat(hbuf, itos(hline));
+            strlcpy(hbuf, "Current command ", sizeof(hbuf));
+            strlcat(hbuf, itos(hline), sizeof(hbuf));
             if (hloff) {
-                strcat(hbuf, " (line ");
-                strcat(hbuf, itos(hloff + 1));
-                strcat(hbuf, ")");
+                strlcat(hbuf, " (line ", sizeof(hbuf));
+                strlcat(hbuf, itos(hloff + 1), sizeof(hbuf));
+                strlcat(hbuf, ")", sizeof(hbuf));
             }
             if ((hline != location.hist_command) || (hloff != location.hist_line)) {
-                strcat(hbuf, "; Previous command ");
-                strcat(hbuf, itos(location.hist_command));
+                strlcat(hbuf, "; Previous command ", sizeof(hbuf));
+                strlcat(hbuf, itos(location.hist_command), sizeof(hbuf));
                 if (location.hist_line) {
-                    strcat(hbuf, " (line ");
-                    strcat(hbuf, itos(location.hist_line + 1));
-                    strcat(hbuf, ")");
+                    strlcat(hbuf, " (line ", sizeof(hbuf));
+                    strlcat(hbuf, itos(location.hist_line + 1), sizeof(hbuf));
+                    strlcat(hbuf, ")", sizeof(hbuf));
                 }
             }
             show_info(ep, hbuf);
