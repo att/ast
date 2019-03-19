@@ -1,8 +1,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <fcntl.h>
+#include <limits.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 #include "ast.h"

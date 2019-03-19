@@ -1,9 +1,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include <limits.h>
+#include <string.h>
 
 #include "ast.h"
 #include "terror.h"
