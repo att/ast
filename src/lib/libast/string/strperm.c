@@ -138,19 +138,15 @@ int strperm(const char *aexpr, char **e, int perm) {
                                 if (who) {
                                     typ &= who;
                                 } else {
-                                    switch (op) {
-                                        case '=':
-                                        case '+':
-                                        case '|':
-                                        case '-':
-                                        case '&':
-                                            if (!masked) {
-                                                masked = 1;
-                                                umask(mask = umask(0));
-                                                mask = ~mask;
-                                            }
-                                            typ &= mask;
-                                            break;
+                                    if (op == '=' || op == '+' || op == '|' || op == '-' ||
+                                        op == '&') {
+                                        if (!masked) {
+                                            masked = 1;
+                                            mask = umask(0);
+                                            umask(mask);
+                                            mask = ~mask;
+                                        }
+                                        typ &= mask;
                                     }
                                 }
                                 switch (op) {
