@@ -649,8 +649,10 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
             }
         }
         continue;
+
     push:
         c = 0;
+
     push_delimiter:
         if (sp < &stack[elementsof(stack)]) {
             sp->format = (char *)format;
@@ -659,7 +661,6 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
             delimiter = c;
             sp++;
         }
-        continue;
     }
     tm_info.flags = flags;
     if (cp >= ep) cp = ep - 1;
