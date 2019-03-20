@@ -28,6 +28,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <stdbool.h>
 #include <stddef.h>
 
 #include "ast.h"
@@ -148,23 +149,24 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
         width = 0;
         prec = 0;
         parts = 0;
-        for (;;) {
-            switch (c = *format++) {
+        bool done = false;
+        while (!done) {
+            c = *format++;
+            if (c == '0' && !parts) {
+                pad = c;
+                continue;
+            }
+            switch (c) {
                 case '_':
                 case '-':
                     pad = c;
-                    continue;
+                    break;
                 case 'E':
                 case 'O':
                     if (!isalpha(*format)) break;
                     alt = c;
-                    continue;
+                    break;
                 case '0':
-                    if (!parts) {
-                        pad = c;
-                        continue;
-                    }
-                    /*FALLTHROUGH*/
                 case '1':
                 case '2':
                 case '3':
@@ -177,7 +179,8 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                     switch (parts) {
                         case 0:
                             parts++;
-                            /*FALLTHROUGH*/
+                            width = width * 10 + (c - '0');
+                            break;
                         case 1:
                             width = width * 10 + (c - '0');
                             break;
@@ -185,10 +188,10 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                             prec = prec * 10 + (c - '0');
                             break;
                     }
-                    continue;
+                    break;
                 case '.':
                     if (!parts++) parts++;
-                    continue;
+                    break;
                 case '(':
                     i = 1;
                     arg = argbuf;
@@ -206,11 +209,11 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                     }
                     *arg = 0;
                     arg = argbuf;
-                    continue;
+                    break;
                 default:
+                    done = true;
                     break;
             }
-            break;
         }
         switch (c) {
             case 0:
