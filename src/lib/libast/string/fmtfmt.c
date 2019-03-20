@@ -43,6 +43,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <stdbool.h>
 
 #include "ast.h"
 #include "sfio.h"
@@ -64,9 +65,11 @@ char *fmtfmt(const char *as) {
 
     z = 1;
     i = m = 0;
-    for (;;) {
+    bool done = false;
+    while (!done) {
         switch (*s++) {
             case 0:
+                done = true;
                 break;
             case '%':
                 if (*s == '%') continue;
@@ -180,11 +183,10 @@ char *fmtfmt(const char *as) {
                     }
                     if (m < i) m = i;
                 }
-                continue;
+                break;
             default:
-                continue;
+                break;
         }
-        break;
     }
     s = buf = fmtbuf(m + z);
     for (i = 1; i <= m; i++) {
