@@ -467,7 +467,7 @@ do      flags=F
         done
         case $name in
         '')     ;;
-        CONFORMANCE|HOSTTYPE|LIBPATH|LIBPREFIX|LIBSUFFIX|PATH_ATTRIBUTES|PATH_RESOLVE|UNIVERSE)
+        HOSTTYPE|LIBPATH|LIBPREFIX|LIBSUFFIX|PATH_ATTRIBUTES|PATH_RESOLVE|UNIVERSE)
                 ;;
         *)      values=
                 script=

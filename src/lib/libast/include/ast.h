@@ -189,7 +189,6 @@ extern ssize_t base64encode(const void *, size_t, void **, void *, size_t);
 extern ssize_t base64decode(const void *, size_t, void **, void *, size_t);
 extern int chresc(const char *, char **);
 extern int chrexp(const char *, char **, int *, int);
-extern char *conformance(const char *, size_t);
 extern void set_debug_filename(const char *pathname);
 extern const char *addr2info(void *p);
 extern void dump_backtrace(int max_frames);

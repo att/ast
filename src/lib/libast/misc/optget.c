@@ -4047,7 +4047,11 @@ again:
                 s = optget_next(s + 1, version);
                 if (*s == '(') {
                     s = optget_nest(f = s);
+#if 0  // disabled because we are removing support for legacy AST "conformance" support
                     if (!conformance(f, s - f)) goto disable;
+#else
+                    goto disable;
+#endif
                 }
                 k = *(f = s);
                 if (k == '+' || k == '-') {
@@ -4690,10 +4694,12 @@ help:
                 return '?';
             }
             state.force = hp->style;
+#if 0  // disabled because we are removing support for legacy AST "conformance" support
         } else if (optget_match(s, "CONFORMANCE", -1, ID, NULL)) {
             opt_info.arg = sfprints("\f%s", conformance(w, 0));
             optget_pop(psp);
             return '?';
+#endif
         } else if (optget_match(s, "ESC", -1, ID, NULL) ||
                    optget_match(s, "EMPHASIS", -1, ID, NULL)) {
             state.emphasis = n;
