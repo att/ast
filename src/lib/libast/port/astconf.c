@@ -71,8 +71,6 @@
     do {                                                       \
         if (!state.data) astconf_synthesize(NULL, NULL, NULL); \
     } while (0)
-#define STANDARD(v) \
-    (!strcmp(v, "standard") || !strcmp(v, "strict") || !strcmp(v, "posix") || !strcmp(v, "xopen"))
 
 #define MAXVAL 256
 
@@ -112,10 +110,7 @@ static Feature_t dynamic[] = {
 #define OP_architecture 0
     {&dynamic[OP_architecture + 1], "ARCHITECTURE", "", NULL, NULL, 12, CONF_AST, 0,
      OP_architecture},
-#define OP_conformance (OP_architecture + 1)
-    {&dynamic[OP_conformance + 1], "CONFORMANCE", "ast", "standard", "ast", 11, CONF_AST, 0,
-     OP_conformance},
-#define OP_getconf (OP_conformance + 1)
+#define OP_getconf (OP_architecture + 1)
     {&dynamic[OP_getconf + 1], "GETCONF",
 #ifdef _pth_getconf
      _pth_getconf,
@@ -168,7 +163,6 @@ static Feature_t dynamic[] = {
 typedef struct State_s {
     const char *id;
     const char *name;
-    const char *standard;
     const char *strict;
     Feature_t *features;
 
@@ -190,7 +184,6 @@ typedef struct State_s {
 
 static State_t state = {"getconf",
                         "_AST_FEATURES",
-                        "CONFORMANCE = standard",
                         "POSIXLY_CORRECT",
                         dynamic,
                         -1,
@@ -250,7 +243,7 @@ static_fn char *astconf_synthesize(Feature_t *fp, const char *path, const char *
         state.prefix = strlen(state.name) + 1;
         n = state.prefix + 3 * MAXVAL;
         s = getenv(state.name);
-        if (!s && getenv(state.strict)) s = (char *)state.standard;
+        if (!s && getenv(state.strict)) s = "standard";
         if (s) n += strlen(s) + 1;
         n = roundof(n, 32);
         state.data = calloc(1, n);
@@ -448,9 +441,6 @@ static_fn void astconf_initialize(Feature_t *fp, const char *path, const char *c
         case OP_architecture:
             ok = 1;
             break;
-        case OP_conformance:
-            ok = getenv(state.strict) != 0;
-            break;
         case OP_hosttype:
             ok = 1;
             break;
@@ -551,7 +541,6 @@ static_fn char *astconf_format(Feature_t *fp, const char *path, const char *valu
                                unsigned int flags, Error_f conferror) {
     UNUSED(conferror);
     UNUSED(flags);
-    Feature_t *sp;
     int n;
     static struct utsname uts;
 
@@ -568,36 +557,6 @@ static_fn char *astconf_format(Feature_t *fp, const char *path, const char *valu
         case OP_architecture:
             if (!uname(&uts)) return fp->value = uts.machine;
             if (!(fp->value = getenv("HOSTNAME"))) fp->value = "unknown";
-            break;
-
-        case OP_conformance:
-            if (value && STANDARD(value)) value = fp->std;
-            state.std = !strcmp(fp->value, fp->std);
-#if DEBUG_astconf
-            error(-6, "state.std=%d %s [%s] std=%s ast=%s value=%s", state.std, fp->name, value,
-                  fp->std, fp->ast, fp->value);
-#endif
-            if (state.synthesizing && value == (char *)fp->std) {
-                fp->value = (char *)value;
-            } else if (!astconf_synthesize(fp, path, value)) {
-                astconf_initialize(fp, path, NULL, fp->std, fp->value);
-            }
-#if DEBUG_astconf
-            error(-6, "state.std=%d %s [%s] std=%s ast=%s value=%s", state.std, fp->name, value,
-                  fp->std, fp->ast, fp->value);
-#endif
-            if (!state.std && value == fp->std) {
-                state.std = 1;
-                for (sp = state.features; sp; sp = sp->next) {
-                    if (sp->std && sp->op && sp->op != OP_conformance) {
-                        astconf_feature(sp, 0, path, sp->std, 0, 0);
-                    }
-                }
-            }
-#if DEBUG_astconf
-            error(-6, "state.std=%d %s [%s] std=%s ast=%s value=%s", state.std, fp->name, value,
-                  fp->std, fp->ast, fp->value);
-#endif
             break;
 
         case OP_hosttype:
