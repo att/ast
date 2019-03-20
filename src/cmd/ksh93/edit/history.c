@@ -933,8 +933,7 @@ static int hist_exceptf(Sfio_t *fp, int type, Sfdisc_t *handle)
             // The return value of this lseek() has historically been ignored. It is unclear if that
             // is correct. That is, is there any scenario in which this lseek() could fail but the
             // overall behavior of the shell still be correct if we ignore that failure? The void
-            // cast is to silence
-            // https://scan4.coverity.com/reports.htm#v37777/p13914/fileInstanceId=57999457&defectInstanceId=10523151&mergedDefectId=253581
+            // cast is to silence Coverity CID #253581.
             (void)lseek(oldfd, 2, SEEK_SET);
             hp->histcnt = 2;
             hp->histind = 1;

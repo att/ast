@@ -166,13 +166,14 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
         }
     }
 
-    /* save old readf, writef, and seekf to see if stream need reinit */
-#define GETDISCF(func, iof, type)                    \
-    {                                                \
-        for (d = f->disc; d && !d->iof; d = d->disc) \
-            ;                                        \
-        func = d ? d->iof : NULL;                    \
-    }
+    // Save old readf, writef, and seekf to see if stream need reinit.
+#define GETDISCF(func, iof, type)         \
+    do {                                  \
+        d = f->disc;                      \
+        while (d && !d->iof) d = d->disc; \
+        func = d ? d->iof : NULL;         \
+    } while (0)
+
     GETDISCF(oreadf, readf, Sfread_f);
     GETDISCF(owritef, writef, Sfwrite_f);
     GETDISCF(oseekf, seekf, Sfseek_f);
@@ -216,13 +217,16 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
 
     if (!(f->flags & SF_STRING)) { /* this stream may have to be reinitialized */
         int reinit = 0;
+
 #define DISCF(dst, iof, type) (dst ? dst->iof : NULL)
-#define REINIT(oiof, iof, type)                      \
-    if (!reinit) {                                   \
-        for (d = f->disc; d && !d->iof; d = d->disc) \
-            ;                                        \
-        if (DISCF(d, iof, type) != oiof) reinit = 1; \
-    }
+#define REINIT(oiof, iof, type)                          \
+    do {                                                 \
+        if (!reinit) {                                   \
+            d = f->disc;                                 \
+            while (d && !d->iof) d = d->disc;            \
+            if (DISCF(d, iof, type) != oiof) reinit = 1; \
+        }                                                \
+    } while (0)
 
         REINIT(oreadf, readf, Sfread_f);
         REINIT(owritef, writef, Sfwrite_f);
