@@ -182,17 +182,8 @@ typedef struct State_s {
 
 } State_t;
 
-static State_t state = {"getconf",
-                        "_AST_FEATURES",
-                        "POSIXLY_CORRECT",
-                        dynamic,
-                        -1,
-                        0,
-                        0,
-                        NULL,
-                        NULL,
-                        NULL,
-                        NULL};
+static State_t state = {
+    "getconf", "_AST_FEATURES", "POSIXLY_CORRECT", dynamic, -1, 0, 0, NULL, NULL, NULL, NULL};
 
 static_fn char *astconf_feature(Feature_t *, const char *, const char *, const char *, unsigned int,
                                 Error_f);
