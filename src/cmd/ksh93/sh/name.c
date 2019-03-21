@@ -693,15 +693,24 @@ static_fn char *stack_extend(Shell_t *shp, const char *cname, char *cp, int n) {
 
 Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
     Shell_t *shp = sh_getinterp();
-    char *sub = 0, *cp = (char *)name, *sp, *xp;
+    char *sub = NULL;
+    char *cp = (char *)name;
+    Namval_t *np = NULL;
+    Namval_t *nq = NULL;
+    Namfun_t *fp = NULL;
+    Namarr_t *ap = NULL;
+    Namval_t *qp = NULL;
+    long add = 0;
+    int copy = 0;
+    int top = 0;
+    int noscope = (flags & NV_NOSCOPE);
+    int nofree = 0;
+    int level = 0;
+    int zerosub = 0;
+    char *sp, *xp;
     int c;
-    Namval_t *np = 0, *nq = 0;
-    Namfun_t *fp = 0;
-    long mode, add = 0;
-    int copy = 0, isref, top = 0, noscope = (flags & NV_NOSCOPE);
-    int nofree = 0, level = 0, zerosub = 0;
-    Namarr_t *ap;
-    Namval_t *qp = 0;
+    long mode;
+    int isref;
 
     if (root == shp->var_tree) {
         if (dtvnext(root)) {
@@ -999,8 +1008,9 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                             Namval_t *tp;
                         addsub:
                             sp = cp;
-                            nq = 0;
-                            if ((tp = nv_type(np)) && nv_hasdisc(np, &ENUM_disc)) goto enumfix;
+                            nq = NULL;
+                            tp = nv_type(np);
+                            if (tp && nv_hasdisc(np, &ENUM_disc)) goto enumfix;
                             if (ap && ap->table && tp) nq = nv_search(sub, ap->table, 0);
                             if (!nq && !(nq = nv_opensub(np))) {
                                 Namarr_t *ap = nv_arrayptr(np);
