@@ -1284,6 +1284,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
             return ap->cur;
         }
         case ASSOC_OP_CURRENT_val: {
+            assert(ap);
             if (ap->cur) ap->cur->nvenv = np;
             return ap->cur;
         }
