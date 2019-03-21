@@ -329,7 +329,7 @@ void errorv(const char *id, int level, va_list ap) {
              */
 
             if ((flags & ERROR_SYSTEM) && errno && errno != error_info.last_errno) {
-                sfprintf(stkstd, " [%s]", fmterror(errno));
+                sfprintf(stkstd, " [%s]", strerror(errno));
                 if (error_info.set & ERROR_SYSTEM) errno = 0;
                 error_info.last_errno = (level >= 0) ? 0 : errno;
             }

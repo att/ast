@@ -86,7 +86,7 @@ char *dlerror(void) {
     char *msg;
 
     if (!err) return 0;
-    msg = fmterror(err);
+    msg = strerror(err);
     err = 0;
     return msg;
 }
@@ -218,7 +218,7 @@ char *dlerror(void) {
     char *msg;
 
     if (!err) return 0;
-    msg = fmterror(err);
+    msg = strerror(err);
     err = 0;
     return msg;
 }
@@ -256,7 +256,7 @@ char *dlerror(void) {
     char *msg;
 
     if (!err) return 0;
-    msg = fmterror(err);
+    msg = strerror(err);
     err = 0;
     return msg;
 }
