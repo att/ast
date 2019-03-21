@@ -3157,22 +3157,22 @@ char *nv_name(const Namval_t *np) {
             }
         }
     }
+
     // The `if (!np->nvname) goto skip;` above means we can reach this juncture with `np->nvname`
     // being the NULL pointer. Tell the compiler and lint tools this can't happen via an assert.
     //
     // TODO: Rewrite this code to avoid the need for the "goto" above and this explicit suppression
     // of a logic warning.
     assert(np->nvname);
-    if (!(table = shp->last_table) || *np->nvname == '.' || table == shp->namespace ||
-        np == table) {
-        return np->nvname;
-    }
-    if (table) {
-        cp = nv_name(table);
-        sfprintf(shp->strbuf, "%s.%s", cp, np->nvname);
-    } else {
-        sfprintf(shp->strbuf, "%s", np->nvname);
-    }
+
+    table = shp->last_table;
+    if (!table) return np->nvname;
+    if (table == shp->namespace) return np->nvname;
+    if (table == np) return np->nvname;
+    if (*np->nvname == '.') return np->nvname;
+
+    cp = nv_name(table);
+    sfprintf(shp->strbuf, "%s.%s", cp, np->nvname);
     return sfstruse(shp->strbuf);
 }
 
