@@ -2,7 +2,7 @@ libast_files += [
     'string/base64.c',
     'string/chresc.c',
     'string/fmtbase.c', 'string/fmtbuf.c',
-    'string/fmtelapsed.c', 'string/fmterror.c',
+    'string/fmtelapsed.c',
     'string/fmtesc.c', 'string/fmtfmt.c',
     'string/fmtident.c', 'string/fmtint.c',
     'string/fmtmatch.c', 'string/fmtmode.c',
