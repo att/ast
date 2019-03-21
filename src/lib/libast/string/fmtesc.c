@@ -19,12 +19,12 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * return string with expanded escape chars
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// return string with expanded escape chars
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
@@ -35,15 +35,17 @@
 
 #include "ast.h"
 
-/*
- * quote string as of length n with qb...qe
- * (flags&FMT_ALWAYS) always quotes, otherwise quote output only if necessary
- * qe and the usual suspects are \... escaped
- * (flags&FMT_WIDE) doesn't escape 8 bit chars
- * (flags&FMT_ESCAPED) doesn't \... escape the usual suspects
- * (flags&FMT_SHELL) escape $`"#;~&|()<>[]*?
- */
+//
+// Quote string as of length n with qb...qe
+// (flags&FMT_ALWAYS) always quotes, otherwise quote output only if necessary
+// qe and the usual suspects are \... escaped
+// (flags&FMT_WIDE) doesn't escape 8 bit chars
+// (flags&FMT_ESCAPED) doesn't \... escape the usual suspects
+// (flags&FMT_SHELL) escape $`"#;~&|()<>[]*?
+//
 
+// NOTE: This function is used by `astconf()` function which only uses `FMT_SHELL` flag.
+// TODO: Shall we drop rest of the flags ?
 char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int flags) {
     unsigned char *s = (unsigned char *)as;
     unsigned char *e = s + n;
@@ -187,24 +189,3 @@ char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int fla
     *b = 0;
     return buf;
 }
-
-/*
- * escape the usual suspects and quote chars in qs
- * in length n string as
- */
-
-char *fmtnesq(const char *as, const char *qs, size_t n) { return fmtquote(as, NULL, qs, n, 0); }
-
-/*
- * escape the usual suspects and quote chars in qs
- */
-
-char *fmtesq(const char *as, const char *qs) {
-    return fmtquote(as, NULL, qs, strlen((char *)as), 0);
-}
-
-/*
- * escape the usual suspects
- */
-
-char *fmtesc(const char *as) { return fmtquote(as, NULL, NULL, strlen((char *)as), 0); }
