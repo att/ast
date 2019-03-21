@@ -1,4 +1,5 @@
-string_test_files = [ 'base64.c', 'chresc.c', 'fmtbase.c', 'utf.c' ]
+string_test_files = [ 'base64.c', 'chresc.c', 'fmtbase.c', 'fmtelapsed.c',
+                    'utf.c' ]
 
 incdir = include_directories('..',
                              '../../include/')

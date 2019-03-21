@@ -440,4 +440,9 @@ __attribute__((unused)) static void *tstshared(size_t n) {
     return p;
 }
 
+struct IntegerToStringTest {
+    int input;
+    const char *expected_result;
+};
+
 #endif  // _TERROR_H
