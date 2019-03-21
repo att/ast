@@ -93,7 +93,7 @@ void test_escape_sequences() {
 
 void test_normal_string() {
     int actual, expected;
-    const char *input = "This is a message";
+    char input[] = "This is a message";
     char *next_string = input;
 
     do {
