@@ -20,7 +20,7 @@
  *                                                                      *
  ***********************************************************************/
 //
-// Return pointer to formatted elapsed time for u * 1/n secs
+// Return pointer to human readable elapsed time for u * 1/n secs
 // Compatible with strelapsed()
 // Return value length is at most 7
 //
