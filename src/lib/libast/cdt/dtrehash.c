@@ -393,7 +393,6 @@ static_fn ssize_t dtrehash_size(Dt_t *dt, Htbl_t *tbl, ssize_t lev, Dtstat_t *st
         // Ugh! Turning `HSIZE` from a macro into an inline function now causes cppcheck to warn
         // that the following test "is redundant or the array 'hash->mask[16]' is accessed at index
         // 255, which is out of bounds." This code is a mess of badly defined interfaces.
-        // cppcheck-suppress arrayIndexOutOfBoundsCond
         if (lev < DT_MAXSIZE) {
             st->msize = lev > st->msize ? lev : st->msize;
             st->tsize[lev] += HSIZE(hash, lev);

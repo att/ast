@@ -2019,7 +2019,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 int err = errno;
                 sfclose(iop);
                 while (close(0) < 0 && errno == EINTR) errno = err;
-                dup(savein);
+                int dup_fd = dup(savein);  // it has to return zero
+                assert(dup_fd == 0);
                 shp->cur_line = 0;
             }
             break;

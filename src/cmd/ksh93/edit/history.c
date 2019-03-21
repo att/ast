@@ -806,7 +806,6 @@ int hist_copy(char *s1, int size, int command, int line) {
     int c;
     History_t *hp = shgd->hist_ptr;
     int count = 0;
-    // cppcheck-suppress nullPointerArithmetic
     char *s1max = s1 + size;
 
     if (!hp) return -1;

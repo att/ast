@@ -150,7 +150,6 @@ static_fn void array_setptr(Namval_t *np, struct index_array *old, struct index_
 //
 static_fn int arsize(struct index_array *ap, int maxi) {
     if (ap && maxi < 2 * ap->maxi) maxi = 2 * ap->maxi;
-    // cppcheck-suppress integerOverflowCond
     maxi = roundof(maxi, ARRAY_INCR);
     return maxi > ARRAY_MAX ? ARRAY_MAX : maxi;
 }
