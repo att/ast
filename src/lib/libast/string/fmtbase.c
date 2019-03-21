@@ -19,14 +19,14 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Bell Laboratories
- *
- * return base b representation for n
- * if p!=0 then base prefix is included
- * otherwise if n==0 or b==0 then output is signed base 10
- */
+//
+// Glenn Fowler
+// AT&T Bell Laboratories
+//
+// Return base representation for number
+// If prefix!=0 then base prefix is included
+// Otherwise if n==0 or b==0 then output is signed base 10
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stdint.h>
@@ -34,16 +34,19 @@
 #include "ast.h"
 #include "sfio.h"
 
-char *fmtbase(int64_t n, int b, int p) {
+char *fmtbase(int64_t number, int base, int prefix) {
     char *buf;
-    int z;
+    int bufsize = 72;
 
-    if (!p) {
-        if (!n) return "0";
-        if (!b) return fmtint(n, 0);
-        if (b == 10) return fmtint(n, 1);
+    if (!prefix) {
+        if (!number) return "0";
+        if (!base) return fmtint(number, 0);
+        if (base == 10) return fmtint(number, 1);
     }
-    buf = fmtbuf(z = 72);
-    sfsprintf(buf, z, p ? "%#..*I*u" : "%..*I*u", b, sizeof(n), n);
+
+    // This function allocates memory through `fmtbuf()` function
+    // so it's returned value should be duped if it is to be kept persistent
+    buf = fmtbuf(bufsize);
+    sfsprintf(buf, bufsize, prefix ? "%#..*I*u" : "%..*I*u", base, sizeof(number), number);
     return buf;
 }
