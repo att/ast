@@ -19,16 +19,18 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * return pointer to formatted elapsed time for u 1/n secs
- * compatible with strelapsed()
- * return value length is at most 7
- */
+//
+// Return pointer to formatted elapsed time for u * 1/n secs
+// Compatible with strelapsed()
+// Return value length is at most 7
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "ast.h"
 #include "sfio.h"
 
+// This function returns memory allocated by `fmtbuf()` function.
+// So it's return value should be dup'ed if it's kept in a non-local variable.
 char *fmtelapsed(unsigned long u, int n) {
     unsigned long t;
     char *buf;
