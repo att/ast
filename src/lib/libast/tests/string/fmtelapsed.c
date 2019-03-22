@@ -1,6 +1,5 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <stdint.h>
 #include <string.h>
 
 #include "ast.h"
