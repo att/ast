@@ -66,8 +66,9 @@ char *fmtre(const char *as) {
     } else {
         s++;
     }
-    for (;;) {
-        switch (c = *s++) {
+    while (1) {
+        c = *s++;
+        switch (c) {
             case 0:
                 break;
             case '\\':
@@ -75,7 +76,8 @@ char *fmtre(const char *as) {
                 *t++ = '\\';
                 if ((*t++ = c) == '(' && *s == '|') {
                     *t++ = *s++;
-                    goto logical;
+                    if (!*s || *s == ')') return 0;
+                    *t++ = c;
                 }
                 continue;
             case '[':
@@ -189,9 +191,9 @@ char *fmtre(const char *as) {
                 continue;
             case '|':
                 if (t == buf || *(t - 1) == '(') return 0;
-            logical:
                 if (!*s || *s == ')') return 0;
-                /*FALLTHROUGH*/
+                *t++ = c;
+                continue;
             default:
                 *t++ = c;
                 continue;
