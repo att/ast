@@ -93,7 +93,8 @@ ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
         }
     }
 
-    for (dosync = 0;;) { /* stream locked by sfsetfd() */
+    dosync = 0;  // stream locked by sfsetfd()
+    while (1) {
         if (!(f->flags & SF_STRING) && f->file < 0) SFMTXRETURN(f, 0)
 
         f->flags &= ~(SF_EOF | SF_ERROR);
@@ -275,20 +276,11 @@ ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
 
     do_except:
         if (local) SETLOCAL(f);
-        switch (_sfexcept(f, SF_READ, (ssize_t)r, dc)) {
-            case SF_ECONT:
-                goto do_continue;
-            case SF_EDONE:
-                n = local ? 0 : (ssize_t)r;
-                SFMTXRETURN(f, n)
-            case SF_EDISC:
-                if (!local && !(f->flags & SF_STRING)) goto do_continue;
-                /* else fall thru */
-            case SF_ESTACK:
-                SFMTXRETURN(f, -1)
-        }
+        int exception = _sfexcept(f, SF_READ, (ssize_t)r, dc);
+        if (exception == SF_EDONE) SFMTXRETURN(f, local ? 0 : (ssize_t)r);
+        if (exception == SF_ESTACK) SFMTXRETURN(f, -1)
+        if (exception == SF_EDISC && (local || (f->flags & SF_STRING))) SFMTXRETURN(f, -1)
 
-    do_continue:
         for (dc = f->disc; dc; dc = dc->disc) {
             if (dc == disc) break;
         }
