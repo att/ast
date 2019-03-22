@@ -107,7 +107,8 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
         for (n = 0; n < FP_INDEX; ++n) need[n] = -1;
 
     loop_flags: /* LOOP FOR \0, %, FLAGS, WIDTH, PRECISION, BASE, TYPE */
-        switch ((fmt = *form++)) {
+        fmt = *form++;
+        switch (fmt) {
             case LEFTP: /* get the type enclosed in balanced parens */
                 t_str = (char *)form;
                 for (v = 1;;) {
@@ -213,7 +214,6 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
                     base = v;
                 }
                 goto loop_flags;
-
             case 'I': /* object length */
                 size = -1;
                 flags = (flags & ~SFFMT_TYPES) | SFFMT_IFLAG;
@@ -261,6 +261,7 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
                 size = -1;
                 flags = (flags & ~SFFMT_TYPES) | SFFMT_LDOUBLE;
                 goto loop_flags;
+            default: { break; }  // should this be an abort()?
         }
 
         /* set object size for scalars */

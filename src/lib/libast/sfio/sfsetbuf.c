@@ -169,6 +169,7 @@ static_fn int sfsetlinemode(void) {
                     modes &= ~SF_WCWIDTH;
                 }
                 break;
+            default: { break; }  // should this be abort()?
         }
     }
 
