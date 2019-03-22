@@ -20,10 +20,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <stdbool.h>
-
 #include <errno.h>
 #include <fcntl.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include "error.h"
@@ -97,6 +97,7 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
+            default: { abort(); }
         }
     }
     argv += opt_info.index;

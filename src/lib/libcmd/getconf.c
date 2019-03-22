@@ -24,6 +24,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <limits.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -219,6 +220,7 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
+            default: { abort(); }
         }
     }
     argv += opt_info.index;

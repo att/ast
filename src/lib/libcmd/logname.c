@@ -27,6 +27,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include "error.h"
@@ -65,6 +66,7 @@ int b_logname(int argc, char **argv, Shbltin_t *context) {
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
+            default: { abort(); }
         }
     }
     if (error_info.errors) {

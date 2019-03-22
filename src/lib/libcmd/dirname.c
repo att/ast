@@ -30,6 +30,7 @@
 
 #include <limits.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 #include "ast.h"
 #include "error.h"
@@ -126,6 +127,7 @@ int b_dirname(int argc, char **argv, Shbltin_t *context) {
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
+            default: { abort(); }
         }
     }
     argv += opt_info.index;

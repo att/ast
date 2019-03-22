@@ -336,6 +336,7 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, int flags) {
                 }
                 header = flags & (B_FLAG | N_FLAG);
                 break;
+            default: { abort(); }
         }
     }
 }
@@ -404,6 +405,7 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
+            default: { abort(); }
         }
         if (!n) break;
         if (opt_info.num) {

@@ -116,7 +116,8 @@ size_t utf8toutf32v(uint32_t *up, const char *str) {
             *up = (((s[0] & 0x07) << 18) | ((s[1] & 0x30) << 12) | ((s[1] & 0x0f) << 12) |
                    ((s[2] & 0x3c) << 6) | ((s[2] & 0x03) << 6) | (s[3] & 0x3f));
             return 4;
+        default:
+            *up = 0;
+            return 0;
     }
-    *up = 0;
-    return 0;
 }
