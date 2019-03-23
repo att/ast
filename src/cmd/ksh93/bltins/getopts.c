@@ -209,6 +209,6 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
     }
     nv_close(np);
     sh_popcontext(shp, &buff);
-    opt_info.disc = 0;
+    opt_info.disc = NULL;
     return r;
 }

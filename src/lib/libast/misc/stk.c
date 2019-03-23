@@ -185,7 +185,7 @@ static_fn int stkexcept(Sfio_t *stream, int type, void *val, Sfdisc_t *dp) {
                     }
                 }
             }
-            stream->data = stream->next = 0;
+            stream->data = stream->next = NULL;
         }
             return 0;
         case SF_FINAL:

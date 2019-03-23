@@ -396,7 +396,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
-                opt_info.disc = 0;
+                opt_info.disc = NULL;
                 return 2;
             }
             default: { break; }
@@ -410,7 +410,7 @@ endargs:
         __builtin_unreachable();
     }
 #endif  // SHOPT_BASH
-    opt_info.disc = 0;
+    opt_info.disc = NULL;
     // Handle argument of + and - specially.
     if (*argv && argv[0][1] == 0 && (*argv[0] == '+' || *argv[0] == '-')) {
         tdata.aflag = *argv[0];
@@ -524,7 +524,7 @@ static_fn void print_value(Sfio_t *iop, Namval_t *np, struct tdata *tp) {
         tp->sh->namespace = NULL;
         tp->sh->prefix = nv_name(np) + 1;
         sh_outtype(tp->sh, iop);
-        tp->sh->prefix = 0;
+        tp->sh->prefix = NULL;
         tp->sh->namespace = np;
         tp->sh->last_root = root;
         // Output variables from namespace.
@@ -533,7 +533,7 @@ static_fn void print_value(Sfio_t *iop, Namval_t *np, struct tdata *tp) {
         tp->sh->namespace = NULL;
         // Output functions from namespace.
         print_scan(iop, NV_FUNCTION | NV_NOSCOPE, tp->sh->fun_tree, aflag == '+', tp);
-        tp->wctname = 0;
+        tp->wctname = NULL;
         tp->sh->namespace = nsp;
         if (--tp->indent) sfnputc(iop, '\t', tp->indent);
         sfwrite(iop, "}\n", 2);
@@ -566,7 +566,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
     if (!shp->prefix) {
         if (!tp->pflag) nvflags |= NV_NOSCOPE;
     } else if (*shp->prefix == 0) {
-        shp->prefix = 0;
+        shp->prefix = NULL;
     }
     if (*argv[0] == '+') nvflags |= NV_NOADD;
     flag &= ~(NV_NOARRAY | NV_NOSCOPE | NV_VARNAME | NV_IDENT | NV_STATIC | NV_COMVAR | NV_IARRAY);
@@ -834,7 +834,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
         if (tp->aflag) {
             if (troot == shp->fun_tree) {
                 flag |= NV_FUNCTION;
-                tp->prefix = 0;
+                tp->prefix = NULL;
             } else if (troot == shp->var_tree) {
                 flag |= (nvflags & NV_ARRAY);
                 if (iarray) flag |= NV_ARRAY | NV_IARRAY;
@@ -1088,7 +1088,7 @@ int b_set(int argc, char *argv[], Shbltin_t *context) {
 
     memset(&tdata, 0, sizeof(tdata));
     tdata.sh = shp;
-    tdata.prefix = 0;
+    tdata.prefix = NULL;
     if (argv[1]) {
         if (sh_argopts(argc, argv, tdata.sh) < 0) return 2;
         if (sh_isoption(shp, SH_VERBOSE)) {

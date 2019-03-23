@@ -267,7 +267,7 @@ void sh_siginit(Shell_t *shp) {
 void sh_sigtrap(Shell_t *shp, int sig) {
     int flag;
     sh_sigfun_t fun;
-    shp->st.otrapcom = 0;
+    shp->st.otrapcom = NULL;
     if (sig == 0) {
         sh_sigdone(shp);
     } else if (!((flag = shp->sigflag[sig]) & (SH_SIGFAULT | SH_SIGOFF))) {
@@ -348,7 +348,7 @@ void sh_sigclear(Shell_t *shp, int sig) {
     int flag = shp->sigflag[sig];
     char *trap;
 
-    shp->st.otrapcom = 0;
+    shp->st.otrapcom = NULL;
     if (!(flag & SH_SIGFAULT)) return;
     flag &= ~(SH_SIGTRAP | SH_SIGSET);
     trap = shp->st.trapcom[sig];
@@ -503,8 +503,8 @@ void sh_exit(Shell_t *shp, int xno) {
 #endif  // SIGPIPE
     sfclrlock(sfstdin);
     shp->intrace = 0;
-    shp->prefix = 0;
-    shp->mktype = 0;
+    shp->prefix = NULL;
+    shp->mktype = NULL;
     if (job.in_critical) job_unlock();
     if (pp->mode == SH_JMPSCRIPT && !pp->prev) sh_done(shp, sig);
     if (pp->mode) siglongjmp(pp->buff, pp->mode);

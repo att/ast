@@ -322,7 +322,7 @@ void regsubfree(regex_t *p) {
 
     if (p && (env = p->env) && env->sub && (sub = p->re_sub)) {
         env->sub = 0;
-        p->re_sub = 0;
+        p->re_sub = NULL;
         if (!(env->disc->re_flags & REG_NOFREE)) {
             if (sub->re_buf) (void)regalloc(env->disc, sub->re_buf, 0);
             if (sub->re_ops) (void)regalloc(env->disc, sub->re_ops, 0);

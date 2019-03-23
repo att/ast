@@ -305,7 +305,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
         Namval_t *nq = NULL;
         shp->used_pos = 0;
         if (arg->argflag & ARG_MAC) {
-            shp->prefix = 0;
+            shp->prefix = NULL;
             cp = sh_mactrim(shp, arg->argval, (flags & NV_NOREF) ? -3 : -1);
             shp->prefix = prefix;
         } else {
@@ -329,7 +329,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                     array |= (tp->com.comset->argflag & ARG_MESSAGE) ? NV_IARRAY : NV_ARRAY;
                 }
                 if (prefix && tp->com.comset && *cp == '[') {
-                    shp->prefix = 0;
+                    shp->prefix = NULL;
                     np = nv_open(prefix, shp->var_tree, flag);
                     shp->prefix = prefix;
                     if (np) {
@@ -397,7 +397,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                     shp->last_root = last_root;
                     if (shp->mktype && shp->dot_depth == 0 &&
                         np == ((struct sh_type *)shp->mktype)->nodes[0]) {
-                        shp->mktype = 0;
+                        shp->mktype = NULL;
                         errormsg(SH_DICT, ERROR_exit(1), "%s: not a known type name", argv[0]);
                         __builtin_unreachable();
                     }
@@ -471,7 +471,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                                 nv_setarray(np, nv_associative);
                             }
                         }
-                        shp->typeinit = 0;
+                        shp->typeinit = NULL;
                         sh_setlist(shp, tp->com.comset, flags & ~NV_STATIC, 0);
                         shp->prefix = prefix;
                         if (tp->com.comset->argval[1] != '[') nv_setvtree(np);
@@ -627,7 +627,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
             shp->mktype = shtp.previous;
             maketype = 0;
             if (shp->namespace) free(shp->prefix);
-            shp->prefix = 0;
+            shp->prefix = NULL;
             if (nr.np == np) {
                 STORE_VT(L_ARGNOD->nvalue, nrp, FETCH_VT(node.nvalue, nrp));
                 nv_setattr(L_ARGNOD, node.nvflag);
@@ -1118,7 +1118,7 @@ void nv_delete(Namval_t *np, Dt_t *root, int flags) {
             struct Namref *rp;
             while ((rp = (struct Namref *)dtmatch(Refdict, key))) {
                 if (rp->sub) free(rp->sub);
-                rp->sub = 0;
+                rp->sub = NULL;
                 rp = dtremove(Refdict, rp);
                 if (rp) rp->np = &NullNode;
             }
@@ -1323,7 +1323,7 @@ skip:
             Namval_t *mp;
             Namarr_t *ap;
             int isref;
-            shp->prefix = 0;
+            shp->prefix = NULL;
             if ((flags & NV_STATIC) && !shp->mktype && !nv_isnull(np)) {
                 shp->prefix = prefix;
                 return np;
@@ -2300,7 +2300,7 @@ void nv_optimize(Namval_t *np) {
         op->ptr = shp->argaddr;
         op->np = np;
         if (xp) {
-            op->namfun.disc = 0;
+            op->namfun.disc = NULL;
             op->next = xp->next;
             xp->next = op;
         } else {
@@ -2784,7 +2784,7 @@ bool nv_rename(Namval_t *np, int flags) {
     }
     arraynr = cp[strlen(cp) - 1] == ']';
     if (nv_isarray(np) && !mp) index = nv_aindex(np);
-    shp->prefix = 0;
+    shp->prefix = NULL;
     if (!hp) hp = shp->var_tree;
     if (!(nr = nv_open(cp, hp, flags | NV_ARRAY | NV_NOSCOPE | NV_NOADD | NV_NOFAIL))) {
         if (shp->namespace) {

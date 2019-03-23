@@ -1260,11 +1260,11 @@ int job_post(Shell_t *shp, pid_t pid, pid_t join) {
         pw = calloc(1, sizeof(struct process));
     }
     pw->p_flag = 0;
-    pw->p_curdir = 0;
+    pw->p_curdir = NULL;
     job.numpost++;
     pw->p_exitval = job.exitval;
 #if SHOPT_COSHELL
-    pw->p_cojob = 0;
+    pw->p_cojob = NULL;
     if (shp->coshell && (pid & COPID_BIT)) {
         pw->p_cojob = ((struct cosh *)shp->coshell)->cojob;
         job.curpgid = sh_isstate(shp, SH_MONITOR) ? pid : 0;
@@ -1327,7 +1327,7 @@ int job_post(Shell_t *shp, pid_t pid, pid_t join) {
     } else {
         // Create a new job.
         while ((pw->p_job = job_alloc(shp)) < 0) job_wait((pid_t)1);
-        pw->p_nxtproc = 0;
+        pw->p_nxtproc = NULL;
         do {
             pw->p_nxtjob = job.pwlist;
         } while (asocasptr(&job.pwlist, pw->p_nxtjob, pw) != pw->p_nxtjob);

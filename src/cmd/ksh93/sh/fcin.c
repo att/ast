@@ -51,7 +51,7 @@ int fcfopen(Sfio_t *f) {
         fcrestore(&save);
         _Fcin.fcchar = 0;
         _Fcin.fcptr = _Fcin.fcbuff = &_Fcin.fcchar;
-        _Fcin.fclast = 0;
+        _Fcin.fclast = NULL;
         _Fcin._fcfile = NULL;
         return EOF;
     }
@@ -107,7 +107,7 @@ int fcfill(void) {
     if (n && _Fcin.fcfun) (*_Fcin.fcfun)(f, (const char *)_Fcin.fcbuff, n, _Fcin.context);
     sfread(f, (char *)_Fcin.fcbuff, n);
     _Fcin.fcoff += n;
-    _Fcin._fcfile = 0;
+    _Fcin._fcfile = NULL;
     if (!last) {
         return 0;
     } else if (fcfopen(f) < 0) {
@@ -125,7 +125,7 @@ int fcclose(void) {
     if (_Fcin.fclast == 0) return 0;
     if ((ptr = _Fcin.fcptr) > _Fcin.fcbuff && *(ptr - 1) == 0) _Fcin.fcptr--;
     if (_Fcin.fcchar) *_Fcin.fclast = _Fcin.fcchar;
-    _Fcin.fclast = 0;
+    _Fcin.fclast = NULL;
     _Fcin.fcleft = 0;
     return fcfill();
 }

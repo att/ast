@@ -367,7 +367,7 @@ bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
             char *prefix = shp->prefix;
             if (xtrace) sh_offoption(shp, SH_XTRACE);
             ap->flags &= ~ARRAY_SCAN;
-            shp->prefix = 0;
+            shp->prefix = NULL;
             sh_eval(shp, sh_sfeval((const char **)av), 0);
             shp->prefix = prefix;
             ap->flags |= ARRAY_SCAN;
@@ -406,7 +406,7 @@ static_fn Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t 
     }
     ap = (Namarr_t *)nv_clone_disc(fp, 0);
     if (flags & NV_COMVAR) {
-        ap->scope = 0;
+        ap->scope = NULL;
         ap->flags = 0;
         ap->nelem = 0;
         shp->prev_table = shp->last_table;
@@ -1218,8 +1218,8 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
             if (ap) {
                 ap->namarr.table = dtopen(&_Nvdisc, Dtoset);
                 dtuserdata(ap->namarr.table, shp, 1);
-                ap->cur = 0;
-                ap->pos = 0;
+                ap->cur = NULL;
+                ap->pos = NULL;
                 ap->namarr.namfun.disc = &array_disc;
                 nv_disc(np, (Namfun_t *)ap, DISC_OP_FIRST);
                 ap->namarr.namfun.dsize = sizeof(struct assoc_array);
@@ -1240,11 +1240,11 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
             return ap;
         }
         case ASSOC_OP_FREE_val: {
-            ap->pos = 0;
+            ap->pos = NULL;
             if (ap->namarr.scope) {
                 ap->namarr.table = dtview(ap->namarr.table, NULL);
                 dtclose(ap->namarr.scope);
-                ap->namarr.scope = 0;
+                ap->namarr.scope = NULL;
             } else {
                 if (ap->namarr.nelem == 0 && (ap->cur = nv_search("0", ap->namarr.table, 0))) {
                     nv_associative(np, NULL, ASSOC_OP_DELETE);

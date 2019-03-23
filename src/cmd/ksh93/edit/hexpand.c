@@ -122,28 +122,28 @@ static char *parse_subst(Shell_t *shp, const char *s, struct subst *sb) {
 // History expansion main routine.
 //
 int hist_expand(Shell_t *shp, const char *ln, char **xp) {
-    int off,                            // stack offset
-        q,                              // quotation flags
-        p,                              // flag
-        c,                              // current char
-        flag = 0;                       // HIST_* flags
-    Sfoff_t n,                          // history line number, counter, etc.
-        i,                              // counter
-        w[2];                           // word range
-    char *sp,                           // stack pointer
-        *cp,                            // current char in ln
-        *str,                           // search string
-        *evp,                           // event/word designator string, for error msgs
-            *cc = 0,                    // copy of current line up to cp; temp ptr
-        hc[3],                          // default histchars
-            *qc = "\'\"`";              // quote characters
-    Sfio_t *ref = 0,                    // line referenced by event designator
-        *tmp = 0,                       // temporary line buffer
-            *tmp2 = 0;                  // temporary line buffer
-    Histloc_t hl;                       // history location
-    static Namval_t *np = NULL;         // histchars variable
-    static struct subst sb = {{0, 0}};  // substition strings
-    static Sfio_t *wm = NULL;           // word match from !?string? event designator
+    int off;                                  // stack offset
+    int q;                                    // quotation flags
+    int p;                                    // flag
+    int c;                                    // current char
+    int flag = 0;                             // HIST_* flags
+    Sfoff_t n;                                // history line number, counter, etc.
+    Sfoff_t i;                                // counter
+    Sfoff_t w[2];                             // word range
+    char *sp;                                 // stack pointer
+    char *cp;                                 // current char in ln
+    char *str;                                // search string
+    char *evp;                                // event/word designator string, for error msgs
+    char *cc = NULL;                          // copy of current line up to cp; temp ptr
+    char hc[3];                               // default histchars
+    char *qc = "\'\"`";                       // quote characters
+    Sfio_t *ref = NULL;                       // line referenced by event designator
+    Sfio_t *tmp = NULL;                       // temporary line buffer
+    Sfio_t *tmp2 = NULL;                      // temporary line buffer
+    Histloc_t hl;                             // history location
+    static Namval_t *np = NULL;               // histchars variable
+    static struct subst sb = {{NULL, NULL}};  // substition strings
+    static Sfio_t *wm = NULL;                 // word match from !?string? event designator
 
     if (!wm) wm = sfopen(NULL, NULL, "swr");
 

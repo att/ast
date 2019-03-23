@@ -2368,7 +2368,7 @@ static_fn void sftrack(Sfio_t *sp, int flag, void *data) {
             struct openlist *item;
             for (item = pp->olist; item; item = item->next) {
                 if (item->strm == sp) {
-                    item->strm = 0;
+                    item->strm = NULL;
                     break;
                 }
             }

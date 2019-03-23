@@ -322,13 +322,13 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
         shp->winch = 0;
     }
 #endif
-    ep->hlist = 0;
+    ep->hlist = NULL;
     ep->nhlist = 0;
     ep->hoff = 0;
     ep->e_stkptr = stkptr(shp->stk, 0);
     ep->e_stkoff = stktell(shp->stk);
     if (!(last = shp->prompt)) last = "";
-    shp->prompt = 0;
+    shp->prompt = NULL;
     if (shp->gd->hist_ptr) {
         History_t *hp = shp->gd->hist_ptr;
         ep->e_hismax = hist_max(hp);
@@ -478,7 +478,7 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
         if (n > LOOKAHEAD) n = LOOKAHEAD;
         ep->e_lookahead = n;
         while (n-- > 0) ep->e_lbuf[n] = *pp++;
-        ep->e_default = 0;
+        ep->e_default = NULL;
     }
     if (ep->sh->st.trap[SH_KEYTRAP]) {
         if (!savelex) savelex = malloc(shp->lexsize);
@@ -1125,8 +1125,8 @@ int ed_histgen(Edit_t *ep, const char *pattern) {
     if (ep->e_cur <= 2) {
         maxmatch = 0;
     } else if (maxmatch && ep->e_cur > maxmatch) {
-        ep->hlist = 0;
-        ep->hfirst = 0;
+        ep->hlist = NULL;
+        ep->hfirst = NULL;
         return 0;
     }
     hp = ep->sh->gd->hist_ptr;
@@ -1189,7 +1189,7 @@ int ed_histgen(Edit_t *ep, const char *pattern) {
             *ar++ = (char *)(mplast = mp);
         }
         *ar = 0;
-        mplast->next = 0;
+        mplast->next = NULL;
         ac = ar - argv;
         strsort(argv, ac, ed_sortindex);
         mplast = (Histmatch_t *)argv[0];
@@ -1198,7 +1198,7 @@ int ed_histgen(Edit_t *ep, const char *pattern) {
             mplast->next = mp;
             mplast = mp;
         }
-        mplast->next = 0;
+        mplast->next = NULL;
     }
     ep->hlist = (Histmatch_t **)argv;
     ep->hfirst = ep->hlist ? ep->hlist[0] : 0;
@@ -1217,7 +1217,7 @@ void ed_histlist(Edit_t *ep, int n) {
         ed_putchar(ep, '\n');
         ed_putchar(ep, '\r');
     } else {
-        ep->hlist = 0;
+        ep->hlist = NULL;
         ep->nhlist = 0;
     }
     ed_putstring(ep, KILL_LINE);

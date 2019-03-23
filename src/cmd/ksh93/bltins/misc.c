@@ -75,7 +75,7 @@ int b_exec(int argc, char *argv[], Shbltin_t *context) {
     struct login logdata;
     int n;
     logdata.clear = 0;
-    logdata.arg0 = 0;
+    logdata.arg0 = NULL;
     logdata.sh = context->shp;
     logdata.sh->st.ioset = 0;
     while ((n = optget(argv, sh_optexec))) {
@@ -317,7 +317,7 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
         shp->st.filename = strdup(rp->fname ? rp->fname : "");
     }
     nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
-    shp->posix_fun = 0;
+    shp->posix_fun = NULL;
     if (np || argv[1]) argsave = sh_argnew(shp, argv, &saveargfor);
     sh_pushcontext(shp, &buff, SH_JMPDOT);
     jmpval = sigsetjmp(buff.buff, 0);

@@ -969,7 +969,7 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                 catcher.re.conj_left.right = rex->re.group.expr.binary.right;
                 catcher.re.conj_left.cont = &next;
                 catcher.re.conj_left.beg = s;
-                catcher.next = 0;
+                catcher.next = NULL;
                 return regnexec_parse(env, rex->re.group.expr.binary.left, &catcher, s);
             case REX_CONJ_LEFT:
                 rex->re.conj_left.cont->re.conj_right.end = s;
@@ -1197,7 +1197,7 @@ static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char 
                 } else {
                     catcher.type = REX_GROUP_BEHIND_NOT_CATCH;
                     catcher.re.neg_catch.beg = s;
-                    catcher.next = 0;
+                    catcher.next = NULL;
                     e = env->end;
                     env->end = s;
                     for (t = s - rex->re.group.size; t >= env->beg; t--) {

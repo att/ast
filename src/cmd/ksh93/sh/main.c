@@ -504,7 +504,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
         if (!sh_isstate(shp, SH_INTERACTIVE) && !sh_isoption(shp, SH_CFLAG)) {
             error_info.flags &= ~ERROR_INTERACTIVE;
         }
-        shp->readscript = 0;
+        shp->readscript = NULL;
         if (sh_isstate(shp, SH_INTERACTIVE) && shp->gd->hist_ptr) hist_flush(shp->gd->hist_ptr);
         sh_offstate(shp, SH_HISTORY);
         if (!t) continue;

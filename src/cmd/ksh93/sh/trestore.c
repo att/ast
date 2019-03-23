@@ -136,7 +136,7 @@ static_fn Shnode_t *r_tree(Shell_t *shp) {
             if (type & COMSCAN) {
                 t->sw.swio = r_redirect(shp);
             } else {
-                t->sw.swio = 0;
+                t->sw.swio = NULL;
             }
             t->sw.swlst = r_switch(shp);
             break;
@@ -153,9 +153,9 @@ static_fn Shnode_t *r_tree(Shell_t *shp) {
             savstk = stkinstall(savstk, 0);
             slp =
                 (struct slnod *)stkalloc(shp->stk, sizeof(struct slnod) + sizeof(struct functnod));
-            slp->slchild = 0;
+            slp->slchild = NULL;
             slp->slnext = shp->st.staklist;
-            shp->st.staklist = 0;
+            shp->st.staklist = NULL;
             fp = (struct functnod *)(slp + 1);
             memset(fp, 0, sizeof(*fp));
             fp->functtyp = TFUN | FAMP;
@@ -280,7 +280,7 @@ static_fn void r_comarg(Shell_t *shp, struct comnod *com) {
 
     com->comio = r_redirect(shp);
     com->comset = r_arg(shp);
-    com->comstate = 0;
+    com->comstate = NULL;
     if (com->comtyp & COMSCAN) {
         com->comarg = r_arg(shp);
         if (com->comarg->argflag == ARG_RAW) cmdname = com->comarg->argval;

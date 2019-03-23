@@ -1912,7 +1912,7 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
 
     mp->shp->argaddr = NULL;
     savemac = *mp;
-    mp->shp->st.staklist = 0;
+    mp->shp->st.staklist = NULL;
 #if SHOPT_COSHELL
     if (mp->shp->inpool) return;
 #endif  // SHOPT_COSHELL

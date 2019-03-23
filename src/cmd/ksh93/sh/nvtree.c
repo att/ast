@@ -784,7 +784,7 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
         _nv_unset(np, NV_RDONLY);
         if (wp->shp->subshell || (wp->flags != NV_RDONLY) ||
             nv_isattr(np, NV_MINIMAL | NV_NOFREE)) {
-            wp->root = 0;
+            wp->root = NULL;
         }
         nv_delete(np, wp->root, nv_isattr(np, NV_MINIMAL) ? NV_NOFREE : 0);
         return;

@@ -199,7 +199,7 @@ static_fn char *name_chtype(const Namval_t *np, Namfun_t *fp) {
     Namval_t *nq = pp->ptype->np;
     Namarr_t *ap;
 
-    if (nv_isattr(np, NV_REF | NV_TAGGED) == (NV_REF | NV_TAGGED)) shp->last_table = 0;
+    if (nv_isattr(np, NV_REF | NV_TAGGED) == (NV_REF | NV_TAGGED)) shp->last_table = NULL;
     cp = nv_name(nq);
     if ((ap = nv_arrayptr(nq)) && !(ap->flags & ARRAY_UNDEF) && (sub = nv_getsub(nq))) {
         sfprintf(shp->strbuf, "%s[%s].%s", cp, sub, np->nvname);
@@ -1561,7 +1561,7 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
         nv_settype(L_ARGNOD, tp, 0);
         if (indent) sfnputc(out, '\t', indent);
         sfprintf(out, "typeset -T %s=", tp->nvname + n);
-        shp->last_table = 0;
+        shp->last_table = NULL;
         cp = nv_getval(L_ARGNOD);
         if (indent) {
             write_indent(out, cp, strlen(cp) - 1, indent);

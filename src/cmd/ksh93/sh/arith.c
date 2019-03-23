@@ -124,7 +124,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
     assign = assign ? NV_ASSIGN : 0;
     lvalue->nosub = 0;
     if (nosub < 0 && lvalue->ovalue) return (Namval_t *)lvalue->ovalue;
-    lvalue->ovalue = 0;
+    lvalue->ovalue = NULL;
     if (cp >= lvalue->expr && cp < lvalue->expr + lvalue->elen) {
         int offset;
         // Do binding to node now.

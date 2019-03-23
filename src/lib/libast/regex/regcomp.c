@@ -339,7 +339,7 @@ static_fn Rex_t *regcomp_cat(Cenv_t *env, Rex_t *e, Rex_t *f) {
     }
     if (f->type == REX_NULL) {
         g = f->next;
-        f->next = 0;
+        f->next = NULL;
         drop(env->disc, f);
         f = g;
     } else if (e->type == REX_DOT && f->type == REX_DOT) {
@@ -355,7 +355,7 @@ static_fn Rex_t *regcomp_cat(Cenv_t *env, Rex_t *e, Rex_t *f) {
                 e->lo = m;
                 e->hi = n;
                 g = f->next;
-                f->next = 0;
+                f->next = NULL;
                 drop(env->disc, f);
                 f = g;
             }
@@ -2943,7 +2943,7 @@ static_fn int regcomp_special(Cenv_t *env, regex_t *p) {
                 }
                 a->next = e->next;
                 p->env->rex = a;
-                e->next = 0;
+                e->next = NULL;
                 drop(env->disc, e);
                 break;
             default:
@@ -3156,24 +3156,24 @@ int regcomb(regex_t *p, regex_t *q) {
     env.disc = p->env->disc;
     if (e->type == REX_BM) {
         p->env->rex = e->next;
-        e->next = 0;
+        e->next = NULL;
         drop(env.disc, e);
         e = p->env->rex;
     }
     if (f->type == REX_BM) {
         q->env->rex = f->next;
-        f->next = 0;
+        f->next = NULL;
         drop(env.disc, f);
         f = q->env->rex;
     }
     if (e->type == REX_BEG && f->type == REX_BEG) {
         p->env->flags |= REG_LEFT;
         p->env->rex = e->next;
-        e->next = 0;
+        e->next = NULL;
         drop(env.disc, e);
         e = p->env->rex;
         q->env->rex = f->next;
-        f->next = 0;
+        f->next = NULL;
         drop(env.disc, f);
         f = q->env->rex;
     }
@@ -3186,9 +3186,9 @@ int regcomb(regex_t *p, regex_t *q) {
     if (g->next && g->next->type == REX_END && h->next && h->next->type == REX_END) {
         p->env->flags |= REG_RIGHT;
         drop(env.disc, g->next);
-        g->next = 0;
+        g->next = NULL;
         drop(env.disc, h->next);
-        h->next = 0;
+        h->next = NULL;
     }
     if (!(g = regcomp_trie(&env, f, e))) return fatal(p->env->disc, REG_BADPAT, NULL);
     p->env->rex = g;

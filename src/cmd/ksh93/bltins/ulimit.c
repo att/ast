@@ -123,7 +123,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
             }
         }
     }
-    opt_info.disc = 0;
+    opt_info.disc = NULL;
     // Default to -f.
     limit = argv[opt_info.index];
     if (hit == 0) {

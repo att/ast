@@ -147,7 +147,7 @@ static_fn void lex_advance(Sfio_t *iop, const char *buff, int size, void *contex
     }
     if (size > 0 && (lp->arg || lp->lexd.noarg)) {
         sfwrite(stkp, buff, size);
-        lp->lexd.first = 0;
+        lp->lexd.first = NULL;
     }
 }
 
@@ -167,7 +167,7 @@ static_fn int lexfill(Lex_t *lp) {
     docextra = lp->lexd.docextra;
     lp->lex = savelex.lex;
     lp->lexd = savelex.lexd;
-    if (fcfile() || c) lp->lexd.first = 0;
+    if (fcfile() || c) lp->lexd.first = NULL;
     aok = lp->aliasok;
     ap = lp->arg;
     memcpy(lp, &savelex, offsetof(Lex_t, lexd));
@@ -198,7 +198,7 @@ Lex_t *sh_lexopen(Lex_t *lp, Shell_t *shp, int mode) {
         lp->lexd.noarg = lp->lexd.level = lp->lexd.dolparen = lp->lexd.balance = 0;
         lp->lexd.nocopy = lp->lexd.docword = lp->lexd.nest = lp->lexd.paren = 0;
         lp->lexd.lex_state = lp->lexd.lastc = 0;
-        lp->lexd.docend = 0;
+        lp->lexd.docend = NULL;
         lp->lexd.nested_tilde = 0;
     }
     lp->comsub = 0;
@@ -283,7 +283,7 @@ int sh_lex(Lex_t *lp) {
         if (mode != ST_BEGIN) {
             lp->lexd.first = fcseek(0);
         } else {
-            lp->lexd.first = 0;
+            lp->lexd.first = NULL;
         }
     }
     lp->lastline = lp->sh->inlineno;
@@ -406,7 +406,7 @@ int sh_lex(Lex_t *lp) {
                         sh_syntax(lp);
                     }
                     if (!lp->lexd.dolparen) lp->lexd.nocopy--;
-                    lp->heredoc = 0;
+                    lp->heredoc = NULL;
                 }
                 lp->lex.reservok = !lp->lex.intest;
                 lp->lex.skipword = 0;
@@ -561,7 +561,7 @@ int sh_lex(Lex_t *lp) {
                     lp->arg = ap;
                     if (n <= ARGVAL) {
                         mode = 0;
-                        lp->lexd.first = 0;
+                        lp->lexd.first = NULL;
                     }
                     continue;
                 }
@@ -1189,7 +1189,7 @@ breakloop:
     stkseek(stkp, stktell(stkp) - 1);
     state = stkptr(stkp, ARGVAL);
     n = stktell(stkp) - ARGVAL;
-    lp->lexd.first = 0;
+    lp->lexd.first = NULL;
     if (n == 1) {
         // Check for numbered redirection.
         n = state[0];
@@ -1614,7 +1614,7 @@ static_fn int here_copy(Lex_t *lp, struct ionod *iop) {
     funlog = lp->sh->funlog;
     if (funlog) {
         if (fcfill() > 0) fcseek(-LEN);
-        lp->sh->funlog = 0;
+        lp->sh->funlog = NULL;
     }
     if (iop->iolst) here_copy(lp, iop->iolst);
     iop->iooffset = sfseek(sp, (off_t)0, SEEK_END);

@@ -309,7 +309,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
                 node.value = (char *)dp;
                 node.flag = c;
                 if (lastval) node.eflag = 1;
-                node.ptr = 0;
+                node.ptr = NULL;
                 num = (*ep->fun)(&ptr, &node, ASSIGN, num);
                 if (lastval && node.ptr) {
                     Sfdouble_t r;
@@ -563,7 +563,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
         }
         if (c) lastval = NULL;
         if (c & T_BINARY) {
-            node.ptr = 0;
+            node.ptr = NULL;
             sp--, tp--;
             if (*tp > type) type = *tp;
         }
@@ -666,9 +666,9 @@ static_fn bool expr(vars_t *vp, int precedence) {
     Sfdouble_t d;
     Shell_t *shp = vp->shp;
 
-    lvalue.value = 0;
+    lvalue.value = NULL;
     lvalue.nargs = 0;
-    lvalue.fun = 0;
+    lvalue.fun = NULL;
     lvalue.shp = shp;
 again:
     op = gettok(vp);
@@ -740,7 +740,7 @@ again:
             if (lvalue.flag < 0) lvalue.flag = 0;
             stkpush(shp->stk, vp, lvalue.flag, short);
             if (vp->nextchr == 0) ERROR(vp, e_badnum);
-            if (!(strval_precedence[op] & SEQPOINT)) lvalue.value = 0;
+            if (!(strval_precedence[op] & SEQPOINT)) lvalue.value = NULL;
             invalid = 0;
         } else if (precedence == A_LVALUE) {
             ERROR(vp, e_notlvalue);
@@ -770,7 +770,7 @@ again:
                     stkseek(shp->stk, stktell(shp->stk) - 1);
                     return false;
                 }
-                lvalue.value = 0;
+                lvalue.value = NULL;
                 break;
             }
             case A_LPAR: {
@@ -780,7 +780,7 @@ again:
                 int nargs = lvalue.nargs;
                 if (nargs < 0 && (nargs & 070) == 070) nargs = -nargs;
                 fun = lvalue.fun;
-                lvalue.fun = 0;
+                lvalue.fun = NULL;
                 if (fun) {
                     if (vp->staksize++ >= vp->stakmaxsize) vp->stakmaxsize = vp->staksize;
                     vp->infun = 1;
@@ -832,7 +832,7 @@ again:
                 } else {
                     sfputc(shp->stk, op);
                 }
-                lvalue.value = 0;
+                lvalue.value = NULL;
                 break;
             }
             case A_QUEST: {
@@ -850,7 +850,7 @@ again:
                 sfputc(shp->stk, A_POP);
                 if (!expr(vp, 3)) return false;
                 *((short *)stkptr(shp->stk, offset2)) = stktell(shp->stk);
-                lvalue.value = 0;
+                lvalue.value = NULL;
                 wasop = 0;
                 break;
             }
@@ -874,7 +874,7 @@ again:
                 if (!expr(vp, c)) return false;
                 *((short *)stkptr(shp->stk, offset)) = stktell(shp->stk);
                 if (op != A_QCOLON) sfputc(shp->stk, A_NOTNOT);
-                lvalue.value = 0;
+                lvalue.value = NULL;
                 wasop = 0;
                 break;
             }

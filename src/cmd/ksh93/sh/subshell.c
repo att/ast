@@ -162,7 +162,7 @@ void sh_subtmpfile(Shell_t *shp) {
         sh_iostream(shp, 1, 1);
         sfset(sfstdout, SF_SHARE | SF_PUBLIC, 1);
         sfpool(sfstdout, shp->outpool, SF_WRITE);
-        if (pp && pp->olist && pp->olist->strm == sfstdout) pp->olist->strm = 0;
+        if (pp && pp->olist && pp->olist->strm == sfstdout) pp->olist->strm = NULL;
     }
 }
 
@@ -316,7 +316,7 @@ static_fn void nv_restore(struct subshell *sp) {
     const char *save = sp->shpwd;
     Namval_t *mpnext;
     int flags, nofree;
-    sp->shpwd = 0;  // make sure sh_assignok doesn't save with nv_unset()
+    sp->shpwd = NULL;  // make sure sh_assignok doesn't save with nv_unset()
     for (lp = sp->svar; lp; lp = lq) {
         np = (Namval_t *)&lp->dict;
         lq = lp->next;
@@ -491,7 +491,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     shp->subdup = 0;
 #if SHOPT_COSHELL
     sp->coshell = shp->coshell;
-    shp->coshell = 0;
+    shp->coshell = NULL;
 #endif  // SHOPT_COSHELL
     // Make sure initialization has occurred.
     if (!shp->pathlist) {
@@ -560,7 +560,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         if (comsub == 1) {
             int fds[2];
             sh_rpipe(fds);
-            sp->pipe = 0;
+            sp->pipe = NULL;
             sp->pipefd = fds[0];
             sp->tmpfd = fds[1];
             sh_subfork();

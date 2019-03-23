@@ -1298,7 +1298,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
         // Try using environment variable _ or argv[0].
         char *cp = nv_getval(L_ARGNOD);
         char buff[PATH_MAX + 1];
-        shp->gd->shpath = 0;
+        shp->gd->shpath = NULL;
         if ((n = pathprog(NULL, buff, sizeof(buff))) > 0 && n <= sizeof(buff)) {
             shp->gd->shpath = strdup(buff);
         } else if ((cp && (sh_type(cp) & SH_TYPE_SH)) || (argc > 0 && strchr(cp = *argv, '/'))) {
@@ -1311,8 +1311,8 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
                 sfputc(stkstd, '/');
                 sfputr(stkstd, argv[0], 0);
                 --stkstd->next;
-                n = stktell(stdstk) - offset;
-                pathcanon(stkptr(stdstk, offset), n, PATH_DOTDOT);
+                n = stktell(stkstd) - offset;
+                pathcanon(stkptr(stkstd, offset), n, PATH_DOTDOT);
                 shp->gd->shpath = strdup(stkptr(stkstd, offset));
                 stkseek(stkstd, offset);
             }
@@ -1344,7 +1344,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
             shp->exitval = 2;
             sh_done(shp, 0);
         }
-        opt_info.disc = 0;
+        opt_info.disc = NULL;
         dolv_index = (argc - 1) - shp->st.dolc;
         shp->st.dolv = argv + dolv_index;
         shp->st.repl_index = dolv_index;
@@ -1463,7 +1463,7 @@ int sh_reinit(Shell_t *shp, char *argv[]) {
     if (shp->userinit) (*shp->userinit)(shp, 1);
     if (shp->heredocs) {
         sfclose(shp->heredocs);
-        shp->heredocs = 0;
+        shp->heredocs = NULL;
     }
     // Remove locals.
     sh_onstate(shp, SH_INIT);
@@ -1503,8 +1503,8 @@ int sh_reinit(Shell_t *shp, char *argv[]) {
     nv_offattr(SHLVL, NV_IMPORT);
     shp->st.filename = strdup(shp->lastarg);
     nv_delete(NULL, NULL, 0);
-    job.exitval = 0;
-    shp->inpipe = shp->outpipe = 0;
+    job.exitval = NULL;
+    shp->inpipe = shp->outpipe = NULL;
     job_clear(shp);
     job.in_critical = 0;
     shp->exittrap = 0;

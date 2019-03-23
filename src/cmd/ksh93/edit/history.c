@@ -275,8 +275,8 @@ void hist_close(History_t *hp) {
         sfclose(hp->auditfp);
     }
     free(hp);
-    hist_ptr = 0;
-    shgd->hist_ptr = 0;
+    hist_ptr = NULL;
+    shgd->hist_ptr = NULL;
 }
 
 //

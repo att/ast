@@ -333,7 +333,7 @@ static_fn int xec_p_comarg(Shell_t *shp, struct comnod *com) {
         bp->ptr = save_ptr;
         bp->data = save_data;
     }
-    com->comstate = 0;
+    com->comstate = NULL;
     if (com->comarg && !np) n++;
     return n;
 }
@@ -785,7 +785,7 @@ __attribute__((noreturn)) static_fn void forked_child(Shell_t *shp, const Shnode
         sh_delay(.001);
         unlink(shp->fifo);
         free(shp->fifo);
-        shp->fifo = 0;
+        shp->fifo = NULL;
         type &= ~(FPIN | FPOU);
     }
 #endif  // !has_dev_fd
@@ -1165,7 +1165,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                                         type | (FETCH_VT(np->nvalue, shbltinp) == b_dot_cmd
                                                     ? 0
                                                     : IOHERESTRING | IOUSEVEX));
-                            for (item = buffp->olist; item; item = item->next) item->strm = 0;
+                            for (item = buffp->olist; item; item = item->next) item->strm = NULL;
                         }
                         if (!nv_isattr(np, BLT_ENV) && !nv_isattr(np, BLT_SPC)) {
                             if (!shp->pwd) {
@@ -1190,7 +1190,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             sh_scope(shp, argp, 0);
                         }
                         opt_info.index = opt_info.offset = 0;
-                        opt_info.disc = 0;
+                        opt_info.disc = NULL;
                         error_info.id = *com;
                         if (argn) shp->exitval = 0;
                         shp->bltinfun = funptr(np);
@@ -1316,7 +1316,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     if (jmpval) siglongjmp(*shp->jmplist, jmpval);
 #if 0
                                     if(flgs&NV_STATIC)
-                                            ((Shnode_t*)t)->com.comset = 0;
+                                            ((Shnode_t*)t)->com.comset = NULL;
 #endif
                     if (shp->exitval >= 0) goto setexit;
                     np = NULL;
@@ -1657,7 +1657,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 int nsig, jmpval;
                 struct checkpt *buffp =
                     (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
-                shp->st.otrapcom = 0;
+                shp->st.otrapcom = NULL;
 
                 nsig = shp->st.trapmax;
                 if (nsig > 0 || shp->st.trapcom[0]) {
@@ -1699,13 +1699,13 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             int showme = t->tre.tretyp & FSHOWME;
             int n, waitall, savewaitall = job.waitall;
             int savejobid = job.curjobid;
-            int *exitval = 0, *saveexitval = job.exitval;
+            int *exitval = NULL, *saveexitval = job.exitval;
             pid_t savepgid = job.curpgid;
 #if SHOPT_COSHELL
             int copipe = 0;
             Shnode_t *tt;
 #endif  // SHOPT_COSHELL
-            job.exitval = 0;
+            job.exitval = NULL;
 #if SHOPT_COSHELL
             if (shp->inpool) {
                 do {
@@ -1759,7 +1759,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             // Repeat until end of pipeline.
             while (!type && t->tre.tretyp == TFIL);
             shp->inpipe = pvn;
-            shp->outpipe = 0;
+            shp->outpipe = NULL;
             pipejob = 2;
             waitall = job.waitall;
             job.waitall = 0;
@@ -1851,7 +1851,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             int jmpval = ((struct checkpt *)shp->jmplist)->mode;
             struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
             void *optlist = shp->optlist;
-            shp->optlist = 0;
+            shp->optlist = NULL;
             sh_tclear(shp, t->for_.fortre);
             sh_pushcontext(shp, buffp, jmpval);
             jmpval = sigsetjmp(buffp->buff, 0);
@@ -1984,7 +1984,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 break;
             }
 #endif  // SHOPT_COSHELL
-            shp->optlist = 0;
+            shp->optlist = NULL;
             sh_tclear(shp, t->wh.whtre);
             sh_tclear(shp, t->wh.dotre);
             sh_pushcontext(shp, buffp, jmpval);
@@ -2027,7 +2027,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 while (close(0) < 0 && errno == EINTR) errno = err;
                 int dup_fd = dup(savein);  // it has to return zero
                 assert(dup_fd == 0);
-                shp->cur_line = 0;
+                shp->cur_line = NULL;
             }
             break;
         }
@@ -2239,7 +2239,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 int offset = stktell(stkp);
                 if (shp->prefix) {
                     cp = shp->prefix;
-                    shp->prefix = 0;
+                    shp->prefix = NULL;
                     npv = nv_open(cp, shp->var_tree, NV_NOARRAY | NV_VARNAME);
                     shp->prefix = cp;
                     cp = fname;
@@ -2282,7 +2282,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         nv_delete(mp, rp->sdict, 0);
                     }
                     dtclose(rp->sdict);
-                    rp->sdict = 0;
+                    rp->sdict = NULL;
                 }
                 if (shp->funload) {
                     if (!shp->fpathdict) free(FETCH_VT(np->nvalue, rp));
@@ -2308,7 +2308,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 FETCH_VT(np->nvalue, rp)->hoffset = t->funct.functloc;
                 FETCH_VT(np->nvalue, rp)->lineno = t->funct.functline;
                 FETCH_VT(np->nvalue, rp)->nspace = shp->namespace;
-                FETCH_VT(np->nvalue, rp)->fname = 0;
+                FETCH_VT(np->nvalue, rp)->fname = NULL;
                 FETCH_VT(np->nvalue, rp)->argv = ac ? ((struct dolnod *)ac->comarg)->dolval + 1 : 0;
                 FETCH_VT(np->nvalue, rp)->argc = ac ? ((struct dolnod *)ac->comarg)->dolnum : 0;
                 FETCH_VT(np->nvalue, rp)->fdict = shp->fun_tree;
@@ -2761,7 +2761,7 @@ static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], stru
     } else {
         fun.env = envlist;
         fun.node = np;
-        fun.nref = 0;
+        fun.nref = NULL;
         sh_funscope(shp, argn, argv, 0, &fun, execflg);
     }
     if (level-- != nv_getnum(SH_LEVELNOD)) {
@@ -2803,7 +2803,7 @@ int sh_fun(Shell_t *shp, Namval_t *np, Namval_t *nq, char *argv[]) {
     fcsave(&save);
     offset = stktell(shp->stk);
     if (offset > 0) base = stkfreeze(shp->stk, 0);
-    shp->prefix = 0;
+    shp->prefix = NULL;
     if (!argv) {
         argv = av + 1;
         argv[1] = 0;
@@ -2823,7 +2823,7 @@ int sh_fun(Shell_t *shp, Namval_t *np, Namval_t *nq, char *argv[]) {
             errorpush(&buffp->err, 0);
             error_info.id = argv[0];
             opt_info.index = opt_info.offset = 0;
-            opt_info.disc = 0;
+            opt_info.disc = NULL;
             shp->exitval = 0;
             shp->exitval = (funptr(np))(n, argv, bp);
         }

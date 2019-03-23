@@ -232,7 +232,7 @@ static_fn Shnode_t *makeparent(Lex_t *lp, int flag, Shnode_t *child) {
     Shnode_t *par = getnode(forknod);
     par->fork.forktyp = flag;
     par->fork.forktre = child;
-    par->fork.forkio = 0;
+    par->fork.forkio = NULL;
     par->fork.forkline = sh_getlineno(lp) - 1;
     return par;
 }
@@ -311,10 +311,10 @@ Shnode_t *sh_parse(Shell_t *shp, Sfio_t *iop, int flag) {
         return sh_trestore(shp, iop);
     }
     fcsave(&sav_input);
-    shp->st.staklist = 0;
+    shp->st.staklist = NULL;
     lexp->assignlevel = 0;
     lexp->noreserv = 0;
-    lexp->heredoc = 0;
+    lexp->heredoc = NULL;
     lexp->inlineno = shp->inlineno;
     lexp->firstline = shp->st.firstline;
     lexp->fundepth = 0;
@@ -422,7 +422,7 @@ Shnode_t *sh_dolparen(Lex_t *lp) {
 //
 void sh_freeup(Shell_t *shp) {
     if (shp->st.staklist) sh_funstaks(shp->st.staklist, -1);
-    shp->st.staklist = 0;
+    shp->st.staklist = NULL;
 }
 
 //
@@ -580,7 +580,7 @@ static_fn struct regnod *syncase(Lex_t *lexp, int esym) {
 
     if (tok == esym) return NULL;
     r = (struct regnod *)stkalloc(stkstd, sizeof(struct regnod));
-    r->regptr = 0;
+    r->regptr = NULL;
     r->regflag = 0;
     if (tok == LPAREN) skipnl(lexp, 0);
     while (1) {
@@ -603,7 +603,7 @@ static_fn struct regnod *syncase(Lex_t *lexp, int esym) {
         r->regnxt = syncase(lexp, esym);
     } else {
         if (tok != esym && tok != EOFSYM) sh_syntax(lexp);
-        r->regnxt = 0;
+        r->regnxt = NULL;
     }
     if (lexp->token == EOFSYM) return NULL;
     return r;
@@ -667,7 +667,7 @@ static_fn Shnode_t *arithfor(Lex_t *lexp, Shnode_t *tf) {
         t = getanode(lexp, argp);
         tw->wh.whinc = (struct arithnod *)t;
     } else {
-        tw->wh.whinc = 0;
+        tw->wh.whinc = NULL;
     }
     sh_lexopen(lexp, lexp->sh, 1);
     if ((n = sh_lex(lexp)) == NL) {
@@ -697,12 +697,12 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
     int save_optget = opt_get;
     void *in_mktype = shp->mktype;
 
-    shp->mktype = 0;
+    shp->mktype = NULL;
     opt_get = 0;
     t = getnode(functnod);
     t->funct.functline = shp->inlineno;
     t->funct.functtyp = TFUN;
-    t->funct.functargs = 0;
+    t->funct.functargs = NULL;
     if (!(flag = (lexp->token == FUNCTSYM))) {
         t->funct.functtyp |= FPOSIX;
     } else if (sh_lex(lexp)) {
@@ -795,15 +795,15 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
         savstak = stkopen(STK_SMALL);
         savstak = stkinstall(savstak, 0);
         slp = (struct slnod *)stkalloc(stkstd, sizeof(struct slnod) + sizeof(struct functnod));
-        slp->slchild = 0;
+        slp->slchild = NULL;
         slp->slnext = shp->st.staklist;
-        shp->st.staklist = 0;
+        shp->st.staklist = NULL;
         t->funct.functstak = (struct slnod *)slp;
         // Store the pathname of function definition file on stack in name field of fake for node.
         fp = (struct functnod *)(slp + 1);
         fp->functtyp = TFUN | FAMP;
-        fp->functnam = 0;
-        fp->functargs = 0;
+        fp->functnam = NULL;
+        fp->functargs = NULL;
         fp->functline = t->funct.functline;
         if (shp->st.filename) fp->functnam = stkcopy(stkstd, shp->st.filename);
         loop_level = 0;
@@ -863,7 +863,7 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
     shp->mktype = in_mktype;
     if (lexp->sh->funlog) {
         if (fcfill() > 0) fcseek(-1);
-        lexp->sh->funlog = 0;
+        lexp->sh->funlog = NULL;
     }
     if (lexp->kiafile) {
         kiaentity(lexp, t->funct.functnam, -1, 'p', t->funct.functline, shp->inlineno - 1,
@@ -1100,7 +1100,7 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
             if (sh_lex(lexp)) sh_syntax(lexp);
             t->sw.swarg = lexp->arg;
             t->sw.swtyp = TSW;
-            t->sw.swio = 0;
+            t->sw.swio = NULL;
             t->sw.swtyp |= FLINENO;
             t->sw.swline = lexp->sh->inlineno;
             if ((tok = skipnl(lexp, 0)) != INSYM && tok != LBRACE) sh_syntax(lexp);
@@ -1136,7 +1136,7 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
         case SELECTSYM: {  // for and select statement
             t = getnode(fornod);
             t->for_.fortyp = (lexp->token == FORSYM ? TFOR : TSELECT);
-            t->for_.forlst = 0;
+            t->for_.forlst = NULL;
             t->for_.forline = lexp->sh->inlineno;
             if (sh_lex(lexp)) {
                 if (lexp->token != EXPRSYM || t->for_.fortyp != TFOR) sh_syntax(lexp);
@@ -1163,8 +1163,8 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
                     (t->for_.forlst)->comset = NULL;
                     (t->for_.forlst)->comnamp = NULL;
                     (t->for_.forlst)->comnamq = NULL;
-                    (t->for_.forlst)->comstate = 0;
-                    (t->for_.forlst)->comio = 0;
+                    (t->for_.forlst)->comstate = NULL;
+                    (t->for_.forlst)->comio = NULL;
                     (t->for_.forlst)->comtyp = 0;
                 } else {
                     t->for_.forlst = (struct comnod *)simple(lexp, SH_NOIO, NULL);
@@ -1189,7 +1189,7 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
             if (lexp->fundepth) sh_syntax(lexp);
             t = getnode(functnod);
             t->funct.functtyp = TNSPACE;
-            t->funct.functargs = 0;
+            t->funct.functargs = NULL;
             t->funct.functloc = 0;
             if (sh_lex(lexp)) sh_syntax(lexp);
             t->funct.functnam = (char *)lexp->arg->argval;
@@ -1208,7 +1208,7 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
             t->wh.whtre = sh_cmd(lexp, DOSYM, SH_NL);
             t->wh.dotre = sh_cmd(lexp, DONESYM, SH_NL | SH_SEMI);
             if (--loop_level == 0) label_last = label_list;
-            t->wh.whinc = 0;
+            t->wh.whinc = NULL;
             break;
         }
         case LABLSYM: {
@@ -1345,7 +1345,7 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
     t->comset = NULL;
     t->comnamp = NULL;
     t->comnamq = NULL;
-    t->comstate = 0;
+    t->comstate = NULL;
     settail = &(t->comset);
     if (lexp->assignlevel && (flag & SH_ARRAY) && check_array(lexp)) type |= NV_ARRAY;
     while (lexp->token == 0) {
@@ -1651,7 +1651,7 @@ static_fn struct ionod *inout(Lex_t *lexp, struct ionod *lastio, int flag) {
     }
     lexp->digits = 0;
     iop = (struct ionod *)stkalloc(stkp, sizeof(struct ionod));
-    iop->iodelim = 0;
+    iop->iodelim = NULL;
     iop->iosize = 0;
     token = sh_lex(lexp);
     if (token) {
@@ -1691,7 +1691,7 @@ static_fn struct ionod *inout(Lex_t *lexp, struct ionod *lastio, int flag) {
             if (lexp->digits) iof |= IOSTRIP;
         }
     } else {
-        iop->iolst = 0;
+        iop->iolst = NULL;
         if (lexp->arg->argflag & ARG_RAW) iof |= IORAW;
     }
     iop->iofile = iof;
@@ -1716,8 +1716,8 @@ static_fn struct ionod *inout(Lex_t *lexp, struct ionod *lastio, int flag) {
             ioq = (struct ionod *)stkalloc(stkp, sizeof(struct ionod));
             memset(ioq, 0, sizeof(*ioq));
             ioq->ioname = "1";
-            ioq->iolst = 0;
-            ioq->iodelim = 0;
+            ioq->iolst = NULL;
+            ioq->iodelim = NULL;
             ioq->iofile = IORAW | IOPUT | IOMOV | 2;
             iop->ionxt = ioq;
         }

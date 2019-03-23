@@ -106,15 +106,15 @@ struct siginfo_ll {
 typedef struct siginfo_ll siginfo_ll_t;
 
 #if USE_SPAWN
-#define sh_pushcontext(shp, bp, n)                                                           \
-    ((bp)->mode = (n), (bp)->olist = 0, (bp)->topfd = shp->topfd, (bp)->prev = shp->jmplist, \
-     (bp)->vexi = shp->vexp->cur, (bp)->err = *ERROR_CONTEXT_BASE,                           \
+#define sh_pushcontext(shp, bp, n)                                                              \
+    ((bp)->mode = (n), (bp)->olist = NULL, (bp)->topfd = shp->topfd, (bp)->prev = shp->jmplist, \
+     (bp)->vexi = shp->vexp->cur, (bp)->err = *ERROR_CONTEXT_BASE,                              \
      shp->jmplist = (sigjmp_buf *)(&(bp)->buff))
 
 #else  // USE_SPAWN
 
-#define sh_pushcontext(shp, bp, n)                                                           \
-    ((bp)->mode = (n), (bp)->olist = 0, (bp)->topfd = shp->topfd, (bp)->prev = shp->jmplist, \
+#define sh_pushcontext(shp, bp, n)                                                              \
+    ((bp)->mode = (n), (bp)->olist = NULL, (bp)->topfd = shp->topfd, (bp)->prev = shp->jmplist, \
      (bp)->err = *ERROR_CONTEXT_BASE, shp->jmplist = (sigjmp_buf *)(&(bp)->buff))
 #endif  // USE_SPAWN
 

@@ -546,7 +546,7 @@ static_fn void funload(Shell_t *shp, int fno, const char *name) {
         }
         do {
             if ((np = dtsearch(funtree, rp->np)) && is_afunction(np)) {
-                if (FETCH_VT(np->nvalue, rp)) FETCH_VT(np->nvalue, rp)->fdict = 0;
+                if (FETCH_VT(np->nvalue, rp)) FETCH_VT(np->nvalue, rp)->fdict = NULL;
                 nv_delete(np, funtree, NV_NOFREE);
             }
             dtinsert(funtree, rp->np);
@@ -564,7 +564,7 @@ static_fn void funload(Shell_t *shp, int fno, const char *name) {
     error_info.line = 0;
     sh_eval(shp, sfnew(NULL, buff, IOBSIZE, fno, SF_READ), SH_FUNEVAL);
     sh_close(fno);
-    shp->readscript = 0;
+    shp->readscript = NULL;
     if (shp->namespace) {
         np = sh_fsearch(shp, name, 0);
     } else {
@@ -681,7 +681,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
     shp->path_err = 0;
     while (1) {
         sh_sigcheck(shp);
-        shp->bltin_dir = 0;
+        shp->bltin_dir = NULL;
         // In this loop, oldpp is the current pointer
         // pp is the next pointer
         while ((oldpp = pp)) {
@@ -727,7 +727,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
             if ((addr = sh_getlib(shp, stkptr(shp->stk, n), oldpp)) &&
                 (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NULL)) &&
                 nv_isattr(np, NV_BLTINOPT)) {
-                shp->bltin_dir = 0;
+                shp->bltin_dir = NULL;
                 return oldpp;
             }
             stkseek(shp->stk, n);
@@ -744,7 +744,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                     fp = NULL;
                 } else {
                     fp = oldpp->bbuf;
-                    oldpp->blib = oldpp->bbuf = 0;
+                    oldpp->blib = oldpp->bbuf = NULL;
                 }
                 n = stktell(shp->stk);
                 sfputr(shp->stk, "b_", 0);
@@ -764,7 +764,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                     nv_isattr(np, NV_BLTINOPT)) {
                 found:
                     if (fp) free(fp);
-                    shp->bltin_dir = 0;
+                    shp->bltin_dir = NULL;
                     return oldpp;
                 }
                 dll = dllplugin(SH_ID, stkptr(shp->stk, m), NULL, SH_PLUGIN_VERSION, NULL,
@@ -785,7 +785,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                 stkseek(shp->stk, n);
             }
         }
-        shp->bltin_dir = 0;
+        shp->bltin_dir = NULL;
         sh_stats(STAT_PATHS);
         f = can_execute(shp, stkptr(shp->stk, PATH_OFFSET), isfun);
         if (isfun && f >= 0 && (cp = strrchr(name, '.'))) {
@@ -1176,9 +1176,9 @@ static_fn void exscript(Shell_t *shp, char *path, char *argv[], char *const *env
     Sfio_t *sp;
 
     path = path_relative(shp, path);
-    shp->comdiv = 0;
+    shp->comdiv = NULL;
     shp->bckpid = 0;
-    shp->coshell = 0;
+    shp->coshell = NULL;
     shp->st.ioset = 0;
     // Clean up any cooperating processes.
     if (shp->cpipe[0] > 0) sh_pclose(shp->cpipe);
@@ -1516,7 +1516,7 @@ void path_newdir(Shell_t *shp, Pathcomp_t *first) {
             sfputr(shp->stk, pp->name, -1);
             stkseek(shp->stk, offset);
             next = pp->next;
-            pp->next = 0;
+            pp->next = NULL;
             path_chkpaths(shp, first, NULL, pp, offset);
             if (pp->next) pp = pp->next;
             pp->next = next;
@@ -1537,7 +1537,7 @@ Pathcomp_t *path_unsetfpath(Shell_t *shp) {
         for (rp = (struct Ufunction *)dtfirst(shp->fpathdict); rp; rp = rpnext) {
             rpnext = (struct Ufunction *)dtnext(shp->fpathdict, rp);
             if (rp->fdict) nv_delete(rp->np, rp->fdict, NV_NOFREE);
-            rp->fdict = 0;
+            rp->fdict = NULL;
         }
     }
     while (pp) {
@@ -1585,7 +1585,7 @@ static_fn char *talias_get(Namval_t *np, Namfun_t *nvp) {
     char *ptr;
 
     if (!pp) return NULL;
-    pp->shp->last_table = 0;
+    pp->shp->last_table = NULL;
     path_nextcomp(pp->shp, pp, nv_name(np), pp);
     ptr = stkfreeze(shp->stk, 0);
     return ptr + PATH_OFFSET;

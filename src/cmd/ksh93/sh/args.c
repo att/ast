@@ -586,7 +586,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
     lp->unknown = kiaentity(lp, "<unknown>", -1, 'p', -1, 0, 0, '0', 0, "");
     kiaentity(lp, "<unknown>", -1, 'p', 0, 0, lp->unknown, '0', 0, "");
     lp->current = lp->script;
-    ap->kiafile = 0;
+    ap->kiafile = NULL;
 
     return argc;
 }
@@ -722,7 +722,7 @@ struct dolnod *sh_argcreate(char *argv[]) {
     dp = calloc(1, sizeof(struct dolnod) + size + n + (n * sizeof(char *)));
     dp->dolrefcnt = 1;  // use count
     dp->dolnum = n;
-    dp->dolnxt = 0;
+    dp->dolnxt = NULL;
     pp = dp->dolval;
     sp = (char *)dp + sizeof(struct dolnod) + n * sizeof(char *);
     while (n--) {
@@ -739,8 +739,8 @@ struct dolnod *sh_argnew(Shell_t *shp, char *argi[], struct dolnod **savargfor) 
     Arg_t *ap = shp->arg_context;
     struct dolnod *olddolh = ap->dolh;
     *savargfor = ap->argfor;
-    ap->dolh = 0;
-    ap->argfor = 0;
+    ap->dolh = NULL;
+    ap->argfor = NULL;
     sh_argset(ap, argi);
     return olddolh;
 }
@@ -869,7 +869,7 @@ char **sh_argbuild(Shell_t *shp, int *nargs, const struct comnod *comptr, int fl
         *nargs = ap->dolnum;
         return ap->dolval + ap->dolbot;
     }
-    shp->lastpath = 0;
+    shp->lastpath = NULL;
     procsub = shp->procsub;
     *nargs = 0;
 
@@ -912,7 +912,7 @@ char **sh_argbuild(Shell_t *shp, int *nargs, const struct comnod *comptr, int fl
             comargm = comargn;
         }
     }
-    shp->last_table = 0;
+    shp->last_table = NULL;
     return comargn;
 }
 
@@ -944,7 +944,7 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
     sfputr(shp->stk, shp->fifo, 0);
 #endif  // has_dev_fd
     ap = (struct argnod *)stkfreeze(shp->stk, 0);
-    shp->inpipe = shp->outpipe = 0;
+    shp->inpipe = shp->outpipe = NULL;
     monitor = (sh_isstate(shp, SH_MONITOR) != 0);
     if (monitor) sh_offstate(shp, SH_MONITOR);
     shp->subshell = 0;
@@ -986,7 +986,7 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
     sh_iosave(shp, -pv[fd], shp->topfd, NULL);
 #else
     free(shp->fifo);
-    shp->fifo = 0;
+    shp->fifo = NULL;
 #endif  // has_dev_fd
     return ap;
 }
