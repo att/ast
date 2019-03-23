@@ -196,15 +196,11 @@ extern void run_lsof();
 extern char *fmtbase(int64_t, int, int);
 extern char *fmtbuf(size_t);  // to be used only by the "string" subsystem
 extern char *fmtelapsed(unsigned long, int);
-extern char *fmterror(int);
-extern char *fmtesc(const char *);
-extern char *fmtesq(const char *, const char *);
 extern char *fmtident(const char *);
 extern char *fmtfmt(const char *);
 extern char *fmtint(int64_t, int);
 extern char *fmtmatch(const char *);
 extern char *fmtmode(int, int);
-extern char *fmtnesq(const char *, const char *, size_t);
 extern char *fmtperm(int);
 extern char *fmtquote(const char *, const char *, const char *, size_t, int);
 extern char *fmtre(const char *);
