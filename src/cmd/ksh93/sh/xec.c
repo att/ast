@@ -3147,22 +3147,22 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
                 shp->last_root = 0;
                 for (r = 0; args[r]; r++) {
                     np = nv_search(args[r], shp->var_tree, NV_NOSCOPE | NV_ADD);
-                    if (np && *nref) {
-                        nq = *nref++;
-                        STORE_VT(np->nvalue, nrp, calloc(1, sizeof(struct Namref)));
-                        if (nv_isattr(nq, NV_LDOUBLE) == NV_LDOUBLE) {
-                            FETCH_VT(np->nvalue, nrp)->np = nq;
-                        } else {
-                            // TODO: Figure out where the assignment to nq->nvalue.ldp is occurring.
-                            // This used to be the sole use of `pointerof()` which simply did what
-                            // we're now doing. But when spelled out like this it is obvious there
-                            // is a problem.
-                            FETCH_VT(np->nvalue, nrp)->np =
-                                (void *)((uintptr_t)*FETCH_VT(nq->nvalue, sfdoublep));
-                            nv_onattr(nq, NV_LDOUBLE);
-                        }
-                        nv_onattr(np, NV_REF | NV_NOFREE);
+                    if (!np || !*nref) continue;
+
+                    nq = *nref++;
+                    struct Namref *nrp = calloc(1, sizeof(struct Namref));
+                    STORE_VT(np->nvalue, nrp, nrp);
+                    if (nv_isattr(nq, NV_LDOUBLE) == NV_LDOUBLE) {
+                        nrp->np = nq;
+                    } else {
+                        // TODO: Figure out where the assignment to nq->nvalue.ldp is occurring.
+                        // This used to be the sole use of `pointerof()` which simply did what
+                        // we're now doing. But when spelled out like this it is obvious there
+                        // is a problem.
+                        nrp->np = (void *)((uintptr_t)*FETCH_VT(nq->nvalue, sfdoublep));
+                        nv_onattr(nq, NV_LDOUBLE);
                     }
+                    nv_onattr(np, NV_REF | NV_NOFREE);
                 }
             }
             sh_exec(shp, (Shnode_t *)(nv_funtree((fp->node))), execflg | SH_ERREXIT);
