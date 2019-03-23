@@ -164,42 +164,7 @@ struct Complete {
 #define UWERASE -6  // user word erase char synonym
 #define ULNEXT -7   // user next literal char synonym
 
-#if ('a' == 97)  // ASCII?
 #define cntl(x) (x & 037)
-#else
-static inline int cntl(int c) {
-    switch (c) {
-        case 'D':
-            return 55;
-        case 'E':
-            return 45;
-        case 'G':
-            return '\a';
-        case 'H':
-            return '\b';
-        case 'I':
-            return '\t';
-        case 'J':
-            return '\n';
-        case 'T':
-            return 60;
-        case 'U':
-            return 61;
-        case 'V':
-            return 50;
-        case 'W':
-            return 38;
-        case 'Z':
-            return 63;
-        case '[':
-            return 39;
-        case ']':
-            return 29;
-    }
-    if (c < 'J') return c + 1 - 'A';
-    return c + 10 - 'J';
-}
-#endif  // ASCII?
 
 extern void ed_crlf(Edit_t *);
 extern void ed_putchar(Edit_t *, int);
