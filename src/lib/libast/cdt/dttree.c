@@ -509,6 +509,9 @@ static_fn void *dttree(Dt_t *dt, void *obj, int type) {
         {
             if ((type & (DT_ATLEAST | DT_ATMOST)) ||
                 ((type & (DT_NEXT | DT_PREV | DT_REMOVE)) && _DTOBJ(disc, root) != obj)) {
+                // Coverity CID 253782 says there is a theoretical path that can reach this point
+                // with `obj` set to NULL. Which is a problem because dttree_root() dereferences it.
+                assert(obj);
                 root = dttree_root(dt, root, &link, obj, type);
             }
         }
