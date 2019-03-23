@@ -703,7 +703,9 @@ static_fn void outname(Shell_t *shp, Sfio_t *out, char *name, int len, bool json
 }
 
 static_fn void outval(char *name, const char *vname, struct Walk *wp) {
-    Namval_t *tp = 0, *np, *nq, *last_table = wp->shp->last_table;
+    Namval_t *tp = NULL;
+    Namval_t *last_table = wp->shp->last_table;
+    Namval_t *np, *nq;
     Namfun_t *fp;
     int isarray = 0, special = 0, mode = 0;
     bool json = (wp->flags & NV_JSON);
@@ -1010,7 +1012,8 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
     int n = 0, noscope = (flags & NV_NOSCOPE);
     Namarr_t *arp = nv_arrayptr(np);
     Dt_t *save_tree = shp->var_tree, *last_root;
-    Namval_t *mp = 0, *table;
+    Namval_t *mp = NULL;
+    Namval_t *table;
     char *xpname = xp ? stkcopy(shp->stk, nv_name(xp)) : 0;
 
     memset(&walk, 0, sizeof(walk));

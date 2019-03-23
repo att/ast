@@ -147,7 +147,7 @@ regclass_t regclass(const char *s, char **e) {
     for (cp = ctypes; cp; cp = cp->next) {
         if (n == cp->size && !strncmp(s, cp->name, n)) goto found;
     }
-    xp = zp = 0;
+    xp = zp = NULL;
     lc = (Ctype_t *)ast_setlocale(LC_CTYPE, NULL);
     for (cp = ctype; cp < &ctype[elementsof(ctype)]; cp++) {
         if (!zp) {

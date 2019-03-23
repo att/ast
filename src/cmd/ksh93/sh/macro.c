@@ -1917,7 +1917,7 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
     if (mp->shp->inpool) return;
 #endif  // SHOPT_COSHELL
     if (type) {
-        sp = 0;
+        sp = NULL;
         fcseek(-1);
         if (!t) t = sh_dolparen(mp->shp->lex_context);
         if (t && t->tre.tretyp == TARITH) {
