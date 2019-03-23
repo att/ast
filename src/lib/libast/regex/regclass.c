@@ -168,7 +168,8 @@ regclass_t regclass(const char *s, char **e) {
         }
     }
     if (!cp->name) {
-        if (!(cp->name = (const char *)memdup(s, n + 1))) return 0;
+        cp->name = memdup(s, n + 1);
+        if (!cp->name) return 0;
         *((char *)cp->name + n) = 0;
     }
     /* mvs.390 needs the (char*) cast -- barf */

@@ -530,10 +530,11 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
 #if _use_spawnveg
             if (newenv) {
             p = environ;
-            while (*p++)
+            while (*p++) {
                 ;
-            if (!(oenviron = (char **)memdup(environ, (p - environ) * sizeof(char *))))
-                goto cleanup;
+            }
+            oenviron = memdup(environ, (p - environ) * sizeof(char *));
+            if (!oenviron) goto cleanup;
         }
 #endif
         if (argv && envv != (char **)environ) {
