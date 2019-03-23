@@ -1280,6 +1280,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
             return NULL;
         }
         case ASSOC_OP_SETSUB_val: {
+            assert(ap);
             ap->cur = (Namval_t *)sp;
             return ap->cur;
         }
