@@ -57,7 +57,6 @@
 **			   (%I1d is fixed to handle "signed char" correctly)
 **		01/01/2004 Porting issues to various platforms resolved.
 **		06/01/2008 Allowing notify() at entering/exiting thread-safe routines.
-**		09/15/2008 Add sfwalk().
 */
 
 /* the below is for protecting the application from SIGPIPE */

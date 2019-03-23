@@ -11,5 +11,5 @@ libast_files += [
     'sfio/sfset.c', 'sfio/sfsetbuf.c', 'sfio/sfsetfd.c', 'sfio/sfsize.c', 'sfio/sfsk.c',
     'sfio/sfstack.c', 'sfio/sfstrtod.c', 'sfio/sfswap.c', 'sfio/sfsync.c', 'sfio/sftable.c',
     'sfio/sftell.c', 'sfio/sftmp.c', 'sfio/sfungetc.c', 'sfio/sfvprintf.c', 'sfio/sfvscanf.c',
-    'sfio/sfwalk.c', 'sfio/sfwr.c', 'sfio/sfwrite.c'
+    'sfio/sfwr.c', 'sfio/sfwrite.c'
 ]

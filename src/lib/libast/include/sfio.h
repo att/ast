@@ -46,7 +46,6 @@ typedef ssize_t (*Sfread_f)(Sfio_t *, void *, size_t, Sfdisc_t *);
 typedef ssize_t (*Sfwrite_f)(Sfio_t *, const void *, size_t, Sfdisc_t *);
 typedef Sfoff_t (*Sfseek_f)(Sfio_t *, Sfoff_t, int, Sfdisc_t *);
 typedef int (*Sfexcept_f)(Sfio_t *, int, void *, Sfdisc_t *);
-typedef int (*Sfwalk_f)(Sfio_t *, void *);
 
 /* discipline structure */
 struct _sfdisc_s {
@@ -240,7 +239,6 @@ extern Sfio_t *sfpopen(Sfio_t *, const char *, const char *);
 extern Sfio_t *sfstack(Sfio_t *, Sfio_t *);
 extern Sfio_t *sfswap(Sfio_t *, Sfio_t *);
 extern Sfio_t *sftmp(size_t);
-extern int sfwalk(Sfwalk_f, void *, int);
 extern int sfpurge(Sfio_t *);
 extern void *sfreserve(Sfio_t *, ssize_t, int);
 extern int sfresize(Sfio_t *, Sfoff_t);

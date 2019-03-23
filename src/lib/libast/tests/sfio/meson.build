@@ -11,7 +11,7 @@ sfio_test_files =[ 'talarm.c', 'talign.c', 'tappend.c', 'tatexit.c',
                    'tresize.c', 'tscanf.c', 'tscanf1.c', 'tseek.c', 'tsetbuf.c',
                    'tsetfd.c', 'tsfstr.c', 'tshare.c', 'tsize.c', 'tstack.c',
                    'tstatus.c',  'tstkpk.c', 'tstring.c', 'tswap.c', 'tsync.c',
-                   'ttell.c', 'ttmp.c', 'ttmpfile.c', 'tungetc.c', 'twalk.c', 'twhole.c',
+                   'ttell.c', 'ttmp.c', 'ttmpfile.c', 'tungetc.c', 'twhole.c',
                    'twrrd.c', 'tprintf.c' ]
 
 # TODO: This test fails due to a use after free bug. Enable it when that is fixed. For some reason

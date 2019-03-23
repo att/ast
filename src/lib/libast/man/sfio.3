@@ -223,7 +223,6 @@ int        sfclrlock(Sfio_t* f);
 
 int        sfnotify(void (*notify)(Sfio_t* f, int type, void* data));
 
-int        sfwalk(Sfwalk_f walkf, void* data, int type);
 .ft 1
 .fi
 .Ss "MISCELLANEOUS FUNCTIONS"
@@ -2050,18 +2049,6 @@ to set a stream that would be used for performing the actual I/O operation.
 In this way, certain global streams such as the standard streams \f5sfstdin\fP,
 \f5sfstdout\fP and \f5sfstderr\fP could be made to act differently when used
 in different streams.
-
-.Ss "  int sfwalk(Sfwalk_f walkf, void* data, int type)"
-This function invokes \f5(*walkf)(f, data)\fP on every open stream \f5f\fP
-whose flags as defined by \f5sfset()\fP contains all bit flags given in \f5type\fP.
-On such a call, if the return value is negative, \f5sfwalk()\fP will terminate.
-\f5sfwalk()\fP returns 0 if no stream was processed.
-Otherwise, it returns the return value from the last invocation of \f5walkf()\fP.
-
-As an example, the call \f5sfwalk(walkf, data, SF_READ)\fP will iterate over all streams
-opened for reading. Similarly, \f5sfwalk(walkf, data, SF_READ|SF_WRITE)\fP
-iterates over all streams opened for both reading and writing.
-Lastly, \f5sfwalk(walkf, data, 0)\fP iterates over all streams.
 
 .PP
 .Ss "MISCELLANEOUS FUNCTIONS"
