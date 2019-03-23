@@ -153,8 +153,8 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
     char *next;
     size_t c, len = strlen(name);
     struct nvdir *save, *dp;
-    Namval_t *nq = 0, fake;
-    Namfun_t *nfp = 0;
+    Namval_t *nq = NULL, fake;
+    Namfun_t *nfp = NULL;
 
     dp = calloc(1, sizeof(struct nvdir) + len + 1);
     if (!dp) return NULL;
@@ -172,7 +172,7 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
     if (!np || !nv_isvtree(np)) {
         while (1) {
             dp->table = shp->last_table;
-            shp->last_table = 0;
+            shp->last_table = NULL;
             if (*(last = (char *)name) == 0) break;
             if (!(next = nextdot(last, shp))) break;
             *next = 0;
@@ -247,7 +247,7 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
                 dp->fun = nfp;
                 dp->hp = (*dp->nextnode)(np, NULL, nfp);
             } else {
-                dp->nextnode = 0;
+                dp->nextnode = NULL;
             }
         } else {
             break;
@@ -255,7 +255,7 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
         if (!next || next[1] == 0) break;
         last = next + 1;
         nq = np;
-        np = 0;
+        np = NULL;
     }
     return dp;
 }
@@ -267,7 +267,7 @@ static_fn Namval_t *nextnode(struct nvdir *dp) {
 }
 
 char *nv_dirnext(void *dir) {
-    Shell_t *shp = 0;
+    Shell_t *shp = NULL;
     struct nvdir *save, *dp = (struct nvdir *)dir;
     Namval_t *np, *last_table;
     char *cp;
@@ -323,7 +323,7 @@ char *nv_dirnext(void *dir) {
 
             if ((nfp = nextdisc(np)) && (nfp->disc->getval || nfp->disc->getnum) &&
                 nv_isvtree(np) && strcmp(cp, dp->data)) {
-                nfp = 0;
+                nfp = NULL;
             }
 
             if (!nfp && !nv_istable(np)) return cp;
@@ -361,7 +361,7 @@ char *nv_dirnext(void *dir) {
                 dp->fun = nfp;
                 dp->hp = (*dp->nextnode)(np, NULL, nfp);
             } else {
-                dp->nextnode = 0;
+                dp->nextnode = NULL;
             }
             return cp;
         }
@@ -379,7 +379,7 @@ void nv_dirclose(void *dir) {
 }
 
 static_fn void outtype(Namval_t *np, Namfun_t *fp, Sfio_t *out, const char *prefix) {
-    char *type = 0;
+    char *type = NULL;
     Namval_t *tp = fp->type;
 
     assert(fp->disc);
@@ -628,7 +628,7 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
             nv_putsub(np, mp->nvname, 0, ARRAY_SCAN);
         }
         if (ep == Empty && !ap) ep = NULL;
-        xp = 0;
+        xp = NULL;
         if (!ap && nv_isattr(np, NV_INTEGER | NV_LJUST) == NV_LJUST) {
             xp = ep + nv_size(np);
             while (--xp > ep && *xp == ' ') {
@@ -638,7 +638,7 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
             if (xp < (ep + nv_size(np))) {
                 *xp = 0;
             } else {
-                xp = 0;
+                xp = NULL;
             }
         }
         if (mp && nv_isvtree(mp)) {
@@ -723,7 +723,7 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
         if (nv_isattr(np, NV_BINARY) || nv_type(np)) return;
         if (fp && FETCH_VT(np->nvalue, const_cp) && FETCH_VT(np->nvalue, const_cp) != Empty) {
             nv_local = true;
-            fp = 0;
+            fp = NULL;
         }
         if (fp) return;
         if (nv_isarray(np)) return;
@@ -813,7 +813,7 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
         if (isarray == 2) return;
     }
     fp = np->nvfun;
-    if (*name == '.' && !isarray) np->nvfun = 0;
+    if (*name == '.' && !isarray) np->nvfun = NULL;
     nv_outnode(np, wp->out, wp->indent, special | (wp->flags & (NV_JSON | NV_JSON_LAST)));
     if (*name == '.' && !isarray) np->nvfun = fp;
     if (isarray && !special) {
@@ -912,7 +912,7 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
             } else if (outfile && !wp->nofollow && argv[1] &&
                        strncmp(arg, argv[1], l = strlen(arg)) == 0 && argv[1][l] == '[') {
                 int k = 1;
-                Namarr_t *aq = 0;
+                Namarr_t *aq = NULL;
                 np = nv_open(arg, wp->root, NV_VARNAME | NV_NOADD | wp->noscope);
                 if (!np) continue;
                 if ((wp->array = nv_isarray(np)) && (aq = nv_arrayptr(np))) k = array_elem(aq);
@@ -1002,10 +1002,10 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
     Sfoff_t off = 0;
     int len, savtop = stktell(shp->stk);
     char *savptr = stkfreeze(shp->stk, 0);
-    struct argnod *ap = 0;
-    struct argnod *arglist = 0;
+    struct argnod *ap = NULL;
+    struct argnod *arglist = NULL;
     char *name, *cp, **argv;
-    char *subscript = 0;
+    char *subscript = NULL;
     void *dir;
     int n = 0, noscope = (flags & NV_NOSCOPE);
     Namarr_t *arp = nv_arrayptr(np);
@@ -1034,7 +1034,7 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
         mp = np;
     }
     name = stkfreeze(shp->stk, 1);
-    shp->last_root = 0;
+    shp->last_root = NULL;
     if (shp->last_table && !nv_type(shp->last_table) && (cp = nv_name(shp->last_table)) &&
         strcmp(cp, ".sh") && (len = strlen(cp)) && strncmp(name, cp, len) == 0 &&
         name[len] == '.') {

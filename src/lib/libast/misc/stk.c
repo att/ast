@@ -197,7 +197,7 @@ static_fn int stkexcept(Sfio_t *stream, int type, void *val, Sfdisc_t *dp) {
         case SF_SEEK: {
             long size = sfvalue(stream);
             if (init) {
-                Sfio_t *old = 0;
+                Sfio_t *old = NULL;
                 if (stream != stkstd) old = stkinstall(stream, NULL);
                 if (!stkgrow(stkstd, size - (stkstd->endb - stkstd->data))) return -1;
                 if (old) stkinstall(old, NULL);

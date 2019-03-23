@@ -103,7 +103,7 @@ static void namebase(Sfio_t *outfile, char *pathname, char *suffix) {
 
 int b_basename(int argc, char **argv, Shbltin_t *context) {
     char *string;
-    char *suffix = 0;
+    char *suffix = NULL;
     int all = 0;
     int n;
 

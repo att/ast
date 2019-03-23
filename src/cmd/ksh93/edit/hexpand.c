@@ -141,9 +141,9 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
         *tmp = 0,                       // temporary line buffer
             *tmp2 = 0;                  // temporary line buffer
     Histloc_t hl;                       // history location
-    static Namval_t *np = 0;            // histchars variable
+    static Namval_t *np = NULL;         // histchars variable
     static struct subst sb = {{0, 0}};  // substition strings
-    static Sfio_t *wm = 0;              // word match from !?string? event designator
+    static Sfio_t *wm = NULL;           // word match from !?string? event designator
 
     if (!wm) wm = sfopen(NULL, NULL, "swr");
 

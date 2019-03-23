@@ -177,7 +177,7 @@ static_fn void typeset_order(const char *str, int line) {
 // a/d type definitions when compiling with -n.
 //
 static_fn void check_typedef(Lex_t *lp, struct comnod *tp) {
-    char *cp = 0;
+    char *cp = NULL;
     if (tp->comtyp & COMSCAN) {
         struct argnod *ap = tp->comarg;
         while ((ap = ap->argnxt.ap)) {
@@ -271,7 +271,7 @@ static_fn Shnode_t *getanode(Lex_t *lp, struct argnod *ap) {
         if (sh_isoption(lp->sh, SH_NOEXEC) && (ap->argflag & ARG_MAC) && paramsub(ap->argval)) {
             errormsg(SH_DICT, ERROR_warn(0), e_lexwarnvar, lp->sh->inlineno);
         }
-        t->ar.arcomp = 0;
+        t->ar.arcomp = NULL;
     }
     return t;
 }
@@ -378,7 +378,7 @@ Shnode_t *sh_parse(Shell_t *shp, Sfio_t *iop, int flag) {
 // This routine parses up the matching right parenthesis and returns the parse tree.
 //
 Shnode_t *sh_dolparen(Lex_t *lp) {
-    Shnode_t *t = 0;
+    Shnode_t *t = NULL;
     Sfio_t *sp = fcfile();
     int line = lp->sh->inlineno;
 
@@ -630,8 +630,8 @@ static_fn Shnode_t *arithfor(Lex_t *lexp, Shnode_t *tf) {
     for (n = 0;; n++) {
         int c;
         argp = (struct argnod *)stkseek(stkp, ARGVAL);
-        argp->argnxt.ap = 0;
-        argp->argchn.cp = 0;
+        argp->argnxt.ap = NULL;
+        argp->argchn.cp = NULL;
         argp->argflag = argflag;
         if (n == 2) break;
         // Copy up to ; onto the stack.
@@ -958,7 +958,7 @@ static_fn struct argnod *parse_assign(Lex_t *lexp, struct argnod *ap, int type) 
                 ar->argflag |= aq->argflag;
             }
             ar = (struct argnod *)stkfreeze(stkp, 1);
-            ar->argnxt.ap = 0;
+            ar->argnxt.ap = NULL;
             if (!aq) ar = parse_assign(lexp, ar, 0);
             ar->argflag |= ARG_MESSAGE;
             *settail = ar;
@@ -971,7 +971,7 @@ static_fn struct argnod *parse_assign(Lex_t *lexp, struct argnod *ap, int type) 
                 sfputr(stkstd, lexp->arg->argval, 0);
                 --stkstd->next;
                 ar = (struct argnod *)stkfreeze(stkp, 1);
-                ar->argnxt.ap = 0;
+                ar->argnxt.ap = NULL;
                 ar->argflag = lexp->arg->argflag;
                 *settail = ar;
                 settail = &(ar->argnxt.ap);
@@ -1159,10 +1159,10 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
                                  lexp->sh->inlineno - (lexp->token == '\n'));
                     }
                     t->for_.forlst = (struct comnod *)getnode(comnod);
-                    (t->for_.forlst)->comarg = 0;
-                    (t->for_.forlst)->comset = 0;
-                    (t->for_.forlst)->comnamp = 0;
-                    (t->for_.forlst)->comnamq = 0;
+                    (t->for_.forlst)->comarg = NULL;
+                    (t->for_.forlst)->comset = NULL;
+                    (t->for_.forlst)->comnamp = NULL;
+                    (t->for_.forlst)->comnamq = NULL;
                     (t->for_.forlst)->comstate = 0;
                     (t->for_.forlst)->comio = 0;
                     (t->for_.forlst)->comtyp = 0;
@@ -1332,7 +1332,7 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
     int key_on = (!(flag & SH_NOIO) && sh_isoption(lexp->sh, SH_KEYWORD));
     int procsub = 0, associative = 0;
 
-    Namval_t *np = 0;
+    Namval_t *np = NULL;
     argp = lexp->arg;
     if (argp && (argp->argflag & ARG_ASSIGN) && argp->argval[0] == '[') {
         flag |= SH_ARRAY;
@@ -1342,9 +1342,9 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
     t->comio = io;                    // initial io chain
     t->comline = sh_getlineno(lexp);  // set command line number for error messages
     argtail = &(t->comarg);
-    t->comset = 0;
+    t->comset = NULL;
     t->comnamp = NULL;
-    t->comnamq = 0;
+    t->comnamq = NULL;
     t->comstate = 0;
     settail = &(t->comset);
     if (lexp->assignlevel && (flag & SH_ARRAY) && check_array(lexp)) type |= NV_ARRAY;
@@ -1388,7 +1388,7 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
                     }
                     ap = (struct argnod *)stkfreeze(stkp, 1);
                     ap->argflag = ARG_RAW;
-                    ap->argchn.ap = 0;
+                    ap->argchn.ap = NULL;
                 }
                 *argtail = ap;
                 argtail = &(ap->argnxt.ap);
@@ -1598,7 +1598,7 @@ static_fn struct ionod *inout(Lex_t *lexp, struct ionod *lastio, int flag) {
     int iof = lexp->digits, token = lexp->token;
     struct ionod *iop;
     Stk_t *stkp = lexp->sh->stk;
-    char *iovname = 0;
+    char *iovname = NULL;
     int errout = 0;
 
     if (token == IOVNAME) {
@@ -1723,7 +1723,7 @@ static_fn struct ionod *inout(Lex_t *lexp, struct ionod *lastio, int flag) {
         }
         ioq->ionxt = inout(lexp, lastio, flag);
     } else {
-        iop->ionxt = 0;
+        iop->ionxt = NULL;
     }
     return iop;
 }

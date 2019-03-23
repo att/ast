@@ -1113,12 +1113,12 @@ static int ed_histlencopy(const char *cp, char *dp) {
 }
 
 int ed_histgen(Edit_t *ep, const char *pattern) {
-    Histmatch_t *mp, *mplast = 0;
+    Histmatch_t *mp, *mplast = NULL;
     History_t *hp;
     off_t offset;
     int ac = 0, l, n, index1, index2;
     size_t m;
-    char *cp, **argv = 0, **av, **ar;
+    char *cp, **argv = NULL, **av, **ar;
     static int maxmatch;
 
     if (!(hp = ep->sh->gd->hist_ptr) && (!nv_getval(HISTFILE) || !sh_histinit(ep->sh))) return 0;

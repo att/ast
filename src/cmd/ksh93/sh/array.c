@@ -382,7 +382,8 @@ bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
 static_fn Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     Namarr_t *ap = (Namarr_t *)fp;
     Namval_t *nq, *mq;
-    char *name, *sub = 0;
+    char *name;
+    char *sub = NULL;
     int flg, skipped = 0;
     Dt_t *otable = ap->table;
     struct index_array *aq = (struct index_array *)ap, *ar;
@@ -559,7 +560,7 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
                     (*ap->fun)(np, NULL, ASSOC_OP_FREE);
                 } else if (ap->table) {
                     dtclose(ap->table);
-                    ap->table = 0;
+                    ap->table = NULL;
                 }
                 nv_offattr(np, NV_ARRAY);
             }
@@ -902,7 +903,8 @@ Namval_t *nv_arraychild(Namval_t *np, Namval_t *nq, int c) {
 bool nv_nextsub(Namval_t *np) {
     struct index_array *ap = (struct index_array *)nv_arrayptr(np);
     unsigned dot;
-    struct index_array *aq = 0, *ar = 0;
+    struct index_array *aq = NULL;
+    struct index_array *ar = NULL;
 
     if (!ap || !(ap->namarr.flags & ARRAY_SCAN)) return false;
     if (is_associative(&ap->namarr)) {
@@ -996,7 +998,7 @@ Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
 		}
 #endif
         ap->cur = size;
-        if ((flags & ARRAY_SCAN) && (ap->cur--, !nv_nextsub(np))) np = 0;
+        if ((flags & ARRAY_SCAN) && (ap->cur--, !nv_nextsub(np))) np = NULL;
         if (flags & (ARRAY_FILL | ARRAY_ADD)) {
             if (!(flags & ARRAY_ADD)) {
                 int n;
@@ -1042,7 +1044,7 @@ Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
             if (array_isbit(ap->bits, size, ARRAY_CHILD) && FETCH_VT(ap->val[size], np)) {
                 nv_putsub(FETCH_VT(ap->val[size], np), NULL, 0, ARRAY_UNDEF);
             }
-            if (sp && !(flags & ARRAY_ADD) && !FETCH_VT(ap->val[size], const_cp)) np = 0;
+            if (sp && !(flags & ARRAY_ADD) && !FETCH_VT(ap->val[size], const_cp)) np = NULL;
         }
         return np;
     }
@@ -1248,7 +1250,7 @@ void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
                     nv_associative(np, NULL, ASSOC_OP_DELETE);
                 }
                 dtclose(ap->namarr.table);
-                ap->namarr.table = 0;
+                ap->namarr.table = NULL;
             }
             return ap;
         }

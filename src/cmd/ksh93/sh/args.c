@@ -540,7 +540,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
                 }
                 free(sp);
                 nv_close(np);
-                np = 0;
+                np = NULL;
             } else {
                 strsort(shp->st.dolv + 1, shp->st.dolc, sortfn);
             }
@@ -903,7 +903,7 @@ char **sh_argbuild(Shell_t *shp, int *nargs, const struct comnod *comptr, int fl
     }
     while (argp) {
         struct argnod *nextarg = argp->argchn.ap;
-        argp->argchn.ap = 0;
+        argp->argchn.ap = NULL;
         *--comargn = argp->argval;
         if (!(argp->argflag & ARG_RAW)) sh_trim(*comargn);
         if (!(argp = nextarg) || (argp->argflag & ARG_MAKE)) {
@@ -1005,7 +1005,7 @@ static_fn int arg_expand(Shell_t *shp, struct argnod *argp, struct argnod **argc
     } else if (!(argp->argflag & ARG_RAW)) {
         struct argnod *ap;
         sh_stats(STAT_ARGEXPAND);
-        if (flag & ARG_OPTIMIZE) argp->argchn.ap = 0;
+        if (flag & ARG_OPTIMIZE) argp->argchn.ap = NULL;
         ap = argp->argchn.ap;
         if (ap) {
             sh_stats(STAT_ARGHITS);

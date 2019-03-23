@@ -391,7 +391,7 @@ static_fn void put_ifs(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
         fp = nv_stack(np, NULL);
         if (fp && !fp->nofree) {
             free(fp);
-            fp = 0;
+            fp = NULL;
         }
     }
     if (val != FETCH_VT(np->nvalue, const_cp)) nv_putv(np, val, flags, fp);
@@ -635,7 +635,7 @@ static_fn void astbin_update(Shell_t *shp, const char *from, const char *to) {
         sfwrite(shp->stk, to, tolen);
         sfputr(shp->stk, np->nvname + flen, 0);
         path = stkptr(shp->stk, offset);
-        mp = 0;
+        mp = NULL;
         if (tobin) {
             mp = nv_search(path, shp->bltin_tree, 0);
             if (!mp) path += 4;
@@ -776,17 +776,17 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
             for (i = 0; i < mp->nmatch; i++) {
                 if (np->nvfun && np->nvfun != &mp->namfun) {
                     free(np->nvfun);
-                    np->nvfun = 0;
+                    np->nvfun = NULL;
                 }
                 np = nv_namptr(np + 1, 0);
             }
             free(mp->nodes);
-            mp->nodes = 0;
+            mp->nodes = NULL;
         }
         mp->vlen = 0;
         if (ap && ap->namfun.next != &mp->namfun) free(ap);
         STORE_VT(SH_MATCHNOD->nvalue, const_cp, NULL);
-        SH_MATCHNOD->nvfun = 0;
+        SH_MATCHNOD->nvfun = NULL;
         if (!(mp->nmatch = nmatch) && !v) {
             shp->subshell = savesub;
             return;
@@ -1173,7 +1173,7 @@ int sh_type(const char *path) {
 static_fn void put_mode(Namval_t *np, const char *val, int flag, Namfun_t *nfp) {
     if (val) {
         mode_t mode;
-        char *last = 0;
+        char *last = NULL;
         if (flag & NV_INTEGER) {
             if (flag & NV_LONG) {
                 mode = *(Sfdouble_t *)val;
@@ -1478,7 +1478,7 @@ int sh_reinit(Shell_t *shp, char *argv[]) {
         dp = nv_dict(shp->namespace);
         if (dp == shp->var_tree) shp->var_tree = dtview(dp, 0);
         _nv_unset(shp->namespace, NV_RDONLY);
-        shp->namespace = 0;
+        shp->namespace = NULL;
     }
     if (sh_isoption(shp, SH_TRACKALL)) on_option(&opt, SH_TRACKALL);
     if (sh_isoption(shp, SH_EMACS)) on_option(&opt, SH_EMACS);
@@ -1488,7 +1488,7 @@ int sh_reinit(Shell_t *shp, char *argv[]) {
     // Set up new args.
     if (argv) shp->arglist = sh_argcreate(argv);
     if (shp->arglist) sh_argreset(shp, shp->arglist, NULL);
-    shp->envlist = 0;
+    shp->envlist = NULL;
     shp->curenv = 0;
     shp->shname = error_info.id = strdup(shp->st.dolv[0]);
     sh_offstate(shp, SH_FORKED);

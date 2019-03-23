@@ -185,7 +185,7 @@ static char *find_begin(char outbuff[], char *last, int endchar, int *type) {
 }
 
 static char **prog_complete(Dt_t *dict, char *line, char *word, int cur) {
-    char *cp = line, *cmd, c, **com = 0;
+    char *cp = line, *cmd, c, **com = NULL;
     struct Complete *pcp;
     while (isspace(*cp) || *cp == '#') cp++;
     if (*cp && cp < word) {
@@ -228,11 +228,12 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
     struct comnod *comptr;
     struct argnod *ap;
     char *out;
-    char *av[2], *begin, *dir = 0;
+    char *av[2], *begin;
+    char *dir = NULL;
     int addstar = 0, rval = 0, var = 0, strip = 1, narg = 0;
     int nomarkdirs = !sh_isoption(ep->sh, SH_MARKDIRS);
     Shell_t *shp = ep->sh;
-    char **com = 0;
+    char **com = NULL;
 
     sh_onstate(shp, SH_FCOMPLETE);
     if (ep->e_nlist) {
@@ -272,8 +273,8 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
     comptr->comtyp = COMSCAN;
     comptr->comarg = ap;
     ap->argflag = (ARG_MAC | ARG_EXP);
-    ap->argnxt.ap = 0;
-    ap->argchn.cp = 0;
+    ap->argnxt.ap = NULL;
+    ap->argchn.cp = NULL;
 
     {
         char *last = out;

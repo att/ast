@@ -353,7 +353,7 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
     unsigned char *bp, *first;
     int lastchar;
     wchar_t w;
-    Sfio_t *fdtmp = 0;
+    Sfio_t *fdtmp = NULL;
     long offset = 0;
     unsigned char mb[8];
     /* process each buffer */
@@ -521,7 +521,7 @@ failed:
 }
 
 int b_cut(int argc, char **argv, Shbltin_t *context) {
-    char *cp = 0;
+    char *cp = NULL;
     Sfio_t *fp;
     char *s;
     int n;

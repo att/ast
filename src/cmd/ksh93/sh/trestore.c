@@ -113,7 +113,7 @@ static_fn Shnode_t *r_tree(Shell_t *shp) {
             t = getnode(shp->stk, arithnod);
             t->ar.arline = sfgetu(infile);
             t->ar.arexpr = r_arg(shp);
-            t->ar.arcomp = 0;
+            t->ar.arcomp = NULL;
             if ((t->ar.arexpr)->argflag & ARG_RAW) {
                 t->ar.arcomp = sh_arithcomp(shp, (t->ar.arexpr)->argval);
             }
@@ -184,7 +184,9 @@ static_fn Shnode_t *r_tree(Shell_t *shp) {
 }
 
 static_fn struct argnod *r_arg(Shell_t *shp) {
-    struct argnod *ap = 0, *apold, *aptop = 0;
+    struct argnod *ap = NULL;
+    struct argnod *aptop = NULL;
+    struct argnod *apold;
     long l;
     Stk_t *stkp = shp->stk;
 
@@ -199,7 +201,7 @@ static_fn struct argnod *r_arg(Shell_t *shp) {
             sfread(infile, ap->argval, (size_t)l);
         }
         ap->argval[l] = 0;
-        ap->argchn.cp = 0;
+        ap->argchn.cp = NULL;
         ap->argflag = sfgetc(infile);
 #if 0
 		if((ap->argflag&ARG_MESSAGE) && *ap->argval)
@@ -231,13 +233,15 @@ static_fn struct argnod *r_arg(Shell_t *shp) {
         }
         apold = ap;
     }
-    if (ap) ap->argnxt.ap = 0;
+    if (ap) ap->argnxt.ap = NULL;
     return aptop;
 }
 
 static_fn struct ionod *r_redirect(Shell_t *shp) {
     long l;
-    struct ionod *iop = 0, *iopold, *ioptop = 0;
+    struct ionod *iop = NULL;
+    struct ionod *ioptop = NULL;
+    struct ionod *iopold;
 
     while ((l = sfgetl(infile)) >= 0) {
         iop = (struct ionod *)getnode(shp->stk, ionod);
@@ -263,11 +267,11 @@ static_fn struct ionod *r_redirect(Shell_t *shp) {
         if (iop->iofile & IOVNM) {
             iop->iovname = r_string(shp->stk);
         } else {
-            iop->iovname = 0;
+            iop->iovname = NULL;
         }
         iop->iofile &= ~IOVNM;
     }
-    if (iop) iop->ionxt = 0;
+    if (iop) iop->ionxt = NULL;
     return ioptop;
 }
 
@@ -284,7 +288,7 @@ static_fn void r_comarg(Shell_t *shp, struct comnod *com) {
         cmdname = ((struct dolnod *)(com->comarg))->dolval[ARG_SPARE];
     }
     com->comline = sfgetu(infile);
-    com->comnamq = 0;
+    com->comnamq = NULL;
     if (cmdname) {
         char *cp;
         com->comnamp = nv_search(cmdname, shp->fun_tree, 0);
@@ -294,12 +298,12 @@ static_fn void r_comarg(Shell_t *shp, struct comnod *com) {
             *cp = '.';
         }
     } else {
-        com->comnamp = 0;
+        com->comnamp = NULL;
     }
 }
 
 static_fn struct dolnod *r_comlist(Shell_t *shp) {
-    struct dolnod *dol = 0;
+    struct dolnod *dol = NULL;
     long l;
     char **argv;
 
@@ -320,7 +324,9 @@ static_fn struct dolnod *r_comlist(Shell_t *shp) {
 
 static_fn struct regnod *r_switch(Shell_t *shp) {
     long l;
-    struct regnod *reg = 0, *regold, *regtop = 0;
+    struct regnod *reg = NULL;
+    struct regnod *regtop = NULL;
+    struct regnod *regold;
 
     while ((l = sfgetl(infile)) >= 0) {
         reg = (struct regnod *)getnode(shp->stk, regnod);
@@ -334,7 +340,7 @@ static_fn struct regnod *r_switch(Shell_t *shp) {
         reg->regcom = r_tree(shp);
         regold = reg;
     }
-    if (reg) reg->regnxt = 0;
+    if (reg) reg->regnxt = NULL;
     return regtop;
 }
 

@@ -179,9 +179,10 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
     int exitval = 0, n, fd = 1;
     Shell_t *shp = context->shp;
     const char *options, *msg = e_file + 4;
-    char *format = 0, *fmttype = 0;
+    char *format = NULL;
+    char *fmttype = NULL;
     int sflag = 0, nflag = 0, rflag = 0, vflag = 0;
-    Namval_t *vname = 0;
+    Namval_t *vname = NULL;
     Optdisc_t disc;
 
     memset(&disc, 0, sizeof(disc));
@@ -606,7 +607,7 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
 #if SUPPORT_JSON
     if (fmt && strncmp(fmt, "json", 4) == 0) nv_onattr(np, NV_JSON);
 #endif
-    if (*string == '.') shp->namespace = 0;
+    if (*string == '.') shp->namespace = NULL;
     cp = nv_getval(np);
     if (*string == '.') shp->namespace = nspace;
     if (alt == 1) {
@@ -686,7 +687,7 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
             argp = sfstruse(pp->sh->strbuf);
         }
     } else {
-        pp->lastarg = 0;
+        pp->lastarg = NULL;
     }
 
     fe->flags |= SFFMT_VALUE;

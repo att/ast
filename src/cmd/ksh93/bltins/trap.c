@@ -139,7 +139,7 @@ int b_trap(int argc, char *argv[], Shbltin_t *context) {
                     if (arg) sfputr(sfstdout, arg, '\n');
                     continue;
                 }
-                shp->st.otrap = 0;
+                shp->st.otrap = NULL;
                 arg = shp->st.trap[sig];
                 shp->st.trap[sig] = 0;
                 if (!clear && *action) {

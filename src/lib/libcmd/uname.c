@@ -133,7 +133,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
     char *s;
     char *t;
     char *e;
-    char *sethost = 0;
+    char *sethost = NULL;
     int list = 0;
     struct utsname ut;
     char buf[257];

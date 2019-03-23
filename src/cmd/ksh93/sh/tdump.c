@@ -128,7 +128,7 @@ static_fn int dump_p_arg(const struct argnod *arg) {
     while (arg) {
         if ((n = strlen(arg->argval)) ||
             (arg->argflag & ~(ARG_APPEND | ARG_MESSAGE | ARG_QUOTED | ARG_ARRAY))) {
-            fp = 0;
+            fp = NULL;
         } else {
             fp = (struct fornod *)arg->argchn.ap;
             n = strlen(fp->fornam) + 1;

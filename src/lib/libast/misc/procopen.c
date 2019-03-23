@@ -303,7 +303,7 @@ static void restore(Proc_t *proc) {
  */
 
 Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flags) {
-    Proc_t *proc = 0;
+    Proc_t *proc = NULL;
     int procfd;
     char **p;
     char **v;
@@ -425,8 +425,8 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
     }
     if (!proc->pid) {
 #if _use_spawnveg
-        char **oenviron = 0;
-        char *oenviron0 = 0;
+        char **oenviron = NULL;
+        char *oenviron0 = NULL;
 
         v = 0;
 #endif

@@ -13,7 +13,7 @@ tmain() {
     UNUSED(argc);
     UNUSED(argv);
     int failed = 0;
-    char *result = 0;
+    char *result = NULL;
     char default_astconf_path[BUFSIZ];
 
     char *custom_path = "/foo:/bar:/baz";

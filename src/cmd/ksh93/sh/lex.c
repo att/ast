@@ -279,7 +279,7 @@ int sh_lex(Lex_t *lp) {
         }
     }
     if (!lp->lexd.dolparen) {
-        lp->arg = 0;
+        lp->arg = NULL;
         if (mode != ST_BEGIN) {
             lp->lexd.first = fcseek(0);
         } else {
@@ -1259,8 +1259,8 @@ breakloop:
     } else if (!lp->lex.skipword) {
         lp->assignok = 0;
     }
-    lp->arg->argchn.cp = 0;
-    lp->arg->argnxt.ap = 0;
+    lp->arg->argchn.cp = NULL;
+    lp->arg->argnxt.ap = NULL;
     if (mode == ST_NONE) {
         lp->token = EXPRSYM;
         return EXPRSYM;
@@ -1415,7 +1415,10 @@ static_fn int comsub(Lex_t *lp, int endtok) {
     lp->comsub = (endtok == LBRACE);
     first = lp->lexd.first;
     off = cp - (first ? first : fcfirst());
-    if (off < 0) c = *cp, *cp = 0;
+    if (off < 0) {
+        c = *cp;
+        *cp = 0;
+    }
     n = sh_lex(lp);
     if (off < 0) *cp = c;
     if (n == endtok || off < 0) {
@@ -1905,8 +1908,9 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
     size_t n;
     char *sp, *dp;
     int inquote = 0, inlit = 0; /* set within quoted strings */
-    struct argnod *argp = 0;
-    char *ep = 0, *xp = 0;
+    struct argnod *argp = NULL;
+    char *ep = NULL;
+    char *xp = NULL;
     int bracket = 0;
     Stk_t *stkp = shp->stk;
 

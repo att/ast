@@ -172,7 +172,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
     char *tp;
     Sfdouble_t d, small_stack[SMALL_STACK + 1], arg[9];
     const char *ptr = "";
-    char *lastval = 0;
+    char *lastval = NULL;
     int lastsub = 0;
     struct lval node;
     Shell_t *shp = ep->shp;
@@ -263,7 +263,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
                 cp += sizeof(short);
                 lastval = node.value = (char *)dp;
                 node.flag = c;
-                if (node.flag) lastval = 0;
+                if (node.flag) lastval = NULL;
                 node.isfloat = 0;
                 node.level = level;
                 node.nosub = 0;
@@ -327,7 +327,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
                     arith_error((char *)ERROR_dictionary(e_notset), nv_name((Namval_t *)lastval),
                                 3);
                 }
-                lastval = 0;
+                lastval = NULL;
                 c = 0;
                 break;
             }
@@ -561,7 +561,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
                 break;
             }
         }
-        if (c) lastval = 0;
+        if (c) lastval = NULL;
         if (c & T_BINARY) {
             node.ptr = 0;
             sp--, tp--;
@@ -1023,7 +1023,7 @@ Sfdouble_t strval(Shell_t *shp, const char *s, char **end,
                   Sfdouble_t (*conv)(const char **, struct lval *, int, Sfdouble_t), int emode) {
     Arith_t *ep;
     Sfdouble_t d;
-    char *sp = 0;
+    char *sp = NULL;
     int offset;
 
     offset = stktell(shp->stk);

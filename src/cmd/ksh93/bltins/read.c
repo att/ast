@@ -209,7 +209,7 @@ static struct Method methods[] = {
 
 int b_read(int argc, char *argv[], Shbltin_t *context) {
     Sfdouble_t sec;
-    char *name = 0;
+    char *name = NULL;
     int r, flags = 0, fd = 0;
     Shell_t *shp = context->shp;
     ssize_t len = 0;
@@ -217,8 +217,8 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
     int save_prompt, fixargs = context->invariant;
     struct read_save *rp;
     int mindex = 0;
-    char *method = 0;
-    void *readfn = 0;
+    char *method = NULL;
+    void *readfn = NULL;
     static char default_prompt[3] = {ESC, ESC};
 
     rp = (struct read_save *)(context->data);
@@ -588,7 +588,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
             for (;;) {
                 c = size;
                 if (keytrap) {
-                    cp = 0;
+                    cp = NULL;
                     f = 0;
                     m = 0;
                     while (c-- > 0 && (buf[m] = ed_getchar(ep, 0))) m++;
@@ -915,7 +915,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                 np = nv_open(name, shp->var_tree, NV_VARNAME);
                 name = *++names;
             } else {
-                np = 0;
+                np = NULL;
             }
             if (c != S_NL) break;
             if (!np) goto done;

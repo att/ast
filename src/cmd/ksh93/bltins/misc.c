@@ -119,7 +119,7 @@ static_fn void noexport(Namval_t *np, void *data) {
 //
 int B_login(int argc, char *argv[], Shbltin_t *context) {
     struct checkpt *pp;
-    struct login *logp = 0;
+    struct login *logp = NULL;
     Shell_t *shp;
     const char *pname;
     if (argc) {
@@ -280,14 +280,14 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
                 // exercises this statement. I added the void cast to silence Coverity Scan 253792.
                 (void)path_search(shp, script, NULL, 0);
                 if (FETCH_VT(np->nvalue, ip)) {
-                    if (nv_isattr(np, NV_FPOSIX)) np = 0;
+                    if (nv_isattr(np, NV_FPOSIX)) np = NULL;
                 } else {
                     errormsg(SH_DICT, ERROR_exit(1), e_found, script);
                     __builtin_unreachable();
                 }
             }
         } else {
-            np = 0;
+            np = NULL;
         }
 
         if (!np) {

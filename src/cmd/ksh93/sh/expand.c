@@ -213,7 +213,7 @@ int path_generate(Shell_t *shp, struct argnod *todo, struct argnod **arghead) {
     char *cp;
     int brace;
     struct argnod *ap;
-    struct argnod *top = 0;
+    struct argnod *top = NULL;
     struct argnod *apin;
     char *pat, *rescan;
     char *format = NULL;
@@ -222,7 +222,7 @@ int path_generate(Shell_t *shp, struct argnod *todo, struct argnod **arghead) {
     char tmp[32], end[1];
 
     if (!sh_isoption(shp, SH_BRACEEXPAND)) return path_expand(shp, todo->argval, arghead);
-    todo->argchn.ap = 0;
+    todo->argchn.ap = NULL;
 again:
     apin = ap = todo;
     todo = ap->argchn.ap;

@@ -113,7 +113,7 @@ int sh_histinit(void *sh_context) {
     int fd;
     History_t *hp;
     char *histname;
-    char *fname = 0;
+    char *fname = NULL;
     int histmask, maxlines, hist_start = 0;
     char *cp;
     off_t hsize = 0;
@@ -240,7 +240,7 @@ retry:
     sfdisc(hp->histfp, &hp->histdisc);
     STORE_VT((HISTCUR)->nvalue, i32p, &hp->histind);
     sh_timeradd(1000L * (HIST_RECENT - 30), 1, hist_touch, hp->histname);
-    hp->auditfp = 0;
+    hp->auditfp = NULL;
 
     char buff[SF_BUFSIZE];
     if (!sh_isstate(shp, SH_INTERACTIVE)) return 1;
@@ -304,7 +304,7 @@ static History_t *hist_trim(History_t *hp, int n) {
     char *cp;
     int incmd = 1, c = 0;
     History_t *hist_new, *hist_old = hp;
-    char *buff, *endbuff, *tmpname = 0;
+    char *buff, *endbuff, *tmpname = NULL;
     off_t oldp, newp;
     struct stat statb;
 
@@ -726,7 +726,7 @@ void hist_list(History_t *hp, Sfio_t *outfile, off_t offset, int last, const cha
 Histloc_t hist_find(History_t *hp, char *string, int index1, int flag, int direction) {
     int index2;
     off_t offset;
-    int *coffset = 0;
+    int *coffset = NULL;
     Histloc_t location;
 
     location.hist_command = -1;

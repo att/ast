@@ -269,7 +269,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                     } else {
                         shp->st.filename = path_fullname(shp, name);
                     }
-                    sp = 0;
+                    sp = NULL;
                     if (fdin < 0 && !strchr(name, '/')) {
 #ifdef PATH_BFPATH
                         if (path_absolute(shp, name, NULL)) {
@@ -542,7 +542,7 @@ done:
 static_fn void chkmail(Shell_t *shp, char *files) {
     char *cp, *sp, *qp;
     char save;
-    struct argnod *arglist = 0;
+    struct argnod *arglist = NULL;
     int offset = stktell(shp->stk);
     char *savstak = stkptr(shp->stk, 0);
     struct stat statb;
@@ -551,7 +551,7 @@ static_fn void chkmail(Shell_t *shp, char *files) {
     sp = cp;
     do {
         // Skip to : or end of string saving first '?'.
-        for (qp = 0; *sp && *sp != ':'; sp++) {
+        for (qp = NULL; *sp && *sp != ':'; sp++) {
             if ((*sp == '?' || *sp == '%') && qp == 0) qp = sp;
         }
         save = *sp;

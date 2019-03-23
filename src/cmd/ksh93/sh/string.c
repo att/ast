@@ -156,7 +156,7 @@ int sh_lookopt(const char *sp, int *invert) {
 char *sh_substitute(Shell_t *shp, const char *string, const char *oldsp, const char *newsp) {
     const char *sp = string;
     const char *cp;
-    const char *savesp = 0;
+    const char *savesp = NULL;
 
     stkseek(shp->stk, 0);
     if (*sp == 0) return NULL;

@@ -343,7 +343,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                     int fsize = str - (char *)(*ptr);
                     const struct mathtab *tp;
                     Namval_t *nq;
-                    lvalue->fun = 0;
+                    lvalue->fun = NULL;
                     sfprintf(shp->stk, ".sh.math.%.*s%c", fsize, *ptr, 0);
                     stkseek(shp->stk, off);
                     nq = nv_search(stkptr(shp->stk, off), shp->fun_tree, 0);
@@ -413,7 +413,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                         np->nvshell = shp;
                         nv_onattr(np, NV_NOFREE | NV_LDOUBLE | NV_RDONLY);
                     } else {
-                        const struct Mathconst *mp = 0;
+                        const struct Mathconst *mp = NULL;
                         np = NULL;
                         if (strchr("ELPS12", **ptr)) {
                             for (mp = Mtable; *mp->name; mp++) {

@@ -327,7 +327,7 @@ Sfio_t *sh_iostream(Shell_t *shp, int fd, int fn) {
     if (status & IOREAD) {
         if (shp->bltinfun && shp->bltinfun != b_read && shp->bltindata.bnode &&
             !nv_isattr(shp->bltindata.bnode, BLT_SPC)) {
-            bp = 0;
+            bp = NULL;
         } else if (!(bp = malloc(IOBSIZE + 1))) {
             return NULL;
         }
@@ -1172,7 +1172,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
             }
         }
         errno = 0;
-        np = 0;
+        np = NULL;
 #if SHOPT_COSHELL
         if (shp->inpool) {
             if (!(iof & (IODOC | IOLSEEK | IOMOV))) sh_coaddfile(shp, fname);
@@ -1215,7 +1215,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     char *number = fname;
                     int f;
                     if (fd == '{') {
-                        np = 0;
+                        np = NULL;
                         number = strchr(fname, '}');
                         if (number) {
                             *number = 0;
@@ -1227,7 +1227,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                             goto fail;
                         }
                         dupfd = nv_getnum(np);
-                        np = 0;
+                        np = NULL;
                     } else {
                         dupfd = strtol(fname, &number, 10);
                     }
@@ -1812,7 +1812,7 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
 void sh_vexsave(Shell_t *shp, int fn, int fd, Spawnvex_f vexfun, void *arg) {
     Spawnvex_t *vp = shp->vexp;
     Spawnvex_t *vc = shp->vex;
-    Sfio_t *sp = 0;
+    Sfio_t *sp = NULL;
     int status, infd = fd, close = (fd == -2);
     if (!vexfun && shp->sftable[fn]) vexfun = iovex_stream;
     if (!arg) arg = shp;
@@ -2085,7 +2085,7 @@ static_fn ssize_t slowread(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *handl
     int (*readf)(void *, int, char *, int, int);
     int reedit = 0;
     size_t rsize;
-    char *xp = 0;
+    char *xp = NULL;
 
     if (sh_isoption(shp, SH_EMACS) || sh_isoption(shp, SH_GMACS)) {
         readf = ed_emacsread;
@@ -2119,7 +2119,7 @@ static_fn ssize_t slowread(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *handl
         ((char *)buff)[rsize] = '\0';
         if (xp) {
             free(xp);
-            xp = 0;
+            xp = NULL;
         }
 
         int r = hist_expand(shp, buff, &xp);

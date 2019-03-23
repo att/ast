@@ -392,7 +392,7 @@ pid_t spawnvex(const char *path, char *const argv[], char *const envv[], Spawnve
     int fd;
     posix_spawnattr_t ax;
     posix_spawn_file_actions_t fx;
-    Spawnvex_t *xev = 0;
+    Spawnvex_t *xev = NULL;
 #if _lib_spawn_mode || _lib_spawn && _mem_pgroup_inheritance
     pid_t pgid;
     int arg;
@@ -450,7 +450,7 @@ pid_t spawnvex(const char *path, char *const argv[], char *const envv[], Spawnve
         }
     } else {
         flags = 0;
-        xev = 0;
+        xev = NULL;
     }
 #if _lib_spawn_mode
     if (vex)

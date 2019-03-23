@@ -305,7 +305,7 @@ static_fn int fixnode(Namtype_t *np1, Namtype_t *np2, int i, struct Namref *nrp,
         if (nq->nvfun) {
             Namval_t *np = nv_namptr(np2->nodes, i);
             if (nv_isarray(nq)) STORE_VT(nq->nvalue, const_cp, NULL);
-            nq->nvfun = 0;
+            nq->nvfun = NULL;
             if (nv_isarray(nq) && ((flag & NV_IARRAY) || nv_type(np))) {
                 Shell_t *shp = sh_ptr(np);
                 Namval_t *last_table = shp->last_table;
@@ -361,7 +361,7 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     char *cp;
     Dt_t *root = NULL;
     Namval_t *last_table = shp->last_table;
-    struct Namref *nrp = 0;
+    struct Namref *nrp = NULL;
     Namarr_t *ap;
 
     if (flags & NV_MOVE) {
@@ -507,7 +507,7 @@ static_fn Namval_t *create_type(Namval_t *np, const void *vp, int flag, Namfun_t
                 goto found;
             }
         }
-        nq = 0;
+        nq = NULL;
     } else {
         for (i = 0; i < dp->numnodes; i++) {
             nq = nv_namptr(dp->nodes, i);
@@ -519,7 +519,7 @@ static_fn Namval_t *create_type(Namval_t *np, const void *vp, int flag, Namfun_t
             if (strlen(nq->nvname) == r && strncmp(name, nq->nvname, r) == 0) s = i;
         }
     }
-    nq = 0;
+    nq = NULL;
     if (s) {
         nq = nv_namptr(dp->nodes, s);
         n = r;
@@ -741,8 +741,9 @@ static_fn int std_disc(Namval_t *mp, Namtype_t *pp) {
     const char *sp, *cp = strrchr(mp->nvname, '.');
     const char **argv;
     int i;
+    Namval_t *np = NULL;
+    Namval_t *nq;
 
-    Namval_t *np = 0, *nq;
     if (cp) {
         cp++;
     } else {
@@ -846,9 +847,9 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
     size_t offset = 0, m;
     ssize_t n;
     char *name = 0, *cp, *sp, **help;
-    Namtype_t *pp, *qp = 0, *dp, *tp;
+    Namtype_t *pp, *qp = NULL, *dp, *tp;
     Dt_t *root = nv_dict(mp);
-    struct Namref *nrp = 0;
+    struct Namref *nrp = NULL;
     Namfun_t *fp;
 
     m = strlen(mp->nvname) + 1;
@@ -989,7 +990,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
         if (strcmp(&np->nvname[m], NV_DATA) == 0 && !nv_type(np)) {
             char *val = nv_getval(np);
             nq = nv_namptr(pp->nodes, 0);
-            nq->nvfun = 0;
+            nq->nvfun = NULL;
             nv_putval(nq, (val ? val : 0), nv_isattr(np, ~(NV_IMPORT | NV_EXPORT | NV_ARRAY)));
             nv_setattr(nq, np->nvflag | NV_NOFREE | NV_MINIMAL);
             goto skip;
@@ -1025,7 +1026,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                     mnodes[j] = bfp->bltins[j];
                 }
             }
-            qp = 0;
+            qp = NULL;
             inherit = 1;
             goto skip;
         }
@@ -1121,7 +1122,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
             if (j == 0 && (ap = nv_arrayptr(np)) && !ap->fun) j = 1;
             nq->nvfun = np->nvfun;
             nq->nvshell = np->nvshell;
-            np->nvfun = 0;
+            np->nvfun = NULL;
             nv_disc(nq, &pp->childfun.fun, DISC_OP_LAST);
             if (nq->nvfun) {
                 for (fp = nq->nvfun; fp; fp = fp->next) fp->nofree |= 1;
@@ -1540,7 +1541,7 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
     strcpy(nvtype, NV_CLASS);
     if (!(mp = nv_open(nvtype, shp->var_base, NV_NOADD | NV_VARNAME))) return 0;
     memcpy(&node, L_ARGNOD, sizeof(node));
-    L_ARGNOD->nvfun = 0;
+    L_ARGNOD->nvfun = NULL;
     STORE_VT(L_ARGNOD->nvalue, const_cp, NULL);
     dp = nv_dict(mp);
     if (indent == 0) {
@@ -1568,7 +1569,7 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
             sfprintf(out, "%.*s", strlen(cp) - 1, cp);
         }
         _nv_unset(L_ARGNOD, NV_RDONLY);
-        for (sp = 0; (sp = nv_setdisc(tp, NULL, (Namval_t *)sp, (Namfun_t *)tp));) {
+        for (sp = NULL; (sp = nv_setdisc(tp, NULL, (Namval_t *)sp, (Namfun_t *)tp));) {
             mp = (Namval_t *)nv_setdisc(tp, sp, tp, (Namfun_t *)tp);
             if (!mp || mp == tp) continue;
             cp = strrchr(mp->nvname, '.');

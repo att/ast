@@ -345,7 +345,7 @@ static_fn void nv_restore(struct subshell *sp) {
             STORE_VT(mp->nvalue, const_cp, FETCH_VT(np->nvalue, const_cp));
         }
         if (nofree && np->nvfun && !np->nvfun->nofree) free(np->nvfun);
-        np->nvfun = 0;
+        np->nvfun = NULL;
         if (nv_isattr(mp, NV_EXPORT)) {
             char *name = nv_name(mp);
             sh_envput(sp->shp, mp);
@@ -454,10 +454,10 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     int savejobpgid = job.curpgid;
     int *saveexitval = job.exitval;
     char **savsig;
-    Sfio_t *iop = 0;
+    Sfio_t *iop = NULL;
     struct checkpt buff;
     struct sh_scoped savst;
-    struct dolnod *argsav = 0;
+    struct dolnod *argsav = NULL;
     int argcnt;
 #if USE_SPAWN
     Spawnvex_t *vp;
@@ -528,7 +528,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         sp->mask = shp->mask;
         sh_stats(STAT_SUBSHELL);
         // Save trap table.
-        shp->st.otrapcom = 0;
+        shp->st.otrapcom = NULL;
         shp->st.otrap = savst.trap;
         nsig = shp->st.trapmax;
         if (nsig > 0 || shp->st.trapcom[0]) {
@@ -691,7 +691,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         if (n > 0) memset(&shp->st.trapcom[savst.trapmax], 0, n * sizeof(char *));
         shp->st = savst;
         shp->curenv = savecurenv;
-        shp->st.otrap = 0;
+        shp->st.otrap = NULL;
         if (nsig) {
             for (isig = 0; isig < nsig; ++isig) {
                 if (shp->st.trapcom[isig]) {

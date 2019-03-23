@@ -148,7 +148,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
     int mode;
     int force = 0;
     int flag, flags;
-    char *amode = 0;
+    char *amode = NULL;
     FTS *fts;
     FTSENT *ent;
     char *last;
@@ -235,7 +235,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
     if (logical) flags &= ~(FTS_COMFOLLOW | FTS_PHYSICAL);
     if (ignore) ignore = umask(0);
     if (amode) {
-        amode = 0;
+        amode = NULL;
     } else {
         amode = *argv++;
         mode = strperm(amode, &last, 0);

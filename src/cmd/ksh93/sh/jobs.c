@@ -269,7 +269,7 @@ static_fn struct jobsave *jobsave_create(pid_t pid) {
 pid_t sh_copid(struct cosh *csp) { return COPID_BIT | (csp->id << 16) | csp->cojob->id; }
 
 char *sh_pid2str(Shell_t *shp, pid_t pid) {
-    struct cosh *csp = 0;
+    struct cosh *csp = NULL;
     if (pid & COPID_BIT) {
         int id = (pid >> 16) & 0x3f;
         for (csp = job.colist; csp; csp = csp->next) {
@@ -1152,8 +1152,8 @@ no_sigqueue:
 //
 static_fn struct process *job_byname(char *name) {
     struct process *pw = job.pwlist;
-    struct process *pz = 0;
-    int *flag = 0;
+    struct process *pz = NULL;
+    int *flag = NULL;
     char *cp = name;
     int offset;
 
@@ -1778,7 +1778,8 @@ static_fn const char *job_sigmsg(Shell_t *shp, int sig) {
 // If pid is not found a -1 is returned.
 //
 static_fn int job_chksave(pid_t pid, long env) {
-    struct jobsave *jp = bck.list, *jpold = 0;
+    struct jobsave *jp = bck.list;
+    struct jobsave *jpold = NULL;
     int r = -1;
     int count = bck.count;
     struct back_save *bp = &bck;
@@ -1793,7 +1794,7 @@ again:
     if (!jp && pid && (bp = bp->prev)) {
         count = bp->count;
         jp = bp->list;
-        jpold = 0;
+        jpold = NULL;
         goto again;
     }
 

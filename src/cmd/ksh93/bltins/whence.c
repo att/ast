@@ -176,7 +176,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
     Dt_t *root;
     Namval_t *nq;
     char *notused;
-    Pathcomp_t *pp = 0;
+    Pathcomp_t *pp = NULL;
     int notrack = 1;
 
     if (flags & Q_FLAG) flags &= ~A_FLAG;
@@ -185,8 +185,8 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
         char *sp = NULL;
 
         aflag = ((flags & A_FLAG) != 0);
-        cp = 0;
-        np = 0;
+        cp = NULL;
+        np = NULL;
         if (flags & P_FLAG) goto search;
         if (flags & Q_FLAG) goto bltins;
         // Reserved words first.
@@ -217,7 +217,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                 sfputr(sfstdout, sh_fmtq(cp), '\n');
             }
             if (!aflag) continue;
-            cp = 0;
+            cp = NULL;
             aflag++;
         }
 
@@ -255,23 +255,23 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                 sfprintf(sfstdout, "%s%s\n", name, sh_translate(cp));
             }
             if (!aflag) continue;
-            cp = 0;
+            cp = NULL;
             aflag++;
         }
 
     search:
         if (sh_isstate(shp, SH_DEFPATH)) {
-            cp = 0;
+            cp = NULL;
             notrack = 1;
         }
         do {
             if (path_search(shp, name, &pp, 2 + (aflag > 1))) {
                 cp = name;
-                if ((flags & P_FLAG) && *cp != '/') cp = 0;
+                if ((flags & P_FLAG) && *cp != '/') cp = NULL;
             } else {
                 cp = stkptr(stkstd, PATH_OFFSET);
                 if (*cp == 0) {
-                    cp = 0;
+                    cp = NULL;
                 } else if (*cp != '/') {
                     tofree = true;
                     sp = path_fullname(shp, cp);
@@ -279,7 +279,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                 }
             }
             if (flags & Q_FLAG) {
-                pp = 0;
+                pp = NULL;
                 r |= !cp;
             } else if (cp) {
                 if (flags & V_FLAG) {
@@ -314,7 +314,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                     if (aflag <= 1) aflag++;
                     if (pp) pp = pp->next;
                 } else {
-                    pp = 0;
+                    pp = NULL;
                 }
                 if (tofree) {
                     free(sp);

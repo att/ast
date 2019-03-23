@@ -253,11 +253,11 @@ static_fn void glob_dir(glob_t *gp, globlist_t *ap, int re_flags) {
     int meta = ((gp->re_flags & REG_ICASE) && *ap->gl_begin != '/') ? MATCH_META : 0;
     int quote = 0;
     int savequote = 0;
-    char *restore1 = 0;
-    char *restore2 = 0;
-    regex_t *prec = 0;
-    regex_t *prei = 0;
-    char *matchdir = 0;
+    char *restore1 = NULL;
+    char *restore2 = NULL;
+    regex_t *prec = NULL;
+    regex_t *prei = NULL;
+    char *matchdir = NULL;
     int starstar = 0;
 
     if (*gp->gl_intr) {
@@ -617,7 +617,7 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
     }
     top = ap = (globlist_t *)stkalloc(
         stkstd, (optlen ? 2 : 1) * strlen(pattern) + sizeof(globlist_t) + suflen + gp->gl_extra);
-    ap->gl_next = 0;
+    ap->gl_next = NULL;
     ap->gl_flags = 0;
     ap->gl_begin = ap->gl_path + gp->gl_extra;
     // TODO: Rewrite this to utilize safer functions like strlcpy(). See issue #956.
@@ -626,7 +626,7 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
     if (optlen) {
         strlcpy(gp->gl_pat = gp->gl_opt = pat + 1, pattern, optlen);
     } else {
-        gp->gl_pat = 0;
+        gp->gl_pat = NULL;
     }
     if (!(flags & GLOB_LIST)) gp->gl_match = 0;
     re_flags = gp->re_flags;

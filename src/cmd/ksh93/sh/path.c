@@ -169,7 +169,7 @@ static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], ch
 static_fn pid_t path_xargs(Shell_t *shp, const char *path, char *argv[], char *const envp[],
                            int spawn) {
     char **av, **xv;
-    char **avlast = &argv[shp->xargmax], **saveargs = 0;
+    char **avlast = &argv[shp->xargmax], **saveargs = NULL;
     char *const *ev;
     size_t size;
     ssize_t left;
@@ -206,7 +206,7 @@ static_fn pid_t path_xargs(Shell_t *shp, const char *path, char *argv[], char *c
             if (saveargs) {
                 memcpy(av, saveargs, n);
                 free(saveargs);
-                saveargs = 0;
+                saveargs = NULL;
             }
         } else if (spawn /*&& !sh_isoption(shp,SH_PFSH)*/) {
             shp->xargexit = exitval;
@@ -273,7 +273,9 @@ skip:
 // Delete current Pathcomp_t structure.
 //
 void path_delete(Pathcomp_t *first) {
-    Pathcomp_t *pp = first, *old = 0, *ppnext;
+    Pathcomp_t *pp = first;
+    Pathcomp_t *old = NULL;
+    Pathcomp_t *ppnext;
 
     while (pp) {
         ppnext = pp->next;
@@ -380,7 +382,7 @@ Pathcomp_t *path_nextcomp(Shell_t *shp, Pathcomp_t *pp, const char *name, Pathco
     stkseek(shp->stk, PATH_OFFSET);
 
     if (*name == '/') {
-        pp = 0;
+        pp = NULL;
     } else {
         for (; pp && pp != last; pp = ppnext) {
             ppnext = pp->next;
@@ -591,7 +593,7 @@ static_fn void funload(Shell_t *shp, int fno, const char *name) {
 bool path_search(Shell_t *shp, const char *name, Pathcomp_t **oldpp, int flag) {
     Namval_t *np;
     int fno;
-    Pathcomp_t *pp = 0;
+    Pathcomp_t *pp = NULL;
 
     assert(name);
     if (strchr(name, '/')) {
@@ -739,7 +741,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                 if (fp) {
                     *fp++ = 0;
                     oldpp->blib = fp;
-                    fp = 0;
+                    fp = NULL;
                 } else {
                     fp = oldpp->bbuf;
                     oldpp->blib = oldpp->bbuf = 0;
@@ -901,7 +903,8 @@ char *path_relative(Shell_t *shp, const char *file) {
 void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *local) {
     char **envp;
     const char *opath;
-    Pathcomp_t *libpath, *pp = 0;
+    Pathcomp_t *libpath;
+    Pathcomp_t *pp = NULL;
     int slash = 0;
     int not_executable = 0;
 
@@ -1196,7 +1199,7 @@ static_fn void exscript(Shell_t *shp, char *path, char *argv[], char *const *env
     static char name[] = "/tmp/euidXXXXXXXXXX";
     int n;
     uid_t euserid;
-    char *savet = 0;
+    char *savet = NULL;
     struct stat statb;
     int err = 0;
 
@@ -1302,7 +1305,7 @@ static_fn Pathcomp_t *path_addcomp(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *
             return first;
         }
     }
-    for (pp = first, oldpp = 0; pp; oldpp = pp, pp = pp->next) {
+    for (pp = first, oldpp = NULL; pp; oldpp = pp, pp = pp->next) {
         ;  // empty loop
     }
     pp = calloc(1, sizeof(Pathcomp_t) + len + 1);
@@ -1417,7 +1420,7 @@ static_fn bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, P
 
 Pathcomp_t *path_addpath(Shell_t *shp, Pathcomp_t *first, const char *path, int type) {
     const char *cp;
-    Pathcomp_t *old = 0;
+    Pathcomp_t *old = NULL;
     int offset = stktell(shp->stk);
     char *savptr;
 
@@ -1526,7 +1529,8 @@ void path_newdir(Shell_t *shp, Pathcomp_t *first) {
 
 Pathcomp_t *path_unsetfpath(Shell_t *shp) {
     Pathcomp_t *first = shp->pathlist;
-    Pathcomp_t *pp = first, *old = 0;
+    Pathcomp_t *pp = first;
+    Pathcomp_t *old = NULL;
 
     if (shp->fpathdict) {
         struct Ufunction *rp, *rpnext;

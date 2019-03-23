@@ -471,7 +471,7 @@ again:
 }
 
 static bool delete_and_add(const char *name, struct Complete *comp) {
-    struct Complete *old = 0;
+    struct Complete *old = NULL;
     Dt_t *compdict = shgd->ed_context->compdict;
 
     if (compdict && (old = (struct Complete *)dtmatch(compdict, name))) {
