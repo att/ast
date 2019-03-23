@@ -34,6 +34,7 @@
 #endif
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "defs.h"
 #include "error.h"
 #include "lexstates.h"
@@ -576,22 +577,22 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
             sfwrite(stkstd, bp, cp - bp - 1);
             sfputc(stkstd, '\'');
         } else {
-            if (!fold) {
-                sfwrite(stkstd, bp, cp - bp);
-            } else {
-                n = fold;
-                cp = bp;
-                while ((c = mb1char((char **)&cp))) {
-                    if (--n <= 0) {
-                        n = fold;
-                        sfwrite(stkstd, bp, --cp - bp);
-                        bp = cp;
-                        sfwrite(stkstd, "\\\n", 2);
-                    }
+            // If you look at the `if()` conditions at the top of this function you'll see that it
+            // should be impossible to reach this point with `fold == 0`.
+            assert(fold);
+            n = fold;
+            cp = bp;
+            while ((c = mb1char((char **)&cp))) {
+                if (--n <= 0) {
+                    n = fold;
+                    sfwrite(stkstd, bp, --cp - bp);
+                    bp = cp;
+                    sfwrite(stkstd, "\\\n", 2);
                 }
-                sfwrite(stkstd, bp, cp - bp - 1);
             }
+            sfwrite(stkstd, bp, cp - bp - 1);
         }
+
         if (c) {
             sfputc(stkstd, '\\');
             sfputc(stkstd, '\n');
