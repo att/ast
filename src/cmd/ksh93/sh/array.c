@@ -1204,164 +1204,199 @@ int nv_aimax(Namval_t *np) {
     return sub;
 }
 
+static_fn void *nv_assoc_op_init(Namval_t *np, const char *sp) {
+    UNUSED(sp);
+    Shell_t *shp = sh_ptr(np);
+    struct assoc_array *ap = (struct assoc_array *)nv_arrayptr(np);
+
+    assert(!ap);
+    ap = calloc(1, sizeof(struct assoc_array));
+    assert(ap);
+    ap->namarr.table = dtopen(&_Nvdisc, Dtoset);
+    dtuserdata(ap->namarr.table, shp, 1);
+    ap->cur = NULL;
+    ap->pos = NULL;
+    ap->namarr.namfun.disc = &array_disc;
+    nv_disc(np, (Namfun_t *)ap, DISC_OP_FIRST);
+    ap->namarr.namfun.dsize = sizeof(struct assoc_array);
+    ap->namarr.namfun.nofree &= ~1;
+    return ap;
+}
+
+static_fn void *nv_assoc_op_delete(Namval_t *np, const char *sp) {
+    UNUSED(sp);
+    struct assoc_array *ap = (struct assoc_array *)nv_arrayptr(np);
+
+    assert(ap);
+    if (ap->cur) {
+        Dt_t *scope = ap->namarr.scope;
+        if (!scope || scope == ap->namarr.table || !nv_search(ap->cur->nvname, scope, 0)) {
+            ap->namarr.nelem--;
+        }
+        _nv_unset(ap->cur, NV_RDONLY);
+        nv_delete(ap->cur, ap->namarr.table, 0);
+        ap->cur = 0;
+    }
+    return ap;
+}
+
+static_fn void *nv_assoc_op_free(Namval_t *np, const char *sp) {
+    UNUSED(sp);
+    struct assoc_array *ap = (struct assoc_array *)nv_arrayptr(np);
+
+    assert(ap);
+    ap->pos = NULL;
+    if (ap->namarr.scope) {
+        ap->namarr.table = dtview(ap->namarr.table, NULL);
+        dtclose(ap->namarr.scope);
+        ap->namarr.scope = NULL;
+    } else {
+        if (ap->namarr.nelem == 0 && (ap->cur = nv_search("0", ap->namarr.table, 0))) {
+            nv_associative(np, NULL, ASSOC_OP_DELETE);
+        }
+        dtclose(ap->namarr.table);
+        ap->namarr.table = NULL;
+    }
+    return ap;
+}
+
+static_fn void *nv_assoc_op_next(Namval_t *np, const char *sp) {
+    UNUSED(sp);
+    struct assoc_array *ap = (struct assoc_array *)nv_arrayptr(np);
+
+    assert(ap);
+    if (!ap->pos) {
+        if ((ap->namarr.flags & ARRAY_NOSCOPE) && ap->namarr.scope && dtvnext(ap->namarr.table)) {
+            ap->namarr.scope = dtvnext(ap->namarr.table);
+            ap->namarr.table->view = 0;
+        }
+        if (!(ap->pos = ap->cur)) ap->pos = dtfirst(ap->namarr.table);
+    } else {
+        ap->pos = ap->nextpos;
+    }
+    for (; (ap->cur = ap->pos); ap->pos = ap->nextpos) {
+        ap->nextpos = dtnext(ap->namarr.table, ap->pos);
+        if (!nv_isnull(ap->cur)) {
+            if ((ap->namarr.flags & ARRAY_NOCHILD) && nv_isattr(ap->cur, NV_CHILD)) {
+                continue;
+            }
+            return ap;
+        }
+    }
+    if ((ap->namarr.flags & ARRAY_NOSCOPE) && ap->namarr.scope && !dtvnext(ap->namarr.table)) {
+        ap->namarr.table->view = ap->namarr.scope;
+        ap->namarr.scope = ap->namarr.table;
+    }
+    return NULL;
+}
+
+static_fn void *nv_assoc_op_setsub(Namval_t *np, const char *sp) {
+    struct assoc_array *ap = (struct assoc_array *)nv_arrayptr(np);
+
+    assert(ap);
+    ap->cur = (Namval_t *)sp;
+    return ap->cur;
+}
+
+static_fn void *nv_assoc_op_current(Namval_t *np, const char *sp) {
+    UNUSED(sp);
+    struct assoc_array *ap = (struct assoc_array *)nv_arrayptr(np);
+
+    assert(ap);
+    if (ap->cur) ap->cur->nvenv = np;
+    return ap->cur;
+}
+
+static_fn void *nv_assoc_op_name(Namval_t *np, const char *sp) {
+    UNUSED(sp);
+    Shell_t *shp = sh_ptr(np);
+    struct assoc_array *ap = (struct assoc_array *)nv_arrayptr(np);
+
+    assert(ap);
+    if (ap->cur) {
+        if (!shp->instance && nv_isnull(ap->cur)) return NULL;
+        return ap->cur->nvname;
+    }
+    return NULL;
+}
+
+static_fn void *nv_assoc_op_add(Namval_t *np, const char *sp, bool add) {
+    struct assoc_array *ap = (struct assoc_array *)nv_arrayptr(np);
+
+    assert(ap);
+    if (sp) {
+        Shell_t *shp = sh_ptr(np);
+        Namval_t *mp = NULL;
+        ap->cur = NULL;
+        if (sp == (char *)np) return NULL;
+        int type = nv_isattr(np, ~(NV_NOFREE | NV_ARRAY | NV_CHILD | NV_MINIMAL));
+        int mode = 0;
+        if (add) {
+            mode = NV_ADD | NV_NOSCOPE;
+        } else if (ap->namarr.flags & ARRAY_NOSCOPE) {
+            mode = NV_NOSCOPE;
+        }
+        if (*sp == 0 && sh_isoption(shp, SH_XTRACE) && add) {
+            errormsg(SH_DICT, ERROR_warn(0), "adding empty subscript");
+        }
+        if (shp->subshell && (mp = nv_search(sp, ap->namarr.table, 0)) && nv_isnull(mp)) {
+            ap->cur = mp;
+        }
+        if ((mp || (mp = nv_search(sp, ap->namarr.table, mode))) && nv_isnull(mp) && add) {
+            mp->nvshell = np->nvshell;
+            nv_onattr(mp, type);
+            mp->nvenv = np;
+            if (add && nv_type(np)) nv_arraychild(np, mp, 0);
+            if (shp->subshell) sh_assignok(np, 1);
+            if (type & NV_INTEGER) {
+                nv_onattr(mp, NV_NOTSET);
+            } else if (!ap->namarr.scope || !nv_search(sp, dtvnext(ap->namarr.table), 0)) {
+                ap->namarr.nelem++;
+            }
+            if (nv_isnull(mp)) {
+                if (ap->namarr.flags & ARRAY_TREE) nv_setvtree(mp);
+                STORE_VT(mp->nvalue, const_cp, Empty);
+            }
+        } else if (ap->namarr.flags & ARRAY_SCAN) {
+            Namval_t fake;
+            memset(&fake, 0, sizeof(fake));
+            fake.nvname = (char *)sp;
+            ap->pos = mp = dtprev(ap->namarr.table, &fake);
+            ap->nextpos = dtnext(ap->namarr.table, mp);
+        } else if (!mp && *sp && mode == 0) {
+            mp = nv_search(sp, ap->namarr.table, NV_ADD | NV_NOSCOPE);
+            assert(mp);
+            if (!FETCH_VT(mp->nvalue, const_cp)) mp->nvsize |= 1;
+        }
+        np = mp;
+        if (ap->pos && ap->pos == np) {
+            ap->namarr.flags |= ARRAY_SCAN;
+        } else if (!(ap->namarr.flags & ARRAY_SCAN)) {
+            ap->pos = NULL;
+        }
+        ap->cur = np;
+    }
+    if (ap->cur) return &ap->cur->nvalue;
+
+    static struct Value dummy_value;
+    STORE_VT(dummy_value, cp, NULL);
+    return &dummy_value;
+}
+
 //
 // This is the default implementation for associative arrays.
 //
 void *nv_associative(Namval_t *np, const char *sp, Nvassoc_op_t op) {
-    Shell_t *shp = sh_ptr(np);
-    struct assoc_array *ap = (struct assoc_array *)nv_arrayptr(np);
-    int type;
-
-    switch (op.val) {
-        case ASSOC_OP_INIT_val: {
-            ap = calloc(1, sizeof(struct assoc_array));
-            if (ap) {
-                ap->namarr.table = dtopen(&_Nvdisc, Dtoset);
-                dtuserdata(ap->namarr.table, shp, 1);
-                ap->cur = NULL;
-                ap->pos = NULL;
-                ap->namarr.namfun.disc = &array_disc;
-                nv_disc(np, (Namfun_t *)ap, DISC_OP_FIRST);
-                ap->namarr.namfun.dsize = sizeof(struct assoc_array);
-                ap->namarr.namfun.nofree &= ~1;
-            }
-            return ap;
-        }
-        case ASSOC_OP_DELETE_val: {
-            if (ap->cur) {
-                Dt_t *scope = ap->namarr.scope;
-                if (!scope || scope == ap->namarr.table || !nv_search(ap->cur->nvname, scope, 0)) {
-                    ap->namarr.nelem--;
-                }
-                _nv_unset(ap->cur, NV_RDONLY);
-                nv_delete(ap->cur, ap->namarr.table, 0);
-                ap->cur = 0;
-            }
-            return ap;
-        }
-        case ASSOC_OP_FREE_val: {
-            ap->pos = NULL;
-            if (ap->namarr.scope) {
-                ap->namarr.table = dtview(ap->namarr.table, NULL);
-                dtclose(ap->namarr.scope);
-                ap->namarr.scope = NULL;
-            } else {
-                if (ap->namarr.nelem == 0 && (ap->cur = nv_search("0", ap->namarr.table, 0))) {
-                    nv_associative(np, NULL, ASSOC_OP_DELETE);
-                }
-                dtclose(ap->namarr.table);
-                ap->namarr.table = NULL;
-            }
-            return ap;
-        }
-        case ASSOC_OP_NEXT_val: {
-            if (!ap->pos) {
-                if ((ap->namarr.flags & ARRAY_NOSCOPE) && ap->namarr.scope &&
-                    dtvnext(ap->namarr.table)) {
-                    ap->namarr.scope = dtvnext(ap->namarr.table);
-                    ap->namarr.table->view = 0;
-                }
-                if (!(ap->pos = ap->cur)) ap->pos = dtfirst(ap->namarr.table);
-            } else {
-                ap->pos = ap->nextpos;
-            }
-            for (; (ap->cur = ap->pos); ap->pos = ap->nextpos) {
-                ap->nextpos = dtnext(ap->namarr.table, ap->pos);
-                if (!nv_isnull(ap->cur)) {
-                    if ((ap->namarr.flags & ARRAY_NOCHILD) && nv_isattr(ap->cur, NV_CHILD)) {
-                        continue;
-                    }
-                    return ap;
-                }
-            }
-            if ((ap->namarr.flags & ARRAY_NOSCOPE) && ap->namarr.scope &&
-                !dtvnext(ap->namarr.table)) {
-                ap->namarr.table->view = ap->namarr.scope;
-                ap->namarr.scope = ap->namarr.table;
-            }
-            return NULL;
-        }
-        case ASSOC_OP_SETSUB_val: {
-            assert(ap);
-            ap->cur = (Namval_t *)sp;
-            return ap->cur;
-        }
-        case ASSOC_OP_CURRENT_val: {
-            assert(ap);
-            if (ap->cur) ap->cur->nvenv = np;
-            return ap->cur;
-        }
-        case ASSOC_OP_NAME_val: {
-            assert(ap);
-            if (ap->cur) {
-                if (!shp->instance && nv_isnull(ap->cur)) return NULL;
-                return ap->cur->nvname;
-            }
-            return NULL;
-        }
-        case ASSOC_OP_ADD_val:
-        case ASSOC_OP_ADD2_val: {
-            assert(ap);
-            if (sp) {
-                Namval_t *mp = NULL;
-                ap->cur = NULL;
-                if (sp == (char *)np) return NULL;
-                type = nv_isattr(np, ~(NV_NOFREE | NV_ARRAY | NV_CHILD | NV_MINIMAL));
-                int mode = 0;
-                if (op.val == ASSOC_OP_ADD_val) {
-                    mode = NV_ADD | NV_NOSCOPE;
-                } else if (ap->namarr.flags & ARRAY_NOSCOPE) {
-                    mode = NV_NOSCOPE;
-                }
-                if (*sp == 0 && sh_isoption(shp, SH_XTRACE) && op.val == ASSOC_OP_ADD_val) {
-                    errormsg(SH_DICT, ERROR_warn(0), "adding empty subscript");
-                }
-                if (shp->subshell && (mp = nv_search(sp, ap->namarr.table, 0)) && nv_isnull(mp)) {
-                    ap->cur = mp;
-                }
-                if ((mp || (mp = nv_search(sp, ap->namarr.table, mode))) && nv_isnull(mp) &&
-                    op.val == ASSOC_OP_ADD_val) {
-                    mp->nvshell = np->nvshell;
-                    nv_onattr(mp, type);
-                    mp->nvenv = np;
-                    if (op.val == ASSOC_OP_ADD_val && nv_type(np)) nv_arraychild(np, mp, 0);
-                    if (shp->subshell) sh_assignok(np, 1);
-                    if (type & NV_INTEGER) {
-                        nv_onattr(mp, NV_NOTSET);
-                    } else if (!ap->namarr.scope || !nv_search(sp, dtvnext(ap->namarr.table), 0)) {
-                        ap->namarr.nelem++;
-                    }
-                    if (nv_isnull(mp)) {
-                        if (ap->namarr.flags & ARRAY_TREE) nv_setvtree(mp);
-                        STORE_VT(mp->nvalue, const_cp, Empty);
-                    }
-                } else if (ap->namarr.flags & ARRAY_SCAN) {
-                    Namval_t fake;
-                    memset(&fake, 0, sizeof(fake));
-                    fake.nvname = (char *)sp;
-                    ap->pos = mp = dtprev(ap->namarr.table, &fake);
-                    ap->nextpos = dtnext(ap->namarr.table, mp);
-                } else if (!mp && *sp && mode == 0) {
-                    mp = nv_search(sp, ap->namarr.table, NV_ADD | NV_NOSCOPE);
-                    assert(mp);
-                    if (!FETCH_VT(mp->nvalue, const_cp)) mp->nvsize |= 1;
-                }
-                np = mp;
-                if (ap->pos && ap->pos == np) {
-                    ap->namarr.flags |= ARRAY_SCAN;
-                } else if (!(ap->namarr.flags & ARRAY_SCAN)) {
-                    ap->pos = NULL;
-                }
-                ap->cur = np;
-            }
-            if (ap->cur) return &ap->cur->nvalue;
-
-            static struct Value dummy_value;
-            STORE_VT(dummy_value, cp, NULL);
-            return &dummy_value;
-        }
-        default: { abort(); }
-    }
+    if (op.val == ASSOC_OP_INIT_val) return nv_assoc_op_init(np, sp);
+    if (op.val == ASSOC_OP_DELETE_val) return nv_assoc_op_delete(np, sp);
+    if (op.val == ASSOC_OP_FREE_val) return nv_assoc_op_free(np, sp);
+    if (op.val == ASSOC_OP_NEXT_val) return nv_assoc_op_next(np, sp);
+    if (op.val == ASSOC_OP_SETSUB_val) return nv_assoc_op_setsub(np, sp);
+    if (op.val == ASSOC_OP_CURRENT_val) return nv_assoc_op_current(np, sp);
+    if (op.val == ASSOC_OP_NAME_val) return nv_assoc_op_name(np, sp);
+    if (op.val == ASSOC_OP_ADD_val) return nv_assoc_op_add(np, sp, true);
+    if (op.val == ASSOC_OP_ADD2_val) return nv_assoc_op_add(np, sp, false);
+    abort();
 }
 
 //
