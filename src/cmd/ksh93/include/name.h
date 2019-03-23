@@ -160,11 +160,6 @@ struct Value {
 
 #endif
 
-#define dprint_vt(value_obj)                                                                \
-    DPRINTF("stored value type \"%s\" @ %s:%d in %s()", value_type_names[(value_obj).type], \
-            (value_obj).filename ? (value_obj).filename : "undef", (value_obj).line_num,    \
-            (value_obj).funcname ? (value_obj).funcname : "undef")
-
 #define dprint_vtp(value_objp)                                                                 \
     DPRINTF("stored value type \"%s\" @ %s:%d in %s()", value_type_names[(value_objp)->type],  \
             (value_objp)->filename ? (value_objp)->filename : "undef", (value_objp)->line_num, \
