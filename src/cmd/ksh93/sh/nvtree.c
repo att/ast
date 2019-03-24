@@ -429,6 +429,7 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
         fp = NULL;
         typep = NULL;
     }
+
     if (!fp && !nv_isattr(np, ~(NV_MINIMAL | NV_NOFREE))) {
         if (prefix && *prefix) {
             if (nv_isvtree(np)) {
@@ -468,7 +469,15 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
         for (tp = shtab_attributes; *tp->sh_name; tp++) {
             val = tp->sh_number;
             mask = val;
-            if (fp && (val & NV_INTEGER)) break;
+
+            // Coverity CID 253748 points out that `fp` is always NULL at this juncture. Empirical
+            // testing (e.g., by adding debug printf() calls) confirms that assertion. This bug
+            // exists in the ksh93u+ release. For the moment just comment out the unreachable
+            // `break` statement. Like so much of the name/value code this function needs to be
+            // refactored to make the logic clearer.
+            //
+            // if (fp && (val & NV_INTEGER)) break;
+
             // The following test is needed to prevent variables with E attribute from being given
             // the F attribute as well.
             if (val == NV_DOUBLE && (attr & (NV_EXPNOTE | NV_HEXFLOAT))) continue;
