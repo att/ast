@@ -19,18 +19,22 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Bell Laboratories
- *
- * return ls -l style file mode string given file mode bits
- * if external!=0 then mode is modex canonical
- */
+//
+// Glenn Fowler
+// AT&T Bell Laboratories
+//
+// Return ls -l style file mode string given file mode bits
+// if external!=0 then mode is modex canonical
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "modelib.h"
 #include "modex.h"
 
+//
+// This function always returns same static buffer.
+// It should be used with care.
+//
 char *fmtmode(int mode, int external) {
     char *s;
     struct modeop *p;
