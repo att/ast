@@ -2725,6 +2725,7 @@ again:
                     if (style == STYLE_posix && y) sfputc(sp, ':');
                 } else {
                     if (style >= STYLE_match) {
+                        assert(sp_body);
                         sfputc(sp_body, '\n');
                         if (!head) {
                             head = 1;
