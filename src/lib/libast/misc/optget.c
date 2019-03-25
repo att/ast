@@ -2902,6 +2902,7 @@ again:
                                 t = ov + ol;
                                 while (ov < t) {
                                     if (((c = *ov++) == ':' || c == '?') && *ov == c) ov++;
+                                    assert(sp_info);
                                     sfputc(sp_info, c);
                                 }
                                 sfprintf(sp_info, "\b %s.", T(NULL, ID, "is assumed"));
