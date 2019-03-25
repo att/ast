@@ -152,7 +152,7 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
                 opt_info.arg = key;
             } else {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                opt_info.arg = 0;
+                opt_info.arg = NULL;
                 flag = '?';
             }
             *(options = value) = flag;
@@ -177,14 +177,17 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
                     __builtin_unreachable();
                 }
             }
-            opt_info.arg = 0;
+            opt_info.arg = NULL;
             options = value;
             *options = '?';
             r = 1;
             opt_info.offset = 0;
             break;
         }
-        default: { options = opt_info.option + (*opt_info.option != '+'); }
+        default: {
+            options = opt_info.option + (*opt_info.option != '+');
+            break;
+        }
     }
     if (r < 0) r = 0;
     error_info.context->flags &= ~ERROR_SILENT;

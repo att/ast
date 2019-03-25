@@ -1450,6 +1450,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
         if (nv_isattr(np, NV_DOUBLE) == NV_DOUBLE) {
             if (nv_isattr(np, NV_LONG) && sizeof(double) < sizeof(Sfdouble_t)) {
                 Sfdouble_t ld, old = 0;
+                assert(vp);
                 if (flags & NV_INTEGER) {
                     if (flags & NV_LONG) {
                         ld = *(Sfdouble_t *)vp;
