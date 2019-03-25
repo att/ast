@@ -549,7 +549,12 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
         } else if (q & 1) {
             sfputc(stkstd, '\'');
             cp = bp;
-            n = fold ? (fold - 2) : 0;
+            // If you look at the `if()` conditions at the top of this function you'll see that it
+            // should be impossible to reach this point with `fold == 0`. Coverity CID 253764.
+            //
+            // n = fold ? (fold - 2) : 0;
+            assert(fold);
+            n = fold - 2;
             while ((c = mb1char((char **)&cp))) {
                 if (c == '\n') {
                     n = fold - 1;
