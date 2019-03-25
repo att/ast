@@ -19,24 +19,24 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Bell Laboratories
- *
- * return strperm() expression for perm
- */
+//
+// Glenn Fowler
+// AT&T Bell Laboratories
+//
+// Return strperm() expression for perm
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <sys/stat.h>
 
+// This function always returns same static buffer
 char *fmtperm(int perm) {
     static char strbuf[32];
     char *s = strbuf;
 
-    /*
-     * u
-     */
-
+    //
+    //  User permissions
+    //
     *s++ = 'u';
     *s++ = '=';
     if (perm & S_ISVTX) *s++ = 't';
@@ -46,10 +46,9 @@ char *fmtperm(int perm) {
     if (perm & S_IXUSR) *s++ = 'x';
     if ((perm & (S_ISGID | S_IXGRP)) == S_ISGID) *s++ = 'l';
 
-    /*
-     * g
-     */
-
+    //
+    // Group Permissions
+    //
     *s++ = ',';
     *s++ = 'g';
     *s++ = '=';
@@ -58,10 +57,9 @@ char *fmtperm(int perm) {
     if (perm & S_IWGRP) *s++ = 'w';
     if (perm & S_IXGRP) *s++ = 'x';
 
-    /*
-     * o
-     */
-
+    //
+    // Other permissions
+    //
     *s++ = ',';
     *s++ = 'o';
     *s++ = '=';
