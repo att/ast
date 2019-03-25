@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "ast_assert.h"
 #include "sfhdr.h"
 #include "sfio.h"
 
@@ -166,6 +167,11 @@ ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
                         f->extent = f->here;
                     }
                 } else if ((f->flags & SF_SHARE) && !(f->flags & SF_PUBLIC)) {
+                    // Coverity CID 279472 warned that we might pass a negative value to sfseek().
+                    // In practice that can't happen. But due to how poorly structured the code is
+                    // tools like Coverity don't know that it can't happen. In any event it's
+                    // probably a good idea add an assert to guarantee it doesn't happen.
+                    assert(f->here >= 0);
                     f->here = SFSK(f, f->here, SEEK_SET, dc);
                 }
             }
