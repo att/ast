@@ -19,27 +19,27 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * return printf(3) format signature given format string
- * the format signature contains one char per format optionally preceded
- * by the number of `*' args
- *	c	char
- *	d	double
- *	D	long double
- *	f	float
- *	h	short
- *	i	int
- *	j	long long
- *	l	long
- *	p	void*
- *	s	string
- *	t	ptrdiff_t
- *	z	size_t
- *	?	unknown
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// return printf(3) format signature given format string
+// the format signature contains one char per format optionally preceded
+// by the number of `*' args
+//	c	char
+//	d	double
+//	D	long double
+//	f	float
+//	h	short
+//	i	int
+//	j	long long
+//	l	long
+//	p	void*
+//	s	string
+//	t	ptrdiff_t
+//	z	size_t
+//	?	unknown
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
@@ -48,6 +48,8 @@
 #include "ast.h"
 #include "sfio.h"
 
+// This function is used to check that trasnlated strings have same printf format as the original
+// string
 char *fmtfmt(const char *as) {
     char *s = (char *)as;
     char *buf;
