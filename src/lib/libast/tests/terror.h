@@ -445,6 +445,11 @@ struct IntegerToStringTest {
     const char *expected_result;
 };
 
+struct StringToIntegerTest {
+    const char *input;
+    int expected_result;
+};
+
 // Test conversion of string
 struct StringToStringTest {
     char *input;
