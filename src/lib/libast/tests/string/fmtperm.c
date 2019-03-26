@@ -21,8 +21,10 @@ tmain() {
         actual_result = fmtperm(tests[i].input);
 
         if (strcmp(actual_result, tests[i].expected_result)) {
-            terror("fmtperm() failed :: Failed to convert mode to string :: Actual Result : %s, Expected Result : %s",
-                    actual_result, tests[i].expected_result);
+            terror(
+                "fmtperm() failed :: Failed to convert mode to string :: Actual Result : %s, "
+                "Expected Result : %s",
+                actual_result, tests[i].expected_result);
         }
     }
 
