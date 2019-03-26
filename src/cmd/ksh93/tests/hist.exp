@@ -48,7 +48,9 @@ expect_prompt
 # `hist echo` finds last echo command
 log_test_entry
 send "hist echo\r"
-send [ctrl D]
+# Give `ed` time to start then quit it which will cause the last echo command to be run.
+sleep 0.1
+send "q\r"
 expect -re "bye world\r\n" {
     puts "hist echo finds last echo command"
 }
