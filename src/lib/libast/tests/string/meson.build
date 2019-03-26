@@ -1,7 +1,7 @@
 string_test_files = [ 'base64.c', 'chresc.c', 'fmtbase.c', 'fmtesc.c',
                       'fmtelapsed.c', 'fmtfmt.c', 'fmtint.c', 'fmtmode.c',
                       'fmtperm.c', 'fmtscale.c', 'fmttmx.c', 'strelapsed.c',
-                      'stresc.c', 'strlcat.c', 'fmtre.c', 'utf.c' ]
+                      'stresc.c', 'strlcat.c', 'strlcpy.c', 'fmtre.c', 'utf.c' ]
 
 incdir = include_directories('..',
                              '../../include/')
