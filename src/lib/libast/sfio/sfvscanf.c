@@ -201,8 +201,6 @@ static_fn int _sfwaccept(wchar_t wc, Accept_t *ac) {
     return !ac->yes;
 }
 
-#define SFgetwc(sc, wc, fmt, ac, mbs) _sfgetwc(sc, wc, fmt, ac, (void *)(mbs))
-
 static_fn int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, void *mbs) {
     int n, v;
     char b[16]; /* assuming that MB_CUR_MAX <= 16! */
@@ -233,21 +231,22 @@ static_fn int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, void *mbs
             b[n++] = v;
         }
 
-        if (mbrtowc(wc, b, n, (mbstate_t *)mbs) == (size_t)(-1)) {
-            goto no_match;  // malformed multi-byte char
-        } else {            // multi-byte char converted successfully
-            if (fmt == 'c') {
-                return 1;
-            } else if (fmt == 's') {
-                if (n > 1 || (n == 1 && !isspace(b[0]))) return 1;
-            } else if (fmt == '[') {
-                if (n == 1 && ac->ok[b[0]]) return 1;
-                if (n > 1 && _sfwaccept(*wc, ac)) return 1;
-                goto no_match;
-            } else {  // if(fmt == '1') match a single wchar_t
-                if (*wc == ac->wc) return 1;
-                goto no_match;
-            }
+        size_t rv = mbrtowc(wc, b, n, mbs);
+        if (rv == (size_t)(-1)) goto no_match;  // malformed multi-byte char
+        if (rv == (size_t)(-2)) continue;       // incomplete multi-byte char
+
+        // Multi-byte char converted successfully.
+        if (fmt == 'c') {
+            return 1;
+        } else if (fmt == 's') {
+            if (n > 1 || (n == 1 && !isspace(b[0]))) return 1;
+        } else if (fmt == '[') {
+            if (n == 1 && ac->ok[b[0]]) return 1;
+            if (n > 1 && _sfwaccept(*wc, ac)) return 1;
+            goto no_match;
+        } else {  // if(fmt == '1') match a single wchar_t
+            if (*wc == ac->wc) return 1;
+            goto no_match;
         }
     }
 
@@ -342,7 +341,7 @@ loop_fmt:
                     acc.wc = wc;
                     SCinit(&scd, 0);
                     SFMBCLR(&mbs);
-                    v = SFgetwc(&scd, &wc, '1', &acc, &mbs);
+                    v = _sfgetwc(&scd, &wc, '1', &acc, &mbs);
                     SCend(&scd, 0);
                     if (v == 0) goto pop_fmt;
                     form += n - 1;
@@ -925,7 +924,7 @@ loop_fmt:
                 SCinit(&scd, 0);
                 SFMBCLR(&mbs);
                 for (; width > 0; --width) {
-                    if (SFgetwc(&scd, &wc, fmt, &acc, &mbs) == 0) break;
+                    if (_sfgetwc(&scd, &wc, fmt, &acc, &mbs) == 0) break;
                     if ((n += 1) <= size) *argv.ws++ = wc;
                 }
                 SCend(&scd, 0);
