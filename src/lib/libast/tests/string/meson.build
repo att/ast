@@ -1,18 +1,16 @@
-string_test_files = [ 'base64.c', 'chresc.c', 'fmtbase.c', 'fmtesc.c',
-                      'fmtelapsed.c', 'fmtfmt.c', 'fmtint.c', 'fmtmode.c',
-                      'fmtperm.c', 'fmtscale.c', 'fmttmx.c', 'fmtre.c',
-                      'strelapsed.c', 'stresc.c', 'strlcat.c', 'strlcpy.c',
-                      'strmatch.c', 'strperm.c', 'strsort.c', 'strtonll.c',
-                      'struniq.c', 'utf.c' ]
+test_dir = meson.current_source_dir()
+tests = ['base64', 'chresc', 'fmtbase', 'fmtesc', 'fmtelapsed', 'fmtfmt', 'fmtint', 'fmtmode',
+         'fmtperm', 'fmtre', 'fmtscale', 'fmttmx', 'strelapsed', 'stresc', 'strlcat',
+         'strlcpy', 'strmatch', 'strperm', 'strsort', 'strtonll', 'struniq', 'utf']
 
-incdir = include_directories('..',
-                             '../../include/')
+incdir = include_directories('..', '../../include/')
 
-foreach file: string_test_files
+foreach test_name: tests
     test_target = executable(
-        'string_' + file, file, c_args: shared_c_args,
+        test_name, test_name + '.c',
+        c_args: shared_c_args,
         include_directories: [configuration_incdir, incdir],
         link_with: [libast, libenv],
         install: false)
-    test('API/string/' + file, test_target)
+    test('API/string/' + test_name, ksh_exe, args: [test_driver, test_target, test_dir])
 endforeach

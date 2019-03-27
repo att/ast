@@ -1,15 +1,14 @@
-aso_test_files =['taso.c', 'tlock.c']
+test_dir = meson.current_source_dir()
+tests = ['taso', 'tlock']
 
-incdir = include_directories('..',
-                             '../../include/')
+incdir = include_directories('..', '../../include/')
 
-foreach file: aso_test_files
-    test_target = executable('aso_' + file, file, c_args: shared_c_args,
-                             include_directories: [configuration_incdir, incdir],
-                             link_with: [libast, libenv],
-                             link_args: ['-lpthread'],
-                             install: false)
-    # TODO: Figure out how to make these tests more efficient so we don't need such an absurdly long
-    # timeout in order to keep these tests from timing out on OpenBSD. See issue #483.
-    test('API/aso/' + file, test_target)
+foreach test_name: tests
+    test_target = executable(
+        test_name, test_name + '.c',
+        c_args: shared_c_args,
+        include_directories: [configuration_incdir, incdir],
+        link_with: [libast, libenv],
+        install: false)
+    test('API/aso/' + test_name, ksh_exe, args: [test_driver, test_target, test_dir])
 endforeach

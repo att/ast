@@ -1,11 +1,12 @@
-string_test_files = [ 'opt.c', 'strelapsed.c' ]
+test_dir = meson.current_source_dir()
+tests = ['opt']
 
-incdir = include_directories('..',
-                             '../../include/')
+incdir = include_directories('..', '../../include/')
 
-foreach file: string_test_files
+foreach test_name: tests
     test_target = executable(
-        'misc_' + file, file, c_args: shared_c_args,
+        test_name, test_name + '.c',
+        c_args: shared_c_args,
         include_directories: [configuration_incdir, incdir],
         link_with: [libast, libenv],
         install: false)
@@ -14,7 +15,5 @@ foreach file: string_test_files
     # For the moment we only build the programs to verify they can be built and to enable linting
     # them. Running the tests will require converting the *.rt and *.tst files into scripts.
     #
-    if file == 'base64.c'
-        test('API/misc/' + file, test_target)
-    endif
+    # test('API/misc/' + test_name, ksh_exe, args: [test_driver, test_target, test_dir])
 endforeach

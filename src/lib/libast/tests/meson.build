@@ -1,3 +1,6 @@
+ksh_exe = find_program('ksh')
+test_driver = join_paths(meson.current_source_dir(), 'run_test.sh')
+
 subdir('aso')
 subdir('cdt')
 subdir('misc')

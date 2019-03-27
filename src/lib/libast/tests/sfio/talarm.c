@@ -36,13 +36,13 @@ void alrmhandler(int sig) {
 
     if (Except == 0) {
         signal(sig, alrmhandler);
-    } else if (Except == 1) /* testing return on interrupt */
-    {
+    } else if (Except == 1) {  // testing return on interrupt
         Except = 2;
         signal(sig, alrmhandler);
         alarm(2);
     } else if (Except == 2) {
-        twarn("System call was automatically resumed by the OS");
+        // Why are we issuing a warning here? Either this is acceptable behavior or it isn't.
+        // twarn("System call was automatically resumed by the OS");
         texit(0);
     } else {
         terror("Unexpected Except(%d) state", Except);

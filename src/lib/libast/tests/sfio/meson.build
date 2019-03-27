@@ -1,18 +1,12 @@
-sfio_test_files =[ 'talarm.c', 'talign.c', 'tappend.c', 'tatexit.c',
-                   'tbadargs.c', 'tclose.c', 'terrno.c', 'texcept.c',
-                   'tflags.c', 'tfmt.c', 'tgetr.c', 'thole.c', 'tleak.c',
-                   'tlocale.c', 'tlongdouble.c',  'tmode.c',
-                   'tmove.c', 'tmprdwr.c', 'tmpread.c', 'tmprocess.c',
-                   'tmtsafe.c', 'tmultiple.c', 'tmwrite.c', 'tnoseek.c',
-                   'tnotify.c', 'topen.c', 'tpipe.c', 'tpipemove.c', 'tpkrd.c',
-                   'tpool.c', 'tpopen.c', 'tpopenrw.c', 'tpublic.c',
-                   'tputgetc.c', 'tputgetd.c', 'tputgetl.c', 'tputgetm.c',
-                   'tputgetr.c', 'tputgetu.c', 'trcrv.c', 'treserve.c',
-                   'tresize.c', 'tscanf.c', 'tscanf1.c', 'tseek.c', 'tsetbuf.c',
-                   'tsetfd.c', 'tsfstr.c', 'tshare.c', 'tsize.c', 'tstack.c',
-                   'tstatus.c',  'tstkpk.c', 'tstring.c', 'tswap.c', 'tsync.c',
-                   'ttell.c', 'ttmp.c', 'ttmpfile.c', 'tungetc.c', 'twhole.c',
-                   'twrrd.c', 'tprintf.c' ]
+test_dir = meson.current_source_dir()
+tests =['talarm', 'talign', 'tappend', 'tatexit', 'tbadargs', 'tclose', 'terrno', 'texcept',
+        'tflags', 'tfmt', 'tgetr', 'thole', 'tleak', 'tlocale', 'tlongdouble',  'tmode', 'tmove',
+        'tmprdwr', 'tmpread', 'tmprocess', 'tmtsafe', 'tmultiple', 'tmwrite', 'tnoseek', 'tnotify',
+        'topen', 'tpipe', 'tpipemove', 'tpkrd', 'tpool', 'tpopen', 'tpopenrw', 'tpublic',
+        'tputgetc', 'tputgetd', 'tputgetl', 'tputgetm', 'tputgetr', 'tputgetu', 'trcrv', 'treserve',
+        'tresize', 'tscanf', 'tscanf1', 'tseek', 'tsetbuf', 'tsetfd', 'tsfstr', 'tshare', 'tsize',
+        'tstack', 'tstatus',  'tstkpk', 'tstring', 'tswap', 'tsync', 'ttell', 'ttmp', 'ttmpfile',
+        'tungetc', 'twhole', 'twrrd', 'tprintf']
 
 # TODO: This test fails due to a use after free bug. Enable it when that is fixed. For some reason
 # this affects Linux systems but not BSD systems. It results in a SIGSEGV on the `sfclose(fs);`
@@ -21,13 +15,14 @@ sfio_test_files =[ 'talarm.c', 'talign.c', 'tappend.c', 'tatexit.c',
 #
 # 'tdisc.c'
 
-
 incdir = include_directories('..', '../../include/', '../../sfio/')
 
-foreach file: sfio_test_files
-    test_target = executable('sfio_' + file, file,
-                             include_directories: [configuration_incdir, incdir],
-                             link_with: [libast, libenv],
-                             install: false)
-    test('API/sfio/' + file, test_target)
+foreach test_name: tests
+    test_target = executable(
+        test_name, test_name + '.c',
+        c_args: shared_c_args,
+        include_directories: [configuration_incdir, incdir],
+        link_with: [libast, libenv],
+        install: false)
+    test('API/sfio/' + test_name, ksh_exe, args: [test_driver, test_target, test_dir])
 endforeach
