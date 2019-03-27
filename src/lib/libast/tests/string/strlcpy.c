@@ -2,7 +2,6 @@
 
 #include <string.h>
 
-#include "ast.h"
 #include "terror.h"
 
 tmain() {
