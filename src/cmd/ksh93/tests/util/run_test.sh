@@ -130,6 +130,7 @@ mkdir $TEST_DIR/home
 mkdir "$TEST_DIR/home/space dir"
 export HOME=$TEST_DIR/home
 export HISTFILE=$TEST_DIR/sh_history
+export ENV=/./$HOME/.kshrc  # inhibit reading system wide kshrc
 
 # This is used to capture the `expect` based test line that failed.
 typeset -a failure_lines
