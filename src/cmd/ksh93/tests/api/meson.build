@@ -3,8 +3,10 @@
 # timeout of 30 seconds is too short. Try to keep the list sorted.
 api_default_timeout = 30
 
+lang_var = 'LANG=en_US.UTF-8'
+
 api_tests = [
-    ['debug.c'],
+    ['debug'],
 ]
 
 foreach testspec : api_tests
@@ -17,11 +19,9 @@ foreach testspec : api_tests
         parallel = true
     endif
 
-    # Run the test without compiling the script (which is how most people use ksh).
-    lang_var = 'LANG=en_US.UTF-8'
 
     test_target = executable(
-        testname, testname, c_args: shared_c_args,
+        testname, testname + '.c', c_args: shared_c_args,
         include_directories: [configuration_incdir, ksh93_incdir],
         link_with: [libksh, libast, libcmd, libdll],
         dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
