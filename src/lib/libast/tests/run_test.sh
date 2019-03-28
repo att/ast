@@ -6,22 +6,20 @@
 #
 # Make sure when called via `meson test` we've got the expected args.
 #
-function log_info {
-    typeset lineno=$1
-    print -r "<I> run_test[$lineno]: ${@:2}"
+log_info() {
+    echo "<I> run_test[$1]: $2"
 }
 alias log_info='log_info $LINENO'
 
-function log_warning {
-    typeset lineno=$1
-    print -u2 -r "<W> run_test[$lineno]: ${@:2}"
+log_warning() {
+    echo "<W> run_test[$1]: $2" >&2
 }
 alias log_warning='log_warning $LINENO'
 
-function log_error {
-    typeset lineno=$1
-    print -u2 -r "<E> run_test[$lineno]: ${@:2}"
+log_error() {
+    echo "<E> run_test[$1]: $2" >&2
 }
+
 alias log_error='log_error $LINENO'
 
 if [[ $# -ne 2 ]]
@@ -59,7 +57,7 @@ export OS_NAME=$(uname -s)
 #
 export TEST_DIR=$(mktemp -dt api.${test_name}.XXXXXX) ||
     { log_error "mktemp -dt failed"; exit 99; }
-cd $TEST_DIR || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 99; }
+cd $TEST_DIR || { echo "<E> 'cd $TEST_DIR' failed with status $?" >&2; exit 99; }
 log_info "TEST_DIR=$TEST_DIR"
 
 #
