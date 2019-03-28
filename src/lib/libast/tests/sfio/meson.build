@@ -24,5 +24,5 @@ foreach test_name: tests
         include_directories: [configuration_incdir, incdir],
         link_with: [libast, libenv],
         install: false)
-    test('API/sfio/' + test_name, ksh_exe, args: [test_driver, test_target, test_dir])
+    test('API/sfio/' + test_name, sh_exe, args: [test_driver, test_target, test_dir])
 endforeach
