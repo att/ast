@@ -1,3 +1,4 @@
+#!/bin/sh
 # This is loosely based on the src/cmd/ksh93/tests/util/run_test.sh script.
 #
 # This helps ensure each API test runs in a unique temp dir that is automatically cleaned up when
@@ -22,9 +23,9 @@ log_error() {
 
 alias log_error='log_error $LINENO'
 
-if [[ $# -ne 2 ]]
+if [ $# -ne 2 ]
 then
-    log_error "Expected two args (the API test binary pathname and test name), got $#: $@"
+    log_error "Expected two args (the API test binary pathname and test name), got $#: $*"
     exit 99
 fi
 
@@ -38,6 +39,7 @@ readonly test_src_dir=$2
 #
 # A test may need to alter its behavior based on the OS we're running on.
 #
+# shellcheck disable=SC2155
 export OS_NAME=$(uname -s)
 
 #
@@ -55,9 +57,10 @@ export OS_NAME=$(uname -s)
 # our purposes that doesn't matter. It simply means the temp file name will contain the X's on a BSD
 # system.
 #
-export TEST_DIR=$(mktemp -dt api.${test_name}.XXXXXX) ||
+# shellcheck disable=SC2155
+export TEST_DIR=$(mktemp -dt "api.${test_name}.XXXXXX") ||
     { log_error "mktemp -dt failed"; exit 99; }
-cd $TEST_DIR || { echo "<E> 'cd $TEST_DIR' failed with status $?" >&2; exit 99; }
+cd "$TEST_DIR" || { echo "<E> 'cd $TEST_DIR' failed with status $?" >&2; exit 99; }
 log_info "TEST_DIR=$TEST_DIR"
 
 #
@@ -68,10 +71,10 @@ log_info "TEST_DIR=$TEST_DIR"
 # external command of the same name in PATH that we use the command created by the unit test.
 # See issue #429.
 #
-export ORIG_PATH=$PATH
+export ORIG_PATH="$PATH"
 export SAFE_PATH="$TEST_DIR:$TEST_DIR/space dir:$test_src_dir:$BUILD_DIR/src/cmd/builtin"
-export FULL_PATH=$SAFE_PATH:$ORIG_PATH
-export PATH=$FULL_PATH
+export FULL_PATH="$SAFE_PATH:$ORIG_PATH"
+export PATH="$FULL_PATH"
 
 #
 # We don't want the tests to modify the command history and the like of the user running the tests
@@ -82,46 +85,47 @@ mkdir "$TEST_DIR/space dir"
 export HOME=$TEST_DIR/home
 
 # Run a libast API test.
-function run_api {
-    $api_binary >$test_name.out 2>$test_name.err
+run_api() {
+    $api_binary >"$test_name.out" 2>"$test_name.err"
     exit_status=$?
 
-    if [[ -e $test_src_dir/$test_name.out ]]
+    if [ -e "$test_src_dir/$test_name.out" ]
     then
-        if ! diff -q $test_src_dir/$test_name.out $test_name.out >/dev/null
+        if ! diff -q "$test_src_dir/$test_name.out" "$test_name.out >/dev/null"
         then
             log_error "Stdout for $test_name had unexpected differences:"
-            diff -U3 $test_src_dir/$test_name.out $test_name.out >&2
+            diff -U3 "$test_src_dir/$test_name.out" "$test_name.out >&2"
             exit_status=1
         fi
-    elif [[ -s $test_name.out ]]
+    elif [ -s "$test_name.out" ]
     then
             log_error "Stdout for $test_name should have been empty:"
-            cat $test_name.out >&2
+            cat "$test_name.out" >&2
             exit_status=1
     fi
 
-    if [[ -e $test_src_dir/$test_name.err ]]
+    if [ -e "$test_src_dir/$test_name.err" ]
     then
-        if ! diff -q $test_src_dir/$test_name.err $test_name.err >/dev/null
+        if ! diff -q "$test_src_dir/$test_name.err" "$test_name.err" >/dev/null
         then
             log_error "Stderr for $test_name had unexpected differences:"
-            diff -U3 $test_src_dir/$test_name.err $test_name.err >&2
+            diff -U3 "$test_src_dir/$test_name.err" "$test_name.err" >&2
             exit_status=1
         fi
-    elif [[ -s $test_name.err ]]
+    elif [ -s "$test_name.err" ]
     then
             log_error "Stderr for $test_name should have been empty:"
-            cat $test_name.err >&2
+            cat "$test_name.err" >&2
             exit_status=1
     fi
 
-    if [[ $exit_status -eq 0 ]]
+    if [ $exit_status -eq 0 ]
     then
         # We only remove the temp test dir if the test is successful. Otherwise we leave it since
         # it may contain useful clues about why the test failed.
+        # shellcheck disable=SC2164
         cd /tmp
-        rm -rf $TEST_DIR
+        rm -rf "$TEST_DIR"
     fi
 
     return $exit_status
