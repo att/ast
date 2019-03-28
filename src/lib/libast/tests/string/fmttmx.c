@@ -1,6 +1,8 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "terror.h"
 #include "tmx.h"
