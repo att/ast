@@ -1,4 +1,4 @@
-ksh_exe = find_program('ksh')
+sh_exe = find_program('sh')
 test_driver = join_paths(meson.current_source_dir(), 'run_test.sh')
 
 subdir('aso')

@@ -15,5 +15,5 @@ foreach test_name: tests
     # For the moment we only build the programs to verify they can be built and to enable linting
     # them. Running the tests will require converting the *.rt and *.tst files into scripts.
     #
-    # test('API/misc/' + test_name, ksh_exe, args: [test_driver, test_target, test_dir])
+    # test('API/misc/' + test_name, sh_exe, args: [test_driver, test_target, test_dir])
 endforeach

@@ -17,5 +17,5 @@ foreach test_name: tests
         link_with: [libast, libenv],
         link_args: ['-lpthread'],
         install: false)
-    test('API/cdt/' + test_name, ksh_exe, args: [test_driver, test_target, test_dir])
+    test('API/cdt/' + test_name, sh_exe, args: [test_driver, test_target, test_dir])
 endforeach
