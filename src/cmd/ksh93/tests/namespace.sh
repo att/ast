@@ -126,7 +126,7 @@ namespace a.b
 {
     function f1 { print OK ; }
     function f2 { f1 ; }
-    [[ $(f2) == OK ]] 2> /dev/null || log_error 'function defined in namespace not found when referenced by another function in the namespace'
+    [[ $(f2) == OK ]] || log_error 'function defined in namespace not found when referenced by another function in the namespace'
 }
 
 namespace org.terror
@@ -143,7 +143,7 @@ namespace org.terror
         x1.method_a
             x2.method_a
     }
-    [[ $(main 2> /dev/null)  == $'xxx\nyyy' ]] || log_error 'discipline override type defined in namespace not working'
+    [[ $(main)  == $'xxx\nyyy' ]] || log_error 'discipline override type defined in namespace not working'
 }
 
 namespace a.b
@@ -165,6 +165,6 @@ namespace a.b
     )
         function p { printf "%q\n" "$1" ;}
     y_t x
-    [[ $(x.px 2> /dev/null) == 9 ]] || log_error 'function defined in type not found from within a namespace'
+    [[ $(x.px) == 9 ]] || log_error 'function defined in type not found from within a namespace'
 }
-[[ $(.a.b.x.px 2> /dev/null) == 9 ]] || log_error 'function defined in type not found from outside a.b namespace'
+[[ $(.a.b.x.px) == 9 ]] || log_error 'function defined in type not found from outside a.b namespace'
