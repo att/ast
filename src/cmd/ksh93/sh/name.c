@@ -889,7 +889,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                         flags &= ~(noscope ? 0 : NV_NOSCOPE);
                     } else if (c) {
                         char *xp = NULL;
-                        ssize_t xlen;
+                        size_t xlen;
                         c = (cp - sp);
                         // Eliminate namespace name.
                         if (shp->last_table && !nv_type(shp->last_table)) {
@@ -897,8 +897,10 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                             xlen = strlen(xp);
                         }
                         cp = nv_name(np);
-                        if (xp && strncmp(cp, xp, xlen) && cp[xlen] == '.') cp += xlen + 1;
                         copy = strlen(cp);
+                        if (xp && copy > xlen && !strncmp(cp, xp, xlen) && cp[xlen] == '.') {
+                            cp += xlen + 1;
+                        }
                         dp->nofree |= 1;
                         name = copystack(shp, cp, sp, sub);
                         sp = (char *)name + copy;
