@@ -725,10 +725,9 @@ bool nv_setnotify(Namval_t *np, char **addr) {
 }
 
 static_fn void *newnode(const char *name) {
-    size_t s = strlen(name);
-    Namval_t *np = calloc(1, sizeof(Namval_t) + s + 1);
-
-    if (!np) return NULL;
+    size_t s = strlen(name) + 1;
+    Namval_t *np = calloc(1, sizeof(Namval_t) + s);
+    assert(np);
     np->nvname = (char *)np + sizeof(Namval_t);
     memcpy(np->nvname, name, s);
     return np;
