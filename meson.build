@@ -124,8 +124,21 @@ endif
 # memory leaks that those errors cause spurious failures in the unit tests.
 # And in any case until we resolve the more serious memory management errors
 # worrying about memory leaks is premature.
-asan_debug_env.set('ASAN_OPTIONS',
-    'symbolize=1:check_initialization_order=1:detect_stack_use_after_return=1:detect_leaks=0:redzone=16')
+#
+# Set `disable_coredump=0` if you want core dumps on ASAN failures. But be
+# aware that can produce core files that are terabytes in size on 64 bit
+# platforms. The `use_madv_dontdump=1` should mitigate that on Linux.
+asan_options = [
+    'disable_coredump=1',
+    'use_madv_dontdump=1',
+    'abort_on_error=1',
+    'symbolize=1',
+    'check_initialization_order=1',
+    'detect_stack_use_after_return=1',
+    'detect_leaks=0',
+    'redzone=16',
+]
+asan_debug_env.set('ASAN_OPTIONS', ':'.join(asan_options))
 add_test_setup('asan', timeout_multiplier: 2, env: asan_debug_env)
 
 if get_option('ASAN') == true

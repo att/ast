@@ -111,7 +111,7 @@ then
 fi
 
 set x
-if x$1=0 2> /dev/null
+if x$1=0
 then
     log_error "x\$1=value treated as an assignment"
 fi
@@ -119,7 +119,7 @@ fi
 # Check for attributes across subshells
 typeset -i x=3
 y=1/0
-if ( x=y ) 2> /dev/null
+if ( x=y )
 then
     log_error "attributes not passed to subshells"
 fi
@@ -196,7 +196,7 @@ then
     log_error " set discipline failure COUNT=$COUNT ACCESS=$ACCESS"
 fi
 
-LANG=C > /dev/null 2>&1
+LANG=C
 if [[ $LANG != C ]]
 then
     log_error "C locale not working"
@@ -237,13 +237,13 @@ do
         log_error "\$$i not equal to \${$i}"
     fi
 
-    command eval bar='$'{$i%?} 2> /dev/null || log_error "\${$i%?} gives syntax error"
+    command eval bar='$'{$i%?} || log_error "\${$i%?} gives syntax error"
     if [[ $i != [@*] && ${foo%?} != "$bar"  ]]
     then
         log_error "\${$i%?} not correct"
     fi
 
-    command eval bar='$'{$i#?} 2> /dev/null || log_error "\${$i#?} gives syntax error"
+    command eval bar='$'{$i#?} || log_error "\${$i#?} gives syntax error"
     if [[ $i != [@*] && ${foo#?} != "$bar"  ]]
     then
         log_error "\${$i#?} not correct"
@@ -317,7 +317,7 @@ fi
 
 for i in : % + / 3b '**' '***' '@@' '{' '[' '}' !!  '*a' '$$'
 do
-    (eval : \${"$i"} 2> /dev/null) && log_error "\${$i} not an syntax error"
+    (eval : \${"$i"} ) && log_error "\${$i} not an syntax error"
 done
 
 unset IFS
@@ -488,7 +488,7 @@ function foo
 x=$(foo)
 (( x >1 && x < 2 ))
 '
-} 2> /dev/null   || log_error 'SECONDS not working in function'
+} || log_error 'SECONDS not working in function'
 cat > $TEST_DIR/script <<-\!
 	posixfun()
 	{
@@ -578,7 +578,7 @@ got=$(<$TEST_DIR/out)
     }
     dave=foo; dave+=bar
     [[ $dave == barfoo ]] || exit 2
-) 2> /dev/null
+)
 case $? in
 0)     ;;
 1)     log_error 'append discipline not implemented';;
@@ -590,7 +590,7 @@ esac
     {
         .sh.value=world
     }
-} 2> /dev/null || log_error "cannot add get discipline to .sh.foobar"
+} || log_error "cannot add get discipline to .sh.foobar"
 [[ ${.sh.foobar} == world ]]  || log_error 'get discipline for .sh.foobar not working'
 x='a|b'
 IFS='|'
@@ -679,7 +679,7 @@ for v in EDITOR VISUAL OPTIND CDPATH FPATH PATH ENV RANDOM SECONDS _
 do
     nameref r=$v
     unset $v
-    if ( $SHELL -c "unset $v; : \$$v" ) 2>/dev/null
+    if ( $SHELL -c "unset $v; : \$$v" )
     then
     [[ $r ]] && log_error "unset $v failed -- expected '', got '$r'"
         r=$x
@@ -717,9 +717,9 @@ if [[ -n $x ]]; then
         [[ $r ]] && log_error "unset $v failed -- expected '', got '$r'"
         d=$($SHELL -c "$v=$x" 2>&1)
         [[ $d ]] || log_error "$v=$x failed -- expected locale diagnostic"
-        { g=$( r=$x; print -- $r ); } 2>/dev/null
+        { g=$( r=$x; print -- $r ); }
         [[ $g == '' ]] || log_error "$v=$x failed -- expected '', got '$g'"
-        { g=$( r=C; r=$x; print -- $r ); } 2>/dev/null
+        { g=$( r=C; r=$x; print -- $r ); }
         [[ $g == 'C' ]] || log_error "$v=C; $v=$x failed -- expected 'C', got '$g'"
     done
 fi
@@ -729,7 +729,7 @@ cd $TEST_DIR
 print print -n zzz > zzz
 chmod +x zzz
 exp='aaazzz'
-got=$($SHELL -c 'unset SHLVL; print -n aaa; ./zzz' 2>&1) >/dev/null 2>&1
+got=$($SHELL -c 'unset SHLVL; print -n aaa; ./zzz' 2>&1)
 [[ $got == "$exp" ]] || log_error "unset SHLVL causes script failure -- expected '$exp', got '$got'"
 
 mkdir glean
@@ -750,15 +750,15 @@ eval $v=C
 [[ -v $v ]] || log_error "$v=C; [[ -v $v ]] failed"
 
 cmd='set --nounset; unset foo; : ${!foo*}'
-$SHELL -c "$cmd" 2>/dev/null || log_error "'$cmd' exit status $?, expected 0"
+$SHELL -c "$cmd" || log_error "'$cmd' exit status $?, expected 0"
 
 SHLVL=1
 level=$($SHELL -c $'$SHELL -c \'print -r "$SHLVL"\'')
 [[ $level  == 3 ]]  || log_error "SHLVL should be 3 not $level"
 
-[[ $($SHELL -c '{ x=1; : ${x.};print ok;}' 2> /dev/null) == ok ]] || log_error '${x.} where x is a simple variable causes shell to abort'
+[[ $($SHELL -c '{ x=1; : ${x.};print ok;}') == ok ]] || log_error '${x.} where x is a simple variable causes shell to abort'
 
-$SHELL -c 'unset .sh' 2> /dev/null
+$SHELL -c 'unset .sh'
 [[ $? == 1 ]] || log_error 'unset .sh should return 1'
 
 x=$($SHELL -c 'foo=bar foobar=fbar; print -r -- ${!foo*}')
