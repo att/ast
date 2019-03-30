@@ -175,20 +175,20 @@ then
 fi
 
 typeset -E x=1.5
-( ((x++))  ) 2>/dev/null
+( ((x++)) )
 if [[ $? == 0 ]]
 then
     log_error 'postincrement of floating point allowed'
 fi
 
-( ((++x))  ) 2>/dev/null
+( ((++x)) )
 if [[ $? == 0 ]]
 then
     log_error 'preincrement of floating point allowed'
 fi
 
 x=1.5
-( ((x%1.1))  ) 2>/dev/null
+( ((x%1.1)) )
 if [[ $? == 0 ]]
 then
     log_error 'floating point allowed with % operator'
@@ -205,7 +205,7 @@ then
     log_error '$(( pow(2,3) )) != 8'
 fi
 
-( [[ $(( pow(2,(3)) )) == 8 ]] ) 2> /dev/null
+( [[ $(( pow(2,(3)) )) == 8 ]] )
 if (( $? ))
 then
     log_error '$(( pow(2,(3)) )) != 8'
@@ -219,13 +219,13 @@ then
 fi
 
 unset z
-{ z=$(typeset -RZ2 z2; (( z2 = 8 )); print $z2) ;} 2>/dev/null
+{ z=$(typeset -RZ2 z2; (( z2 = 8 )); print $z2); }
 if [[ $z != "08" ]]
 then
     log_error "typeset -RZ2 leading 0 decimal not working [z=$z]"
 fi
 
-{ z=$(typeset -RZ3 z3; (( z3 = 8 )); print $z3) ;} 2>/dev/null
+{ z=$(typeset -RZ3 z3; (( z3 = 8 )); print $z3); }
 if [[ $z != "008" ]]
 then
     log_error "typeset -RZ3 leading 0 decimal not working [z=$z]"
@@ -326,11 +326,11 @@ then
     log_error "variable subscript associative array arithmetic failure"
 fi
 
-$SHELL -nc '((a = 1))' 2> /dev/null || log_error "sh -n fails with arithmetic"
-$SHELL -nc '((a.b++))' 2> /dev/null || log_error "sh -n fails with arithmetic2"
+$SHELL -nc '((a = 1))' || log_error "sh -n fails with arithmetic"
+$SHELL -nc '((a.b++))' || log_error "sh -n fails with arithmetic2"
 unset z
 float z=7.5
-if { (( z%2 != 1));} 2> /dev/null
+if { (( z%2 != 1)); }
 then
     log_error '% not working on floating point'
 fi
@@ -429,7 +429,8 @@ then
     log_error 'display of unsigned integers in non-decimal bases wrong'
 fi
 
-$SHELL -c 'i=0;(( ofiles[i] != -1 && (ofiles[i] < mins || mins == -1) ));exit 0' 2> /dev/null || log_error 'lexical error with arithemtic expression'
+$SHELL -c 'i=0;(( ofiles[i] != -1 && (ofiles[i] < mins || mins == -1) )); exit 0' ||
+    log_error 'lexical error with arithemtic expression'
 $SHELL -c '(( +1 == 1))' 2> /dev/null || log_error 'unary + not working'
 typeset -E val=123.01234567890
 [[ $val == 123.0123456789 ]] || log_error "rounding error val=$val"
@@ -438,7 +439,7 @@ then
     log_error 'parsing error with x$((10))=foo'
 fi
 
-$SHELL -c 'typeset x$((10))=foo' 2> /dev/null || log_error 'typeset x$((10)) parse error'
+$SHELL -c 'typeset x$((10))=foo' || log_error 'typeset x$((10)) parse error'
 unset x
 x=$(( exp(log(2.0)) ))
 (( x > 1.999 && x < 2.001 )) || log_error 'composite functions not working'
@@ -550,13 +551,13 @@ function mkobj
 mkobj bla
 !
 chmod +x $TEST_DIR/script
-[[ $($TEST_DIR/script 1) != '( bar=2 baz=3 foo=1 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
-[[ $($TEST_DIR/script 2) != '( faz=0 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
-[[ $($TEST_DIR/script 3) != '( foz=777 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
-[[ $($TEST_DIR/script 4) != '( foz=777 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
-[[ $($TEST_DIR/script 5) != '( fuz=777 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
-[[ $($TEST_DIR/script 6) != '0' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
-[[ $($TEST_DIR/script 7) != '0' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 1) != '( bar=2 baz=3 foo=1 )' ]] && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 2) != '( faz=0 )' ]] && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 3) != '( foz=777 )' ]] && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 4) != '( foz=777 )' ]] && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 5) != '( fuz=777 )' ]] && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 6) != '0' ]] && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 7) != '0' ]] && log_error 'compound var arithmetic failed'
 unset foo
 typeset -F1 foo=123456789.19
 [[ $foo == 123456789.2 ]] || log_error 'typeset -F1 not working correctly'
@@ -565,23 +566,23 @@ typeset -F1 foo=123456789.19
 
 for expr in '1/(1/2)' '8%(1/2)' '8%(1.0/2)'
 do
-    [[ $( ( $SHELL -c "( (($expr)) )  || print ok" ) 2>/dev/null ) == ok ]] || log_error "divide by zero not trapped: $expr"
+    [[ $( ( $SHELL -c "( (($expr)) )  || print ok" ) ) == ok ]] || log_error "divide by zero not trapped: $expr"
 done
 
 for expr in '1/(1.0/2)' '1/(1/2.0)'
 do
-    [[ $( ( $SHELL -c "( print -r -- \$(($expr)) )" ) 2>/dev/null ) == 2 ]] || log_error "invalid value for: $expr"
+    [[ $( ( $SHELL -c "( print -r -- \$(($expr)) )" ) ) == 2 ]] || log_error "invalid value for: $expr"
 done
 
 [[ $((5||0)) == 1 ]] || log_error '$((5||0))'" == $((5||0)) should be 1"
-$SHELL -c 'integer x=3 y=2; (( (y += x += 2) == 7  && x==5))' 2> /dev/null || log_error '((y += x += 2)) not working'
-$SHELL -c 'b=0; [[ $((b?a=1:b=9)) == 9 ]]' 2> /dev/null || log_error 'b?a=1:b=9 not working'
+$SHELL -c 'integer x=3 y=2; (( (y += x += 2) == 7  && x==5))' || log_error '((y += x += 2)) not working'
+$SHELL -c 'b=0; [[ $((b?a=1:b=9)) == 9 ]]' || log_error 'b?a=1:b=9 not working'
 
 unset x
 (( x = 4*atan(1.0) ))
 [[ $x == "$((x))" ]] || log_error  '$x !- $((x)) when x is pi'
 
-$SHELL -c  "[[  ${x//./} == {14,100}(\d) ]]" 2> /dev/null || log_error 'pi has less than 14 significant places'
+$SHELL -c  "[[  ${x//./} == {14,100}(\d) ]]" || log_error 'pi has less than 14 significant places'
 if (( Inf+1 == Inf ))
 then
     set \
@@ -638,10 +639,10 @@ r=-0
 [[ $(( -1.0*0)) == -0 ]] || log_error '$(( -1.0*0)) should be -0'
 [[ $(printf "%g %g %g\n" x $x $((x)) ) == '-0 -0 -0' ]] || log_error '%g of x $x $((x)) for x=-0 should all be -0'
 [[ $(printf "%g %g %g\n" y $x $((y)) ) == '-0 -0 -0' ]] || log_error '%g of y $y $((y)) for y=-0.0 should all be -0'
-$SHELL -c '(( x=));:' 2> /dev/null && log_error '((x=)) should be an error'
-$SHELL -c '(( x+=));:' 2> /dev/null && log_error '((x+=)) should be an error'
-$SHELL -c '(( x=+));:' 2> /dev/null && log_error '((x=+)) should be an error'
-$SHELL -c 'x=();x.arr[0]=(z=3); ((x.arr[0].z=2))' 2> /dev/null || log_error '(((x.arr[0].z=2)) should not be an error'
+$SHELL -c '(( x=));:' && log_error '((x=)) should be an error'
+$SHELL -c '(( x+=));:' && log_error '((x+=)) should be an error'
+$SHELL -c '(( x=+));:' && log_error '((x=+)) should be an error'
+$SHELL -c 'x=();x.arr[0]=(z=3); ((x.arr[0].z=2))' || log_error '(((x.arr[0].z=2)) should not be an error'
 
 float t
 float a b r
@@ -682,7 +683,7 @@ y_ascii=$y
         ))
     :
     done
-EOF) 2> /dev/null ||  log_error 'error with comma expression'
+EOF) ||  log_error 'error with comma expression'
 
 N=(89551 89557)
 i=0 j=1
@@ -740,7 +741,7 @@ function .sh.math.mysin x
 
 (( abs(sin(.5)-mysin(.5)) < 1e-6 )) || log_error 'mysin() not close to sin()'
 
-$SHELL 2> /dev/null  <<- \EOF || log_error "arithmetic functions defined and referenced in compound command not working"
+$SHELL <<- \EOF || log_error "arithmetic functions defined and referenced in compound command not working"
 {
     function .sh.math.mysin x
     {
@@ -786,12 +787,12 @@ x z[1]
 
 unset x
 float x
-x=$( ($SHELL -c 'print -- $(( asinh(acosh(atanh(sin(cos(tan(atan(acos(asin(tanh(cosh(sinh(asinh(acosh(atanh(sin(cos(tan(atan(acos(asin(tanh(cosh(sinh(.5)))))))))))))))))))))))) )) ';:) 2> /dev/null)
+x=$( ($SHELL -c 'print -- $(( asinh(acosh(atanh(sin(cos(tan(atan(acos(asin(tanh(cosh(sinh(asinh(acosh(atanh(sin(cos(tan(atan(acos(asin(tanh(cosh(sinh(.5)))))))))))))))))))))))) )) ';:) )
 (( abs(x-.5) < 1.e-10 )) || log_error 'bug in composite function evaluation'
 
 unset x
 typeset -X x=16
-{ (( $x == 16 )) ;} 2> /dev/null || log_error 'expansions of hexfloat not working in arithmetic expansions'
+{ (( $x == 16 )); } || log_error 'expansions of hexfloat not working in arithmetic expansions'
 
 unset foo
 function foobar
@@ -830,10 +831,12 @@ do
 done
 (( z==2 )) || log_error 'unset compound array variable error with for loop optimization'
 
-[[ $($SHELL 2> /dev/null -c 'print -- $(( ldexp(1, 4) ))' ) == 16 ]] || log_error 'function ldexp not implement or not working correctly'
+[[ $($SHELL -c 'print -- $(( ldexp(1, 4) ))' ) == 16 ]] ||
+    log_error 'function ldexp not implement or not working correctly'
 
 
-$SHELL 2> /dev/null -c 'str="0x1.df768ed398ee1e01329a130627ae0000p-1";typeset -l -E x;((x=str))' || log_error '((x=var)) fails for hexfloat with var begining with 0x1.nnn'
+$SHELL -c 'str="0x1.df768ed398ee1e01329a130627ae0000p-1";typeset -l -E x;((x=str))' ||
+    log_error '((x=var)) fails for hexfloat with var begining with 0x1.nnn'
 
 x=(3 6 12)
 (( x[2] /= x[0]))
@@ -934,7 +937,7 @@ actual=$(printf $'%.28a\n' 64)
 [[ $actual == $expect ]] || log_error "'printf %.28a 64' failed" "$expect" "$actual"
 
 # redirections with ((...)) should not cause a syntax error
-$SHELL 2>/dev/null -c '(($(echo 1+1 | tee /dev/fd/3))) >/dev/null 3>&1'
+$SHELL '(($(echo 1+1 | tee /dev/fd/3))) >/dev/null 3>&1'
 ((  $? )) && log_error 'redirections with ((...))) yield a syntax error'
 
 (( (2 ** 63) ==  2*((2 ** 63)/2) )) || log_error 'integer division with numbers near intmax not working'
@@ -1019,7 +1022,9 @@ actual=$(( norm(z) ))
 expect=$(( sqrt(163.6) ))
 fequal $actual $expect || log_error "norm of associative array wrong" "$expect" "$actual"
 
-$SHELL -c 'for ((i = 0; i < 1023; i++)); do eval a$i=a$((i+1));done;a1023=999;print $((a0))' > /dev/null 2>&1 || log_error 'arithmetic recursive evaluation too deep'
+log_warning WTF
+$SHELL -c 'for ((i = 0; i < 1023; i++)); do eval a$i=a$((i+1)); done; a1023=999; print $((a0))' ||
+    log_error 'arithmetic recursive evaluation too deep'
 
 integer count=0 i
 compound -a x=( (pid=1) (pid=2) )
@@ -1030,7 +1035,7 @@ done
 (( count==1 )) || log_error 'x[i].pid==x[0].pid should be true only once'
 
 #bug with short integers that causes core dumps
-$SHELL 2> /dev/null <<- \EOF || log_error 'short integer bug causing core dumps'
+$SHELL <<- \EOF || log_error 'short integer bug causing core dumps'
     typeset -s -i -a t
     typeset -s -i p
     (( p=2**17 )) # tape start position
@@ -1057,7 +1062,8 @@ function f
     done
     printf "%q\n" "${ar[*]}"
 }
-[[ $(f) == "'0 1 2'" ]] 2> /dev/null || log_error '0 value for variable in arithmetic expression inside function with set -u fails'
+[[ $(f) == "'0 1 2'" ]] ||
+    log_error '0 value for variable in arithmetic expression inside function with set -u fails'
 
 [[ $(( (2**32) << 67 )) == 0 ]] || log_error 'left shift count 67 is non-zero'
 
