@@ -272,11 +272,13 @@ actual="$output"
 [[ $actual == $expect ]] || log_error "output failed" "$expect" "$actual"
 (( SECONDS > 1 )) && log_error "took $SECONDS seconds, expected around 0.5"
 
-trap '' SIGBUS
+# ====================
+# Verify an ignored signal can't be trapped in a subshell.
+trap '' SIGUSR2
 expect=''
-actual=$($SHELL -c 'trap date SIGBUS; trap -p SIGBUS')
-[[ $actual == $expect ]] || log_error 'SIGBUS should not have a trap' "$expect" "$actual"
-trap -- - SIGBUS
+actual=$($SHELL -c 'trap date SIGUSR2; trap -p SIGUSR2')
+[[ $actual == $expect ]] || log_error 'SIGUSR2 should not have a trap' "$expect" "$actual"
+trap -- - SIGUSR2
 
 {
     output=$($SHELL <<'EOF'
