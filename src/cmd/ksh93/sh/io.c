@@ -2084,7 +2084,7 @@ static_fn ssize_t slowread(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *handl
     Shell_t *shp = ((struct Iodisc *)handle)->sh;
     int (*readf)(void *, int, char *, int, int);
     int reedit = 0;
-    size_t rsize;
+    ssize_t rsize;
     char *xp = NULL;
 
     if (sh_isoption(shp, SH_EMACS) || sh_isoption(shp, SH_GMACS)) {
@@ -2110,6 +2110,8 @@ static_fn ssize_t slowread(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *handl
             timerdel(timeout);
             timeout = NULL;
         }
+
+        if (rsize == -1) return -1;
 
         if (!(rsize && *(char *)buff != '\n' && shp->nextprompt == 1 &&
               sh_isoption(shp, SH_HISTEXPAND))) {
