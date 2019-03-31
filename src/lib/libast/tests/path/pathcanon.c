@@ -12,11 +12,6 @@
 const char *linkname = "foo";
 const char *filename = "foobarbaz";
 
-void cleanup_handler(void) {
-    unlink(linkname);
-    unlink(filename);
-}
-
 tmain() {
     UNUSED(argc);
     UNUSED(argv);
@@ -24,7 +19,6 @@ tmain() {
     char path[PATH_MAX];
     int fd;
     char tmp_parent_realpath[PATH_MAX];
-    atexit(cleanup_handler);
 
     fd = open(filename, O_CREAT, 0666);
     if (fd == -1) terror("Failed to create test file");

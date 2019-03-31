@@ -10,7 +10,6 @@
 #include "terror.h"
 
 char test_path[PATH_MAX] = "foo";
-void cleanup_handler(void) { unlink(test_path); }
 
 tmain() {
     UNUSED(argc);
@@ -26,7 +25,6 @@ tmain() {
 
     int fd = open(test_path, O_CREAT, 0666);
     if (fd == -1) terror("Failed to create test file");
-    atexit(cleanup_handler);
 
     // Search this path in current directory and expand it
     pathpath("foo", NULL, PATH_ABSOLUTE, path, sizeof(path));

@@ -10,8 +10,6 @@
 
 const char *link_to_temp_file = "link_to_temp_file";
 
-void cleanup_handler(void) { unlink(link_to_temp_file); }
-
 tmain() {
     UNUSED(argc);
     UNUSED(argv);
@@ -31,8 +29,6 @@ tmain() {
     if (symlink(temp_file, link_to_temp_file) < 0) {
         terror("Failed to create symbolic link to %s", temp_file);
     }
-
-    atexit(cleanup_handler);
 
     // Unlink target file to create a broken symbolic link
     unlink(temp_file);

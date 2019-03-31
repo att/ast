@@ -12,8 +12,6 @@
 
 const char *relative_path = "foo";
 
-void cleanup_handler(void) { unlink(relative_path); }
-
 tmain() {
     UNUSED(argc);
     UNUSED(argv);
@@ -36,8 +34,6 @@ tmain() {
     // Test for relative paths
     int fd = open(relative_path, O_CREAT, 0666);
     if (fd == -1) terror("Failed to create test file");
-
-    atexit(cleanup_handler);
 
     if (!getcwd(cwd, sizeof(cwd))) terror("Failed to get current working directory");
 

@@ -9,8 +9,6 @@
 
 const char *temp_file = NULL;
 
-void cleanup_handler(void) { unlink(temp_file); }
-
 tmain() {
     UNUSED(argc);
     UNUSED(argv);
@@ -22,7 +20,6 @@ tmain() {
 
     temp_file = ast_temp_file(cwd, NULL, &fd, 0);
     if (!temp_file || fd < 0) terror("Failed to create temporary file");
-    atexit(cleanup_handler);
 
     texit(0);
 }
