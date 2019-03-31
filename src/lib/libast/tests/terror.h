@@ -62,10 +62,6 @@ static char Tstfile[256][256];
     do {                                            \
         (Tstline = __LINE__), tstinfo(__VA_ARGS__); \
     } while (0)
-#define tmesg(...)                                  \
-    do {                                            \
-        (Tstline = __LINE__), tstwarn(__VA_ARGS__); \
-    } while (0)
 #define tpause(...)                                  \
     do {                                             \
         (Tstline = __LINE__), tstpause(__VA_ARGS__); \
