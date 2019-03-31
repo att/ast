@@ -74,7 +74,7 @@ void *writebig(arg) void *arg;
 }
 
 void sighandler(int sig) {
-    tmesg("\tSignal %d.\n", sig);
+    // tmesg("\tSignal %d.\n", sig);
     texit(0);
 }
 
@@ -91,11 +91,6 @@ tmain() {
     signal(SIGINT, sighandler);
 
 do_inverted: /* get back to here when trying to make things fail */
-
-    if (!Inverted)
-        tmesg("\tTesting thread-safe streams.\n");
-    else
-        tmesg("\tTesting unsafe streams: if hung, send INTR or QUIT.\n");
 
     /* spin threads writing small chunks */
     Sf = sfopen(NULL, tstfile("sf", 0), Inverted ? "w+" : "mw+");
@@ -219,8 +214,7 @@ do_inverted: /* get back to here when trying to make things fail */
     if (!Inverted) {
         Inverted = 1;
         goto do_inverted;
-    } else
-        tmesg("\tUnsafe streams work ok on this platform!\n");
+    }
 
     texit(0);
 }
