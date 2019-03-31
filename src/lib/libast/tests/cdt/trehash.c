@@ -198,7 +198,9 @@ static void workload(Dt_t *dt, Proc_t *proc, int p) {
             for (s = 0; s < SEARCH; ++s) {
                 ssize_t r = random() % k;
                 or = proc->obj + r;
-                if (dtsearch(dt, or)) twarn("\t\tProcess %d(%d): Search %s !NULL", p, pid, or->str);
+                if (dtsearch(dt, or)) {
+                    terror("\t\tProcess %d(%d): Search %s !NULL", p, pid, or->str);
+                }
             }
         }
     }
@@ -299,7 +301,7 @@ tmain() {
     for (k = 0; k < N_OBJ; ++k) {
         if ((Obj[k].flag & DELETE)) z += 1;
     }
-    if (z != N_OBJ) twarn("Some deletion was not properly recorded?");
+    if (z != N_OBJ) terror("Some deletion was not properly recorded?");
 
     tinfo("\ttrehash: All testing done.");
     twait(pid, -N_PROC);

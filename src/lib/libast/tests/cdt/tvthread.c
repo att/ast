@@ -178,7 +178,7 @@ tmain() {
             obj.value = k;
             if ((o = dtsearch(Dict[0], &obj))) continue;
             if ((o = dtsearch(Dict[1], &obj))) continue;
-            twarn("%d not found", k);
+            terror("%d not found", k);
             dtsearch(Dict[0], &obj);
             dtsearch(Dict[1], &obj);
         }

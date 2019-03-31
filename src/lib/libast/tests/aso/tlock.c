@@ -96,7 +96,7 @@ int lockobj(void *lck, ssize_t size, int locking) {
 // Anything that isn't an actual error should not produce output as doing so can result in flakey
 // unit tests. See https://github.com/att/ast/issues/1259.
         } else if (k > 0 && (k % 10000) == 0) {
-            twarn("Process %3d(pid=%d): locking loop %d blocked by %d", Pnum, Pid[Pnum], k, aso);
+            terror("Process %3d(pid=%d): locking loop %d blocked by %d", Pnum, Pid[Pnum], k, aso);
 #endif
         }
     }
