@@ -284,7 +284,7 @@ tmain() {
     z = 0;
     for (k = 0; k < N_OBJ; ++k)
         if ((Obj[k].flag & DELETE)) z += 1;
-    if (z != N_OBJ) twarn("Some deletion was not properly recorded?");
+    if (z != N_OBJ) terror("Some deletion was not properly recorded?");
 
     tinfo("\ttsafehash: All testing done.");
     twait(pid, -N_PROC);

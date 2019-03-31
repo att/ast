@@ -102,7 +102,7 @@ tmain() {
     if (write(fd[1], "0123456789", 10) != 10) terror("Writing to pipe");
     alarm(2);
     if ((n = sfread(sfstdin, buf, sizeof(buf))) != 10) {
-        twarn("Wrong read size(%d) after an interrupt\n", n);
+        terror("Wrong read size(%d) after an interrupt\n", n);
     }
 
     texit(0);

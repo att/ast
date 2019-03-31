@@ -32,9 +32,5 @@ tmain() {
         terror("pathgetlink() should fail when buffer is small");
     }
 
-    if (unlink(linkname) < 0) {
-        twarn("Failed to unlink link");
-    }
-
     texit(0);
 }

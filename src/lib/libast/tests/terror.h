@@ -74,10 +74,6 @@ static char Tstfile[256][256];
     do {                                               \
         (Tstline = __LINE__), tstsuccess(__VA_ARGS__); \
     } while (0)
-#define twarn(...)                                  \
-    do {                                            \
-        (Tstline = __LINE__), tstwarn(__VA_ARGS__); \
-    } while (0)
 
 #define tchild() ((Tstline = __LINE__), tstchild(argv))
 #define topts() ((Tstline = __LINE__), tstopts(argv))

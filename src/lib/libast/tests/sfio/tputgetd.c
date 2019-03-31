@@ -47,7 +47,7 @@ tmain() {
         if (v <= (f - 1e-10) || v >= (f + 1e-10)) {
             terror("Element=%d Input=%.12Lf, Expect=%.12Lf", i, v, f);
         } else if (!flag) {
-            twarn("Element=%d Input=%.12Lf, Expect=%.12Lf\n", i, v, f);
+            terror("Element=%d Input=%.12Lf, Expect=%.12Lf\n", i, v, f);
             flag = 1;
         }
     }
