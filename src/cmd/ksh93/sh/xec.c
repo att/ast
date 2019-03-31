@@ -3118,7 +3118,6 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
     // Save trap table.
     nsig = shp->st.trapmax;
     if (nsig > 0 || shp->st.trapcom[0]) {
-        ++nsig;
         savsig = malloc(nsig * sizeof(char *));
         // Contents of shp->st.trapcom may change
         for (isig = 0; isig < nsig; ++isig) {

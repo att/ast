@@ -532,14 +532,13 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         shp->st.otrap = savst.trap;
         nsig = shp->st.trapmax;
         if (nsig > 0 || shp->st.trapcom[0]) {
-            ++nsig;
             savsig = malloc(nsig * sizeof(char *));
             // Contents of shp->st.st.trapcom may change
             for (isig = 0; isig < nsig; ++isig) {
                 savsig[isig] = shp->st.trapcom[isig] ? strdup(shp->st.trapcom[isig]) : NULL;
             }
             // This nonsense needed for $(trap).
-            shp->st.otrapcom = (char **)savsig;
+            shp->st.otrapcom = savsig;
         }
         sp->cpid = shp->cpid;
         sp->coutpipe = shp->coutpipe;
