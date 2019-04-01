@@ -25,7 +25,7 @@ do
     typeset -$option $option
 done
 
-(r=newval) 2> /dev/null && log_error readonly attribute fails
+(r=newval) && log_error readonly attribute fails
 i=i+5
 if ((i != 27))
 then
@@ -118,8 +118,8 @@ then
     log_error 'environment variables require re-export'
 fi
 
-(typeset + ) > /dev/null 2>&1 || log_error 'typeset + not working'
-(typeset -L-5 buf="A" 2>/dev/null)
+(typeset + ) || log_error 'typeset + not working'
+(typeset -L-5 buf="A")
 if [[ $? == 0 ]]
 then
     log_error 'typeset allows negative field for left/right adjust'
@@ -247,9 +247,10 @@ hello worldhello worldhello world
 !
 [[ $v1 == "$b1" ]] || log_error "v1=$v1 should be $b1"
 [[ $v2 == "$x" ]] || log_error "v1=$v2 should be $x"
-if env '!=1' >/dev/null 2>&1
+if env '!=1'
 then
-    [[ $(env '!=1' $SHELL -c 'echo ok' 2>/dev/null) == ok ]] || log_error 'malformed environment terminates shell'
+    [[ $(env '!=1' $SHELL -c 'echo ok') == ok ]] ||
+        log_error 'malformed environment terminates shell'
 fi
 
 unset var
@@ -257,7 +258,7 @@ typeset -b var
 printf '12%Z34' | read -r -N 5 var
 [[ $var == MTIAMzQ= ]] || log_error 'binary files with zeros not working'
 unset var
-if command typeset -usi var=0xfffff 2> /dev/null
+if command typeset -usi var=0xfffff
 then
     (( $var == 0xffff )) || log_error 'unsigned short integers not working'
 else
@@ -278,7 +279,8 @@ function fun
 fun
 [[ $(export | grep ^foo=) == 'foo=hello' ]] || log_error 'export not working in functions'
 [[ $(export | grep ^bar=) ]] && log_error 'typeset -x not local'
-[[ $($SHELL -c 'typeset -r IFS=;print -r $(pwd)' 2> /dev/null) == "$(pwd)" ]] || log_error 'readonly IFS causes command substitution to fail'
+[[ $($SHELL -c 'typeset -r IFS=;print -r $(pwd)') == "$(pwd)" ]] ||
+    log_error 'readonly IFS causes command substitution to fail'
 
 fred[66]=88
 [[ $(typeset -pa) == *fred* ]] || log_error 'typeset -pa not working'
@@ -366,7 +368,7 @@ EOF
     typeset -R6 foo=bbbbbb
     [[ \$foo == bbbbbb ]]
 EOF
-} 2> /dev/null || log_error 'typeset -R should not preserve old attributes'
+} || log_error 'typeset -R should not preserve old attributes'
 
 expected='YWJjZGVmZ2hpag=='
 unset foo
@@ -392,9 +394,9 @@ read -N10 foo[4] <<< 'abcdefghijklmnop'
 [[ $(printf %B foo[4]) == abcdefghij ]] || log_error 'printf %B for binary indexed array element not working'
 unset foo
 
-$SHELL 2> /dev/null -c 'export foo=(bar=3)' && log_error 'compound variables cannot be exported'
+$SHELL -c 'export foo=(bar=3)' && log_error 'compound variables cannot be exported'
 
-$SHELL -c 'builtin date' >/dev/null 2>&1 &&
+$SHELL -c 'builtin date' &&
 {
 
 # check env var changes against a builtin that uses the env var
@@ -434,14 +436,14 @@ typeset -H v=/dev/null
 [[ $v == *nul* ]] || log_error 'typeset -H for /dev/null not working'
 
 unset x
-(typeset +C x) 2> /dev/null && log_error 'typeset +C should be an error'
-(typeset +A x) 2> /dev/null && log_error 'typeset +A should be an error'
-(typeset +a x) 2> /dev/null && log_error 'typeset +a should be an error'
+(typeset +C x) && log_error 'typeset +C should be an error'
+(typeset +A x) && log_error 'typeset +A should be an error'
+(typeset +a x) && log_error 'typeset +a should be an error'
 
 unset x
 {
 x=$($SHELL -c 'integer -s x=5;print -r -- $x')
-} 2> /dev/null
+}
 [[ $x == 5 ]] || log_error 'integer -s not working'
 
 [[ $(typeset -l) == *namespace*.sh* ]] && log_error 'typeset -l should not contain namespace .sh'
@@ -461,7 +463,7 @@ expected=$'(\n\t[0]=WORLD\n\t[1]=HELLO\n\t[2]=CHICKEN\n)'
 [[ $(print -v s) == "$expected" ]] || log_error 'typeset -u for associative array does not display correctly'
 
 unset s
-if command typeset -M totitle s 2> /dev/null
+if command typeset -M totitle s
 then
     [[ $(typeset +p s) == 'typeset -M totitle s' ]] || log_error 'typeset -M totitle does not display correctly with typeset -p'
 fi
@@ -476,7 +478,7 @@ fi
 
     [[ ${a1[70].text} == hello ]]
 EOF
-} 2> /dev/null
+}
 (( $? )) && log_error  'typeset + a[i] not working'
 
 typeset groupDB="" userDB=""
@@ -502,7 +504,7 @@ actual="$(printf "%B" x)"
 (
     trap 'exit $?' EXIT
     $SHELL -c 'typeset v=foo; [[ $(typeset -p v[0]) == v=foo ]]'
-) 2> /dev/null || log_error 'typeset -p v[0] not working for simple variable v'
+) || log_error 'typeset -p v[0] not working for simple variable v'
 
 unset x
 expected='typeset -a x=(a\=3 b\=4)'
@@ -518,7 +520,8 @@ unset y
 z='typeset -A y=([a]=foo)'
 $SHELL -c "$z; [[ \$(typeset -pA) == '$z' ]]" || log_error 'typeset -pA does not list only associative arrays'
 
-$SHELL 2> /dev/null -c 'typeset -C arr=( aa bb cc dd )' && log_error 'invalid compound variable assignment not reported'
+$SHELL -c 'typeset -C arr=( aa bb cc dd )' &&
+    log_error 'invalid compound variable assignment not reported'
 
 unset x
 typeset -l x=
@@ -530,7 +533,7 @@ typeset -L4 x=$'\001abcdef'
 
 unset x
 typeset -L x=-1
-command typeset -F x=0-1 2> /dev/null || log_error 'typeset -F after typeset -L fails'
+command typeset -F x=0-1 || log_error 'typeset -F after typeset -L fails'
 
 unset val
 typeset -i val=10#0-3
