@@ -1089,20 +1089,9 @@ set -- $(bar)
 [[ $1 == $2 ]] && log_error ".sh.inline optimization bug"
 ( $SHELL  -c ' function foo { typeset x=$1;print $1;};z=();z=($(foo bar)) ') 2> /dev/null ||  log_error 'using a function to set an array in a command sub  fails'
 
-{
-actual=$(
-ulimit=$(ulimit -s)
-if [[ $ulimit == +([[:digit:]]) ]] && (( ulimit < 16384 ))
-then
-    ulimit -s 16384
-fi
-ulimit=$(ulimit -n)
-if [[ $ulimit == +([[:digit:]]) ]] && (( ulimit < 512 ))
-then
-    ulimit -n 512
-fi
-
-$SHELL << \+++
+# Note: When run under ASAN the stack needs to be larger than 16384KB. Setting it to 32768 works
+# for me on macOS. Otherwise it fails when the stack overflows.
+actual=$( $SHELL << \+++
 f()
 {
     if (($1>1))
@@ -1115,7 +1104,6 @@ f()
 f 257 && print ok || print fail
 +++
 )
-}
 expect=ok
 [[ $actual == $expect ]] || log_error 'comsub depth > 256 in function failed' "$expect" "$actual"
 

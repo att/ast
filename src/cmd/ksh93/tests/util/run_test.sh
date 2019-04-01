@@ -277,6 +277,22 @@ unset PAGER
 unset VIEWER
 unset VISUAL
 
+#
+# A couple of tests involve deep recursion that migh require a stack up to 16MB, double that if
+# run with ASAN enabled. Similarly, some tests need a larege number of file descriptors.
+#
+ulimit=$(ulimit -s)
+if [[ $ulimit == +([[:digit:]]) ]] && (( ulimit < 32764 ))
+then
+    ulimit -s 32764
+fi
+
+ulimit=$(ulimit -n)
+if [[ $ulimit == +([[:digit:]]) ]] && (( ulimit < 1024 ))
+then
+    ulimit -n 1024
+fi
+
 if [[ $test_name == *.exp ]]
 then
     # Interactive test.
