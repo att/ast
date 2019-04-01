@@ -1022,7 +1022,8 @@ actual=$(( norm(z) ))
 expect=$(( sqrt(163.6) ))
 fequal $actual $expect || log_error "norm of associative array wrong" "$expect" "$actual"
 
-log_warning WTF
+# Note: When running under ASAN this can cause the stack to grow to more than 8MB. You may need to
+# do `ulimit -s -S 16384` for this to pass.
 $SHELL -c 'for ((i = 0; i < 1023; i++)); do eval a$i=a$((i+1)); done; a1023=999; print $((a0))' ||
     log_error 'arithmetic recursive evaluation too deep'
 
