@@ -57,8 +57,7 @@
 
 #define oldmode(lp) (lp->lexd.lastc >> CHAR_BIT)
 #define endchar(lp) (lp->lexd.lastc & 0xff)
-#define setchar(lp, c) (lp->lexd.lastc = ((lp->lexd.lastc & ~0xff) | (c)))
-#define poplevel(lp) (lp->lexd.lastc = lp->lexd.lex_match[--lp->lexd.level])
+#define setchar(lp, c) lp->lexd.lastc = ((lp->lexd.lastc & ~0xff) | (c))
 
 static_fn char *fmttoken(Lex_t *, int, char *);
 #ifdef SF_BUFCONST
@@ -70,12 +69,16 @@ static_fn void setupalias(Lex_t *, const char *, Namval_t *);
 static_fn int comsub(Lex_t *, int);
 static_fn void nested_here(Lex_t *);
 static_fn int here_copy(Lex_t *, struct ionod *);
-static_fn bool stack_grow(Lex_t *);
+static_fn void stack_grow(Lex_t *);
 static const Sfdisc_t alias_disc = {NULL, NULL, NULL, alias_exceptf, NULL};
+
+static_fn void poplevel(Lex_t *lp) {
+    assert(lp->lexd.level > 0);
+    lp->lexd.lastc = lp->lexd.lex_match[--lp->lexd.level];
+}
 
 static_fn void pushlevel(Lex_t *lp, int c, int s) {
     if (lp->lexd.level >= lp->lexd.lex_max) stack_grow(lp);
-    assert(lp->lexd.lex_match);
     lp->lexd.lex_match[lp->lexd.level++] = lp->lexd.lastc;
     lp->lexd.lastc = (s << CHAR_BIT) | c;
 }
@@ -653,8 +656,7 @@ int sh_lex(Lex_t *lp) {
                 wordflags |= ARG_QUOTED;
                 if (mode == ST_DOL) {
                     if (endchar(lp) != '$') goto err;
-                    if (oldmode(lp) == ST_QUOTE)  // $' within "" or ``
-                    {
+                    if (oldmode(lp) == ST_QUOTE) {  // $' within "" or ``
                         if (lp->lexd.warn) {
                             errormsg(SH_DICT, ERROR_warn(0), e_lexslash, shp->inlineno);
                         }
@@ -854,10 +856,10 @@ int sh_lex(Lex_t *lp) {
             case S_ERR: {
                 if ((n = endchar(lp)) == '$') goto err;
                 if (c == '*' || ((n = sh_lexstates[ST_BRACE][c]) != S_MOD1 && n != S_MOD2)) {
-                    // See whether inside `...`.
+                    n = endchar(lp);
+                    if (n != '`') goto err;  // not inside `...`
                     mode = oldmode(lp);
                     poplevel(lp);
-                    if ((n = endchar(lp)) != '`') goto err;
                     pushlevel(lp, RBRACE, mode);
                 } else {
                     setchar(lp, RBRACE);
@@ -2207,12 +2209,12 @@ static_fn void setupalias(Lex_t *lp, const char *string, Namval_t *np) {
 //
 // Grow storage stack for nested constructs by STACK_ARRAY.
 //
-static_fn bool stack_grow(Lex_t *lp) {
+static_fn void stack_grow(Lex_t *lp) {
     lp->lexd.lex_max += STACK_ARRAY;
     if (lp->lexd.lex_match) {
         lp->lexd.lex_match = realloc(lp->lexd.lex_match, sizeof(int) * lp->lexd.lex_max);
     } else {
         lp->lexd.lex_match = malloc(sizeof(int) * STACK_ARRAY);
     }
-    return lp->lexd.lex_match != 0;
+    assert(lp->lexd.lex_match);
 }
