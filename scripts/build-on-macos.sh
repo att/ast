@@ -6,7 +6,7 @@ set -e
 # head of the branch.
 brew install --HEAD meson
 
-source scripts/travis_common.sh
+. scripts/travis_common.sh
 
 mkdir build
 cd build
