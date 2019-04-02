@@ -948,6 +948,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                             if (flags & NV_ASSIGN) n |= NV_ADD | ARRAY_FILL;
                             table = shp->last_table;
                             cp = nv_endsubscript(np, sp, n | (flags & NV_ASSIGN), np->nvshell);
+                            ap = nv_arrayptr(np);  // nv_endsubscript() may have moved the array
                             shp->last_table = table;
 #if 0
 						if(scan)
