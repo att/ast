@@ -115,8 +115,8 @@ fi
 #
 # We also need this value for cppcheck to find some system headers again, on platforms like macOS,
 # where the system headers aren't found at /usr/include.
-readonly system_hdrs="$(clang -H -E ../etc/hdrs.c 2>&1 | head -1 |
-    sed -e 's/^\. //' -e 's/\/[^/]*$//')"
+readonly system_hdrs="$(clang -H -E ../etc/hdrs.c 2>&1 |
+    sed -ne 's,^\. \(.*\)/.*$,\1,p' -e '1,$!t' -e 'q')"
 
 # On macOS the system headers used by `clang` may not be rooted at /usr/include.
 lint_args=( -I. -I"${system_hdrs}" )
