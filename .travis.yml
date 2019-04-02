@@ -72,10 +72,9 @@ matrix:
         - os: linux
           env:
             - SCAN_TYPE="shellcheck"
-              DISTRO_TYPE=fedora
-              INSTALL_REQUIREMENTS="dnf repolist; dnf install -y shellcheck"
           before_install:
-              - docker pull ${DISTRO_TYPE}
+              - sudo apt-get update
+              - sudo apt-get install shellcheck findutils file
 
 services:
     - docker
