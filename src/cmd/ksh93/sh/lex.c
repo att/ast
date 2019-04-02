@@ -57,7 +57,6 @@
 
 #define oldmode(lp) (lp->lexd.lastc >> CHAR_BIT)
 #define endchar(lp) (lp->lexd.lastc & 0xff)
-#define setchar(lp, c) lp->lexd.lastc = ((lp->lexd.lastc & ~0xff) | (c))
 
 static_fn char *fmttoken(Lex_t *, int, char *);
 #ifdef SF_BUFCONST
@@ -72,12 +71,16 @@ static_fn int here_copy(Lex_t *, struct ionod *);
 static_fn void stack_grow(Lex_t *);
 static const Sfdisc_t alias_disc = {NULL, NULL, NULL, alias_exceptf, NULL};
 
-static_fn void poplevel(Lex_t *lp) {
+static inline void setchar(Lex_t *lp, int c) {
+    lp->lexd.lastc = (lp->lexd.lastc & ~0xff) | c;
+}
+
+static inline void poplevel(Lex_t *lp) {
     assert(lp->lexd.level > 0);
     lp->lexd.lastc = lp->lexd.lex_match[--lp->lexd.level];
 }
 
-static_fn void pushlevel(Lex_t *lp, int c, int s) {
+static inline void pushlevel(Lex_t *lp, int c, int s) {
     if (lp->lexd.level >= lp->lexd.lex_max) stack_grow(lp);
     lp->lexd.lex_match[lp->lexd.level++] = lp->lexd.lastc;
     lp->lexd.lastc = (s << CHAR_BIT) | c;
