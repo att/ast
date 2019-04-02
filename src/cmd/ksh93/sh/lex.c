@@ -71,9 +71,7 @@ static_fn int here_copy(Lex_t *, struct ionod *);
 static_fn void stack_grow(Lex_t *);
 static const Sfdisc_t alias_disc = {NULL, NULL, NULL, alias_exceptf, NULL};
 
-static inline void setchar(Lex_t *lp, int c) {
-    lp->lexd.lastc = (lp->lexd.lastc & ~0xff) | c;
-}
+static inline void setchar(Lex_t *lp, int c) { lp->lexd.lastc = (lp->lexd.lastc & ~0xff) | c; }
 
 static inline void poplevel(Lex_t *lp) {
     assert(lp->lexd.level > 0);
