@@ -339,3 +339,21 @@ void _dprint_nvp(const char *file_name, const int lineno, const char *func_name,
         }
     }
 }
+
+// Diagnostic print a struct Namref object.
+void _dprint_nrp(const char *file_name, const int lineno, const char *func_name, int level,
+                 const char *var_name, const void *vp) {
+    const struct Namref *nr = vp;
+
+    _dprintf(file_name, lineno, func_name, indent(level, "struct Namref %s @ %p"), var_name,
+             NP_BASE_ADDR(nr));
+    if (!nr) return;
+    _dprintf(file_name, lineno, func_name, indent(level + 1, "->np is..."));
+    _dprint_nvp(file_name, lineno, func_name, level + 1, "np", nr->np);
+    _dprintf(file_name, lineno, func_name, indent(level + 1, "->table is..."));
+    _dprint_nvp(file_name, lineno, func_name, level + 1, "table", nr->table);
+    _dprintf(file_name, lineno, func_name, indent(level + 1, "->oldnp is..."));
+    _dprint_nvp(file_name, lineno, func_name, level + 1, "oldnp", nr->oldnp);
+    _dprintf(file_name, lineno, func_name, indent(level + 1, "->sub %p |%s|"),
+             NP_BASE_ADDR(nr->sub), nr->sub);
+}
