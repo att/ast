@@ -43,8 +43,7 @@ static_fn void _dprint_VT_do_not_use(const char *file_name, int lineno, const ch
                                      int level, const char *var_name, const struct Value *vtp) {
     UNUSED(vtp);
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name,
-             indent(level, "undefined since the type is VT_do_not_use"));
+    _dprintf(file_name, lineno, func_name, indent(level, "undefined (type is VT_do_not_use)"));
 }
 
 static_fn void _dprint_VT_vp(const char *file_name, int lineno, const char *func_name, int level,
@@ -286,18 +285,27 @@ static vtp_dprintf *dprint_vtp_dispatch[] = {
 // Diagnostic print a struct Value object.
 void _dprint_vtp(const char *file_name, int const lineno, const char *func_name, int level,
                  const char *var_name, const void *vp) {
-    const struct Value *vtp = vp;
+    if (!vp) {
+        _dprintf(file_name, lineno, func_name, indent(level, "struct Value %s == NULL"), var_name);
+        return;
+    }
 
     // We do this rather than a sizeof(dprint_vtp_dispatch) check because the latter is a constant
     // expression that causes lint warnings.
+    const struct Value *vtp = vp;
     assert(dprint_vtp_dispatch[VT_sentinal] == _dprint_VT_sentinal);
     assert(vtp->type >= VT_do_not_use && vtp->type < VT_sentinal);
 
+    if (vtp->type == VT_do_not_use) {
+        _dprintf(file_name, lineno, func_name,
+                 indent(level, "struct Value %s is undefined (type is VT_do_not_use)"), var_name);
+        return;
+    }
+
     _dprintf(file_name, lineno, func_name,
-             indent(level, "struct Value %s->%s stored @ %s:%d in %s() is..."), var_name,
+             indent(level, "struct Value %s.%s stored @ %s:%d in %s() is..."), var_name,
              value_type_names[vtp->type], vtp->filename ? vtp->filename : "undef", vtp->line_num,
              vtp->funcname ? vtp->funcname : "undef");
-
     (dprint_vtp_dispatch[vtp->type])(file_name, lineno, func_name, level + 1, var_name, vtp);
 }
 
@@ -314,16 +322,18 @@ void _dprint_nvp(const char *file_name, const int lineno, const char *func_name,
 
     _dprintf(file_name, lineno, func_name, indent(level, "struct Namval %s @ %p"), var_name,
              NP_BASE_ADDR(np));
-    _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvname |%s|"), np->nvname);
+    if (!np) return;
+    _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvname %p |%s|"),
+             NP_BASE_ADDR(np->nvname), np->nvname);
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvsize %d"), np->nvsize);
-    _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvalue is:"));
+    _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvalue is..."));
     _dprint_vtp(file_name, lineno, func_name, level + 1, "", &np->nvalue);
     if (np->nvenv) {
         if (np->nvenv_is_cp) {
-            _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvenv is %p |%s|"),
+            _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvenv %p |%s|"),
                      NP_BASE_ADDR(np->nvenv), np->nvenv);
         } else {
-            _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvenv is %p:"),
+            _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvenv is..."),
                      NP_BASE_ADDR(np->nvenv));
             _dprint_nvp(file_name, lineno, func_name, level + 1, "->nvenv", np->nvenv);
         }
