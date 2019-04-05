@@ -276,17 +276,19 @@ extern void _dprintf(const char *fname, int lineno, const char *funcname, const 
 // Note that the function prototype uses a `const void*` because we can't use
 // `struct Value*` here as the src/ksh93/include/name.h header which defines
 // it can't be included before this header.
-extern void _dprint_vtp(const char *fname, const int lineno, const char *funcname, const void *vp);
-#define DPRINT_VT(vt) _dprint_vtp(__FILE__, __LINE__, __FUNCTION__, &(vt))
-#define DPRINT_VTP(vtp) _dprint_vtp(__FILE__, __LINE__, __FUNCTION__, vtp)
+extern void _dprint_vtp(const char *file_name, const int lineno, const char *func_name,
+                        int level, const char *var_name, const void *vp);
+#define DPRINT_VT(vt) _dprint_vtp(__FILE__, __LINE__, __FUNCTION__, 0, #vt, &(vt))
+#define DPRINT_VTP(vtp) _dprint_vtp(__FILE__, __LINE__, __FUNCTION__, 0, #vtp, vtp)
 
 // Debug print of a `struct Namval` object.
 //
 // Note that the function prototype uses a `const void*` because we can't use
 // `struct Namval*` here as the src/ksh93/include/name.h header which defines
 // it can't be included before this header.
-extern void _dprint_nvp(const char *fname, const int lineno, const char *funcname, const void *vp);
-#define DPRINT_NV(nv) _dprint_nvp(__FILE__, __LINE__, __FUNCTION__, &(nv))
-#define DPRINT_NVP(nvp) _dprint_nvp(__FILE__, __LINE__, __FUNCTION__, nvp)
+extern void _dprint_nvp(const char *file_name, const int lineno, const char *func_name,
+                        int level, const char *var_name, const void *vp);
+#define DPRINT_NV(nv) _dprint_nvp(__FILE__, __LINE__, __FUNCTION__, 0, #nv, &(nv))
+#define DPRINT_NVP(nvp) _dprint_nvp(__FILE__, __LINE__, __FUNCTION__, 0, #nvp, nvp)
 
 #endif
