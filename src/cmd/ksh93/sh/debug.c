@@ -175,8 +175,11 @@ static_fn void _dprint_VT_sfdoublep(const char *file_name, int lineno, const cha
 
 static_fn void _dprint_VT_np(const char *file_name, int lineno, const char *func_name, int level,
                              const char *var_name, const struct Value *vtp) {
-    UNUSED(var_name);
-    _dprint_nvp(file_name, lineno, func_name, level + 1, "->np", FETCH_VTP(vtp, np));
+    char buf[128];
+
+    strlcpy(buf, var_name, sizeof(buf));
+    strlcat(buf, ".np", sizeof(buf));
+    _dprint_nvp(file_name, lineno, func_name, level, buf, FETCH_VTP(vtp, np));
 }
 
 static_fn void _dprint_VT_up(const char *file_name, int lineno, const char *func_name, int level,
@@ -184,8 +187,12 @@ static_fn void _dprint_VT_up(const char *file_name, int lineno, const char *func
     char buf[128];
 
     strlcpy(buf, var_name, sizeof(buf));
-    strlcat(buf, "->up", sizeof(buf));
-    _dprintf(file_name, lineno, func_name, indent(level, "struct Value* %p is..."),
+    strlcat(buf, ".up", sizeof(buf));
+    // This is a slightly unusual case that doesn't follow the other patterns for printing an
+    // embedded struct pointer; e.g., _dprint_VT_nrp. That is because this is printing a pointer to
+    // another struct Value. So to provide context we need to print that pointer addr now before
+    // printing info about the struct Value that pointer refers to.
+    _dprintf(file_name, lineno, func_name, indent(level, "struct Value %s %p is..."), buf,
              BASE_ADDR(FETCH_VTP(vtp, up)));
     _dprint_vtp(file_name, lineno, func_name, level + 1, buf, FETCH_VTP(vtp, up));
 }
@@ -206,9 +213,11 @@ static_fn void _dprint_VT_funp(const char *file_name, int lineno, const char *fu
 
 static_fn void _dprint_VT_nrp(const char *file_name, int lineno, const char *func_name, int level,
                               const char *var_name, const struct Value *vtp) {
-    UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "struct Namref* %p"),
-             BASE_ADDR(FETCH_VTP(vtp, nrp)));
+    char buf[128];
+
+    strlcpy(buf, var_name, sizeof(buf));
+    strlcat(buf, ".nrp", sizeof(buf));
+    _dprint_nrp(file_name, lineno, func_name, level, buf, FETCH_VTP(vtp, nrp));
 }
 
 static_fn void _dprint_VT_shbltinp(const char *file_name, int lineno, const char *func_name,
