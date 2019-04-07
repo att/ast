@@ -513,8 +513,9 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                                 nv_isvtree(np) || nv_arrayptr(np)) &&
                                !nv_type(np) &&
                                nv_isattr(np, NV_MINIMAL | NV_EXPORT) != NV_MINIMAL) {
-                        _nv_unset(np, NV_EXPORT);
-                        if (ap && ap->fun) {
+                        bool was_assoc_array = ap && ap->fun;
+                        _nv_unset(np, NV_EXPORT);  // this can free ap
+                        if (was_assoc_array) {
                             nv_setarray(np, nv_associative);
                         } else {
                             // nq is initialized to same value as np. When _nv_unset(np, NV_EXPORT);
