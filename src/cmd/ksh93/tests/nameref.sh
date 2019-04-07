@@ -503,6 +503,10 @@ else
     fi
 fi
 
+# TODO: Remove the `unset x` when https://github.com/att/ast/issues/1267 is fixed.
+# The problem is that the `unset c` below invalidates the Namval_t that `x` points to.
+unset x
+
 typeset +n nr
 unset c nr
 compound c
