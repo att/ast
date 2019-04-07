@@ -150,7 +150,7 @@ char *pathcanon(char *path, size_t size, int flags) {
                             if (dots > 0) {
                                 // Symbolic link refers to valid physcal path
                                 loop++;
-                                strcpy(buf + dots, next - (*next != 0));
+                                strlcpy(buf + dots, next - (*next != 0), sizeof(buf) - dots);
                                 if (*buf == '/') p = next_char_after_triple_dot = path;
                                 physical_canonical_path = next = canonical_path = p;
                                 strcpy(p, buf);
