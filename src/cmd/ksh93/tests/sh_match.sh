@@ -52,12 +52,6 @@ function test_xmlfragment1
     typeset -r testscript='test1_script.sh'
 
     cat >"${testscript}" <<-TEST1SCRIPT
-	# Put safeguards to prevent out-of-control memory consumption.
-	# Ignore "read only" error if a limit is not supported.
-	ulimit -M \$(( 1024 * 1024 )) 2>/dev/null
-	ulimit -v \$(( 1024 * 1024 )) 2>/dev/null
-	ulimit -d \$(( 1024 * 1024 )) 2>/dev/null
-
 	# input text
 	xmltext="\$( < "\$1" )"
 
