@@ -4,6 +4,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <inttypes.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
 #include <sys/types.h>
@@ -20,6 +21,33 @@
 // offsets to that var.
 void *_dprint_vt_base_addr = NULL;
 #define BASE_ADDR(p) (char *)((char *)(p) - (char *)_dprint_vt_base_addr)
+
+// Max number of pointers we remember when following a cycle of pointers.
+#define MAX_PTRS 100
+static void *ptrs_seen[MAX_PTRS];
+static int next_ptr = 0;
+static bool max_ptrs_warned = false;
+
+// When dumping an object (e.g., a Namval_t) at level zero forget about any pointers we've seen from
+// previous debug print calls.
+static_fn void clear_ptrs() {
+    next_ptr = 0;
+    max_ptrs_warned = false;
+}
+
+// Return true if we've already seen the pointer; otherwise, remember it.
+static_fn bool ptr_seen(void *p) {
+    if (next_ptr == MAX_PTRS) {
+        if (!max_ptrs_warned) DPRINTF("Too many pointers already cached when checking %p", p);
+        return true;  // return true to avoid cycles we can't detect -- should never happen
+    }
+
+    for (int i = 0; i < next_ptr; i++) {
+        if (ptrs_seen[i] == p) return true;
+    }
+    ptrs_seen[next_ptr++] = p;
+    return false;
+}
 
 static_fn const char *indent(int level, const char *fmt) {
     static char buf[MAX_LEVELS * INDENT + 1 + 100];
@@ -179,7 +207,13 @@ static_fn void _dprint_VT_np(const char *file_name, int lineno, const char *func
 
     strlcpy(buf, var_name, sizeof(buf));
     strlcat(buf, ".np", sizeof(buf));
-    _dprint_nvp(file_name, lineno, func_name, level, buf, FETCH_VTP(vtp, np));
+    void *p = FETCH_VTP(vtp, np);
+    if (ptr_seen(p)) {
+        _dprintf(file_name, lineno, func_name,
+                 indent(level, "WARN: %s ptr %p already dumped; not following it"), buf, p);
+        return;
+    }
+    _dprint_nvp(file_name, lineno, func_name, level, buf, p);
 }
 
 static_fn void _dprint_VT_up(const char *file_name, int lineno, const char *func_name, int level,
@@ -192,9 +226,15 @@ static_fn void _dprint_VT_up(const char *file_name, int lineno, const char *func
     // embedded struct pointer; e.g., _dprint_VT_nrp. That is because this is printing a pointer to
     // another struct Value. So to provide context we need to print that pointer addr now before
     // printing info about the struct Value that pointer refers to.
+    void *p = FETCH_VTP(vtp, up);
     _dprintf(file_name, lineno, func_name, indent(level, "struct Value %s %p is..."), buf,
-             BASE_ADDR(FETCH_VTP(vtp, up)));
-    _dprint_vtp(file_name, lineno, func_name, level + 1, buf, FETCH_VTP(vtp, up));
+             BASE_ADDR(p));
+    if (ptr_seen(p)) {
+        _dprintf(file_name, lineno, func_name,
+                 indent(level, "WARN: %s ptr %p already dumped; not following it"), buf, p);
+        return;
+    }
+    _dprint_vtp(file_name, lineno, func_name, level + 1, buf, p);
 }
 
 static_fn void _dprint_VT_rp(const char *file_name, int lineno, const char *func_name, int level,
@@ -217,7 +257,13 @@ static_fn void _dprint_VT_nrp(const char *file_name, int lineno, const char *fun
 
     strlcpy(buf, var_name, sizeof(buf));
     strlcat(buf, ".nrp", sizeof(buf));
-    _dprint_nrp(file_name, lineno, func_name, level, buf, FETCH_VTP(vtp, nrp));
+    void *p = FETCH_VTP(vtp, nrp);
+    if (ptr_seen(p)) {
+        _dprintf(file_name, lineno, func_name,
+                 indent(level, "WARN: %s ptr %p already dumped; not following it"), buf, p);
+        return;
+    }
+    _dprint_nrp(file_name, lineno, func_name, level, buf, p);
 }
 
 static_fn void _dprint_VT_shbltinp(const char *file_name, int lineno, const char *func_name,
@@ -299,6 +345,8 @@ void _dprint_vtp(const char *file_name, int const lineno, const char *func_name,
         return;
     }
 
+    if (level == 0) clear_ptrs();
+
     // We do this rather than a sizeof(dprint_vtp_dispatch) check because the latter is a constant
     // expression that causes lint warnings.
     const struct Value *vtp = vp;
@@ -329,6 +377,8 @@ void _dprint_nvp(const char *file_name, const int lineno, const char *func_name,
                  const char *var_name, const void *vp) {
     const Namval_t *np = vp;
 
+    if (level == 0) clear_ptrs();
+
     _dprintf(file_name, lineno, func_name, indent(level, "struct Namval %s @ %p"), var_name,
              NP_BASE_ADDR(np));
     if (!np) return;
@@ -344,7 +394,12 @@ void _dprint_nvp(const char *file_name, const int lineno, const char *func_name,
         } else {
             _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvenv is..."),
                      NP_BASE_ADDR(np->nvenv));
-            _dprint_nvp(file_name, lineno, func_name, level + 1, "->nvenv", np->nvenv);
+            if (ptr_seen(np->nvenv)) {
+                _dprintf(file_name, lineno, func_name,
+                         indent(level, "WARN: ptr %p already dumped; not following it"), np->nvenv);
+            } else {
+                _dprint_nvp(file_name, lineno, func_name, level + 1, "->nvenv", np->nvenv);
+            }
         }
     }
 }
@@ -354,15 +409,36 @@ void _dprint_nrp(const char *file_name, const int lineno, const char *func_name,
                  const char *var_name, const void *vp) {
     const struct Namref *nr = vp;
 
+    if (level == 0) clear_ptrs();
+
     _dprintf(file_name, lineno, func_name, indent(level, "struct Namref %s @ %p"), var_name,
              NP_BASE_ADDR(nr));
     if (!nr) return;
+
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->np is..."));
-    _dprint_nvp(file_name, lineno, func_name, level + 1, "np", nr->np);
+    if (ptr_seen(nr->np)) {
+        _dprintf(file_name, lineno, func_name,
+                 indent(level, "WARN: ptr %p already dumped; not following it"), nr->np);
+    } else {
+        _dprint_nvp(file_name, lineno, func_name, level + 1, "np", nr->np);
+    }
+
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->table is..."));
-    _dprint_nvp(file_name, lineno, func_name, level + 1, "table", nr->table);
+    if (ptr_seen(nr->table)) {
+        _dprintf(file_name, lineno, func_name,
+                 indent(level, "WARN: ptr %p already dumped; not following it"), nr->table);
+    } else {
+        _dprint_nvp(file_name, lineno, func_name, level + 1, "table", nr->table);
+    }
+
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->oldnp is..."));
-    _dprint_nvp(file_name, lineno, func_name, level + 1, "oldnp", nr->oldnp);
+    if (ptr_seen(nr->oldnp)) {
+        _dprintf(file_name, lineno, func_name,
+                 indent(level, "WARN: ptr %p already dumped; not following it"), nr->oldnp);
+    } else {
+        _dprint_nvp(file_name, lineno, func_name, level + 1, "oldnp", nr->oldnp);
+    }
+
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->sub %p |%s|"),
              NP_BASE_ADDR(nr->sub), nr->sub);
 }
