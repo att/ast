@@ -135,7 +135,6 @@ function test_arithmetric_expression_accesss_array_element_through_nameref
                 esac
 
                 testname="${0}/${cmd}"
-#set -x
                 out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -o errexit -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 #set +x
 

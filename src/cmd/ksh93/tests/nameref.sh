@@ -280,7 +280,6 @@ i=$($SHELL -c 'nameref foo=bar; bar[2]=(x=3 y=4); nameref x=foo[2].y;print -r --
 	foo
 +++EOF
 ) ==  *foo=hello* ]] || log_error 'unable to display compound variable from name reference of local variable'
-#set -x
 for c in '=' '[' ']' '\' "'" '"' '<' '=' '('
 do
     [[ $($SHELL 2> /dev/null <<- ++EOF++
