@@ -352,7 +352,11 @@ static_fn char *lookup(Namval_t *np, int type, Sfdouble_t *dp, Namfun_t *handle)
             nv_setsize(SH_VALNOD, 10);
         }
         block(bp, type);
+        // Make sure nv_setdisc doesn't invalidate `vp` by freeing it.
+        // See 
+        block(bp, UNASSIGN);
         sh_fun(shp, nq, np, NULL);
+        unblock(bp, UNASSIGN);
         unblock(bp, type);
         if (!vp->disc[type]) chktfree(np, vp);
         if (type == LOOKUPN) {
@@ -466,7 +470,7 @@ char *nv_setdisc(Namval_t *np, const void *event, Namval_t *action, Namfun_t *fp
     }
     if (action == np) {
         action = vp->disc[type];
-        empty = 0;
+        empty = NULL;
     } else if (action) {
         // The cast is because `vp->namfun.disc` is const. Why are we modifying a const struct?
         Namdisc_t *dp = (Namdisc_t *)vp->namfun.disc;
@@ -477,12 +481,10 @@ char *nv_setdisc(Namval_t *np, const void *event, Namval_t *action, Namfun_t *fp
         }
         vp->disc[type] = action;
     } else {
-        struct blocked *bp;
         action = vp->disc[type];
-        vp->disc[type] = 0;
-        if (!(bp = block_info(np, NULL)) || !isblocked(bp, UNASSIGN)) {
-            chktfree(np, vp);
-        }
+        vp->disc[type] = NULL;
+        struct blocked *bp = block_info(np, NULL);
+        if (!bp || !isblocked(bp, UNASSIGN)) chktfree(np, vp);
     }
     return action ? (char *)action : empty;
 }
