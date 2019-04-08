@@ -253,7 +253,7 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 't': {
-                sec = sh_strnum(shp, opt_info.arg, (char **)0, 1);
+                sec = sh_strnum(shp, opt_info.arg, NULL, 1);
                 timeout = sec ? 1000 * sec : 1;
                 break;
             }

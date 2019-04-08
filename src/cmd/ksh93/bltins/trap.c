@@ -275,7 +275,7 @@ endopts:
         } else {
             while ((signame = *argv++)) {
                 if (isdigit(*signame)) {
-                    sh_siglist(shp, sfstdout, ((int)strtol(signame, (char **)0, 10) & 0177) + 1);
+                    sh_siglist(shp, sfstdout, ((int)strtol(signame, NULL, 10) & 0177) + 1);
                 } else {
                     if ((sig = sig_number(shp, signame)) < 0) {
                         shp->exitval = 2;

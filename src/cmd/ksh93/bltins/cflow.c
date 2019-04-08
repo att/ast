@@ -70,7 +70,7 @@ done:
 
     pp->mode = (**argv == 'e' ? SH_JMPEXIT : SH_JMPFUN);
     argv += opt_info.index;
-    n = (((arg = *argv) ? (int)strtol(arg, (char **)0, 10) : shp->oldexit));
+    n = (((arg = *argv) ? (int)strtol(arg, NULL, 10) : shp->oldexit));
     if (n < 0 || n == 256 || n > SH_EXITMASK + shp->gd->sigmax) {
         n &= ((unsigned int)n) & SH_EXITMASK;
     }

@@ -554,7 +554,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
     return r;
 }
 
-Sfdouble_t sh_arith(Shell_t *shp, const char *str) { return sh_strnum(shp, str, (char **)0, 1); }
+Sfdouble_t sh_arith(Shell_t *shp, const char *str) { return sh_strnum(shp, str, NULL, 1); }
 
 void *sh_arithcomp(Shell_t *shp, char *str) {
     const char *ptr = str;

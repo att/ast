@@ -600,7 +600,7 @@ int sh_access(const char *name, int mode) {
     struct stat statb;
 
     if (*name == 0) return -1;
-    if (sh_isdevfd(name)) return sh_ioaccess((int)strtol(name + 8, (char **)0, 10), mode);
+    if (sh_isdevfd(name)) return sh_ioaccess((int)strtol(name + 8, NULL, 10), mode);
     // Can't use access function for execute permission with root.
     if (mode == X_OK && shp->gd->euserid == 0) goto skip;
     if (shp->gd->userid == shp->gd->euserid && shp->gd->groupid == shp->gd->egroupid) {
@@ -700,6 +700,6 @@ static_fn int test_stat(const char *name, struct stat *buff) {
         errno = ENOENT;
         return -1;
     }
-    if (sh_isdevfd(name)) return fstat((int)strtol(name + 8, (char **)0, 10), buff);
+    if (sh_isdevfd(name)) return fstat((int)strtol(name + 8, NULL, 10), buff);
     return sh_stat(name, buff);
 }

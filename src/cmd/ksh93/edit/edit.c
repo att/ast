@@ -253,7 +253,7 @@ int ed_window(void) {
     char *cp = nv_getval(COLUMNS);
 
     if (cp) {
-        cols = (int)strtol(cp, (char **)0, 10) - 1;
+        cols = (int)strtol(cp, NULL, 10) - 1;
     } else {
         astwinsize(2, &rows, &cols);
         if (--cols < 0) cols = DFLTWINDOW - 1;

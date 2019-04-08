@@ -154,7 +154,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
             } while (isdigit(*arg));
             if (*arg == 0) {
                 arg = argv[1];
-                range[++flag] = (int)strtol(arg, (char **)0, 10);
+                range[++flag] = (int)strtol(arg, NULL, 10);
                 if (*arg == '-') range[flag] += (hist_max(hp) - 1);
                 argv++;
                 continue;

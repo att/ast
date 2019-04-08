@@ -1901,7 +1901,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         if (type != 0) {
                             type = nargs;
                         } else {
-                            type = (int)strtol(val, (char **)0, 10) - 1;
+                            type = (int)strtol(val, NULL, 10) - 1;
                         }
                         if (type < 0 || type >= nargs) {
                             cp = "";
@@ -3301,8 +3301,7 @@ int sh_run(Shell_t *shp, int argn, char *argv[]) {
     memcpy(dp->dolval + ARG_SPARE, argv, (argn + 1) * sizeof(char *));
     t->comarg = (struct argnod *)dp;
     if (!strchr(argv[0], '/')) {
-        t->comnamp =
-            (void *)nv_bfsearch(argv[0], shp->fun_tree, (Namval_t **)&t->comnamq, (char **)0);
+        t->comnamp = nv_bfsearch(argv[0], shp->fun_tree, (Namval_t **)&t->comnamq, NULL);
     }
     argn = sh_exec(shp, (Shnode_t *)t, sh_isstate(shp, SH_ERREXIT));
     shp->bltindata = bltindata;

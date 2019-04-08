@@ -118,7 +118,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     if (rshflag) sh_offoption(shp, SH_RESTRICTED);
     if (sigsetjmp(*((sigjmp_buf *)shp->jmpbuffer), 0)) {
         // Begin script execution here.
-        sh_reinit(shp, (char **)0);
+        sh_reinit(shp, NULL);
         shp->gd->pid = getpid();
         shp->gd->ppid = getppid();
     }
@@ -236,7 +236,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                     char *cp;
                     int type;
 #endif
-                    fdin = (int)strtol(name + 8, (char **)0, 10);
+                    fdin = (int)strtol(name + 8, NULL, 10);
                     if (fstat(fdin, &statb) < 0) {
                         errormsg(SH_DICT, ERROR_system(1), e_open, name);
                         __builtin_unreachable();
@@ -440,7 +440,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
             sh_offstate(shp, SH_MONITOR);
             if (sh_isoption(shp, SH_MONITOR)) sh_onstate(shp, SH_MONITOR);
             if (job.pwlist) {
-                job_walk(shp, sfstderr, job_list, JOB_NFLAG, (char **)0);
+                job_walk(shp, sfstderr, job_list, JOB_NFLAG, NULL);
                 job_wait((pid_t)0);
             }
 #endif  // JOBS

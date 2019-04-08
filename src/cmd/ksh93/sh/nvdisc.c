@@ -274,7 +274,7 @@ static_fn void assign(Namval_t *np, const void *val, int flags, Namfun_t *handle
         int bflag = 0;
         block(bp, type);
         if (type == APPEND && (bflag = !isblocked(bp, LOOKUPS))) block(bp, LOOKUPS);
-        sh_fun(shp, nq, np, (char **)0);
+        sh_fun(shp, nq, np, NULL);
         unblock(bp, type);
         if (bflag) unblock(bp, LOOKUPS);
         if (!vp->disc[type]) chktfree(np, vp);
@@ -352,7 +352,7 @@ static_fn char *lookup(Namval_t *np, int type, Sfdouble_t *dp, Namfun_t *handle)
             nv_setsize(SH_VALNOD, 10);
         }
         block(bp, type);
-        sh_fun(shp, nq, np, (char **)0);
+        sh_fun(shp, nq, np, NULL);
         unblock(bp, type);
         if (!vp->disc[type]) chktfree(np, vp);
         if (type == LOOKUPN) {
@@ -1088,7 +1088,7 @@ Namval_t *sh_addbuiltin(Shell_t *shp, const char *path, Shbltin_f bltin, void *e
         name = path;
     } else if ((name = path_basename(path)) == path &&
                bltin != FETCH_VT(SYSTYPESET->nvalue, shbltinp) &&
-               (nq = nv_bfsearch(name, shp->bltin_tree, (Namval_t **)0, &cp))) {
+               (nq = nv_bfsearch(name, shp->bltin_tree, NULL, &cp))) {
         path = name = stkptr(shp->stk, offset);
     } else if (shp->bltin_dir && extra != builtin_delete) {
         sfputr(shp->stk, shp->bltin_dir, '/');

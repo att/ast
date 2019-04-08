@@ -1012,7 +1012,7 @@ static_fn struct process *job_bystring(char *ajob) {
     if (*ajob++ != '%') return NULL;
     c = *ajob;
     if (isdigit(c)) {
-        pw = job_byjid((int)strtol(ajob, (char **)0, 10));
+        pw = job_byjid((int)strtol(ajob, NULL, 10));
     } else if (c == '+' || c == '%') {
         ;  // do nothing
     } else if (c == '-') {

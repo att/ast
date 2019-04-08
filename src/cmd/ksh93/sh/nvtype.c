@@ -1263,10 +1263,10 @@ static_fn void type_init(Namval_t *np) {
     for (i = 0; i < pp->numnodes; i++) {
         nq = nv_namptr(pp->nodes, i);
         if ((dp = (Namtype_t *)nv_hasdisc(nq, &type_disc)) && dp->cp) {
-            sh_fun(shp, dp->cp, nq, (char **)0);
+            sh_fun(shp, dp->cp, nq, NULL);
         }
     }
-    if (pp->cp) sh_fun(shp, pp->cp, np, (char **)0);
+    if (pp->cp) sh_fun(shp, pp->cp, np, NULL);
 }
 
 //

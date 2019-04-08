@@ -2520,7 +2520,7 @@ void sh_menu(Shell_t *shp, Sfio_t *outfile, int argn, char *argv[]) {
     int nrow, ncol = 1, ndigits = 1;
     int fldsize, wsize = ed_window();
     char *cp = nv_getval(sh_scoped(shp, LINES));
-    nrow = (cp ? 1 + 2 * ((int)strtol(cp, (char **)0, 10) / 3) : NROW);
+    nrow = (cp ? 1 + 2 * ((int)strtol(cp, NULL, 10) / 3) : NROW);
     for (i = argn; i >= 10; i /= 10) ndigits++;
     if (argn < nrow) {
         nrow = argn;

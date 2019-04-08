@@ -983,7 +983,7 @@ static_fn int subcopy(Mac_t *mp, int flag) {
 bool sh_macfun(Shell_t *shp, const char *name, int offset) {
     Namval_t *np, *nq;
 
-    np = nv_bfsearch(name, shp->fun_tree, &nq, (char **)0);
+    np = nv_bfsearch(name, shp->fun_tree, &nq, NULL);
     if (np) {
         // Treat ${x.foo} as ${x.foo;}.
         union {

@@ -480,7 +480,7 @@ int b_bg(int n, char *argv[], Shbltin_t *context) {
         }
         return 1;
     }
-    if (flag == 'd' && *argv == 0) argv = (char **)0;
+    if (flag == 'd' && *argv == 0) argv = NULL;
     if (job_walk(shp, sfstdout, job_switch, flag, argv)) {
         errormsg(SH_DICT, ERROR_exit(1), e_no_job);
         __builtin_unreachable();
@@ -526,7 +526,7 @@ int b_jobs(int n, char *argv[], Shbltin_t *context) {
         __builtin_unreachable();
     }
 
-    if (*argv == 0) argv = (char **)0;
+    if (*argv == 0) argv = NULL;
     if (job_walk(shp, sfstdout, job_list, flag, argv)) {
         errormsg(SH_DICT, ERROR_exit(1), e_no_job);
         __builtin_unreachable();
