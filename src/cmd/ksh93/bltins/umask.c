@@ -38,10 +38,6 @@
 // This has to be included after "shell.h".
 #include "builtins.h"
 
-#ifndef SH_DICT
-#define SH_DICT "libshell"
-#endif
-
 int b_umask(int argc, char *argv[], Shbltin_t *context) {
     char *mask;
     int flag = 0;

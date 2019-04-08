@@ -45,9 +45,6 @@
 #ifndef ERROR_dictionary
 #define ERROR_dictionary(s) (s)
 #endif
-#ifndef SH_DICT
-#define SH_DICT "libshell"
-#endif
 
 #define MAXLEVEL 1024
 #define SMALL_STACK 12

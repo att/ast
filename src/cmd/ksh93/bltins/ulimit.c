@@ -39,10 +39,6 @@
 #include "shcmd.h"
 #include "ulimit.h"
 
-#ifndef SH_DICT
-#define SH_DICT "libshell"
-#endif
-
 #ifdef _no_ulimit
 
 int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
