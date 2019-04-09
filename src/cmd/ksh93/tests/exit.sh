@@ -40,6 +40,7 @@ ${ABSHELL}  <<!
 HOME='$PWD' \
 PATH='$PATH' \
 SHELL='$ABSSHELL' \
+ASAN_OPTIONS='$ASAN_OPTIONS' \
 $(
     v=$(getconf LIBPATH)
     for v in ${v//,/ }
@@ -48,7 +49,7 @@ $(
         eval [[ \$$v ]] && eval print -n \" \"\$v=\"\$$v\"
     done
 ) \
-exec -c -a -ksh ${ABSHELL} -c "exit 1" 1>/dev/null 2>&1
+exec -c -a -ksh ${ABSHELL} -c "exit 1"
 !
 status=$(echo $?)
 if [[ -o noprivileged && $status != 0 ]]
