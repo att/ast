@@ -399,17 +399,22 @@ static History_t *hist_trim(History_t *hp, int n) {
 // Position history file at size and find next command number.
 //
 static int hist_nearend(History_t *hp, Sfio_t *iop, off_t size) {
-    unsigned char *cp, *endbuff;
-    int n, incmd = 1;
-    unsigned char *buff, marker[4];
+    unsigned char *cp, *endbuff, *buff, marker[4];
+    int n;
+    int incmd = 1;
 
-    if (size <= 2L || sfseek(iop, size, SEEK_SET) < 0) goto begin;
+    if (size <= 2) goto begin;
+    if (sfseek(iop, size, SEEK_SET) < 0) goto begin;
+
     // Skip to marker command and return the number. Numbering commands occur after a null and begin
     // with HIST_CMDNO.
-    while ((cp = buff = (unsigned char *)sfreserve(iop, SF_UNBOUND, SF_LOCKR))) {
+    while (true) {
+        cp = buff = (unsigned char *)sfreserve(iop, SF_UNBOUND, SF_LOCKR | SF_WRITE);
+        if (!cp) break;
+
         n = sfvalue(iop);
-        *(endbuff = cp + n) = 0;
-        while (1) {
+        endbuff = cp + n;
+        while (true) {
             // Check for marker.
             if (!incmd && *cp++ == HIST_CMDNO && *cp == 0) {
                 n = cp + 1 - buff;
@@ -417,12 +422,14 @@ static int hist_nearend(History_t *hp, Sfio_t *iop, off_t size) {
                 break;
             }
             incmd = 0;
-            cp += strlen((char *)cp) + 1;  // point past the terminating null
+            cp += strnlen((char *)cp, endbuff - cp) + 1;  // point past the terminating null
             if (cp > endbuff) {
                 incmd = 1;
                 break;
             }
-            if (*cp == 0 && ++cp > endbuff) break;
+            if (*cp == 0 && ++cp > endbuff) {
+                break;
+            }
         }
         size += n;
         sfread(iop, (char *)buff, n);
@@ -439,9 +446,10 @@ static int hist_nearend(History_t *hp, Sfio_t *iop, off_t size) {
             incmd = 0;
         }
     }
+
 begin:
-    sfseek(iop, (off_t)2, SEEK_SET);
-    hp->histmarker = hp->histcnt = 2L;
+    sfseek(iop, 2, SEEK_SET);
+    hp->histmarker = hp->histcnt = 2;
     return 1;
 }
 
