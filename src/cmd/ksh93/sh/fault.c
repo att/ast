@@ -408,7 +408,8 @@ void sh_chktrap(Shell_t *shp) {
             }
             trap = shp->st.trapcom[sig];
             if (trap) {
-                siginfo_ll_t *ip = 0, *ipnext;
+                siginfo_ll_t *ip = NULL;
+                siginfo_ll_t *ipnext;
             retry:
                 if (shp->siginfo) {
                     do {
@@ -416,19 +417,24 @@ void sh_chktrap(Shell_t *shp) {
                     } while (asocasptr(&shp->siginfo[sig], ip, 0) != ip);
                 }
             again:
-                if (ip) {
-                    sh_setsiginfo(&ip->info);
-                    ipnext = ip->next;
-                } else {
-                    continue;
-                }
+                if (!ip) continue;
+                sh_setsiginfo(&ip->info);
+                ipnext = ip->next;
                 cursig = sig;
-                sh_trap(shp, trap, 0);
+                if (trap) sh_trap(shp, trap, 0);
                 count++;
                 if (ip) {
                     free(ip);
                     ip = ipnext;
-                    if (ip) goto again;
+                    if (ip) {
+                        // Handling the trap via sh_trap() may unset the trap (e.g., `trap - INT`)
+                        // or install a different handler. Either will cause the buffer pointed to
+                        // by `trap` to be freed thus invaliding our cached pointer. Ensure we're
+                        // using the current trap text when dealing with another instance of the
+                        // signal. See https://github.com/att/ast/issues/1272.
+                        trap = shp->st.trapcom[sig];
+                        goto again;
+                    }
                 }
                 if (shp->siginfo[sig]) goto retry;
                 cursig = -1;
