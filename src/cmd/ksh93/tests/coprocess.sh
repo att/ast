@@ -19,10 +19,10 @@
 ########################################################################
 # Test the behavior of co-processes
 
-if [[ -d /cygdrive ]]
+if [[ $OS_NAME == CYGWIN* ]]
 then
-    log_warning 'cygwin detected - coprocess tests disabled - enable at the risk of wedging your system'
-    exit 99
+    log_warning 'coprocess tests disabled on Cygwin - enable at the risk of wedging your system'
+    exit 0
 fi
 
 function ping # id
@@ -37,7 +37,6 @@ function ping # id
 
 for cat in cat $bin_cat
 do
-
     $cat |&
     print -p "hello"
     read -p line
