@@ -73,8 +73,8 @@ fi
 # command and they won't necessarily agree. So normalize both to UTC.
 for i in 1 2 3
 do
-   actual=$(printf '%T\n' now | sed -e 's/GMT/UTC/')
-   expect=$(date | sed -e 's/GMT/UTC/')
+   expect=$(env LANG=C date | sed -e 's/GMT/UTC/')
+   actual=$(env LANG=C $SHELL -c 'printf "%T\n" now' | sed -e 's/GMT/UTC/')
    if [[ "$actual" == "$expect" ]]
    then
       break
