@@ -99,9 +99,14 @@ then
 fi
 
 chmod 000 $file
-if [[ -r $file ]]
+if [[ $OS_NAME == CYGWIN* ]]
 then
-    log_error "-r: $file should not be readable"
+    log_info 'skipping [[ -r $file ]] test on Cygwin'
+else
+    if [[ -r $file ]]
+    then
+        log_error "-r: $file should not be readable"
+    fi
 fi
 
 if [[ ! -O $file ]]
@@ -109,30 +114,46 @@ then
     log_error "-r: $file should be owned by me"
 fi
 
-if [[ -w $file ]]
+if [[ $OS_NAME == CYGWIN* ]]
 then
-    log_error "-w: $file should not be writable"
+    log_info 'skipping [[ -w $file ]] test on Cygwin'
+else
+    if [[ -w $file ]]
+    then
+        log_error "-w: $file should not be writable"
+    fi
 fi
 
-if [[ -w $file ]]
+if [[ $OS_NAME == CYGWIN* ]]
 then
-    log_error "-x: $file should not be executable"
+    log_info 'skipping [[ -x $file ]] test on Cygwin'
+else
+    if [[ -w $file ]]
+    then
+        log_error "-x: $file should not be executable"
+    fi
 fi
 
-if [[ -w $file || -r $file ]]
+if [[ $OS_NAME == CYGWIN* ]]
 then
-    log_error "-rw: $file should not be readable/writable"
+    log_info 'skipping [[ -w $file || -r $file ]] test on Cygwin'
+else
+    if [[ -w $file || -r $file ]]
+    then
+        log_error "-rw: $file should not be readable/writable"
+    fi
 fi
 
-if [[   -z x &&  -z x || ! -z x ]]
+if [[ -z x && -z x || ! -z x ]]
 then
     :
-else    log_error " wrong precedence"
+else
+    log_error "wrong precedence"
 fi
 
-if [[   -z x &&  (-z x || ! -z x) ]]
+if [[ -z x && (-z x || ! -z x) ]]
 then
-    log_error " () grouping not working"
+    log_error "() grouping not working"
 fi
 
 if [[ foo < bar ]]
