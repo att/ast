@@ -78,11 +78,12 @@ alias log_error='log_error $LINENO'
 exec 9<>fifo9
 exec 8<>fifo8
 function empty_fifos {
-    read -u9 -t0.01 x && {
-        'log_warning' $1 "fifo9 unexpectedly had data: '$x'"
+    typeset _x
+    read -u9 -t0.01 _x && {
+        'log_warning' $1 "fifo9 unexpectedly had data: '$_x'"
     }
-    read -u8 -t0.01 x && {
-        'log_warning' $1 "fifo9 unexpectedly had data: '$x'"
+    read -u8 -t0.01 _x && {
+        'log_warning' $1 "fifo9 unexpectedly had data: '$_x'"
     }
 }
 alias empty_fifos='empty_fifos $LINENO'

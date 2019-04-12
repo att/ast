@@ -32,6 +32,12 @@ for name in $(builtin -l | grep -Ev '(echo|test|true|false|login|newgrp|uname|ge
 done
 
 # ==========
+# TODO: Fix whatever causes this to fail on Cygwin. When the `$name --man 2>&1 | head -5` is run by
+# hand it fails with `head: error reading 'standard input': Connection reset by peer`.
+if [[ $OS_NAME == CYGWIN* ]]
+then
+    log_warning 'skipping `$name --man` test'
+else
 for name in $(builtin -l | grep -Ev '(echo|test|true|false|login|newgrp|hash|type|source|\[|:)'); do
     # Extract builtin name from /opt path
     if [[ "$name" =~ "/opt" ]];
@@ -43,6 +49,7 @@ for name in $(builtin -l | grep -Ev '(echo|test|true|false|login|newgrp|hash|typ
     expect="NAME $name - "
     [[ "$actual" =~ "^$expect" ]] || log_error "$name --man should show documentation" "$expect" "$actual"
 done
+fi
 
 # test shell builtin commands
 : ${foo=bar} || log_error ": failed"
@@ -354,9 +361,14 @@ cd ../..
 cd /usr/bin
 cd ..
 [[ $(pwd) == /usr ]] || log_error 'cd /usr/bin;cd ..;pwd is not /usr'
+
 cd "$TEST_DIR"
-if mkdir $TEST_DIR/t1
+if [[ $OS_NAME == CYGWIN* ]]
 then
+    # This test fails on Cygwin due to underlying MS Windows behavior that makes it impossible for
+    # this to work without special support for Cygwin (and perhaps not even then).
+    log_warning 'skipping parent dir rename on Cygwin'
+else
     (
         cd $TEST_DIR/t1
         > real_t1
@@ -532,12 +544,15 @@ print ". $TEST_DIR/evalbug" >$TEST_DIR/envfile
 [[ $(ENV=$TEST_DIR/envfile $SHELL -i -c : 2> /dev/null) == ok ]] || log_error 'eval inside dot script called from profile file not working'
 
 # test cd to a directory that doesn't have execute permission
-if mkdir -p $TEST_DIR/a/b
+if [[ $OS_NAME == CYGWIN* ]]
 then
+    log_warning 'skipping test of cd to dir without execute permission on Cygwin'
+else
+    mkdir -p $TEST_DIR/a/b
     chmod -x $TEST_DIR/a/b
     cd $TEST_DIR/a/b 2> /dev/null && log_error 'cd to directory without execute should fail'
+    chmod +x $TEST_DIR/a/b  # so the test temp dir can be removed when the test completes
 fi
-chmod +x $TEST_DIR/a/b  # so the test temp dir can be removed when the test completes
 
 builtin  -d set 2> /dev/null && log_error 'buitin -d allows special builtins to be deleted'
 
