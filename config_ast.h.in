@@ -65,6 +65,7 @@
 #mesondefine _pipe_rw
 #mesondefine _ptr_bits
 #mesondefine _socketpair_shutdown_mode
+#mesondefine _pipe_socketpair
 #mesondefine isnanl
 #mesondefine const_const_fts_open
 #mesondefine MAX_SIGNUM
@@ -173,18 +174,6 @@
 #define _ast_intmax_t _ast_int8_t
 #mesondefine _ast_intmax_long
 #define _ast_fltmax_t long double
-
-//
-// This defintion has been taken from the IFFE feature test for pipes.
-// This definition used to be in the src/cmd/ksh93/include/defs.h header but
-// we're trying to remove that header and in any case the definition really
-// belongs here.
-//
-// TODO: Verify this assumption is safe.
-// The original test for this capability can be found in the
-// src/cmd/ksh93/features/poll file. See the `tst pipe_socketpair` section.
-//
-#define _pipe_socketpair 1  // use socketpair() for peekable pipe()
 
 #if DEBUG_BUILD
 // If we're doing a debug build don't have any static (module private) functions.

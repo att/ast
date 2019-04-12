@@ -28,17 +28,13 @@ for name in $(builtin -l | grep -Ev '(echo|test|true|false|login|newgrp|uname|ge
 
     actual=$($name --this-option-does-not-exist 2>&1)
     expect="Usage: $name"
-    [[ "$actual" =~ "$expect" ]] || log_error "$name should show usage info on unrecognized options" "$expect" "$actual"
+    [[ "$actual" =~ "$expect" ]] ||
+        log_error "$name should show usage info on unrecognized options" "$expect" "$actual"
 done
 
 # ==========
-# TODO: Fix whatever causes this to fail on Cygwin. When the `$name --man 2>&1 | head -5` is run by
-# hand it fails with `head: error reading 'standard input': Connection reset by peer`.
-if [[ $OS_NAME == CYGWIN* ]]
-then
-    log_warning 'skipping `$name --man` test'
-else
-for name in $(builtin -l | grep -Ev '(echo|test|true|false|login|newgrp|hash|type|source|\[|:)'); do
+for name in $(builtin -l | grep -Ev '(echo|test|true|false|login|newgrp|hash|type|source|\[|:)')
+do
     # Extract builtin name from /opt path
     if [[ "$name" =~ "/opt" ]];
     then
@@ -47,9 +43,9 @@ for name in $(builtin -l | grep -Ev '(echo|test|true|false|login|newgrp|hash|typ
 
     actual=$($name --man 2>&1 | head -5 | sed $'s,\x1B\[[0-9;]*[a-zA-Z],,g'  | tr -s '\n ' ' ')
     expect="NAME $name - "
-    [[ "$actual" =~ "^$expect" ]] || log_error "$name --man should show documentation" "$expect" "$actual"
+    [[ "$actual" =~ "^$expect" ]] ||
+        log_error "$name --man should show documentation" "$expect" "$actual"
 done
-fi
 
 # test shell builtin commands
 : ${foo=bar} || log_error ": failed"

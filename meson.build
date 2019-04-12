@@ -226,8 +226,11 @@ hosttype = hosttype_cmd.stdout().strip()
 osname = hosttype.split('.')[0]
 feature_data.set_quoted('HOSTTYPE', hosttype)
 feature_data.set_quoted('OSNAME', osname)
+
 # Some systems, like FreeBSD, have a different signature for the fts_open() comparison function.
 feature_data.set10('const_const_fts_open', osname == 'freebsd' or osname == 'cygwin')
+# On Cygwin we can't use socketpair() for pipes.
+feature_data.set10('_pipe_socketpair', osname != 'cygwin')
 
 
 feature_data.set('_ast_sizeof_int', int_size)
