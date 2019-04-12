@@ -242,9 +242,14 @@ actual=$(( ceil(0.1) ))
 
 # ==========
 # copysign
-expect=-1.0
-actual=$(( copysign(1.0, -3) ))
-[[ $actual -eq $expect ]] || log_error "copysign failed" "$expect" "$actual"
+if [[ $OS_NAME == CYGWIN* ]]
+then
+    log_warning 'copysignl() function is broken  on Cygwin'
+else
+    expect=-1.0
+    actual=$(roundof $(( copysign(1.0, -3) )) )
+    [[ $actual -eq $expect ]] || log_error "copysign failed" "$expect" "$actual"
+fi
 
 # ==========
 # cos
