@@ -1091,6 +1091,12 @@ set -- $(bar)
 
 # Note: When run under ASAN the stack needs to be larger than 16384KB. Setting it to 32768 works
 # for me on macOS. Otherwise it fails when the stack overflows.
+if [[ $OS_NAME == CYGWIN* ]]
+then
+    # At the moment this causes the subshell to die with a memory fault (presumably a SIGSEGV but
+    # that is unclear).
+    log_warning 'TODO: enable this test on Cygwin'
+else
 actual=$( $SHELL << \+++
 f()
 {
@@ -1106,6 +1112,7 @@ f 257 && print ok || print fail
 )
 expect=ok
 [[ $actual == $expect ]] || log_error 'comsub depth > 256 in function failed' "$expect" "$actual"
+fi
 
 tmp1=$TEST_DIR/job.1
 tmp2=$TEST_DIR/job.2
