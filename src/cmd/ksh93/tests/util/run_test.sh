@@ -27,7 +27,18 @@ shcomp=false
 if [[ $1 == shcomp ]]
 then
     # Run a ksh script test after compiling it.
-    shcomp=true
+    #
+    # The presence of a NO_SHCOMP env var causes the shcomp variant to be skipped. This is useful,
+    # for example, when running tests under ASAN or Valgrind where we want to minimize the total
+    # test run time. Not to mention that the shcomp variants should be, and always are as I write
+    # this, redundant. That is, they always pass or fail for the same reasons as the non-shcomp
+    # variant.
+    if [[ -z "$NO_SHCOMP" ]]
+    then
+        shcomp=true
+    else
+        shcomp=skip
+    fi
     shift 1
 elif [[ $1 == api ]]
 then
@@ -360,7 +371,8 @@ else
     if [[ $shcomp == false ]]
     then
         $TEST_DIR/$test_script $test_name < /dev/null
-    else
+    elif [[ $shcomp != skip ]]
+    then
         $SHCOMP $test_script > $test_script.comp || exit
         $SHELL $TEST_DIR/$test_script.comp $test_name < /dev/null
     fi
