@@ -1,14 +1,22 @@
 # Tests for sleep builtin
-
+#
 # sleep suspends execution for at least the time specified by duration or until
 # a SIGALRM signal is received. duration may be one of the following:
+#
+# Note: The 0.1 second slop is to workaround quirks of platforms like Cygwin where the sleep is
+# often slightly less than the requested duration. Note, however, that even on more mainstream UNIX
+# implementations it is theoretically possible for the sleep to be slightly less than a full second.
+float slop=0.1
 
 # ======
 # integer
 # The number of seconds to sleep.
 SECONDS=0
 sleep 1
-[[ $SECONDS -ge 1 ]] || log_error "sleep 1 should sleep for at least 1 second"
+actual=$SECONDS
+expect=1
+(( actual + slop >= expect )) ||
+    log_error "sleep 1 should sleep for at least 1 second" "$expect" "$actual"
 
 # ======
 # floating point
@@ -16,7 +24,10 @@ sleep 1
 # underlying system, normally around 1 millisecond.
 SECONDS=0
 sleep 0.1
-[[ $SECONDS -ge 0.1 ]] || log_error "sleep 0.1 should sleep for at least 0.1 second"
+actual=$SECONDS
+expect=0.1
+(( actual + slop / 10 >= expect )) ||
+    log_error "sleep 0.1 should sleep for at least 0.1 second" "$expect" "$actual"
 
 # ======
 # PnYnMnDTnHnMnS
@@ -24,7 +35,10 @@ sleep 0.1
 # specified.
 SECONDS=0
 sleep "P0Y0M0DT0H0M1S"
-[[ $SECONDS -ge 1 ]] || log_error "sleep P0Y0M0DT0H0M1S should sleep for at least 1 second"
+actual=$SECONDS
+expect=1.0
+(( actual + slop >= expect )) ||
+    log_error "sleep 1 should sleep for at least 1 second" "$expect" "$actual"
 
 # ======
 # PnW   An ISO 8601 duration specifying n weeks.
@@ -38,7 +52,10 @@ sleep P0W || log_error "sleep does not recocgnize PnW"
 # or U specifies microseconds, and n specifies nanoseconds.
 SECONDS=0
 sleep "p0Y0M0DT0H0M1S"
-[[ $SECONDS -ge 1 ]] || log_error "sleep p0Y0M0DT0H0M1S should sleep for at least 1 second"
+actual=$SECONDS
+expect=1.0
+(( actual + slop >= expect )) ||
+    log_error "sleep 1 should sleep for at least 1 second" "$expect" "$actual"
 
 # ======
 # date/time
@@ -52,7 +69,10 @@ sleep "$today" || log_error "sleep does not recognize date parameter"
 #    omitted or 0 then no timeout will be used.
 SECONDS=0
 sleep -s 1
-[[ $SECONDS -ge 1 ]] || log_error "sleep -s 1 should sleep for at least 1 second"
+actual=$SECONDS
+expect=1.0
+(( actual + slop >= expect )) ||
+    log_error "sleep 1 should sleep for at least 1 second" "$expect" "$actual"
 
 # ======
 $SHELL -c 'sleep $(printf "%a" .95)' 2> /dev/null || log_error "sleep doesn't except %a format constants"
