@@ -353,7 +353,7 @@ static_fn char *lookup(Namval_t *np, int type, Sfdouble_t *dp, Namfun_t *handle)
         }
         block(bp, type);
         // Make sure nv_setdisc doesn't invalidate `vp` by freeing it.
-        // See 
+        // See https://github.com/att/ast/issues/1268
         block(bp, UNASSIGN);
         sh_fun(shp, nq, np, NULL);
         unblock(bp, UNASSIGN);
