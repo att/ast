@@ -146,13 +146,8 @@ static Feature_t dynamic[] = {
 #endif
      NULL, NULL, 9, CONF_AST, 0, OP_libsuffix},
 #define OP_path_attributes (OP_libsuffix + 1)
-    {&dynamic[OP_path_attributes + 1], "PATH_ATTRIBUTES",
-#if __CYGWIN__
-     "c",
-#else
-     "",
-#endif
-     "", 0, 15, CONF_AST, CONF_READONLY, OP_path_attributes},
+    {&dynamic[OP_path_attributes + 1], "PATH_ATTRIBUTES", "", "", 0, 15, CONF_AST, CONF_READONLY,
+     OP_path_attributes},
 #define OP_path_resolve (OP_path_attributes + 1)
     {&dynamic[OP_path_resolve + 1], "PATH_RESOLVE", "", "physical", "metaphysical", 12, CONF_AST, 0,
      OP_path_resolve},
