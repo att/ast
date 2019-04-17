@@ -273,32 +273,58 @@ PATH=$FULL_PATH
 scr=$TEST_DIR/script
 exp=126
 
+# Cygwin file permission behavior causes these corner cases to fail. So skip these tests on Cygwin.
+# See https://github.com/att/ast/issues/1281
+#
+# TODO: Figure out if there is some way to make ksh behave on Cygwin like it does on real UNIX/POSIX
+# compliant systems for these edge cases without greatly complicating the code.
+if [[ $OS_NAME != CYGWIN* ]]
+then
+
 : > $scr
 chmod a=x $scr
 { got=$($scr; print $?); } 2>/dev/null
-[[ "$got" == "$exp" ]] || log_error "unreadable empty script should fail -- expected $exp, got $got"
+[[ "$got" == "$exp" ]] ||
+    log_error "unreadable empty script should fail" "$exp" "$got"
 { got=$(command $scr; print $?); } 2>/dev/null
-[[ "$got" == "$exp" ]] || log_error "command of unreadable empty script should fail -- expected $exp, got $got"
-[[ "$(:; $scr; print $?)" == "$exp" ]] 2>/dev/null || log_error "unreadable empty script in [[ ... ]] should fail -- expected $exp"
-[[ "$(:; command $scr; print $?)" == "$exp" ]] 2>/dev/null || log_error "command unreadable empty script in [[ ... ]] should fail -- expected $exp"
+[[ "$got" == "$exp" ]] ||
+    log_error "command of unreadable empty script should fail" "$exp" "$got"
+got="$(:; $scr; print $?)"
+[[ "$got" == "$exp" ]] 2>/dev/null ||
+    log_error "unreadable empty script in [[ ... ]] should fail" "$exp" "$got"
+got="$(:; command $scr; print $?)"
+[[ "$got" == "$exp" ]] 2>/dev/null ||
+    log_error "command unreadable empty script in [[ ... ]] should fail" "$exp" "$got"
 got=$($SHELL -c "$scr; print \$?" 2>/dev/null)
-[[ "$got" == "$exp" ]] || log_error "\$SHELL -c of unreadable empty script should fail -- expected $exp, got" $got
+[[ "$got" == "$exp" ]] ||
+    log_error "\$SHELL -c of unreadable empty script should fail" "$exp" "$got"
 got=$($SHELL -c "command $scr; print \$?" 2>/dev/null)
-[[ "$got" == "$exp" ]] || log_error "\$SHELL -c of command of unreadable empty script should fail -- expected $exp, got" $got
+[[ "$got" == "$exp" ]] ||
+    log_error "\$SHELL -c of command of unreadable empty script should fail" "$exp" "$got"
 
 rm -f $scr
 print : > $scr
 chmod a=x $scr
 { got=$($scr; print $?); } 2>/dev/null
-[[ "$got" == "$exp" ]] || log_error "unreadable non-empty script should fail -- expected $exp, got $got"
+[[ "$got" == "$exp" ]] ||
+    log_error "unreadable non-empty script should fail" "$exp" "$got"
 { got=$(command $scr; print $?); } 2>/dev/null
-[[ "$got" == "$exp" ]] || log_error "command of unreadable non-empty script should fail -- expected $exp, got $got"
-[[ "$(:; $scr; print $?)" == "$exp" ]] 2>/dev/null || log_error "unreadable non-empty script in [[ ... ]] should fail -- expected $exp"
-[[ "$(:; command $scr; print $?)" == "$exp" ]] 2>/dev/null || log_error "command unreadable non-empty script in [[ ... ]] should fail -- expected $exp"
+[[ "$got" == "$exp" ]] ||
+    log_error "command of unreadable non-empty script should fail" "$exp" "$got"
+got="$(:; $scr; print $?)" 2>/dev/null
+[[ "$got" == "$exp" ]] ||
+    log_error "unreadable non-empty script in [[ ... ]] should fail" "$exp" "$got"
+got="$(:; command $scr; print $?)" 2>/dev/null
+[[ "$got" == "$exp" ]] ||
+    log_error "command unreadable non-empty script in [[ ... ]] should fail" "$exp" "$got"
 got=$($SHELL -c "$scr; print \$?" 2>/dev/null)
-[[ "$got" == "$exp" ]] || log_error "\$SHELL -c of unreadable non-empty script should fail -- expected $exp, got" $got
+[[ "$got" == "$exp" ]] ||
+    log_error "\$SHELL -c of unreadable non-empty script should fail" "$exp" "$got"
 got=$($SHELL -c "command $scr; print \$?" 2>/dev/null)
-[[ "$got" == "$exp" ]] || log_error "\$SHELL -c of command of unreadable non-empty script should fail -- expected $exp, got" $got
+[[ "$got" == "$exp" ]] ||
+    log_error "\$SHELL -c of command of unreadable non-empty script should fail" "$exp" "$got"
+
+fi  # [[ $OS_NAME != CYGWIN* ]]
 
 # whence -a bug fix
 cd "$TEST_DIR"
