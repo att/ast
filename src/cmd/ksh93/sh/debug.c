@@ -3,6 +3,7 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -340,8 +341,11 @@ static vtp_dprintf *dprint_vtp_dispatch[] = {
 // Diagnostic print a struct Value object.
 void _dprint_vtp(const char *file_name, int const lineno, const char *func_name, int level,
                  const char *var_name, const void *vp) {
+    int oerrno = errno;
+
     if (!vp) {
         _dprintf(file_name, lineno, func_name, indent(level, "struct Value %s == NULL"), var_name);
+        errno = oerrno;
         return;
     }
 
@@ -356,6 +360,7 @@ void _dprint_vtp(const char *file_name, int const lineno, const char *func_name,
     if (vtp->type == VT_do_not_use) {
         _dprintf(file_name, lineno, func_name,
                  indent(level, "struct Value %s is undefined (type is VT_do_not_use)"), var_name);
+        errno = oerrno;
         return;
     }
 
@@ -364,6 +369,7 @@ void _dprint_vtp(const char *file_name, int const lineno, const char *func_name,
              value_type_names[vtp->type], vtp->filename ? vtp->filename : "undef", vtp->line_num,
              vtp->funcname ? vtp->funcname : "undef");
     (dprint_vtp_dispatch[vtp->type])(file_name, lineno, func_name, level + 1, var_name, vtp);
+    errno = oerrno;
 }
 
 // If a unit test has set a base addr for struct Value objects just use a constant for the printed
@@ -375,13 +381,17 @@ void _dprint_vtp(const char *file_name, int const lineno, const char *func_name,
 // Diagnostic print a struct Namval (aka Namval_t) object.
 void _dprint_nvp(const char *file_name, const int lineno, const char *func_name, int level,
                  const char *var_name, const void *vp) {
+    int oerrno = errno;
     const Namval_t *np = vp;
 
     if (level == 0) clear_ptrs();
 
     _dprintf(file_name, lineno, func_name, indent(level, "struct Namval %s @ %p"), var_name,
              NP_BASE_ADDR(np));
-    if (!np) return;
+    if (!np) {
+        errno = oerrno;
+        return;
+    }
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvname %p |%s|"),
              NP_BASE_ADDR(np->nvname), np->nvname);
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvsize %d"), np->nvsize);
@@ -402,18 +412,23 @@ void _dprint_nvp(const char *file_name, const int lineno, const char *func_name,
             }
         }
     }
+    errno = oerrno;
 }
 
 // Diagnostic print a struct Namref object.
 void _dprint_nrp(const char *file_name, const int lineno, const char *func_name, int level,
                  const char *var_name, const void *vp) {
+    int oerrno = errno;
     const struct Namref *nr = vp;
 
     if (level == 0) clear_ptrs();
 
     _dprintf(file_name, lineno, func_name, indent(level, "struct Namref %s @ %p"), var_name,
              NP_BASE_ADDR(nr));
-    if (!nr) return;
+    if (!nr) {
+        errno = oerrno;
+        return;
+    }
 
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->np is..."));
     if (ptr_seen(nr->np)) {
@@ -441,4 +456,5 @@ void _dprint_nrp(const char *file_name, const int lineno, const char *func_name,
 
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->sub %p |%s|"),
              NP_BASE_ADDR(nr->sub), nr->sub);
+    errno = oerrno;
 }

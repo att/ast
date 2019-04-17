@@ -5,6 +5,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <dlfcn.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
 #include <signal.h>
@@ -46,6 +47,8 @@ void set_debug_filename(const char *pathname) { ksh_pathname = pathname; }
 static Time_t _dprintf_base_time = TMX_NOTIME;
 
 void _dprintf(const char *fname, int lineno, const char *funcname, const char *fmt, ...) {
+    int oerrno = errno;
+
     va_list ap;
     va_start(ap, fmt);
 
@@ -77,10 +80,13 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     write(2, buf2, n);
 
     va_end(ap);
+    errno = oerrno;
 }
 
 // Run external command `lsof -p $$` and redirect its output to stderr.
 void run_lsof() {
+    int oerrno = errno;
+
     sigset_t sigchld_mask, omask;
     sigemptyset(&sigchld_mask);
     sigaddset(&sigchld_mask, SIGCHLD);
@@ -110,6 +116,7 @@ void run_lsof() {
     (void)waitpid(pid, &status, 0);
 
     sigprocmask(SIG_SETMASK, &omask, NULL);
+    errno = oerrno;
 }
 
 #if _hdr_execinfo
@@ -151,7 +158,7 @@ static const char *find_cached_addr(void *p) {
 
 // Run an external command such as `atos` or `addr2line`, collect its output, and split it into
 // lines. Each line has an entry in the `info[]` array above.
-void run_addr2lines_prog(int n_frames, char *path, const char **argv) {
+static_fn void run_addr2lines_prog(int n_frames, char *path, const char **argv) {
     int fds[2];
     pipe(fds);
 
@@ -280,7 +287,12 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
 #endif  // _pth_atos
 
 // Given a single address return info about it; e.g., function name, file name, line number.
-const char *addr2info(void *addr) { return addrs2info(1, &addr)[0]; }
+const char *addr2info(void *addr) {
+    int oerrno = errno;
+    const char *rv = addrs2info(1, &addr)[0];
+    errno = oerrno;
+    return rv;
+}
 
 // Write a backtrace to stderr. This can be called from anyplace in the code where you would like to
 // understand the call sequence leading to that point in the code. It is also called automatically
@@ -288,6 +300,8 @@ const char *addr2info(void *addr) { return addrs2info(1, &addr)[0]; }
 // frames we allow by default. See `MAX_FRAMES` above. If you want fewer lines of context specify a
 // value greater than zero but less than `MAX_FRAMES`.
 void dump_backtrace(int max_frames) {
+    int oerrno = errno;
+
     assert(max_frames >= 0);
     if (max_frames > 0 && max_frames < MAX_FRAMES) {
         max_frames += 1;  // add room for this function's frame
@@ -318,6 +332,8 @@ void dump_backtrace(int max_frames) {
         }
         write(2, text, n);
     }
+
+    errno = oerrno;
 }
 
 #else  // _hdr_execinfo
@@ -326,7 +342,10 @@ void dump_backtrace(int max_frames) {
 
 void dump_backtrace(int max_frames) {
     UNUSED(max_frames);
+    int oerrno = errno;
+
     write(2, header_msg, sizeof(header_msg));
+    errno = oerrno;
 }
 
 #endif  // _hdr_execinfo
