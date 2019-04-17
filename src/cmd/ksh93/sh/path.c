@@ -87,6 +87,30 @@ static_fn bool onstdpath(Shell_t *shp, const char *name) {
     return false;
 }
 
+#if __CYGWIN__
+
+// On Cygwin execve() can fail with errno == ENOEXEC when the real problem is that the file does
+// not have an appropriate execute bit. In that case the correct errno is EACCES and the caller
+// of path_pfexecve() requires that specific errno in that situation.
+//
+// Warning: This is a potential security hole since we're checking the permissions after the
+// execve() has failed. In between the two operations the permissions might have been changed.
+// But there isn't much we can do about that.
+static_fn void fixup_execve_errno(const char *path) {
+    if (errno != ENOEXEC) return;
+    if (access(path, X_OK) == 0) return;
+    errno = EACCES;
+    return;
+}
+
+#else  // __CYGWIN__
+
+static_fn void fixup_execve_errno(const char *path) {
+    UNUSED(path);
+}
+
+#endif  // __CYGWIN__
+
 static_fn pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char *const envp[],
                               int spawn) {
     UNUSED(spawn);
@@ -109,7 +133,9 @@ static_fn pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char
     }
 #endif  // USE_SPAWN
 
-    return execve(path, argv, envp);
+    int rv = execve(path, argv, envp);
+    fixup_execve_errno(path);
+    return rv;
 }
 
 #if !USE_SPAWN
