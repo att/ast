@@ -28,6 +28,17 @@ actual=$($SHELL --version 2>&1)
 expect='version'
 [[ "$actual" == *${expect}* ]] || log_error "failed to get version string" "*${expect}*" "$actual"
 
+# ==========
+# Is an invalid flag handled correctly?
+# Regression: https://github.com/att/ast/issues/1284
+actual=$($SHELL --verson 2>&1)
+actual_status=$?
+expect='ksh: verson: bad option(s)'
+expect_status=2
+[[ "$actual" == ${expect}* ]] || log_error "failed to get version string" "${expect}*" "$actual"
+[[ $actual_status == $expect_status ]] ||
+    log_error "wrong exit status" "$expect_status" "$actual_status"
+
 # test basic file operations like redirection, pipes, file expansion
 
 umask u=rwx,go=rx || log_error "umask u=rws,go=rx failed"

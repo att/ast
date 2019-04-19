@@ -454,15 +454,15 @@ void sh_exit(Shell_t *shp, int xno) {
     Sfio_t *pool;
     int sig = 0;
     struct checkpt *pp = (struct checkpt *)shp->jmplist;
-    assert(pp);
 
     shp->exitval = xno;
     if (xno == SH_EXITSIG) shp->exitval |= (sig = shp->lastsig);
-    if (pp->mode > 1) cursig = -1;
+    if (pp && pp->mode > 1) cursig = -1;
     if (shp->procsub) *shp->procsub = 0;
+
 #ifdef SIGTSTP
     if ((shp->trapnote & SH_SIGTSTP) && job.jobcontrol) {
-        /* ^Z detected by the shell */
+        // ^Z detected by the shell.
         shp->trapnote = 0;
         shp->sigflag[SIGTSTP] = 0;
         if (!shp->subshell && sh_isstate(shp, SH_MONITOR) && !sh_isstate(shp, SH_STOPOK)) return;
@@ -483,10 +483,11 @@ void sh_exit(Shell_t *shp, int xno) {
             // Wait for child to stop.
             shp->exitval = (SH_EXITSIG | SIGTSTP);
             // Return to prompt mode.
+            assert(pp);
             pp->mode = SH_JMPERREXIT;
         } else {
             if (shp->subshell) sh_subfork();
-            /* child process, put to sleep */
+            // Child process, put to sleep.
             sh_offstate(shp, SH_STOPOK);
             sh_offstate(shp, SH_MONITOR);
             shp->sigflag[SIGTSTP] = 0;
@@ -498,8 +499,8 @@ void sh_exit(Shell_t *shp, int xno) {
             return;
         }
     }
-
 #endif /* SIGTSTP */
+
     // Unlock output pool.
     sh_offstate(shp, SH_NOTRACK);
     if (!(pool = sfpool(NULL, shp->outpool, SF_WRITE))) pool = shp->outpool;  // can't happen?
@@ -508,6 +509,7 @@ void sh_exit(Shell_t *shp, int xno) {
     if (shp->lastsig == SIGPIPE) sfpurge(pool);
 #endif  // SIGPIPE
     sfclrlock(sfstdin);
+    if (!pp) sh_done(shp, sig);
     shp->intrace = 0;
     shp->prefix = NULL;
     shp->mktype = NULL;
