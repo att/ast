@@ -29,11 +29,24 @@ all_tests = [
     ['special-dev-paths', 0],
 ]
 
-# This is a list of tests to be skipped because they are known to be broken when
-# compiled by `shcomp`.
-# TODO: Fix these tests.
-shcomp_tests_to_skip = ['io', 'namespace', 'treemove', 'printf', 'set', 'wc']
-macos_tests_to_skip = ['jobs.exp' ]
+# Some tests fail for inexplicable reasons on some platforms. For example, on macOS the jobs.exp
+# test to verify [ctrl-Z] suspends the current foreground job fails even though doing the same thing
+# "by hand" works just fine. Possibly a quirk of the `expect` utility on macOS. In other cases,
+# such as Cygwin, things simply don't work as expected and probably never will due to quirks of the
+# platform.
+tests_to_skip = [
+    ['cygwin', 'jobs.exp'],
+    ['darwin', 'jobs.exp'],
+    # Tests to be skipped because they are known to be broken when compiled by `shcomp`.
+    # TODO: Fix these tests.
+    ['shcomp', 'io'],
+    ['shcomp', 'namespace'],
+    ['shcomp', 'printf'],
+    ['shcomp', 'set'],
+    ['shcomp', 'treemove'],
+    ['shcomp', 'wc'],
+]
+system = build_machine.system()
 
 # The test cases are executed in parallel by default
 foreach testspec : all_tests
@@ -45,30 +58,45 @@ foreach testspec : all_tests
     else
         parallel = true
     endif
-    if testname.endswith('.exp')
-        # The interactive `expect` based tests are highly sensitive to timing variations.
-        # Never run them in parallel with any other test.
-        parallel = false
-    endif
 
-    # Run the test without compiling the script (which is how most people use ksh).
-    lang_var = 'LANG=en_US.UTF-8'
+    skip_test = false
+    foreach skip : tests_to_skip
+        if system == skip[0] and testname == skip[1]
+            warning('skipping ' + testname + ' on ' + system)
+            skip_test = true
+            # break  # Not until meson 0.49
+        endif
+    endforeach
+    if not skip_test
+        if testname.endswith('.exp')
+            # The interactive `expect` based tests are highly sensitive to timing variations.
+            # Never run them in parallel with any other test.
+            parallel = false
+        endif
 
-    # Skip some tests on macOS
-    if build_machine.system() != 'darwin' or not macos_tests_to_skip.contains(testname)
+        # Run the test without compiling the script (which is how most people use ksh).
+        lang_var = 'LANG=en_US.UTF-8'
         test(testname, ksh93_exe, timeout: timeout, is_parallel: parallel,
             args: [test_driver, testname],
             env: [shell_var, lang_var, ld_library_path, libsample_path])
-    endif
 
-    # The shcomp variants are only applicable to the non-interactive tests.
-    if not testname.endswith('.exp')
-        # Run the test after compiling the script with `shcomp`.
-        if not shcomp_tests_to_skip.contains(testname)
-            lang_var = 'LANG=C'
-            test(testname + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
-                args: [ test_driver, 'shcomp', testname],
-                env: [shell_var, lang_var, shcomp_var, ld_library_path, libsample_path])
+        # The shcomp variants are only applicable to the non-interactive tests.
+        if not testname.endswith('.exp')
+            skip_test = false
+            foreach skip : tests_to_skip
+                if 'shcomp' == skip[0] and testname == skip[1]
+                    warning('skipping ' + testname + '/shcomp on ' + system)
+                    skip_test = true
+                    # break  # Not until meson 0.49
+                endif
+            endforeach
+            if not skip_test
+                # Run the test after compiling the script with `shcomp`.
+                lang_var = 'LANG=C'
+                test(testname + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
+                    args: [ test_driver, 'shcomp', testname],
+                    env: [shell_var, lang_var, shcomp_var, ld_library_path, libsample_path])
+            endif
         endif
     endif
 endforeach
