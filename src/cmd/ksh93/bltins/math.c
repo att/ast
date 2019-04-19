@@ -156,6 +156,16 @@ static Sfdouble_t local_tgamma(Sfdouble_t a1) { return tgamma(a1); }
 #define tgammal local_tgamma
 #endif
 
+#if __CYGWIN__
+// The sqrtl() function on Cygwin incorrectly returns its input if negative rather than NaN.
+static Sfdouble_t local_sqrtl(Sfdouble_t a1) {
+    if (a1 < 0.0) return NAN;
+    return sqrtl(a1);
+}
+#else  // __CYGWIN__
+#define local_sqrtl sqrtl
+#endif  // __CYGWIN__
+
 //
 // the first byte is a three-digit octal number <mask><return><argc>:
 //
@@ -229,7 +239,7 @@ const struct mathtab shtab_math[] = {{"\001acos", (Math_f)acosl},
                                      {"\011signbit", (Math_f)local_signbit},
                                      {"\001sin", (Math_f)sinl},
                                      {"\001sinh", (Math_f)sinhl},
-                                     {"\001sqrt", (Math_f)sqrtl},
+                                     {"\001sqrt", (Math_f)local_sqrtl},
                                      {"\001tan", (Math_f)tanl},
                                      {"\001tanh", (Math_f)tanhl},
                                      {"\001tgamma", (Math_f)tgammal},
