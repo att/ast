@@ -1128,7 +1128,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
     volatile int r;
     Dt_t *dp;
     int nflag = 0, all = 0, isfun, jmpval;
-    struct checkpt buff;
+    checkpt_t buff;
     enum { ALIAS, VARIABLE } type;
     UNUSED(argc);
 

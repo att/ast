@@ -118,7 +118,7 @@ static long subenv;
 void sh_subtmpfile(Shell_t *shp) {
     if (sfset(sfstdout, 0, 0) & SF_STRING) {
         int fd;
-        struct checkpt *pp = (struct checkpt *)shp->jmplist;
+        checkpt_t *pp = shp->jmplist;
         struct subshell *sp = subshell_data->pipe;
         // Save file descriptor 1 if open.
         if ((sp->tmpfd = fd = sh_fcntl(1, F_DUPFD_CLOEXEC, 10)) >= 0) {
@@ -194,7 +194,7 @@ void sh_subfork(void) {
             sh_close(sp->tmpfd);
             sp->tmpfd = -1;
         }
-        siglongjmp(*shp->jmplist, SH_JMPSUB);
+        siglongjmp(shp->jmplist->buff, SH_JMPSUB);
     } else {
         // This is the child part of the fork. Setting subpid to 1 causes subshell to exit when
         // reached.
@@ -455,7 +455,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     int *saveexitval = job.exitval;
     char **savsig;
     Sfio_t *iop = NULL;
-    struct checkpt buff;
+    checkpt_t buff;
     struct sh_scoped savst;
     struct dolnod *argsav = NULL;
     int argcnt;
@@ -603,7 +603,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     if (shp->subshell == 0) {  // must be child process
         shp->st.trapcom[0] = 0;
         subshell_data = sp->prev;
-        if (jmpval == SH_JMPSCRIPT) siglongjmp(*shp->jmplist, jmpval);
+        if (jmpval == SH_JMPSCRIPT) siglongjmp(shp->jmplist->buff, jmpval);
         shp->exitval &= SH_EXITMASK;
         sh_done(shp, 0);
     }
@@ -638,7 +638,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
                 int fd = sfsetfd(iop, sh_get_unused_fd(shp, 3));
                 if (fd < 0) {
                     shp->toomany = 1;
-                    ((struct checkpt *)shp->jmplist)->mode = SH_JMPERREXIT;
+                    shp->jmplist->mode = SH_JMPERREXIT;
                     errormsg(SH_DICT, ERROR_system(1), e_toomany);
                     __builtin_unreachable();
                 }
@@ -778,13 +778,13 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         if (sig == SIGINT || sig == SIGQUIT) kill(getpid(), sig);
     }
     if (duped) {
-        ((struct checkpt *)shp->jmplist)->mode = SH_JMPERREXIT;
+        shp->jmplist->mode = SH_JMPERREXIT;
         shp->toomany = 1;
         errormsg(SH_DICT, ERROR_system(1), e_redirect);
         __builtin_unreachable();
     }
     if (shp->ignsig) kill(getpid(), shp->ignsig);
     if (jmpval == SH_JMPSUB && shp->lastsig) kill(getpid(), shp->lastsig);
-    if (jmpval && shp->toomany) siglongjmp(*shp->jmplist, jmpval);
+    if (jmpval && shp->toomany) siglongjmp(shp->jmplist->buff, jmpval);
     return iop;
 }

@@ -90,13 +90,15 @@ struct openlist {
 
 struct checkpt {
     sigjmp_buf buff;
-    sigjmp_buf *prev;
+    struct checkpt *prev;
     int topfd;
     int mode;
     int vexi;
     struct openlist *olist;
     Error_context_t err;
 };
+
+typedef struct checkpt checkpt_t;
 
 struct siginfo_ll {
     siginfo_t info;
@@ -108,14 +110,13 @@ typedef struct siginfo_ll siginfo_ll_t;
 #if USE_SPAWN
 #define sh_pushcontext(shp, bp, n)                                                              \
     ((bp)->mode = (n), (bp)->olist = NULL, (bp)->topfd = shp->topfd, (bp)->prev = shp->jmplist, \
-     (bp)->vexi = shp->vexp->cur, (bp)->err = *ERROR_CONTEXT_BASE,                              \
-     shp->jmplist = (sigjmp_buf *)(&(bp)->buff))
+     (bp)->vexi = shp->vexp->cur, (bp)->err = *ERROR_CONTEXT_BASE, shp->jmplist = bp)
 
 #else  // USE_SPAWN
 
 #define sh_pushcontext(shp, bp, n)                                                              \
     ((bp)->mode = (n), (bp)->olist = NULL, (bp)->topfd = shp->topfd, (bp)->prev = shp->jmplist, \
-     (bp)->err = *ERROR_CONTEXT_BASE, shp->jmplist = (sigjmp_buf *)(&(bp)->buff))
+     (bp)->err = *ERROR_CONTEXT_BASE, shp->jmplist = bp)
 #endif  // USE_SPAWN
 
 #define sh_popcontext(shp, bp) (shp->jmplist = (bp)->prev, errorpop(&((bp)->err)))

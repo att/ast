@@ -750,7 +750,7 @@ __attribute__((noreturn)) static_fn void forked_child(Shell_t *shp, const Shnode
 #endif
     // This is the FORKED branch (child) of execute.
     volatile int jmpval;
-    struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+    checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
     struct ionod *iop;
     int rewrite = 0;
     if (no_fork) sh_sigreset(shp, 2);
@@ -835,7 +835,7 @@ __attribute__((noreturn)) static_fn void forked_child(Shell_t *shp, const Shnode
     }
 done:
     sh_popcontext(shp, buffp);
-    if (jmpval > SH_JMPEXIT) siglongjmp(*shp->jmplist, jmpval);
+    if (jmpval > SH_JMPEXIT) siglongjmp(shp->jmplist->buff, jmpval);
     sh_done(shp, 0);
 }
 
@@ -1124,8 +1124,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     volatile void *save_data;
                     int jmpval, save_prompt;
                     int was_nofork = execflg ? sh_isstate(shp, SH_NOFORK) : 0;
-                    struct checkpt *buffp =
-                        (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+                    checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
                     volatile unsigned long was_vi = 0, was_emacs = 0, was_gmacs = 0;
 #ifndef O_SEARCH
                     struct stat statb;
@@ -1313,7 +1312,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     if (shp->vexp->cur > vexi) sh_vexrestore(shp, vexi);
 #endif
                     shp->redir0 = 0;
-                    if (jmpval) siglongjmp(*shp->jmplist, jmpval);
+                    if (jmpval) siglongjmp(shp->jmplist->buff, jmpval);
 #if 0
                                     if(flgs&NV_STATIC)
                                             ((Shnode_t*)t)->com.comset = NULL;
@@ -1326,8 +1325,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 if (!command && np && nv_isattr(np, NV_FUNCTION)) {
                     volatile int indx;
                     int jmpval = 0;
-                    struct checkpt *buffp =
-                        (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+                    checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
                     Namval_t node;
                     Namval_t *namespace = NULL;
                     struct Namref nr;
@@ -1408,7 +1406,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     sh_funstaks(slp->slchild, -1);
                     stkclose(slp->slptr);
                     if (jmpval > SH_JMPFUN || (io && jmpval > SH_JMPIO)) {
-                        siglongjmp(*shp->jmplist, jmpval);
+                        siglongjmp(shp->jmplist->buff, jmpval);
                     }
                     goto setexit;
                 }
@@ -1452,7 +1450,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             no_fork =
                 !ntflag && !(type & (FAMP | FPOU)) && !shp->subshell &&
                 !(shp->st.trapcom[SIGINT] && *shp->st.trapcom[SIGINT]) && !shp->st.trapcom[0] &&
-                !shp->st.trap[SH_ERRTRAP] && ((struct checkpt *)shp->jmplist)->mode != SH_JMPEVAL &&
+                !shp->st.trap[SH_ERRTRAP] && shp->jmplist->mode != SH_JMPEVAL &&
                 (execflg2 ||
                  (execflg && shp->fn_depth == 0 && !(pipejob && sh_isoption(shp, SH_PIPEFAIL))));
             if (sh_isstate(shp, SH_PROFILE) || shp->dot_depth) {
@@ -1565,7 +1563,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             pid_t pid;
             int jmpval, waitall;
             int simple = (t->fork.forktre->tre.tretyp & COMMSK) == TCOM;
-            struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+            checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
 #if SHOPT_COSHELL
             if (shp->inpool) {
                 sh_redirect(shp, t->fork.forkio, 0);
@@ -1639,7 +1637,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     sh_onstate(shp, SH_ERREXIT);
                 }
             }
-            if (jmpval > SH_JMPIO) siglongjmp(*shp->jmplist, jmpval);
+            if (jmpval > SH_JMPIO) siglongjmp(shp->jmplist->buff, jmpval);
             break;
         }
         case TPAR: {
@@ -1655,8 +1653,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 (flags & sh_state(SH_NOFORK))) {
                 char *savsig;
                 int nsig, jmpval;
-                struct checkpt *buffp =
-                    (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+                checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
                 shp->st.otrapcom = NULL;
 
                 nsig = shp->st.trapmax;
@@ -1671,7 +1668,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 jmpval = sigsetjmp(buffp->buff, 0);
                 if (jmpval == 0) sh_exec(shp, t->par.partre, flags);
                 sh_popcontext(shp, buffp);
-                if (jmpval > SH_JMPEXIT) siglongjmp(*shp->jmplist, jmpval);
+                if (jmpval > SH_JMPEXIT) siglongjmp(shp->jmplist->buff, jmpval);
                 if (shp->exitval > 256) shp->exitval -= 128;
                 sh_done(shp, 0);
             } else if (((type = t->par.partre->tre.tretyp) & FAMP) && ((type & COMMSK) == TFORK)) {
@@ -1848,8 +1845,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
 #if SHOPT_COSHELL
             int poolfiles;
 #endif /* SHOPT_COSHELL */
-            int jmpval = ((struct checkpt *)shp->jmplist)->mode;
-            struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+            int jmpval = shp->jmplist->mode;
+            checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
             void *optlist = shp->optlist;
             shp->optlist = NULL;
             sh_tclear(shp, t->for_.fortre);
@@ -1951,7 +1948,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             sh_popcontext(shp, buffp);
             sh_tclear(shp, t->for_.fortre);
             sh_optclear(shp, optlist);
-            if (jmpval) siglongjmp(*shp->jmplist, jmpval);
+            if (jmpval) siglongjmp(shp->jmplist->buff, jmpval);
             if (shp->st.breakcnt > 0) shp->st.execbrk = (--shp->st.breakcnt != 0);
             shp->st.loopcnt--;
             sh_argfree(shp, argsav);
@@ -1964,8 +1961,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             Shnode_t *tt = t->wh.whtre;
             Sfio_t *iop = NULL;
             int savein;
-            int jmpval = ((struct checkpt *)shp->jmplist)->mode;
-            struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+            int jmpval = shp->jmplist->mode;
+            checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
             void *optlist = shp->optlist;
 #if SHOPT_COSHELL
             if (shp->inpool) {
@@ -2017,7 +2014,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             sh_tclear(shp, t->wh.whtre);
             sh_tclear(shp, t->wh.dotre);
             sh_optclear(shp, optlist);
-            if (jmpval) siglongjmp(*shp->jmplist, jmpval);
+            if (jmpval) siglongjmp(shp->jmplist->buff, jmpval);
             if (shp->st.breakcnt > 0) shp->st.execbrk = (--shp->st.breakcnt != 0);
             shp->st.loopcnt--;
             shp->exitval = r;
@@ -2813,7 +2810,7 @@ int sh_fun(Shell_t *shp, Namval_t *np, Namval_t *nq, char *argv[]) {
     if (nq) mode = set_instance(shp, nq, &node, &nr);
     if (is_abuiltin(np)) {
         int jmpval;
-        struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+        checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
         Shbltin_t *bp = &shp->bltindata;
         sh_pushcontext(shp, buffp, SH_JMPCMD);
         jmpval = sigsetjmp(buffp->buff, 1);
@@ -2828,7 +2825,7 @@ int sh_fun(Shell_t *shp, Namval_t *np, Namval_t *nq, char *argv[]) {
             shp->exitval = (funptr(np))(n, argv, bp);
         }
         sh_popcontext(shp, buffp);
-        if (jmpval > SH_JMPCMD) siglongjmp(*shp->jmplist, jmpval);
+        if (jmpval > SH_JMPCMD) siglongjmp(shp->jmplist->buff, jmpval);
     } else {
         sh_funct(shp, np, n, argv, NULL, sh_isstate(shp, SH_ERREXIT));
     }
@@ -2899,7 +2896,7 @@ static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jo
     static pid_t spawnpid;
     static int savetype;
     static int savejobid;
-    struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+    checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
     int otype = 0, jmpval, jobfork = 0, lineno = shp->st.firstline;
     volatile int scope = 0, sigwasset = 0;
     char **arge, *path;
@@ -3027,7 +3024,7 @@ static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jo
         if (shp->vexp->cur > buffp->vexi) sh_vexrestore(shp, buffp->vexi);
 #endif
     }
-    if (jmpval > SH_JMPCMD) siglongjmp(*shp->jmplist, jmpval);
+    if (jmpval > SH_JMPCMD) siglongjmp(shp->jmplist->buff, jmpval);
     if (spawnpid > 0) {
         _sh_fork(shp, spawnpid, otype, jobid);
         job_fork(spawnpid);
@@ -3067,7 +3064,7 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
     int n;
     char **savsig;
     struct funenv *fp = NULL;
-    struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+    checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
     Namval_t *nspace = shp->namespace;
     Dt_t *last_root = shp->last_root;
     Shopt_t options;
@@ -3142,7 +3139,7 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
     if (jmpval == 0) {
         if (shp->fn_depth++ > MAXDEPTH) {
             shp->toomany = 1;
-            siglongjmp(*shp->jmplist, SH_JMPERRFN);
+            siglongjmp(shp->jmplist->buff, SH_JMPERRFN);
         } else if (fun) {
             r = (*fun)(arg);
         } else {
@@ -3204,7 +3201,7 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
     shp->trapnote = 0;
     shp->options = options;
     shp->last_root = last_root;
-    if (jmpval == SH_JMPSUB) siglongjmp(*shp->jmplist, jmpval);
+    if (jmpval == SH_JMPSUB) siglongjmp(shp->jmplist->buff, jmpval);
     if (trap) {
         sh_trap(shp, trap, 0);
         free(trap);
@@ -3216,7 +3213,7 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
     }
     if (jmpval > SH_JMPFUN) {
         sh_chktrap(shp);
-        siglongjmp(*shp->jmplist, jmpval);
+        siglongjmp(shp->jmplist->buff, jmpval);
     }
     return r;
 }
@@ -3228,8 +3225,8 @@ int sh_eval(Shell_t *shp, Sfio_t *iop, int mode) {
     Shnode_t *t;
     struct slnod *saveslp = shp->st.staklist;
     int jmpval;
-    struct checkpt *pp = (struct checkpt *)shp->jmplist;
-    struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
+    checkpt_t *pp = shp->jmplist;
+    checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
     static Sfio_t *io_save;
     volatile bool traceon = false;
     volatile int lineno = 0;
@@ -3280,7 +3277,7 @@ int sh_eval(Shell_t *shp, Sfio_t *iop, int mode) {
     sh_freeup(shp);
     shp->st.staklist = saveslp;
     shp->fn_reset = 0;
-    if (jmpval > SH_JMPEVAL) siglongjmp(*shp->jmplist, jmpval);
+    if (jmpval > SH_JMPEVAL) siglongjmp(shp->jmplist->buff, jmpval);
     return shp->exitval;
 }
 

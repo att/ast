@@ -44,7 +44,7 @@
 int b_return(int n, char *argv[], Shbltin_t *context) {
     char *arg;
     Shell_t *shp = context->shp;
-    struct checkpt *pp = (struct checkpt *)shp->jmplist;
+    checkpt_t *pp = shp->jmplist;
     const char *options = (**argv == 'r' ? sh_optreturn : sh_optexit);
     while ((n = optget(argv, options))) {
         switch (n) {

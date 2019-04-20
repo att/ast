@@ -453,7 +453,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
     int binary;
     int oflags = NV_ASSIGN | NV_VARNAME;
     char inquote = 0;
-    struct checkpt buff;
+    checkpt_t buff;
     Edit_t *ep = (struct edit *)shp->gd->ed_context;
 
     if (!(iop = shp->sftable[fd]) && !(iop = sh_iostream(shp, fd, fd))) return 1;
@@ -936,6 +936,6 @@ done:
     nv_close(np);
     if ((shp->fdstatus[fd] & IOTTY) && !keytrap) tty_cooked(sffileno(iop));
     if (flags & S_FLAG) hist_flush(shp->gd->hist_ptr);
-    if (jmpval > 1) siglongjmp(*shp->jmplist, jmpval);
+    if (jmpval > 1) siglongjmp(shp->jmplist->buff, jmpval);
     return jmpval;
 }

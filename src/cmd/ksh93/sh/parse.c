@@ -693,7 +693,7 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
     unsigned long current = lexp->current;
     int nargs = 0, size = 0, jmpval, saveloop = loop_level;
     struct argnod *savelabel = label_last;
-    struct checkpt buff;
+    checkpt_t buff;
     int save_optget = opt_get;
     void *in_mktype = shp->mktype;
 
@@ -852,7 +852,7 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
             shp->st.staklist = slp->slnext;
             stkclose(slp->slptr);
         }
-        siglongjmp(*shp->jmplist, jmpval);
+        siglongjmp(shp->jmplist->buff, jmpval);
     }
     shp->st.staklist = (struct slnod *)slp;
     last = fctell();

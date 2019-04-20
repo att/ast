@@ -150,7 +150,7 @@ struct Shell_s {
     char *shname;         // shell name
     char *comdiv;         // points to sh -c argument
     char *prefix;         // prefix for compound assignment
-    sigjmp_buf *jmplist;  // longjmp return stack
+    checkpt_t *jmplist;   // longjmp return stack plus other data
     char *fifo;           // fifo name for process sub
     int oldexit;
     pid_t bckpid;  // background process id
@@ -223,7 +223,7 @@ struct Shell_s {
     Spawnvex_t *vexp;
 #endif  // USE_SPAWN
     struct sh_scoped global;
-    struct checkpt checkbase;
+    checkpt_t checkbase;
     Shinit_f userinit;
     Shbltin_f bltinfun;
     Shbltin_t bltindata;
@@ -232,7 +232,7 @@ struct Shell_s {
     Sfio_t **sftable;
     unsigned int *fdstatus;
     const char *pwd;
-    void *jmpbuffer;
+    checkpt_t *jmpbuffer;
     void *mktype;
     Sfio_t *strbuf;
     Sfio_t *strbuf2;

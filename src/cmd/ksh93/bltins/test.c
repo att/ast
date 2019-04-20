@@ -122,7 +122,7 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
     int not;
     Shell_t *shp = context->shp;
     int jmpval = 0, result = 0;
-    struct checkpt buff;
+    checkpt_t buff;
 
     memset(&buff, 0, sizeof(buff));
     tdata.sh = context->shp;

@@ -976,7 +976,7 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
         } while (pp);
     }
     // Force an exit.
-    ((struct checkpt *)shp->jmplist)->mode = SH_JMPEXIT;
+    shp->jmplist->mode = SH_JMPEXIT;
     if (not_executable) {
         // This will return with status 126.
         errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, arg0);
@@ -1146,7 +1146,7 @@ retry:
 #endif
                 }
 #endif  // USE_SPAWN
-                ((struct checkpt *)shp->jmplist)->mode = SH_JMPEXIT;
+                shp->jmplist->mode = SH_JMPEXIT;
             }
             exscript(shp, path, argv, envp);
             // TODO: is this supposed to FALL THRU or it is unreachable?
@@ -1300,7 +1300,7 @@ openok:
     }
     sh_offstate(shp, SH_FORKED);
     if (shp->sigflag[SIGCHLD] == SH_SIGOFF) shp->sigflag[SIGCHLD] = SH_SIGFAULT;
-    siglongjmp(*shp->jmplist, SH_JMPSCRIPT);
+    siglongjmp(shp->jmplist->buff, SH_JMPSCRIPT);
 }
 
 //

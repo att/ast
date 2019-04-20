@@ -141,7 +141,7 @@ char *sh_mactry(Shell_t *shp, char *string) {
     if (string) {
         int jmp_val;
         int savexit = shp->savexit;
-        struct checkpt buff;
+        checkpt_t buff;
         sh_pushcontext(shp, &buff, SH_JMPSUB);
         jmp_val = sigsetjmp(buff.buff, 0);
         if (jmp_val == 0) string = sh_mactrim(shp, string, 0);
@@ -1979,7 +1979,7 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
             // Special case $(<file) and $(<#file).
             int fd;
             int r = 0;
-            struct checkpt buff;
+            checkpt_t buff;
             struct ionod *ip = NULL;
 
             if (sp) sfclose(sp);

@@ -116,7 +116,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     time(&mailtime);
     rshflag = sh_isoption(shp, SH_RESTRICTED);
     if (rshflag) sh_offoption(shp, SH_RESTRICTED);
-    if (sigsetjmp(*((sigjmp_buf *)shp->jmpbuffer), 0)) {
+    if (sigsetjmp(shp->jmpbuffer->buff, 0)) {
         // Begin script execution here.
         sh_reinit(shp, NULL);
         shp->gd->pid = getpid();
@@ -326,7 +326,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
     Shnode_t *t;
     int maxtry = IOMAXTRY, tdone = 0, execflags;
     int states, jmpval;
-    struct checkpt buff;
+    checkpt_t buff;
 
     sh_pushcontext(shp, &buff, SH_JMPERREXIT);
     // Open input stream.
@@ -527,7 +527,7 @@ done:
         job_close(shp);
     }
     if (jmpval == SH_JMPSCRIPT) {
-        siglongjmp(*shp->jmplist, jmpval);
+        siglongjmp(shp->jmplist->buff, jmpval);
     } else if (jmpval == SH_JMPEXIT || jmpval == SH_JMPERREXIT) {
         sh_done(shp, 0);
     }

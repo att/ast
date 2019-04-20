@@ -271,11 +271,11 @@ static_fn int outexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
             default: {
                 if (active) return -1;
 #if 0
-                int mode = ((struct checkpt *)shp->jmplist)->mode;
+                int mode = shp->jmplist->mode;
 #endif
                 int save = errno;
                 active = 1;
-                ((struct checkpt *)shp->jmplist)->mode = 0;
+                shp->jmplist->mode = 0;
                 sfpurge(iop);
                 sfpool(iop, NULL, SF_WRITE);
                 errno = save;
@@ -287,7 +287,7 @@ static_fn int outexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
                 // be removed.
 #if 0
                 active = 0;
-                ((struct checkpt *)shp->jmplist)->mode = mode;
+                shp->jmplist->mode = mode;
                 sh_exit(shp, 1);
 #endif
             }
@@ -388,7 +388,7 @@ static_fn void io_preserve(Shell_t *shp, Sfio_t *sp, int f2) {
     if (f2 == shp->infd) shp->infd = fd;
     if (fd < 0) {
         shp->toomany = 1;
-        ((struct checkpt *)shp->jmplist)->mode = SH_JMPERREXIT;
+        shp->jmplist->mode = SH_JMPERREXIT;
         errormsg(SH_DICT, ERROR_system(1), e_toomany);
         __builtin_unreachable();
     }
@@ -1762,7 +1762,7 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
     } else {
         if ((savefd = sh_fcntl(origfd, F_DUPFD_CLOEXEC, 10)) < 0 && errno != EBADF) {
             shp->toomany = 1;
-            ((struct checkpt *)shp->jmplist)->mode = SH_JMPERREXIT;
+            shp->jmplist->mode = SH_JMPERREXIT;
             errormsg(SH_DICT, ERROR_system(1), e_toomany);
             __builtin_unreachable();
         }
@@ -2039,7 +2039,7 @@ static_fn void time_grace(void *handle) {
     if (sh_isstate(shp, SH_GRACE)) {
         sh_offstate(shp, SH_GRACE);
         if (!sh_isstate(shp, SH_INTERACTIVE)) return;
-        ((struct checkpt *)shp->jmplist)->mode = SH_JMPEXIT;
+        shp->jmplist->mode = SH_JMPEXIT;
         errormsg(SH_DICT, 2, e_timeout);
         shp->trapnote |= SH_SIGSET;
         return;
@@ -2312,7 +2312,7 @@ static_fn int pipeexcept(Sfio_t *iop, int mode, void *data, Sfdisc_t *handle) {
 static_fn void sftrack(Sfio_t *sp, int flag, void *data) {
     Shell_t *shp = sh_getinterp();
     int fd = sffileno(sp);
-    struct checkpt *pp;
+    checkpt_t *pp;
     int mode;
     int newfd = (uintptr_t)data;
 
@@ -2352,7 +2352,8 @@ static_fn void sftrack(Sfio_t *sp, int flag, void *data) {
             shp->fdstatus[fd] = flag;
             sh_iostream(shp, fd, fd);
         }
-        if ((pp = (struct checkpt *)shp->jmplist) && pp->mode == SH_JMPCMD) {
+        pp = shp->jmplist;
+        if (pp && pp->mode == SH_JMPCMD) {
             struct openlist *item;
             // Record open file descriptors so they can be closed in case a
             // longjmp prevents built-ins from cleanup.
@@ -2365,7 +2366,7 @@ static_fn void sftrack(Sfio_t *sp, int flag, void *data) {
     } else if (flag == SF_CLOSING || (flag == SF_SETFD && newfd <= 2)) {
         shp->sftable[fd] = 0;
         shp->fdstatus[fd] = IOCLOSE;
-        pp = (struct checkpt *)shp->jmplist;
+        pp = shp->jmplist;
         if (pp) {
             struct openlist *item;
             for (item = pp->olist; item; item = item->next) {

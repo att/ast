@@ -113,7 +113,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
     Shell_t *shp = sh_getinterp();
     int flag = 0;
     char *trap;
-    struct checkpt *pp = (struct checkpt *)shp->jmplist;
+    checkpt_t *pp = shp->jmplist;
 
     if (sig == SIGABRT) {
         sh_signal(sig, (sh_sigfun_t)(SIG_DFL));
@@ -392,8 +392,7 @@ void sh_chktrap(Shell_t *shp) {
         }
         shp->trapnote = sav_trapnote;
         if (sh_isoption(shp, SH_ERREXIT)) {
-            struct checkpt *pp = (struct checkpt *)shp->jmplist;
-            pp->mode = SH_JMPEXIT;
+            shp->jmplist->mode = SH_JMPEXIT;
             sh_exit(shp, shp->exitval);
         }
     }
@@ -453,7 +452,7 @@ void sh_chktrap(Shell_t *shp) {
 void sh_exit(Shell_t *shp, int xno) {
     Sfio_t *pool;
     int sig = 0;
-    struct checkpt *pp = (struct checkpt *)shp->jmplist;
+    checkpt_t *pp = shp->jmplist;
 
     shp->exitval = xno;
     if (xno == SH_EXITSIG) shp->exitval |= (sig = shp->lastsig);
@@ -707,7 +706,7 @@ int sh_trap(Shell_t *shp, const char *trap, int mode) {
     int staktop = stktell(shp->stk);
     char *savptr = stkfreeze(shp->stk, 0);
     char ifstable[256];
-    struct checkpt buff;
+    checkpt_t buff;
     Fcin_t savefc;
 
     fcsave(&savefc);
@@ -747,9 +746,8 @@ int sh_trap(Shell_t *shp, const char *trap, int mode) {
     if (was_history) sh_onstate(shp, SH_HISTORY);
     if (was_verbose) sh_onstate(shp, SH_VERBOSE);
     exitset(shp);
-    if (jmpval > SH_JMPTRAP && (((struct checkpt *)shp->jmpbuffer)->prev ||
-                                ((struct checkpt *)shp->jmpbuffer)->mode == SH_JMPSCRIPT)) {
-        siglongjmp(*shp->jmplist, jmpval);
+    if (jmpval > SH_JMPTRAP && (shp->jmpbuffer->prev || shp->jmpbuffer->mode == SH_JMPSCRIPT)) {
+        siglongjmp(shp->jmplist->buff, jmpval);
     }
     return shp->exitval;
 }

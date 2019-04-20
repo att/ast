@@ -70,7 +70,7 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
     char value[2], key[2];
     int jmpval;
     volatile int extended, r = -1;
-    struct checkpt buff, *pp;
+    checkpt_t buff;
     struct {
         Optdisc_t optdisc;
         Shell_t *sh;
@@ -129,8 +129,7 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
         sh_popcontext(shp, &buff);
         shp->st.opterror = 1;
         if (r == 0) return 2;
-        pp = (struct checkpt *)shp->jmplist;
-        pp->mode = SH_JMPERREXIT;
+        shp->jmplist->mode = SH_JMPERREXIT;
         sh_exit(shp, 2);
     }
     opt_info.disc = &disc.optdisc;

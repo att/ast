@@ -118,7 +118,7 @@ static_fn void noexport(Namval_t *np, void *data) {
 // Builtin `login`.
 //
 int B_login(int argc, char *argv[], Shbltin_t *context) {
-    struct checkpt *pp;
+    checkpt_t *pp;
     struct login *logp = NULL;
     Shell_t *shp;
     const char *pname;
@@ -129,7 +129,7 @@ int B_login(int argc, char *argv[], Shbltin_t *context) {
         shp = logp->sh;
     }
 
-    pp = (struct checkpt *)shp->jmplist;
+    pp = shp->jmplist;
     if (sh_isoption(shp, SH_RESTRICTED)) {
         errormsg(SH_DICT, ERROR_exit(1), e_restricted, argv[0]);
         __builtin_unreachable();
@@ -236,7 +236,7 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
     char *buffer = NULL;
     struct dolnod *saveargfor = NULL;
     volatile struct dolnod *argsave = NULL;
-    struct checkpt buff;
+    checkpt_t buff;
     Sfio_t *iop = NULL;
     short level;
     Optdisc_t disc;
@@ -350,7 +350,7 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
     memcpy(&shp->st, prevscope, sizeof(Shscope_t));
     shp->topscope = (Shscope_t *)prevscope;
     nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
-    if (jmpval && jmpval != SH_JMPFUN) siglongjmp(*shp->jmplist, jmpval);
+    if (jmpval && jmpval != SH_JMPFUN) siglongjmp(shp->jmplist->buff, jmpval);
     return shp->exitval;
 }
 
