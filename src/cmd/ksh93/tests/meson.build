@@ -40,7 +40,6 @@ tests_to_skip = [
     # Tests to be skipped because they are known to be broken when compiled by `shcomp`.
     # TODO: Fix these tests.
     ['shcomp', 'io'],
-    ['shcomp', 'printf'],
     ['shcomp', 'set'],
     ['shcomp', 'treemove'],
 ]
