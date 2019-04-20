@@ -105,9 +105,7 @@ static_fn void fixup_execve_errno(const char *path) {
 
 #else  // __CYGWIN__
 
-static_fn void fixup_execve_errno(const char *path) {
-    UNUSED(path);
-}
+static_fn void fixup_execve_errno(const char *path) { UNUSED(path); }
 
 #endif  // __CYGWIN__
 
