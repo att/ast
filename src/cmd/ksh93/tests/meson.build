@@ -43,7 +43,6 @@ tests_to_skip = [
     ['shcomp', 'printf'],
     ['shcomp', 'set'],
     ['shcomp', 'treemove'],
-    ['shcomp', 'wc'],
 ]
 system = build_machine.system()
 
@@ -91,7 +90,6 @@ foreach testspec : all_tests
             endforeach
             if not skip_test
                 # Run the test after compiling the script with `shcomp`.
-                lang_var = 'LANG=C'
                 test(testname + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
                     args: [ test_driver, 'shcomp', testname],
                     env: [shell_var, lang_var, shcomp_var, ld_library_path, libsample_path])
