@@ -25,24 +25,24 @@
  *
  * common header and implementation for
  *
- *	strtod		_sfdscan
- *	strntof
+ *      strtod          _sfdscan
+ *      strntof
  *
  * define these macros to instantiate an implementation:
  *
- *	S2F_function	the function name
- *	S2F_static	<0:export =0:extern >0:static
- *	S2F_type	0:float 1:double 2:long.double
- *	S2F_qualifier	1 for optional [fFlL] qualifier suffix
- *	S2F_size	1 for interface with size_t second arg
- *	S2F_scan	1 for alternate interface with these arguments:
- *				void* handle
- *				int (*getchar)(void* handle, int flag)
- *			exactly one extra (*getchar)() is done, i.e.,
- *			the caller must do the pushback
- *				flag==0		get next char
- *				flag==1		no number seen
- *			return 0 on error or EOF
+ *      S2F_function    the function name
+ *      S2F_static      <0:export =0:extern >0:static
+ *      S2F_type        0:float 1:double 2:long.double
+ *      S2F_qualifier   1 for optional [fFlL] qualifier suffix
+ *      S2F_size        1 for interface with size_t second arg
+ *      S2F_scan        1 for alternate interface with these arguments:
+ *                              void* handle
+ *                              int (*getchar)(void* handle, int flag)
+ *                      exactly one extra (*getchar)() is done, i.e.,
+ *                      the caller must do the pushback
+ *                              flag==0         get next char
+ *                              flag==1         no number seen
+ *                      return 0 on error or EOF
  */
 #ifndef _SFSTRTOF_H
 #define _SFSTRTOF_H 1

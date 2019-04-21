@@ -37,8 +37,8 @@
 
 #define Stk_t Sfio_t
 
-#define STK_SMALL 1 /* small stkopen stack		*/
-#define STK_NULL 2  /* return NULL on overflow	*/
+#define STK_SMALL 1 /* small stkopen stack              */
+#define STK_NULL 2  /* return NULL on overflow  */
 
 #define stkptr(sp, n) ((char *)((sp)->data) + (n))
 #define stktop(sp) ((char *)(sp)->next)

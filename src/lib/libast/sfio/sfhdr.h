@@ -61,8 +61,8 @@
 #endif /*_FIOCLEX*/
 #endif /*F_SETFD*/
 
-/*	Internal definitions for sfio.
-**	Written by Kiem-Phong Vo
+/*      Internal definitions for sfio.
+**      Written by Kiem-Phong Vo
 */
 
 #include "ast.h"
@@ -183,21 +183,21 @@
 #endif /*vt_threaded*/
 
 /* Private flags in the "bits" field */
-#define SF_MMAP 00000001       /* in memory mapping mode		*/
-#define SF_BOTH 00000002       /* both read/write			*/
-#define SF_HOLE 00000004       /* a hole of zero's was created		*/
-#define SF_NULL 00000010       /* stream is /dev/null			*/
-#define SF_SEQUENTIAL 00000020 /* sequential access			*/
-#define SF_JUSTSEEK 00000040   /* just did a sfseek			*/
-#define SF_PRIVATE 00000100    /* private stream to Sfio, no mutex	*/
-#define SF_ENDING 00000200     /* no re-io on interrupts at closing	*/
-// #define SF_WIDE 00000400       /* in wide mode - stdio only		*/
-#define SF_PUTR 00001000 /* in sfputr()				*/
+#define SF_MMAP 00000001       /* in memory mapping mode                */
+#define SF_BOTH 00000002       /* both read/write                       */
+#define SF_HOLE 00000004       /* a hole of zero's was created          */
+#define SF_NULL 00000010       /* stream is /dev/null                   */
+#define SF_SEQUENTIAL 00000020 /* sequential access                     */
+#define SF_JUSTSEEK 00000040   /* just did a sfseek                     */
+#define SF_PRIVATE 00000100    /* private stream to Sfio, no mutex      */
+#define SF_ENDING 00000200     /* no re-io on interrupts at closing     */
+// #define SF_WIDE 00000400       /* in wide mode - stdio only          */
+#define SF_PUTR 00001000 /* in sfputr()                         */
 
 /* "bits" flags that must be cleared in sfclrlock */
 #define SF_TMPBITS 00170000
 
-#define SF_MVSIZE 00040000 /* f->size was reset in sfmove()	*/
+#define SF_MVSIZE 00040000 /* f->size was reset in sfmove()     */
 #define SFMVSET(f)                \
     {                             \
         ((f)->size *= SF_NMAP);   \
@@ -217,18 +217,18 @@
     }
 
 /* bits for the mode field, SF_INIT defined in sfio_t.h */
-#define SF_RC 00000010     /* peeking for a record			*/
-#define SF_RV 00000020     /* reserve without read	or most write	*/
-#define SF_LOCK 00000040   /* stream is locked for io op		*/
-#define SF_PUSH 00000100   /* stream has been pushed		*/
-#define SF_POOL 00000200   /* stream is in a pool but not current	*/
-#define SF_PEEK 00000400   /* there is a pending peek		*/
-#define SF_PKRD 00001000   /* did a peek read			*/
-#define SF_GETR 00002000   /* did a getr on this stream		*/
-#define SF_SYNCED 00004000 /* stream was synced			*/
-#define SF_STDIO 00010000  /* given up the buffer to stdio		*/
-#define SF_AVAIL 00020000  /* was closed, available for reuse	*/
-#define SF_LOCAL 00100000  /* sentinel for a local call		*/
+#define SF_RC 00000010     /* peeking for a record                      */
+#define SF_RV 00000020     /* reserve without read      or most write   */
+#define SF_LOCK 00000040   /* stream is locked for io op                */
+#define SF_PUSH 00000100   /* stream has been pushed            */
+#define SF_POOL 00000200   /* stream is in a pool but not current       */
+#define SF_PEEK 00000400   /* there is a pending peek           */
+#define SF_PKRD 00001000   /* did a peek read                   */
+#define SF_GETR 00002000   /* did a getr on this stream         */
+#define SF_SYNCED 00004000 /* stream was synced                 */
+#define SF_STDIO 00010000  /* given up the buffer to stdio              */
+#define SF_AVAIL 00020000  /* was closed, available for reuse   */
+#define SF_LOCAL 00100000  /* sentinel for a local call         */
 
 /* short-hands */
 #ifndef uchar
@@ -306,31 +306,31 @@
 typedef struct _sfpool_s Sfpool_t;
 struct _sfpool_s {
     Sfpool_t *next;
-    int mode;         /* type of pool			*/
-    int s_sf;         /* size of pool array		*/
-    int n_sf;         /* number currently in pool	*/
-    Sfio_t **sf;      /* array of streams		*/
-    Sfio_t *array[3]; /* start with 3			*/
-    Vtmutex_t mutex;  /* mutex lock object		*/
+    int mode;         /* type of pool                   */
+    int s_sf;         /* size of pool array             */
+    int n_sf;         /* number currently in pool       */
+    Sfio_t **sf;      /* array of streams               */
+    Sfio_t *array[3]; /* start with 3                   */
+    Vtmutex_t mutex;  /* mutex lock object              */
 };
 
 /* reserve buffer structure */
 typedef struct _sfrsrv_s Sfrsrv_t;
 struct _sfrsrv_s {
-    ssize_t slen;  /* last string length		*/
-    ssize_t size;  /* buffer size			*/
-    uchar data[1]; /* data buffer			*/
+    ssize_t slen;  /* last string length                */
+    ssize_t size;  /* buffer size                       */
+    uchar data[1]; /* data buffer                       */
 };
 
 /* co-process structure */
 typedef struct _sfproc_s Sfproc_t;
 struct _sfproc_s {
-    int pid;      /* process id			*/
-    uchar *rdata; /* read data being cached	*/
-    int ndata;    /* size of cached data		*/
-    int size;     /* buffer size			*/
-    int file;     /* saved file descriptor	*/
-    int sigp;     /* sigpipe protection needed	*/
+    int pid;      /* process id                 */
+    uchar *rdata; /* read data being cached     */
+    int ndata;    /* size of cached data                */
+    int size;     /* buffer size                        */
+    int file;     /* saved file descriptor      */
+    int sigp;     /* sigpipe protection needed  */
 };
 
 /* extensions to sfvprintf/sfvscanf */
@@ -340,7 +340,7 @@ struct _sfproc_s {
 #define FP_BASE 2
 #define FP_STR 3
 #define FP_SIZE 4
-#define FP_INDEX 5 /* index size	*/
+#define FP_INDEX 5 /* index size        */
 
 typedef struct _fmt_s Fmt_t;
 typedef struct _fmtpos_s Fmtpos_t;
@@ -365,25 +365,25 @@ typedef union {
 } Argv_t;
 
 struct _fmt_s {
-    char *form;   /* format string		*/
-    va_list args; /* corresponding arglist	*/
-    SFMBDCL(mbs)  /* multibyte parsing state	*/
+    char *form;   /* format string              */
+    va_list args; /* corresponding arglist      */
+    SFMBDCL(mbs)  /* multibyte parsing state    */
 
-    char *oform;   /* original format string	*/
-    va_list oargs; /* original arg list		*/
-    int argn;      /* number of args already used	*/
-    Fmtpos_t *fp;  /* position list		*/
+    char *oform;   /* original format string    */
+    va_list oargs; /* original arg list         */
+    int argn;      /* number of args already used       */
+    Fmtpos_t *fp;  /* position list             */
 
-    Sffmt_t *ft;         /* formatting environment	*/
-    Sffmtevent_f eventf; /* event function		*/
-    Fmt_t *next;         /* stack frame pointer		*/
+    Sffmt_t *ft;         /* formatting environment      */
+    Sffmtevent_f eventf; /* event function              */
+    Fmt_t *next;         /* stack frame pointer         */
 };
 
 struct _fmtpos_s {
-    Sffmt_t ft;         /* environment			*/
-    Argv_t argv;        /* argument value		*/
-    int fmt;            /* original format		*/
-    int need[FP_INDEX]; /* positions depending on	*/
+    Sffmt_t ft;         /* environment                  */
+    Argv_t argv;        /* argument value               */
+    int fmt;            /* original format              */
+    int need[FP_INDEX]; /* positions depending on       */
 };
 
 #define LEFTP '('
@@ -404,23 +404,23 @@ struct _fmtpos_s {
      (pr = ft->precis), (bs = ft->base))
 
 /* format flags&types, must coexist with those in sfio.h */
-// #define SFFMT_FORBIDDEN 000077777777 /* for sfio.h only		*/
-#define SFFMT_EFORMAT 001000000000 /* sfcvt converting %e		*/
-#define SFFMT_MINUS 002000000000   /* minus sign			*/
-#define SFFMT_AFORMAT 004000000000 /* sfcvt converting %a		*/
-#define SFFMT_UPPER 010000000000   /* sfcvt converting upper	*/
+// #define SFFMT_FORBIDDEN 000077777777 /* for sfio.h only              */
+#define SFFMT_EFORMAT 001000000000 /* sfcvt converting %e               */
+#define SFFMT_MINUS 002000000000   /* minus sign                        */
+#define SFFMT_AFORMAT 004000000000 /* sfcvt converting %a               */
+#define SFFMT_UPPER 010000000000   /* sfcvt converting upper    */
 
 #define SFFMT_TYPES                                                                        \
     (SFFMT_SHORT | SFFMT_SSHORT | SFFMT_LONG | SFFMT_LLONG | SFFMT_LDOUBLE | SFFMT_IFLAG | \
      SFFMT_JFLAG | SFFMT_TFLAG | SFFMT_ZFLAG)
 
 /* type of elements to be converted */
-#define SFFMT_INT 001     /* %d,%i 		*/
-#define SFFMT_UINT 002    /* %u,o,x etc.		*/
-#define SFFMT_FLOAT 004   /* %f,e,g etc.		*/
-#define SFFMT_CHAR 010    /* %c,C			*/
-#define SFFMT_POINTER 020 /* %p,n,s,S		*/
-#define SFFMT_CLASS 040   /* %[			*/
+#define SFFMT_INT 001     /* %d,%i              */
+#define SFFMT_UINT 002    /* %u,o,x etc.                */
+#define SFFMT_FLOAT 004   /* %f,e,g etc.                */
+#define SFFMT_CHAR 010    /* %c,C                       */
+#define SFFMT_POINTER 020 /* %p,n,s,S           */
+#define SFFMT_CLASS 040   /* %[                 */
 
 /* _Sftest SF_TEST_* bitmasks -- 0x0001..0x0080 are unnamed */
 
@@ -522,10 +522,10 @@ typedef struct _sfextern_s {
 #define SFKILLED(f) (((f)->mode & (SF_AVAIL | SF_LOCK)) == (SF_AVAIL | SF_LOCK))
 
 /* exception types */
-#define SF_EDONE 0  /* stop this operation and return	*/
-#define SF_EDISC 1  /* discipline says it's ok		*/
-#define SF_ESTACK 2 /* stack was popped			*/
-#define SF_ECONT 3  /* can continue normally		*/
+#define SF_EDONE 0  /* stop this operation and return   */
+#define SF_EDISC 1  /* discipline says it's ok          */
+#define SF_ESTACK 2 /* stack was popped                 */
+#define SF_ECONT 3  /* can continue normally            */
 
 #define SETLOCAL(f) ((f)->mode |= SF_LOCAL)
 #define GETLOCAL(f, v)                \
@@ -689,28 +689,28 @@ typedef struct _sfextern_s {
 #define _Sflpow10 (_Sftable.sf_ldbl_pow10)
 typedef struct _sfieee_s Sfieee_t;
 struct _sfieee_s {
-    float fltnan;       /* float NAN			*/
-    float fltinf;       /* float INF			*/
-    double dblnan;      /* double NAN			*/
-    double dblinf;      /* double INF			*/
-    Sfdouble_t ldblnan; /* Sfdouble_t NAN		*/
-    Sfdouble_t ldblinf; /* Sfdouble_t INF		*/
+    float fltnan;       /* float NAN                    */
+    float fltinf;       /* float INF                    */
+    double dblnan;      /* double NAN                   */
+    double dblinf;      /* double INF                   */
+    Sfdouble_t ldblnan; /* Sfdouble_t NAN               */
+    Sfdouble_t ldblinf; /* Sfdouble_t INF               */
 };
 typedef struct _sftab_ {
-    Sfdouble_t sf_pos10[SF_MAXEXP10]; /* positive powers of 10	*/
-    Sfdouble_t sf_neg10[SF_MAXEXP10]; /* negative powers of 10	*/
-    uchar sf_dec[200];                /* ascii reps of values < 100	*/
-    char *sf_digits;                  /* digits for general bases	*/
-    int (*sf_cvinitf)();              /* initialization function	*/
-    int sf_cvinit;                    /* initialization state		*/
+    Sfdouble_t sf_pos10[SF_MAXEXP10]; /* positive powers of 10  */
+    Sfdouble_t sf_neg10[SF_MAXEXP10]; /* negative powers of 10  */
+    uchar sf_dec[200];                /* ascii reps of values < 100     */
+    char *sf_digits;                  /* digits for general bases       */
+    int (*sf_cvinitf)();              /* initialization function        */
+    int sf_cvinit;                    /* initialization state           */
     Fmtpos_t *(*sf_fmtposf)(Sfio_t *, const char *, va_list, Sffmt_t *, int);
     char *(*sf_fmtintf)(const char *, int *);
-    float *sf_flt_pow10;           /* float powers of 10		*/
-    double *sf_dbl_pow10;          /* double powers of 10		*/
-    Sfdouble_t *sf_ldbl_pow10;     /* Sfdouble_t powers of 10	*/
-    uchar sf_cv36[SF_MAXCHAR + 1]; /* conversion for base [2-36]	*/
-    uchar sf_cv64[SF_MAXCHAR + 1]; /* conversion for base [37-64]	*/
-    uchar sf_type[SF_MAXCHAR + 1]; /* conversion formats&types	*/
+    float *sf_flt_pow10;           /* float powers of 10                */
+    double *sf_dbl_pow10;          /* double powers of 10               */
+    Sfdouble_t *sf_ldbl_pow10;     /* Sfdouble_t powers of 10   */
+    uchar sf_cv36[SF_MAXCHAR + 1]; /* conversion for base [2-36]        */
+    uchar sf_cv64[SF_MAXCHAR + 1]; /* conversion for base [37-64]       */
+    uchar sf_type[SF_MAXCHAR + 1]; /* conversion formats&types  */
     Sfieee_t sf_ieee;              /* IEEE floating point constants*/
 } Sftab_t;
 

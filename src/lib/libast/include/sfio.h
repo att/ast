@@ -19,9 +19,9 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*	Public header file for the sfio library
+/*      Public header file for the sfio library
 **
-**	Written by Kiem-Phong Vo
+**      Written by Kiem-Phong Vo
 */
 #ifndef _SFIO_H
 #define _SFIO_H 1
@@ -49,11 +49,11 @@ typedef int (*Sfexcept_f)(Sfio_t *, int, void *, Sfdisc_t *);
 
 /* discipline structure */
 struct _sfdisc_s {
-    Sfread_f readf;     /* read function		*/
-    Sfwrite_f writef;   /* write function		*/
-    Sfseek_f seekf;     /* seek function		*/
-    Sfexcept_f exceptf; /* to handle exceptions		*/
-    Sfdisc_t *disc;     /* the continuing discipline	*/
+    Sfread_f readf;     /* read function                */
+    Sfwrite_f writef;   /* write function               */
+    Sfseek_f seekf;     /* seek function                */
+    Sfexcept_f exceptf; /* to handle exceptions         */
+    Sfdisc_t *disc;     /* the continuing discipline    */
 };
 
 struct _sfio_s {
@@ -90,56 +90,56 @@ typedef struct _sffmt_s Sffmt_t;
 typedef int (*Sffmtext_f)(Sfio_t *, void *, Sffmt_t *);
 typedef int (*Sffmtevent_f)(Sfio_t *, int, void *, Sffmt_t *);
 struct _sffmt_s {
-    long version;        /* version of this structure		*/
-    Sffmtext_f extf;     /* function to process arguments	*/
-    Sffmtevent_f eventf; /* process events			*/
+    long version;        /* version of this structure           */
+    Sffmtext_f extf;     /* function to process arguments       */
+    Sffmtevent_f eventf; /* process events                      */
 
-    char *form;   /* format string to stack		*/
-    va_list args; /* corresponding arg list		*/
+    char *form;   /* format string to stack             */
+    va_list args; /* corresponding arg list             */
 
-    int fmt;      /* format character			*/
-    ssize_t size; /* object size				*/
-    int flags;    /* formatting flags			*/
-    int width;    /* width of field			*/
-    int precis;   /* precision required			*/
-    int base;     /* conversion base			*/
+    int fmt;      /* format character                   */
+    ssize_t size; /* object size                                */
+    int flags;    /* formatting flags                   */
+    int width;    /* width of field                     */
+    int precis;   /* precision required                 */
+    int base;     /* conversion base                    */
 
-    char *t_str;   /* type string 				*/
-    ssize_t n_str; /* length of t_str 			*/
+    char *t_str;   /* type string                               */
+    ssize_t n_str; /* length of t_str                   */
 
-    void *mbs; /* multibyte state for format string	*/
+    void *mbs; /* multibyte state for format string     */
 
-    void *none; /* unused for now			*/
+    void *none; /* unused for now                       */
 };
 
-#define SFFMT_SSHORT 000000010 /* 'hh' flag, char			*/
-#define SFFMT_TFLAG 000000020  /* 't' flag, ptrdiff_t			*/
-#define SFFMT_ZFLAG 000000040  /* 'z' flag, size_t			*/
+#define SFFMT_SSHORT 000000010 /* 'hh' flag, char                       */
+#define SFFMT_TFLAG 000000020  /* 't' flag, ptrdiff_t                   */
+#define SFFMT_ZFLAG 000000040  /* 'z' flag, size_t                      */
 
-#define SFFMT_LEFT 000000100     /* left-justification			*/
-#define SFFMT_SIGN 000000200     /* must have a sign			*/
-#define SFFMT_BLANK 000000400    /* if not signed, prepend a blank	*/
-#define SFFMT_ZERO 000001000     /* zero-padding on the left		*/
-#define SFFMT_ALTER 000002000    /* alternate formatting		*/
-#define SFFMT_THOUSAND 000004000 /* thousand grouping			*/
-#define SFFMT_SKIP 000010000     /* skip assignment in scanf()		*/
-#define SFFMT_SHORT 000020000    /* 'h' flag				*/
-#define SFFMT_LONG 000040000     /* 'l' flag				*/
-#define SFFMT_LLONG 000100000    /* 'll' flag				*/
-#define SFFMT_LDOUBLE 000200000  /* 'L' flag				*/
-#define SFFMT_VALUE 000400000    /* value is returned			*/
-#define SFFMT_ARGPOS 001000000   /* getting arg for $ patterns		*/
-#define SFFMT_IFLAG 002000000    /* 'I' flag				*/
-#define SFFMT_JFLAG 004000000    /* 'j' flag, intmax_t			*/
-#define SFFMT_CENTER 010000000   /* '=' flag, center justification	*/
-#define SFFMT_CHOP 020000000     /* chop long string values from left	*/
-#define SFFMT_SET 037777770      /* flags settable on calling extf	*/
+#define SFFMT_LEFT 000000100     /* left-justification                  */
+#define SFFMT_SIGN 000000200     /* must have a sign                    */
+#define SFFMT_BLANK 000000400    /* if not signed, prepend a blank      */
+#define SFFMT_ZERO 000001000     /* zero-padding on the left            */
+#define SFFMT_ALTER 000002000    /* alternate formatting                */
+#define SFFMT_THOUSAND 000004000 /* thousand grouping                   */
+#define SFFMT_SKIP 000010000     /* skip assignment in scanf()          */
+#define SFFMT_SHORT 000020000    /* 'h' flag                            */
+#define SFFMT_LONG 000040000     /* 'l' flag                            */
+#define SFFMT_LLONG 000100000    /* 'll' flag                           */
+#define SFFMT_LDOUBLE 000200000  /* 'L' flag                            */
+#define SFFMT_VALUE 000400000    /* value is returned                   */
+#define SFFMT_ARGPOS 001000000   /* getting arg for $ patterns          */
+#define SFFMT_IFLAG 002000000    /* 'I' flag                            */
+#define SFFMT_JFLAG 004000000    /* 'j' flag, intmax_t                  */
+#define SFFMT_CENTER 010000000   /* '=' flag, center justification      */
+#define SFFMT_CHOP 020000000     /* chop long string values from left   */
+#define SFFMT_SET 037777770      /* flags settable on calling extf      */
 
 /* for sfmutex() call */
-#define SFMTX_LOCK 0    /* up mutex count			*/
-#define SFMTX_TRYLOCK 1 /* try to up mutex count		*/
-#define SFMTX_UNLOCK 2  /* down mutex count			*/
-#define SFMTX_CLRLOCK 3 /* clear mutex count			*/
+#define SFMTX_LOCK 0    /* up mutex count                       */
+#define SFMTX_TRYLOCK 1 /* try to up mutex count                */
+#define SFMTX_UNLOCK 2  /* down mutex count                     */
+#define SFMTX_CLRLOCK 3 /* clear mutex count                    */
 
 // Various constants.
 #define SF_RADIX 64  // maximum integer conversion base
@@ -163,33 +163,33 @@ struct _sffmt_s {
 #endif  // SEEK_SET
 
 /* bits for various types of files */
-#define SF_READ 0000001     /* open for reading			*/
-#define SF_WRITE 0000002    /* open for writing			*/
-#define SF_STRING 0000004   /* a string stream			*/
-#define SF_APPENDWR 0000010 /* file is in append mode only		*/
-#define SF_MALLOC 0000020   /* buffer is malloc-ed			*/
-#define SF_LINE 0000040     /* line buffering			*/
-#define SF_SHARE 0000100    /* stream with shared file descriptor 	*/
-#define SF_EOF 0000200      /* eof was detected			*/
-#define SF_ERROR 0000400    /* an error happened			*/
-#define SF_STATIC 0001000   /* a stream that cannot be freed	*/
-#define SF_IOCHECK 0002000  /* call exceptf before doing IO		*/
-#define SF_PUBLIC 0004000   /* SF_SHARE and follow physical seek	*/
-#define SF_MTSAFE 0010000   /* need thread safety			*/
+#define SF_READ 0000001     /* open for reading                 */
+#define SF_WRITE 0000002    /* open for writing                 */
+#define SF_STRING 0000004   /* a string stream                  */
+#define SF_APPENDWR 0000010 /* file is in append mode only              */
+#define SF_MALLOC 0000020   /* buffer is malloc-ed                      */
+#define SF_LINE 0000040     /* line buffering                   */
+#define SF_SHARE 0000100    /* stream with shared file descriptor       */
+#define SF_EOF 0000200      /* eof was detected                 */
+#define SF_ERROR 0000400    /* an error happened                        */
+#define SF_STATIC 0001000   /* a stream that cannot be freed    */
+#define SF_IOCHECK 0002000  /* call exceptf before doing IO             */
+#define SF_PUBLIC 0004000   /* SF_SHARE and follow physical seek        */
+#define SF_MTSAFE 0010000   /* need thread safety                       */
 #define SF_WHOLE 0020000    /* preserve wholeness of sfwrite/sfputr */
-#define SF_IOINTR 0040000   /* return on interrupts			*/
-#define SF_WCWIDTH 0100000  /* wcwidth display stream		*/
+#define SF_IOINTR 0040000   /* return on interrupts                     */
+#define SF_WCWIDTH 0100000  /* wcwidth display stream           */
 
-#define SFIO_FLAGS 0177177 /* PUBLIC FLAGS PASSABLE TO SFNEW()	*/
-#define SF_SETS 0177163    /* flags passable to sfset()		*/
+#define SFIO_FLAGS 0177177 /* PUBLIC FLAGS PASSABLE TO SFNEW()  */
+#define SF_SETS 0177163    /* flags passable to sfset()         */
 
 #ifndef _SF_NO_OBSOLETE
-#define SF_BUFCONST 0400000 /* unused flag - for compatibility only	*/
+#define SF_BUFCONST 0400000 /* unused flag - for compatibility only     */
 #endif
 
 /* for sfgetr/sfreserve to hold a record */
-#define SF_LOCKR 0000010 /* lock record, stop access to stream	*/
-#define SF_LASTR 0000020 /* get the last incomplete record	*/
+#define SF_LOCKR 0000010 /* lock record, stop access to stream  */
+#define SF_LASTR 0000020 /* get the last incomplete record      */
 
 // Exception events: SF_NEW(0), SF_READ(1), SF_WRITE(2) and the below.
 #define SF_SEEK 3     // seek error
@@ -208,17 +208,17 @@ struct _sffmt_s {
 // #define SF_EVENT 100  // start of user-defined events
 
 /* for stack and disciplines */
-#define SF_POPSTACK (NULL) /* pop the stream stack		*/
-#define SF_POPDISC (NULL)  /* pop the discipline stack	*/
+#define SF_POPSTACK (NULL) /* pop the stream stack              */
+#define SF_POPDISC (NULL)  /* pop the discipline stack  */
 
 /* for the notify function and discipline exception */
-#define SF_NEW 0         /* new stream				*/
-#define SF_SETFD (-1)    /* about to set the file descriptor 	*/
-#define SF_MTACCESS (-2) /* starting a multi-threaded stream	*/
-#define SF_TMPFILE (-3)  /* sftmp() switching from buf to file	*/
+#define SF_NEW 0         /* new stream                          */
+#define SF_SETFD (-1)    /* about to set the file descriptor    */
+#define SF_MTACCESS (-2) /* starting a multi-threaded stream    */
+#define SF_TMPFILE (-3)  /* sftmp() switching from buf to file  */
 
-#define SF_BUFSIZE 8192 /* default buffer size			*/
-#define SF_UNBOUND (-1) /* unbounded buffer size		*/
+#define SF_BUFSIZE 8192 /* default buffer size                  */
+#define SF_UNBOUND (-1) /* unbounded buffer size                */
 
 extern ssize_t _Sfi;
 extern ssize_t _Sfmaxr;
@@ -382,62 +382,62 @@ extern char *sfstrseek(Sfio_t *, Sfoff_t, int);
 /* for static initialization of an Sfio_t structure */
 #define SFNEW(data, size, file, type, disc, mutex)                       \
     {                                                                    \
-        (unsigned char *)(data),                            /* next		*/  \
-            (unsigned char *)(data),                        /* endw		*/  \
-            (unsigned char *)(data),                        /* endr		*/  \
-            (unsigned char *)(data),                        /* endb		*/  \
-            NULL,                                           /* push		*/  \
-            (unsigned short)((type)&SFIO_FLAGS),            /* flags	*/  \
-            (short)(file),                                  /* file		*/  \
-            (unsigned char *)(data),                        /* data		*/  \
-            (ssize_t)(size),                                /* size		*/  \
-            (ssize_t)(-1),                                  /* val		*/   \
-            (Sfoff_t)0,                                     /* extent	*/ \
-            (Sfoff_t)0,                                     /* here		*/  \
-            0,                                              /* ngetr	*/  \
-            {0},                                            /* tiny		*/  \
-            0,                                              /* bits		*/  \
-            (unsigned int)(((type) & (SF_RDWR)) | SF_INIT), /* mode		*/  \
-            (struct _sfdisc_s *)(disc),                     /* disc		*/  \
-            NULL,                                           /* pool		*/  \
-            NULL,                                           /* rsrv		*/  \
-            NULL,                                           /* proc		*/  \
-            (mutex),                                        /* mutex	*/  \
-            NULL,                                           /* stdio	*/  \
-            (Sfoff_t)0,                                     /* lpos		*/  \
-            (size_t)0,                                      /* iosz		*/  \
-            0,                                              /* blksz	*/  \
-            0,                                              /* getr		*/  \
+        (unsigned char *)(data),                            /* next             */  \
+            (unsigned char *)(data),                        /* endw             */  \
+            (unsigned char *)(data),                        /* endr             */  \
+            (unsigned char *)(data),                        /* endb             */  \
+            NULL,                                           /* push             */  \
+            (unsigned short)((type)&SFIO_FLAGS),            /* flags    */  \
+            (short)(file),                                  /* file             */  \
+            (unsigned char *)(data),                        /* data             */  \
+            (ssize_t)(size),                                /* size             */  \
+            (ssize_t)(-1),                                  /* val              */   \
+            (Sfoff_t)0,                                     /* extent   */ \
+            (Sfoff_t)0,                                     /* here             */  \
+            0,                                              /* ngetr    */  \
+            {0},                                            /* tiny             */  \
+            0,                                              /* bits             */  \
+            (unsigned int)(((type) & (SF_RDWR)) | SF_INIT), /* mode             */  \
+            (struct _sfdisc_s *)(disc),                     /* disc             */  \
+            NULL,                                           /* pool             */  \
+            NULL,                                           /* rsrv             */  \
+            NULL,                                           /* proc             */  \
+            (mutex),                                        /* mutex    */  \
+            NULL,                                           /* stdio    */  \
+            (Sfoff_t)0,                                     /* lpos             */  \
+            (size_t)0,                                      /* iosz             */  \
+            0,                                              /* blksz    */  \
+            0,                                              /* getr             */  \
     }
 
 /* function to clear an Sfio_t structure */
 #define SFCLEAR(f, mtx)               \
-    ((f)->next = NULL,   /* next		*/  \
-     (f)->endw = NULL,   /* endw		*/  \
-     (f)->endr = NULL,   /* endr		*/  \
-     (f)->endb = NULL,   /* endb		*/  \
-     (f)->push = NULL,   /* push		*/  \
-     (f)->flags = 0,     /* flags	*/  \
-     (f)->file = -1,     /* file		*/  \
-     (f)->data = NULL,   /* data		*/  \
-     (f)->size = -1,     /* size		*/  \
-     (f)->val = -1,      /* val		*/   \
-     (f)->extent = -1,   /* extent	*/ \
-     (f)->here = 0,      /* here		*/  \
-     (f)->ngetr = 0,     /* ngetr	*/  \
-     (f)->tiny[0] = 0,   /* tiny		*/  \
-     (f)->bits = 0,      /* bits		*/  \
-     (f)->mode = 0,      /* mode		*/  \
-     (f)->disc = NULL,   /* disc		*/  \
-     (f)->pool = NULL,   /* pool		*/  \
-     (f)->rsrv = NULL,   /* rsrv		*/  \
-     (f)->proc = NULL,   /* proc		*/  \
-     (f)->mutex = (mtx), /* mutex	*/  \
-     (f)->stdio = NULL,  /* stdio	*/  \
-     (f)->lpos = 0,      /* lpos		*/  \
-     (f)->iosz = 0,      /* iosz		*/  \
-     (f)->blksz = 0,     /* blksz	*/  \
-     (f)->getr = 0       /* getr		*/  \
+    ((f)->next = NULL,   /* next                */  \
+     (f)->endw = NULL,   /* endw                */  \
+     (f)->endr = NULL,   /* endr                */  \
+     (f)->endb = NULL,   /* endb                */  \
+     (f)->push = NULL,   /* push                */  \
+     (f)->flags = 0,     /* flags       */  \
+     (f)->file = -1,     /* file                */  \
+     (f)->data = NULL,   /* data                */  \
+     (f)->size = -1,     /* size                */  \
+     (f)->val = -1,      /* val         */   \
+     (f)->extent = -1,   /* extent      */ \
+     (f)->here = 0,      /* here                */  \
+     (f)->ngetr = 0,     /* ngetr       */  \
+     (f)->tiny[0] = 0,   /* tiny                */  \
+     (f)->bits = 0,      /* bits                */  \
+     (f)->mode = 0,      /* mode                */  \
+     (f)->disc = NULL,   /* disc                */  \
+     (f)->pool = NULL,   /* pool                */  \
+     (f)->rsrv = NULL,   /* rsrv                */  \
+     (f)->proc = NULL,   /* proc                */  \
+     (f)->mutex = (mtx), /* mutex       */  \
+     (f)->stdio = NULL,  /* stdio       */  \
+     (f)->lpos = 0,      /* lpos                */  \
+     (f)->iosz = 0,      /* iosz                */  \
+     (f)->blksz = 0,     /* blksz       */  \
+     (f)->getr = 0       /* getr                */  \
     )
 
 // Expose next stream inside discipline function; state saved in int f.

@@ -44,12 +44,12 @@
  * exit() support -- this matches shell exit codes
  */
 
-#define EXIT_BITS 8 /* # exit status bits	*/
+#define EXIT_BITS 8 /* # exit status bits       */
 
-// #define EXIT_USAGE 2      /* usage exit code	*/
-#define EXIT_QUIT 255     /* parent should quit	*/
-#define EXIT_NOTFOUND 127 /* command not found	*/
-#define EXIT_NOEXEC 126   /* other exec error	*/
+// #define EXIT_USAGE 2      /* usage exit code */
+#define EXIT_QUIT 255     /* parent should quit */
+#define EXIT_NOTFOUND 127 /* command not found  */
+#define EXIT_NOEXEC 126   /* other exec error   */
 
 #define EXIT_CODE(x) ((x) & ((1 << EXIT_BITS) - 1))
 #define EXIT_TERM(x) (EXIT_CODE(x) | (1 << EXIT_BITS))
@@ -96,32 +96,32 @@
  * strgrpmatch() flags
  */
 
-#define STR_MAXIMAL 0x01 /* maximal match		*/
-#define STR_LEFT 0x02    /* implicit left anchor		*/
-#define STR_RIGHT 0x04   /* implicit right anchor	*/
-#define STR_ICASE 0x08   /* ignore case			*/
-#define STR_GROUP 0x10   /* (|&) inside [@|&](...) only	*/
-#define STR_INT 0x20     /* deprecated int* match array	*/
+#define STR_MAXIMAL 0x01 /* maximal match               */
+#define STR_LEFT 0x02    /* implicit left anchor                */
+#define STR_RIGHT 0x04   /* implicit right anchor       */
+#define STR_ICASE 0x08   /* ignore case                 */
+#define STR_GROUP 0x10   /* (|&) inside [@|&](...) only */
+#define STR_INT 0x20     /* deprecated int* match array */
 
 /*
  * fmtquote() flags
  */
 
-#define FMT_ALWAYS 0x01  /* always quote			*/
-#define FMT_ESCAPED 0x02 /* already escaped		*/
-#define FMT_SHELL 0x04   /* escape $ ` too		*/
-#define FMT_WIDE 0x08    /* don't escape 8 bit chars	*/
-#define FMT_PARAM 0x10   /* disable FMT_SHELL ${$( quote	*/
+#define FMT_ALWAYS 0x01  /* always quote                        */
+#define FMT_ESCAPED 0x02 /* already escaped             */
+#define FMT_SHELL 0x04   /* escape $ ` too              */
+#define FMT_WIDE 0x08    /* don't escape 8 bit chars    */
+#define FMT_PARAM 0x10   /* disable FMT_SHELL ${$( quote        */
 
 /*
  * chrexp() flags
  */
 
-#define FMT_EXP_CHAR 0x020 /* expand single byte chars	*/
-#define FMT_EXP_LINE 0x040 /* expand \n and \r		*/
-#define FMT_EXP_WIDE 0x080 /* expand \u \U \x wide chars	*/
-#define FMT_EXP_NOCR 0x100 /* skip \r			*/
-#define FMT_EXP_NONL 0x200 /* skip \n			*/
+#define FMT_EXP_CHAR 0x020 /* expand single byte chars  */
+#define FMT_EXP_LINE 0x040 /* expand \n and \r          */
+#define FMT_EXP_WIDE 0x080 /* expand \u \U \x wide chars        */
+#define FMT_EXP_NOCR 0x100 /* skip \r                   */
+#define FMT_EXP_NONL 0x200 /* skip \n                   */
 
 /*
  * multibyte macros

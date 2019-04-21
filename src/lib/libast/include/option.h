@@ -39,26 +39,26 @@ struct Optdisc_s;
 typedef int (*Optinfo_f)(struct Opt_s *, Sfio_t *, const char *, struct Optdisc_s *);
 
 struct Optdisc_s {
-    unsigned long version; /* OPT_VERSION			*/
-    unsigned long flags;   /* OPT_* flags			*/
-    char *catalog;         /* error catalog id		*/
-    Optinfo_f infof;       /* runtime info function	*/
+    unsigned long version; /* OPT_VERSION                       */
+    unsigned long flags;   /* OPT_* flags                       */
+    char *catalog;         /* error catalog id          */
+    Optinfo_f infof;       /* runtime info function     */
 };
 
 // NOTE: Opt_t member order fixed by a previous binary release
 typedef struct Opt_s {
-    int again;                /* see optjoin()		*/
-    char *arg;                /* {:,#} string argument	*/
-    char **argv;              /* most recent argv		*/
-    int index;                /* argv index			*/
-    char *msg;                /* error/usage message buffer	*/
-    long num;                 /* OBSOLETE -- use number	*/
-    int offset;               /* char offset in argv[index]	*/
+    int again;                /* see optjoin()          */
+    char *arg;                /* {:,#} string argument  */
+    char **argv;              /* most recent argv               */
+    int index;                /* argv index                     */
+    char *msg;                /* error/usage message buffer     */
+    long num;                 /* OBSOLETE -- use number */
+    int offset;               /* char offset in argv[index]     */
     char option[8];           /* current flag {-,+} + option  */
-    char name[64];            /* current long name or flag	*/
-    Optdisc_t *disc;          /* user discipline		*/
-    int64_t number;           /* # numeric argument		*/
-    unsigned char assignment; /* option arg assigment op	*/
+    char name[64];            /* current long name or flag      */
+    Optdisc_t *disc;          /* user discipline                */
+    int64_t number;           /* # numeric argument             */
+    unsigned char assignment; /* option arg assigment op        */
     unsigned char pads[sizeof(void *) - 1];
     char pad[2 * sizeof(void *)];
     Optstate_t *state;

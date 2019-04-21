@@ -24,11 +24,11 @@
 
 // #define VTHREAD_VERSION 20001201L
 
-/*	Header for the Vthread library.
-**	Note that the macro vt_threaded may be defined
-**	outside of vthread.h to suppress threading.
+/*      Header for the Vthread library.
+**      Note that the macro vt_threaded may be defined
+**      outside of vthread.h to suppress threading.
 **
-**	Written by Kiem-Phong Vo, kpv@research.att.com
+**      Written by Kiem-Phong Vo, kpv@research.att.com
 */
 
 #include <errno.h>
@@ -102,13 +102,13 @@ struct _vtmutex_s {
 
 /* structure for states of thread */
 struct _vthread_s {
-    _vtself_t self;  /* self-handle		*/
-    _vtid_t id;      /* thread id		*/
-    _vtattr_t attrs; /* attributes		*/
-    size_t stack;    /* stack size		*/
-    int state;       /* execution state	*/
-    int error;       /* error status 	*/
-    void *exit;      /* exit value		*/
+    _vtself_t self;  /* self-handle             */
+    _vtid_t id;      /* thread id               */
+    _vtattr_t attrs; /* attributes              */
+    size_t stack;    /* stack size              */
+    int state;       /* execution state */
+    int error;       /* error status    */
+    void *exit;      /* exit value              */
 };
 
 /* structure for exactly once execution */

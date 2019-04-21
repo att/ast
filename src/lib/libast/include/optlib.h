@@ -72,30 +72,30 @@ typedef struct Optcache_s {
 } Optcache_t;
 
 typedef struct Optstate_s {
-    Sfio_t *mp;         /* opt_info.msg string stream	*/
-    Sfio_t *vp;         /* translation string stream	*/
-    Sfio_t *xp;         /* translation string stream	*/
-    Sfio_t *cp;         /* compatibility string stream	*/
-    Optpass_t pass[8];  /* optjoin() list		*/
-    char *argv[2];      /* initial argv copy		*/
-    char *strv[3];      /* optstr() argv		*/
-    char *str;          /* optstr() string		*/
-    Sfio_t *strp;       /* optstr() stream		*/
-    int force;          /* force this style		*/
-    int pindex;         /* prev index for backup	*/
-    int poffset;        /* prev offset for backup	*/
-    int npass;          /* # optjoin() passes		*/
-    int join;           /* optjoin() pass #		*/
-    int plus;           /* + ok				*/
-    int style;          /* default opthelp() style	*/
-    int width;          /* format line width		*/
-    int flags;          /* display flags		*/
-    int emphasis;       /* ansi term emphasis ok	*/
-    uint32_t localized; /* locale initialization serial	*/
-    Dtdisc_t msgdisc;   /* msgdict discipline		*/
-    Dt_t *msgdict;      /* default ast.id catalog msgs	*/
-    Optcache_t *cache;  /* OPT_cache cache		*/
-    char **conformance; /* conformance id vector	*/
+    Sfio_t *mp;         /* opt_info.msg string stream   */
+    Sfio_t *vp;         /* translation string stream    */
+    Sfio_t *xp;         /* translation string stream    */
+    Sfio_t *cp;         /* compatibility string stream  */
+    Optpass_t pass[8];  /* optjoin() list               */
+    char *argv[2];      /* initial argv copy            */
+    char *strv[3];      /* optstr() argv                */
+    char *str;          /* optstr() string              */
+    Sfio_t *strp;       /* optstr() stream              */
+    int force;          /* force this style             */
+    int pindex;         /* prev index for backup        */
+    int poffset;        /* prev offset for backup       */
+    int npass;          /* # optjoin() passes           */
+    int join;           /* optjoin() pass #             */
+    int plus;           /* + ok                         */
+    int style;          /* default opthelp() style      */
+    int width;          /* format line width            */
+    int flags;          /* display flags                */
+    int emphasis;       /* ansi term emphasis ok        */
+    uint32_t localized; /* locale initialization serial */
+    Dtdisc_t msgdisc;   /* msgdict discipline           */
+    Dt_t *msgdict;      /* default ast.id catalog msgs  */
+    Optcache_t *cache;  /* OPT_cache cache              */
+    char **conformance; /* conformance id vector        */
 } Optstate_t;
 
 #endif  // _OPTLIB_H

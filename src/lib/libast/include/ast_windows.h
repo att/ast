@@ -29,7 +29,7 @@
 #ifndef _AST_WINDOWS_H
 #define _AST_WINDOWS_H 1
 
-#undef SF_ERROR /* clash in <oaidl.h>		*/
+#undef SF_ERROR /* clash in <oaidl.h>           */
 
 #include <windows.h>
 

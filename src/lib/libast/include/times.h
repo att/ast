@@ -25,10 +25,10 @@
  *
  * -last clock_t,time_t interface definitions plus
  *
- *	<ast.h>
- *	<time.h>
- *	<sys/time.h>
- *	<sys/times.h>
+ *      <ast.h>
+ *      <time.h>
+ *      <sys/time.h>
+ *      <sys/times.h>
  */
 #ifndef _TIMES_H
 #define _TIMES_H 1

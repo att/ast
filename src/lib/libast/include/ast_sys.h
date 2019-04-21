@@ -29,13 +29,13 @@ typedef struct Spawnvex_s {
 } Spawnvex_t;
 
 typedef struct Spawnvex_noexec_s {
-    Spawnvex_t *vex;    /* caller vex handle		*/
-    void *handle;       /* caller callback handle	*/
-    const char *path;   /* spawnvex() path		*/
-    char *const *argv;  /* spawnvex() argv		*/
-    char *const *envv;  /* spawnvex() envv		*/
-    unsigned int flags; /* SPAWN_EXEC             	*/
-    int msgfd;          /* if no return and >= 0 close	*/
+    Spawnvex_t *vex;    /* caller vex handle            */
+    void *handle;       /* caller callback handle       */
+    const char *path;   /* spawnvex() path              */
+    char *const *argv;  /* spawnvex() argv              */
+    char *const *envv;  /* spawnvex() envv              */
+    unsigned int flags; /* SPAWN_EXEC                   */
+    int msgfd;          /* if no return and >= 0 close  */
 } Spawnvex_noexec_t;
 
 typedef int (*Spawnvex_f)(void *, uint64_t, uint64_t);

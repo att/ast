@@ -71,7 +71,7 @@
 
 #define asocas8(p, o, n) atomic_cas_8(p, o, n)
 #define asoadd8(p, n) (atomic_add_8_nv(p, n) - (n))
-#define asosub8(p, n)		(atomic_add_8_nv(p,(-(n))+(n))
+#define asosub8(p, n)           (atomic_add_8_nv(p,(-(n))+(n))
 #define asoinc8(p) (atomic_add_8_nv(p, 1) - 1)
 #define asodec8(p) (atomic_add_8_nv(p, -1) + 1)
 #define asocas16(p, o, n) atomic_cas_16(p, o, n)
@@ -105,7 +105,7 @@
 
 #define asocas8(p, o, n) atomic_cas_8(p, o, n)
 #define asoadd8(p, n) (atomic_add_8_nv(p, n) - (n))
-#define asosub8(p, n)		(atomic_add_8_nv(p,(-(n))+(n))
+#define asosub8(p, n)           (atomic_add_8_nv(p,(-(n))+(n))
 #define asoinc8(p) (atomic_add_8_nv(p, 1) - 1)
 #define asodec8(p) (atomic_add_8_nv(p, -1) + 1)
 #define asocas16(p, o, n) atomic_cas_16(p, o, n)
@@ -129,7 +129,7 @@
 
 #define asocas8(p, o, n) atomic_cas_8(p, o, n)
 #define asoadd8(p, n) (atomic_add_8_nv(p, n) - (n))
-#define asosub8(p, n)		(atomic_add_8_nv(p,(-(n))+(n))
+#define asosub8(p, n)           (atomic_add_8_nv(p,(-(n))+(n))
 #define asoinc8(p) (atomic_add_8_nv(p, 1) - 1)
 #define asodec8(p) (atomic_add_8_nv(p, -1) + 1)
 #define asocas16(p, o, n) atomic_cas_16(p, o, n)
@@ -163,7 +163,7 @@
 
 #define asocas8(p, o, n) atomic_cas_8(p, o, n)
 #define asoadd8(p, n) (atomic_add_8_nv(p, n) - (n))
-#define asosub8(p, n)		(atomic_add_8_nv(p,(-(n))+(n))
+#define asosub8(p, n)           (atomic_add_8_nv(p,(-(n))+(n))
 #define asoinc8(p) (atomic_add_8_nv(p, 1) - 1)
 #define asodec8(p) (atomic_add_8_nv(p, -1) + 1)
 #define asocas16(p, o, n) atomic_cas_16(p, o, n)

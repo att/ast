@@ -106,35 +106,35 @@ struct _glob_ {
 };
 
 /* standard interface */
-#define GLOB_APPEND 0x0001   /* append to previous		*/
-#define GLOB_DOOFFS 0x0002   /* gl_offs defines argv offset	*/
-#define GLOB_ERR 0x0004      /* abort on error		*/
-#define GLOB_MARK 0x0008     /* append / to directories	*/
-#define GLOB_NOCHECK 0x0010  /* nomatch is original pattern	*/
-#define GLOB_NOESCAPE 0x0020 /* don't treat \ specially	*/
-#define GLOB_NOSORT 0x0040   /* don't sort the list		*/
+#define GLOB_APPEND 0x0001   /* append to previous              */
+#define GLOB_DOOFFS 0x0002   /* gl_offs defines argv offset     */
+#define GLOB_ERR 0x0004      /* abort on error          */
+#define GLOB_MARK 0x0008     /* append / to directories */
+#define GLOB_NOCHECK 0x0010  /* nomatch is original pattern     */
+#define GLOB_NOESCAPE 0x0020 /* don't treat \ specially */
+#define GLOB_NOSORT 0x0040   /* don't sort the list             */
 
 /* extended interface */
-#define GLOB_STARSTAR 0x0080   /* enable [/]**[/] expansion	*/
-#define GLOB_BRACE 0x0100      /* enable {...} expansion	*/
-#define GLOB_ICASE 0x0200      /* ignore case on match		*/
-#define GLOB_COMPLETE 0x0400   /* shell file completeion	*/
-#define GLOB_AUGMENTED 0x0800  /* augmented shell patterns	*/
-#define GLOB_STACK 0x1000      /* allocate on current stack	*/
-#define GLOB_LIST 0x2000       /* just create gl_list		*/
-#define GLOB_ALTDIRFUNC 0x4000 /* gnu discipline functions	*/
-#define GLOB_DISC 0x8000       /* discipline initialized	*/
+#define GLOB_STARSTAR 0x0080   /* enable [/]**[/] expansion     */
+#define GLOB_BRACE 0x0100      /* enable {...} expansion        */
+#define GLOB_ICASE 0x0200      /* ignore case on match          */
+#define GLOB_COMPLETE 0x0400   /* shell file completeion        */
+#define GLOB_AUGMENTED 0x0800  /* augmented shell patterns      */
+#define GLOB_STACK 0x1000      /* allocate on current stack     */
+#define GLOB_LIST 0x2000       /* just create gl_list           */
+#define GLOB_ALTDIRFUNC 0x4000 /* gnu discipline functions      */
+#define GLOB_DISC 0x8000       /* discipline initialized        */
 
-#define GLOB_GROUP 0x10000 /* REG_SHELL_GROUP		*/
+#define GLOB_GROUP 0x10000 /* REG_SHELL_GROUP           */
 
 /* gl_status */
-#define GLOB_NOTDIR 0x0001 /* last gl_dirnext() not a dir	*/
+#define GLOB_NOTDIR 0x0001 /* last gl_dirnext() not a dir       */
 
 /* gl_type return */
-#define GLOB_DEV 1 /* exists but not DIR EXE REG	*/
-#define GLOB_DIR 2 /* directory			*/
-#define GLOB_EXE 3 /* executable regular file	*/
-#define GLOB_REG 4 /* regular file			*/
+#define GLOB_DEV 1 /* exists but not DIR EXE REG        */
+#define GLOB_DIR 2 /* directory                 */
+#define GLOB_EXE 3 /* executable regular file   */
+#define GLOB_REG 4 /* regular file                      */
 
 /* error return values */
 #define GLOB_ABORTED 1

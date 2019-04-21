@@ -55,30 +55,30 @@
          : (char *)(m))
 #endif
 
-#define ERROR_WARNING 1           /* warning message		*/
-#define ERROR_ERROR 2             /* error message -- no err_exit	*/
-#define ERROR_FATAL 3             /* error message with err_exit	*/
-#define ERROR_NOEXEC EXIT_NOEXEC  /* shell convention		*/
-#define ERROR_NOENT EXIT_NOTFOUND /* shell convention		*/
-#define ERROR_PANIC ERROR_LEVEL   /* panic message with err_exit	*/
+#define ERROR_WARNING 1           /* warning message            */
+#define ERROR_ERROR 2             /* error message -- no err_exit       */
+#define ERROR_FATAL 3             /* error message with err_exit        */
+#define ERROR_NOEXEC EXIT_NOEXEC  /* shell convention           */
+#define ERROR_NOENT EXIT_NOTFOUND /* shell convention           */
+#define ERROR_PANIC ERROR_LEVEL   /* panic message with err_exit        */
 
-#define ERROR_LEVEL 0x00ff   /* level portion of status	*/
-#define ERROR_SYSTEM 0x0100  /* report system errno message	*/
-#define ERROR_OUTPUT 0x0200  /* next arg is error fd		*/
-#define ERROR_SOURCE 0x0400  /* next 2 args are FILE,LINE	*/
-#define ERROR_USAGE 0x0800   /* usage message		*/
-#define ERROR_PROMPT 0x1000  /* omit trailing newline	*/
-#define ERROR_NOID 0x2000    /* omit err_id			*/
-#define ERROR_LIBRARY 0x4000 /* library routine error	*/
+#define ERROR_LEVEL 0x00ff   /* level portion of status */
+#define ERROR_SYSTEM 0x0100  /* report system errno message     */
+#define ERROR_OUTPUT 0x0200  /* next arg is error fd            */
+#define ERROR_SOURCE 0x0400  /* next 2 args are FILE,LINE       */
+#define ERROR_USAGE 0x0800   /* usage message           */
+#define ERROR_PROMPT 0x1000  /* omit trailing newline   */
+#define ERROR_NOID 0x2000    /* omit err_id                     */
+#define ERROR_LIBRARY 0x4000 /* library routine error   */
 
-#define ERROR_INTERACTIVE 0x0001 /* context is interactive	*/
-#define ERROR_SILENT 0x0002      /* context is silent		*/
-#define ERROR_NOTIFY 0x0004      /* main(-sig,0,ctx) on signal	*/
+#define ERROR_INTERACTIVE 0x0001 /* context is interactive      */
+#define ERROR_SILENT 0x0002      /* context is silent           */
+#define ERROR_NOTIFY 0x0004      /* main(-sig,0,ctx) on signal  */
 
-#define ERROR_FREE 0x0010 /* free context on pop		*/
-#define ERROR_POP 0x0020  /* pop context			*/
-#define ERROR_PUSH 0x0040 /* push context			*/
-// #define ERROR_SET 0x0080  /* set context			*/
+#define ERROR_FREE 0x0010 /* free context on pop                */
+#define ERROR_POP 0x0020  /* pop context                        */
+#define ERROR_PUSH 0x0040 /* push context                       */
+// #define ERROR_SET 0x0080  /* set context                     */
 
 #ifdef ECONNRESET
 #define ERROR_PIPE(e) ((e) == EPIPE || (e) == ECONNRESET || (e) == EIO)
@@ -110,50 +110,50 @@ typedef struct Error_info_s Error_info_t;
 typedef struct Error_context_s Error_context_t;
 
 #define ERROR_CONTEXT                                          \
-    ERROR_CONTEXT_T *context; /* prev context stack element	*/ \
-    int errors;               /* >= ERROR_ERROR count		*/      \
-    int flags;                /* context flags		*/             \
-    int line;                 /* input|output line number	*/   \
-    int warnings;             /* ERROR_WARNING count		*/       \
-    char *file;               /* input|output file name	*/     \
-    char *id;                 /* command id			*/
+    ERROR_CONTEXT_T *context; /* prev context stack element     */ \
+    int errors;               /* >= ERROR_ERROR count           */      \
+    int flags;                /* context flags          */             \
+    int line;                 /* input|output line number       */   \
+    int warnings;             /* ERROR_WARNING count            */       \
+    char *file;               /* input|output file name */     \
+    char *id;                 /* command id                     */
 
-struct Error_context_s /* context stack element	*/
+struct Error_context_s /* context stack element */
 {
     ERROR_CONTEXT
 };
 
-struct Error_info_s /* error state			*/
+struct Error_info_s /* error state                      */
 {
-    int fd; /* write(2) fd			*/
+    int fd; /* write(2) fd                      */
 
-    Error_exit_f exit;   /* error exit			*/
-    Error_write_f write; /* error output	*/
+    Error_exit_f exit;   /* error exit                  */
+    Error_write_f write; /* error output        */
 
-    /* the rest are implicitly initialized				*/
+    /* the rest are implicitly initialized                              */
 
-    int clear;      /* default clear ERROR_* flags	*/
-    int core;       /* level>=core -> core dump	*/
-    int indent;     /* debug trace indent level	*/
-    int last_errno; /* last reported errno		*/
-    int mask;       /* multi level debug trace mask	*/
-    int set;        /* default set ERROR_* flags	*/
-    int trace;      /* debug trace level		*/
+    int clear;      /* default clear ERROR_* flags      */
+    int core;       /* level>=core -> core dump */
+    int indent;     /* debug trace indent level */
+    int last_errno; /* last reported errno              */
+    int mask;       /* multi level debug trace mask     */
+    int set;        /* default set ERROR_* flags        */
+    int trace;      /* debug trace level                */
 
-    char *version; /* ERROR_SOURCE command version	*/
+    char *version; /* ERROR_SOURCE command version      */
 
-    int (*auxilliary)(Sfio_t *, int, int); /* aux info to append	*/
+    int (*auxilliary)(Sfio_t *, int, int); /* aux info to append        */
 
-    ERROR_CONTEXT /* top of context stack		*/
+    ERROR_CONTEXT /* top of context stack               */
 
-        Error_context_t empty; /* empty context stack element	*/
+        Error_context_t empty; /* empty context stack element   */
 
-    unsigned long time; /* debug time trace		*/
+    unsigned long time; /* debug time trace             */
 
     char *(*translate)(const char *, const char *, const char *,
                        const char *); /* format translator */
 
-    const char *catalog; /* message catalog		*/
+    const char *catalog; /* message catalog             */
     void *handle;        /* user defined => Error_*_handle_f */
 };
 

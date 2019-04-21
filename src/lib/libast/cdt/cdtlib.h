@@ -22,9 +22,9 @@
 #ifndef _CDTLIB_H
 #define _CDTLIB_H 1
 
-/*	cdt library/method implementation header
-**	this header is exported to the method libraries
-**	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
+/*      cdt library/method implementation header
+**      this header is exported to the method libraries
+**      Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
 #include "ast.h"
@@ -48,11 +48,11 @@
 
 /* This struct holds private method data created on DT_OPEN */
 struct _dtdata_s {
-    pthread_mutex_t lock; /* general dictionary lock	*/
-    unsigned int type;    /* method type, control flags	*/
-    ssize_t size;         /* number of objects		*/
-    Dtuser_t user;        /* application's data		*/
-    Dt_t dict;            /* when DT_INDATA is requested	*/
+    pthread_mutex_t lock; /* general dictionary lock    */
+    unsigned int type;    /* method type, control flags */
+    ssize_t size;         /* number of objects          */
+    Dtuser_t user;        /* application's data         */
+    Dt_t dict;            /* when DT_INDATA is requested        */
 };
 
 /* this structure holds the plugin information */
