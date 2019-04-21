@@ -267,8 +267,17 @@ then
     [[  $REPLY == {39}(l) ]] || log_error "<## pattern failed to position"
     command exec 3<# *abc*
     read -u3 && log_error "not found pattern not positioning at eof"
-    cat $TEST_DIR/seek | read -r <# *WWW*
-    [[ $REPLY == *WWWWW* ]] || log_error '<# not working for pipes'
+    # On Cygwin we can't use socketpair() for pipes. The ksh support for regular pipes is broken
+    # which break these tests. So skip this test on Cygwin.
+    #
+    # TODO: Remove this restriction when support for reading from regular pipes is fixed.
+    if [[ $OS_NAME == CYGWIN* ]]
+    then
+	log_warning "skipping 'read' tests on Cygwin"
+    else
+	cat $TEST_DIR/seek | read -r <# *WWW*
+	[[ $REPLY == *WWWWW* ]] || log_error '<# not working for pipes'
+    fi  # if [[ $OS_NAME == CYGWIN* ]]
     { < $TEST_DIR/seek <# ((2358336120)) ;} 2> /dev/null || log_error 'long seek not working'
 else
     log_error "$TEST_DIR/seek: cannot open for reading"
@@ -390,95 +399,104 @@ then
     log_error  'read -n1 not working'
 fi
 
-unset a
-{ read -N3 a; read -N1 b;}  <<!
-abcdefg
-!
-[[ $a == abc ]] || log_error 'read -N3 here-document not working'
-[[ $b == d ]] || log_error 'read -N1 here-document not working'
-read -n3 a <<!
-abcdefg
-!
-[[ $a == abc ]] || log_error 'read -n3 here-document not working'
-(print -n a; sleep 1; print -n bcde) | { read -N3 a; read -N1 b;}
-[[ $a == abc ]] || log_error 'read -N3 from pipe not working'
-[[ $b == d ]] || log_error 'read -N1 from pipe not working'
-(print -n a; sleep 1; print -n bcde) |read -n3 a
-[[ $a == a ]] || log_error 'read -n3 from pipe not working'
-
-if mkfifo $TEST_DIR/fifo 2> /dev/null
+# On Cygwin we can't use socketpair() for pipes. The ksh support for regular pipes is broken which
+# break these tests. So skip this test on Cygwin.
+#
+# TODO: Remove this restriction when support for reading from regular pipes is fixed.
+if [[ $OS_NAME == CYGWIN* ]]
 then
-    (print -n a; sleep 2; print -n bcde) > $TEST_DIR/fifo &
-    {
-    read -u5 -n3 -t3 a || log_error 'read -n3 from fifo timed out'
-    read -u5 -n1 -t3 b || log_error 'read -n1 from fifo timed out'
-    } 5< $TEST_DIR/fifo
-    exp=a
-    got=$a
-    [[ $got == "$exp" ]] || log_error "read -n3 from fifo failed -- expected '$exp', got '$got'"
-    exp=b
-    got=$b
-    [[ $got == "$exp" ]] || log_error "read -n1 from fifo failed -- expected '$exp', got '$got'"
-    rm -f $TEST_DIR/fifo
-    wait
-    mkfifo $TEST_DIR/fifo 2> /dev/null
-    (print -n a; sleep 2; print -n bcde) > $TEST_DIR/fifo &
-    {
-    read -u5 -N3 -t3 a || log_error 'read -N3 from fifo timed out'
-    read -u5 -N1 -t3 b || log_error 'read -N1 from fifo timed out'
-    } 5< $TEST_DIR/fifo
-    exp=abc
-    got=$a
-    [[ $got == "$exp" ]] || log_error "read -N3 from fifo failed -- expected '$exp', got '$got'"
-    exp=d
-    got=$b
-    [[ $got == "$exp" ]] || log_error "read -N1 from fifo failed -- expected '$exp', got '$got'"
-    wait
-fi
+    log_warning "skipping 'read' tests on Cygwin"
+else
+    unset a
+    { read -N3 a; read -N1 b;}  <<!
+abcdefg
+!
+    [[ $a == abc ]] || log_error 'read -N3 here-document not working'
+    [[ $b == d ]] || log_error 'read -N1 here-document not working'
+    read -n3 a <<!
+abcdefg
+!
+    [[ $a == abc ]] || log_error 'read -n3 here-document not working'
+    (print -n a; sleep 1; print -n bcde) | { read -N3 a; read -N1 b;}
+    [[ $a == abc ]] || log_error 'read -N3 from pipe not working'
+    [[ $b == d ]] || log_error 'read -N1 from pipe not working'
+    (print -n a; sleep 1; print -n bcde) |read -n3 a
+    [[ $a == a ]] || log_error 'read -n3 from pipe not working'
 
-(
-    print -n 'prompt1: '
-    sleep .1
-    print line2
-    sleep .1
-    print -n 'prompt2: '
-    sleep .1
-) | {
-    read -t2 -n 1000 line1
-    read -t2 -n 1000 line2
-    read -t2 -n 1000 line3
-    read -t2 -n 1000 line4
-}
+    if mkfifo $TEST_DIR/fifo 2> /dev/null
+    then
+	(print -n a; sleep 2; print -n bcde) > $TEST_DIR/fifo &
+	{
+	read -u5 -n3 -t3 a || log_error 'read -n3 from fifo timed out'
+	read -u5 -n1 -t3 b || log_error 'read -n1 from fifo timed out'
+	} 5< $TEST_DIR/fifo
+	exp=a
+	got=$a
+	[[ $got == "$exp" ]] || log_error "read -n3 from fifo failed -- expected '$exp', got '$got'"
+	exp=b
+	got=$b
+	[[ $got == "$exp" ]] || log_error "read -n1 from fifo failed -- expected '$exp', got '$got'"
+	rm -f $TEST_DIR/fifo
+	wait
+	mkfifo $TEST_DIR/fifo 2> /dev/null
+	(print -n a; sleep 2; print -n bcde) > $TEST_DIR/fifo &
+	{
+	read -u5 -N3 -t3 a || log_error 'read -N3 from fifo timed out'
+	read -u5 -N1 -t3 b || log_error 'read -N1 from fifo timed out'
+	} 5< $TEST_DIR/fifo
+	exp=abc
+	got=$a
+	[[ $got == "$exp" ]] || log_error "read -N3 from fifo failed -- expected '$exp', got '$got'"
+	exp=d
+	got=$b
+	[[ $got == "$exp" ]] || log_error "read -N1 from fifo failed -- expected '$exp', got '$got'"
+	wait
+    fi
 
-[[ $? == 0 ]]             && log_error 'should have timed out'
-[[ $line1 == 'prompt1: ' ]]     || log_error "line1 should be 'prompt1: '"
-[[ $line2 == line2 ]]        || log_error "line2 should be line2"
-[[ $line3 == 'prompt2: ' ]]    || log_error "line3 should be 'prompt2: '"
-[[ ! $line4 ]]            || log_error "line4 should be empty"
+    (
+	print -n 'prompt1: '
+	sleep .1
+	print line2
+	sleep .1
+	print -n 'prompt2: '
+	sleep .1
+    ) | {
+	read -t2 -n 1000 line1
+	read -t2 -n 1000 line2
+	read -t2 -n 1000 line3
+	read -t2 -n 1000 line4
+    }
 
-typeset -a e o=(-n2 -N2)
-integer i
-set -- \
-    'a'    'bcd'    'a bcd'    'ab cd' \
-    'ab'    'cd'    'ab cd'    'ab cd' \
-    'abc'    'd'    'ab cd'    'ab cd' \
-    'abcd'    ''    'ab cd'    'ab cd'
-while (( $# >= 3 ))
-do
-    a=$1
-    b=$2
-    e[0]=$3
-    e[1]=$4
-    shift 4
-    for ((i = 0; i < 2; i++))
+    [[ $? == 0 ]]                && log_error 'should have timed out'
+    [[ $line1 == 'prompt1: ' ]]  || log_error "line1 wrong" "prompt1: " "$line1"
+    [[ $line2 == line2 ]]        || log_error "line2 wrong" "line2" "$line2"
+    [[ $line3 == 'prompt2: ' ]]  || log_error "line3 wrong" "prompt2: " "$line3"
+    [[ ! $line4 ]]               || log_error "line4 should be empty" "" "$line4"
+
+    typeset -a e o=(-n2 -N2)
+    integer i
+    set -- \
+	'a'    'bcd'    'a bcd'    'ab cd' \
+	'ab'    'cd'    'ab cd'    'ab cd' \
+	'abc'    'd'    'ab cd'    'ab cd' \
+	'abcd'    ''    'ab cd'    'ab cd'
+    while (( $# >= 3 ))
     do
-        for lc_all in C en_US.UTF-8
-        do
-            g=$(LC_ALL=$lc_all $SHELL -c "{ print -n '$a'; sleep 0.2; print -n '$b'; sleep 0.2; } | { read ${o[i]} a; print -n \$a; read a; print -n \ \$a; }")
-            [[ $g == "${e[i]}" ]] || log_error "LC_ALL=$lc_all read ${o[i]} from pipe '$a $b' failed -- expected '${e[i]}', got '$g'"
-        done
+	a=$1
+	b=$2
+	e[0]=$3
+	e[1]=$4
+	shift 4
+	for ((i = 0; i < 2; i++))
+	do
+	    for lc_all in C en_US.UTF-8
+	    do
+		g=$(LC_ALL=$lc_all $SHELL -c "{ print -n '$a'; sleep 0.2; print -n '$b'; sleep 0.2; } | { read ${o[i]} a; print -n \$a; read a; print -n \ \$a; }")
+		[[ $g == "${e[i]}" ]] || log_error "LC_ALL=$lc_all read ${o[i]} from pipe '$a $b' failed -- expected '${e[i]}', got '$g'"
+	    done
+	done
     done
-done
+fi  # if [[ $OS_NAME == CYGWIN* ]]
 
 export LC_ALL=en_US.UTF-8
 typeset -a c=( '' 'A' $'\303\274' $'\342\202\254' )
@@ -551,8 +569,15 @@ print hello there world > $TEST_DIR/foobar
 $SHELL -c "sed  -e 's/there //' $TEST_DIR/foobar  >; $TEST_DIR/foobar"
 [[ $(<$TEST_DIR/foobar) == 'hello world' ]] || log_error '>; redirection not working with -c on a simple command'
 
-chmod -w $TEST_DIR/foobar
-(: >; $TEST_DIR/foobar) 2> /dev/null && '>; should fail for a file without write permission'
+# Cygwin lets you open a file for writing even though it doesn't have write permission.
+# So skip this test on Cygwin.
+if [[ $OS_NAME == CYGWIN* ]]
+then
+    log_warning "skipping open for writing of read-only file on Cygwin"
+else
+    chmod -w $TEST_DIR/foobar
+    (: >; $TEST_DIR/foobar) 2> /dev/null && '>; should fail for a file without write permission'
+fi  # if [[ $OS_NAME == CYGWIN* ]]
 
 rm -f "$TEST_DIR/junk"
 for (( i=1; i < 50; i++ ))
