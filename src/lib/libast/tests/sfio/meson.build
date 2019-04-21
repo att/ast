@@ -18,11 +18,15 @@ tests =['talarm', 'talign', 'tappend', 'tatexit', 'tbadargs', 'tclose', 'terrno'
 incdir = include_directories('..', '../../include/', '../../sfio/')
 
 foreach test_name: tests
-    test_target = executable(
-        test_name, test_name + '.c',
-        c_args: shared_c_args,
-        include_directories: [configuration_incdir, incdir],
-        link_with: [libast, libenv],
-        install: false)
-    test('API/sfio/' + test_name, sh_exe, args: [test_driver, test_target, test_dir])
+    if system == 'cygwin' and (test_name == 'tclose' or test_name == 'treserve')
+        warning('skipping API/sfio/' + test_name + ' on cygwin')
+    else
+        test_target = executable(
+            test_name, test_name + '.c',
+            c_args: shared_c_args,
+            include_directories: [configuration_incdir, incdir],
+            link_with: [libast, libenv],
+            install: false)
+        test('API/sfio/' + test_name, sh_exe, args: [test_driver, test_target, test_dir])
+    endif
 endforeach

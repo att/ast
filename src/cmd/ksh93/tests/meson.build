@@ -44,7 +44,6 @@ tests_to_skip = [
     ['shcomp', 'set'],
     ['shcomp', 'treemove'],
 ]
-system = build_machine.system()
 
 # The test cases are executed in parallel by default
 foreach testspec : all_tests
