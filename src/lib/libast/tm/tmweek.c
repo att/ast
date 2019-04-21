@@ -35,9 +35,9 @@ static unsigned char offset[7][3] = {
 
 /*
  * type is week type
- *	0 sunday first day of week
- *	1 monday first day of week
- *	2 monday first day of iso week
+ *      0 sunday first day of week
+ *      1 monday first day of week
+ *      2 monday first day of iso week
  * if week<0 then return week for tm
  * if day<0 then set tm to first day of week
  * otherwise set tm to day in week

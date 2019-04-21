@@ -26,9 +26,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Reserve a segment of data or buffer.
+/*      Reserve a segment of data or buffer.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 void *sfreserve(Sfio_t *f, ssize_t size, int type) {

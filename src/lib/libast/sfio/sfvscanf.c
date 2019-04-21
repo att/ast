@@ -34,12 +34,12 @@
 
 #include "ast.h"
 
-/*	The main engine for reading formatted data
+/*      The main engine for reading formatted data
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
-#define MAXWIDTH (int)(((uint)~0) >> 1) /* max amount to scan	*/
+#define MAXWIDTH (int)(((uint)~0) >> 1) /* max amount to scan   */
 
 /*
  * pull in a private strtold()
@@ -66,13 +66,13 @@ static_fn void _sfbuf(Sfio_t *f, int *peek) {
 /* buffer used during scanning of a double value or a multi-byte
    character. the fields mirror certain local variables in sfvscanf.  */
 typedef struct _scan_s {
-    int error;              /* get set by _sfdscan if no value specified	*/
-    int inp;                /* last input character read			*/
-    int width;              /* field width					*/
-    Sfio_t *f;              /* stream being scanned				*/
-    uchar *d, *endd, *data; /* local buffering system	*/
-    int peek;               /* != 0 if unseekable/share stream		*/
-    int n_input;            /* number of input bytes processed		*/
+    int error;              /* get set by _sfdscan if no value specified        */
+    int inp;                /* last input character read                        */
+    int width;              /* field width                                      */
+    Sfio_t *f;              /* stream being scanned                             */
+    uchar *d, *endd, *data; /* local buffering system   */
+    int peek;               /* != 0 if unseekable/share stream          */
+    int n_input;            /* number of input bytes processed          */
 } Scan_t;
 
 /* ds != 0 for scanning double values */

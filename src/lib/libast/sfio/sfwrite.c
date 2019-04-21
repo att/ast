@@ -27,9 +27,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Write data out to the file system
+/*      Write data out to the file system
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 ssize_t sfwrite(Sfio_t *f, const void *buf, size_t n) {

@@ -446,10 +446,10 @@ void sh_funstaks(struct slnod *slp, int flag) {
 
 //
 // cmd
-//	empty
-//	list
-//	list & [ cmd ]
-//	list [ ; cmd ]
+//      empty
+//      list
+//      list & [ cmd ]
+//      list [ ; cmd ]
 //
 static_fn Shnode_t *sh_cmd(Lex_t *lexp, int sym, int flag) {
     Shnode_t *left, *right;
@@ -500,9 +500,9 @@ static_fn Shnode_t *sh_cmd(Lex_t *lexp, int sym, int flag) {
 
 //
 // list
-//	term
-//	list && term
-//	list || term
+//      term
+//      list && term
+//      list || term
 //      unfortunately, these are equal precedence
 //
 static_fn Shnode_t *list(Lex_t *lexp, int flag) {
@@ -517,8 +517,8 @@ static_fn Shnode_t *list(Lex_t *lexp, int flag) {
 
 //
 // term
-//	item
-//	item | term
+//      item
+//      item | term
 //
 static_fn Shnode_t *term(Lex_t *lexp, int flag) {
     Shnode_t *t;
@@ -1523,8 +1523,8 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
             writedefs(lexp, argp, line, 0, NULL);
         }
 #if 0
-		else if(argp && strcmp(argp->argval,"unset")==0)
-			writedefs(lexp,argp,line,'u', NULL);
+                else if(argp && strcmp(argp->argval,"unset")==0)
+                        writedefs(lexp,argp,line,'u', NULL);
 #endif
         else if (argp && *argp->argval == '.' && argp->argval[1] == 0 && (argp = argp->argnxt.ap)) {
             r = kiaentity(lexp, sh_argstr(argp), -1, 'p', 0, 0, lexp->script, 'd', 0, "");

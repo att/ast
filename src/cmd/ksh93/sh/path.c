@@ -353,13 +353,13 @@ static_fn char *path_lib(Shell_t *shp, Pathcomp_t *pp, char *path) {
 #if 0
 void path_dump(Pathcomp_t *pp)
 {
-	sfprintf(sfstderr,"dump\n");
-	while(pp)
-	{
-		sfprintf(sfstderr,"pp=%x dev=%d ino=%d len=%d flags=%o name=%.*s\n",
-			pp,pp->dev,pp->ino,pp->len,pp->flags,pp->len,pp->name);
-		pp = pp->next;
-	}
+        sfprintf(sfstderr,"dump\n");
+        while(pp)
+        {
+                sfprintf(sfstderr,"pp=%x dev=%d ino=%d len=%d flags=%o name=%.*s\n",
+                        pp,pp->dev,pp->ino,pp->len,pp->flags,pp->len,pp->name);
+                pp = pp->next;
+        }
 }
 #endif
 
@@ -1142,7 +1142,7 @@ retry:
                 if (shp->vex) {
                     spawnvex_apply(shp->vex, 0, 0);
 #if 0
-				spawnvex_apply(shp->vexp,0,SPAWN_RESET);
+                                spawnvex_apply(shp->vexp,0,SPAWN_RESET);
 #endif
                 }
 #endif  // USE_SPAWN
@@ -1547,7 +1547,7 @@ void path_newdir(Shell_t *shp, Pathcomp_t *first) {
         }
     }
 #if 0
-	path_dump(first);
+        path_dump(first);
 #endif
 }
 

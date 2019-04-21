@@ -34,22 +34,22 @@
 // These are now on by default
 //
 //  ESH_NFIRST
-//	-  A ^N as first history related command after the prompt will move to the next command
-//	relative to the last known history position. It will not start at the position where the
-//	last command was entered as is done by the ^P command.  Every history related command will
-//	set both the current and last position.  Executing a command will only set the current
-//	position.
+//      -  A ^N as first history related command after the prompt will move to the next command
+//      relative to the last known history position. It will not start at the position where the
+//      last command was entered as is done by the ^P command.  Every history related command will
+//      set both the current and last position.  Executing a command will only set the current
+//      position.
 //
 //  ESH_KAPPEND
-//	-  Successive kill and delete commands will accumulate their data in the kill buffer, by
-//	appending or prepending as appropriate. This mode will be reset by any command not adding
-//	something to the kill buffer.
+//      -  Successive kill and delete commands will accumulate their data in the kill buffer, by
+//      appending or prepending as appropriate. This mode will be reset by any command not adding
+//      something to the kill buffer.
 //
 //  ESH_BETTER
-//	-  Some enhancements:
-//		- argument for a macro is passed to its replacement
-//		- ^X^H command to find out about history position (debugging)
-//		- ^X^D command to show any debugging info
+//      -  Some enhancements:
+//              - argument for a macro is passed to its replacement
+//              - ^X^H command to find out about history position (debugging)
+//              - ^X^D command to show any debugging info
 //
 // I do not pretend these for changes are completely independent, but you can use them to seperate
 // features.
@@ -976,7 +976,7 @@ static void xcommands(Emacs_t *ep, int count) {
             return;
         }
 #if 0   /* debugging, modify as required */
-        case cntl('D'):	 { // ^X^D show debugging info
+        case cntl('D'):  { // ^X^D show debugging info
                 char debugbuf[MAXLINE];
 
                 strcpy(debugbuf, "count=");

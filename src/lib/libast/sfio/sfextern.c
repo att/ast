@@ -27,8 +27,8 @@
 #include "sfio.h"
 #include "vthread.h"
 
-/*	External variables and functions used only by Sfio
-**	Written by Kiem-Phong Vo
+/*      External variables and functions used only by Sfio
+**      Written by Kiem-Phong Vo
 */
 
 /* code to initialize mutexes */
@@ -70,8 +70,8 @@ Sfextern_t _Sfextern = {
     SF_TEST_DEFAULT   // _Sftest
 };
 
-ssize_t _Sfi = -1;   /* value for a few fast macro functions	*/
-ssize_t _Sfmaxr = 0; /* default (unlimited) max record size	*/
+ssize_t _Sfi = -1;   /* value for a few fast macro functions    */
+ssize_t _Sfmaxr = 0; /* default (unlimited) max record size     */
 
 #if vt_threaded
 static Vtmutex_t _Sfmtxin, _Sfmtxout, _Sfmtxerr;

@@ -28,9 +28,9 @@
 
 #include "ast.h"
 
-/*	Write out a rune (wide char) as a multibyte char on f.
+/*      Write out a rune (wide char) as a multibyte char on f.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 /*

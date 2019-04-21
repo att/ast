@@ -43,9 +43,9 @@
  * format n with padding p into s
  * return end of s
  *
- * p:	<0	blank padding
- *	 0	no padding
- *	>0	0 padding
+ * p:   <0      blank padding
+ *       0      no padding
+ *      >0      0 padding
  */
 
 static_fn char *tmx_number(char *s, char *e, long n, int p, int w, int pad) {
@@ -334,8 +334,8 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                 cp = tmx_number(cp, ep, (long)tm->tm_nsec, 9, width, pad);
                 continue;
 #if 0
-		case 'o':	/* (UNUSED) */
-			continue;
+                case 'o':       /* (UNUSED) */
+                        continue;
 #endif
             case 'p': /* meridian */
                 n = TM_MERIDIAN + (tm->tm_hour >= 12);
@@ -522,8 +522,8 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                 cp = tmx_number(cp, ep, (long)tmweek(tm, 0, -1, -1), 2, width, pad);
                 continue;
 #if 0
-		case 'v':	/* (UNUSED) */
-			continue;
+                case 'v':       /* (UNUSED) */
+                        continue;
 #endif
             case 'V': /* ISO week number */
                 cp = tmx_number(cp, ep, (long)tmweek(tm, 2, -1, -1), 2, width, pad);

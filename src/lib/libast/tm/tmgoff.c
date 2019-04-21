@@ -32,8 +32,8 @@
 /*
  * return minutes offset from absolute timezone expression
  *
- *	[[-+]hh[:mm[:ss]]]
- *	[-+]hhmm
+ *      [[-+]hh[:mm[:ss]]]
+ *      [-+]hhmm
  *
  * if e is non-null then it points to the first unrecognized char in s
  * d returned if no offset in s

@@ -25,10 +25,10 @@
  *
  * error and message formatter
  *
- *	level is the error level
- *	level >= error_info.core!=0 dumps core
- *	level >= ERROR_FATAL calls error_info.exit
- *	level < 0 is for debug tracing
+ *      level is the error level
+ *      level >= error_info.core!=0 dumps core
+ *      level >= ERROR_FATAL calls error_info.exit
+ *      level < 0 is for debug tracing
  *
  * NOTE: id && ERROR_NOID && !ERROR_USAGE implies format=id for errmsg()
  */
@@ -51,7 +51,7 @@
 
 /*
  * 2007-03-19 move error_info from _error_info_ to (*_error_infop_)
- *	      to allow future Error_info_t growth
+ *            to allow future Error_info_t growth
  *            by 2009 _error_info_ can be static
  */
 Error_info_t _error_info_ = {

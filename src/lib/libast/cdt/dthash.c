@@ -31,25 +31,25 @@
 #include "cdt.h"
 #include "cdtlib.h"
 
-/*	Hash table with chaining for collisions.
+/*      Hash table with chaining for collisions.
 **
 **      Written by Kiem-Phong Vo, phongvo@gmail.com (05/25/96)
 */
 
 /* these bits should be outside the scope of DT_METHODS */
-#define H_FIXED 0100000   /* table size is fixed	*/
-#define H_FLATTEN 0200000 /* table was flattened	*/
+#define H_FIXED 0100000   /* table size is fixed        */
+#define H_FLATTEN 0200000 /* table was flattened        */
 
-#define HLOAD(n) (n) /* load one-to-one	*/
+#define HLOAD(n) (n) /* load one-to-one */
 
 /* internal data structure for hash table with chaining */
 typedef struct _dthash_s {
     Dtdata_t data;
     int type;
-    unsigned int walk; /* on-going walks	*/
-    Dtlink_t *here;    /* fingered object	*/
-    Dtlink_t **htbl;   /* hash table slots 	*/
-    ssize_t tblz;      /* size of hash table 	*/
+    unsigned int walk; /* on-going walks        */
+    Dtlink_t *here;    /* fingered object       */
+    Dtlink_t **htbl;   /* hash table slots      */
+    ssize_t tblz;      /* size of hash table    */
 } Dthash_t;
 
 /* make/resize hash table */

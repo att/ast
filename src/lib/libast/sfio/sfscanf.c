@@ -27,9 +27,9 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Read formated data from a stream
+/*      Read formated data from a stream
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 int sfscanf(Sfio_t *f, const char *form, ...) {

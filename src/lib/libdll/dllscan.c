@@ -50,7 +50,7 @@ static char *lib = "lib";
 // We need a sibling dir in PATH to search for dlls.
 // The confstr LIBPATH provides the local info.
 //
-//	<sibling-dir>[:<env-var>[:<host-pattern>]][,...]
+//      <sibling-dir>[:<env-var>[:<host-pattern>]][,...]
 //
 // If <host-pattern> is present then it must match confstr HOSTTYPE.
 //

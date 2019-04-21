@@ -163,7 +163,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
         }
         job_init(shp, sh_isoption(shp, SH_LOGIN_SHELL));
         if (sh_isoption(shp, SH_LOGIN_SHELL)) {
-            //	System profile.
+            //  System profile.
             sh_source(shp, iop, e_sysprofile);
             if (!sh_isoption(shp, SH_NOUSRPROFILE) && !sh_isoption(shp, SH_PRIVILEGED)) {
                 char **files = shp->gd->login_files;

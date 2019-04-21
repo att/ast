@@ -52,7 +52,7 @@ Tm_t *tmfix(Tm_t *tm) {
     /*
      * check for special case that adjusts tm_wday at the end
      * this happens during
-     *	nl_langinfo() => strftime() => tmfmt()
+     *  nl_langinfo() => strftime() => tmfmt()
      */
 
     w = !tm->tm_sec && !tm->tm_min && !tm->tm_mday && !tm->tm_year && !tm->tm_yday && !tm->tm_isdst;

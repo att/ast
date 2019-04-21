@@ -38,7 +38,7 @@
 
 /*
  * 2007-03-19 move tm_info from _tm_info_ to (*_tm_infop_)
- *	      to allow future Tm_info_t growth
+ *            to allow future Tm_info_t growth
  *            by 2009 _tm_info_ can be static
  */
 

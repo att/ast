@@ -952,8 +952,8 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                             ap = nv_arrayptr(np);  // nv_endsubscript() may have moved the array
                             shp->last_table = table;
 #if 0
-						if(scan)
-							nv_putsub(np,NULL,0,ARRAY_SCAN);
+                                                if(scan)
+                                                        nv_putsub(np,NULL,0,ARRAY_SCAN);
 #endif
                         } else {
                             cp = sp;
@@ -1145,11 +1145,11 @@ void nv_delete(Namval_t *np, Dt_t *root, int flags) {
             }
         }
 #if 0
-		else
-		{
-			sfprintf(sfstderr,"%s not deleted\n",nv_name(np));
-			sfsync(sfstderr);
-		}
+                else
+                {
+                        sfprintf(sfstderr,"%s not deleted\n",nv_name(np));
+                        sfsync(sfstderr);
+                }
 #endif
     }
 }

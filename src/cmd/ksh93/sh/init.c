@@ -1412,19 +1412,19 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 
 #if 0
 #define NV_MKINTTYPE(x, y, z) nv_mkinttype(#x, sizeof(x), (x)-1 < 0, (y), (Namdisc_t *)z);
-	NV_MKINTTYPE(pid_t,"process id",0);
-	NV_MKINTTYPE(gid_t,"group id",0);
-	NV_MKINTTYPE(uid_t,"user id",0);
-	NV_MKINTTYPE(size_t,(const char*)0,0);
-	NV_MKINTTYPE(ssize_t,(const char*)0,0);
-	NV_MKINTTYPE(off_t,"offset in bytes",0);
-	NV_MKINTTYPE(ino_t,"\ai-\anode number",0);
-	NV_MKINTTYPE(mode_t,(const char*)0,&modedisc);
-	NV_MKINTTYPE(dev_t,"device id",0);
-	NV_MKINTTYPE(nlink_t,"hard link count",0);
-	NV_MKINTTYPE(blkcnt_t,"block count",0);
-	NV_MKINTTYPE(time_t,"seconds since the epoch",0);
-	nv_mkstat();
+        NV_MKINTTYPE(pid_t,"process id",0);
+        NV_MKINTTYPE(gid_t,"group id",0);
+        NV_MKINTTYPE(uid_t,"user id",0);
+        NV_MKINTTYPE(size_t,(const char*)0,0);
+        NV_MKINTTYPE(ssize_t,(const char*)0,0);
+        NV_MKINTTYPE(off_t,"offset in bytes",0);
+        NV_MKINTTYPE(ino_t,"\ai-\anode number",0);
+        NV_MKINTTYPE(mode_t,(const char*)0,&modedisc);
+        NV_MKINTTYPE(dev_t,"device id",0);
+        NV_MKINTTYPE(nlink_t,"hard link count",0);
+        NV_MKINTTYPE(blkcnt_t,"block count",0);
+        NV_MKINTTYPE(time_t,"seconds since the epoch",0);
+        nv_mkstat();
 
 #endif
     shp->userinit = userinit;

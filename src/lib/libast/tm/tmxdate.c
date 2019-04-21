@@ -495,7 +495,7 @@ again:
             /*
              * check for cron/iso date
              *
-             *	min hour day-of-month month day-of-week
+             *  min hour day-of-month month day-of-week
              *
              * if it's cron then determine the next time
              * that satisfies the specification
@@ -776,9 +776,9 @@ again:
                         /*
                          * various { date(1) touch(1) } formats
                          *
-                         *	[[cc]yy[mm]]ddhhmm[.ss[.nn...]]
-                         *	[cc]yyjjj
-                         *	hhmm[.ss[.nn...]]
+                         *      [[cc]yy[mm]]ddhhmm[.ss[.nn...]]
+                         *      [cc]yyjjj
+                         *      hhmm[.ss[.nn...]]
                          */
 
                         flags = 0;

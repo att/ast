@@ -27,9 +27,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Put out a null-terminated string
+/*      Put out a null-terminated string
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 ssize_t sfputr(Sfio_t *f, const char *s, int rc) {
     ssize_t p, n, w, sn;

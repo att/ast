@@ -28,9 +28,9 @@
 #include "cdt.h"
 #include "cdtlib.h"
 
-/*	Close a dictionary
+/*      Close a dictionary
 **
-**	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96) (11/15/2010)
+**      Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96) (11/15/2010)
 */
 int dtclose(Dt_t *dt) {
     int ev, type;

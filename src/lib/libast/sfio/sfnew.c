@@ -27,11 +27,11 @@
 #include "sfio.h"
 #include "vthread.h"
 
-/*	Fundamental function to create a new stream.
-**	The argument flags defines the type of stream and the scheme
-**	of buffering.
+/*      Fundamental function to create a new stream.
+**      The argument flags defines the type of stream and the scheme
+**      of buffering.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 Sfio_t *sfnew(Sfio_t *oldf, void *buf, size_t size, int file, int flags) {

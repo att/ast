@@ -30,9 +30,9 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Set the IO pointer to a specific location in the stream
+/*      Set the IO pointer to a specific location in the stream
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 static_fn void newpos(Sfio_t *f, Sfoff_t p) {

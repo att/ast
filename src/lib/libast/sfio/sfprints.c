@@ -29,11 +29,11 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Construct a string with the given format and data.
-**	These functions allocate space as necessary to store the string.
-**	This avoids overflow problems typical with sprintf() in stdio.
+/*      Construct a string with the given format and data.
+**      These functions allocate space as necessary to store the string.
+**      This avoids overflow problems typical with sprintf() in stdio.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 char *sfvprints(const char *form, va_list args) {

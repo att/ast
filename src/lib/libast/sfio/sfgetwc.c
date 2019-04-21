@@ -30,9 +30,9 @@
 
 #include "ast.h"
 
-/*	Read the next multibyte character from f and return the corresponding rune (wide char.)
+/*      Read the next multibyte character from f and return the corresponding rune (wide char.)
 **
-**	Written by Kiem-Phong Vo
+**      Written by Kiem-Phong Vo
 */
 
 int sfgetwc(Sfio_t *f) {

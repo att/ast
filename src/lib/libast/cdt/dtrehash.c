@@ -31,7 +31,7 @@
 #include "cdt.h"
 #include "cdtlib.h"
 
-/*	Recursive hashing data structure.
+/*      Recursive hashing data structure.
 **
 **      Written by Kiem-Phong Vo (phongvo@gmail.com) and Adam Edgar (09/06/2010).
 */
@@ -40,10 +40,10 @@
 #define HCLSLOCK(dt, hh, ty, sh) ((sh) == 0 ? 0 : hclslock((dt), (hh), (ty), 1))
 #define HCLSOPEN(dt, hh, ty, sh) ((sh) == 0 ? 0 : hclslock((dt), (hh), (ty), 0))
 
-#define H_TABLE DT_HIBIT                         /* hibit indicates a table	*/
-#define H_NBITS (ssize_t)(DT_NBITS - 1)          /* #bits in a hash value	*/
-#define HTABLE(l) ((l)->_hash & H_TABLE)         /* test for a table	*/
-#define HVALUE(h) (((uint)(h)) & (DT_ONES >> 1)) /* get hash value	*/
+#define H_TABLE DT_HIBIT                         /* hibit indicates a table     */
+#define H_NBITS (ssize_t)(DT_NBITS - 1)          /* #bits in a hash value       */
+#define HTABLE(l) ((l)->_hash & H_TABLE)         /* test for a table    */
+#define HVALUE(h) (((uint)(h)) & (DT_ONES >> 1)) /* get hash value      */
 
 #if 0 /* if needed, remix bad hash values with (lbits*511+rbits) */
 #define LBITS(v) (((uint)(v)) >> 5)
@@ -55,18 +55,18 @@
 #endif
 
 /* number of bits and search steps at different trie levels */
-#define H_BIT0 20 /* this can be reset by app 	*/
+#define H_BIT0 20 /* this can be reset by app   */
 #define H_BIT1 2
 #define H_BIT2 2
-#define H_BITA 2 /* #bits for all other levels	*/
-/* this must be <= H_BIT[012]	*/
+#define H_BITA 2 /* #bits for all other levels  */
+/* this must be <= H_BIT[012]   */
 
-#define H_SRCH0 1 /* 1 to make insert-lock safe	*/
+#define H_SRCH0 1 /* 1 to make insert-lock safe */
 #define H_SRCH1 4
 #define H_SRCH2 4
 #define H_SRCHA 4
 
-#define H_NLEV (ssize_t)(DT_NBITS / H_BITA) /* #levels	*/
+#define H_NLEV (ssize_t)(DT_NBITS / H_BITA) /* #levels  */
 
 /* the base (starting search) position of an element in a given table and #search steps */
 #define HBASP(hh, lv, h) ((lv) >= (hh)->nlev ? 0 : (((h) >> (hh)->shft[lv]) & (hh)->mask[lv]))
@@ -85,33 +85,33 @@
 
 typedef struct _htbl_s /* a trie branch or hash table */
 {
-    Dtlink_t link;     /* parent table & position	*/
-    Dtlink_t *pobj;    /* come down from parent list 	*/
-    Dtlink_t *list[1]; /* list of objects or subtables	*/
+    Dtlink_t link;     /* parent table & position       */
+    Dtlink_t *pobj;    /* come down from parent list    */
+    Dtlink_t *list[1]; /* list of objects or subtables  */
 } Htbl_t;
 
 typedef struct _fngr_s /* finger for faster dtnext(), dtstep()  */
 {
-    Dtlink_t *here; /* fingered object		*/
-    Htbl_t *mtbl;   /* table of the fingered object	*/
-    ssize_t mpos;   /* position of object in table	*/
-    ssize_t mlev;   /* level of table in hashtrie	*/
+    Dtlink_t *here; /* fingered object          */
+    Htbl_t *mtbl;   /* table of the fingered object     */
+    ssize_t mpos;   /* position of object in table      */
+    ssize_t mlev;   /* level of table in hashtrie       */
 } Fngr_t;
 
 typedef struct _hash_s /* recursive hashing data */
 {
     Dtdata_t data;
 
-    Htbl_t *root;         /* top-most hash table		*/
-    ssize_t nlev;         /* number of nontrivial levels	*/
-    ssize_t mask[H_NLEV]; /* bit mask per level 	*/
-    ssize_t shft[H_NLEV]; /* shift amount per level	*/
+    Htbl_t *root;         /* top-most hash table                */
+    ssize_t nlev;         /* number of nontrivial levels        */
+    ssize_t mask[H_NLEV]; /* bit mask per level         */
+    ssize_t shft[H_NLEV]; /* shift amount per level     */
 
-    uchar *lock;  /* insertion/deletion locks	*/
-    ssize_t lmax; /* max lock index (2^n -1)	*/
-    uint *refn;   /* reference counts		*/
+    uchar *lock;  /* insertion/deletion locks   */
+    ssize_t lmax; /* max lock index (2^n -1)    */
+    uint *refn;   /* reference counts           */
 
-    Fngr_t fngr; /* finger to help dtnext/dtstep	*/
+    Fngr_t fngr; /* finger to help dtnext/dtstep        */
 } Hash_t;
 
 // Return hash table size at a given level.

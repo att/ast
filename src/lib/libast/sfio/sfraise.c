@@ -24,9 +24,9 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Invoke event handlers for a stream
+/*      Invoke event handlers for a stream
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 static_fn int _sfraiseall(int type, void *data) {

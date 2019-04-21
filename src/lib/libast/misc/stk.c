@@ -49,12 +49,12 @@
 /*
  *  A stack is a header and a linked list of frames
  *  The first frame has structure
- *	Sfio_t
- *	Sfdisc_t
- *	struct stk
+ *      Sfio_t
+ *      Sfdisc_t
+ *      struct stk
  * Frames have structure
- *	struct frame
- *	data
+ *      struct frame
+ *      data
  */
 
 // TODO: Figure out if hardcoding this value is correct. It used to be bound to a config time

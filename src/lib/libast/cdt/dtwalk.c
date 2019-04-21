@@ -23,10 +23,10 @@
 
 #include "cdt.h"
 
-/*	Walk a dictionary and all dictionaries viewed through it.
-**	userf:	user function
+/*      Walk a dictionary and all dictionaries viewed through it.
+**      userf:  user function
 **
-**	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
+**      Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
 int dtwalk(Dt_t *dt, int (*userf)(Dt_t *, void *, void *), void *data) {

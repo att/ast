@@ -96,8 +96,8 @@ tmain() {
 
     Buf[0] = 0;
     Except = 1;                   /* testing return-on-interrupt feature */
-    sfdisc(sfstdin, NULL);        /* pop discipline		*/
-    sfset(sfstdin, SF_IOINTR, 1); /* set to return on interrupt	*/
+    sfdisc(sfstdin, NULL);        /* pop discipline             */
+    sfset(sfstdin, SF_IOINTR, 1); /* set to return on interrupt */
     signal(SIGALRM, alrmhandler);
     if (write(fd[1], "0123456789", 10) != 10) terror("Writing to pipe");
     alarm(2);

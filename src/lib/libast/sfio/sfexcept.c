@@ -28,8 +28,8 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Function to handle io exceptions.
-**	Written by Kiem-Phong Vo
+/*      Function to handle io exceptions.
+**      Written by Kiem-Phong Vo
 */
 
 int _sfexcept(Sfio_t *f, int type, ssize_t io, Sfdisc_t *disc) {
@@ -83,8 +83,8 @@ int _sfexcept(Sfio_t *f, int type, ssize_t io, Sfdisc_t *disc) {
     }
 
     if (errno == EINTR) {
-        if (_Sfexiting || (f->bits & SF_ENDING) || /* stop being a hero	*/
-            (f->flags & SF_IOINTR))                /* application requests to return	*/
+        if (_Sfexiting || (f->bits & SF_ENDING) || /* stop being a hero */
+            (f->flags & SF_IOINTR))                /* application requests to return    */
             SFMTXRETURN(f, SF_EDONE)
 
         /* a normal interrupt, we can continue */

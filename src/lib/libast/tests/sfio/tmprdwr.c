@@ -30,9 +30,9 @@
 
 typedef struct _mydisc_s {
     Sfdisc_t disc;
-    int size; /* remaining size of readable data	*/
-    int send; /* channel to send size of a read	*/
-    int recv; /* channel to read amount of data	*/
+    int size; /* remaining size of readable data        */
+    int send; /* channel to send size of a read */
+    int recv; /* channel to read amount of data */
 } Mydisc_t;
 
 ssize_t discread(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {

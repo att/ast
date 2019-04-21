@@ -24,9 +24,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Set some control flags or file descript for the stream
+/*      Set some control flags or file descript for the stream
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 int sfset(Sfio_t *f, int flags, int set) {

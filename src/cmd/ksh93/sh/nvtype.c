@@ -114,10 +114,10 @@ struct Namtype {
 #if 0
 struct type
 {
-	Namtype_t	hdr;
-	unsigned short	ndisc;
-	unsigned short	current;
-	unsigned short	nref;
+        Namtype_t       hdr;
+        unsigned short  ndisc;
+        unsigned short  current;
+        unsigned short  nref;
 };
 #endif
 
@@ -379,7 +379,7 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     }
     memcpy(dp, pp, size);
 #if 0
-	dp->parent = nv_lastdict(np->nvshell);
+        dp->parent = nv_lastdict(np->nvshell);
 #else
     dp->parent = mp;
 #endif
@@ -387,7 +387,7 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     dp->np = mp;
     dp->childfun.ptype = dp;
 #if 0
-	dp->childfun.ttype = (Namtype_t*)nv_hasdisc(dp->fun.type,&type_disc);
+        dp->childfun.ttype = (Namtype_t*)nv_hasdisc(dp->fun.type,&type_disc);
 #endif
     dp->nodes = (char *)(dp + 1);
     dp->data = (char *)dp + (pp->data - (char *)pp);

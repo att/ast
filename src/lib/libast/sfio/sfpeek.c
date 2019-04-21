@@ -26,10 +26,10 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Safe access to the internal stream buffer.
-**	This function is obsolete. sfreserve() should be used.
+/*      Safe access to the internal stream buffer.
+**      This function is obsolete. sfreserve() should be used.
 **
-**	Written by Kiem-Phong Vo (06/27/90).
+**      Written by Kiem-Phong Vo (06/27/90).
 */
 
 ssize_t sfpeek(Sfio_t *f, void **bp, size_t size) {

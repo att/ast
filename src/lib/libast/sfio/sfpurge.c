@@ -26,9 +26,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Delete all pending data in the buffer
+/*      Delete all pending data in the buffer
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 int sfpurge(Sfio_t *f) {

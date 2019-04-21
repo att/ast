@@ -47,8 +47,8 @@ char *sh_getenv(const char *name) { return getenv(name); }
 // Pointer to value returned.
 // environ==0 is ok
 //
-//	setenviron("N=V")	add N=V
-//	setenviron("N")		delete N
+//      setenviron("N=V")       add N=V
+//      setenviron("N")         delete N
 //
 char *sh_setenviron(const char *akey) {
     assert(akey);

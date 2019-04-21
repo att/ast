@@ -30,9 +30,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-/*	Read/Peek a record from an unseekable device
+/*      Read/Peek a record from an unseekable device
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 #define SOCKET_PEEK (1 << 0)

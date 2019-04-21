@@ -122,21 +122,21 @@ static_fn const char *rexname(Rex_t *rex) {
 
 #endif
 
-#define BEG_ALT 1 /* beginning of an alt			*/
-#define BEG_ONE 2 /* beginning of one iteration of a rep	*/
-#define BEG_REP 3 /* beginning of a repetition		*/
-#define BEG_SUB 4 /* beginning of a subexpression		*/
-#define END_ANY 5 /* end of any of above			*/
+#define BEG_ALT 1 /* beginning of an alt                        */
+#define BEG_ONE 2 /* beginning of one iteration of a rep        */
+#define BEG_REP 3 /* beginning of a repetition          */
+#define BEG_SUB 4 /* beginning of a subexpression               */
+#define END_ANY 5 /* end of any of above                        */
 
 /*
  * returns from regnexec_parse()
  */
 
-#define NONE 0 /* no parse found			*/
-#define GOOD 1 /* some parse was found			*/
-#define CUT 2  /* no match and no backtrack		*/
-#define BEST 3 /* an unbeatable parse was found	*/
-#define BAD 4  /* error ocurred			*/
+#define NONE 0 /* no parse found                        */
+#define GOOD 1 /* some parse was found                  */
+#define CUT 2  /* no match and no backtrack             */
+#define BEST 3 /* an unbeatable parse was found */
+#define BAD 4  /* error ocurred                 */
 
 /*
  * REG_SHELL_DOT test
@@ -151,10 +151,10 @@ static_fn const char *rexname(Rex_t *rex) {
  */
 
 typedef struct {
-    unsigned char *p; /* where in string		*/
-    size_t length;    /* length in string		*/
-    short serial;     /* preorder subpattern number	*/
-    short be;         /* which end of pair		*/
+    unsigned char *p; /* where in string                */
+    size_t length;    /* length in string               */
+    short serial;     /* preorder subpattern number     */
+    short be;         /* which end of pair              */
 } Pos_t;
 
 /* ===== begin library support ===== */

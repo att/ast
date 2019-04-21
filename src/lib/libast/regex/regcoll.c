@@ -37,9 +37,9 @@
  *
  * the collating symbol is converted to multibyte in <buf,size>
  * the return value is:
- *	-1	syntax error / invalid collating element
- *	>=0	size with 0-terminated mb character (*wc != 0)
- *		or collating element (*wc == 0) in buf
+ *      -1      syntax error / invalid collating element
+ *      >=0     size with 0-terminated mb character (*wc != 0)
+ *              or collating element (*wc == 0) in buf
  */
 
 int regcollate(const char *s, char **e, char *buf, size_t size, wchar_t *wc) {

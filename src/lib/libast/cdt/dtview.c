@@ -25,9 +25,9 @@
 
 #include "cdt.h"
 
-/*	Set a view path from dict to view.
+/*      Set a view path from dict to view.
 **
-**	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
+**      Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
 /* these operations must be done without viewpathing */

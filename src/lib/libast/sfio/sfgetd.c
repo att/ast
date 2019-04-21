@@ -26,9 +26,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Read a portably coded double value
+/*      Read a portably coded double value
 **
-**	Written by Kiem-Phong Vo
+**      Written by Kiem-Phong Vo
 */
 
 Sfdouble_t sfgetd(Sfio_t *f) {

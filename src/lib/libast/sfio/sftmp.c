@@ -32,13 +32,13 @@
 
 #include "ast.h"
 
-/*	Create a temporary stream for read/write.
-**	The stream is originally created as a memory-resident stream.
-**	When this memory is exceeded, a real temp file will be created.
-**	The temp file creation sequence is somewhat convoluted so that
-**	pool/stack/discipline will work correctly.
+/*      Create a temporary stream for read/write.
+**      The stream is originally created as a memory-resident stream.
+**      When this memory is exceeded, a real temp file will be created.
+**      The temp file creation sequence is somewhat convoluted so that
+**      pool/stack/discipline will work correctly.
 **
-**	Written by David Korn and Kiem-Phong Vo.
+**      Written by David Korn and Kiem-Phong Vo.
 */
 
 #if _tmp_rmfail
@@ -56,12 +56,12 @@
 
 typedef struct _file_s File_t;
 struct _file_s {
-    File_t *next; /* link list		*/
-    Sfio_t *f;    /* associated stream	*/
-    char name[1]; /* temp file name	*/
+    File_t *next; /* link list          */
+    Sfio_t *f;    /* associated stream  */
+    char name[1]; /* temp file name     */
 };
 
-static File_t *File; /* list pf temp files	*/
+static File_t *File; /* list pf temp files      */
 
 static_fn int _tmprmfile(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     File_t *ff, *last;

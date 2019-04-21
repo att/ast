@@ -26,9 +26,9 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Read an unsigned long value coded portably for a given range.
+/*      Read an unsigned long value coded portably for a given range.
 **
-**	Written by Kiem-Phong Vo
+**      Written by Kiem-Phong Vo
 */
 
 Sfulong_t sfgetm(Sfio_t *f, Sfulong_t m) {

@@ -28,9 +28,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Change the file descriptor
+/*      Change the file descriptor
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 static_fn int _sfdup(int fd, int newfd) {

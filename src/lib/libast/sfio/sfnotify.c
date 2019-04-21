@@ -24,9 +24,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Set the function to be called when a stream is opened or closed
+/*      Set the function to be called when a stream is opened or closed
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 int sfnotify(void (*notify)(Sfio_t *, int, void *)) {
     _Sfnotify = notify;

@@ -26,9 +26,9 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Push/pop streams
+/*      Push/pop streams
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 Sfio_t *sfstack(Sfio_t *f1, Sfio_t *f2) {

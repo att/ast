@@ -24,11 +24,11 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Function to clear a locked stream.
-**	This is useful for programs that longjmp from the mid of an sfio function.
-**	There is no guarantee on data integrity in such a case.
+/*      Function to clear a locked stream.
+**      This is useful for programs that longjmp from the mid of an sfio function.
+**      There is no guarantee on data integrity in such a case.
 **
-**	Written by Kiem-Phong Vo
+**      Written by Kiem-Phong Vo
 */
 int sfclrlock(Sfio_t *f) {
     int rv;

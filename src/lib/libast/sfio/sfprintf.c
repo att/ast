@@ -28,9 +28,9 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Print data with a given format
+/*      Print data with a given format
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 int sfprintf(Sfio_t *f, const char *form, ...) {

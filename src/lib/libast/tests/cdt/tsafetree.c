@@ -44,30 +44,30 @@
 #define N_PROC 64
 #endif
 
-#define N_OBJ (N_PROC * 64 * 1024)      /* #objects to insert	*/
-#define SEARCH 4                        /* #searches while inserting	*/
-#define PROGRESS (N_OBJ / (N_PROC * 4)) /* amount done	*/
+#define N_OBJ (N_PROC * 64 * 1024)      /* #objects to insert   */
+#define SEARCH 4                        /* #searches while inserting    */
+#define PROGRESS (N_OBJ / (N_PROC * 4)) /* amount done  */
 
 #define FORMAT "%09zd"  // 9 digit ssize_t numbers zero-filled
 
-#define INSERT 001 /* to tell if an object was inserted	*/
-#define DELETE 002 /* to tell if an object was deleted	*/
+#define INSERT 001 /* to tell if an object was inserted */
+#define DELETE 002 /* to tell if an object was deleted  */
 
 typedef struct _obj_s {
     Dtlink_t link;
-    unsigned int flag; /* INSERT/DELETE state		*/
-    char str[12];      /* string representation	*/
+    unsigned int flag; /* INSERT/DELETE state           */
+    char str[12];      /* string representation */
 } Obj_t;
 
 typedef struct _proc_s {
-    Obj_t *obj;   /* list of objects to add	*/
-    ssize_t objn; /* number of objects in list	*/
+    Obj_t *obj;   /* list of objects to add     */
+    ssize_t objn; /* number of objects in list  */
 } Proc_t;
 
 typedef struct _state_s {
-    unsigned int insert; /* insertion states		*/
+    unsigned int insert; /* insertion states            */
     unsigned int idone;
-    unsigned int delete; /* deletion states		*/
+    unsigned int delete; /* deletion states             */
     unsigned int ddone;
 } State_t;
 
@@ -78,15 +78,15 @@ typedef struct _disc_s {
     ssize_t size;
 } Disc_t;
 
-static Disc_t *Disc;          /* shared discipline structure 	*/
-static Obj_t *Obj;            /* shared object list		*/
-static Proc_t Proc[N_PROC];   /* process workloads	*/
-static int Pnum = N_PROC + 1; /* start as parent	*/
+static Disc_t *Disc;          /* shared discipline structure    */
+static Obj_t *Obj;            /* shared object list             */
+static Proc_t Proc[N_PROC];   /* process workloads      */
+static int Pnum = N_PROC + 1; /* start as parent        */
 
-static int Icount; /* # insertions done		*/
-static int Dcount; /* # deletions done		*/
+static int Icount; /* # insertions done         */
+static int Dcount; /* # deletions done          */
 
-static State_t *State; /* insert/delete states		*/
+static State_t *State; /* insert/delete states          */
 
 /* memory allocator for shared dictionary - no freeing here */
 static void *memory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {

@@ -48,8 +48,8 @@ static unsigned int objhash(Dt_t *dt, void *arg, Dtdisc_t *disc) {
 
 Dtdisc_t Disc = {0, 0, 0, 0, 0, objcmp, objhash, 0, 0};
 
-#define N_OBJ 100000 /* total number of elements	*/
-#define N_PATH 100   /* need N_OBJ%NPATH == 0	*/
+#define N_OBJ 100000 /* total number of elements        */
+#define N_PATH 100   /* need N_OBJ%NPATH == 0   */
 static Obj_t Obj[N_OBJ];
 static Obj_t *Ord[N_OBJ];
 

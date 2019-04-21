@@ -27,7 +27,7 @@
  *
  * each expression term must match
  *
- *	[ugoa]*[-&+|^=]?[rwxst0-7]*
+ *      [ugoa]*[-&+|^=]?[rwxst0-7]*
  *
  * terms may be combined using ,
  *

@@ -300,8 +300,8 @@ int spawnvex_apply(Spawnvex_t *vex, int cur, int flags) {
                                 if (err) break;
                             }
 #if 0
-						if (close(op))
-							err = errno;
+                                                if (close(op))
+                                                        err = errno;
 #else
                             close(op);
 #endif

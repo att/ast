@@ -26,9 +26,9 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Write out an unsigned long value in a portable format.
+/*      Write out an unsigned long value in a portable format.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 #define N_ARRAY (2 * sizeof(Sfulong_t))
 

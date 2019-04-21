@@ -26,8 +26,8 @@
 #include "sfio.h"
 #include "terror.h"
 
-/*	Test to see if multiple writers to the same file create
-**	a consistent set of records.
+/*      Test to see if multiple writers to the same file create
+**      a consistent set of records.
 */
 
 #ifndef N_PROC

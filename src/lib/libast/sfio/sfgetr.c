@@ -28,10 +28,10 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Read a record delineated by a character.
-**	The record length can be accessed via sfvalue(f).
+/*      Read a record delineated by a character.
+**      The record length can be accessed via sfvalue(f).
 **
-**	Written by Kiem-Phong Vo
+**      Written by Kiem-Phong Vo
 */
 
 char *sfgetr(Sfio_t *f, int rc, int type) {

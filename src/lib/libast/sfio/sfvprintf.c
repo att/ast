@@ -35,21 +35,21 @@
 
 #include "ast.h"
 
-/*	The engine for formatting data.
-**	1. Argument positioning is done in sftable.c so any changes
-**	   made here should be reflected in sftable.c as well.
-**	2. For internationalization, Sfio only supports I/O of multibyte strings.
-**	   However, this code does provide minimal support so that Stdio functions
-**	   such as fwprintf/swprintf can be emulated (see stdvwprintf()).
+/*      The engine for formatting data.
+**      1. Argument positioning is done in sftable.c so any changes
+**         made here should be reflected in sftable.c as well.
+**      2. For internationalization, Sfio only supports I/O of multibyte strings.
+**         However, this code does provide minimal support so that Stdio functions
+**         such as fwprintf/swprintf can be emulated (see stdvwprintf()).
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 #define HIGHBITI (~((~((uint)0)) >> 1))
 #define HIGHBITL (~((~((Sfulong_t)0)) >> 1))
 
 #define SFFMT_PREFIX (SFFMT_MINUS | SFFMT_SIGN | SFFMT_BLANK)
 
-#define FPRECIS 6 /* default precision for floats 	*/
+#define FPRECIS 6 /* default precision for floats       */
 
 static_fn int chr2str(char *buf, int v) {
     if (isprint(v) && v != '\\') {
@@ -112,26 +112,26 @@ int sfvprintf(Sfio_t *f, const char *form, va_list args) {
     ssize_t size;
     Sfdouble_t dval;
     void *valp;
-    char *tls[2], **ls; /* for %..[separ]s		*/
-    char *t_str;        /* stuff between ()		*/
-    ssize_t n_str;      /* its length			*/
+    char *tls[2], **ls; /* for %..[separ]s              */
+    char *t_str;        /* stuff between ()             */
+    ssize_t n_str;      /* its length                   */
 
-    Argv_t argv;       /* for extf to return value	*/
-    Sffmt_t *ft;       /* format environment		*/
-    Fmt_t *fm, *fmstk; /* stack contexts		*/
+    Argv_t argv;       /* for extf to return value      */
+    Sffmt_t *ft;       /* format environment            */
+    Fmt_t *fm, *fmstk; /* stack contexts                */
 
-    char *oform;    /* original format string	*/
-    va_list oargs;  /* original arg list		*/
-    Fmtpos_t *fp;   /* arg position list		*/
-    int argp, argn; /* arg position and number	*/
+    char *oform;    /* original format string   */
+    va_list oargs;  /* original arg list                */
+    Fmtpos_t *fp;   /* arg position list                */
+    int argp, argn; /* arg position and number  */
 
 #define SLACK 1024
     char buf[SF_MAXDIGITS + SLACK], tmp[SF_MAXDIGITS + 1], data[SF_GRAIN];
     int decimal = 0, thousand = 0;
 
     wchar_t *wsp;
-    SFMBDCL(fmbs) /* state of format string	*/
-    SFMBDCL(mbs)  /* state of some string		*/
+    SFMBDCL(fmbs) /* state of format string     */
+    SFMBDCL(mbs)  /* state of some string               */
     char *osp;
     int n_w, wc;
     wchar_t tw;

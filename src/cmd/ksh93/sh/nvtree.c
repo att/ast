@@ -284,7 +284,7 @@ char *nv_dirnext(void *dir) {
         if (!shp && dp->hp) shp = sh_ptr(dp->hp);
         while ((np = dp->hp)) {
 #if 0
-			char *sptr;
+                        char *sptr;
 #endif
             ap = nv_arrayptr(np);
             if (ap) nv_putsub(np, NULL, 0, ARRAY_UNDEF);
@@ -292,11 +292,11 @@ char *nv_dirnext(void *dir) {
             if (nv_isnull(np) && !nv_isarray(np) && !nv_isattr(np, NV_INTEGER)) continue;
             last_table = shp->last_table;
 #if 0
-			if(dp->table && dp->otable && !nv_isattr(dp->table,NV_MINIMAL))
-			{
-				sptr = dp->table->nvenv;
-				dp->table->nvenv = (char*)dp->otable;
-			}
+                        if(dp->table && dp->otable && !nv_isattr(dp->table,NV_MINIMAL))
+                        {
+                                sptr = dp->table->nvenv;
+                                dp->table->nvenv = (char*)dp->otable;
+                        }
 #endif
             shp->last_table = dp->table;
             if (!dp->table) dot = -1;
@@ -308,8 +308,8 @@ char *nv_dirnext(void *dir) {
             if (dot >= 0) nv_putsub(dp->table, NULL, xdot, xdot < dot ? 0 : flags);
 
 #if 0
-			if(dp->table && dp->otable && !nv_isattr(dp->table,NV_MINIMAL))
-				dp->table->nvenv = sptr;
+                        if(dp->table && dp->otable && !nv_isattr(dp->table,NV_MINIMAL))
+                                dp->table->nvenv = sptr;
 #endif
             if (dp->nextnode && !dp->hp && (nq = dp->table)) {
                 Namarr_t *aq = nv_arrayptr(nq);
@@ -766,8 +766,8 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
     }
     wp->flags &= ~NV_COMVAR;
 #if 0
-	if(nv_isnull(np) && !nv_isarray(np) && !nv_isattr(np,NV_INTEGER))
-		return;
+        if(nv_isnull(np) && !nv_isarray(np) && !nv_isattr(np,NV_INTEGER))
+                return;
 #else
     if (!nv_isarray(np) && !nv_isattr(np, NV_INTEGER)) {
         if (nv_isnull(np)) return;

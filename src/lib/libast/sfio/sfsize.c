@@ -28,9 +28,9 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Get the size of a stream.
+/*      Get the size of a stream.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 Sfoff_t sfsize(Sfio_t *f) {
     Sfdisc_t *disc;

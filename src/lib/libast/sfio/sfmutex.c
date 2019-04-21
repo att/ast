@@ -25,9 +25,9 @@
 #include "sfio.h"
 #include "vthread.h"
 
-/*	Obtain/release exclusive use of a stream.
+/*      Obtain/release exclusive use of a stream.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 /* the main locking/unlocking interface */

@@ -25,12 +25,12 @@
 //
 // path name canonicalization -- preserves the logical view
 //
-//	Remove redundant `.`'s and `/`'s
-//	Move `..`'s to the front
-//	/.. preserved (for pdu and newcastle hacks)
-//	if (flags&PATH_PHYSICAL) then symlinks resolved at each component
-//	if (flags&(PATH_DOTDOT|PATH_PHYSICAL)) then each .. checked for access
-//	if (flags&PATH_EXISTS) then path must exist at each component
+//      Remove redundant `.`'s and `/`'s
+//      Move `..`'s to the front
+//      /.. preserved (for pdu and newcastle hacks)
+//      if (flags&PATH_PHYSICAL) then symlinks resolved at each component
+//      if (flags&(PATH_DOTDOT|PATH_PHYSICAL)) then each .. checked for access
+//      if (flags&PATH_EXISTS) then path must exist at each component
 //
 // Longer pathname possible if (flags&PATH_PHYSICAL) involved
 // 0 returned on error and if (flags&(PATH_DOTDOT|PATH_EXISTS)) then canon

@@ -24,7 +24,7 @@
 #include "sfio.h"
 #include "terror.h"
 
-/*	Test for /dev/null and hole-preserving code */
+/*      Test for /dev/null and hole-preserving code */
 
 tmain() {
     UNUSED(argc);

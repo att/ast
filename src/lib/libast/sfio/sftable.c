@@ -35,9 +35,9 @@
 
 #include "ast.h"
 
-/*	Dealing with $ argument addressing stuffs.
+/*      Dealing with $ argument addressing stuffs.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 static_fn char *sffmtint(const char *str, int *v) {
@@ -52,7 +52,7 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
     char *t_str;
     int v, n, skip, dollar, decimal, thousand;
     Sffmt_t savft;
-    Fmtpos_t *fp; /* position array of arguments	*/
+    Fmtpos_t *fp; /* position array of arguments        */
     int argp, argn, maxp, need[FP_INDEX];
     SFMBDCL(fmbs)
 

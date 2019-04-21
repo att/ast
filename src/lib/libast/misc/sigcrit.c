@@ -36,7 +36,7 @@
 static struct {
     int sig;
     int op;
-} signals[] = /* held inside critical region	*/
+} signals[] = /* held inside critical region    */
     {
         {SIGINT, SIG_REG_EXEC},
 #ifdef SIGPIPE
@@ -65,9 +65,9 @@ static struct {
 /*
  * critical signal region handler
  *
- * op>0		new region according to SIG_REG_*, return region level
- * op==0	pop region, return region level
- * op<0		return non-zero if any signals held in current region
+ * op>0         new region according to SIG_REG_*, return region level
+ * op==0        pop region, return region level
+ * op<0         return non-zero if any signals held in current region
  *
  * signals[] held until region popped
  */

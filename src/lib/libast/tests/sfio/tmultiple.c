@@ -26,8 +26,8 @@
 #include "sfio.h"
 #include "terror.h"
 
-/*	Test multiple processes reading/writing from same file
-**	descriptor.
+/*      Test multiple processes reading/writing from same file
+**      descriptor.
 */
 tmain() {
     char *s;

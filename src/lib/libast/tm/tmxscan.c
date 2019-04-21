@@ -413,9 +413,9 @@ done:
 }
 
 /*
- *  format==0	DATEMSK
- * *format==0	DATEMSK and tmxdate()
- * *format!=0	format
+ *  format==0   DATEMSK
+ * *format==0   DATEMSK and tmxdate()
+ * *format!=0   format
  */
 
 Time_t tmxscan(const char *s, char **e, const char *format, char **f, Time_t t, long flags) {

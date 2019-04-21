@@ -30,9 +30,9 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Convert a floating point value to ASCII.
+/*      Convert a floating point value to ASCII.
 **
-**	Written by Kiem-Phong Vo and Glenn Fowler (SFFMT_AFORMAT)
+**      Written by Kiem-Phong Vo and Glenn Fowler (SFFMT_AFORMAT)
 */
 
 static char *lc_inf = "inf", *uc_inf = "INF";
@@ -201,12 +201,12 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
         n = (((format & SFFMT_EFORMAT) || *decpt <= 0) ? 1 : *decpt + 1) - n;
         if (n_digit > 0) {
 #if 0
-			static int	dig = 0;
-			
-			if (!dig && (!(t = getenv("_AST_LDBL_DIG")) || !(dig = atoi(t))))
-				dig = LDBL_DIG;
-			if (n_digit > dig)
-				n_digit = dig;
+                        static int      dig = 0;
+                        
+                        if (!dig && (!(t = getenv("_AST_LDBL_DIG")) || !(dig = atoi(t))))
+                                dig = LDBL_DIG;
+                        if (n_digit > dig)
+                                n_digit = dig;
 #else
             if (n_digit > CVT_DIG_MPY * LDBL_DIG) n_digit = CVT_DIG_MPY * LDBL_DIG;
 #endif
@@ -343,12 +343,12 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
         n = (((format & SFFMT_EFORMAT) || *decpt <= 0) ? 1 : *decpt + 1) - n;
         if (n_digit > 0) {
 #if 0
-			static int	dig = 0;
-			
-			if (!dig && (!(t = getenv("_AST_DBL_DIG")) || !(dig = atoi(t))))
-				dig = DBL_DIG;
-			if (n_digit > dig)
-				n_digit = dig;
+                        static int      dig = 0;
+                        
+                        if (!dig && (!(t = getenv("_AST_DBL_DIG")) || !(dig = atoi(t))))
+                                dig = DBL_DIG;
+                        if (n_digit > dig)
+                                n_digit = dig;
 #else
             if (n_digit > CVT_DIG_MPY * DBL_DIG) n_digit = CVT_DIG_MPY * DBL_DIG;
 #endif

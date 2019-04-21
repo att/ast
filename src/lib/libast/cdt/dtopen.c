@@ -28,9 +28,9 @@
 #include "cdt.h"
 #include "cdtlib.h"
 
-/* 	Make a new dictionary
+/*      Make a new dictionary
 **
-**	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
+**      Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
 Dt_t *dtopen(Dtdisc_t *disc, Dtmethod_t *meth) {

@@ -1310,8 +1310,8 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                 if (!shp->sftable[dupfd]) sh_iocheckfd(shp, dupfd, dupfd);
                 shp->fdstatus[fd] = (shp->fdstatus[dupfd] & ~IOCLEX);
 #if 0
-				if(!shp->sftable[fn])
-					sh_iostream(shp,fd,fn);
+                                if(!shp->sftable[fn])
+                                        sh_iostream(shp,fd,fn);
 #endif
                 if (toclose < 0 && shp->fdstatus[fd] & IOREAD) {
                     shp->fdstatus[fd] |= IODUP;
@@ -1319,12 +1319,12 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     sh_pclose(shp->cpipe);
                 } else if (!vex && toclose >= 0) {
 #if 0
-					if(vex)
-					{
-						indx = spawnvex_add(vp,dupfd,-1,0,0);
-						spawnvex_add(vc,dupfd,-1,0,0);
-					}
-					else
+                                        if(vex)
+                                        {
+                                                indx = spawnvex_add(vp,dupfd,-1,0,0);
+                                                spawnvex_add(vc,dupfd,-1,0,0);
+                                        }
+                                        else
 #endif
                     {
                         if (flag == 0) {
@@ -1535,9 +1535,9 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     Sfio_t *spold, *sp = shp->sftable[fn];
                     int status = IOCLOSE, fx = fd;
 #if 0
-					if(sp)
-						sfclose(sp);
-					sh_iostream(shp,fd,fn);
+                                        if(sp)
+                                                sfclose(sp);
+                                        sh_iostream(shp,fd,fn);
 #else
                     if (sp) {
                         fx = sffileno(sp);

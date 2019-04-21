@@ -26,8 +26,8 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Create a coprocess.
-**	Written by Kiem-Phong Vo.
+/*      Create a coprocess.
+**      Written by Kiem-Phong Vo.
 */
 
 #include "proc.h"

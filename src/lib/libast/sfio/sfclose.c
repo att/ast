@@ -30,9 +30,9 @@
 #include "sfio.h"
 #include "vthread.h"
 
-/*	Close a stream. A file stream is synced before closing.
+/*      Close a stream. A file stream is synced before closing.
 **
-**	Written by Kiem-Phong Vo
+**      Written by Kiem-Phong Vo
 */
 
 int sfclose(Sfio_t *f) {

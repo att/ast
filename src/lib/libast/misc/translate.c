@@ -46,35 +46,35 @@
 #define GAP 100
 
 typedef struct {
-    Dtlink_t link;       /* dictionary link		*/
-    Dt_t *messages;      /* message dictionary handle	*/
-    nl_catd cat;         /* message catalog handle	*/
-    int debug;           /* special debug locale		*/
-    const char *locale;  /* message catalog locale	*/
-    const char *nlspath; /* message catalog NLSPATH	*/
-    char name[1];        /* catalog name			*/
+    Dtlink_t link;       /* dictionary link             */
+    Dt_t *messages;      /* message dictionary handle   */
+    nl_catd cat;         /* message catalog handle      */
+    int debug;           /* special debug locale                */
+    const char *locale;  /* message catalog locale      */
+    const char *nlspath; /* message catalog NLSPATH     */
+    char name[1];        /* catalog name                        */
 } Catalog_t;
 
 typedef struct {
-    Dtlink_t link;  /* dictionary link		*/
-    Catalog_t *cat; /* current catalog pointer	*/
-    int set;        /* set number			*/
-    int seq;        /* sequence number		*/
-    char text[1];   /* message text			*/
+    Dtlink_t link;  /* dictionary link          */
+    Catalog_t *cat; /* current catalog pointer  */
+    int set;        /* set number                       */
+    int seq;        /* sequence number          */
+    char text[1];   /* message text                     */
 } Message_t;
 
 typedef struct {
-    Sfio_t *sp; /* temp string stream		*/
-    int off;    /* string base offset		*/
+    Sfio_t *sp; /* temp string stream           */
+    int off;    /* string base offset           */
 } Temp_t;
 
 typedef struct {
-    Dtdisc_t message_disc; /* message dict discipline	*/
-    Dtdisc_t catalog_disc; /* catalog dict discipline	*/
-    Dt_t *catalogs;        /* catalog dictionary handle	*/
-    Sfio_t *tmp;           /* temporary string stream	*/
-    int error;             /* no dictionaries!		*/
-    char null[1];          /* null string			*/
+    Dtdisc_t message_disc; /* message dict discipline   */
+    Dtdisc_t catalog_disc; /* catalog dict discipline   */
+    Dt_t *catalogs;        /* catalog dictionary handle */
+    Sfio_t *tmp;           /* temporary string stream   */
+    int error;             /* no dictionaries!          */
+    char null[1];          /* null string                       */
 } State_t;
 
 static State_t state = {
@@ -265,13 +265,13 @@ static Message_t *match(const char *cat, const char *msg) {
 /*
  * translate() is called with four arguments:
  *
- *	loc	the LC_MESSAGES locale name
- *	cmd	the calling command name
- *	cat	the catalog name, possibly a : separated list
- *		"libFOO"	FOO library messages
- *		"libshell"	ksh command messages
- *		"SCRIPT"	script SCRIPT application messages
- *	msg	message text to be translated
+ *      loc     the LC_MESSAGES locale name
+ *      cmd     the calling command name
+ *      cat     the catalog name, possibly a : separated list
+ *              "libFOO"        FOO library messages
+ *              "libshell"      ksh command messages
+ *              "SCRIPT"        script SCRIPT application messages
+ *      msg     message text to be translated
  *
  * the translated message text is returned on success
  * otherwise the original msg is returned

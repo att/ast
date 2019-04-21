@@ -22,9 +22,9 @@
 /*
  * file name expansion - posix.2 glob with gnu and ast extensions
  *
- *	David Korn
- *	Glenn Fowler
- *	AT&T Research
+ *      David Korn
+ *      Glenn Fowler
+ *      AT&T Research
  */
 #include "config_ast.h"  // IWYU pragma: keep
 

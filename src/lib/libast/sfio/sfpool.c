@@ -30,12 +30,12 @@
 #include "sfio.h"
 #include "vthread.h"
 
-/*	Management of pools of streams.
-**	If pf is not nil, f is pooled with pf and f becomes current;
-**	otherwise, f is isolated from its pool. flag can be one of
-**	0 or SF_SHARE.
+/*      Management of pools of streams.
+**      If pf is not nil, f is pooled with pf and f becomes current;
+**      otherwise, f is isolated from its pool. flag can be one of
+**      0 or SF_SHARE.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 /* Note that we do not free the space for a pool once it is allocated.
@@ -114,7 +114,7 @@ static_fn int _sfphead(Sfpool_t *p, Sfio_t *f, int n) {
         if (SFMODE(head, 1) != SF_WRITE && _sfmode(head, SF_WRITE, 1) < 0) goto done;
         assert(f->next == f->data);
 
-        v = head->next - head->data; /* pending data		*/
+        v = head->next - head->data; /* pending data            */
         if ((k = v - (f->endb - f->data)) <= 0) {
             k = 0;
         } else /* try to write out amount exceeding f's capacity */

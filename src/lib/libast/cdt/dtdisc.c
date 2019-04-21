@@ -25,11 +25,11 @@
 
 #include "cdt.h"
 
-/*	Change discipline.
-**	dt :	dictionary
-**	disc :	discipline
+/*      Change discipline.
+**      dt :    dictionary
+**      disc :  discipline
 **
-**	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
+**      Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
 static_fn void *dtmemory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {

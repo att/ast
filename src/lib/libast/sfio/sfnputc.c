@@ -27,9 +27,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Write out a character n times
+/*      Write out a character n times
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 ssize_t sfnputc(Sfio_t *f, int c, size_t n) {

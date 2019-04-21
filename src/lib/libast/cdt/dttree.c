@@ -28,10 +28,10 @@
 #include "cdt.h"
 #include "cdtlib.h"
 
-/*	Ordered set/multiset
-**	dt:	dictionary being searched
-**	obj:	the object to look for.
-**	type:	search type.
+/*      Ordered set/multiset
+**      dt:     dictionary being searched
+**      obj:    the object to look for.
+**      type:   search type.
 **
 **      Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */

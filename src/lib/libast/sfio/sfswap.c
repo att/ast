@@ -27,12 +27,12 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Swap two streams. If the second argument is NULL,
-**	a new stream will be created. Always return the second argument
-**	or the new stream. Note that this function will always work
-**	unless streams are locked by SF_PUSH.
+/*      Swap two streams. If the second argument is NULL,
+**      a new stream will be created. Always return the second argument
+**      or the new stream. Note that this function will always work
+**      unless streams are locked by SF_PUSH.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 Sfio_t *sfswap(Sfio_t *f1, Sfio_t *f2) {

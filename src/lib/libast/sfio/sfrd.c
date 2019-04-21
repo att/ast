@@ -31,10 +31,10 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Internal function to do a hard read.
-**	This knows about discipline and memory mapping, peek read.
+/*      Internal function to do a hard read.
+**      This knows about discipline and memory mapping, peek read.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 /* synchronize unseekable write streams */

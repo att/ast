@@ -28,14 +28,14 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Fill the buffer of a stream with data.
-**	If n < 0, sffilbuf() attempts to fill the buffer if it's empty.
-**	If n == 0, if the buffer is not empty, just return the first byte;
-**		otherwise fill the buffer and return the first byte.
-**	If n > 0, even if the buffer is not empty, try a read to get as
-**		close to n as possible. n is reset to -1 if stack pops.
+/*      Fill the buffer of a stream with data.
+**      If n < 0, sffilbuf() attempts to fill the buffer if it's empty.
+**      If n == 0, if the buffer is not empty, just return the first byte;
+**              otherwise fill the buffer and return the first byte.
+**      If n > 0, even if the buffer is not empty, try a read to get as
+**              close to n as possible. n is reset to -1 if stack pops.
 **
-**	Written by Kiem-Phong Vo
+**      Written by Kiem-Phong Vo
 */
 
 int _sffilbuf(Sfio_t *f, int n) {

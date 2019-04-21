@@ -982,20 +982,20 @@ Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
         ap->namarr.flags &= ~ARRAY_UNDEF;
         ap->namarr.flags |= (flags & (ARRAY_SCAN | ARRAY_NOCHILD | ARRAY_UNDEF | ARRAY_NOSCOPE));
 #if 0
-		if(array_isbit(ap->bits,oldsize,ARRAY_CHILD))
-			mp = ap->val[oldsize].np;
-		if(size != oldsize && FETCH_VT(mp->nvalue, const_cp))
-		{
-			Namfun_t *nfp;
-			for(nfp=np->nvfun; nfp; nfp=nfp->next)
-			{
-				if(nfp->disc && nfp->disc->readf)
-				{
-					(*nfp->disc->readf)(mp,(Sfio_t*)0,0,nfp);
-					break;
-				}
-			}
-		}
+                if(array_isbit(ap->bits,oldsize,ARRAY_CHILD))
+                        mp = ap->val[oldsize].np;
+                if(size != oldsize && FETCH_VT(mp->nvalue, const_cp))
+                {
+                        Namfun_t *nfp;
+                        for(nfp=np->nvfun; nfp; nfp=nfp->next)
+                        {
+                                if(nfp->disc && nfp->disc->readf)
+                                {
+                                        (*nfp->disc->readf)(mp,(Sfio_t*)0,0,nfp);
+                                        break;
+                                }
+                        }
+                }
 #endif
         ap->cur = size;
         if ((flags & ARRAY_SCAN) && (ap->cur--, !nv_nextsub(np))) np = NULL;

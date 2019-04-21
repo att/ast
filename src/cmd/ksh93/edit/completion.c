@@ -264,11 +264,11 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
 
     out = outbuff + *cur + (sh_isoption(shp, SH_VI) != 0);
 #if 0
-	if(out[-1]=='"' || out[-1]=='\'')
-	{
-		rval = -(sh_isoption(shp,SH_VI)!=0);
-		goto done;
-	}
+        if(out[-1]=='"' || out[-1]=='\'')
+        {
+                rval = -(sh_isoption(shp,SH_VI)!=0);
+                goto done;
+        }
 #endif
     comptr->comtyp = COMSCAN;
     comptr->comarg = ap;

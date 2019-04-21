@@ -26,9 +26,9 @@
 #include "cdt.h"
 #include "cdtlib.h"
 
-/*	Change search method.
+/*      Change search method.
 **
-**	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
+**      Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
 Dtmethod_t *dtmethod(Dt_t *dt, Dtmethod_t *meth) {

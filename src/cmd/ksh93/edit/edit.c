@@ -20,7 +20,7 @@
 //
 // Common routines for vi and emacs one line editors in shell.
 //
-// David Korn				P.D. Sullivan
+// David Korn                           P.D. Sullivan
 // AT&T Labs
 //
 // Coded April 1983.
@@ -657,8 +657,8 @@ static int putstack(Edit_t *ep, char string[], int nbyte, int type) {
 //
 // Routine to perform read from terminal for vi and emacs mode.
 // <mode> can be one of the following:
-//   -2	 vi insert mode - key binding is in effect
-//   -1	 vi control mode - key binding is in effect
+//   -2  vi insert mode - key binding is in effect
+//   -1  vi control mode - key binding is in effect
 //    0  normal command mode - key binding is in effect
 //    1  edit keys not mapped
 //    2  Next key is literal

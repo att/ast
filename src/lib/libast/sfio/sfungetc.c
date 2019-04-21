@@ -27,9 +27,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Push back one byte to a given SF_READ stream
+/*      Push back one byte to a given SF_READ stream
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 static_fn int _uexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     UNUSED(val);

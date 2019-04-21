@@ -372,8 +372,8 @@ static short sum[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365
  *
  * tl.time is the seconds since the epoch for the leap event
  *
- *	adding:		the first additional second
- *	subtracting:	the first dissappearing second
+ *      adding:         the first additional second
+ *      subtracting:    the first dissappearing second
  */
 
 static Tm_leap_t leap[] = {{1230768023, 24}, /* 2008-12-31+23:59:60-0000 */
@@ -414,43 +414,43 @@ static Tm_leap_t leap[] = {{1230768023, 24}, /* 2008-12-31+23:59:60-0000 */
  * tz.standard is the sentinel
  */
 
-static Tm_zone_t zone[] = {{0, "GMT", 0, (0 * 60), 0},                  /* UTC			*/
-                           {0, "UCT", 0, (0 * 60), 0},                  /* UTC			*/
-                           {0, "UTC", 0, (0 * 60), 0},                  /* UTC			*/
-                           {0, "CUT", 0, (0 * 60), 0},                  /* UTC			*/
-                           {0, "Z", 0, (0 * 60), 0},                    /* UTC			*/
-                           {"USA", "HST", 0, (10 * 60), 0},             /* Hawaii		*/
-                           {0, "YST", "YDT", (9 * 60), TM_DST},         /* Yukon		*/
-                           {0, "PST", "PDT", (8 * 60), TM_DST},         /* Pacific		*/
-                           {0, "PST", "PPET", (8 * 60), TM_DST},        /* Pacific pres elect	*/
-                           {0, "MST", "MDT", (7 * 60), TM_DST},         /* Mountain		*/
-                           {0, "CST", "CDT", (6 * 60), TM_DST},         /* Central		*/
-                           {0, "EST", "EDT", (5 * 60), TM_DST},         /* Eastern		*/
-                           {"CAN", "AST", "ADT", (4 * 60), TM_DST},     /* Atlantic		*/
-                           {0, "NST", 0, (3 * 60 + 30), 0},             /* Newfoundland		*/
-                           {"GBR", "", "BST", (0 * 60), TM_DST},        /* British Summer	*/
-                           {"EUR", "WET", "WEST", (0 * 60), TM_DST},    /* Western European	*/
-                           {0, "CET", "CEST", -(1 * 60), TM_DST},       /* Central European	*/
-                           {0, "MET", "MEST", -(1 * 60), TM_DST},       /* Middle European	*/
-                           {0, "EET", "EEST", -(2 * 60), TM_DST},       /* Eastern European	*/
-                           {"ISR", "IST", "IDT", -(3 * 60), TM_DST},    /* Israel		*/
-                           {"IND", "IST", 0, -(5 * 60 + 30), 0},        /* India		*/
-                           {"CHN", "HKT", 0, -(8 * 60), 0},             /* Hong Kong		*/
-                           {"KOR", "KST", "KDT", -(8 * 60), TM_DST},    /* Korea		*/
-                           {"SNG", "SST", 0, -(8 * 60), 0},             /* Singapore		*/
-                           {"JPN", "JST", 0, -(9 * 60), 0},             /* Japan		*/
-                           {"AUS", "AWST", 0, -(8 * 60), 0},            /* Australia Western	*/
-                           {0, "WST", 0, -(8 * 60), 0},                 /* Australia Western	*/
-                           {0, "ACST", 0, -(9 * 60 + 30), TM_DST},      /* Australia Central	*/
-                           {0, "CST", 0, -(9 * 60 + 30), TM_DST},       /* Australia Central	*/
-                           {0, "AEST", 0, -(10 * 60), TM_DST},          /* Australia Eastern	*/
-                           {0, "EST", 0, -(10 * 60), TM_DST},           /* Australia Eastern	*/
-                           {"NZL", "NZST", "NZDT", -(12 * 60), TM_DST}, /* New Zealand		*/
+static Tm_zone_t zone[] = {{0, "GMT", 0, (0 * 60), 0},                  /* UTC                  */
+                           {0, "UCT", 0, (0 * 60), 0},                  /* UTC                  */
+                           {0, "UTC", 0, (0 * 60), 0},                  /* UTC                  */
+                           {0, "CUT", 0, (0 * 60), 0},                  /* UTC                  */
+                           {0, "Z", 0, (0 * 60), 0},                    /* UTC                  */
+                           {"USA", "HST", 0, (10 * 60), 0},             /* Hawaii               */
+                           {0, "YST", "YDT", (9 * 60), TM_DST},         /* Yukon                */
+                           {0, "PST", "PDT", (8 * 60), TM_DST},         /* Pacific              */
+                           {0, "PST", "PPET", (8 * 60), TM_DST},        /* Pacific pres elect   */
+                           {0, "MST", "MDT", (7 * 60), TM_DST},         /* Mountain             */
+                           {0, "CST", "CDT", (6 * 60), TM_DST},         /* Central              */
+                           {0, "EST", "EDT", (5 * 60), TM_DST},         /* Eastern              */
+                           {"CAN", "AST", "ADT", (4 * 60), TM_DST},     /* Atlantic             */
+                           {0, "NST", 0, (3 * 60 + 30), 0},             /* Newfoundland         */
+                           {"GBR", "", "BST", (0 * 60), TM_DST},        /* British Summer       */
+                           {"EUR", "WET", "WEST", (0 * 60), TM_DST},    /* Western European     */
+                           {0, "CET", "CEST", -(1 * 60), TM_DST},       /* Central European     */
+                           {0, "MET", "MEST", -(1 * 60), TM_DST},       /* Middle European      */
+                           {0, "EET", "EEST", -(2 * 60), TM_DST},       /* Eastern European     */
+                           {"ISR", "IST", "IDT", -(3 * 60), TM_DST},    /* Israel               */
+                           {"IND", "IST", 0, -(5 * 60 + 30), 0},        /* India                */
+                           {"CHN", "HKT", 0, -(8 * 60), 0},             /* Hong Kong            */
+                           {"KOR", "KST", "KDT", -(8 * 60), TM_DST},    /* Korea                */
+                           {"SNG", "SST", 0, -(8 * 60), 0},             /* Singapore            */
+                           {"JPN", "JST", 0, -(9 * 60), 0},             /* Japan                */
+                           {"AUS", "AWST", 0, -(8 * 60), 0},            /* Australia Western    */
+                           {0, "WST", 0, -(8 * 60), 0},                 /* Australia Western    */
+                           {0, "ACST", 0, -(9 * 60 + 30), TM_DST},      /* Australia Central    */
+                           {0, "CST", 0, -(9 * 60 + 30), TM_DST},       /* Australia Central    */
+                           {0, "AEST", 0, -(10 * 60), TM_DST},          /* Australia Eastern    */
+                           {0, "EST", 0, -(10 * 60), TM_DST},           /* Australia Eastern    */
+                           {"NZL", "NZST", "NZDT", -(12 * 60), TM_DST}, /* New Zealand          */
                            {NULL, NULL, NULL, 0, 0}};
 
 /*
  * 2007-03-19 move tm_data from _tm_data_ to (*_tm_datap_)
- *	      to allow future Tm_data_t growth
+ *            to allow future Tm_data_t growth
  *            by 2009 _tm_data_ can be static
  */
 

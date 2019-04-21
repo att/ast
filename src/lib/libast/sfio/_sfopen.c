@@ -28,11 +28,11 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Open a file/string for IO.
-**	If f is not nil, it is taken as an existing stream that should be
-**	closed and its structure reused for the new stream.
+/*      Open a file/string for IO.
+**      If f is not nil, it is taken as an existing stream that should be
+**      closed and its structure reused for the new stream.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {

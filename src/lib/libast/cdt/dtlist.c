@@ -26,15 +26,15 @@
 #include "cdt.h"
 #include "cdtlib.h"
 
-/*	List, Deque, Stack, Queue.
+/*      List, Deque, Stack, Queue.
 **
-**	Written by Kiem-Phong Vo, phongvo@gmail.com (05/25/96)
+**      Written by Kiem-Phong Vo, phongvo@gmail.com (05/25/96)
 */
 
 typedef struct _dtlist_s {
     Dtdata_t data;
-    Dtlink_t *link; /* list of objects		*/
-    Dtlink_t *here; /* finger to searched objects	*/
+    Dtlink_t *link; /* list of objects          */
+    Dtlink_t *here; /* finger to searched objects       */
 } Dtlist_t;
 
 #ifdef DEBUG

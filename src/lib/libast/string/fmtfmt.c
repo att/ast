@@ -26,19 +26,19 @@
 // return printf(3) format signature given format string
 // the format signature contains one char per format optionally preceded
 // by the number of `*' args
-//	c	char
-//	d	double
-//	D	long double
-//	f	float
-//	h	short
-//	i	int
-//	j	long long
-//	l	long
-//	p	void*
-//	s	string
-//	t	ptrdiff_t
-//	z	size_t
-//	?	unknown
+//      c       char
+//      d       double
+//      D       long double
+//      f       float
+//      h       short
+//      i       int
+//      j       long long
+//      l       long
+//      p       void*
+//      s       string
+//      t       ptrdiff_t
+//      z       size_t
+//      ?       unknown
 //
 #include "config_ast.h"  // IWYU pragma: keep
 

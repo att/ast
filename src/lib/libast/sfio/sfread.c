@@ -27,9 +27,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Read n bytes from a stream into a buffer
+/*      Read n bytes from a stream into a buffer
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 ssize_t sfread(Sfio_t *f, void *buf, size_t n) {

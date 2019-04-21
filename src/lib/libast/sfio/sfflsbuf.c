@@ -27,10 +27,10 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Write a buffer out to a file descriptor or
-**	extending a buffer for a SF_STRING stream.
+/*      Write a buffer out to a file descriptor or
+**      extending a buffer for a SF_STRING stream.
 **
-**	Written by Kiem-Phong Vo
+**      Written by Kiem-Phong Vo
 */
 
 int _sfflsbuf(Sfio_t *f, int c) {

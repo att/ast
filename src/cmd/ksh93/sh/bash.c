@@ -347,8 +347,8 @@ void bash_init(Shell_t *shp, int mode) {
 // Needs to go here because --version option is parsed before the init script.
 #if 0
         /* This was causing a core dump when running set to display all variables */
-		if(np=nv_open("HOSTTYPE",shp->var_tree,0))
-			nv_putval(np, BASH_HOSTTYPE, NV_NOFREE);
+                if(np=nv_open("HOSTTYPE",shp->var_tree,0))
+                        nv_putval(np, BASH_HOSTTYPE, NV_NOFREE);
 #endif
         np = nv_open("MACHTYPE", shp->var_tree, 0);
         if (np) nv_putval(np, BASH_MACHTYPE, NV_NOFREE);

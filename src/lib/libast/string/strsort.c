@@ -22,7 +22,7 @@
 /*
  *  strsort - sort an array pointers using fn
  *
- *	fn follows strcmp(3) conventions
+ *      fn follows strcmp(3) conventions
  *
  *   David Korn
  *   AT&T Bell Laboratories

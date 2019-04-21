@@ -51,39 +51,39 @@
 #define KEEP "*[A-Za-z][A-Za-z]*"
 #define OMIT "*@(\\[[-+]*\\?*\\]|\\@\\(#\\)|Copyright \\(c\\)|\\$\\I\\d\\: )*"
 
-#define GO '{' /* group nest open		*/
-#define OG '}' /* group nest close		*/
+#define GO '{' /* group nest open               */
+#define OG '}' /* group nest close              */
 
-#define OPT_WIDTH 80  /* default help text width	*/
-#define OPT_MARGIN 10 /* default help text margin	*/
-#define OPT_USAGE 7   /* usage continuation indent	*/
+#define OPT_WIDTH 80  /* default help text width        */
+#define OPT_MARGIN 10 /* default help text margin       */
+#define OPT_USAGE 7   /* usage continuation indent      */
 
-#define OPT_flag 0x001       /* flag ( 0 or 1 )		*/
-#define OPT_hidden 0x002     /* remaining are hidden		*/
-#define OPT_ignorecase 0x004 /* arg match ignores case	*/
-#define OPT_invert 0x008     /* flag inverts long sense	*/
-#define OPT_listof 0x010     /* arg is ' ' or ',' list	*/
-#define OPT_number 0x020     /* arg is strton64() number	*/
-#define OPT_oneof 0x040      /* arg may be set once		*/
-#define OPT_optional 0x080   /* arg is optional		*/
-#define OPT_string 0x100     /* arg is string		*/
+#define OPT_flag 0x001       /* flag ( 0 or 1 )         */
+#define OPT_hidden 0x002     /* remaining are hidden            */
+#define OPT_ignorecase 0x004 /* arg match ignores case  */
+#define OPT_invert 0x008     /* flag inverts long sense */
+#define OPT_listof 0x010     /* arg is ' ' or ',' list  */
+#define OPT_number 0x020     /* arg is strton64() number        */
+#define OPT_oneof 0x040      /* arg may be set once             */
+#define OPT_optional 0x080   /* arg is optional         */
+#define OPT_string 0x100     /* arg is string           */
 
-#define OPT_preformat 0001   /* output preformat string	*/
-#define OPT_proprietary 0002 /* proprietary docs		*/
+#define OPT_preformat 0001   /* output preformat string */
+#define OPT_proprietary 0002 /* proprietary docs                */
 
 #define OPT_TYPE (OPT_flag | OPT_number | OPT_string)
 
-#define STYLE_posix 0   /* posix getopt usage		*/
-#define STYLE_short 1   /* [default] short usage	*/
-#define STYLE_long 2    /* long usage			*/
-#define STYLE_match 3   /* long description of matches	*/
-#define STYLE_options 4 /* short and long descriptions	*/
-#define STYLE_man 5     /* pretty details		*/
-#define STYLE_html 6    /* html details			*/
-#define STYLE_nroff 7   /* nroff details		*/
-#define STYLE_api 8     /* program details		*/
-#define STYLE_keys 9    /* translation key strings	*/
-#define STYLE_usage 10  /* escaped usage string		*/
+#define STYLE_posix 0   /* posix getopt usage           */
+#define STYLE_short 1   /* [default] short usage        */
+#define STYLE_long 2    /* long usage                   */
+#define STYLE_match 3   /* long description of matches  */
+#define STYLE_options 4 /* short and long descriptions  */
+#define STYLE_man 5     /* pretty details               */
+#define STYLE_html 6    /* html details                 */
+#define STYLE_nroff 7   /* nroff details                */
+#define STYLE_api 8     /* program details              */
+#define STYLE_keys 9    /* translation key strings      */
+#define STYLE_usage 10  /* escaped usage string         */
 
 #define FONT_BOLD 1
 #define FONT_ITALIC 2
@@ -104,11 +104,11 @@ typedef struct Attr_s {
 } Attr_t;
 
 typedef struct Help_s {
-    const char *match; /* builtin help match name	*/
-    const char *name;  /* builtin help name		*/
-    int style;         /* STYLE_*			*/
-    const char *text;  /* --? text			*/
-    unsigned int size; /* strlen text			*/
+    const char *match; /* builtin help match name       */
+    const char *name;  /* builtin help name             */
+    int style;         /* STYLE_*                       */
+    const char *text;  /* --? text                      */
+    unsigned int size; /* strlen text                   */
 } Help_t;
 
 typedef struct Font_s {
@@ -118,37 +118,37 @@ typedef struct Font_s {
 } Font_t;
 
 typedef struct List_s {
-    int type;         /* { - + : }			*/
-    const char *name; /* list name			*/
-    const char *text; /* help text			*/
+    int type;         /* { - + : }                      */
+    const char *name; /* list name                      */
+    const char *text; /* help text                      */
 } List_t;
 
 typedef struct Msg_s {
-    const char *text; /* default message text		*/
-    Dtlink_t link;    /* cdt link			*/
+    const char *text; /* default message text           */
+    Dtlink_t link;    /* cdt link                       */
 } Msg_t;
 
 typedef struct Save_s {
-    Dtlink_t link; /* cdt link			*/
-    char text[1];  /* saved text text		*/
+    Dtlink_t link; /* cdt link                  */
+    char text[1];  /* saved text text           */
 } Save_t;
 
 typedef struct Push_s {
-    struct Push_s *next; /* next string			*/
-    char *ob;            /* next char in old string	*/
-    char *oe;            /* end of old string		*/
-    char *nb;            /* next char in new string	*/
-    char *ne;            /* end of new string		*/
-    int ch;              /* optget_localize() translation	*/
+    struct Push_s *next; /* next string                 */
+    char *ob;            /* next char in old string     */
+    char *oe;            /* end of old string           */
+    char *nb;            /* next char in new string     */
+    char *ne;            /* end of new string           */
+    int ch;              /* optget_localize() translation       */
 } Push_t;
 
 typedef struct Tag_s {
-    unsigned char level; /* indent level			*/
-    unsigned char id;    /* TAG_* id			*/
+    unsigned char level; /* indent level                        */
+    unsigned char id;    /* TAG_* id                    */
 } Tag_t;
 
 typedef struct Indent_s {
-    int stop; /* tab column position		*/
+    int stop; /* tab column position            */
 } Indent_t;
 
 static Indent_t indent[] = {{0},  {2},  {4},  {10}, {12}, {18}, {20}, {26},
@@ -282,7 +282,7 @@ static Msg_t C_LC_MESSAGES_libast[] = {
 
 /*
  * 2007-03-19 move opt_info from _opt_info_ to (*_opt_data_)
- *	      to allow future Opt_t growth
+ *            to allow future Opt_t growth
  *            by 2009 _opt_info_ can be static
  */
 
@@ -409,11 +409,11 @@ static_fn char *optget_next(char *s, int version) {
 
 /*
  * skip to t1 or t2 or t3, whichever first, in s
- *	n==0	outside [...]
- *	n==1	inside [...] before ?
- *	n==2	inside [...] after ?
- *	b==0	outside {...}
- *	b==1	inside {...}
+ *      n==0    outside [...]
+ *      n==1    inside [...] before ?
+ *      n==2    inside [...] after ?
+ *      b==0    outside {...}
+ *      b==1    inside {...}
  * past skips past the terminator to the next token
  * otherwise a pointer to the terminator is returned
  *
@@ -1950,16 +1950,16 @@ static_fn void optget_list(Sfio_t *sp, const List_t *lp) {
  * return pointer to help message sans `Usage: command'
  * if oopts is 0 then state.pass is used
  * what:
- *	0	?short by default, ?long if any long options used
- *	*	otherwise see help_text[] (--???)
+ *      0       ?short by default, ?long if any long options used
+ *      *       otherwise see help_text[] (--???)
  * external formatter:
- *	\a...\a	italic
- *	\b...\b	bold
- *	\f...\f	discipline infof callback on ...
- *	\v...\v	literal
+ *      \a...\a italic
+ *      \b...\b bold
+ *      \f...\f discipline infof callback on ...
+ *      \v...\v literal
  * internal formatter:
- *	\t	indent
- *	\n	newline
+ *      \t      indent
+ *      \n      newline
  * margin flush pops to previous indent
  */
 
@@ -3574,33 +3574,33 @@ nospace:
 }
 
 /*
- * argv:	command line argv where argv[0] is command name
+ * argv:        command line argv where argv[0] is command name
  *
- * opts:	option control string
+ * opts:        option control string
  *
- *	'[' [flag][=][index][:<long-name>[|<alias-name>...]['?'description]] ']'
- *			long option name, index, description; -index returned
- *	':'		option takes string arg
- *	'#'		option takes numeric arg (concat option may follow)
- *	'?'		(option) following options not in usage
- *			(following # or :) optional arg
- *	'[' '[' ... ] ... '[' ... ']' ']'
- *			mutually exclusive option grouping
- *	'[' name [:attr]* [?description] ']'
- *			(following # or :) optional option arg description
- *	'\n'[' '|'\t']*	ignored for legibility
- *	' ' ...		optional argument(s) description (to end of string)
- *			or after blank line
- *	']]'		literal ']' within '[' ... ']'
+ *      '[' [flag][=][index][:<long-name>[|<alias-name>...]['?'description]] ']'
+ *                      long option name, index, description; -index returned
+ *      ':'             option takes string arg
+ *      '#'             option takes numeric arg (concat option may follow)
+ *      '?'             (option) following options not in usage
+ *                      (following # or :) optional arg
+ *      '[' '[' ... ] ... '[' ... ']' ']'
+ *                      mutually exclusive option grouping
+ *      '[' name [:attr]* [?description] ']'
+ *                      (following # or :) optional option arg description
+ *      '\n'[' '|'\t']* ignored for legibility
+ *      ' ' ...         optional argument(s) description (to end of string)
+ *                      or after blank line
+ *      ']]'            literal ']' within '[' ... ']'
  *
  * return:
- *	0		no more options
- *	'?'		usage: opt_info.arg points to message sans
- *			`Usage: command '
- *	':'		error: opt_info.arg points to message sans `command: '
+ *      0               no more options
+ *      '?'             usage: opt_info.arg points to message sans
+ *                      `Usage: command '
+ *      ':'             error: opt_info.arg points to message sans `command: '
  *
  * ':'  '#'  ' '  '['  ']'
- *			invalid option chars
+ *                      invalid option chars
  *
  * -- terminates option list and returns 0
  *
@@ -3868,9 +3868,9 @@ again:
     /*
      * at this point:
      *
-     *	c	the first character of the option
-     *	w	long option name if != 0, otherwise short
-     *	v	long option value (via =) if w != 0
+     *  c       the first character of the option
+     *  w       long option name if != 0, otherwise short
+     *  v       long option value (via =) if w != 0
      */
 
     if (c == '?') {
@@ -4741,21 +4741,21 @@ nospace:
  * parse long options with 0,1,2 leading '-' or '+' from string and pass to optget()
  * syntax is the unquoted
  *
- *	<length> [-|+|--|++]<name>[[-+:|&=]=<value>\n (or \0 for the last)
+ *      <length> [-|+|--|++]<name>[[-+:|&=]=<value>\n (or \0 for the last)
  *
  * or the quoted
  *
- *	[-|+|--|++][no]name[[-+:|&=]=['"{(]value[)}"']][, ]...
+ *      [-|+|--|++][no]name[[-+:|&=]=['"{(]value[)}"']][, ]...
  *
  * with \x escapes passed to chresc()
  *
  * return '#' for `label:', with opt_info.name==label
- * str[opt_info.offset]	next arg
+ * str[opt_info.offset] next arg
  *
- *	optstr(s, 0)
- *		return '-' if arg, 0 otherwise
- *	optstr(0, opts)
- *		use previous parsed str
+ *      optstr(s, 0)
+ *              return '-' if arg, 0 otherwise
+ *      optstr(0, opts)
+ *              use previous parsed str
  */
 
 int optstr(const char *str, const char *opts) {

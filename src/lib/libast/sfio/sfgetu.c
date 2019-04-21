@@ -26,9 +26,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Read an unsigned long value coded in a portable format.
+/*      Read an unsigned long value coded in a portable format.
 **
-**	Written by Kiem-Phong Vo
+**      Written by Kiem-Phong Vo
 */
 
 Sfulong_t sfgetu(Sfio_t *f) {

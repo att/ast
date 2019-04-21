@@ -27,9 +27,9 @@
 #include "sfhdr.h"
 #include "sfio.h"
 
-/*	Tell the current location in a given stream
+/*      Tell the current location in a given stream
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 
 Sfoff_t sftell(Sfio_t *f) {

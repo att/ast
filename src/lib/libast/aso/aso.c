@@ -200,11 +200,11 @@ uint32_t _aso_cas32(uint32_t volatile *p, uint32_t o, uint32_t n) {
     int r;
 
     __asm__ __volatile__(
-        "0:	lwarx %0,0,%1 ;"
-        "	xor. %0,%3,%0;"
-        "	bne 1f;"
-        "	stwcx. %2,0,%1;"
-        "	bne- 0b;"
+        "0:     lwarx %0,0,%1 ;"
+        "       xor. %0,%3,%0;"
+        "       bne 1f;"
+        "       stwcx. %2,0,%1;"
+        "       bne- 0b;"
         "1:"
         : "=&r"(r)
         : "r"(p), "r"(n), "r"(o)
@@ -217,11 +217,11 @@ uint64_t _aso_cas64(uint64_t volatile *p, uint64_t o, uint64_t n) {
     long r;
 
     __asm__ __volatile__(
-        "0:	ldarx %0,0,%1 ;"
-        "	xor. %0,%3,%0;"
-        "	bne 1f;"
-        "	stdcx. %2,0,%1;"
-        "	bne- 0b;"
+        "0:     ldarx %0,0,%1 ;"
+        "       xor. %0,%3,%0;"
+        "       bne 1f;"
+        "       stdcx. %2,0,%1;"
+        "       bne- 0b;"
         "1:"
         : "=&r"(r)
         : "r"(p), "r"(n), "r"(o)
@@ -236,11 +236,11 @@ uint32_t _aso_cas32(uint32_t volatile *p, uint32_t o, uint32_t n) {
     int r;
 
     __asm__ __volatile__(
-        "0:	lwarx %0,0,%1 ;"
-        "	xor. %0,%3,%0;"
-        "	bne 1f;"
-        "	stwcx. %2,0,%1;"
-        "	bne- 0b;"
+        "0:     lwarx %0,0,%1 ;"
+        "       xor. %0,%3,%0;"
+        "       bne 1f;"
+        "       stwcx. %2,0,%1;"
+        "       bne- 0b;"
         "1:"
         : "=&r"(r)
         : "r"(p), "r"(n), "r"(o)
@@ -253,11 +253,11 @@ uint64_t _aso_cas64(uint64_t volatile *p, uint64_t o, uint64_t n) {
     long r;
 
     __asm__ __volatile__(
-        "0:	ldarx %0,0,%1 ;"
-        "	xor. %0,%3,%0;"
-        "	bne 1f;"
-        "	stdcx. %2,0,%1;"
-        "	bne- 0b;"
+        "0:     ldarx %0,0,%1 ;"
+        "       xor. %0,%3,%0;"
+        "       bne 1f;"
+        "       stdcx. %2,0,%1;"
+        "       bne- 0b;"
         "1:"
         : "=&r"(r)
         : "r"(p), "r"(n), "r"(o)

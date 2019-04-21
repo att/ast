@@ -28,24 +28,24 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Add a new discipline to the discipline stack. Each discipline
-**	provides alternative I/O functions that are analogues of the
-**	system calls.
+/*      Add a new discipline to the discipline stack. Each discipline
+**      provides alternative I/O functions that are analogues of the
+**      system calls.
 **
-**	When the application fills or flushes the stream buffer, data
-**	will be processed through discipline functions. A case deserving
-**	consideration is stacking a discipline onto a read stream. Each
-**	discipline operation implies buffer synchronization so the stream
-**	buffer should be empty. However, a read stream representing an
-**	unseekable device (eg, a pipe) may not be synchronizable. In that
-**	case, any buffered data must then be fed to the new discipline
-**	to preserve data processing semantics. This is done by creating
-**	a temporary discipline to cache such buffered data and feed
-**	them to the new discipline when its readf() asks for new data.
-**	Care must then be taken to remove this temporary discipline
-**	when it runs out of cached data.
+**      When the application fills or flushes the stream buffer, data
+**      will be processed through discipline functions. A case deserving
+**      consideration is stacking a discipline onto a read stream. Each
+**      discipline operation implies buffer synchronization so the stream
+**      buffer should be empty. However, a read stream representing an
+**      unseekable device (eg, a pipe) may not be synchronizable. In that
+**      case, any buffered data must then be fed to the new discipline
+**      to preserve data processing semantics. This is done by creating
+**      a temporary discipline to cache such buffered data and feed
+**      them to the new discipline when its readf() asks for new data.
+**      Care must then be taken to remove this temporary discipline
+**      when it runs out of cached data.
 **
-**	Written by Kiem-Phong Vo
+**      Written by Kiem-Phong Vo
 */
 
 typedef struct _dccache_s {

@@ -1272,9 +1272,9 @@ retry1:
                     } else {
                         np = nv_open(v, mp->shp->var_tree, flag | NV_NOFAIL);
 #if 0
-					type = M_BRACE;
-				if(c!='}')
-					mac_error(np);
+                                        type = M_BRACE;
+                                if(c!='}')
+                                        mac_error(np);
 #endif
                     }
                 }

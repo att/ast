@@ -27,29 +27,29 @@
  * match shell file patterns
  * this interface is a wrapper on regex
  *
- *	sh pattern	egrep RE	description
- *	----------	--------	-----------
- *	*		.*		0 or more chars
- *	?		.		any single char
- *	[.]		[.]		char class
- *	[!.]		[^.]		negated char class
- *	[[:.:]]		[[:.:]]		ctype class
- *	[[=.=]]		[[=.=]]		equivalence class
- *	[[...]]		[[...]]		collation element
- *	*(.)		(.)*		0 or more of
- *	+(.)		(.)+		1 or more of
- *	?(.)		(.)?		0 or 1 of
- *	(.)		(.)		1 of
- *	@(.)		(.)		1 of
- *	a|b		a|b		a or b
- *	\#				() subgroup back reference [1-9]
- *	a&b				a and b
- *	!(.)				none of
+ *      sh pattern      egrep RE        description
+ *      ----------      --------        -----------
+ *      *               .*              0 or more chars
+ *      ?               .               any single char
+ *      [.]             [.]             char class
+ *      [!.]            [^.]            negated char class
+ *      [[:.:]]         [[:.:]]         ctype class
+ *      [[=.=]]         [[=.=]]         equivalence class
+ *      [[...]]         [[...]]         collation element
+ *      *(.)            (.)*            0 or more of
+ *      +(.)            (.)+            1 or more of
+ *      ?(.)            (.)?            0 or 1 of
+ *      (.)             (.)             1 of
+ *      @(.)            (.)             1 of
+ *      a|b             a|b             a or b
+ *      \#                              () subgroup back reference [1-9]
+ *      a&b                             a and b
+ *      !(.)                            none of
  *
  * \ used to escape metacharacters
  *
- *	*, ?, (, |, &, ), [, \ must be \'d outside of [...]
- *	only ] must be \'d inside [...]
+ *      *, ?, (, |, &, ), [, \ must be \'d outside of [...]
+ *      only ] must be \'d inside [...]
  *
  */
 

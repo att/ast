@@ -46,8 +46,8 @@ static unsigned int objhash(Dt_t *dt, void *arg, Dtdisc_t *disc) {
 
 Dtdisc_t Disc = {0, 0, 0, 0, 0, objcmp, objhash, 0, 0};
 
-#define N_OBJ 100 /* total number of elements	*/
-#define R_OBJ 5   /* number of times to repeat	*/
+#define N_OBJ 100 /* total number of elements   */
+#define R_OBJ 5   /* number of times to repeat  */
 #define N_CHK 10
 static Obj_t Obj[N_OBJ];
 

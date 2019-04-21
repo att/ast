@@ -29,12 +29,12 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-/*	Move data from one stream to another.
-**	This code is written so that it'll work even in the presence
-**	of stacking streams, pool, and discipline.
-**	If you must change it, be gentle.
+/*      Move data from one stream to another.
+**      This code is written so that it'll work even in the presence
+**      of stacking streams, pool, and discipline.
+**      If you must change it, be gentle.
 **
-**	Written by Kiem-Phong Vo.
+**      Written by Kiem-Phong Vo.
 */
 #define MAX_SSIZE ((ssize_t)((~((size_t)0)) >> 1))
 
