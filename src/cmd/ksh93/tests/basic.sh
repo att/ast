@@ -463,29 +463,38 @@ fi
 
 # ========
 # Producer/consumer test involving process substitution.
-{
-    producer() {
-        for ((i = 0; i < 20000; i++ ))
-        do
-            print xxxxx${i}xxxxx
-        done
-    }
-    consumer() {
-        while read var
-        do
-            print ${var}
-        done < ${1}
-    }
-    consumer <(producer) > /dev/null
-} &
-pid=$!
+# On Cygwin we can't use socketpair() for pipes. The ksh support for regular pipes is broken which
+# break these tests. So skip this test on Cygwin.
+#
+# TODO: Remove this restriction when support for reading from regular pipes is fixed.
+if [[ $OS_NAME == CYGWIN* ]]
+then
+    log_warning "skipping 'read' tests on Cygwin"
+else
+    # On most systems a five second timeout is adequate. On my WSL (Windows Subsystem for Linux) VM
+    # This test takes six seconds. Hence the ten second read timeout.
+    {
+        producer() {
+            for ((i = 0; i < 20000; i++ ))
+            do
+                print xxxxx${i}xxxxx
+            done
+        }
+        consumer() {
+            while read var
+            do
+                print ${var}
+            done < ${1}
+        }
+        consumer <(producer) > /dev/null
+    } &
+    pid=$!
+    (read -t 10 -u 9 x && exit 0; kill -HUP $pid) 2> /dev/null &
+    wait $pid || log_error "process substitution hangs"
+    print -u 9 exit
+    wait
+fi  # if [[ $OS_NAME == CYGWIN* ]]
 
-# On most systems a five second timeout is adequate. On my WSL (Windows Subsystem for Linux) VM
-# This test takes six seconds. Hence the ten second read timeout.
-(read -t 10 -u 9 x && exit 0; kill -HUP $pid) 2> /dev/null &
-wait $pid || log_error "process substitution hangs"
-print -u 9 exit
-wait
 # TODO: Figure out why `empty_fifos` breaks the "set -o pipefail" test below.
 # Specifically, why does doing a `read -u8` or `read -u9` cause a problem.
 # For the moment we'll just assume the fifos are empty since anything else represents a bug.
