@@ -109,13 +109,13 @@ typedef ssize_t (*Error_write_handle_f)(void *, int, const void *, size_t);
 typedef struct Error_info_s Error_info_t;
 typedef struct Error_context_s Error_context_t;
 
-#define ERROR_CONTEXT                                          \
+#define ERROR_CONTEXT                                              \
     ERROR_CONTEXT_T *context; /* prev context stack element     */ \
-    int errors;               /* >= ERROR_ERROR count           */      \
-    int flags;                /* context flags          */             \
-    int line;                 /* input|output line number       */   \
-    int warnings;             /* ERROR_WARNING count            */       \
-    char *file;               /* input|output file name */     \
+    int errors;               /* >= ERROR_ERROR count           */ \
+    int flags;                /* context flags          */         \
+    int line;                 /* input|output line number       */ \
+    int warnings;             /* ERROR_WARNING count            */ \
+    char *file;               /* input|output file name */         \
     char *id;                 /* command id                     */
 
 struct Error_context_s /* context stack element */
