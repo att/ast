@@ -46,8 +46,8 @@ int main() {
 
         int rv = poll(&po, 1, -1);
         if (!(po.revents & POLLIN) && !(po.revents & POLLHUP)) exit(3);
-        char buf[1];
-        rv = read(fd, buf, 1);
+        char buf;
+        rv = read(fd, &buf, 1);
         if (rv == 0) exit(0);  // EOF detected so poll() seems to work as expected by SFIO
     }
 }
