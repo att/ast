@@ -247,7 +247,7 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
             ep->e_nlist = 0;
         }
     }
-    comptr = (struct comnod *)stkalloc(shp->stk, sizeof(struct comnod));
+    comptr = stkalloc(shp->stk, sizeof(struct comnod));
     ap = (struct argnod *)stkseek(shp->stk, ARGVAL);
 
     {

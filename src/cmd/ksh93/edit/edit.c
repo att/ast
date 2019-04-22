@@ -1159,7 +1159,7 @@ int ed_histgen(Edit_t *ep, const char *pattern) {
         if (*cp == '#') continue;
         if (strmatch(cp, pattern)) {
             l = ed_histlencopy(cp, NULL);
-            mp = (Histmatch_t *)stkalloc(ep->sh->stk, sizeof(Histmatch_t) + l);
+            mp = stkalloc(ep->sh->stk, sizeof(Histmatch_t) + l);
             mp->next = mplast;
             mplast = mp;
             mp->len = l;
@@ -1172,7 +1172,7 @@ int ed_histgen(Edit_t *ep, const char *pattern) {
     }
     if (ac > 0) {
         l = ac;
-        argv = av = (char **)stkalloc(ep->sh->stk, (ac + 1) * sizeof(char *));
+        argv = av = stkalloc(ep->sh->stk, (ac + 1) * sizeof(char *));
         for (; l >= 0 && (*av = (char *)mp); mp = mp->next, av++) {
             l--;
         }

@@ -1601,7 +1601,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
 #if SHOPT_BASH
                 if ((t->tre.tretyp & COMMSK) == TCOM && sh_isoption(shp, SH_BASH) &&
                     !sh_isoption(shp, SH_LASTPIPE)) {
-                    Shnode_t *tt = (Shnode_t *)stkalloc(shp->stk, sizeof(Shnode_t));
+                    Shnode_t *tt = stkalloc(shp->stk, sizeof(Shnode_t));
                     tt->par.partyp = type = TPAR;
                     tt->par.partre = (Shnode_t *)t;
                     t = tt;
@@ -1732,7 +1732,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 job.waitall = 2;
                 job.curpgid = 0;
                 while ((tn = tn->lst.lstrit) && tn->tre.tretyp == TFIL) job.waitall++;
-                exitval = job.exitval = (int *)stkalloc(shp->stk, job.waitall * sizeof(int));
+                exitval = job.exitval = stkalloc(shp->stk, job.waitall * sizeof(int));
                 memset(exitval, 0, job.waitall * sizeof(int));
             } else {
                 job.waitall |= !pipejob && sh_isstate(shp, SH_MONITOR);
@@ -3283,16 +3283,15 @@ int sh_eval(Shell_t *shp, Sfio_t *iop, int mode) {
 
 int sh_run(Shell_t *shp, int argn, char *argv[]) {
     struct dolnod *dp;
-    struct comnod *t = (struct comnod *)stkalloc(shp->stk, sizeof(struct comnod));
+    struct comnod *t = stkalloc(shp->stk, sizeof(struct comnod));
     int savtop = stktell(shp->stk);
     char *savptr = stkfreeze(stkstd, 0);
     Shbltin_t bltindata;
 
     bltindata = shp->bltindata;
     memset(t, 0, sizeof(struct comnod));
-    dp =
-        (struct dolnod *)stkalloc(shp->stk, (unsigned)sizeof(struct dolnod) +
-                                                ARG_SPARE * sizeof(char *) + argn * sizeof(char *));
+    dp = stkalloc(shp->stk,
+                  sizeof(struct dolnod) + ARG_SPARE * sizeof(char *) + argn * sizeof(char *));
     dp->dolnum = argn;
     dp->dolbot = ARG_SPARE;
     memcpy(dp->dolval + ARG_SPARE, argv, (argn + 1) * sizeof(char *));

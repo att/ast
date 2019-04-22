@@ -298,7 +298,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
         struct argnod *ap;
         int n = 0;
         for (ap = arg; ap; ap = ap->argnxt.ap) n++;
-        nlp = nodelist = (Namval_t **)stkalloc(shp->stk, (n + 1) * sizeof(Namval_t *));
+        nlp = nodelist = stkalloc(shp->stk, (n + 1) * sizeof(Namval_t *));
         nodelist[n] = 0;
     }
     for (; arg; arg = arg->argnxt.ap) {
@@ -1927,11 +1927,11 @@ char **sh_envgen(Shell_t *shp) {
     data.attsize = 6;
     namec = nv_scan(shp->var_tree, NULL, NULL, NV_EXPORT, NV_EXPORT);
     namec += shp->nenv;
-    er = (char **)stkalloc(shp->stk, (namec + 4) * sizeof(char *));
+    er = stkalloc(shp->stk, (namec + 4) * sizeof(char *));
     data.argnam = (er += 2) + shp->nenv;
     if (shp->nenv) memcpy(er, environ, shp->nenv * sizeof(char *));
     nv_scan(shp->var_tree, pushnam, &data, NV_EXPORT, NV_EXPORT);
-    *data.argnam = (char *)stkalloc(shp->stk, data.attsize);
+    *data.argnam = stkalloc(shp->stk, data.attsize);
     cp = data.attval = stpcpy(*data.argnam, e_envmarker);
     nv_scan(shp->var_tree, attstore, &data, 0,
             (NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER));

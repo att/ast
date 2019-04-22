@@ -46,7 +46,7 @@ static_fn void r_comarg(Shell_t *, struct comnod *);
 
 static Sfio_t *infile;
 
-#define getnode(s, type) ((Shnode_t *)stkalloc((s), sizeof(struct type)))
+#define getnode(s, type) (stkalloc((s), sizeof(struct type)))
 
 Shnode_t *sh_trestore(Shell_t *shp, Sfio_t *in) {
     Shnode_t *t;
@@ -151,8 +151,7 @@ static_fn Shnode_t *r_tree(Shell_t *shp) {
             t->funct.functnam = r_string(shp->stk);
             savstk = stkopen(STK_SMALL);
             savstk = stkinstall(savstk, 0);
-            slp =
-                (struct slnod *)stkalloc(shp->stk, sizeof(struct slnod) + sizeof(struct functnod));
+            slp = stkalloc(shp->stk, sizeof(struct slnod) + sizeof(struct functnod));
             slp->slchild = NULL;
             slp->slnext = shp->st.staklist;
             shp->st.staklist = NULL;
@@ -308,8 +307,7 @@ static_fn struct dolnod *r_comlist(Shell_t *shp) {
     char **argv;
 
     if ((l = sfgetl(infile)) > 0) {
-        dol = (struct dolnod *)stkalloc(shp->stk,
-                                        sizeof(struct dolnod) + sizeof(char *) * (l + ARG_SPARE));
+        dol = stkalloc(shp->stk, sizeof(struct dolnod) + sizeof(char *) * (l + ARG_SPARE));
         dol->dolnum = l;
         dol->dolbot = ARG_SPARE;
         argv = dol->dolval + ARG_SPARE;

@@ -84,7 +84,7 @@ static int loop_level;
 static struct argnod *label_list;
 static struct argnod *label_last;
 
-#define getnode(type) ((Shnode_t *)stkalloc(stkstd, sizeof(struct type)))
+#define getnode(type) stkalloc(stkstd, sizeof(struct type))
 
 //
 // Write out entities for each item in the list type=='V' for variable assignment lists. Otherwise
@@ -576,10 +576,10 @@ static_fn Shnode_t *term(Lex_t *lexp, int flag) {
 //
 static_fn struct regnod *syncase(Lex_t *lexp, int esym) {
     int tok = skipnl(lexp, 0);
-    struct regnod *r;
 
     if (tok == esym) return NULL;
-    r = (struct regnod *)stkalloc(stkstd, sizeof(struct regnod));
+
+    struct regnod *r = stkalloc(stkstd, sizeof(struct regnod));
     r->regptr = NULL;
     r->regflag = 0;
     if (tok == LPAREN) skipnl(lexp, 0);
@@ -794,7 +794,7 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
         // Create a new stak frame to compile the command.
         savstak = stkopen(STK_SMALL);
         savstak = stkinstall(savstak, 0);
-        slp = (struct slnod *)stkalloc(stkstd, sizeof(struct slnod) + sizeof(struct functnod));
+        slp = stkalloc(stkstd, sizeof(struct slnod) + sizeof(struct functnod));
         slp->slchild = NULL;
         slp->slnext = shp->st.staklist;
         shp->st.staklist = NULL;
@@ -809,7 +809,7 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
         loop_level = 0;
         label_last = label_list;
         if (size) {
-            struct dolnod *dp = (struct dolnod *)stkalloc(stkstd, size);
+            struct dolnod *dp = stkalloc(stkstd, size);
             char *cp, *sp, **argv;
             char **old = ((struct dolnod *)t->funct.functargs->comarg)->dolval + 1;
             argv = dp->dolval + 1;
@@ -825,7 +825,7 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
             // Copy current word token to current stak frame.
             struct argnod *ap;
             flag = ARGVAL + strlen(lexp->arg->argval);
-            ap = (struct argnod *)stkalloc(stkstd, flag);
+            ap = stkalloc(stkstd, flag);
             memcpy(ap, lexp->arg, flag);
             lexp->arg = ap;
         }
@@ -1305,7 +1305,7 @@ static_fn struct argnod *process_sub(Lex_t *lexp, int tok) {
     int mode = (tok == OPROCSYM);
 
     t = sh_cmd(lexp, RPAREN, SH_NL);
-    argp = (struct argnod *)stkalloc(lexp->sh->stk, sizeof(struct argnod));
+    argp = stkalloc(lexp->sh->stk, sizeof(struct argnod));
     *argp->argval = 0;
     argp->argchn.ap =
         (struct argnod *)makeparent(lexp, mode ? TFORK | FPIN | FAMP | FPCL : TFORK | FPOU, t);
@@ -1650,13 +1650,13 @@ static_fn struct ionod *inout(Lex_t *lexp, struct ionod *lastio, int flag) {
         default: { return lastio; }
     }
     lexp->digits = 0;
-    iop = (struct ionod *)stkalloc(stkp, sizeof(struct ionod));
+    iop = stkalloc(stkp, sizeof(struct ionod));
     iop->iodelim = NULL;
     iop->iosize = 0;
     token = sh_lex(lexp);
     if (token) {
         if (token == RPAREN && (iof & IOLSEEK) && lexp->comsub) {
-            lexp->arg = (struct argnod *)stkalloc(stkp, sizeof(struct argnod) + 3);
+            lexp->arg = stkalloc(stkp, sizeof(struct argnod) + 3);
             strcpy(lexp->arg->argval, "CUR");
             lexp->arg->argflag = ARG_RAW;
             iof |= IOARITH;
@@ -1713,7 +1713,7 @@ static_fn struct ionod *inout(Lex_t *lexp, struct ionod *lastio, int flag) {
         sh_lex(lexp);
         if (errout) {
             // Redirect standard output to standard error.
-            ioq = (struct ionod *)stkalloc(stkp, sizeof(struct ionod));
+            ioq = stkalloc(stkp, sizeof(struct ionod));
             memset(ioq, 0, sizeof(*ioq));
             ioq->ioname = "1";
             ioq->iolst = NULL;
@@ -1763,8 +1763,8 @@ static_fn struct argnod *qscan(Lex_t *lp, struct comnod *ac, int argn) {
         if (sh_isoption(lp->sh, SH_NOEXEC)) errormsg(SH_DICT, ERROR_warn(0), message, ac->comline);
     }
     // Leave space for an extra argument at the front.
-    dp = (struct dolnod *)stkalloc(stkstd, (unsigned)sizeof(struct dolnod) +
-                                               ARG_SPARE * sizeof(char *) + argn * sizeof(char *));
+    dp = stkalloc(stkstd,
+                  sizeof(struct dolnod) + ARG_SPARE * sizeof(char *) + argn * sizeof(char *));
     cp = dp->dolval + ARG_SPARE;
     dp->dolnum = argn;
     dp->dolbot = ARG_SPARE;

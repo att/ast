@@ -215,10 +215,8 @@ static_fn void *stkpush(Stk_t *sp, size_t size) {
 
     stknew(sp, &p);
     size = sizeof(Stk_frame_t) + sizeof(size_t) + size - 1;
-    if (!(f = (Stk_frame_t *)stkalloc(sp,
-                                      sizeof(Stk_frame_t) + sizeof(Stk_frame_t *) + size - 1))) {
-        return 0;
-    }
+    f = stkalloc(sp, sizeof(Stk_frame_t) + sizeof(Stk_frame_t *) + size - 1);
+    if (!f) return NULL;
     f->pos = p;
     stkframe(sp) = f;
     return f->data;

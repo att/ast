@@ -73,26 +73,22 @@ unsigned int myhash(Dt_t *dt, void *key, Dtdisc_t *disc) {
     return *((unsigned *)key);
 }
 
-/* open a shared dictionary */
+// Open a shared dictionary.
 static Dt_t *opendictionary(Mydisc_t *dc) {
-    Dt_t *dt;
-
-    /* discipline for objects identified by their decimal values */
-    dc->disc.key = (ssize_t)DTOFFSET(Obj_t, value);
-    dc->disc.size = (ssize_t)sizeof(int);
+    // Discipline for objects identified by their decimal values.
+    dc->disc.key = DTOFFSET(Obj_t, value);
+    dc->disc.size = sizeof(int);
     dc->disc.link = -1;
-    dc->disc.makef = (Dtmake_f)0;
-    dc->disc.freef = (Dtfree_f)0;
+    dc->disc.makef = NULL;
+    dc->disc.freef = NULL;
     dc->disc.comparf = mycompare;
     dc->disc.hashf = myhash;
     dc->disc.memoryf = mymemory;
-    dc->disc.eventf = (Dtevent_f)0;
+    dc->disc.eventf = NULL;
 
-    if (!(dt = dtopen(&dc->disc, Dtrhset))) { /* open dictionary with hash-trie */
-        terror("Can't open dictionary");
-    }
-    dtcustomize(dt, DT_SHARE, 1); /* turn on concurrent access mode */
-
+    Dt_t *dt = dtopen(&dc->disc, Dtrhset);  // open dictionary with hash-trie
+    if (!dt) terror("Can't open dictionary");
+    dtcustomize(dt, DT_SHARE, 1);  // turn on concurrent access mode
     return dt;
 }
 

@@ -186,7 +186,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
     if (ep->staksize < SMALL_STACK) {
         sp = small_stack;
     } else {
-        sp = (Sfdouble_t *)stkalloc(shp->stk, ep->staksize * (sizeof(Sfdouble_t) + 1));
+        sp = stkalloc(shp->stk, ep->staksize * (sizeof(Sfdouble_t) + 1));
     }
     tp = (char *)(sp + ep->staksize);
     tp--, sp--;

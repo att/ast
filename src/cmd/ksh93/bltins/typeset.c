@@ -1400,7 +1400,7 @@ static_fn void print_scan(Sfio_t *file, int flag, Dt_t *root, bool omit_attrs, s
     if (flag == NV_LTOU || flag == NV_UTOL) tp->scanmask |= NV_UTOL | NV_LTOU;
     if (root == tp->sh->bltin_tree) tp->scanmask |= BLT_DISABLE;
     namec = nv_scan(root, NULL, tp, tp->scanmask, flag & ~NV_IARRAY);
-    argv = tp->argnam = (char **)stkalloc(tp->sh->stk, (namec + 1) * sizeof(char *));
+    argv = tp->argnam = stkalloc(tp->sh->stk, (namec + 1) * sizeof(char *));
     namec = nv_scan(root, pushname, tp, tp->scanmask, flag & ~NV_IARRAY);
     strsort(argv, namec, strcoll);
     if (namec == 0 && tp->sh->namespace && nv_dict(tp->sh->namespace) == root) {

@@ -894,7 +894,7 @@ char **sh_argbuild(Shell_t *shp, int *nargs, const struct comnod *comptr, int fl
     argn = *nargs;
     argn += 1;  // allow room to prepend args
 
-    comargn = (char **)stkalloc(shp->stk, (unsigned)(argn + 1) * sizeof(char *));
+    comargn = stkalloc(shp->stk, (unsigned)(argn + 1) * sizeof(char *));
     comargm = comargn += argn;
     *comargn = NULL;
     if (!argp) {  // reserve an extra null pointer

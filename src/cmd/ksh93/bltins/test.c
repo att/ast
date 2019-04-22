@@ -666,7 +666,7 @@ skip:
                     maxgroups = shgd->lim.ngroups_max;
                 }
             }
-            groups = (gid_t *)stkalloc(shp->stk, (maxgroups + 1) * sizeof(gid_t));
+            groups = stkalloc(shp->stk, (maxgroups + 1) * sizeof(gid_t));
             n = getgroups(maxgroups, groups);
             while (--n >= 0) {
                 if (groups[n] == statb.st_gid) {

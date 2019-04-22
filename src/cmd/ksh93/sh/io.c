@@ -1147,15 +1147,13 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
         fname = iop->ioname;
         if (!(iof & IORAW)) {
             if (iof & IOLSEEK) {
-                struct argnod *ap =
-                    (struct argnod *)stkalloc(shp->stk, ARGVAL + strlen(iop->ioname));
+                struct argnod *ap = stkalloc(shp->stk, ARGVAL + strlen(iop->ioname));
                 memset(ap, 0, ARGVAL);
                 ap->argflag = ARG_MAC;
                 strcpy(ap->argval, iop->ioname);
                 fname = sh_macpat(shp, ap, (iof & IOARITH) ? ARG_ARITH : ARG_EXP);
             } else if (iof & IOPROCSUB) {
-                struct argnod *ap =
-                    (struct argnod *)stkalloc(shp->stk, ARGVAL + strlen(iop->ioname));
+                struct argnod *ap = stkalloc(shp->stk, ARGVAL + strlen(iop->ioname));
                 memset(ap, 0, ARGVAL);
                 if (iof & IOPUT) {
                     ap->argflag = ARG_RAW;

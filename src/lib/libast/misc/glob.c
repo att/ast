@@ -615,7 +615,7 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
             }
         }
     }
-    top = ap = (globlist_t *)stkalloc(
+    top = ap = stkalloc(
         stkstd, (optlen ? 2 : 1) * strlen(pattern) + sizeof(globlist_t) + suflen + gp->gl_extra);
     ap->gl_next = NULL;
     ap->gl_flags = 0;
@@ -649,7 +649,7 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
     if (flags & GLOB_LIST) {
         gp->gl_list = gp->gl_match;
     } else {
-        argv = (char **)stkalloc(stkstd, (gp->gl_pathc + extra) * sizeof(char *));
+        argv = stkalloc(stkstd, (gp->gl_pathc + extra) * sizeof(char *));
         if (gp->gl_flags & GLOB_APPEND) {
             skip += --extra;
             memcpy(argv, gp->gl_pathv, skip * sizeof(char *));
