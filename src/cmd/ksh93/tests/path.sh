@@ -388,8 +388,9 @@ cat <<- \EOF > fun/myfun
 		print myfun
 	}
 EOF
-x=$(FPATH= PATH=$PWD/bin $SHELL -c  ': $(whence less);myfun') 2> /dev/null
-[[ $x == myfun ]] || log_error 'function myfun not found'
+actual=$(FPATH= PATH=$PWD/bin:$PATH $SHELL -c  ': $(whence less);myfun') 2> /dev/null
+expect=myfun
+[[ $actual == $expect ]] || log_error 'function myfun not found' "$expect" "$actual"
 
 cp $bin_echo user_to_group_relationship.hdr.query
 FPATH=/foobar:
