@@ -75,13 +75,36 @@ typedef struct _scan_s {
     int n_input;            /* number of input bytes processed          */
 } Scan_t;
 
-/* ds != 0 for scanning double values */
-#define SCinit(sc, ds)                                                                          \
-    ((sc)->inp = (sc)->error = -1, (sc)->f = f, ((sc)->width = (ds) ? width : -1), (sc)->d = d, \
-     (sc)->endd = endd, (sc)->data = data, (sc)->peek = peek, (sc)->n_input = n_input)
-#define SCend(sc, ds)                                                                 \
-    (inp = (sc)->inp, f = (sc)->f, (width = (ds) ? (sc)->width : width), d = (sc)->d, \
-     endd = (sc)->endd, data = (sc)->data, peek = (sc)->peek, n_input = (sc)->n_input)
+// _width = `-1` to scan non-double values; else `width` to scan double values.
+#define SCinit(sc, _width)       \
+    do {                         \
+        (sc)->inp = -1;          \
+        (sc)->error = -1;        \
+        (sc)->f = f;             \
+        (sc)->width = _width;    \
+        (sc)->d = d;             \
+        (sc)->endd = endd;       \
+        (sc)->data = data;       \
+        (sc)->peek = peek;       \
+        (sc)->n_input = n_input; \
+    } while (0)
+#define SCinit_single(sc) SCinit((sc), -1)
+#define SCinit_double(sc) SCinit((sc), width)
+
+// _width = `width` if scanning non-double values; else `sc->width` if scanning double values.
+#define SCend(sc, _width)        \
+    do {                         \
+        inp = (sc)->inp;         \
+        f = (sc)->f;             \
+        width = _width;          \
+        d = (sc)->d;             \
+        endd = (sc)->endd;       \
+        data = (sc)->data;       \
+        peek = (sc)->peek;       \
+        n_input = (sc)->n_input; \
+    } while (0)
+#define SCend_single(sc) SCend((sc), width)
+#define SCend_double(sc) SCend((sc), (sc)->width)
 
 static_fn int _scgetc(void *arg, int flag) {
     Scan_t *sc = (Scan_t *)arg;
@@ -339,10 +362,10 @@ loop_fmt:
                 }
                 if (n > 1) {
                     acc.wc = wc;
-                    SCinit(&scd, 0);
+                    SCinit_single(&scd);
                     SFMBCLR(&mbs);
                     v = _sfgetwc(&scd, &wc, '1', &acc, &mbs);
-                    SCend(&scd, 0);
+                    SCend_single(&scd);
                     if (v == 0) goto pop_fmt;
                     form += n - 1;
                 } else if (SFgetc(f, inp) != fmt) {
@@ -727,9 +750,9 @@ loop_fmt:
 
         if (_Sftype[fmt] == SFFMT_FLOAT) {
             SFungetc(f, inp);
-            SCinit(&scd, 1);
+            SCinit_double(&scd);
             argv.ld = _sfdscan((void *)(&scd), _scgetc);
-            SCend(&scd, 1);
+            SCend_double(&scd);
 
             if (scd.error >= 0) {
                 if (inp >= 0) SFungetc(f, inp);
@@ -921,13 +944,13 @@ loop_fmt:
             n = 0; /* count number of scanned characters */
             if (flags & SFFMT_LONG) {
                 SFungetc(f, inp);
-                SCinit(&scd, 0);
+                SCinit_single(&scd);
                 SFMBCLR(&mbs);
                 for (; width > 0; --width) {
                     if (_sfgetwc(&scd, &wc, fmt, &acc, &mbs) == 0) break;
                     if ((n += 1) <= size) *argv.ws++ = wc;
                 }
-                SCend(&scd, 0);
+                SCend_single(&scd);
             } else if (fmt == 's') {
                 do {
                     if (isspace(inp)) break;
