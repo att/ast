@@ -298,7 +298,7 @@ loop_fmt:
                                     }
                                     n = FP_SET(n, argn);
                                 } else {
-                                    n = FP_SET(-1, argn);
+                                    n = FP_INC(argn);
                                 }
 
                                 if (fp) {
@@ -392,7 +392,7 @@ loop_fmt:
                     if (!fp && !(fp = (*_Sffmtposf)(f, oform, oargs, ft, 0))) goto pop_fmt;
                     n = FP_SET(n, argn);
                 } else {
-                    n = FP_SET(-1, argn);
+                    n = FP_INC(argn);
                 }
 
                 if (fp) {
@@ -459,7 +459,7 @@ loop_fmt:
                         if (!fp && !(fp = (*_Sffmtposf)(f, oform, oargs, ft, 0))) goto pop_fmt;
                         n = FP_SET(n, argn);
                     } else {
-                        n = FP_SET(-1, argn);
+                        n = FP_INC(argn);
                     }
 
                     if (fp) { /* use position list */

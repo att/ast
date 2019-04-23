@@ -430,7 +430,7 @@ loop_fmt:
                                     }
                                     n = FP_SET(n, argn);
                                 } else {
-                                    n = FP_SET(-1, argn);
+                                    n = FP_INC(argn);
                                 }
 
                                 if (fp) {
@@ -469,7 +469,7 @@ loop_fmt:
                         if (!fp && !(fp = (*_Sffmtposf)(f, oform, oargs, ft, 1))) goto pop_fmt;
                         n = FP_SET(n, argn);
                     } else {
-                        n = FP_SET(-1, argn);
+                        n = FP_INC(argn);
                     }
 
                     if (fp) {
@@ -530,7 +530,7 @@ loop_fmt:
                         if (!fp && !(fp = (*_Sffmtposf)(f, oform, oargs, ft, 1))) goto pop_fmt;
                         n = FP_SET(n, argn);
                     } else {
-                        n = FP_SET(-1, argn);
+                        n = FP_INC(argn);
                     }
 
                     if (fp) { /* use position list */
@@ -622,7 +622,11 @@ loop_fmt:
                 }
             } else if (_Sftype[fmt] & SFFMT_CHAR) {
                 if ((flags & SFFMT_LONG) || fmt == 'C') {
-                    size = sizeof(wchar_t) > sizeof(int) ? sizeof(wchar_t) : sizeof(int);
+#if _ast_sizeof_wchar_t > _ast_sizeof_int
+                    size = _ast_sizeof_wchar_t;
+#else
+                    size = _ast_sizeof_int;
+#endif
                 } else if (size < 0) {
                     size = sizeof(int);
                 }

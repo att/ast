@@ -335,6 +335,7 @@ struct _sfproc_s {
 
 /* extensions to sfvprintf/sfvscanf */
 #define FP_SET(fp, fn) (fp < 0 ? (fn += 1) : (fn = fp))
+#define FP_INC(fn) (fn += 1)
 #define FP_WIDTH 0
 #define FP_PRECIS 1
 #define FP_BASE 2
