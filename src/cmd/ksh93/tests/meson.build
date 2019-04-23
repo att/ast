@@ -35,6 +35,7 @@ all_tests = [
 # such as Cygwin, things simply don't work as expected and probably never will due to quirks of the
 # platform.
 tests_to_skip = [
+    ['cygwin', 'signal'],
     ['cygwin', 'jobs.exp'],
     ['darwin', 'jobs.exp'],
     ['openbsd', 'jobs.exp'],
