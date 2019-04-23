@@ -396,10 +396,10 @@ int _sfmode(Sfio_t *f, int wanted, int local) {
         }
     }
 
-    if (wanted == (int)SFMODE(f, 1)) goto done;
+    if (wanted == (int)SFMODE(f, 1)) goto done;  //!OCLINT(constant conditional operator)
 
-    switch (SFMODE(f, 1)) {
-        case SF_WRITE: /* switching to SF_READ */
+    switch (SFMODE(f, 1)) {  //!OCLINT(constant conditional operator)
+        case SF_WRITE:       // switching to SF_READ
             if (wanted == 0 || wanted == SF_WRITE) break;
             if (!(f->flags & SF_READ)) {
                 goto err_notify;

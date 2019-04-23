@@ -109,9 +109,11 @@ static_fn int _sfphead(Sfpool_t *p, Sfio_t *f, int n) {
 
     if (!(p->mode & SF_SHARE) || (head->mode & SF_READ) || (f->mode & SF_READ)) {
         if (SFSYNC(head) < 0) goto done;
-    } else /* shared pool of write-streams, data can be moved among streams */
-    {
-        if (SFMODE(head, 1) != SF_WRITE && _sfmode(head, SF_WRITE, 1) < 0) goto done;
+    } else {  // shared pool of write-streams, data can be moved among streams
+        if (SFMODE(head, 1) != SF_WRITE &&  //!OCLINT(constant conditional operator)
+            _sfmode(head, SF_WRITE, 1) < 0) {
+            goto done;
+        }
         assert(f->next == f->data);
 
         v = head->next - head->data; /* pending data            */
@@ -281,9 +283,15 @@ Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
 
     if (mode & SF_SHARE) /* can only have write streams */
     {
-        if (SFMODE(f, 1) != SF_WRITE && _sfmode(f, SF_WRITE, 1) < 0) goto done;
-        if (SFMODE(pf, 1) != SF_WRITE && _sfmode(pf, SF_WRITE, 1) < 0) goto done;
-        if (f->next > f->data && SFSYNC(f) < 0) { /* start f clean */
+        if (SFMODE(f, 1) != SF_WRITE &&  //!OCLINT(constant conditional operator)
+            _sfmode(f, SF_WRITE, 1) < 0) {
+            goto done;
+        }
+        if (SFMODE(pf, 1) != SF_WRITE &&  //!OCLINT(constant conditional operator)
+            _sfmode(pf, SF_WRITE, 1) < 0) {
+            goto done;
+        }
+        if (f->next > f->data && SFSYNC(f) < 0) {  // start f clean
             goto done;
         }
     }
