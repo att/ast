@@ -55,6 +55,9 @@ if cc.get_id() == 'gcc'
     add_global_arguments('-Wno-cast-function-type', language: 'c')
 endif
 
+# We don't want `__attribute__((annotate("oclint:suppress")))` to produce warnings.
+add_global_arguments('-Wno-attributes', language: 'c')
+
 # There are quite a few places in the code which use a char to index into an
 # array. All of them appear to be "safe" in as much as they only do so when
 # the value involves an ASCII character which, by definition, won't be

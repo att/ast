@@ -87,8 +87,12 @@ static inline char *SF_ZERO(char *buf, int format, size_t size) {
 
 #define CVT_DIG_MPY 4
 
-char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sign, int *len,
-             int format) {
+// Many of the functions used in this function, such as `signbit()` are macros that result in OClint
+// warning about "constant conditional operator". Rather than suppress each individual cause just
+// tag the entire function as being a OClint minefield.
+__attribute__((annotate("oclint:suppress"))) char *_sfcvt(void *vp, char *buf, size_t size,
+                                                          int n_digit, int *decpt, int *sign,
+                                                          int *len, int format) {
     char *sp;
     long n, v;
     char *ep, *b, *endsp, *t;
@@ -202,7 +206,7 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
         if (n_digit > 0) {
 #if 0
                         static int      dig = 0;
-                        
+
                         if (!dig && (!(t = getenv("_AST_LDBL_DIG")) || !(dig = atoi(t))))
                                 dig = LDBL_DIG;
                         if (n_digit > dig)
