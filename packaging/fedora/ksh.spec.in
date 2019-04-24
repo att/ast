@@ -111,6 +111,11 @@ else
     echo "found"
 fi
 
+# ksh-20120801-250 did not use alternatives, so while upgrading ensure that
+# alternatives are set correctly
+%triggerpostun -- ksh < 1:2020.0.0-0.1
+%{_sbindir}/alternatives --auto ksh
+
 %files
 %doc src/cmd/ksh93/COMPATIBILITY src/cmd/ksh93/RELEASE src/cmd/ksh93/TYPES
 # LICENSE file is missing, temporarily?
