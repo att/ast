@@ -5,6 +5,8 @@
 
 #include <errno.h>
 #include <inttypes.h>
+#include <setjmp.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
@@ -67,6 +69,24 @@ static_fn const char *indent(int level, const char *fmt) {
 }
 
 typedef void(vtp_dprintf)(const char *, int, const char *, int, const char *, const struct Value *);
+
+static struct sigaction debug_oact;
+static jmp_buf jbuf;
+
+static_fn void debug_segv_handler(int signo) {
+    UNUSED(signo);
+    siglongjmp(jbuf, 1);
+}
+
+static_fn void debug_trap_sigsegv() {
+    struct sigaction act;
+    act.sa_flags = 0;
+    sigemptyset(&act.sa_mask);
+    act.sa_handler = debug_segv_handler;
+    sigaction(SIGSEGV, &act, &debug_oact);
+}
+
+static_fn void debug_untrap_sigsegv() { sigaction(SIGSEGV, &debug_oact, NULL); }
 
 static_fn void _dprint_VT_do_not_use(const char *file_name, int lineno, const char *func_name,
                                      int level, const char *var_name, const struct Value *vtp) {
@@ -368,7 +388,14 @@ void _dprint_vtp(const char *file_name, int const lineno, const char *func_name,
              indent(level, "struct Value %s.%s stored @ %s:%d in %s() is..."), var_name,
              value_type_names[vtp->type], vtp->filename ? vtp->filename : "undef", vtp->line_num,
              vtp->funcname ? vtp->funcname : "undef");
-    (dprint_vtp_dispatch[vtp->type])(file_name, lineno, func_name, level + 1, var_name, vtp);
+    debug_trap_sigsegv();
+    if (sigsetjmp(jbuf, !0) == 0) {
+        (dprint_vtp_dispatch[vtp->type])(file_name, lineno, func_name, level + 1, var_name, vtp);
+    } else {
+        _dprintf(file_name, lineno, func_name, indent(level, "SIGSEGV on invalid void* %p"),
+                 BASE_ADDR(FETCH_VTP(vtp, vp)));
+    }
+    debug_untrap_sigsegv();
     errno = oerrno;
 }
 
