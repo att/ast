@@ -992,7 +992,7 @@ loop_fmt:
                 if (size == sizeof(Sflong_t)) {
                     lv = argv.ll;
                     goto long_cvt;
-                } else if (sizeof(long) < sizeof(Sflong_t) && size == sizeof(long)) {
+                } else if (sizeof(long) < sizeof(Sflong_t) && size == sizeof(long)) {  //!OCLINT
                     if (fmt == 'd') {
                         lv = (Sflong_t)argv.l;
                     } else {
