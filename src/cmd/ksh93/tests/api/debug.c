@@ -125,6 +125,7 @@ static void test_dprint_nv() {
     DPRINT_NV(nval2);
 
     nval1.nvsize = 99;
+    nval1.nvflag = NV_DOUBLE;
     nval1.nvenv = (Namval_t *)"nvenv is a string";
     nval1.nvenv_is_cp = true;
     DPRINT_NV(nval1);

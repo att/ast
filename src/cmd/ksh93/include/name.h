@@ -344,6 +344,7 @@ struct Namval {
 #define NV_HEXFLOAT (NV_LTOU)              // for C99 base16 float notation
 
 // Options for nv_open(), nv_search(), sh_setlist(), etc.
+// Note: If these definitions are changed remember to update `nvflags` in src/cmd/ksh93/sh/debug.c.
 #define NV_APPEND (1 << 16)   // append value
 #define NV_VARNAME (1 << 17)  // name must be ?(.)id*(.id)
 #define NV_NOADD (1 << 18)    // do not add node

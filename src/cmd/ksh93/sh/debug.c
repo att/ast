@@ -31,6 +31,61 @@ static void *ptrs_seen[MAX_PTRS];
 static int next_ptr = 0;
 static bool max_ptrs_warned = false;
 
+struct nvflag {
+    unsigned short flag;
+    const char *name;
+};
+struct nvflag nv_flags[] = {
+    {NV_RDONLY, "NV_RDONLY"},
+    {NV_INTEGER, "NV_INTEGER"},
+    {NV_LTOU, "NV_LTOU"},
+    {NV_UTOL, "NV_UTOL"},
+    {NV_ZFILL, "NV_ZFILL"},
+    {NV_RJUST, "NV_RJUST"},
+    {NV_LJUST, "NV_LJUST"},
+    {NV_MISC, "NV_MISC"},
+    {NV_BINARY, "NV_BINARY"},
+    {NV_NOFREE, "NV_NOFREE"},
+    {NV_ARRAY, "NV_ARRAY"},
+    {NV_TABLE, "NV_TABLE"},
+    {NV_IMPORT, "NV_IMPORT"},
+    {NV_EXPORT, "NV_EXPORT"},
+    {NV_REF, "NV_REF"},
+    {NV_TAGGED, "NV_TAGGED"},
+    {NV_RAW, "NV_RAW (aka NV_LJUST)"},
+    {NV_HOST, "NV_HOST (aka NV_RJUST | NV_LJUST)"},
+    {NV_MINIMAL, "NV_MINIMAL (aka NV_IMPORT)"},
+    {NV_BLTINOPT, "NV_BLTINOPT (aka NV_ZFILL)"},
+    {NV_NODISC, "NV_NODISC (aka NV_MISC)"},
+    {NV_CLONED, "NV_CLONED (aka NV_MISC)"},
+    {NV_SHORT, "NV_SHORT (aka NV_RJUST)"},
+    {NV_LONG, "NV_LONG (aka NV_UTOL)"},
+    {NV_UNSIGN, "NV_UNSIGN (aka NV_LTOU)"},
+    {NV_DOUBLE, "NV_DOUBLE (aka NV_INTEGER | NV_ZFILL)"},
+    {NV_EXPNOTE, "NV_EXPNOTE (aka NV_LJUST)"},
+    {NV_HEXFLOAT, "NV_HEXFLOAT (aka NV_LTOU)"},
+    {0, NULL},
+};
+
+static_fn const char *nvflag_to_syms(unsigned short nvflag) {
+    static char *str = NULL;
+
+    if (!str) str = malloc(1024);
+
+    if (!nvflag) {
+        strlcpy(str, "NV_?", 1024);
+    } else {
+        *str = '\0';
+        for (struct nvflag *fp = nv_flags; fp->name; fp++) {
+            if ((nvflag & fp->flag) == fp->flag) {
+                if (*str) strlcat(str, " | ", 1024);
+                strlcat(str, fp->name, 1024);
+            }
+        }
+    }
+    return str;
+}
+
 // When dumping an object (e.g., a Namval_t) at level zero forget about any pointers we've seen from
 // previous debug print calls.
 static_fn void clear_ptrs() {
@@ -422,6 +477,8 @@ void _dprint_nvp(const char *file_name, const int lineno, const char *func_name,
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvname %p |%s|"),
              NP_BASE_ADDR(np->nvname), np->nvname);
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvsize %d"), np->nvsize);
+    _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvflag 0x%X %s"), np->nvflag,
+             nvflag_to_syms(np->nvflag));
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvalue is..."));
     _dprint_vtp(file_name, lineno, func_name, level + 1, "", &np->nvalue);
     if (np->nvenv) {
