@@ -219,7 +219,8 @@ int path_generate(Shell_t *shp, struct argnod *todo, struct argnod **arghead) {
     char *format = NULL;
     char comma, range = 0;
     int first, last, incr, count = 0;
-    char tmp[32], end[1];
+    char end_char;
+    char tmp[32];
 
     if (!sh_isoption(shp, SH_BRACEEXPAND)) return path_expand(shp, todo->argval, arghead);
     todo->argchn.ap = NULL;
@@ -347,6 +348,7 @@ endloop1:
     rescan = cp;
     cp = pat - 1;
     *cp = 0;
+
     while (1) {
         brace = 0;
         if (range) {
@@ -359,7 +361,8 @@ endloop1:
                 assert(format);
                 sfsprintf(pat, sizeof(tmp), format, first);
                 *(rescan - 1) = '}';
-                *(cp = end) = 0;
+                cp = &end_char;
+                *cp = 0;
             }
             if (incr * (first + incr) > last * incr) {
                 *cp = '}';
