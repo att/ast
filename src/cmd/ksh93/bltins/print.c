@@ -545,7 +545,7 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
     }
     if (nv_isattr(np, NV_INTEGER) && !nv_isarray(np)) {
         d = nv_getnum(np);
-        if (nv_isattr(np, NV_DOUBLE)) {
+        if (nv_isattr(np, NV_DOUBLE) == NV_DOUBLE) {
             if (nv_isattr(np, NV_LONG)) {
                 size = sizeof(Sfdouble_t);
                 number.ld = d;
