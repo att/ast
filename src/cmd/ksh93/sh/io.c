@@ -2227,13 +2227,13 @@ int sh_iocheckfd(Shell_t *shp, int fd, int fn) {
 //
 static_fn int io_prompt(Shell_t *shp, Sfio_t *iop, int flag) {
     char *cp;
-    char buff[1];
+    char buff;
     char *endprompt;
     static short cmdno;
     int sfflags;
 
     if (flag < 3 && !sh_isstate(shp, SH_INTERACTIVE)) flag = 0;
-    if (flag == 2 && sfpkrd(sffileno(iop), buff, 1, '\n', 0, 1) >= 0) flag = 0;
+    if (flag == 2 && sfpkrd(sffileno(iop), &buff, 1, '\n', 0, 1) >= 0) flag = 0;
     if (flag == 0) return sfsync(sfstderr);
     sfflags = sfset(sfstderr, SF_SHARE | SF_PUBLIC | SF_READ, 0);
     if (!(shp->prompt = (char *)sfreserve(sfstderr, 0, 0))) shp->prompt = "";
