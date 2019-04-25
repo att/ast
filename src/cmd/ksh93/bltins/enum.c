@@ -109,23 +109,24 @@ struct Enum {
     char node[NV_MINSZ + sizeof(char *)];
     int64_t nelem;
     bool iflag;
-    const char *values[1];
+    const char **values;
 };
 
 static_fn int enuminfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *fp) {
     UNUSED(op);
     Namval_t *np;
     struct Enum *ep;
-    int n = 0;
     const char *v;
     np = *(Namval_t **)(fp + 1);
     ep = (struct Enum *)np->nvfun;
     if (strcmp(str, "default") == 0) {
+        assert(ep->nelem > 0);
         sfprintf(out, "\b%s\b", ep->values[0]);
     } else if (strcmp(str, "case") == 0) {
         if (ep->iflag) sfprintf(out, "not ");
     } else {
-        while ((v = ep->values[n++])) {
+        for (int i = 0; i < ep->nelem; i++) {
+            v = ep->values[i];
             sfprintf(out, ", \b%s\b", v);
         }
     }
@@ -133,32 +134,46 @@ static_fn int enuminfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *fp) {
     return 0;
 }
 
+static_fn void free_enum(struct Enum *ep) {
+    for (int i = 0; i < ep->nelem; i++) {
+        free((char *)ep->values[i]);
+    }
+    free(ep->values);
+    free(ep);
+}
+
 static_fn Namfun_t *clone_enum(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     UNUSED(np);
     UNUSED(mp);
     UNUSED(flags);
-    struct Enum *ep, *pp = (struct Enum *)fp;
-    ep = calloc(1, sizeof(struct Enum) + pp->nelem * sizeof(char *));
-    memcpy(ep, pp, sizeof(struct Enum) + pp->nelem * sizeof(char *));
+
+    struct Enum *pp = (struct Enum *)fp;
+    struct Enum *ep = malloc(sizeof(struct Enum));
+    memcpy(ep, pp, sizeof(struct Enum));
+    ep->values = malloc(ep->nelem * sizeof(*ep->values));
+    for (int i = 0; i < pp->nelem; i++) {
+        ep->values[i] = strdup(pp->values[i]);
+    }
     return &ep->namfun;
 }
 
 static_fn void put_enum(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
     struct Enum *ep = (struct Enum *)fp;
     const char *v;
-    unsigned short i = 0;
     int n;
     if (!val && !(flags & NV_INTEGER)) {
         nv_putv(np, val, flags, fp);
         nv_disc(np, &ep->namfun, DISC_OP_POP);
-        if (!ep->namfun.nofree) free(ep);
+        if (!ep->namfun.nofree) free_enum(ep);
         return;
     }
     if (flags & NV_INTEGER) {
         nv_putv(np, val, flags, fp);
         return;
     }
-    while ((v = ep->values[i])) {
+
+    for (int i = 0; i < ep->nelem; i++) {
+        v = ep->values[i];
         if (ep->iflag) {
             n = strcasecmp(v, val);
         } else {
@@ -166,10 +181,14 @@ static_fn void put_enum(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
         }
 
         if (n == 0) {
-            nv_putv(np, (char *)&i, NV_UINT16, fp);
+            // TODO: Figure out if a static var is correct. The code used to store a pointer to the
+            // stack local var `i` which is obviously wrong and only works by accident if the
+            // pointer is used before the stack location is overwritten.
+            static uint16_t x;
+            x = i;
+            nv_putv(np, (char *)&x, NV_UINT16, fp);
             return;
         }
-        i++;
     }
     if (nv_isattr(np, NV_NOFREE)) error(ERROR_exit(1), "%s:  invalid value %s", nv_name(np), val);
 }
@@ -177,12 +196,12 @@ static_fn void put_enum(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
 static_fn char *get_enum(Namval_t *np, Namfun_t *fp) {
     if (nv_isattr(np, NV_NOTSET) == NV_NOTSET) return "";
 
-    static char buff[6];
     struct Enum *ep = (struct Enum *)fp;
     long n = nv_getn(np, fp);
-
     assert(n >= 0);
     if (n < ep->nelem) return (char *)ep->values[n];
+
+    static char buff[6];
     sfsprintf(buff, sizeof(buff), "%u%c", n, 0);
     return buff;
 }
@@ -198,7 +217,8 @@ static_fn Namval_t *create_enum(Namval_t *np, const void *vp, int flags, Namfun_
     int i, n;
     mp = nv_namptr(ep->node, 0);
     mp->nvenv = np;
-    for (i = 0; (v = ep->values[i]); i++) {
+    for (i = 0; i < ep->nelem; i++) {
+        v = ep->values[i];
         if (ep->iflag) {
             n = strcasecmp(v, name);
         } else {
@@ -237,7 +257,10 @@ static_fn int sh_outenum(Shell_t *shp, Sfio_t *iop, Namval_t *tp) {
         tp = (Namval_t *)dtfirst(dp);
     }
     while (tp) {
-        if (!tp->nvfun || !(ep = (struct Enum *)nv_hasdisc(tp, &ENUM_disc))) continue;
+        if (!tp->nvfun) continue;
+        ep = (struct Enum *)nv_hasdisc(tp, &ENUM_disc);
+        if (!ep) continue;
+
         sfprintf(iop, "enum %s%s=(\n", (ep->iflag ? "-i " : ""), tp->nvname);
         for (i = 0; i < ep->nelem; i++) sfprintf(iop, "\t%s\n", ep->values[i]);
         sfprintf(iop, ")\n");
@@ -294,8 +317,8 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
 
     while ((cp = *argv++)) {
         np = nv_open(cp, shp->var_tree, NV_VARNAME | NV_NOADD);
-        if (!np || !(ap = nv_arrayptr(np)) || ap->fun || (sz = ap->nelem) < 2) {
-            error(ERROR_exit(1), "%s must name an array  containing at least two elements", cp);
+        if (!np || !(ap = nv_arrayptr(np)) || ap->fun || ap->nelem < 2) {
+            error(ERROR_exit(1), "%s must name an array containing at least two elements", cp);
         }
         n = stktell(shp->stk);
         sfprintf(shp->stk, "%s.%s%c", NV_CLASS, np->nvname, 0);
@@ -305,7 +328,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
             continue;
         }
         stkseek(shp->stk, n);
-        n = sz;
+        n = ap->nelem;
         i = 0;
         nv_onattr(tp, NV_UINT16);
         nv_putval(tp, (char *)&i, NV_INTEGER);
@@ -313,30 +336,28 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
         do {
             sz += strlen(nv_getval(np));
         } while (nv_nextsub(np));
-        sz += n * sizeof(char *);
-        ep = calloc(1, sizeof(struct Enum) + sz);
+        ep = calloc(1, sizeof(struct Enum));
         if (!ep) {
             error(ERROR_system(1), "out of space");
             __builtin_unreachable();
         }
+        ep->nelem = n;
         mp = nv_namptr(ep->node, 0);
         mp->nvshell = shp;
         nv_setsize(mp, 10);
         nv_onattr(mp, NV_UINT16);
         ep->iflag = iflag;
-        ep->nelem = n;
-        cp = (char *)&ep->values[n + 1];
+
+        ep->values = malloc(n * sizeof(*ep->values));
         nv_putsub(np, NULL, 0L, ARRAY_SCAN);
-        ep->values[n] = 0;
         i = 0;
         do {
-            ep->values[i++] = cp;
             sp = nv_getval(np);
-            n = strlen(sp);
-            memcpy(cp, sp, n + 1);
-            cp += n + 1;
+            ep->values[i++] = strdup(sp);
         } while (nv_nextsub(np));
-        ep->namfun.dsize = sizeof(struct Enum) + sz;
+        assert(n == i);
+
+        ep->namfun.dsize = sizeof(struct Enum);
         ep->namfun.disc = &ENUM_disc;
         ep->namfun.type = tp;
         nv_onattr(tp, NV_RDONLY);
