@@ -62,6 +62,9 @@ See the
 for information about code style, unit tests, and other topics of interest
 to anyone who wants to modify the source.
 
+## Guidelines for Packagers
+
+See the guidelines for downstream package maintainers [here](https://github.com/att/ast/wiki/Guidelines-for-Packagers).
 
 ## Coverity Scan
 
