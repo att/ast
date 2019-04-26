@@ -343,6 +343,18 @@ struct Namval {
 #define NV_EXPNOTE (NV_LJUST)              // for scientific notation
 #define NV_HEXFLOAT (NV_LTOU)              // for C99 base16 float notation
 
+// Numeric types.
+#define NV_INT16P (NV_LJUST | NV_SHORT | NV_INTEGER)
+#define NV_INT16 (NV_SHORT | NV_INTEGER)
+#define NV_INT32 (NV_INTEGER)
+#define NV_INT64 (NV_LONG | NV_INTEGER)
+#define NV_UINT16 (NV_UNSIGN | NV_SHORT | NV_INTEGER)
+// #define NV_UINT16P (NV_LJUST | NV_UNSIGN | NV_SHORT | NV_INTEGER)
+// #define NV_UINT32 (NV_UNSIGN | NV_INTEGER)
+// #define NV_UINT64 (NV_UNSIGN | NV_LONG | NV_INTEGER)
+#define NV_FLOAT (NV_SHORT | NV_DOUBLE)
+#define NV_LDOUBLE (NV_LONG | NV_DOUBLE)
+
 // Options for nv_open(), nv_search(), sh_setlist(), etc.
 // Note: If these definitions are changed remember to update `nvflags` in src/cmd/ksh93/sh/debug.c.
 #define NV_APPEND (1 << 16)   // append value
@@ -359,18 +371,6 @@ struct Namval {
 #define NV_NOREF NV_REF    // don't follow reference
 #define NV_FUNCT NV_IDENT  // option for nv_create
 #define NV_IDENT NV_MISC   // name must be identifier
-
-// Numeric types.
-#define NV_INT16P (NV_LJUST | NV_SHORT | NV_INTEGER)
-#define NV_INT16 (NV_SHORT | NV_INTEGER)
-#define NV_INT32 (NV_INTEGER)
-#define NV_INT64 (NV_LONG | NV_INTEGER)
-#define NV_UINT16 (NV_UNSIGN | NV_SHORT | NV_INTEGER)
-// #define NV_UINT16P (NV_LJUST | NV_UNSIGN | NV_SHORT | NV_INTEGER)
-// #define NV_UINT32 (NV_UNSIGN | NV_INTEGER)
-// #define NV_UINT64 (NV_UNSIGN | NV_LONG | NV_INTEGER)
-#define NV_FLOAT (NV_SHORT | NV_DOUBLE)
-#define NV_LDOUBLE (NV_LONG | NV_DOUBLE)
 
 // Name-value attribute test or modification routines. These used to be macros. They are now static
 // inline functions rather than macros to facilitate instrumentation while still being fast. In

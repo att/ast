@@ -483,7 +483,7 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
             if (val == NV_DOUBLE && (attr & (NV_EXPNOTE | NV_HEXFLOAT))) continue;
             if (val & NV_INTEGER) {
                 mask |= NV_DOUBLE;
-            } else if (val & NV_HOST) {
+            } else if ((val & NV_HOST) == NV_HOST) {
                 mask = NV_HOST;
             }
             if ((attr & mask) == val) {
