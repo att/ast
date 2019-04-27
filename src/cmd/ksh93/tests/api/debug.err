@@ -33,7 +33,7 @@
 ### 1234   0.000 debug.c:125         test_dprint_nv() struct Namval nval2 @ 0x88
 ### 1234   0.000 debug.c:125         test_dprint_nv()   ->nvname 0x88 |dvar2|
 ### 1234   0.000 debug.c:125         test_dprint_nv()   ->nvsize 66
-### 1234   0.000 debug.c:125         test_dprint_nv()   ->nvflag 0x0 NV_?
+### 1234   0.000 debug.c:125         test_dprint_nv()   ->nvflag 0x0 No NV_* bits set
 ### 1234   0.000 debug.c:125         test_dprint_nv()   ->nvalue is...
 ### 1234   0.000 debug.c:125         test_dprint_nv()   struct Value .cp stored @ debug.c:122 in test_dprint_nv() is...
 ### 1234   0.000 debug.c:125         test_dprint_nv()     char* 0x4 |dval2|
@@ -41,14 +41,14 @@
 ### 1234   0.000 debug.c:125         test_dprint_nv()   struct Namval ->nvenv @ 0x88
 ### 1234   0.000 debug.c:125         test_dprint_nv()     ->nvname 0x88 |dvar1|
 ### 1234   0.000 debug.c:125         test_dprint_nv()     ->nvsize 33
-### 1234   0.000 debug.c:125         test_dprint_nv()     ->nvflag 0x0 NV_?
+### 1234   0.000 debug.c:125         test_dprint_nv()     ->nvflag 0x0 No NV_* bits set
 ### 1234   0.000 debug.c:125         test_dprint_nv()     ->nvalue is...
 ### 1234   0.000 debug.c:125         test_dprint_nv()     struct Value .i stored @ debug.c:118 in test_dprint_nv() is...
 ### 1234   0.000 debug.c:125         test_dprint_nv()       int 111 (0x6F)
 ### 1234   0.000 debug.c:131         test_dprint_nv() struct Namval nval1 @ 0x88
 ### 1234   0.000 debug.c:131         test_dprint_nv()   ->nvname 0x88 |dvar1|
 ### 1234   0.000 debug.c:131         test_dprint_nv()   ->nvsize 99
-### 1234   0.000 debug.c:131         test_dprint_nv()   ->nvflag 0x12 NV_INTEGER | NV_ZFILL | NV_BLTINOPT (aka NV_ZFILL) | NV_DOUBLE (aka NV_INTEGER | NV_ZFILL)
+### 1234   0.000 debug.c:131         test_dprint_nv()   ->nvflag 0x12 NV_INTEGER | NV_ZFILL | NV_BLTINOPT (aka NV_ZFILL) | NV_DOUBLE (aka NV_INTEGER | NV_ZFILL) | NV_INT32 (aka NV_INTEGER) | NV_FTMP (aka NV_ZFILL) | NV_STATICF (aka NV_INTEGER)
 ### 1234   0.000 debug.c:131         test_dprint_nv()   ->nvalue is...
 ### 1234   0.000 debug.c:131         test_dprint_nv()   struct Value .i stored @ debug.c:118 in test_dprint_nv() is...
 ### 1234   0.000 debug.c:131         test_dprint_nv()     int 111 (0x6F)

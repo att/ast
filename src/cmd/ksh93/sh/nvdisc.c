@@ -798,10 +798,10 @@ void clone_all_disc(Namval_t *np, Namval_t *mp, int flags) {
 // NV_NODISC - discplines with funs non-zero will not be copied
 // NV_COMVAR - cloning a compound variable
 //
-int nv_clone(Namval_t *np, Namval_t *mp, int flags) {
+int nv_clone(Namval_t *np, Namval_t *mp, uint32_t flags) {
     Namfun_t *fp, *fpnext;
     const char *val = FETCH_VT(mp->nvalue, const_cp);
-    unsigned short flag = mp->nvflag;
+    uint32_t flag = mp->nvflag;
     size_t size = nv_size(mp);
 
     mp->nvshell = np->nvshell;

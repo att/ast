@@ -284,16 +284,16 @@ struct Namdecl {
     Optdisc_t *optinfof;
 };
 
+// Any place that assigns or compares the NV_* symbols below to a var should use `nvflat_t` for the
+// type of the var rather than `unsigned short`, `int`, etc.
+typedef uint16_t nvflag_t;
+
 // This defines the attributes for a name-value node.
 struct Namval {
-    Dtlink_t nvlink;        // space for cdt links
-    char *nvname;           // pointer to name of the node
-    unsigned short nvflag;  // attributes
-#if _ast_sizeof_pointer >= 8
-    uint32_t nvsize;  // size or base
-#else
-    unsigned short nvsize;  // size or base
-#endif
+    Dtlink_t nvlink;      // space for cdt links
+    char *nvname;         // pointer to name of the node
+    nvflag_t nvflag;      // attributes
+    uint32_t nvsize;      // size or base
     Namfun_t *nvfun;      // pointer to trap functions
     struct Value nvalue;  // value field
     Shell_t *nvshell;     // shell pointer
@@ -311,6 +311,8 @@ struct Namval {
 // the interpretation of the value but do affect how the namval node behaves.
 //
 // For the moment we are limited to 16 bits since the namval->nvflag is an unsigned short.
+//
+// Note: If these definitions are changed remember to update `nvflags` in src/cmd/ksh93/sh/debug.c.
 #define NV_RDONLY (1 << 0)   // readonly bit -- does not affect the value
 #define NV_INTEGER (1 << 1)  // integer attribute
 #define NV_LTOU (1 << 2)     // convert to uppercase
@@ -328,6 +330,7 @@ struct Namval {
 #define NV_REF (1 << 14)     // reference bit
 #define NV_TAGGED (1 << 15)  // user tagged (typeset -t ...) -- does not affect the value
 
+// Aliases or compound types.
 #define NV_RAW (NV_LJUST)              // used only with NV_BINARY
 #define NV_HOST (NV_RJUST | NV_LJUST)  // map to host filename
 #define NV_MINIMAL NV_IMPORT           // node does not contain all fields
@@ -335,18 +338,24 @@ struct Namval {
 #define NV_NODISC NV_MISC              // ignore disciplines
 #define NV_CLONED NV_MISC  // the value is cloned from an outer scope and thus can't be freed
 
+#define NV_NOPRINT (NV_LTOU | NV_UTOL)  // do not print
+#define NV_NOALIAS (NV_NOPRINT | NV_IMPORT)
+#define NV_NOEXPAND NV_RJUST  // do not expand alias
+#define NV_BLTIN (NV_NOPRINT | NV_EXPORT)
+#define NV_NOTSET (NV_INTEGER | NV_BINARY)
+
 // The following are used with NV_INTEGER.
-#define NV_SHORT (NV_RJUST)                // when integers are not long
-#define NV_LONG (NV_UTOL)                  // for long long and long double
-#define NV_UNSIGN (NV_LTOU)                // for unsigned quantities
+#define NV_SHORT NV_RJUST                  // when integers are not long
+#define NV_LONG NV_UTOL                    // for long long and long double
+#define NV_UNSIGN NV_LTOU                  // for unsigned quantities
 #define NV_DOUBLE (NV_INTEGER | NV_ZFILL)  // for floating point
-#define NV_EXPNOTE (NV_LJUST)              // for scientific notation
-#define NV_HEXFLOAT (NV_LTOU)              // for C99 base16 float notation
+#define NV_EXPNOTE NV_LJUST                // for scientific notation
+#define NV_HEXFLOAT NV_LTOU                // for C99 base16 float notation
 
 // Numeric types.
 #define NV_INT16P (NV_LJUST | NV_SHORT | NV_INTEGER)
 #define NV_INT16 (NV_SHORT | NV_INTEGER)
-#define NV_INT32 (NV_INTEGER)
+#define NV_INT32 NV_INTEGER
 #define NV_INT64 (NV_LONG | NV_INTEGER)
 #define NV_UINT16 (NV_UNSIGN | NV_SHORT | NV_INTEGER)
 // #define NV_UINT16P (NV_LJUST | NV_UNSIGN | NV_SHORT | NV_INTEGER)
@@ -355,8 +364,20 @@ struct Namval {
 #define NV_FLOAT (NV_SHORT | NV_DOUBLE)
 #define NV_LDOUBLE (NV_LONG | NV_DOUBLE)
 
-// Options for nv_open(), nv_search(), sh_setlist(), etc.
-// Note: If these definitions are changed remember to update `nvflags` in src/cmd/ksh93/sh/debug.c.
+// JSON handling.
+#define NV_JSON NV_TAGGED      // for json formatting
+#define NV_JSON_LAST NV_TABLE  // last for json formatting
+
+// These are for use with nodes which are not name-values.
+#define NV_FUNCTION (NV_RJUST | NV_FUNCT)  // value is shell function
+#define NV_FPOSIX NV_LJUST                 // posix function semantics
+#define NV_FTMP NV_ZFILL                   // function source in tmpfile
+#define NV_STATICF NV_INTEGER              // static class function
+#define NV_OPTGET NV_BINARY                // function calls getopts
+#define NV_SHVALUE NV_TABLE                // function assigns .sh.value
+
+// Options for nv_open(), nv_search(), sh_setlist(), etc. They are not valid bits in a nvflag_t;
+// i.e., (struct Namval*)->nvflag.
 #define NV_APPEND (1 << 16)   // append value
 #define NV_VARNAME (1 << 17)  // name must be ?(.)id*(.id)
 #define NV_NOADD (1 << 18)    // do not add node
@@ -365,8 +386,13 @@ struct Namval {
 #define NV_NOARRAY (1 << 21)  // array name not possible
 #define NV_IARRAY (1 << 22)   // for indexed array
 #define NV_ADD (1 << 23)      // add node if not found
+#define NV_UNJUST (1 << 23)   // clear justify attributes
+#define NV_TYPE (1 << 24)
+#define NV_STATIC (1 << 25)
+#define NV_COMVAR (1 << 26)
 #define NV_MOVE (1 << 27)     // for use with nv_clone()
 #define NV_ASSIGN (1 << 28)   // assignment is allowed
+#define NV_DECL (1 << 29)
 
 #define NV_NOREF NV_REF    // don't follow reference
 #define NV_FUNCT NV_IDENT  // option for nv_create
@@ -432,7 +458,7 @@ extern Namval_t *nv_opensub(Namval_t *);
 
 // Name-value pair function prototypes.
 extern bool nv_adddisc(Namval_t *, const char **, Namval_t **);
-extern int nv_clone(Namval_t *, Namval_t *, int);
+extern int nv_clone(Namval_t *, Namval_t *, uint32_t);
 extern void nv_close(Namval_t *);
 extern Namval_t *nv_create(const char *, Dt_t *, int, Namfun_t *);
 extern void nv_delete(Namval_t *, Dt_t *, int);
@@ -532,32 +558,13 @@ struct argnod;
     (~(NV_NOSCOPE | NV_ARRAY | NV_NOARRAY | NV_IDENT | NV_ASSIGN | NV_REF | NV_VARNAME | NV_STATIC))
 #define NV_PARAM NV_NODISC  // expansion use positional params
 
-// This following are for use with nodes which are not name-values.
-#define NV_DECL 0x20000000
-#define NV_TYPE 0x1000000
-#define NV_STATIC 0x2000000
-#define NV_COMVAR 0x4000000
-#define NV_UNJUST 0x800000                 // clear justify attributes
-#define NV_FUNCTION (NV_RJUST | NV_FUNCT)  // value is shell function
-#define NV_FPOSIX NV_LJUST                 // posix function semantics
-#define NV_FTMP NV_ZFILL                   // function source in tmpfile
-#define NV_STATICF NV_INTEGER              // static class function
-
-#define NV_NOPRINT (NV_LTOU | NV_UTOL)  // do not print
-#define NV_NOALIAS (NV_NOPRINT | NV_IMPORT)
-#define NV_NOEXPAND NV_RJUST  // do not expand alias
-#define NV_BLTIN (NV_NOPRINT | NV_EXPORT)
-#define NV_NOTSET (NV_INTEGER | NV_BINARY)
 #define BLT_ENV (NV_RDONLY)      // non-stoppable, can modify enviornment
 #define BLT_DISABLE (NV_BINARY)  // bltin disabled
 #define BLT_SPC (NV_TAGGED)      // special built-ins
 #define BLT_EXIT (NV_RJUST)      // exit value can be > 255
 #define BLT_DCL (NV_LJUST)       // declaration command
 #define BLT_NOSFIO (NV_IMPORT)   // doesn't use sfio
-#define NV_OPTGET (NV_BINARY)    // function calls getopts
-#define NV_SHVALUE (NV_TABLE)    // function assigns .sh.value
-#define NV_JSON (NV_TAGGED)      // for json formatting
-#define NV_JSON_LAST (NV_TABLE)  // last for json formatting
+
 #define nv_isref(n) (nv_isattr((n), NV_REF | NV_TAGGED | NV_FUNCT) == NV_REF)
 #define is_abuiltin(n) (nv_isattr(n, NV_BLTIN | NV_INTEGER) == NV_BLTIN)
 #define is_afunction(n) (nv_isattr(n, NV_FUNCTION | NV_REF) == NV_FUNCTION)
@@ -603,7 +610,6 @@ extern struct argnod *nv_onlist(struct argnod *, const char *);
 extern void nv_optimize(Namval_t *);
 extern void nv_unref(Namval_t *);
 extern bool nv_hasget(Namval_t *);
-extern int nv_clone(Namval_t *, Namval_t *, int);
 void clone_all_disc(Namval_t *, Namval_t *, int);
 extern Namfun_t *nv_clone_disc(Namfun_t *, int);
 extern void *nv_diropen(Namval_t *, const char *, void *);

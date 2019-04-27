@@ -63,23 +63,57 @@ struct nvflag nv_flags[] = {
     {NV_UNSIGN, "NV_UNSIGN (aka NV_LTOU)"},
     {NV_DOUBLE, "NV_DOUBLE (aka NV_INTEGER | NV_ZFILL)"},
     {NV_EXPNOTE, "NV_EXPNOTE (aka NV_LJUST)"},
-    {NV_HEXFLOAT, "NV_HEXFLOAT (aka NV_LTOU)"},
+    {NV_INT16P, "NV_INT16P (aka NV_LJUST | NV_SHORT | NV_INTEGER)"},
+    {NV_INT16, "NV_INT16 (aka NV_SHORT | NV_INTEGER)"},
+    {NV_INT32, "NV_INT32 (aka NV_INTEGER)"},
+    {NV_INT64, "NV_INT64 (aka NV_LONG | NV_INTEGER)"},
+    {NV_UINT16, "NV_UINT16 (aka NV_UNSIGN | NV_SHORT | NV_INTEGER)"},
+    {NV_FLOAT, "NV_FLOAT (aka NV_SHORT | NV_DOUBLE)"},
+    {NV_LDOUBLE, "NV_LDOUBLE (aka NV_LONG | NV_DOUBLE)"},
+    {NV_FUNCTION, "NV_FUNCTION (aka NV_RJUST | NV_FUNCT)"},
+    {NV_FPOSIX, "NV_FPOSIX (aka NV_LJUST)"},
+    {NV_FTMP, "NV_FTMP (aka NV_ZFILL)"},
+    {NV_STATICF, "NV_STATICF (aka NV_INTEGER)"},
+    {NV_NOPRINT, "NV_NOPRINT (aka NV_LTOU | NV_UTOL)"},
+    {NV_NOALIAS, "NV_NOALIAS (aka NV_NOPRINT | NV_IMPORT)"},
+    {NV_NOEXPAND, "NV_NOEXPAND (aka NV_RJUST)"},
+    {NV_BLTIN, "NV_BLTIN (aka NV_NOPRINT | NV_EXPORT)"},
+    {NV_NOTSET, "NV_NOTSET (aka NV_INTEGER | NV_BINARY)"},
+    {NV_OPTGET, "NV_OPTGET (aka NV_BINARY)"},
+    {NV_SHVALUE, "NV_SHVALUE (aka NV_TABLE)"},
+#if SUPPORT_JSON
+    {NV_JSON, "NV_JSON (aka NV_TAGGED)"},
+    {NV_JSON_LAST, "NV_JSON_LAST (aka NV_TABLE)"},
+#endif  // SUPPORT_JSON
     {0, NULL},
 };
 
-static_fn const char *nvflag_to_syms(unsigned short nvflag) {
+// NOTE: For the moment we use `uint64_t` rather than `nvflag_t` because the latter is equivalent to
+// `uint16_t` and we want to be able to use this to decode values that include bits outside that
+// range.
+const char *nvflag_to_syms(uint64_t nvflag) {
     static char *str = NULL;
 
     if (!str) str = malloc(1024);
 
     if (!nvflag) {
-        strlcpy(str, "NV_?", 1024);
+        strlcpy(str, "No NV_* bits set", 1024);
     } else {
         *str = '\0';
+        // Yes, we are going to iterate through the nv_flags array twice. That's because this isn't
+        // performance critical (it's a debugging aid) and we want to make any unrecognized bits in
+        // `nvflag` prominent in our returned value by listing those bits first.
+        uint64_t remaining = nvflag;
+        for (struct nvflag *fp = nv_flags; fp->name; fp++) {
+            if ((nvflag & fp->flag) == fp->flag) remaining &= ~fp->flag;
+        }
+        if (remaining) strlcat(str, "0x%X (unrecognized bits)", remaining);
+
         for (struct nvflag *fp = nv_flags; fp->name; fp++) {
             if ((nvflag & fp->flag) == fp->flag) {
                 if (*str) strlcat(str, " | ", 1024);
                 strlcat(str, fp->name, 1024);
+                remaining &= ~fp->flag;
             }
         }
     }
