@@ -435,8 +435,8 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                         nv_putsub(np, NULL, 0, ARRAY_SCAN);
                         if (!ap->fun && !(ap->flags & ARRAY_TREE) && !np->nvfun->next &&
                             !nv_type(np)) {
-                            int nvflag = np->nvflag;
-                            int nvsize = np->nvsize;
+                            nvflag_t nvflag = np->nvflag;
+                            uint32_t nvsize = np->nvsize;
                             _nv_unset(np, NV_EXPORT);
                             nv_setattr(np, nvflag);
                             np->nvsize = nvsize;

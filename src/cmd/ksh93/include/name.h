@@ -284,7 +284,7 @@ struct Namdecl {
     Optdisc_t *optinfof;
 };
 
-// Any place that assigns or compares the NV_* symbols below to a var should use `nvflat_t` for the
+// Any place that assigns or compares the NV_* symbols below to a var should use `nvflag_t` for the
 // type of the var rather than `unsigned short`, `int`, etc.
 typedef uint16_t nvflag_t;
 
@@ -331,7 +331,7 @@ struct Namval {
 #define NV_TAGGED (1 << 15)  // user tagged (typeset -t ...) -- does not affect the value
 
 // Aliases or compound types.
-#define NV_RAW (NV_LJUST)              // used only with NV_BINARY
+#define NV_RAW NV_LJUST                // used only with NV_BINARY
 #define NV_HOST (NV_RJUST | NV_LJUST)  // map to host filename
 #define NV_MINIMAL NV_IMPORT           // node does not contain all fields
 #define NV_BLTINOPT NV_ZFILL           // mark builtins in `shtab_builtins[]` that are optional
@@ -395,8 +395,8 @@ struct Namval {
 #define NV_TYPE (1 << 24)
 #define NV_STATIC (1 << 25)
 #define NV_COMVAR (1 << 26)
-#define NV_MOVE (1 << 27)     // for use with nv_clone()
-#define NV_ASSIGN (1 << 28)   // assignment is allowed
+#define NV_MOVE (1 << 27)    // for use with nv_clone()
+#define NV_ASSIGN (1 << 28)  // assignment is allowed
 #define NV_DECL (1 << 29)
 
 #define NV_NOREF NV_REF    // don't follow reference
@@ -407,13 +407,13 @@ struct Namval {
 // inline functions rather than macros to facilitate instrumentation while still being fast. In
 // particular validating the nvflag value; both current and new. Variants such as nv_isnull() are
 // not static inline functions because they do more work and were historically extern functions.
-static inline int nv_isattr(const Namval_t *np, unsigned int nvflag) { return np->nvflag & nvflag; }
+static inline int nv_isattr(const Namval_t *np, nvflag_t nvflag) { return np->nvflag & nvflag; }
 
-static inline void nv_onattr(Namval_t *np, unsigned int nvflag) { np->nvflag |= nvflag; }
+static inline void nv_onattr(Namval_t *np, nvflag_t nvflag) { np->nvflag |= nvflag; }
 
-static inline void nv_offattr(Namval_t *np, unsigned int nvflag) { np->nvflag &= ~nvflag; }
+static inline void nv_offattr(Namval_t *np, nvflag_t nvflag) { np->nvflag &= ~nvflag; }
 
-static inline void nv_setattr(Namval_t *np, unsigned int nvflag) { np->nvflag = nvflag; }
+static inline void nv_setattr(Namval_t *np, nvflag_t nvflag) { np->nvflag = nvflag; }
 
 static inline bool nv_isarray(Namval_t *np) { return nv_isattr(np, NV_ARRAY) == NV_ARRAY; }
 
