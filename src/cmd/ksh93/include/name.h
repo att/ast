@@ -365,8 +365,13 @@ struct Namval {
 #define NV_LDOUBLE (NV_LONG | NV_DOUBLE)
 
 // JSON handling.
+#if SUPPORT_JSON
 #define NV_JSON NV_TAGGED      // for json formatting
 #define NV_JSON_LAST NV_TABLE  // last for json formatting
+#else
+#define NV_JSON 0
+#define NV_JSON_LAST 0
+#endif  // SUPPORT_JSON
 
 // These are for use with nodes which are not name-values.
 #define NV_FUNCTION (NV_RJUST | NV_FUNCT)  // value is shell function
