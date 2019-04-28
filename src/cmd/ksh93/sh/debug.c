@@ -107,7 +107,11 @@ const char *nvflag_to_syms(uint64_t nvflag) {
         for (struct nvflag *fp = nv_flags; fp->name; fp++) {
             if ((nvflag & fp->flag) == fp->flag) remaining &= ~fp->flag;
         }
-        if (remaining) strlcat(str, "0x%X (unrecognized bits)", remaining);
+        if (remaining) {
+            char buf[100];
+            snprintf(buf, sizeof(buf), "0x%" PRIX64 " (unrecognized bits)", remaining);
+            strlcat(str, buf, 1024);
+        }
 
         for (struct nvflag *fp = nv_flags; fp->name; fp++) {
             if ((nvflag & fp->flag) == fp->flag) {

@@ -1316,7 +1316,7 @@ nocache:
     c = *cp;
 skip:
     if (np && shp->mktype) np = nv_addnode(np, 0);
-    if (c == '=' && np && (flags & NV_ASSIGN)) {
+    if (np && c == '=' && (flags & NV_ASSIGN)) {
         cp++;
         if (sh_isstate(shp, SH_INIT)) {
             nv_putval(np, cp, NV_RDONLY);
@@ -1368,7 +1368,12 @@ skip:
             savesub = sub;
             shp->prefix = prefix;
         }
-        nv_onattr(np, flags & NV_ATTRIBUTES);
+        // See https://github.com/att/ast/issues/1038 for why this mask op exists. Note that
+        // NV_ARRAY never occurs AFAICT but it was in the original version so retain it for
+        // now out of an abundance of caution.
+        //
+        // TODO: Pass `flags` as-is as soon as the aliasing of these symbols is eliminated.
+        nv_onattr(np, flags & ~(NV_ARRAY | NV_IDENT | NV_REF));
     } else if (c) {
         if (flags & NV_NOFAIL) return 0;
         if (c == '.') {

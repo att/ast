@@ -215,6 +215,7 @@ typedef int (*Shbltin_f)(int, char **, Shbltin_t *);
 // indirectly calls `malloc()`. See issue #563.
 //
 #include <stdbool.h>
+#include <inttypes.h>
 
 extern volatile bool vmbusy_flag;
 #define vmbusy() vmbusy_flag
@@ -290,4 +291,6 @@ extern void _dprint_nrp(const char *file_name, const int lineno, const char *fun
 #define DPRINT_NR(nr) _dprint_nrp(__FILE__, __LINE__, __FUNCTION__, 0, #nr, &(nr))
 #define DPRINT_NRP(nrp) _dprint_nrp(__FILE__, __LINE__, __FUNCTION__, 0, #nrp, nrp)
 
+// This can be used to convert an arbitrary nvflag bit mask to a symbolic form.
+const char *nvflag_to_syms(uint64_t nvflag);
 #endif

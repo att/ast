@@ -286,7 +286,9 @@ struct Namdecl {
 
 // Any place that assigns or compares the NV_* symbols below to a var should use `nvflag_t` for the
 // type of the var rather than `unsigned short`, `int`, etc.
-typedef uint16_t nvflag_t;
+typedef uint32_t nvflag_t;
+// Number of low numbered bits valid in a (struct Namval).nvflag.
+#define NV_nbits 16
 
 // This defines the attributes for a name-value node.
 struct Namval {
@@ -399,6 +401,7 @@ struct Namval {
 #define NV_ASSIGN (1 << 28)  // assignment is allowed
 #define NV_DECL (1 << 29)
 
+// See the uses of these symbols in name.c.
 #define NV_NOREF NV_REF    // don't follow reference
 #define NV_FUNCT NV_IDENT  // option for nv_create
 #define NV_IDENT NV_MISC   // name must be identifier
@@ -409,13 +412,22 @@ struct Namval {
 // not static inline functions because they do more work and were historically extern functions.
 static inline int nv_isattr(const Namval_t *np, nvflag_t nvflag) { return np->nvflag & nvflag; }
 
-static inline void nv_onattr(Namval_t *np, nvflag_t nvflag) { np->nvflag |= nvflag; }
-
-static inline void nv_offattr(Namval_t *np, nvflag_t nvflag) { np->nvflag &= ~nvflag; }
-
-static inline void nv_setattr(Namval_t *np, nvflag_t nvflag) { np->nvflag = nvflag; }
-
 static inline bool nv_isarray(Namval_t *np) { return nv_isattr(np, NV_ARRAY) == NV_ARRAY; }
+
+static inline void nv_onattr(Namval_t *np, nvflag_t nvflag) {
+    nvflag &= ~(~0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
+    np->nvflag |= nvflag;
+}
+
+static inline void nv_offattr(Namval_t *np, nvflag_t nvflag) {
+    nvflag &= ~(~0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
+    np->nvflag &= ~nvflag;
+}
+
+static inline void nv_setattr(Namval_t *np, nvflag_t nvflag) {
+    nvflag &= ~(~0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
+    np->nvflag = nvflag;
+}
 
 // The following symbols are for use with nv_disc().
 enum {
