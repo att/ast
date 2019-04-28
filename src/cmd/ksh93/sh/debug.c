@@ -198,15 +198,17 @@ static_fn void _dprint_VT_vp(const char *file_name, int lineno, const char *func
 static_fn void _dprint_VT_cp(const char *file_name, int lineno, const char *func_name, int level,
                              const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "char* %p |%s|"),
-             BASE_ADDR(FETCH_VTP(vtp, cp)), FETCH_VTP(vtp, cp));
+    char *cp = FETCH_VTP(vtp, cp);
+    _dprintf(file_name, lineno, func_name, indent(level, "char* %p %d|%s|"),
+             BASE_ADDR(cp), strlen(cp), cp);
 }
 
 static_fn void _dprint_VT_const_cp(const char *file_name, int lineno, const char *func_name,
                                    int level, const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "const char* %p |%s|"),
-             BASE_ADDR(FETCH_VTP(vtp, const_cp)), FETCH_VTP(vtp, const_cp));
+    const char *cp = FETCH_VTP(vtp, const_cp);
+    _dprintf(file_name, lineno, func_name, indent(level, "const char* %p %d|%s|"),
+             BASE_ADDR(cp), strlen(cp), cp);
 }
 
 static_fn void _dprint_VT_uc(const char *file_name, int lineno, const char *func_name, int level,
@@ -482,7 +484,7 @@ void _dprint_vtp(const char *file_name, int const lineno, const char *func_name,
              value_type_names[vtp->type], vtp->filename ? vtp->filename : "undef", vtp->line_num,
              vtp->funcname ? vtp->funcname : "undef");
     debug_trap_sigsegv();
-    if (sigsetjmp(jbuf, !0) == 0) {
+    if (sigsetjmp(jbuf, 1) == 0) {
         (dprint_vtp_dispatch[vtp->type])(file_name, lineno, func_name, level + 1, var_name, vtp);
     } else {
         _dprintf(file_name, lineno, func_name, indent(level, "SIGSEGV on invalid void* %p"),
