@@ -571,8 +571,6 @@ struct argnod;
 
 // The following attributes are for internal use.
 #define NV_NOCHANGE (NV_EXPORT | NV_IMPORT | NV_RDONLY | NV_TAGGED | NV_NOFREE | NV_ARRAY)
-#define NV_ATTRIBUTES \
-    (~(NV_NOSCOPE | NV_ARRAY | NV_NOARRAY | NV_IDENT | NV_ASSIGN | NV_REF | NV_VARNAME | NV_STATIC))
 #define NV_PARAM NV_NODISC  // expansion use positional params
 
 #define BLT_ENV (NV_RDONLY)      // non-stoppable, can modify enviornment
