@@ -199,16 +199,16 @@ static_fn void _dprint_VT_cp(const char *file_name, int lineno, const char *func
                              const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
     char *cp = FETCH_VTP(vtp, cp);
-    _dprintf(file_name, lineno, func_name, indent(level, "char* %p %d|%s|"),
-             BASE_ADDR(cp), strlen(cp), cp);
+    _dprintf(file_name, lineno, func_name, indent(level, "char* %p %d|%s|"), BASE_ADDR(cp),
+             strlen(cp), cp);
 }
 
 static_fn void _dprint_VT_const_cp(const char *file_name, int lineno, const char *func_name,
                                    int level, const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
     const char *cp = FETCH_VTP(vtp, const_cp);
-    _dprintf(file_name, lineno, func_name, indent(level, "const char* %p %d|%s|"),
-             BASE_ADDR(cp), strlen(cp), cp);
+    _dprintf(file_name, lineno, func_name, indent(level, "const char* %p %d|%s|"), BASE_ADDR(cp),
+             strlen(cp), cp);
 }
 
 static_fn void _dprint_VT_uc(const char *file_name, int lineno, const char *func_name, int level,
