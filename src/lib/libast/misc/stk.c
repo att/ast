@@ -19,21 +19,21 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- *   Routines to implement a stack-like storage library
- *
- *   A stack consists of a link list of variable size frames
- *   The beginning of each frame is initialized with a frame structure
- *   that contains a pointer to the previous frame and a pointer to the
- *   end of the current frame.
- *
- *   This is a rewrite of the stk library that uses sfio
- *
- *   David Korn
- *   AT&T Research
- *   dgk@research.att.com
- *
- */
+//
+// Routines to implement a stack-like storage library
+//
+// A stack consists of a link list of variable size frames
+// The beginning of each frame is initialized with a frame structure
+// that contains a pointer to the previous frame and a pointer to the
+// end of the current frame.
+//
+// This is a rewrite of the stk library that uses sfio
+//
+// David Korn
+// AT&T Research
+// dgk@research.att.com
+//
+
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stdlib.h>
@@ -46,16 +46,16 @@
 #include "sfio.h"
 #include "stk.h"
 
-/*
- *  A stack is a header and a linked list of frames
- *  The first frame has structure
- *      Sfio_t
- *      Sfdisc_t
- *      struct stk
- * Frames have structure
- *      struct frame
- *      data
- */
+//
+//  A stack is a header and a linked list of frames
+//  The first frame has structure
+//      Sfio_t
+//      Sfdisc_t
+//      struct stk
+// Frames have structure
+//      struct frame
+//      data
+//
 
 // TODO: Figure out if hardcoding this value is correct. It used to be bound to a config time
 // feature test that defined `ALIGN_BOUND`. But on 32-bit Linux platforms it calculated the wrong
@@ -91,22 +91,22 @@ static_fn Sfdisc_t stkdisc = {.exceptf = stkexcept};
 Sfio_t _Stak_data = SFNEW(NULL, 0, -1, SF_STATIC | SF_WRITE | SF_STRING, &stkdisc, 0);
 
 struct frame {
-    char *prev;     /* address of previous frame */
-    char *end;      /* address of end this frame */
-    char **aliases; /* address aliases */
-    int nalias;     /* number of aliases */
+    char *prev;     // Address of previous frame
+    char *end;      // Address of end this frame
+    char **aliases; // Address aliases
+    int nalias;     // Number of aliases
 };
 
 struct stk {
-    _stk_overflow_ stkoverflow; /* called when malloc fails */
-    short stkref;               /* reference count; */
-    short stkflags;             /* stack attributes */
-    char *stkbase;              /* beginning of current stack frame */
-    char *stkend;               /* end of current stack frame */
+    _stk_overflow_ stkoverflow; // Called when malloc fails
+    short stkref;               // Reference count;
+    short stkflags;             // Stack attributes
+    char *stkbase;              // Beginning of current stack frame
+    char *stkend;               // End of current stack frame
 };
 
-static size_t init;        /* 1 when initialized */
-static struct stk *stkcur; /* pointer to current stk */
+static size_t init;        // 1 when initialized
+static struct stk *stkcur; // pointer to current stk
 static_fn char *stkgrow(Sfio_t *, size_t);
 
 #define stream2stk(stream) \
@@ -134,13 +134,13 @@ static struct {
 #else
 #define increment(x)
 #define count(x, n)
-#endif /* STKSTATS */
+#endif // STKSTATS
 
 static const char Omsg[] = "malloc failed while growing stack\n";
 
-/*
- * default overflow exception
- */
+//
+// Default overflow exception
+//
 static_fn char *overflow(int n) {
     UNUSED(n);
     write(2, Omsg, sizeof(Omsg) - 1);
@@ -149,9 +149,9 @@ static_fn char *overflow(int n) {
     return 0;
 }
 
-/*
- * initialize stkstd, sfio operations may have already occcured
- */
+//
+// Initialize stkstd, sfio operations may have already occcured
+//
 static_fn void stkinit(size_t size) {
     Sfio_t *sp;
     init = size;
@@ -212,9 +212,9 @@ static_fn int stkexcept(Sfio_t *stream, int type, void *val, Sfdisc_t *dp) {
     return 0;
 }
 
-/*
- * create a stack
- */
+//
+// Create a stack
+//
 Sfio_t *stkopen(int flags) {
     size_t bsize;
     struct stk *sp;
@@ -254,11 +254,11 @@ Sfio_t *stkopen(int flags) {
     return stream;
 }
 
-/*
- * return a pointer to the current stack
- * if <stream> is not null, it becomes the new current stack
- * <oflow> becomes the new overflow function
- */
+//
+// Return a pointer to the current stack
+// If <stream> is not null, it becomes the new current stack
+// <oflow> becomes the new overflow function
+//
 Sfio_t *stkinstall(Sfio_t *stream, _stk_overflow_ oflow) {
     if (!init) {
         stkinit(1);
@@ -284,20 +284,20 @@ Sfio_t *stkinstall(Sfio_t *stream, _stk_overflow_ oflow) {
     return old;
 }
 
-/*
- * increase the reference count on the given <stack>
- */
+//
+// Increase the reference count on the given <stack>
+//
 int stklink(Sfio_t *stream) {
     struct stk *sp = stream2stk(stream);
     return sp->stkref++;
 }
 
-/*
- * terminate a stack and free up the space
- * >0 returned if reference decremented but still > 0
- *  0 returned on last close
- * <0 returned on error
- */
+//
+// Terminate a stack and free up the space
+// >0 returned if reference decremented but still > 0
+//  0 returned on last close
+// <0 returned on error
+//
 int stkclose(Sfio_t *stream) {
     struct stk *sp = stream2stk(stream);
     if (sp->stkref > 1) {
@@ -307,9 +307,9 @@ int stkclose(Sfio_t *stream) {
     return sfclose(stream);
 }
 
-/*
- * returns 1 if <loc> is on this stack
- */
+//
+// Returns 1 if <loc> is on this stack
+//
 int stkon(Sfio_t *stream, char *loc) {
     struct stk *sp = stream2stk(stream);
     struct frame *fp;
@@ -318,12 +318,12 @@ int stkon(Sfio_t *stream, char *loc) {
     }
     return 0;
 }
-/*
- * reset the bottom of the current stack back to <loc>
- * if <loc> is not in this stack, then the stack is reset to the beginning
- * otherwise, the top of the stack is set to stkbot+<offset>
- *
- */
+
+//
+// Reset the bottom of the current stack back to <loc>
+// If <loc> is not in this stack, then the stack is reset to the beginning
+// otherwise, the top of the stack is set to stkbot+<offset>
+//
 char *stkset(Sfio_t *stream, char *loc, size_t offset) {
     struct stk *sp = stream2stk(stream);
     char *cp;
@@ -345,7 +345,7 @@ char *stkset(Sfio_t *stream, char *loc, size_t offset) {
                 break;
             }
         }
-        /* see whether <loc> is in current stack frame */
+        // See whether <loc> is in current stack frame
         if (loc >= cp && loc <= sp->stkend) {
             if (frames) sfsetbuf(stream, cp, sp->stkend - cp);
             stream->data = (unsigned char *)(cp + roundof(loc - cp, STK_ALIGN));
@@ -361,7 +361,7 @@ char *stkset(Sfio_t *stream, char *loc, size_t offset) {
         }
         frames++;
     }
-    /* set stack back to the beginning */
+    // Set stack back to the beginning
     cp = (char *)(fp + 1);
     if (frames) {
         sfsetbuf(stream, cp, sp->stkend - cp);
@@ -371,9 +371,9 @@ char *stkset(Sfio_t *stream, char *loc, size_t offset) {
     return (char *)stream->data;
 }
 
-/*
- * allocate <n> bytes on the current stack
- */
+//
+// Allocate <n> bytes on the current stack
+//
 void *stkalloc(Sfio_t *stream, size_t n) {
     unsigned char *old;
     if (!init) stkinit(n);
@@ -385,9 +385,9 @@ void *stkalloc(Sfio_t *stream, size_t n) {
     return (char *)old;
 }
 
-/*
- * begin a new stack word of at least <n> bytes
- */
+//
+// Begin a new stack word of at least <n> bytes
+//
 char *stkseek(Sfio_t *stream, ssize_t n) {
     if (!init) stkinit(n);
     increment(seek);
@@ -396,10 +396,10 @@ char *stkseek(Sfio_t *stream, ssize_t n) {
     return (char *)stream->data;
 }
 
-/*
- * advance the stack to the current top
- * if extra is non-zero, first add a extra bytes and zero the first
- */
+//
+// Advance the stack to the current top
+// If extra is non-zero, first add a extra bytes and zero the first
+//
 char *stkfreeze(Sfio_t *stream, size_t extra) {
     unsigned char *old, *top;
     if (!init) stkinit(extra);
@@ -417,9 +417,9 @@ char *stkfreeze(Sfio_t *stream, size_t extra) {
     return (char *)old;
 }
 
-/*
- * copy string <str> onto the stack as a new stack word
- */
+//
+// Copy string <str> onto the stack as a new stack word
+//
 char *stkcopy(Sfio_t *stream, const char *str) {
     size_t n;
     int off = stktell(stream);
@@ -451,13 +451,12 @@ char *stkcopy(Sfio_t *stream, const char *str) {
     return cp;
 }
 
-/*
- * add a new stack frame of size >= <n> to the current stack.
- * if <n> > 0, copy the bytes from stkbot to stktop to the new stack
- * if <n> is zero, then copy the remainder of the stack frame from stkbot
- * to the end is copied into the new stack frame
- */
-
+//
+// Add a new stack frame of size >= <n> to the current stack.
+// If <n> > 0, copy the bytes from stkbot to stktop to the new stack
+// If <n> is zero, then copy the remainder of the stack frame from stkbot
+// to the end is copied into the new stack frame
+//
 static_fn char *stkgrow(Sfio_t *stream, size_t size) {
     char *cp;
     size_t n = size;
@@ -472,7 +471,7 @@ static_fn char *stkgrow(Sfio_t *stream, size_t size) {
 
     n += (m + sizeof(struct frame) + 1);  // what is the purpose of the `+ 1`?
     n = roundof(n, STK_FSIZE);
-    /* see whether current frame can be extended */
+    // See whether current frame can be extended
     if (stkptr(stream, 0) == sp->stkbase + sizeof(struct frame)) {
         nn = fp->nalias + 1;
         dp = sp->stkbase;
