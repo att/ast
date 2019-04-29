@@ -450,7 +450,6 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
     Timer_t *timeslot = NULL;
     int delim = '\n';
     int jmpval = 0;
-    int binary;
     int oflags = NV_ASSIGN | NV_VARNAME;
     char inquote = 0;
     checkpt_t buff;
@@ -508,7 +507,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
             tty_set(sffileno(iop), TCSADRAIN, &ep->e_nttyparm);
         }
     }
-    binary = nv_isattr(np, NV_BINARY);
+    bool binary = nv_isattr(np, NV_BINARY) == NV_BINARY;
     if (!binary && !(flags & (N_FLAG | NN_FLAG))) {
         Namval_t *mp;
         // Set up state table based on IFS.

@@ -559,7 +559,9 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
     char *last = NULL;
     int nvflags =
         (flag & (NV_ARRAY | NV_NOARRAY | NV_VARNAME | NV_IDENT | NV_ASSIGN | NV_STATIC | NV_MOVE));
-    int r = 0, ref = 0, comvar = (flag & NV_COMVAR), iarray = (flag & NV_IARRAY);
+    int r = 0, ref = 0;
+    bool comvar = nv_isflag(flag, NV_COMVAR);
+    bool iarray = nv_isflag(flag, NV_IARRAY);
     size_t len;
     Shell_t *shp = tp->sh;
 

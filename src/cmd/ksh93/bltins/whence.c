@@ -177,7 +177,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
     Namval_t *nq;
     char *notused;
     Pathcomp_t *pp = NULL;
-    int notrack = 1;
+    bool notrack = true;
 
     if (flags & Q_FLAG) flags &= ~A_FLAG;
     while ((name = *argv++)) {
@@ -202,7 +202,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
         }
         // Non-tracked aliases.
         if ((np = nv_search(name, shp->alias_tree, 0)) && !nv_isnull(np) &&
-            !(notrack = nv_isattr(np, NV_TAGGED)) && (cp = nv_getval(np))) {
+            !(notrack = nv_isattr(np, NV_TAGGED) == NV_TAGGED) && (cp = nv_getval(np))) {
             if (flags & V_FLAG) {
                 if (nv_isattr(np, NV_EXPORT)) {
                     msg = sh_translate(is_xalias);
@@ -262,7 +262,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
     search:
         if (sh_isstate(shp, SH_DEFPATH)) {
             cp = NULL;
-            notrack = 1;
+            notrack = true;
         }
         do {
             if (path_search(shp, name, &pp, 2 + (aflag > 1))) {

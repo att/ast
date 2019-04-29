@@ -1018,7 +1018,8 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
     char *name, *cp, **argv;
     char *subscript = NULL;
     void *dir;
-    int n = 0, noscope = (flags & NV_NOSCOPE);
+    int n = 0;
+    bool noscope = nv_isflag(flags, NV_NOSCOPE);
     Namarr_t *arp = nv_arrayptr(np);
     Dt_t *save_tree = shp->var_tree, *last_root;
     Namval_t *mp = NULL;

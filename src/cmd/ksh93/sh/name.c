@@ -704,7 +704,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
     long add = 0;
     int copy = 0;
     int top = 0;
-    int noscope = (flags & NV_NOSCOPE);
+    bool noscope = nv_isflag(flags, NV_NOSCOPE);
     int nofree = 0;
     int level = 0;
     int zerosub = 0;
@@ -789,7 +789,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                         } else {
                             if (shp->var_tree->walk) root = shp->var_tree->walk;
                             flags |= NV_NOSCOPE;
-                            noscope = 1;
+                            noscope = true;
                         }
                     }
                     if (rp && rp->sdict && (flags & NV_STATIC)) {
@@ -863,7 +863,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                         np = nv_refnode(np);
                         if (sub && c != '.') nv_putsub(np, sub, 0L, 0);
                         flags |= NV_NOSCOPE;
-                        noscope = 1;
+                        noscope = true;
                     }
                     shp->first_root = root;
                     if (nv_isref(np) && (c == '[' || c == '.' || !(flags & NV_ASSIGN))) {
@@ -1388,7 +1388,7 @@ skip:
     return np;
 }
 
-static_fn int ja_size(char *, int, int);
+static_fn int ja_size(char *, int, bool);
 static_fn void ja_restore(void);
 static char *savep;
 static char savechars[8 + 1];
@@ -1645,7 +1645,11 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                 }
             }
             size = nv_size(np);
-            if (size) size = ja_size((char *)sp, size, nv_isattr(np, NV_RJUST | NV_ZFILL));
+            if (size) {
+                bool right_adjust =
+                    nv_isattr(np, NV_RJUST) == NV_RJUST || nv_isattr(np, NV_ZFILL) == NV_ZFILL;
+                size = ja_size((char *)sp, size, right_adjust);
+            }
         }
         if (!FETCH_VTP(up, const_cp) || *FETCH_VTP(up, const_cp) == 0) flags &= ~NV_APPEND;
         if (!nv_isattr(np, NV_NOFREE)) {
@@ -1810,7 +1814,7 @@ static_fn void rightjust(char *str, int size, int fill) {
 // spaces if they cross the boundary. <type> is non-zero for right justified  fields.
 //
 
-static_fn int ja_size(char *str, int size, int type) {
+static_fn int ja_size(char *str, int size, bool right_adjust) {
     char *cp = str;
     int n = size;
     int oldn = 0;
@@ -1827,13 +1831,13 @@ static_fn int ja_size(char *str, int size, int type) {
         c = cp - oldcp;
         n += (c - outsize);
         oldcp = cp;
-        if (size <= 0 && type == 0) break;
+        if (size <= 0 && !right_adjust) break;
     }
 
     // Check for right justified fields that need truncating.
     if (size >= 0) return n;
 
-    if (type == 0) {
+    if (!right_adjust) {
         // Left justified and character crosses field boundary.
         n = oldn;
         // Save boundary char and replace with spaces.
@@ -1846,7 +1850,7 @@ static_fn int ja_size(char *str, int size, int type) {
         savep = cp;
     }
     size = -size;
-    if (type) n -= (ja_size(str, size, 0) - size);
+    if (right_adjust) n -= (ja_size(str, size, 0) - size);
     return n;
 }
 

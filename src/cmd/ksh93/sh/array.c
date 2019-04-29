@@ -174,14 +174,14 @@ int array_isempty(Namval_t *np) { return array_maxindex(np) <= 0; }
 static_fn struct Value *array_getup(Namval_t *np, Namarr_t *arp, int update) {
     struct index_array *ap = (struct index_array *)arp;
     struct Value *up;
-    int nofree = 0;
+    bool nofree = false;
 
     if (!arp) return &np->nvalue;
     if (is_associative(&ap->namarr)) {
         Namval_t *mp;
         mp = (*arp->fun)(np, NULL, ASSOC_OP_CURRENT);
         if (mp) {
-            nofree = nv_isattr(mp, NV_NOFREE);
+            nofree = nv_isattr(mp, NV_NOFREE) == NV_NOFREE;
             up = &(mp->nvalue);  // parens are to silence false positive from cppcheck
         } else {
             return (*arp->fun)(np, NULL, ASSOC_OP_ADD2);
@@ -233,14 +233,14 @@ static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
     struct index_array *ap = (struct index_array *)arp;
     struct Value *up;
     Namval_t *mp;
-    int wasundef;
 
     if (flag & ARRAY_LOOKUP) {
         ap->namarr.flags &= ~ARRAY_NOSCOPE;
     } else {
         ap->namarr.flags |= ARRAY_NOSCOPE;
     }
-    wasundef = ap->namarr.flags & ARRAY_UNDEF;
+
+    bool wasundef = nv_isflag(ap->namarr.flags, ARRAY_UNDEF);
     if (wasundef) {
         ap->namarr.flags &= ~ARRAY_UNDEF;
         // Delete array is the same as delete array[@].
@@ -332,8 +332,8 @@ static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
 bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
     Shell_t *shp = sh_ptr(np);
     Namval_t *nq;
-    int rdonly = nv_isattr(np, NV_RDONLY);
-    int xtrace = sh_isoption(shp, SH_XTRACE);
+    bool rdonly = nv_isattr(np, NV_RDONLY) == NV_RDONLY;
+    bool xtrace = sh_isoption(shp, SH_XTRACE);
 
     shp->last_table = NULL;
     if (!tp->nvfun) return true;
@@ -512,10 +512,11 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
     struct Value *up;
     Namval_t *mp;
     struct index_array *aq = (struct index_array *)ap;
-    int scan, nofree = nv_isattr(np, NV_NOFREE);
+    int scan;
+    bool nofree = nv_isattr(np, NV_NOFREE) == NV_NOFREE;
 
     do {
-        int xfree = is_associative(ap) ? 0 : array_isbit(aq->bits, aq->cur, ARRAY_NOFREE);
+        bool xfree = is_associative(ap) ? false : array_isbit(aq->bits, aq->cur, ARRAY_NOFREE);
         mp = array_find(np, ap, string ? ARRAY_ASSIGN : ARRAY_DELETE);
         scan = ap->flags & ARRAY_SCAN;
         if (mp && mp != np) {
