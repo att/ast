@@ -164,7 +164,7 @@ static_fn const char *indent(int level, const char *fmt) {
 typedef void(vtp_dprintf)(const char *, int, const char *, int, const char *, const struct Value *);
 
 static struct sigaction debug_oact;
-static jmp_buf jbuf;
+static sigjmp_buf jbuf;
 
 static_fn void debug_segv_handler(int signo) {
     UNUSED(signo);
