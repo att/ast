@@ -410,9 +410,17 @@ struct Namval {
 // inline functions rather than macros to facilitate instrumentation while still being fast. In
 // particular validating the nvflag value; both current and new. Variants such as nv_isnull() are
 // not static inline functions because they do more work and were historically extern functions.
-static inline int nv_isattr(const Namval_t *np, nvflag_t nvflag) { return np->nvflag & nvflag; }
 
-static inline bool nv_isarray(Namval_t *np) { return nv_isattr(np, NV_ARRAY) == NV_ARRAY; }
+// Return true if the mask is set in nvflags.
+static inline int nv_isflag(const nvflag_t nvflags, const nvflag_t mask) {
+    return (nvflags & mask) == mask;
+}
+
+// Return any bits in mask that are set in the Namval_t.
+// TODO: Convert this to returning a truth value (all bits in mask set or not) to mimic nv_isflag().
+static inline int nv_isattr(const Namval_t *np, const nvflag_t mask) { return np->nvflag & mask; }
+
+static inline bool nv_isarray(const Namval_t *np) { return nv_isattr(np, NV_ARRAY) == NV_ARRAY; }
 
 static inline void nv_onattr(Namval_t *np, nvflag_t nvflag) {
     nvflag &= ~(~0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
@@ -641,7 +649,7 @@ extern Namval_t *nv_mount(Namval_t *, const char *name, Dt_t *);
 extern Namval_t *nv_arraychild(Namval_t *, Namval_t *, int);
 extern int nv_compare(Dt_t *, void *, void *, Dtdisc_t *);
 extern void nv_outnode(Namval_t *, Sfio_t *, int, int);
-extern bool nv_subsaved(Namval_t *, int);
+extern bool nv_subsaved(Namval_t *, bool);
 extern void nv_typename(Namval_t *, Sfio_t *);
 extern void nv_newtype(Namval_t *);
 extern Namval_t *nv_typeparent(Namval_t *);

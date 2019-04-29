@@ -218,14 +218,14 @@ void sh_subfork(void) {
     }
 }
 
-bool nv_subsaved(Namval_t *np, int table) {
+bool nv_subsaved(Namval_t *np, bool table) {
     struct subshell *sp;
     struct Link *lp, *lpprev;
     for (sp = (struct subshell *)subshell_data; sp; sp = sp->prev) {
         lpprev = 0;
         for (lp = sp->svar; lp; lpprev = lp, lp = lp->next) {
             if (lp->node == np) {
-                if (table & NV_TABLE) {
+                if (table) {
                     if (lpprev) {
                         lpprev->next = lp->next;
                     } else {

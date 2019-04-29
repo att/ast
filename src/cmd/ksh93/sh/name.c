@@ -1130,8 +1130,8 @@ void nv_delete(Namval_t *np, Dt_t *root, int flags) {
     }
     if (root) {
         if (dtdelete(root, np)) {
-            if (!(flags & NV_NOFREE) &&
-                ((flags & NV_FUNCTION) || !nv_subsaved(np, flags & NV_TABLE))) {
+            if (!nv_isflag(flags, NV_NOFREE) &&
+                (nv_isflag(flags, NV_FUNCTION) || !nv_subsaved(np, nv_isflag(flags, NV_TABLE)))) {
                 Namarr_t *ap;
                 assert(np);
                 if (nv_isarray(np) && np->nvfun && (ap = nv_arrayptr(np)) && is_associative(ap)) {
