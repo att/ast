@@ -450,8 +450,8 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
     Timer_t *timeslot = NULL;
     int delim = '\n';
     int jmpval = 0;
-    int oflags = NV_ASSIGN | NV_VARNAME;
-    char inquote = 0;
+    nvflag_t oflags = NV_ASSIGN | NV_VARNAME;
+    bool inquote = false;
     checkpt_t buff;
     Edit_t *ep = (struct edit *)shp->gd->ed_context;
 

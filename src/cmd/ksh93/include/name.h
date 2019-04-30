@@ -206,17 +206,23 @@ typedef struct Nambfun Nambfun_t;
 typedef struct Namarray Namarr_t;
 typedef struct Namdecl Namdecl_t;
 
+// Any place that assigns or compares the NV_* symbols below to a var should use `nvflag_t` for the
+// type of the var rather than `unsigned short`, `int`, etc.
+typedef uint32_t nvflag_t;
+// Number of low numbered bits valid in a (struct Namval).nvflag.
+#define NV_nbits 16
+
 //
 // This defines the template for nodes that have their own assignment and or lookup functions.
 //
 struct Namdisc {
     size_t dsize;
-    void (*putval)(Namval_t *, const void *, int, Namfun_t *);
+    void (*putval)(Namval_t *, const void *, nvflag_t, Namfun_t *);
     char *(*getval)(Namval_t *, Namfun_t *);
     Sfdouble_t (*getnum)(Namval_t *, Namfun_t *);
     char *(*setdisc)(Namval_t *, const void *, Namval_t *, Namfun_t *);
-    Namval_t *(*createf)(Namval_t *, const void *, int, Namfun_t *);
-    Namfun_t *(*clonef)(Namval_t *, Namval_t *, int, Namfun_t *);
+    Namval_t *(*createf)(Namval_t *, const void *, nvflag_t, Namfun_t *);
+    Namfun_t *(*clonef)(Namval_t *, Namval_t *, nvflag_t, Namfun_t *);
     char *(*namef)(const Namval_t *, Namfun_t *);
     Namval_t *(*nextf)(Namval_t *, Dt_t *, Namfun_t *);
     Namval_t *(*typef)(Namval_t *, Namfun_t *);
@@ -283,12 +289,6 @@ struct Namdecl {
     const char *optstring;
     Optdisc_t *optinfof;
 };
-
-// Any place that assigns or compares the NV_* symbols below to a var should use `nvflag_t` for the
-// type of the var rather than `unsigned short`, `int`, etc.
-typedef uint32_t nvflag_t;
-// Number of low numbered bits valid in a (struct Namval).nvflag.
-#define NV_nbits 16
 
 // This defines the attributes for a name-value node.
 struct Namval {

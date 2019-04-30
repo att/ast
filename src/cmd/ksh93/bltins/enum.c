@@ -142,7 +142,7 @@ static_fn void free_enum(struct Enum *ep) {
     free(ep);
 }
 
-static_fn Namfun_t *clone_enum(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_enum(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfun_t *fp) {
     UNUSED(np);
     UNUSED(mp);
     UNUSED(flags);
@@ -157,7 +157,7 @@ static_fn Namfun_t *clone_enum(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     return &ep->namfun;
 }
 
-static_fn void put_enum(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_enum(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     struct Enum *ep = (struct Enum *)fp;
     const char *v;
     int n;
@@ -208,7 +208,7 @@ static_fn char *get_enum(Namval_t *np, Namfun_t *fp) {
 
 static_fn Sfdouble_t get_nenum(Namval_t *np, Namfun_t *fp) { return nv_getn(np, fp); }
 
-static_fn Namval_t *create_enum(Namval_t *np, const void *vp, int flags, Namfun_t *fp) {
+static_fn Namval_t *create_enum(Namval_t *np, const void *vp, nvflag_t flags, Namfun_t *fp) {
     UNUSED(flags);
     const char *name = vp;
     struct Enum *ep = (struct Enum *)fp;

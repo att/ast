@@ -70,7 +70,7 @@ struct tdata {
     char aflag;
     bool pflag;
     int argnum;
-    int scanmask;
+    nvflag_t scanmask;
     Dt_t *scanroot;
     char **argnam;
     int indent;
@@ -80,9 +80,9 @@ struct tdata {
 static_fn int print_namval(Sfio_t *, Namval_t *, bool, struct tdata *);
 static_fn void print_attribute(Namval_t *, void *);
 static_fn void print_all(Sfio_t *, Dt_t *, struct tdata *);
-static_fn void print_scan(Sfio_t *, int, Dt_t *, bool, struct tdata *);
+static_fn void print_scan(Sfio_t *, nvflag_t, Dt_t *, bool, struct tdata *);
 static_fn int unall(int, char **, Dt_t *, Shell_t *);
-static_fn int setall(char **, int, Dt_t *, struct tdata *);
+static_fn int setall(char **, nvflag_t, Dt_t *, struct tdata *);
 static_fn void pushname(Namval_t *, void *);
 
 //
@@ -134,17 +134,18 @@ int b_readonly(int argc, char *argv[], Shbltin_t *context) {
     }
 
     argv += (opt_info.index - 1);
+    nvflag_t nvflags;
     if (*command == 'r') {
-        flag = (NV_ASSIGN | NV_RDONLY | NV_VARNAME);
+        nvflags = (NV_ASSIGN | NV_RDONLY | NV_VARNAME);
     } else {
-        flag = (NV_ASSIGN | NV_EXPORT | NV_IDENT);
+        nvflags = (NV_ASSIGN | NV_EXPORT | NV_IDENT);
         if (!tdata.sh->prefix) tdata.sh->prefix = "";
     }
-    return setall(argv, flag, tdata.sh->var_tree, &tdata);
+    return setall(argv, nvflags, tdata.sh->var_tree, &tdata);
 }
 
 int b_alias(int argc, char *argv[], Shbltin_t *context) {
-    unsigned flag = NV_NOARRAY | NV_NOSCOPE | NV_ASSIGN;
+    nvflag_t nvflags = NV_NOARRAY | NV_NOSCOPE | NV_ASSIGN;
     Dt_t *troot;
     int n;
     struct tdata tdata;
@@ -153,9 +154,9 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
     memset(&tdata, 0, sizeof(tdata));
     tdata.sh = context->shp;
     troot = tdata.sh->alias_tree;
-    if (*argv[0] == 'h') flag = NV_TAGGED;
+    if (*argv[0] == 'h') nvflags = NV_TAGGED;
     if (sh_isoption(tdata.sh, SH_BASH)) tdata.prefix = argv[0];
-    if (!argv[1]) return setall(argv, flag, troot, &tdata);
+    if (!argv[1]) return setall(argv, nvflags, troot, &tdata);
 
     opt_info.offset = 0;
     opt_info.index = 1;
@@ -169,11 +170,11 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 't': {
-                flag |= NV_TAGGED;
+                nvflags |= NV_TAGGED;
                 break;
             }
             case 'x': {
-                flag |= NV_EXPORT;
+                nvflags |= NV_EXPORT;
                 break;
             }
             case ':': {
@@ -193,7 +194,7 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
     }
 
     argv += (opt_info.index - 1);
-    if (!(flag & NV_TAGGED)) return setall(argv, flag, troot, &tdata);
+    if (!nv_isflag(nvflags, NV_TAGGED)) return setall(argv, nvflags, troot, &tdata);
 
     // Hacks to handle hash -r | --.
     if (argv[1] && argv[1][0] == '-') {
@@ -213,11 +214,12 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
         }
     }
     troot = tdata.sh->track_tree;
-    return setall(argv, flag, troot, &tdata);
+    return setall(argv, nvflags, troot, &tdata);
 }
 
 int b_typeset(int argc, char *argv[], Shbltin_t *context) {
-    int n, flag = NV_VARNAME | NV_ASSIGN;
+    int n;
+    nvflag_t nvflags = NV_VARNAME | NV_ASSIGN;
     struct tdata tdata;
     const char *optstring = sh_opttypeset;
     Namdecl_t *ntp = (Namdecl_t *)context->ptr;
@@ -241,7 +243,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
         if (tdata.aflag == 0) tdata.aflag = *opt_info.option;
         switch (n) {
             case 'a': {
-                flag |= NV_IARRAY;
+                nvflags |= NV_IARRAY;
                 if (opt_info.arg && *opt_info.arg != '[') {
                     opt_info.index--;
                     goto endargs;
@@ -250,11 +252,11 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'A': {
-                flag |= NV_ARRAY;
+                nvflags |= NV_ARRAY;
                 break;
             }
             case 'C': {
-                flag |= NV_COMVAR;
+                nvflags |= NV_COMVAR;
                 break;
             }
             case 'E': {
@@ -269,43 +271,45 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
             case 'X': {
                 if (!opt_info.arg || (tdata.argnum = opt_info.num) < 0) {
                     if (n == 'X') {
-                        tdata.argnum =
-                            2 * ((flag & NV_LONG) ? sizeof(Sfdouble_t)
-                                                  : (isshort ? sizeof(float) : sizeof(double)));
+                        tdata.argnum = 2 * (nv_isflag(nvflags, NV_LONG)
+                                                ? sizeof(Sfdouble_t)
+                                                : (isshort ? sizeof(float) : sizeof(double)));
                     } else {
                         tdata.argnum =
-                            ((flag & NV_LONG) ? LDBL_DIG : (isshort ? FLT_DIG : DBL_DIG)) - 2;
+                            (nv_isflag(nvflags, NV_LONG) ? LDBL_DIG
+                                                         : (isshort ? FLT_DIG : DBL_DIG)) -
+                            2;
                     }
                 }
                 isfloat = true;
                 if (n == 'E') {
-                    flag &= ~NV_HEXFLOAT;
-                    flag |= NV_EXPNOTE;
+                    nvflags &= ~NV_HEXFLOAT;
+                    nvflags |= NV_EXPNOTE;
                 } else if (n == 'X') {
-                    flag &= ~NV_EXPNOTE;
-                    flag |= NV_HEXFLOAT;
+                    nvflags &= ~NV_EXPNOTE;
+                    nvflags |= NV_HEXFLOAT;
                 }
                 break;
             }
             case 'b': {
-                flag |= NV_BINARY;
+                nvflags |= NV_BINARY;
                 break;
             }
             case 'm': {
-                flag |= NV_MOVE;
+                nvflags |= NV_MOVE;
                 break;
             }
             case 'n': {
-                flag &= ~NV_VARNAME;
-                flag |= (NV_REF | NV_IDENT);
+                nvflags &= ~NV_VARNAME;
+                nvflags |= (NV_REF | NV_IDENT);
                 break;
             }
             case 'H': {
-                flag |= NV_HOST;
+                nvflags |= NV_HOST;
                 break;
             }
             case 'T': {
-                flag |= NV_TYPE;
+                nvflags |= NV_TYPE;
                 tdata.prefix = opt_info.arg;
                 break;
             }
@@ -318,10 +322,10 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
                     __builtin_unreachable();
                 }
                 if (n == 'Z') {
-                    flag |= NV_ZFILL;
+                    nvflags |= NV_ZFILL;
                 } else {
-                    flag &= ~(NV_LJUST | NV_RJUST);
-                    flag |= (n == 'L' ? NV_LJUST : NV_RJUST);
+                    nvflags &= ~(NV_LJUST | NV_RJUST);
+                    nvflags |= (n == 'L' ? NV_LJUST : NV_RJUST);
                 }
                 break;
             }
@@ -332,36 +336,36 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
                     __builtin_unreachable();
                 }
                 if (tdata.wctname && strcmp(tdata.wctname, e_tolower) == 0) {
-                    flag |= NV_UTOL;
+                    nvflags |= NV_UTOL;
                 } else {
-                    flag |= NV_LTOU;
+                    nvflags |= NV_LTOU;
                 }
-                if (!tdata.wctname) flag |= NV_UTOL;
+                if (!tdata.wctname) nvflags |= NV_UTOL;
                 break;
             }
             case 'f': {
-                flag &= ~(NV_VARNAME | NV_ASSIGN);
+                nvflags &= ~(NV_VARNAME | NV_ASSIGN);
                 troot = tdata.sh->fun_tree;
                 break;
             }
             case 'i': {
                 if (!opt_info.arg || (tdata.argnum = opt_info.num) < 0) tdata.argnum = 10;
-                flag |= NV_INTEGER;
+                nvflags |= NV_INTEGER;
                 break;
             }
             case 'l': {
                 tdata.wctname = e_tolower;
-                flag |= NV_UTOL;
+                nvflags |= NV_UTOL;
                 break;
             }
             case 'p': {
                 tdata.prefix = argv[0];
                 tdata.pflag = true;
-                flag &= ~NV_ASSIGN;
+                nvflags &= ~NV_ASSIGN;
                 break;
             }
             case 'r': {
-                flag |= NV_RDONLY;
+                nvflags |= NV_RDONLY;
                 break;
             }
             case 'S': {
@@ -377,17 +381,17 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 't': {
-                flag |= NV_TAGGED;
+                nvflags |= NV_TAGGED;
                 break;
             }
             case 'u': {
                 tdata.wctname = e_toupper;
-                flag |= NV_LTOU;
+                nvflags |= NV_LTOU;
                 break;
             }
             case 'x': {
-                flag &= ~NV_VARNAME;
-                flag |= (NV_EXPORT | NV_IDENT);
+                nvflags &= ~NV_VARNAME;
+                nvflags |= (NV_EXPORT | NV_IDENT);
                 break;
             }
             case ':': {
@@ -417,20 +421,37 @@ endargs:
     } else if (opt_info.index) {
         argv--;
     }
-    if ((flag & NV_ZFILL) && !(flag & NV_LJUST)) flag |= NV_RJUST;
-    if ((flag & NV_INTEGER) && (flag & (NV_LJUST | NV_RJUST | NV_ZFILL))) error_info.errors++;
-    if ((flag & NV_BINARY) && (flag & (NV_LJUST | NV_UTOL | NV_LTOU))) error_info.errors++;
-    if ((flag & NV_MOVE) && (flag & ~(NV_MOVE | NV_VARNAME | NV_ASSIGN))) error_info.errors++;
-    if ((flag & NV_REF) && (flag & ~(NV_REF | NV_IDENT | NV_ASSIGN))) error_info.errors++;
-    if ((flag & NV_TYPE) && (flag & ~(NV_TYPE | NV_VARNAME | NV_ASSIGN))) error_info.errors++;
+    if (nv_isflag(nvflags, NV_ZFILL) && !nv_isflag(nvflags, NV_LJUST)) nvflags |= NV_RJUST;
+    if (nv_isflag(nvflags, NV_INTEGER) &&
+        (nv_isflag(nvflags, NV_LJUST) || nv_isflag(nvflags, NV_RJUST) ||
+         nv_isflag(nvflags, NV_ZFILL))) {
+        error_info.errors++;
+    }
+    if (nv_isflag(nvflags, NV_BINARY) &&
+        (nv_isflag(nvflags, NV_LJUST) || nv_isflag(nvflags, NV_UTOL) ||
+         nv_isflag(nvflags, NV_LTOU))) {
+        error_info.errors++;
+    }
+    if (nv_isflag(nvflags, NV_MOVE) && !nv_isflag(nvflags, NV_MOVE) &&
+        !nv_isflag(nvflags, NV_VARNAME) && !nv_isflag(nvflags, NV_ASSIGN)) {
+        error_info.errors++;
+    }
+    if (nv_isflag(nvflags, NV_REF) && !nv_isflag(nvflags, NV_REF) &&
+        !nv_isflag(nvflags, NV_IDENT) && !nv_isflag(nvflags, NV_ASSIGN)) {
+        error_info.errors++;
+    }
+    if (nv_isflag(nvflags, NV_TYPE) && !nv_isflag(nvflags, NV_TYPE) &&
+        !nv_isflag(nvflags, NV_VARNAME) && !nv_isflag(nvflags, NV_ASSIGN)) {
+        error_info.errors++;
+    }
     if (troot == tdata.sh->fun_tree &&
-        ((isfloat || flag & ~(NV_FUNCT | NV_TAGGED | NV_EXPORT | NV_LTOU)))) {
+        ((isfloat || nvflags & ~(NV_FUNCT | NV_TAGGED | NV_EXPORT | NV_LTOU)))) {
         error_info.errors++;
     }
     if (sflag && troot == tdata.sh->fun_tree) {
         // Static function.
         sflag = false;
-        flag |= NV_STATICF;
+        nvflags |= NV_STATICF;
     }
     if (error_info.errors) {
         errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
@@ -444,21 +465,21 @@ endargs:
     }
 #endif
 
-    if (isfloat) flag |= NV_DOUBLE;
+    if (isfloat) nvflags |= NV_DOUBLE;
     if (isshort) {
-        flag &= ~NV_LONG;
-        flag |= NV_SHORT | NV_INTEGER;
+        nvflags &= ~NV_LONG;
+        nvflags |= NV_SHORT | NV_INTEGER;
     }
     if (sflag) {
         if (tdata.sh->mktype) {
-            flag |= NV_REF | NV_TAGGED;
+            nvflags |= NV_REF | NV_TAGGED;
         } else if (!tdata.sh->typeinit) {
-            flag |= NV_STATIC | NV_IDENT;
+            nvflags |= NV_STATIC | NV_IDENT;
         }
     }
-    if (tdata.sh->fn_depth && !tdata.pflag) flag |= NV_NOSCOPE;
+    if (tdata.sh->fn_depth && !tdata.pflag) nvflags |= NV_NOSCOPE;
     if (tdata.help) tdata.help = strdup(tdata.help);
-    if (flag & NV_TYPE) {
+    if (nv_isflag(nvflags, NV_TYPE)) {
         Stk_t *stkp = tdata.sh->stk;
         int off = 0, offset = stktell(stkp);
         if (!tdata.prefix) return sh_outtype(tdata.sh, sfstdout);
@@ -484,7 +505,7 @@ endargs:
         }
         tdata.tp->nvenv = (Namval_t *)tdata.help;
         tdata.tp->nvenv_is_cp = true;
-        flag &= ~NV_TYPE;
+        nvflags &= ~NV_TYPE;
         if (nv_isattr(tdata.tp, NV_TAGGED)) {
             nv_offattr(tdata.tp, NV_TAGGED);
             return 0;
@@ -493,11 +514,13 @@ endargs:
         tdata.aflag = '-';
     }
     if (!tdata.sh->mktype) tdata.help = NULL;
-    if (tdata.aflag == '+' && (flag & (NV_ARRAY | NV_IARRAY | NV_COMVAR)) && argv[1]) {
+    if (tdata.aflag == '+' && argv[1] &&
+        (nv_isflag(nvflags, NV_ARRAY) || nv_isflag(nvflags, NV_IARRAY) ||
+         nv_isflag(nvflags, NV_COMVAR))) {
         errormsg(SH_DICT, ERROR_exit(1), e_nounattr);
         __builtin_unreachable();
     }
-    return setall(argv, flag, troot, &tdata);
+    return setall(argv, nvflags, troot, &tdata);
 }
 
 static_fn void print_value(Sfio_t *iop, Namval_t *np, struct tdata *tp) {
@@ -554,10 +577,10 @@ static_fn void print_value(Sfio_t *iop, Namval_t *np, struct tdata *tp) {
     }
 }
 
-static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
+static_fn int setall(char **argv, nvflag_t flag, Dt_t *troot, struct tdata *tp) {
     char *name;
     char *last = NULL;
-    int nvflags =
+    nvflag_t nvflags =
         (flag & (NV_ARRAY | NV_NOARRAY | NV_VARNAME | NV_IDENT | NV_ASSIGN | NV_STATIC | NV_MOVE));
     int r = 0, ref = 0;
     bool comvar = nv_isflag(flag, NV_COMVAR);
@@ -586,11 +609,11 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             Namval_t *np;
             Namarr_t *ap;
             Namval_t *mp;
-            unsigned curflag;
+            nvflag_t curflag;
             if (troot == shp->fun_tree) {
                 // Functions can be exported or traced but not set.
                 flag &= ~NV_ASSIGN;
-                if (flag & NV_LTOU) {
+                if (nv_isflag(flag, NV_LTOU)) {
                     // Function names cannot be special builtin.
                     if ((np = nv_search(name, shp->bltin_tree, 0)) && nv_isattr(np, BLT_SPC)) {
                         errormsg(SH_DICT, ERROR_exit(1), e_badfun, name);
@@ -618,7 +641,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                         }
                     }
                 }
-                if (np && ((flag & NV_LTOU) || !nv_isnull(np) || nv_isattr(np, NV_LTOU))) {
+                if (np && (nv_isflag(flag, NV_LTOU) || !nv_isnull(np) || nv_isattr(np, NV_LTOU))) {
                     if (flag == 0 && !tp->help) {
                         print_namval(sfstdout, np, tp->aflag == '+', tp);
                         continue;
@@ -653,7 +676,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             if (shp->nodelist && (len = strlen(name)) && name[len - 1] == '@') {
                 np = *shp->nodelist++;
             } else {
-                np = nv_open(name, troot, nvflags | ((nvflags & NV_ASSIGN) ? 0 : NV_ARRAY));
+                np = nv_open(name, troot, nvflags | (nv_isflag(nvflags, NV_ASSIGN) ? 0 : NV_ARRAY));
             }
             if (!np) continue;
             if (nv_isnull(np) && !nv_isarray(np) && nv_isattr(np, NV_NOFREE)) {
@@ -671,7 +694,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                 errormsg(SH_DICT, ERROR_exit(1),
                          "cannot change associative array %s to index array", nv_name(np));
                 __builtin_unreachable();
-            } else if ((iarray || (flag & NV_ARRAY)) && nv_isvtree(np) && !nv_type(np)) {
+            } else if ((iarray || nv_isflag(flag, NV_ARRAY)) && nv_isvtree(np) && !nv_type(np)) {
                 _nv_unset(np, NV_EXPORT);
             }
             if (tp->pflag) {
@@ -867,7 +890,7 @@ typedef struct Libcomp_s {
     char *lib;
     dev_t dev;
     ino_t ino;
-    unsigned int attr;
+    nvflag_t attr;
 } Libcomp_t;
 
 static Libcomp_t *liblist = NULL;
@@ -936,7 +959,8 @@ Shbltin_f sh_getlib(Shell_t *shp, char *sym, Pathcomp_t *pp) {
 //
 int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     char *arg = NULL, *name;
-    int n, r = 0, flag = 0;
+    int n, r = 0;
+    nvflag_t flag = 0;
     Namval_t *np = NULL;
     void *disable = NULL;
     struct tdata tdata;
@@ -1031,7 +1055,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
             return 0;
         }
     }
-    flag = stktell(stkp);
+    size_t stkoff = stktell(stkp);
     r = 0;
     while (*argv) {
         arg = *argv;
@@ -1048,7 +1072,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
         if (disable || nlib) {
             for (n = (nlib ? nlib : disable ? 1 : 0); --n >= 0;) {
                 if (!disable && !liblist[n].dll) continue;
-                if (disable || (addr = (Shbltin_f)dlllook(liblist[n].dll, stkptr(stkp, flag)))) {
+                if (disable || (addr = (Shbltin_f)dlllook(liblist[n].dll, stkptr(stkp, stkoff)))) {
                     np = sh_addbuiltin(tdata.sh, arg, addr, disable);
                     if (np) {
                         if (disable || nv_isattr(np, BLT_SPC)) {
@@ -1077,7 +1101,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
             r = 1;
         }
         if (!disable && np) nv_offattr(np, BLT_DISABLE);
-        stkseek(stkp, flag);
+        stkseek(stkp, stkoff);
         argv++;
     }
     return r;
@@ -1129,7 +1153,8 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
     const char *name;
     volatile int r;
     Dt_t *dp;
-    int nflag = 0, all = 0, isfun, jmpval;
+    nvflag_t nvflags = 0;
+    int all = 0, isfun, jmpval;
     checkpt_t buff;
     enum { ALIAS, VARIABLE } type;
     UNUSED(argc);
@@ -1153,7 +1178,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
                 break;
             }
             case 'n': {
-                nflag = NV_NOREF;
+                nvflags = NV_NOREF;
             }
             // FALLTHRU
             case 'v': {
@@ -1179,9 +1204,9 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
     if (!troot) return 1;
     r = 0;
     if (troot == shp->var_tree) {
-        nflag |= NV_VARNAME;
+        nvflags |= NV_VARNAME;
     } else {
-        nflag = NV_NOSCOPE;
+        nvflags = NV_NOSCOPE;
     }
     if (all) {
         dtclear(troot);
@@ -1194,9 +1219,9 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
         np = NULL;
         if (jmpval == 0) {
             if (shp->namespace && troot != shp->var_tree) {
-                np = sh_fsearch(shp, name, nflag ? NV_NOSCOPE : 0);
+                np = sh_fsearch(shp, name, nvflags ? NV_NOSCOPE : 0);
             }
-            if (!np) np = nv_open(name, troot, NV_NOADD | nflag);
+            if (!np) np = nv_open(name, troot, NV_NOADD | nvflags);
         } else {
             r = 1;
             continue;
@@ -1384,7 +1409,8 @@ static_fn void print_attribute(Namval_t *np, void *data) {
 // subscript or value is printed.
 //
 
-static_fn void print_scan(Sfio_t *file, int flag, Dt_t *root, bool omit_attrs, struct tdata *tp) {
+static_fn void print_scan(Sfio_t *file, nvflag_t flag, Dt_t *root, bool omit_attrs,
+                          struct tdata *tp) {
     char **argv;
     Namval_t *np;
     int namec;
@@ -1398,7 +1424,7 @@ static_fn void print_scan(Sfio_t *file, int flag, Dt_t *root, bool omit_attrs, s
     tp->scanroot = root;
     tp->outfile = file;
     if (!tp->prefix && tp->tp) tp->prefix = nv_name(tp->tp);
-    if (flag & NV_INTEGER) tp->scanmask |= (NV_DOUBLE | NV_EXPNOTE);
+    if (nv_isflag(flag, NV_INTEGER)) tp->scanmask |= (NV_DOUBLE | NV_EXPNOTE);
     if (flag == NV_LTOU || flag == NV_UTOL) tp->scanmask |= NV_UTOL | NV_LTOU;
     if (root == tp->sh->bltin_tree) tp->scanmask |= BLT_DISABLE;
     namec = nv_scan(root, NULL, tp, tp->scanmask, flag & ~NV_IARRAY);
