@@ -91,22 +91,22 @@ static_fn Sfdisc_t stkdisc = {.exceptf = stkexcept};
 Sfio_t _Stak_data = SFNEW(NULL, 0, -1, SF_STATIC | SF_WRITE | SF_STRING, &stkdisc, 0);
 
 struct frame {
-    char *prev;     // Address of previous frame
-    char *end;      // Address of end this frame
-    char **aliases; // Address aliases
-    int nalias;     // Number of aliases
+    char *prev;      // Address of previous frame
+    char *end;       // Address of end this frame
+    char **aliases;  // Address aliases
+    int nalias;      // Number of aliases
 };
 
 struct stk {
-    _stk_overflow_ stkoverflow; // Called when malloc fails
-    short stkref;               // Reference count;
-    short stkflags;             // Stack attributes
-    char *stkbase;              // Beginning of current stack frame
-    char *stkend;               // End of current stack frame
+    _stk_overflow_ stkoverflow;  // Called when malloc fails
+    short stkref;                // Reference count;
+    short stkflags;              // Stack attributes
+    char *stkbase;               // Beginning of current stack frame
+    char *stkend;                // End of current stack frame
 };
 
-static size_t init;        // 1 when initialized
-static struct stk *stkcur; // pointer to current stk
+static size_t init;         // 1 when initialized
+static struct stk *stkcur;  // pointer to current stk
 static_fn char *stkgrow(Sfio_t *, size_t);
 
 #define stream2stk(stream) \
@@ -134,7 +134,7 @@ static struct {
 #else
 #define increment(x)
 #define count(x, n)
-#endif // STKSTATS
+#endif  // STKSTATS
 
 static const char Omsg[] = "malloc failed while growing stack\n";
 
