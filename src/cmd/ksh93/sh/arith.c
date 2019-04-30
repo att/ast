@@ -121,7 +121,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
     Dt_t *nsdict = (shp->namespace ? nv_dict(shp->namespace) : 0);
     Dt_t *root = shp->var_tree;
 
-    assign = assign ? NV_ASSIGN : 0;
+    nvflag_t nvflags = assign ? NV_ASSIGN : 0;
     lvalue->nosub = 0;
     if (nosub < 0 && lvalue->ovalue) return (Namval_t *)lvalue->ovalue;
     lvalue->ovalue = NULL;
@@ -130,7 +130,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
         // Do binding to node now.
         int d = cp[flag];
         cp[flag] = 0;
-        np = nv_open(cp, root, assign | NV_VARNAME | NV_NOADD | NV_NOFAIL);
+        np = nv_open(cp, root, nvflags | NV_VARNAME | NV_NOADD | NV_NOFAIL);
         if ((!np || nv_isnull(np)) && sh_macfun(shp, cp, offset = stktell(shp->stk))) {
             Fun = sh_arith(shp, sub = stkptr(shp->stk, offset));
             STORE_VT(FunNode.nvalue, sfdoublep, &Fun);
@@ -140,7 +140,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
             return &FunNode;
         }
         if (!np && assign) {
-            np = nv_open(cp, root, assign | NV_VARNAME);
+            np = nv_open(cp, root, nvflags | NV_VARNAME);
         }
         cp[flag] = d;
         if (!np) return 0;
@@ -161,7 +161,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
     while (nv_isref(np)) {
         sub = nv_refsub(np);
         np = nv_refnode(np);
-        if (sub) nv_putsub(np, sub, 0, assign == NV_ASSIGN ? ARRAY_ADD : 0);
+        if (sub) nv_putsub(np, sub, 0, assign ? ARRAY_ADD : 0);
     }
 
     if (!nosub && flag) {
@@ -193,11 +193,10 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
             if (strchr(sub, '$')) sub = sh_mactrim(shp, sub, 0);
             *cp = flag;
             if (c || hasdot) {
-                np = nv_open(sub, shp->var_tree, NV_VARNAME | assign);
+                np = nv_open(sub, shp->var_tree, NV_VARNAME | nvflags);
                 return np;
             }
-            cp = nv_endsubscript(np, sub, (assign == NV_ASSIGN ? NV_ADD : 0) | NV_SUBQUOTE,
-                                 np->nvshell);
+            cp = nv_endsubscript(np, sub, (assign ? NV_ADD : 0) | NV_SUBQUOTE, np->nvshell);
             if (*cp != '[') break;
         skip:
             nq = nv_opensub(np);
