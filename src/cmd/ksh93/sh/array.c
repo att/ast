@@ -809,7 +809,7 @@ static_fn Namarr_t *nv_changearray(Namval_t *np,
 //
 Namarr_t *nv_setarray(Namval_t *np, void *(*fun)(Namval_t *, const char *, Nvassoc_op_t)) {
     Namarr_t *ap;
-    int flags = 0;
+    nvflag_t flags = 0;
 
     if (fun) {
         ap = nv_arrayptr(np);
@@ -1099,13 +1099,16 @@ char *nv_endsubscript(Namval_t *np, char *cp, nvflag_t mode, void *context) {
     }
     if (mode && np) {
         Namarr_t *ap = nv_arrayptr(np);
-        int scan = 0;
-        if (ap) scan = ap->flags & ARRAY_SCAN;
+        bool scan = false;
+        if (ap) scan = nv_isflag(ap->flags, ARRAY_SCAN);
         if ((mode & NV_ASSIGN) && (cp[1] == '=' || cp[1] == '+')) mode |= NV_ADD;
         nv_putsub(np, sp, 0,
                   ((mode & NV_ADD) ? ARRAY_ADD : 0) |
                       (cp[1] && (mode & NV_ADD) ? ARRAY_FILL : mode & ARRAY_FILL));
-        if (scan) ap->flags |= scan;
+        // The nv_putsub() can invalidate `ap` but only if `scan` is zero. So don't use `if (ap)`
+        // since that can result in dereferencing a stale pointer. But if `scan` is non-zero then
+        // `ap` should still be valid.  See https://github.com/att/ast/issues/828.
+        if (scan) ap->flags |= ARRAY_SCAN;
     }
     if (quoted) stkseek(shp->stk, count);
     *cp++ = c;
@@ -1330,8 +1333,9 @@ static_fn void *nv_assoc_op_add(Namval_t *np, const char *sp, bool add) {
         Namval_t *mp = NULL;
         ap->cur = NULL;
         if (sp == (char *)np) return NULL;
-        int type = nv_isattr(np, ~(NV_NOFREE | NV_ARRAY | NV_CHILD | NV_MINIMAL));
-        int mode = 0;
+        nvflag_t type = nv_isattr(np, ~(NV_NOFREE | NV_ARRAY | NV_CHILD | NV_MINIMAL));
+        nvflag_t mode = 0;
+
         if (add) {
             mode = NV_ADD | NV_NOSCOPE;
         } else if (ap->namarr.flags & ARRAY_NOSCOPE) {
@@ -1355,10 +1359,10 @@ static_fn void *nv_assoc_op_add(Namval_t *np, const char *sp, bool add) {
                 ap->namarr.nelem++;
             }
             if (nv_isnull(mp)) {
-                if (ap->namarr.flags & ARRAY_TREE) nv_setvtree(mp);
+                if (nv_isflag(ap->namarr.flags, ARRAY_TREE)) nv_setvtree(mp);
                 STORE_VT(mp->nvalue, const_cp, Empty);
             }
-        } else if (ap->namarr.flags & ARRAY_SCAN) {
+        } else if (nv_isflag(ap->namarr.flags, ARRAY_SCAN)) {
             Namval_t fake;
             memset(&fake, 0, sizeof(fake));
             fake.nvname = (char *)sp;
@@ -1372,7 +1376,7 @@ static_fn void *nv_assoc_op_add(Namval_t *np, const char *sp, bool add) {
         np = mp;
         if (ap->pos && ap->pos == np) {
             ap->namarr.flags |= ARRAY_SCAN;
-        } else if (!(ap->namarr.flags & ARRAY_SCAN)) {
+        } else if (!nv_isflag(ap->namarr.flags, ARRAY_SCAN)) {
             ap->pos = NULL;
         }
         ap->cur = np;

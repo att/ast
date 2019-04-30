@@ -1045,7 +1045,8 @@ static_fn bool varsub(Mac_t *mp) {
     int dolmax = 0, vsize = -1, offset = -1, nulflg, replen = 0, bysub = 0;
     char idbuff[3], *id = idbuff, *pattern = NULL, *repstr = NULL, *arrmax = NULL;
     char *idx = NULL;
-    int var = 1, addsub = 0, oldpat = mp->pattern, idnum = 0, flag = 0, d;
+    int d, var = 1, addsub = 0, oldpat = mp->pattern, idnum = 0;
+    nvflag_t nvflags = 0;
     Stk_t *stkp = mp->shp->stk;
     Shell_t *shp = sh_getinterp();
 
@@ -1180,7 +1181,7 @@ retry1:
                             sfputc(stkp, mode);
                             sfputc(stkp, RBRACT);
                         } else {
-                            flag = NV_ARRAY;
+                            nvflags = NV_ARRAY;
                         }
                         break;
                     } else {
@@ -1229,17 +1230,17 @@ retry1:
                 }
                 goto nosub;
             }
-            flag |= NV_VARNAME | NV_NOADD;
+            nvflags |= NV_VARNAME | NV_NOADD;
             if (c == '=' || c == '?' || (c == ':' && ((d = fcpeek(0)) == '=' || d == '?'))) {
-                if (c == '=' || (c == ':' && d == '=')) flag |= NV_ASSIGN;
-                flag &= ~NV_NOADD;
+                if (c == '=' || (c == ':' && d == '=')) nvflags |= NV_ASSIGN;
+                nvflags &= ~NV_NOADD;
             }
             if (mp->shp->cur_line && *id == 'R' && strcmp(id, "REPLY") == 0) {
                 mp->shp->argaddr = NULL;
                 np = REPLYNOD;
             } else {
-                if (mp->shp->argaddr) flag &= ~NV_NOADD;
-                np = nv_open(id, mp->shp->var_tree, flag | NV_NOFAIL);
+                if (mp->shp->argaddr) nvflags &= ~NV_NOADD;
+                np = nv_open(id, mp->shp->var_tree, nvflags | NV_NOFAIL);
                 if (!np) {
                     sfprintf(mp->shp->strbuf, "%s%c", id, 0);
                     id = sfstruse(mp->shp->strbuf);
@@ -1270,7 +1271,7 @@ retry1:
                         stkseek(stkp, offset);
                         break;
                     } else {
-                        np = nv_open(v, mp->shp->var_tree, flag | NV_NOFAIL);
+                        np = nv_open(v, mp->shp->var_tree, nvflags | NV_NOFAIL);
 #if 0
                                         type = M_BRACE;
                                 if(c!='}')
@@ -1280,14 +1281,14 @@ retry1:
                 }
             }
             if (isastchar(mode)) var = 0;
-            if ((!np || nv_isnull(np)) && type == M_BRACE && c == RBRACE && !(flag & NV_ARRAY) &&
-                strchr(id, '.')) {
+            if ((!np || nv_isnull(np)) && type == M_BRACE && c == RBRACE &&
+                !nv_isflag(nvflags, NV_ARRAY) && strchr(id, '.')) {
                 if (sh_macfun(mp->shp, id, offset)) {
                     fcmbget(&LEN);
                     return true;
                 }
             }
-            if (np && (flag & NV_NOADD) && nv_isnull(np)) {
+            if (np && nv_isflag(nvflags, NV_NOADD) && nv_isnull(np)) {
                 if (nv_isattr(np, NV_NOFREE)) {
                     nv_offattr(np, NV_NOFREE);
                 } else if (np != REPLYNOD || !mp->shp->cur_line) {
@@ -1323,8 +1324,8 @@ retry1:
                     } else {
                         if ((int)sh_arith(mp->shp, v)) np = NULL;
                     }
-                } else if (ap && (isastchar(mode) || type == M_TREE) && !(ap->flags & ARRAY_SCAN) &&
-                           type != M_SIZE) {
+                } else if (ap && (isastchar(mode) || type == M_TREE) &&
+                           !nv_isflag(ap->flags, ARRAY_SCAN) && type != M_SIZE) {
                     nv_putsub(np, NULL, 0, ARRAY_SCAN);
                 }
                 if (!isbracechar(c)) {
@@ -1360,7 +1361,7 @@ retry1:
                 if (type == M_VNAME || (type == M_SUBNAME && ap)) {
                     type = M_BRACE;
                     v = nv_name(np);
-                    if (ap && !mp->dotdot && !(ap->flags & ARRAY_UNDEF)) addsub = 1;
+                    if (ap && !mp->dotdot && !nv_isflag(ap->flags, ARRAY_UNDEF)) addsub = 1;
                 } else if (type == M_TYPE) {
                     Namval_t *nq = nv_type(np);
                     type = M_BRACE;
@@ -1680,7 +1681,7 @@ retry2:
         while (1) {
             if (!v) v = "";
             if (c == '/' || c == '#' || c == '%') {
-                flag = (type || c == '/') ? (STR_GROUP | STR_MAXIMAL) : STR_GROUP;
+                uint32_t flag = (type || c == '/') ? (STR_GROUP | STR_MAXIMAL) : STR_GROUP;
                 if (c != '/') flag |= STR_LEFT;
                 index = nmatch = 0;
                 tsize = (int)strlen(v);
