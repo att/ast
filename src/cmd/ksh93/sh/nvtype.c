@@ -142,9 +142,9 @@ typedef struct {
 
 #define alignof(t)((char *)&((_Align_ *)0)->_d##t - (char *)&((_Align_ *)0)->_c##t)
 
-static_fn void put_type(Namval_t *, const void *, int, Namfun_t *);
-static_fn Namval_t *create_type(Namval_t *, const void *, int, Namfun_t *);
-static_fn Namfun_t *clone_type(Namval_t *, Namval_t *, int, Namfun_t *);
+static_fn void put_type(Namval_t *, const void *, nvflag_t, Namfun_t *);
+static_fn Namval_t *create_type(Namval_t *, const void *, nvflag_t, Namfun_t *);
+static_fn Namfun_t *clone_type(Namval_t *, Namval_t *, nvflag_t, Namfun_t *);
 static_fn Namval_t *next_type(Namval_t *, Dt_t *, Namfun_t *);
 
 static const Namdisc_t type_disc = {.dsize = sizeof(Namtype_t),
@@ -210,7 +210,7 @@ static_fn char *name_chtype(const Namval_t *np, Namfun_t *fp) {
     return sfstruse(shp->strbuf);
 }
 
-static_fn void put_chtype(Namval_t *np, const void *val, int flag, Namfun_t *fp) {
+static_fn void put_chtype(Namval_t *np, const void *val, nvflag_t flag, Namfun_t *fp) {
     if (!val && nv_isattr(np, NV_REF)) return;
     nv_putv(np, val, flag, fp);
     if (!val) {
@@ -234,7 +234,7 @@ static_fn void put_chtype(Namval_t *np, const void *val, int flag, Namfun_t *fp)
     }
 }
 
-static_fn Namfun_t *clone_chtype(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_chtype(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfun_t *fp) {
     UNUSED(np);
     UNUSED(mp);
 
@@ -242,7 +242,7 @@ static_fn Namfun_t *clone_chtype(Namval_t *np, Namval_t *mp, int flags, Namfun_t
     return nv_clone_disc(fp, flags);
 }
 
-static_fn Namval_t *create_chtype(Namval_t *np, const void *name, int flag, Namfun_t *fp) {
+static_fn Namval_t *create_chtype(Namval_t *np, const void *name, nvflag_t flag, Namfun_t *fp) {
     Namchld_t *xp = (Namchld_t *)fp;
     Namval_t *pp = xp->ptype->parent, *nq;
     Shell_t *shp = np->nvshell;
@@ -351,7 +351,7 @@ static_fn int fixnode(Namtype_t *np1, Namtype_t *np2, int i, struct Namref *nrp,
     return 0;
 }
 
-static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfun_t *fp) {
     Namtype_t *dp, *pp = (Namtype_t *)fp;
     Shell_t *shp = np->nvshell;
     int i;
@@ -485,7 +485,7 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
 // Return Namval_t* corresponding to child <name> in <np>.
 // Try complete match first, otherwise find match to first.
 //
-static_fn Namval_t *create_type(Namval_t *np, const void *vp, int flag, Namfun_t *fp) {
+static_fn Namval_t *create_type(Namval_t *np, const void *vp, nvflag_t flag, Namfun_t *fp) {
     const char *name = vp;
     Namtype_t *dp = (Namtype_t *)fp;
     const char *cp = name;
@@ -542,7 +542,7 @@ found:
     return nq;
 }
 
-static_fn void put_type(Namval_t *np, const void *val, int flag, Namfun_t *fp) {
+static_fn void put_type(Namval_t *np, const void *val, nvflag_t flag, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     Namval_t *nq;
 
@@ -600,7 +600,7 @@ static_fn Namval_t *next_type(Namval_t *np, Dt_t *root, Namfun_t *fp) {
 // when running the unit tests. Which means it is never invoked. The question is whether there is a
 // scenario that would invoke this function. If so, what is that scenario? And why isn't there a
 // unit test for it?
-static_fn Namfun_t *clone_inttype(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_inttype(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfun_t *fp) {
     UNUSED(flags);
     Namfun_t *pp = malloc(fp->dsize);
 
@@ -1479,7 +1479,7 @@ Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *
     return mp;
 }
 
-static_fn void put_stat(Namval_t *np, const void *val, int flag, Namfun_t *nfp) {
+static_fn void put_stat(Namval_t *np, const void *val, nvflag_t flag, Namfun_t *nfp) {
     if (val) {
         if (sh_stat(val, (struct stat *)FETCH_VT(np->nvalue, const_cp)) < 0) {
             sfprintf(sfstderr, "stat of %s failed\n", val);

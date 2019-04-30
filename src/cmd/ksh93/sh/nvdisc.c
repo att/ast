@@ -36,7 +36,7 @@
 #include "stk.h"
 #include "variables.h"
 
-static_fn void assign(Namval_t *, const void *, int, Namfun_t *);
+static_fn void assign(Namval_t *, const void *, nvflag_t, Namfun_t *);
 
 const Nvdisc_op_t DISC_OP_NOOP = {DISC_OP_NOOP_val};
 const Nvdisc_op_t DISC_OP_FIRST = {DISC_OP_FIRST_val};
@@ -140,7 +140,7 @@ void nv_putv(Namval_t *np, const void *value, int flags, Namfun_t *nfp) {
         }
         if (!nv_isattr(np, NV_NODISC) || fp == (Namfun_t *)nv_arrayptr(np)) break;
     }
-    if (!value && (flags & NV_TYPE) && fp && fp->disc->putval == assign) fp = NULL;
+    if (!value && nv_isflag(flags, NV_TYPE) && fp && fp->disc->putval == assign) fp = NULL;
     if (fp && fp->disc->putval) {
         (*fp->disc->putval)(np, value, flags, fp);
     } else {
@@ -229,7 +229,7 @@ static_fn void chktfree(Namval_t *np, struct vardisc *vp) {
 //
 // This function performs an assignment disc on the given node <np>.
 //
-static_fn void assign(Namval_t *np, const void *val, int flags, Namfun_t *handle) {
+static_fn void assign(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *handle) {
     Shell_t *shp = sh_ptr(np);
     int type = (flags & NV_APPEND) ? APPEND : ASSIGN;
     struct vardisc *vp = (struct vardisc *)handle;
@@ -537,7 +537,7 @@ static_fn char *setdisc(Namval_t *np, const void *vp, Namval_t *action, Namfun_t
     return (char *)action;
 }
 
-static_fn void putdisc(Namval_t *np, const void *val, int flag, Namfun_t *fp) {
+static_fn void putdisc(Namval_t *np, const void *val, nvflag_t flag, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     nv_putv(np, val, flag, fp);
     if (!val && !(flag & NV_NOFREE)) {
@@ -559,7 +559,7 @@ static_fn void putdisc(Namval_t *np, const void *val, int flag, Namfun_t *fp) {
 
 static const Namdisc_t Nv_bdisc = {.dsize = 0, .putval = putdisc, .setdisc = setdisc};
 
-Namfun_t *nv_clone_disc(Namfun_t *fp, int flags) {
+Namfun_t *nv_clone_disc(Namfun_t *fp, nvflag_t flags) {
     Namfun_t *nfp;
     int size;
 
@@ -690,7 +690,7 @@ struct notify {
     char **ptr;
 };
 
-static_fn void put_notify(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_notify(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     struct notify *pp = (struct notify *)fp;
 
     nv_putv(np, val, flags, fp);
@@ -769,7 +769,7 @@ static_fn void *num_clone(Namval_t *np, void *val) {
     return nval;
 }
 
-void clone_all_disc(Namval_t *np, Namval_t *mp, int flags) {
+void clone_all_disc(Namval_t *np, Namval_t *mp, nvflag_t flags) {
     Namfun_t *fp, **mfp = &mp->nvfun, *nfp, *fpnext;
 
     for (fp = np->nvfun; fp; fp = fpnext) {
@@ -798,7 +798,7 @@ void clone_all_disc(Namval_t *np, Namval_t *mp, int flags) {
 // NV_NODISC - discplines with funs non-zero will not be copied
 // NV_COMVAR - cloning a compound variable
 //
-int nv_clone(Namval_t *np, Namval_t *mp, uint32_t flags) {
+int nv_clone(Namval_t *np, Namval_t *mp, nvflag_t flags) {
     Namfun_t *fp, *fpnext;
     const char *val = FETCH_VT(mp->nvalue, const_cp);
     uint32_t flag = mp->nvflag;
@@ -906,7 +906,7 @@ static_fn Sfdouble_t clone_getn(Namval_t *np, Namfun_t *handle) {
 //
 // Either the `if (val)` is never false or the `nv_putval()` should also be predicated on it being
 // non-NULL.
-static_fn void clone_putv(Namval_t *np, const void *val, int flags, Namfun_t *handle) {
+static_fn void clone_putv(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *handle) {
     UNUSED(handle);
     Shell_t *shp = sh_ptr(np);
     Namfun_t *dp = nv_stack(np, NULL);
@@ -1165,13 +1165,13 @@ static_fn Namval_t *next_table(Namval_t *np, Dt_t *root, Namfun_t *fp) {
     return dtfirst(tp->dict);
 }
 
-static_fn Namval_t *create_table(Namval_t *np, const void *name, int flags, Namfun_t *fp) {
+static_fn Namval_t *create_table(Namval_t *np, const void *name, nvflag_t flags, Namfun_t *fp) {
     struct table *tp = (struct table *)fp;
     tp->shp->last_table = np;
     return nv_create(name, tp->dict, flags, fp);
 }
 
-static_fn Namfun_t *clone_table(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_table(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfun_t *fp) {
     struct table *tp = (struct table *)fp;
     struct table *ntp = (struct table *)nv_clone_disc(fp, 0);
     Dt_t *oroot = tp->dict;
@@ -1204,7 +1204,7 @@ static_fn void delete_fun(Namval_t *np, void *data) {
     nv_delete(np, shp->fun_tree, NV_NOFREE);
 }
 
-static_fn void put_table(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_table(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     Dt_t *root = ((struct table *)fp)->dict;
     Namval_t *nq, *mp;
     Namarr_t *ap;

@@ -692,7 +692,7 @@ static_fn char *stack_extend(Shell_t *shp, const char *cname, char *cp, int n) {
     return name;
 }
 
-Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
+Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) {
     Shell_t *shp = sh_getinterp();
     char *sub = NULL;
     char *cp = (char *)name;
@@ -1105,7 +1105,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
 // If flags does not contain NV_NOFREE, the node is freed.
 // If np==0  && !root && flags==0,  delete the Refdict dictionary.
 //
-void nv_delete(Namval_t *np, Dt_t *root, int flags) {
+void nv_delete(Namval_t *np, Dt_t *root, nvflag_t flags) {
     int c;
     struct Cache_entry *xp;
     for (c = 0, xp = nvcache.entries; c < NVCACHE; xp = &nvcache.entries[++c]) {
@@ -2270,12 +2270,12 @@ static_fn void optimize_clear(Namval_t *np, Namfun_t *fp) {
     }
 }
 
-static_fn void put_optimize(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_optimize(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     nv_putv(np, val, flags, fp);
     optimize_clear(np, fp);
 }
 
-static_fn Namfun_t *clone_optimize(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_optimize(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfun_t *fp) {
     UNUSED(np);
     UNUSED(mp);
     UNUSED(flags);

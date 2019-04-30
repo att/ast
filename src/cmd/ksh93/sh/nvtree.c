@@ -56,7 +56,7 @@ struct nvdir {
 
 static int Indent;
 char *nv_getvtree(Namval_t *, Namfun_t *);
-static_fn void put_tree(Namval_t *, const void *, int, Namfun_t *);
+static_fn void put_tree(Namval_t *, const void *, nvflag_t, Namfun_t *);
 static_fn char *walk_tree(Namval_t *, Namval_t *, int);
 
 static_fn int read_tree(Namval_t *np, Sfio_t *in, int n, Namfun_t *dp) {
@@ -92,7 +92,7 @@ done:
     return c;
 }
 
-static_fn Namval_t *create_tree(Namval_t *np, const void *name, int flag, Namfun_t *dp) {
+static_fn Namval_t *create_tree(Namval_t *np, const void *name, nvflag_t flag, Namfun_t *dp) {
     Namfun_t *fp = dp;
 
     fp->dsize = 0;
@@ -106,7 +106,7 @@ static_fn Namval_t *create_tree(Namval_t *np, const void *name, int flag, Namfun
     return (flag & NV_NOADD) ? 0 : np;
 }
 
-static_fn Namfun_t *clone_tree(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_tree(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfun_t *fp) {
     Namfun_t *dp;
 
     if ((flags & NV_MOVE) && nv_type(np)) return fp;
@@ -1175,7 +1175,7 @@ char *nv_getvtree(Namval_t *np, Namfun_t *fp) {
 //
 // Put discipline for compound initializations.
 //
-static_fn void put_tree(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_tree(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     struct Namarray *ap;
     int nleft = 0;
 

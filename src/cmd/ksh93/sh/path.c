@@ -1615,7 +1615,7 @@ static_fn char *talias_get(Namval_t *np, Namfun_t *nvp) {
     return ptr + PATH_OFFSET;
 }
 
-static_fn void talias_put(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void talias_put(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     if (!val && FETCH_VT(np->nvalue, const_cp)) {
         Pathcomp_t *pp = (Pathcomp_t *)FETCH_VT(np->nvalue, const_cp);
         if (--pp->refcount <= 0) free(pp);

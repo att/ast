@@ -199,7 +199,7 @@ static_fn char *nospace(int unused) {
 }
 
 // Trap for VISUAL and EDITOR variables.
-static_fn void put_ed(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_ed(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     const char *cp, *name = nv_name(np);
     int newopt = 0;
     Shell_t *shp = sh_ptr(np);
@@ -226,7 +226,7 @@ done:
 }
 
 // Trap for HISTFILE and HISTSIZE variables.
-static_fn void put_history(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_history(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     void *histopen = shp ? shp->gd->hist_ptr : NULL;
     char *cp;
@@ -247,7 +247,7 @@ static_fn void put_history(Namval_t *np, const void *val, int flags, Namfun_t *f
 }
 
 // Trap for OPTINDEX.
-static_fn void put_optindex(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_optindex(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     shp->st.opterror = shp->st.optchar = 0;
     nv_putv(np, val, flags, fp);
@@ -260,7 +260,7 @@ static_fn Sfdouble_t nget_optindex(Namval_t *np, Namfun_t *fp) {
     return *FETCH_VT(np->nvalue, i32p);
 }
 
-static_fn Namfun_t *clone_optindex(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_optindex(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfun_t *fp) {
     UNUSED(flags);
     Namfun_t *dp = malloc(sizeof(Namfun_t));
 
@@ -271,7 +271,7 @@ static_fn Namfun_t *clone_optindex(Namval_t *np, Namval_t *mp, int flags, Namfun
 }
 
 // Trap for restricted variables FPATH, PATH, SHELL, ENV.
-static_fn void put_restricted(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_restricted(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     int path_scoped = 0, fpath_scoped = 0;
     Pathcomp_t *pp;
@@ -314,7 +314,7 @@ path_dump(shp->pathlist);
     }
 }
 
-static_fn void put_cdpath(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_cdpath(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     Pathcomp_t *pp;
     Shell_t *shp = sh_ptr(np);
 
@@ -340,7 +340,7 @@ static_fn char *msg_translate(const char *catalog, const char *message) {
 #endif
 
 // Trap for LC_ALL, LC_CTYPE, LC_MESSAGES, LC_COLLATE and LANG.
-static_fn void put_lang(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_lang(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     int type;
     char *name = nv_name(np);
@@ -384,7 +384,7 @@ static_fn void put_lang(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
 }
 
 // Trap for IFS assignment and invalidates state table.
-static_fn void put_ifs(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_ifs(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     struct ifs *ifsp = (struct ifs *)fp;
     ifsp->ifsnp = 0;
     if (!val) {
@@ -452,7 +452,7 @@ static_fn char *get_ifs(Namval_t *np, Namfun_t *fp) {
 #define timeofday(a)
 #endif
 
-static_fn void put_seconds(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_seconds(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     double d;
     struct tms tp;
     if (!val) {
@@ -499,7 +499,7 @@ static_fn Sfdouble_t nget_seconds(Namval_t *np, Namfun_t *fp) {
 //
 // These three functions are used to get and set the RANDOM variable.
 //
-static_fn void put_rand(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_rand(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     struct rand *rp = (struct rand *)fp;
 
     if (!val) {
@@ -556,7 +556,7 @@ static_fn Sfdouble_t nget_lineno(Namval_t *np, Namfun_t *fp) {
     return d;
 }
 
-static_fn void put_lineno(Namval_t *np, const void *vp, int flags, Namfun_t *fp) {
+static_fn void put_lineno(Namval_t *np, const void *vp, nvflag_t flags, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     if (!vp) {
         fp = nv_stack(np, NULL);
@@ -592,7 +592,7 @@ static_fn char *get_lastarg(Namval_t *np, Namfun_t *fp) {
     return shp->lastarg;
 }
 
-static_fn void put_lastarg(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_lastarg(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     UNUSED(fp);
     Shell_t *shp = sh_ptr(np);
     if (flags & NV_INTEGER) {
@@ -651,7 +651,7 @@ static_fn void astbin_update(Shell_t *shp, const char *from, const char *to) {
     if (strcmp(to, SH_CMDLIB_DIR) == 0) path_cmdlib(shp, to, true);
 }
 
-static_fn void put_astbin(Namval_t *np, const void *vp, int flags, Namfun_t *fp) {
+static_fn void put_astbin(Namval_t *np, const void *vp, nvflag_t flags, Namfun_t *fp) {
     const char *val = vp;
     if (!val || *val == 0) val = (char *)e_astbin;
     if (strcmp(FETCH_VT(np->nvalue, const_cp), val)) {
@@ -661,7 +661,7 @@ static_fn void put_astbin(Namval_t *np, const void *vp, int flags, Namfun_t *fp)
 }
 
 // These two routines are for SH_OPTIONS.
-static_fn void put_options(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+static_fn void put_options(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     UNUSED(flags);
     Shell_t *shp = np->nvshell;
     Namval_t *mp;
@@ -943,7 +943,7 @@ static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
 static const Namdisc_t SH_VERSION_disc = {
     .dsize = 0, .getval = get_version, .getnum = nget_version};
 static const Namdisc_t IFS_disc = {
-    sizeof(struct ifs), put_ifs, get_ifs, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    .dsize = sizeof(struct ifs), .putval = put_ifs, .getval = get_ifs};
 const Namdisc_t RESTRICTED_disc = {.dsize = sizeof(Namfun_t), .putval = put_restricted};
 static const Namdisc_t CDPATH_disc = {.dsize = sizeof(Namfun_t), .putval = put_cdpath};
 static const Namdisc_t EDITOR_disc = {.dsize = sizeof(Namfun_t), .putval = put_ed};
@@ -999,7 +999,7 @@ static_fn void math_init(Shell_t *shp) {
     }
 }
 
-static_fn Namval_t *create_math(Namval_t *np, const void *vp, int flag, Namfun_t *fp) {
+static_fn Namval_t *create_math(Namval_t *np, const void *vp, nvflag_t flag, Namfun_t *fp) {
     UNUSED(flag);
     const char *name = vp;
     Shell_t *shp = sh_ptr(np);
@@ -1559,7 +1559,7 @@ static_fn Namval_t *next_svar(Namval_t *np, Dt_t *root, Namfun_t *fp) {
 
 // This is used to assign values to the attributes of the .sh.sig compound var.
 // Do not use it for any other purpose.
-static_fn Namval_t *create_svar(Namval_t *np, const void *vp, int flag, Namfun_t *fp) {
+static_fn Namval_t *create_svar(Namval_t *np, const void *vp, nvflag_t flag, Namfun_t *fp) {
     UNUSED(flag);
     const char *name = vp;
     Svars_t *sp = (Svars_t *)fp;
@@ -1579,7 +1579,7 @@ static_fn Namval_t *create_svar(Namval_t *np, const void *vp, int flag, Namfun_t
     __builtin_unreachable();
 }
 
-static_fn Namfun_t *clone_svar(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_svar(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfun_t *fp) {
     struct Svars *sp = (struct Svars *)fp;
     struct Svars *dp;
     int i;
@@ -2021,7 +2021,7 @@ struct Mapchar {
     wctrans_t trans;
 };
 
-static_fn void put_trans(Namval_t *np, const void *vp, int flags, Namfun_t *fp) {
+static_fn void put_trans(Namval_t *np, const void *vp, nvflag_t flags, Namfun_t *fp) {
     const char *val = vp;
     struct Mapchar *mp = (struct Mapchar *)fp;
     int c;

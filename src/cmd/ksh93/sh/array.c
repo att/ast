@@ -329,7 +329,7 @@ static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
     return np;
 }
 
-bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
+bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, nvflag_t flags) {
     Shell_t *shp = sh_ptr(np);
     Namval_t *nq;
     bool rdonly = nv_isattr(np, NV_RDONLY) == NV_RDONLY;
@@ -379,7 +379,7 @@ bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
     return false;
 }
 
-static_fn Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *array_clone(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfun_t *fp) {
     Namarr_t *ap = (Namarr_t *)fp;
     Namval_t *nq, *mq;
     char *name;
@@ -507,7 +507,7 @@ static_fn Sfdouble_t array_getnum(Namval_t *np, Namfun_t *disc) {
     return nv_getn(np, &ap->namfun);
 }
 
-static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_t *dp) {
+static_fn void array_putval(Namval_t *np, const void *string, nvflag_t flags, Namfun_t *dp) {
     Namarr_t *ap = (Namarr_t *)dp;
     struct Value *up;
     Namval_t *mp;
@@ -955,7 +955,7 @@ bool nv_nextsub(Namval_t *np) {
 //   ARRAY_ADD is specified and there is no value or sets all
 // the elements up to the number specified if ARRAY_ADD is not specified.
 //
-Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
+Namval_t *nv_putsub(Namval_t *np, char *sp, long size, nvflag_t flags) {
     Shell_t *shp = sh_ptr(np);
     struct index_array *ap = (struct index_array *)nv_arrayptr(np);
     if (!ap || !is_associative(&ap->namarr)) {
@@ -1074,7 +1074,7 @@ Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
 // Process an array subscript for node <np> given the subscript <cp>.
 // Returns pointer to character after the subscript.
 //
-char *nv_endsubscript(Namval_t *np, char *cp, int mode, void *context) {
+char *nv_endsubscript(Namval_t *np, char *cp, nvflag_t mode, void *context) {
     int count = 1, quoted = 0, c;
     char *sp = cp + 1;
     Shell_t *shp = context;
