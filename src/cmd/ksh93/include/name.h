@@ -315,22 +315,22 @@ struct Namval {
 // For the moment we are limited to 16 bits since the namval->nvflag is an unsigned short.
 //
 // Note: If these definitions are changed remember to update `nvflags` in src/cmd/ksh93/sh/debug.c.
-#define NV_RDONLY (1 << 0)   // readonly bit -- does not affect the value
-#define NV_INTEGER (1 << 1)  // integer attribute
-#define NV_LTOU (1 << 2)     // convert to uppercase
-#define NV_UTOL (1 << 3)     // convert to lowercase
-#define NV_ZFILL (1 << 4)    // right justify and fill with leading zeros
-#define NV_RJUST (1 << 5)    // right justify and blank fill
-#define NV_LJUST (1 << 6)    // left justify and blank fill
-#define NV_MISC (1 << 7)     // this is overloaded to mean many things
-#define NV_BINARY (1 << 8)   // fixed size data buffer
-#define NV_NOFREE (1 << 9)   // don't free the space when releasing value
-#define NV_ARRAY (1 << 10)   // node is an array
-#define NV_TABLE (1 << 11)   // node is a dictionary table
-#define NV_IMPORT (1 << 12)  // value imported from environment
-#define NV_EXPORT (1 << 13)  // export bit -- does not affect the value
-#define NV_REF (1 << 14)     // reference bit
-#define NV_TAGGED (1 << 15)  // user tagged (typeset -t ...) -- does not affect the value
+#define NV_RDONLY ((nvflag_t)1 << 0)   // readonly bit -- does not affect the value
+#define NV_INTEGER ((nvflag_t)1 << 1)  // integer attribute
+#define NV_LTOU ((nvflag_t)1 << 2)     // convert to uppercase
+#define NV_UTOL ((nvflag_t)1 << 3)     // convert to lowercase
+#define NV_ZFILL ((nvflag_t)1 << 4)    // right justify and fill with leading zeros
+#define NV_RJUST ((nvflag_t)1 << 5)    // right justify and blank fill
+#define NV_LJUST ((nvflag_t)1 << 6)    // left justify and blank fill
+#define NV_MISC ((nvflag_t)1 << 7)     // this is overloaded to mean many things
+#define NV_BINARY ((nvflag_t)1 << 8)   // fixed size data buffer
+#define NV_NOFREE ((nvflag_t)1 << 9)   // don't free the space when releasing value
+#define NV_ARRAY ((nvflag_t)1 << 10)   // node is an array
+#define NV_TABLE ((nvflag_t)1 << 11)   // node is a dictionary table
+#define NV_IMPORT ((nvflag_t)1 << 12)  // value imported from environment
+#define NV_EXPORT ((nvflag_t)1 << 13)  // export bit -- does not affect the value
+#define NV_REF ((nvflag_t)1 << 14)     // reference bit
+#define NV_TAGGED ((nvflag_t)1 << 15)  // user tagged (typeset -t ...) -- does not affect the value
 
 // Aliases or compound types.
 #define NV_RAW NV_LJUST                // used only with NV_BINARY
@@ -385,21 +385,21 @@ struct Namval {
 
 // Options for nv_open(), nv_search(), sh_setlist(), etc. They are not valid bits in a nvflag_t;
 // i.e., (struct Namval*)->nvflag.
-#define NV_APPEND (1 << 16)   // append value
-#define NV_VARNAME (1 << 17)  // name must be ?(.)id*(.id)
-#define NV_NOADD (1 << 18)    // do not add node
-#define NV_NOSCOPE (1 << 19)  // look only in current scope
-#define NV_NOFAIL (1 << 20)   // return 0 on failure, no msg
-#define NV_NOARRAY (1 << 21)  // array name not possible
-#define NV_IARRAY (1 << 22)   // for indexed array
-#define NV_ADD (1 << 23)      // add node if not found
-#define NV_UNJUST (1 << 23)   // clear justify attributes
-#define NV_TYPE (1 << 24)
-#define NV_STATIC (1 << 25)
-#define NV_COMVAR (1 << 26)
-#define NV_MOVE (1 << 27)    // for use with nv_clone()
-#define NV_ASSIGN (1 << 28)  // assignment is allowed
-#define NV_DECL (1 << 29)
+#define NV_APPEND ((nvflag_t)1 << 16)   // append value
+#define NV_VARNAME ((nvflag_t)1 << 17)  // name must be ?(.)id*(.id)
+#define NV_NOADD ((nvflag_t)1 << 18)    // do not add node
+#define NV_NOSCOPE ((nvflag_t)1 << 19)  // look only in current scope
+#define NV_NOFAIL ((nvflag_t)1 << 20)   // return 0 on failure, no msg
+#define NV_NOARRAY ((nvflag_t)1 << 21)  // array name not possible
+#define NV_IARRAY ((nvflag_t)1 << 22)   // for indexed array
+#define NV_ADD ((nvflag_t)1 << 23)      // add node if not found
+#define NV_UNJUST ((nvflag_t)1 << 23)   // clear justify attributes
+#define NV_TYPE ((nvflag_t)1 << 24)
+#define NV_STATIC ((nvflag_t)1 << 25)
+#define NV_COMVAR ((nvflag_t)1 << 26)
+#define NV_MOVE ((nvflag_t)1 << 27)    // for use with nv_clone()
+#define NV_ASSIGN ((nvflag_t)1 << 28)  // assignment is allowed
+#define NV_DECL ((nvflag_t)1 << 29)
 
 // See the uses of these symbols in name.c.
 #define NV_NOREF NV_REF    // don't follow reference
@@ -423,17 +423,17 @@ static inline int nv_isattr(const Namval_t *np, const nvflag_t mask) { return np
 static inline bool nv_isarray(const Namval_t *np) { return nv_isattr(np, NV_ARRAY) == NV_ARRAY; }
 
 static inline void nv_onattr(Namval_t *np, nvflag_t nvflag) {
-    nvflag &= ~(~0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
+    nvflag &= ~(~(nvflag_t)0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
     np->nvflag |= nvflag;
 }
 
 static inline void nv_offattr(Namval_t *np, nvflag_t nvflag) {
-    nvflag &= ~(~0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
+    nvflag &= ~(~(nvflag_t)0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
     np->nvflag &= ~nvflag;
 }
 
 static inline void nv_setattr(Namval_t *np, nvflag_t nvflag) {
-    nvflag &= ~(~0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
+    nvflag &= ~(~(nvflag_t)0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
     np->nvflag = nvflag;
 }
 
@@ -458,9 +458,9 @@ extern const Nvdisc_op_t DISC_OP_CLONE;
 
 // The following are operations for nv_putsub().
 #define ARRAY_BITS 22
-#define ARRAY_ADD (1L << ARRAY_BITS)    // add subscript if not found
-#define ARRAY_SCAN (2L << ARRAY_BITS)   // For ${array[@]}
-#define ARRAY_UNDEF (4L << ARRAY_BITS)  // For ${array}
+#define ARRAY_ADD ((nvflag_t)1 << (0 + ARRAY_BITS))    // add subscript if not found
+#define ARRAY_SCAN ((nvflag_t)1 << (1 + ARRAY_BITS))   // For ${array[@]}
+#define ARRAY_UNDEF ((nvflag_t)1 << (2 + ARRAY_BITS))  // For ${array}
 
 // These symbols are passed to `nv_discfun()` to cause it to return a set of disciplines that
 // implement a specific policy. We start with the arbitrary value 19 to help ensure that calling
@@ -535,12 +535,12 @@ extern const Namdisc_t *nv_discfun(Nvdiscfun_op_t);
 
 // Number of elements to grow when array bound exceeded.  Must be a power of 2.
 #define ARRAY_INCR 32
-#define ARRAY_FILL (8L << ARRAY_BITS)       // used with nv_putsub()
-#define ARRAY_NOCLONE (16L << ARRAY_BITS)   // do not clone array disc
-#define ARRAY_NOCHILD (32L << ARRAY_BITS)   // skip compound arrays
-#define ARRAY_SETSUB (64L << ARRAY_BITS)    // set subscript
-#define ARRAY_NOSCOPE (128L << ARRAY_BITS)  // top level scope only
-#define ARRAY_TREE (256L << ARRAY_BITS)     // arrays of compound vars
+#define ARRAY_FILL ((nvflag_t)1 << (3 + ARRAY_BITS))     // used with nv_putsub()
+#define ARRAY_NOCLONE ((nvflag_t)1 << (4 + ARRAY_BITS))  // do not clone array disc
+#define ARRAY_NOCHILD ((nvflag_t)1 << (5 + ARRAY_BITS))  // skip compound arrays
+#define ARRAY_SETSUB ((nvflag_t)1 << (6 + ARRAY_BITS))   // set subscript
+#define ARRAY_NOSCOPE ((nvflag_t)1 << (7 + ARRAY_BITS))  // top level scope only
+#define ARRAY_TREE ((nvflag_t)1 << (8 + ARRAY_BITS))     // arrays of compound vars
 
 // These flags are used as options to array_get().
 #define ARRAY_ASSIGN 0
