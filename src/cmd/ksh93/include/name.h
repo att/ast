@@ -506,7 +506,7 @@ extern bool nv_rename(Namval_t *, nvflag_t);
 extern int nv_scan(Dt_t *, void (*)(Namval_t *, void *), void *, nvflag_t, nvflag_t);
 extern char *nv_setdisc(Namval_t *, const void *, Namval_t *, Namfun_t *);
 extern void nv_setref(Namval_t *, Dt_t *, nvflag_t);
-extern int nv_settype(Namval_t *, Namval_t *, int);
+extern int nv_settype(Namval_t *, Namval_t *, nvflag_t);
 extern void nv_setvec(Namval_t *, int, int, char *[]);
 extern void nv_setvtree(Namval_t *);
 extern int nv_setsize(Namval_t *, int);

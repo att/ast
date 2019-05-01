@@ -281,7 +281,7 @@ static_fn Namval_t *findref(void *nodes, int n) {
     return NULL;
 }
 
-static_fn int fixnode(Namtype_t *np1, Namtype_t *np2, int i, struct Namref *nrp, int flag) {
+static_fn int fixnode(Namtype_t *np1, Namtype_t *np2, int i, struct Namref *nrp, nvflag_t flag) {
     Namval_t *nq = nv_namptr(np1->nodes, i);
     Namfun_t *fp;
 
@@ -1272,9 +1272,9 @@ static_fn void type_init(Namval_t *np) {
 //
 // This function turns variable <np>  to the type <tp>.
 //
-int nv_settype(Namval_t *np, Namval_t *tp, int flags) {
+int nv_settype(Namval_t *np, Namval_t *tp, nvflag_t flags) {
     int isnull = nv_isnull(np);
-    int rdonly = nv_isattr(np, NV_RDONLY);
+    bool rdonly = nv_isattr(np, NV_RDONLY);
     char *val = NULL;
     Namarr_t *ap = NULL;
     Shell_t *shp = sh_ptr(np);
