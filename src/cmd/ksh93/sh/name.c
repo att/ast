@@ -946,7 +946,9 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
                                 dp->last = cp;
                                 return np;
                             }
-                            if ((nvflags & NV_ADD) && nv_isflag(flags, NV_ARRAY)) nvflags |= ARRAY_FILL;
+                            if (nv_isflag(nvflags, NV_ADD) && nv_isflag(flags, NV_ARRAY)) {
+                                nvflags |= ARRAY_FILL;
+                            }
                             if (nv_isflag(flags, NV_ASSIGN)) nvflags |= NV_ADD | ARRAY_FILL;
                             table = shp->last_table;
                             if (nv_isflag(flags, NV_ASSIGN)) nvflags |= NV_ASSIGN;
@@ -954,13 +956,13 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
                             ap = nv_arrayptr(np);  // nv_endsubscript() may have moved the array
                             shp->last_table = table;
 #if 0
-                                                if(scan)
-                                                        nv_putsub(np,NULL,0,ARRAY_SCAN);
+                            if(scan) nv_putsub(np,NULL,0,ARRAY_SCAN);
 #endif
                         } else {
                             cp = sp;
                         }
-                        if ((c = *cp) == '.' || (c == '[' && nv_isarray(np)) || nv_isflag(nvflags, ARRAY_FILL) ||
+                        if ((c = *cp) == '.' || (c == '[' && nv_isarray(np)) ||
+                            nv_isflag(nvflags, ARRAY_FILL) ||
                             ((ap || nv_isflag(flags, NV_ASSIGN)) && nv_isflag(flags, NV_ARRAY))) {
                             int m = cp - sp;
                             sub = m ? nv_getsub(np) : 0;
