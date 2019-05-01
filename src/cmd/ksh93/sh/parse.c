@@ -903,7 +903,7 @@ static_fn bool check_array(Lex_t *lexp) {
 //
 // Compound assignment.
 //
-static_fn struct argnod *parse_assign(Lex_t *lexp, struct argnod *ap, int type) {
+static_fn struct argnod *parse_assign(Lex_t *lexp, struct argnod *ap, nvflag_t type) {
     int n;
     Shnode_t *t, **tp;
     struct comnod *ac;
@@ -1326,7 +1326,7 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
     bool typed = false;
     int cmdarg = 0;
     int argno = 0;
-    int type = 0;
+    nvflag_t type = 0;
     int was_assign = 0;
     int assignment = 0;
     int key_on = (!(flag & SH_NOIO) && sh_isoption(lexp->sh, SH_KEYWORD));

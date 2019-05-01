@@ -829,10 +829,10 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
             np = nv_search(stkptr(shp->stk, n), shp->bltin_tree, 0);
             stkseek(shp->stk, n);
             if (np) {
-                n = np->nvflag;
+                nvflag_t nvflags = np->nvflag;
                 np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET),
                                    FETCH_VT(np->nvalue, shbltinp), nv_context(np));
-                nv_setattr(np, n);
+                nv_setattr(np, nvflags);
             }
         }
         if (!pp || f >= 0) break;
