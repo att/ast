@@ -42,7 +42,10 @@
 
 #define stkptr(sp, n) ((char *)((sp)->data) + (n))
 #define stktop(sp) ((char *)(sp)->next)
-#define stktell(sp) ((sp)->next - (sp)->data)
+// This is documented to return an int but on systems with 64 bit pointers it returns a long long.
+// This causes lint warnings about narrowing implicit converions. Since the value will never exceed
+// 2GB just do an explicit cast to eliminate the lint.
+#define stktell(sp) (int)((sp)->next - (sp)->data)
 
 extern Sfio_t _Stk_data;
 

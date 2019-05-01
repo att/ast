@@ -45,6 +45,12 @@ add_global_arguments('-fno-strict-aliasing', language: 'c')
 # -Wall.
 add_global_arguments('-Wextra', language: 'c')
 
+# Uncomment this to enable warnings about implicit type coercions.
+# This is gcc only; clang doesn't recognize it.
+# add_global_arguments('-Wcoercion', language: 'c')
+# Uncomment this to enable warnings about implicit 64 to 32 bit narrowing casts.
+# add_global_arguments('-Wshorten-64-to-32', language: 'c')
+
 # GCC 8 enables -Wcast-function-type when -Wextra is used. Sadly it causes far
 # too many false positives in the ksh code. Such as in the
 # src/cmd/ksh93/bltins/math.c module. So disable it.
