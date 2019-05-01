@@ -118,8 +118,12 @@ static_fn Namfun_t *clone_tree(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfu
     return dp;
 }
 
-static const Namdisc_t treedisc = {.dsize = 0, .putval = put_tree, .getval = nv_getvtree, .createf = create_tree,
-                                   .clonef = clone_tree, .readf = read_tree};
+static const Namdisc_t treedisc = {.dsize = 0,
+                                   .putval = put_tree,
+                                   .getval = nv_getvtree,
+                                   .createf = create_tree,
+                                   .clonef = clone_tree,
+                                   .readf = read_tree};
 
 static_fn char *nextdot(const char *str, void *context) {
     char *cp;

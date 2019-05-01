@@ -900,7 +900,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             char *trap;
             Namval_t *np, *nq, *last_table;
             struct ionod *io;
-            int command = 0, flgs = NV_ASSIGN;
+            int command = 0;
+            nvflag_t nvflags = NV_ASSIGN;
             shp->bltindata.invariant = type >> (COMBITS + 2);
             shp->bltindata.pwdfd = shp->pwdfd;
             type &= (COMMSK | COMSCAN);
@@ -972,12 +973,12 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     Namval_t *tp = NULL;
                     if (argn) {
                         if (checkopt(com, 'A')) {
-                            flgs |= NV_ARRAY;
+                            nvflags |= NV_ARRAY;
                         } else if (checkopt(com, 'a')) {
-                            flgs |= NV_IARRAY;
+                            nvflags |= NV_IARRAY;
                         }
                     }
-                    if (np) flgs |= NV_UNJUST;
+                    if (np) nvflags |= NV_UNJUST;
 #if SHOPT_BASH
                     if (np == SYSLOCAL) {
                         if (!nv_getval(SH_FUNNAMENOD)) {
@@ -997,11 +998,11 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             shp->typeinit = np;
                             tp = nv_type(np);
                         }
-                        if (checkopt(com, 'C')) flgs |= NV_COMVAR;
-                        if (checkopt(com, 'S')) flgs |= NV_STATIC;
-                        if (checkopt(com, 'm')) flgs |= NV_MOVE;
+                        if (checkopt(com, 'C')) nvflags |= NV_COMVAR;
+                        if (checkopt(com, 'S')) nvflags |= NV_STATIC;
+                        if (checkopt(com, 'm')) nvflags |= NV_MOVE;
                         if (checkopt(com, 'n')) {
-                            flgs |= NV_NOREF;
+                            nvflags |= NV_NOREF;
                         } else if (argn >= 3 && checkopt(com, 'T')) {
                             if (shp->namespace) {
                                 char *sp, *xp;
@@ -1021,26 +1022,26 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             } else {
                                 shp->prefix = NV_CLASS;
                             }
-                            flgs |= NV_TYPE;
+                            nvflags |= NV_TYPE;
                         }
                         if ((shp->fn_depth && !shp->prefix) || np == SYSLOCAL) {
-                            flgs |= NV_NOSCOPE;
+                            nvflags |= NV_NOSCOPE;
                         }
                     } else if (np == SYSEXPORT) {
-                        flgs |= NV_EXPORT;
+                        nvflags |= NV_EXPORT;
                     }
-                    if (flgs & (NV_EXPORT | NV_NOREF)) {
-                        flgs |= NV_IDENT;
+                    if (nvflags & (NV_EXPORT | NV_NOREF)) {
+                        nvflags |= NV_IDENT;
                     } else {
-                        flgs |= NV_VARNAME;
+                        nvflags |= NV_VARNAME;
                     }
 #if 0
                                     if(OPTIMIZE)
-                                            flgs |= NV_TAGGED;
+                                            nvflags |= NV_TAGGED;
 #endif
-                    if (np && nv_isattr(np, BLT_DCL)) flgs |= NV_DECL;
+                    if (np && nv_isattr(np, BLT_DCL)) nvflags |= NV_DECL;
                     if (t->com.comtyp & COMFIXED) ((Shnode_t *)t)->com.comtyp &= ~COMFIXED;
-                    shp->nodelist = sh_setlist(shp, argp, flgs, tp);
+                    shp->nodelist = sh_setlist(shp, argp, nvflags, tp);
                     if (np == shp->typeinit) shp->typeinit = NULL;
                     shp->envlist = argp;
                     argp = NULL;
@@ -1314,7 +1315,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     shp->redir0 = 0;
                     if (jmpval) siglongjmp(shp->jmplist->buff, jmpval);
 #if 0
-                                    if(flgs&NV_STATIC)
+                                    if(nvflags&NV_STATIC)
                                             ((Shnode_t*)t)->com.comset = NULL;
 #endif
                     if (shp->exitval >= 0) goto setexit;
@@ -2206,7 +2207,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             if (t->tre.tretyp == TNSPACE) {
                 Namval_t *oldnspace = NULL;
                 int offset = stktell(stkp);
-                int flag = NV_NOARRAY | NV_VARNAME;
+                nvflag_t nvflags = NV_NOARRAY | NV_VARNAME;
                 char *sp, *xp;
                 sfputc(stkp, '.');
                 sfputr(stkp, fname, 0);
@@ -2214,7 +2215,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 for (sp = xp + 1; sp;) {
                     sp = strchr(sp, '.');
                     if (sp) *sp = 0;
-                    np = nv_open(xp, shp->var_tree, flag);
+                    np = nv_open(xp, shp->var_tree, nvflags);
                     if (sp) *sp++ = '.';
                 }
                 if (!nv_istable(np)) {
@@ -2225,7 +2226,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     dtview(root, shp->var_base);
                 }
                 oldnspace = enter_namespace(shp, np);
-                sh_exec(shp, t->for_.fortre, flag | sh_state(SH_ERREXIT));
+                sh_exec(shp, t->for_.fortre, nvflags | sh_state(SH_ERREXIT));
                 enter_namespace(shp, oldnspace);
                 break;
             }
