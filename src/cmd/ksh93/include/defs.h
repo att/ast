@@ -262,7 +262,7 @@ extern void sh_setmatch(Shell_t *, const char *, int, int, int[], int);
 extern Dt_t *sh_subaliastree(Shell_t *, int);
 extern void sh_scope(Shell_t *, struct argnod *, int);
 extern Namval_t *sh_scoped(Shell_t *, Namval_t *);
-extern Namval_t **sh_setlist(Shell_t *, struct argnod *, int, Namval_t *);
+extern Namval_t **sh_setlist(Shell_t *, struct argnod *, nvflag_t, Namval_t *);
 extern void sh_sigclear(Shell_t *, int);
 extern void sh_sigdone(Shell_t *);
 extern void sh_sigreset(Shell_t *, int);

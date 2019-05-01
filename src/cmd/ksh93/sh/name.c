@@ -121,7 +121,7 @@ struct Namcache {
         Namval_t *np;
         Namval_t *last_table;
         Namval_t *namespace;
-        int flags;
+        nvflag_t flags;
         short size;
         short len;
     } entries[NVCACHE];
@@ -261,17 +261,17 @@ struct argnod *nv_onlist(struct argnod *arg, const char *name) {
 // Perform parameter assignment for a linked list of parameters.
 // <flags> contains attributes for the parameters.
 //
-Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ) {
+Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, nvflag_t flags, Namval_t *typ) {
     char *cp;
     Namval_t *np, *mp;
     char *trap = shp->st.trap[SH_DEBUGTRAP];
     char *prefix = shp->prefix;
     int traceon = (sh_isoption(shp, SH_XTRACE) != 0);
-    int array = (flags & (NV_ARRAY | NV_IARRAY));
+    nvflag_t array = flags & (NV_ARRAY | NV_IARRAY);
     Namarr_t *ap;
     Namval_t node, **nodelist = NULL, **nlp = NULL;
     struct Namref nr;
-    int maketype = flags & NV_TYPE;
+    bool maketype = nv_isflag(flags, NV_TYPE);
     struct sh_type shtp;
 
     memset(&node, 0, sizeof(node));
@@ -312,7 +312,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
             stkseek(shp->stk, 0);
             if (*arg->argval == 0 && arg->argchn.ap &&
                 !(arg->argflag & ~(ARG_APPEND | ARG_QUOTED | ARG_MESSAGE | ARG_ARRAY))) {
-                int flag = (NV_VARNAME | NV_ARRAY | NV_ASSIGN);
+                nvflag_t flag = NV_VARNAME | NV_ARRAY | NV_ASSIGN;
                 int sub = 0;
                 struct fornod *fp = (struct fornod *)arg->argchn.ap;
                 Shnode_t *tp = fp->fortre;
@@ -626,7 +626,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
             np = nv_mktype(shtp.nodes, shtp.numnodes);
             free(shtp.nodes);
             shp->mktype = shtp.previous;
-            maketype = 0;
+            maketype = false;
             if (shp->namespace) free(shp->prefix);
             shp->prefix = NULL;
             if (nr.np == np) {
@@ -705,11 +705,11 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
     int copy = 0;
     int top = 0;
     bool noscope = nv_isflag(flags, NV_NOSCOPE);
-    int nofree = 0;
+    nvflag_t nofree = 0;
     int level = 0;
     int zerosub = 0;
     char *sp, *xp;
-    int c;
+    int c, n;
     long mode;
     int isref;
 
@@ -933,22 +933,24 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
                     }
                     ap = nv_arrayptr(np);
                     if (c == '[' || (c == '.' && nv_isarray(np))) {
-                        int n = 0;
+                        nvflag_t nvflags = 0;
                         sub = NULL;
                         mode &= ~NV_NOSCOPE;
                         if (c == '[') {
                             Namval_t *table;
-                            n = mode | nv_isarray(np);
-                            if (!mode && (flags & NV_ARRAY) && ((c = sp[1]) == '*' || c == '@') &&
-                                sp[2] == ']') {
+                            nvflags = mode;
+                            if (nv_isarray(np)) nvflags |= NV_ARRAY;
+                            if (!mode && nv_isflag(flags, NV_ARRAY) &&
+                                ((c = sp[1]) == '*' || c == '@') && sp[2] == ']') {
                                 // Not implemented yet.
                                 dp->last = cp;
                                 return np;
                             }
-                            if ((n & NV_ADD) && (flags & NV_ARRAY)) n |= ARRAY_FILL;
-                            if (flags & NV_ASSIGN) n |= NV_ADD | ARRAY_FILL;
+                            if ((nvflags & NV_ADD) && nv_isflag(flags, NV_ARRAY)) nvflags |= ARRAY_FILL;
+                            if (nv_isflag(flags, NV_ASSIGN)) nvflags |= NV_ADD | ARRAY_FILL;
                             table = shp->last_table;
-                            cp = nv_endsubscript(np, sp, n | (flags & NV_ASSIGN), np->nvshell);
+                            if (nv_isflag(flags, NV_ASSIGN)) nvflags |= NV_ASSIGN;
+                            cp = nv_endsubscript(np, sp, nvflags, np->nvshell);
                             ap = nv_arrayptr(np);  // nv_endsubscript() may have moved the array
                             shp->last_table = table;
 #if 0
@@ -958,12 +960,12 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
                         } else {
                             cp = sp;
                         }
-                        if ((c = *cp) == '.' || (c == '[' && nv_isarray(np)) || (n & ARRAY_FILL) ||
-                            ((ap || (flags & NV_ASSIGN)) && (flags & NV_ARRAY))) {
+                        if ((c = *cp) == '.' || (c == '[' && nv_isarray(np)) || nv_isflag(nvflags, ARRAY_FILL) ||
+                            ((ap || nv_isflag(flags, NV_ASSIGN)) && nv_isflag(flags, NV_ARRAY))) {
                             int m = cp - sp;
                             sub = m ? nv_getsub(np) : 0;
                             if (!sub) {
-                                if (m && !(n & NV_ADD) && *cp != '.') return 0;
+                                if (m && !nv_isflag(nvflags, NV_ADD) && *cp != '.') return 0;
                                 zerosub = 1;
                                 sub = "0";
                             }
@@ -999,7 +1001,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
                             }
                         } else if (c == 0 && mode && (n = nv_aindex(np)) >= 0) {
                             nv_putsub(np, NULL, n, 0);
-                        } else if (n == 0 && (c == 0 || (c == '[' && !nv_isarray(np)))) {
+                        } else if (nvflags == 0 && (c == 0 || (c == '[' && !nv_isarray(np)))) {
                             // Subscript must be 0.
                             cp[-1] = 0;
                             n = sh_arith(shp, sp + 1);
@@ -1019,18 +1021,18 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
                             if (!nq && !(nq = nv_opensub(np))) {
                                 Namarr_t *ap = nv_arrayptr(np);
                                 if (!sub && (flags & NV_NOADD)) return 0;
-                                n = mode | ((flags & NV_NOADD) ? 0 : NV_ADD);
-                                if (!(n & NV_ADD) && ap && tp) n |= NV_ADD;
+                                nvflags = mode | ((flags & NV_NOADD) ? 0 : NV_ADD);
+                                if (!(n & NV_ADD) && ap && tp) nvflags |= NV_ADD;
 
-                                if (!ap && (n & NV_ADD)) {
+                                if (!ap && (nvflags & NV_ADD)) {
                                     nv_putsub(np, sub, 0, ARRAY_FILL);
                                     ap = nv_arrayptr(np);
                                 }
-                                if (n && ap && !ap->table) {
+                                if (nvflags && ap && !ap->table) {
                                     ap->table = dtopen(&_Nvdisc, Dtoset);
                                     dtuserdata(ap->table, shp, 1);
                                 }
-                                if (ap && ap->table && (nq = nv_search(sub, ap->table, n))) {
+                                if (ap && ap->table && (nq = nv_search(sub, ap->table, nvflags))) {
                                     nq->nvenv = np;
                                 }
                                 if (nq && nv_isnull(nq)) nq = nv_arraychild(np, nq, c);
@@ -1169,13 +1171,13 @@ void nv_delete(Namval_t *np, Dt_t *root, nvflag_t flags) {
 // If <flags> & NV_UNJUST then unset attributes before assignment.
 // SH_INIT is only set while initializing the environment.
 //
-Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
+Namval_t *nv_open(const char *name, Dt_t *root, nvflag_t flags) {
     Shell_t *shp = sh_getinterp();
     char *cp = (char *)name;
     int c;
     Namval_t *np = NULL;
     Namfun_t fun;
-    int append = 0;
+    nvflag_t append_nvflags = 0;
     const char *msg = e_varname;
     char *fname = NULL;
     int offset = stktell(shp->stk);
@@ -1204,7 +1206,7 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
             root = shp->var_tree;
         }
     } else if (!(flags & (NV_IDENT | NV_VARNAME | NV_ASSIGN))) {
-        long mode = ((flags & NV_NOADD) ? 0 : NV_ADD);
+        nvflag_t mode = ((flags & NV_NOADD) ? 0 : NV_ADD);
         if (flags & NV_NOSCOPE) mode |= NV_NOSCOPE;
         np = nv_search(name, root, mode);
         if (np && !(flags & NV_REF)) {
@@ -1259,8 +1261,10 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
     nvcache.ok = 1;
 #if SHOPT_BASH
     if (root == shp->fun_tree && sh_isoption(shp, SH_BASH)) {
-        c = ((flags & NV_NOSCOPE) ? NV_NOSCOPE : 0) | ((flags & NV_NOADD) ? 0 : NV_ADD);
-        np = nv_search(name, root, c);
+        nvflag_t nvflags = 0;
+        if (nv_isflag(flags, NV_NOSCOPE)) nvflags |= NV_NOSCOPE;
+        if (!nv_isflag(flags & NV_NOADD)) nvflags |= NV_ADD;
+        np = nv_search(name, root, nvflags);
         cp = Empty;
     } else
 #endif  // SHOPT_BASH
@@ -1305,11 +1309,11 @@ nocache:
         *fname = 0;
     } else {
         if (*cp == '.' && cp[1] == '.') {
-            append |= NV_NODISC;
+            append_nvflags |= NV_NODISC;
             cp += 2;
         }
         if (*cp == '+' && cp[1] == '=') {
-            append |= NV_APPEND;
+            append_nvflags |= NV_APPEND;
             cp++;
         }
     }
@@ -1334,10 +1338,10 @@ skip:
             }
             isref = nv_isref(np);
             if (sh_isoption(shp, SH_XTRACE) && nv_isarray(np)) sub = nv_getsub(np);
-            c = msg == e_aliname ? 0 : (append | (flags & NV_EXPORT));
+            nvflag_t nvflags = msg == e_aliname ? 0 : (append_nvflags | (flags & NV_EXPORT));
             if (isref) nv_offattr(np, NV_REF);
-            if (!append && (flags & NV_UNJUST) && !np->nvfun) _nv_unset(np, NV_EXPORT);
-            if (flags & NV_MOVE) {
+            if (!append_nvflags && (flags & NV_UNJUST) && !np->nvfun) _nv_unset(np, NV_EXPORT);
+            if (nv_isflag(flags, NV_MOVE)) {
                 ap = nv_arrayptr(np);
                 if (ap) {
                     mp = nv_opensub(np);
@@ -1357,7 +1361,7 @@ skip:
                 _nv_unset(np, NV_EXPORT);
                 STORE_VT(np->nvalue, const_cp, strdup(cp));
             } else {
-                nv_putval(np, cp, c);
+                nv_putval(np, cp, nvflags);
             }
             if (isref) {
                 if (nv_search_namval(np, shp->var_base, 0)) {
@@ -1401,7 +1405,7 @@ static char savechars[8 + 1];
 // If <flags> contains NV_NOFREE, previous value is freed, and <string>
 // becomes value of node and <flags> becomes attributes.
 //
-void nv_putval(Namval_t *np, const void *vp, int flags) {
+void nv_putval(Namval_t *np, const void *vp, nvflag_t flags) {
     Shell_t *shp = sh_ptr(np);
     const char *sp = vp;
     char *cp;
@@ -1876,24 +1880,26 @@ static_fn char *staknam(Shell_t *shp, Namval_t *np, char *value) {
 // Put the name and attribute into value of attributes variable.
 //
 static_fn void attstore(Namval_t *np, void *data) {
-    int flag = np->nvflag;
+    nvflag_t nvflags = np->nvflag;
     struct adata *ap = (struct adata *)data;
     ap->sh = data;
     ap->tp = NULL;
-    if (!(flag & NV_EXPORT) || (flag & NV_FUNCT)) return;
-    if ((flag & (NV_UTOL | NV_LTOU | NV_INTEGER)) == (NV_UTOL | NV_LTOU)) {
+
+    if (!nv_isflag(nvflags, NV_EXPORT) || nv_isflag(nvflags, NV_FUNCT)) return;
+
+    if ((nvflags & (NV_UTOL | NV_LTOU | NV_INTEGER)) == (NV_UTOL | NV_LTOU)) {
         data = nv_mapchar(np, NULL);
         if (strcmp(data, e_tolower) && strcmp(data, e_toupper)) return;
     }
-    flag &= (NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER);
+    nvflags &= (NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER);
     *ap->attval++ = '=';
-    if ((flag & NV_DOUBLE) == NV_DOUBLE) {
+    if (nv_isflag(nvflags, NV_DOUBLE)) {
         // Export doubles as integers for ksh88 compatibility.
-        *ap->attval++ = ' ' + (NV_INTEGER | (flag & ~(NV_DOUBLE | NV_EXPNOTE)));
+        *ap->attval++ = ' ' + (NV_INTEGER | (nvflags & ~(NV_DOUBLE | NV_EXPNOTE)));
         *ap->attval = ' ';
     } else {
-        *ap->attval++ = ' ' + flag;
-        if (flag & NV_INTEGER) {
+        *ap->attval++ = ' ' + nvflags;
+        if (nvflags & NV_INTEGER) {
             *ap->attval = ' ' + nv_size(np);
         } else {
             *ap->attval = ' ';
@@ -1952,8 +1958,8 @@ char **sh_envgen(Shell_t *shp) {
 
 struct scan {
     void (*scanfn)(Namval_t *, void *);
-    int scanmask;
-    int scanflags;
+    nvflag_t scanmask;
+    nvflag_t scanflags;
     int scancount;
     void *scandata;
 };
@@ -2002,7 +2008,7 @@ static_fn int scanfilter(Dt_t *dict, void *arg, void *data) {
 //     more of <flags> is visited.
 // If <mask> and <flags> are zero, then all nodes are visted.
 //
-int nv_scan(Dt_t *root, void (*fn)(Namval_t *, void *), void *data, int mask, int flags) {
+int nv_scan(Dt_t *root, void (*fn)(Namval_t *, void *), void *data, nvflag_t mask, nvflag_t flags) {
     Namval_t *np;
     Dt_t *base = NULL;
     struct scan sdata;
@@ -2133,7 +2139,7 @@ static_fn void table_unset(Shell_t *shp, Dt_t *root, int flags, Dt_t *oroot) {
 // <flags> can contain NV_RDONLY to override the readonly attribute being cleared.
 // <flags> can contain NV_EXPORT to override preserve nvenv
 //
-void _nv_unset(Namval_t *np, int flags) {
+void _nv_unset(Namval_t *np, nvflag_t flags) {
     Shell_t *shp = sh_ptr(np);
     struct Value *up;
 
@@ -2560,11 +2566,10 @@ Sfdouble_t nv_getnum(Namval_t *np) {
 // Give <np> the attributes <newatts,> and change its current value to conform to <newatts>.  The
 // <size> of left and right justified fields may be given.
 //
-void nv_newattr(Namval_t *np, unsigned newatts, int size) {
+void nv_newattr(Namval_t *np, nvflag_t newatts, int size) {
     Shell_t *shp = sh_ptr(np);
     char *sp;
     char *cp = NULL;
-    unsigned int n;
     Namval_t *mp = NULL;
     Namarr_t *ap = NULL;
     int oldsize, oldatts, trans;
@@ -2580,23 +2585,24 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
         __builtin_unreachable();
     }
     // Handle attributes that do not change data separately.
-    n = np->nvflag;
-    trans = !(n & NV_INTEGER) && (n & (NV_LTOU | NV_UTOL));
+    nvflag_t nvflags = np->nvflag;
+    trans = !nv_isflag(nvflags, NV_INTEGER) && (nvflags & (NV_LTOU | NV_UTOL));
     if (newatts & NV_EXPORT) nv_offattr(np, NV_IMPORT);
-    if (((n ^ newatts) & NV_EXPORT)) {
+    if (((nvflags ^ newatts) & NV_EXPORT)) {
         // Record changes to the environment.
-        if (n & NV_EXPORT) {
+        if (nv_isflag(nvflags, NV_EXPORT)) {
             nv_offattr(np, NV_EXPORT);
             env_delete(shp->env, nv_name(np));
         } else {
             nv_onattr(np, NV_EXPORT);
             sh_envput(shp, np);
         }
-        if ((n ^ newatts) == NV_EXPORT && size == -1) return;
+        if ((nvflags ^ newatts) == NV_EXPORT && size == -1) return;
     }
     oldsize = nv_size(np);
     if (size == -1) size = oldsize;
-    if ((size == oldsize || (n & NV_INTEGER)) && !trans && ((n ^ newatts) & ~NV_NOCHANGE) == 0) {
+    if ((size == oldsize || nv_isflag(nvflags, NV_INTEGER)) && !trans &&
+        ((nvflags ^ newatts) & ~NV_NOCHANGE) == 0) {
         if (size) nv_setsize(np, size);
         if (nv_isattr(np, NV_NOFREE)) newatts |= NV_NOFREE;
         nv_setattr(np, newatts);
@@ -2624,7 +2630,7 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
             // That, however, can result in a buffer that is too small because the `size` passed
             // into this function may be larger than `n + 8`. Resulting in the memmove() in
             // nv_putval() to read past the end of the buffer. So instead do this hack:
-            n = strlen(sp);
+            size_t n = strlen(sp);
             cp = malloc(n + 8 >= size + 8 ? n + 8 : size + 8);
             strcpy(cp, sp);
 
@@ -2763,7 +2769,7 @@ static_fn void cache_purge(const char *name) {
     }
 }
 
-bool nv_rename(Namval_t *np, int flags) {
+bool nv_rename(Namval_t *np, nvflag_t flags) {
     Shell_t *shp = sh_ptr(np);
     Namval_t *mp = NULL;
     Namval_t *nr = NULL;
@@ -2913,7 +2919,7 @@ bool nv_rename(Namval_t *np, int flags) {
 //
 // Create a reference node from <np> to $np in dictionary <hp>.
 //
-void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
+void nv_setref(Namval_t *np, Dt_t *hp, nvflag_t flags) {
     Shell_t *shp = sh_ptr(np);
     Namval_t *nq = NULL;
     Namval_t *nr = NULL;
