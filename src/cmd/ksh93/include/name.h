@@ -501,7 +501,7 @@ extern void nv_newattr(Namval_t *, unsigned, int);
 extern void nv_newtype(Namval_t *);
 extern Namval_t *nv_open(const char *, Dt_t *, nvflag_t);
 extern void nv_putval(Namval_t *, const void *, nvflag_t);
-extern void nv_putv(Namval_t *, const void *, int, Namfun_t *);
+extern void nv_putv(Namval_t *, const void *, nvflag_t, Namfun_t *);
 extern bool nv_rename(Namval_t *, nvflag_t);
 extern int nv_scan(Dt_t *, void (*)(Namval_t *, void *), void *, nvflag_t, nvflag_t);
 extern char *nv_setdisc(Namval_t *, const void *, Namval_t *, Namfun_t *);
@@ -513,8 +513,8 @@ extern int nv_setsize(Namval_t *, int);
 extern Namfun_t *nv_disc(Namval_t *, Namfun_t *, Nvdisc_op_t);
 extern void nv_unset(Namval_t *); /*obsolete */
 extern void _nv_unset(Namval_t *, nvflag_t);
-extern Namval_t *nv_search(const char *, Dt_t *, int);
-extern Namval_t *nv_search_namval(const Namval_t *, Dt_t *, int);
+extern Namval_t *nv_search(const char *, Dt_t *, nvflag_t);
+extern Namval_t *nv_search_namval(const Namval_t *, Dt_t *, nvflag_t);
 extern char *nv_name(const Namval_t *);
 extern Namval_t *nv_type(Namval_t *);
 // Note that the third parameter should be a pointer to a Optdisc_t or a structure where that type

@@ -121,7 +121,7 @@ Sfdouble_t nv_getn(Namval_t *np, Namfun_t *nfp) {
 //
 // Call the next assign function in the chain.
 //
-void nv_putv(Namval_t *np, const void *value, int flags, Namfun_t *nfp) {
+void nv_putv(Namval_t *np, const void *value, nvflag_t flags, Namfun_t *nfp) {
     Namfun_t *fp, *fpnext;
     Namarr_t *ap;
 
@@ -801,7 +801,7 @@ void clone_all_disc(Namval_t *np, Namval_t *mp, nvflag_t flags) {
 int nv_clone(Namval_t *np, Namval_t *mp, nvflag_t flags) {
     Namfun_t *fp, *fpnext;
     const char *val = FETCH_VT(mp->nvalue, const_cp);
-    uint32_t flag = mp->nvflag;
+    nvflag_t flag = mp->nvflag;
     size_t size = nv_size(mp);
 
     mp->nvshell = np->nvshell;
@@ -829,7 +829,7 @@ int nv_clone(Namval_t *np, Namval_t *mp, nvflag_t flags) {
         clone_all_disc(np, mp, flags);
         shp->last_table = last_table;
     }
-    if (flags & NV_APPEND) return 1;
+    if (nv_isflag(flags, NV_APPEND)) return 1;
     if (nv_size(mp) == size) nv_setsize(mp, nv_size(np));
     if (mp->nvflag == flag) {
         nv_setattr(mp, (np->nvflag & ~(NV_MINIMAL)) | (mp->nvflag & NV_MINIMAL));
@@ -837,7 +837,7 @@ int nv_clone(Namval_t *np, Namval_t *mp, nvflag_t flags) {
     if (nv_isattr(np, NV_EXPORT)) mp->nvflag |= (np->nvflag & NV_MINIMAL);
     if (FETCH_VT(mp->nvalue, const_cp) == val && !nv_isattr(np, NV_INTEGER)) {
         if (FETCH_VT(np->nvalue, const_cp) && FETCH_VT(np->nvalue, const_cp) != Empty &&
-            (flags & NV_COMVAR) && !(flags & NV_MOVE)) {
+            nv_isflag(flags, NV_COMVAR) && !nv_isflag(flags, NV_MOVE)) {
             const char *cp = FETCH_VT(np->nvalue, const_cp);
             if (size) {
                 STORE_VT(mp->nvalue, const_cp, memdup(cp, size));
@@ -852,7 +852,7 @@ int nv_clone(Namval_t *np, Namval_t *mp, nvflag_t flags) {
         }
     }
     mp->nvshell = np->nvshell;
-    if (flags & NV_MOVE) {
+    if (nv_isflag(flags, NV_MOVE)) {
         if (nv_isattr(np, NV_INTEGER)) STORE_VT(mp->nvalue, ip, FETCH_VT(np->nvalue, ip));
         np->nvfun = NULL;
         STORE_VT(np->nvalue, const_cp, NULL);
@@ -868,14 +868,14 @@ int nv_clone(Namval_t *np, Namval_t *mp, nvflag_t flags) {
             np->nvflag &= NV_MINIMAL;
         }
         return 1;
-    } else if ((flags & NV_ARRAY) && !nv_isattr(np, NV_MINIMAL)) {
+    } else if (nv_isflag(flags, NV_ARRAY) && !nv_isattr(np, NV_MINIMAL)) {
         mp->nvenv = np->nvenv;
     }
     if (nv_isattr(np, NV_INTEGER) && FETCH_VT(mp->nvalue, ip) != FETCH_VT(np->nvalue, ip) &&
         FETCH_VT(np->nvalue, const_cp) != Empty) {
         STORE_VT(mp->nvalue, ip, (int *)num_clone(np, FETCH_VT(np->nvalue, ip)));
         nv_offattr(mp, NV_NOFREE);
-    } else if ((flags & NV_NOFREE) && !nv_arrayptr(np)) {
+    } else if (nv_isflag(flags, NV_NOFREE) && !nv_arrayptr(np)) {
         nv_onattr(np, NV_NOFREE);
     }
     return 1;
@@ -939,7 +939,7 @@ Namval_t *nv_mkclone(Namval_t *mp) {
     return np;
 }
 
-Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
+Namval_t *nv_search(const char *name, Dt_t *root, nvflag_t mode) {
     Shell_t *shp = sh_getinterp();
     Dt_t *dp = NULL;
 
@@ -967,7 +967,7 @@ Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
 
 // This is a variant of nv_search() that takes an existing Namval_t* rather than a char* to the var
 // name of interest.
-Namval_t *nv_search_namval(const Namval_t *mp, Dt_t *root, int mode) {
+Namval_t *nv_search_namval(const Namval_t *mp, Dt_t *root, nvflag_t mode) {
     Shell_t *shp = sh_getinterp();
     Dt_t *dp = NULL;
     const char *name = NULL;
@@ -976,14 +976,14 @@ Namval_t *nv_search_namval(const Namval_t *mp, Dt_t *root, int mode) {
     if (shp->inpool) mode |= NV_NOSCOPE;
 #endif  // SHOPT_COSHELL
 
-    if (mode & NV_NOSCOPE) dp = dtview(root, 0);
+    if (nv_isflag(mode, NV_NOSCOPE)) dp = dtview(root, 0);
 
     Namval_t *np = dtsearch(root, mp);
-    if (!np && (mode & NV_ADD)) {
+    if (!np && nv_isflag(mode, NV_ADD)) {
         name = nv_name(mp);
-        if (shp->namespace && !(mode & NV_NOSCOPE) && root == shp->var_tree) {
+        if (shp->namespace && !nv_isflag(mode, NV_NOSCOPE) && root == shp->var_tree) {
             root = nv_dict(shp->namespace);
-        } else if (!dp && !(mode & NV_NOSCOPE)) {
+        } else if (!dp && !nv_isflag(mode, NV_NOSCOPE)) {
             Dt_t *next;
             while ((next = dtvnext(root))) root = next;
         }
@@ -1342,7 +1342,7 @@ bool nv_hasget(Namval_t *np) {
     return false;
 }
 
-Namval_t *sh_fsearch(Shell_t *shp, const char *fname, int add) {
+Namval_t *sh_fsearch(Shell_t *shp, const char *fname, nvflag_t add) {
     Stk_t *stkp = shp->stk;
     int offset = stktell(stkp);
 
