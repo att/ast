@@ -1182,7 +1182,7 @@ char *nv_getvtree(Namval_t *np, Namfun_t *fp) {
 // Put discipline for compound initializations.
 //
 static_fn void put_tree(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
-    struct Namarray *ap;
+    Namarr_t *ap;
     int nleft = 0;
 
     if (!val && !fp->next && nv_isattr(np, NV_NOFREE)) return;
