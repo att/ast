@@ -98,6 +98,11 @@ static inline int PROC_ARG(long x, long n) {
 
 struct Mods_s;
 
+#ifdef BBI_SOL11_4
+/* BBI_SOL11_4: unknown location of sig_t definition -- SEE ALSO: src/lib/libast/sfio/sfmode.c */
+typedef void (*sig_t)(int);
+#endif
+
 typedef struct {
     pid_t pid;           // process id
     pid_t pgrp;          // process group id

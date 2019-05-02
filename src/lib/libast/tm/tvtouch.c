@@ -72,6 +72,11 @@ int tvtouch(const char *path, const Tv_t *av, const Tv_t *mv, const Tv_t *cv, in
 
     if (!cv && av == TV_TOUCH_RETAIN && mv == TV_TOUCH_RETAIN) {
         struct stat st;
+#ifdef BBI_SOL11_4
+/* BBI_SOL11_4: workaround defines ALLPERMS as it was in 2012  -- SEE ALSO: src/lib/libast/string/strperm.c and src/lib/libast/tm/tvtouch.c */
+#define S_IPERM (S_ISUID | S_ISGID | S_ISVTX | S_IRWXU | S_IRWXG | S_IRWXO)
+#define ALLPERMS S_IPERM
+#endif
         if (!stat(path, &st) && !chmod(path, st.st_mode & ALLPERMS)) {
             // We were asked to retain existing timestamps but the file doesn't seem to exist. So do
             // nothing and report success.

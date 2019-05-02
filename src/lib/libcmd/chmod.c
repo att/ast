@@ -275,6 +275,11 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
 #endif
                 if (amode) mode = strperm(amode, &last, ent->fts_statp->st_mode);
                 if (show || (*chmodf)(ent->fts_accpath, mode) >= 0) {
+#ifdef BBI_SOL11_4
+/* BBI_SOL11_4: workaround defines ALLPERMS as it was in 2012  -- SEE ALSO: src/lib/libast/string/strperm.c and src/lib/libast/tm/tvtouch.c */
+#define S_IPERM (S_ISUID | S_ISGID | S_ISVTX | S_IRWXU | S_IRWXG | S_IRWXO)
+#define ALLPERMS S_IPERM
+#endif
                     if (notify == 2 || (notify == 1 && (mode & ALLPERMS) !=
                                                            (ent->fts_statp->st_mode & ALLPERMS))) {
                         sfprintf(sfstdout, "%s: mode changed to %0.4o (%s)\n", ent->fts_path, mode,

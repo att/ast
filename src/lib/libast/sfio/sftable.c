@@ -420,11 +420,14 @@ static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t 
                         }
                         break;
                     case SFFMT_FLOAT:
+
 #if !_ast_fltmax_double
                         if (size == sizeof(Sfdouble_t)) {
                             fp[n].argv.ld = va_arg(args, Sfdouble_t);
-                        } else {
+/* BBI_SOL11_4: fixed curly bracket nesting problem -- this is no porting change */
+                        } else 
 #endif
+			{
                             fp[n].argv.d = va_arg(args, double);
                         }
                         break;

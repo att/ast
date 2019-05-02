@@ -35,6 +35,13 @@ add_global_arguments('-std=gnu99', language: 'c')
 # GNU distros.
 add_global_arguments('-D_GNU_SOURCE', language: 'c')
 
+# BBI_SOL11_4: BEGIN: add preprocessor definition BBI_SOL11_4 and _ast_fltmax_double -- add math library for linking phase -lm
+# BBI_SOL11_4: TODO: option to enable this BEGIN/END section only for solaris 11.4 target systems. Processor architecture "sparc" and "i386" should work.
+add_global_arguments('-DBBI_SOL11_4', language: 'c')
+add_global_arguments('-D_ast_fltmax_double', language: 'c')
+add_global_link_arguments('-lm', language: 'c')
+# BBI_SOL11_4: END
+
 # The AST/ksh code is littered with aliasing that violates the assumptions the
 # compiler makes when `-fstrict-aliasing` is in effect so make sure those
 # optimizations are disabled.
@@ -44,14 +51,6 @@ add_global_arguments('-fno-strict-aliasing', language: 'c')
 # more noise than value with `-Wno-...` flags. Note that Meson implicitly adds
 # -Wall.
 add_global_arguments('-Wextra', language: 'c')
-
-# Uncomment this to enable warnings about implicit type coercions.
-# This is gcc only; clang doesn't recognize it.
-# add_global_arguments('-Wcoercion', language: 'c')
-
-# Uncomment this to enable warnings about implicit 64 to 32 bit narrowing casts.
-# This is clang only; gcc doesn't recognize it.
-# add_global_arguments('-Wshorten-64-to-32', language: 'c')
 
 # GCC 8 enables -Wcast-function-type when -Wextra is used. Sadly it causes far
 # too many false positives in the ksh code. Such as in the

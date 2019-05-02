@@ -625,8 +625,10 @@ loop_fmt:
 #if !_ast_fltmax_double
                     if (size == sizeof(Sfdouble_t)) {
                         argv.ld = va_arg(args, Sfdouble_t);
-                    } else {
+/* BBI_SOL11_4: fixed curly bracket nesting problem -- this is no porting change */
+                    } else
 #endif
+ 		    {
                         argv.d = va_arg(args, double);
                     }
                     break;

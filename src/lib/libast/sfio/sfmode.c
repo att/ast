@@ -182,6 +182,11 @@ Sfrsrv_t *_sfrsrv(Sfio_t *f, ssize_t size) {
 static_fn void ignoresig(int sig) { signal(sig, ignoresig); }
 #endif
 
+#ifdef BBI_SOL11_4
+/* BBI_SOL11_4: unknown location of sig_t definition -- SEE ALSO: src/lib/libast/include/proc.h */
+typedef void (*sig_t)(int);
+#endif
+
 int _sfpopen(Sfio_t *f, int fd, int pid, int stdio) {
     Sfproc_t *p;
 

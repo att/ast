@@ -121,6 +121,11 @@ int strperm(const char *aexpr, char **e, int perm) {
                                 typ |= S_ISVTX;
                                 break;
                             case 'l':
+#ifdef BBI_SOL11_4
+/* BBI_SOL11_4: workaround defines ALLPERMS as it was in 2012  -- SEE ALSO: src/lib/libast/string/strperm.c and src/lib/libast/tm/tvtouch.c */
+#define S_IPERM (S_ISUID | S_ISGID | S_ISVTX | S_IRWXU | S_IRWXG | S_IRWXO)
+#define ALLPERMS S_IPERM
+#endif
                                 if (perm & S_IXGRP) {
                                     if (e) *e = expr - 1;
                                     return perm & ALLPERMS;

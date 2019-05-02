@@ -127,7 +127,7 @@ static bool output(bool sep, uint32_t flags, uint32_t flag, const char *value, c
 }
 
 int b_uname(int argc, char **argv, Shbltin_t *context) {
-    uint32_t flags = 0;
+    long flags = 0;
     bool sep = false;
     int n;
     char *s;
@@ -206,7 +206,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         __builtin_unreachable();
     }
     if (sethost) {
-        if (sethostname(sethost, (int)strlen(sethost) + 1)) {
+        if (sethostname(sethost, strlen(sethost) + 1)) {
             error(ERROR_system(1), "%s: cannot set host name", sethost);
             __builtin_unreachable();
         }
@@ -297,6 +297,8 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             sep = output(sep, flags, OPT_hostid, s, "hostid");
         }
 #endif
+#ifndef BBI_SOL11_4
+/* BBI_SOL11_4: option absent for workaround -- check manuals howto obtain RPC domainname */
         if (flags & OPT_domain) {
             s = astconf("SRPC_DOMAIN", NULL, NULL);
             if (!(*s)) {
@@ -305,6 +307,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             }
             sep = output(sep, flags, OPT_domain, s, "domain");
         }
+#endif
         if (sep) sfputc(sfstdout, '\n');
     }
 
