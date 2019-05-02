@@ -622,7 +622,7 @@ static_fn void free_list(struct openlist *olist) {
 // Set ${.sh.name} and ${.sh.subscript}.
 // Set _ to reference for ${.sh.name}[$.sh.subscript].
 //
-static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Namref *nr) {
+static_fn nvflag_t set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Namref *nr) {
     char *sp = NULL;
     char *cp;
     Namarr_t *ap;
@@ -663,7 +663,7 @@ static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Na
     return 0;
 }
 
-static_fn void unset_instance(Namval_t *nq, Namval_t *node, struct Namref *nr, long mode) {
+static_fn void unset_instance(Namval_t *nq, Namval_t *node, struct Namref *nr, nvflag_t mode) {
     UNUSED(nq);
 
     STORE_VT(L_ARGNOD->nvalue, nrp, FETCH_VT(node->nvalue, nrp));
@@ -1330,7 +1330,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     Namval_t node;
                     Namval_t *namespace = NULL;
                     struct Namref nr;
-                    long mode;
+                    nvflag_t mode;
                     struct slnod *slp;
                     if (!FETCH_VT(np->nvalue, ip)) {
                         indx = path_search(shp, com0, NULL, 0);
@@ -2792,7 +2792,7 @@ int sh_fun(Shell_t *shp, Namval_t *np, Namval_t *nq, char *argv[]) {
     char *base;
     Namval_t node;
     struct Namref nr;
-    long mode;
+    nvflag_t mode;
     char *prefix = shp->prefix;
     int n = 0;
     char *av[3];
