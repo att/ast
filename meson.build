@@ -48,7 +48,9 @@ add_global_arguments('-Wextra', language: 'c')
 # Uncomment this to enable warnings about implicit type coercions.
 # This is gcc only; clang doesn't recognize it.
 # add_global_arguments('-Wcoercion', language: 'c')
+
 # Uncomment this to enable warnings about implicit 64 to 32 bit narrowing casts.
+# This is clang only; gcc doesn't recognize it.
 # add_global_arguments('-Wshorten-64-to-32', language: 'c')
 
 # GCC 8 enables -Wcast-function-type when -Wextra is used. Sadly it causes far
