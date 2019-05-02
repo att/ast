@@ -111,7 +111,7 @@ static_fn int test_strmatch(Shell_t *shp, const char *str, const char *pat) {
     if (m > elementsof(match) / 2) m = elementsof(match) / 2;
     n = strgrpmatch(str, pat, (ssize_t *)match, m,
                     STR_GROUP | STR_MAXIMAL | STR_LEFT | STR_RIGHT | STR_INT);
-    if (m == 0 && n == 1) match[1] = strlen(str);
+    if (m == 0 && n == 1) match[1] = (int)strlen(str);
     if (n) sh_setmatch(shp, str, -1, n, match, 0);
     return n;
 }
@@ -300,8 +300,10 @@ static_fn int eval_e3(Shell_t *shp, struct test *tp) {
     if (cp != 0 && (c_eq(cp, '=') || c2_eq(cp, '!', '='))) goto skip;
     if (c2_eq(arg, '-', 't')) {
         if (cp) {
-            op = strtol(cp, &binop, 10);
+            long l = strtol(cp, &binop, 10);
             if (*binop) return 0;
+            if (l > INT_MAX || l < INT_MIN) return 0;
+            op = (int)l;
             if (shp->subshell && op == STDOUT_FILENO) return 0;
             return tty_check(op);
         }
@@ -443,8 +445,10 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
         }
         case 't': {
             char *last;
-            op = strtol(arg, &last, 10);
+            long l = strtol(arg, &last, 10);
             if (*last) return 0;
+            if (l > INT_MAX || l < INT_MIN) return 0;
+            op = (int)l;
             if (shp->subshell && op == STDOUT_FILENO) return 0;
             return tty_check(op);
         }

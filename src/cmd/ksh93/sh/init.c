@@ -525,7 +525,7 @@ static_fn void put_rand(Namval_t *np, const void *val, nvflag_t flags, Namfun_t 
 // Never pick same number twice in a row.
 //
 static_fn Sfdouble_t nget_rand(Namval_t *np, Namfun_t *fp) {
-    long cur, last = *FETCH_VT(np->nvalue, i32p);
+    int cur, last = *FETCH_VT(np->nvalue, i32p);
     UNUSED(fp);
 
     do {
@@ -582,12 +582,13 @@ static_fn char *get_lineno(Namval_t *np, Namfun_t *fp) {
 static_fn char *get_lastarg(Namval_t *np, Namfun_t *fp) {
     UNUSED(fp);
     Shell_t *shp = sh_ptr(np);
-    char *cp;
-    int pid;
 
-    if (sh_isstate(shp, SH_INIT) && (cp = shp->lastarg) && *cp == '*' &&
-        (pid = strtol(cp + 1, &cp, 10)) && *cp == '*') {
-        nv_putval(np, cp + 1, 0);
+    if (sh_isstate(shp, SH_INIT)) {
+        char *cp = shp->lastarg;
+        if (cp && *cp == '*') {
+            long l = strtol(cp + 1, &cp, 10);
+            if (l && *cp == '*') nv_putval(np, cp + 1, 0);
+        }
     }
     return shp->lastarg;
 }
@@ -1989,9 +1990,9 @@ static_fn void env_init(Shell_t *shp) {
                     }
                     if (*ep && *ep != '.') {
                         flag |= NV_EXPNOTE;
-                        size = ep - val;
+                        size = (int)(ep - val);
                     } else {
-                        size = strlen(ep);
+                        size = (int)strlen(ep);
                     }
                     size--;
                 }
