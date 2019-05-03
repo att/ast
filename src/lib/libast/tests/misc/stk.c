@@ -24,8 +24,8 @@
 #include <sys/types.h>
 
 #include "ast.h"
-#include "terror.h"
 #include "stk.h"
+#include "terror.h"
 
 // TODO: Write better documentation of `stk` related functions and extend these tests
 tmain() {
