@@ -41,6 +41,14 @@
 #include "sfio.h"
 #include "shcmd.h"
 
+#ifndef ALLPERMS
+#ifdef S_ISTXT
+#define ALLPERMS (S_ISTXT | S_ISUID | S_ISGID | S_IRWXU | S_IRWXG | S_IRWXO)
+#else
+#define ALLPERMS (S_ISVTX | S_ISUID | S_ISGID | S_IRWXU | S_IRWXG | S_IRWXO)
+#endif
+#endif
+
 static const char usage[] =
     "[-?\n@(#)$Id: chmod (AT&T Research) 2012-04-20 $\n]" USAGE_LICENSE
     "[+NAME?chmod - change the access permissions of files]"

@@ -37,6 +37,14 @@
 
 #include "tv.h"
 
+#ifndef ALLPERMS
+#ifdef S_ISTXT
+#define ALLPERMS (S_ISTXT | S_ISUID | S_ISGID | S_IRWXU | S_IRWXG | S_IRWXO)
+#else
+#define ALLPERMS (S_ISVTX | S_ISUID | S_ISGID | S_IRWXU | S_IRWXG | S_IRWXO)
+#endif
+#endif
+
 // NOTE: These symbols aren't actually available to any code calling tvtouch() since they are not
 // defined in any header that such code could include. See the NOTE below.
 //

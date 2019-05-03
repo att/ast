@@ -9,6 +9,7 @@ foreach test_name: tests
         c_args: shared_c_args,
         include_directories: [configuration_incdir, incdir],
         link_with: [libast, libenv],
+        dependencies: [libm_dep],
         install: false)
     test('API/aso/' + test_name, sh_exe, args: [test_driver, test_target, test_dir])
 endforeach

@@ -39,6 +39,11 @@ endif
 # libc, on others they are found in libm.
 libm_dep = cc.find_library('m', required: false, dirs: lib_dirs)
 
+# On some platforms the network functions (e.g., `socket()`) that we need are found in
+# libc, on others they are found in libsocket and libnsl.
+libsocket_dep = cc.find_library('socket', required: false, dirs: lib_dirs)
+libnsl_dep = cc.find_library('nsl', required: false, dirs: lib_dirs)
+
 # On some platforms `dladdr()` and related functions are found in libc,
 # on others they are found in libdl.
 libdl_dep = cc.find_library('dl', required: false, dirs: lib_dirs)

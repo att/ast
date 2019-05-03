@@ -1,4 +1,5 @@
 #!/bin/sh
+set -x
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
@@ -48,7 +49,7 @@ PATH="$MESON_SOURCE_ROOT/scripts:$PATH"
 tmpdir=$(mktemp -dt ksh.XXXXXX)
 tmp=$tmpdir/conf
 cd $tmpdir || exit
-trap "rm -rf $tmpdir" EXIT
+trap "cd /tmp; rm -rf $tmpdir" EXIT
 
 # We need to create the Meson build directory that will contain the
 # dynamically generated source files.
@@ -338,7 +339,7 @@ sort -u > $tmp.g
 } > $tmp.t
 mv $tmp.t $tmp.g
 
-HOST=`"$MESON_SOURCE_ROOT/bin/hosttype" | sed -e 's,[0123456789.].*,,' | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
+HOST=`"$MESON_SOURCE_ROOT/scripts/hosttype" | sed -e 's,[0123456789.].*,,' | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 case $HOST in
 '')     HOST=SYSTEM ;;
 esac

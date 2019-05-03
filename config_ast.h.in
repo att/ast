@@ -175,6 +175,12 @@
 #mesondefine _ast_intmax_long
 #define _ast_fltmax_t long double
 
+// This shouldn't be necessary but old distros such as SVR4 (e.g., Solaris,
+// OpenIndiana) may not define this type. Rather than add a feature test just
+// define the type. Since the signature is identical on newer distros this
+// doesn't cause any problems.
+typedef void (*sig_t)(int);
+
 #if DEBUG_BUILD
 // If we're doing a debug build don't have any static (module private) functions.
 // This is needed on most platforms for dladdr() to give us an accurate backtrace.

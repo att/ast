@@ -33,7 +33,9 @@
 #include "ast.h"
 #include "cdt.h"
 
+#ifndef RTLD_PARENT
 #define RTLD_PARENT 0
+#endif
 
 #define DLL_INFO_PREVER 0x0001  // pre-suffix style version
 #define DLL_INFO_DOTVER 0x0002  // post-suffix style version

@@ -18,7 +18,7 @@ INC_DIRS="$INC_DIRS -I$MESON_SOURCE_ROOT/src/lib/libast/include"
 INC_DIRS="$INC_DIRS -I$MESON_SOURCE_ROOT/src/lib/libast/features"
 INC_DIRS="$INC_DIRS -I$MESON_SOURCE_ROOT/src/cmd/std"
 
-if [ -z "$CC" ];
+if [ -z "$CC" ]
 then
     CC=cc
 fi

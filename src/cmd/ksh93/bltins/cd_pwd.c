@@ -50,6 +50,10 @@
 #include "stk.h"
 #include "variables.h"
 
+#ifndef O_DIRECTORY
+#define O_DIRECTORY 0
+#endif
+
 //
 // Invalidate path name bindings to relative paths.
 //

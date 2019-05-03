@@ -298,11 +298,16 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         }
 #endif
         if (flags & OPT_domain) {
+#if AST_SUNOS
+            // TODO: Fix this for Solaris.
+            s = "domain.unknown";
+#else
             s = astconf("SRPC_DOMAIN", NULL, NULL);
             if (!(*s)) {
                 getdomainname(buf, sizeof(buf));
                 s = buf;
             }
+#endif
             sep = output(sep, flags, OPT_domain, s, "domain");
         }
         if (sep) sfputc(sfstdout, '\n');

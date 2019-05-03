@@ -12,6 +12,7 @@ endif
 # Global compiler flags aren't used by the feature tests. So instead put them
 # in an array that will be used by the feature tests.
 feature_test_args = ['-std=gnu99', '-D_GNU_SOURCE']
+
 if system == 'openbsd'
     # This is needed because OpenBSD installs a lot of stuff in
     # /usr/local/{include,lib} that would normally be in /usr/{include,lib}.
@@ -34,6 +35,18 @@ add_global_arguments('-std=gnu99', language: 'c')
 # TODO: Figure out if there is a more generic manner of enabling support for
 # GNU distros.
 add_global_arguments('-D_GNU_SOURCE', language: 'c')
+
+# Solaris/SunOS and its derivatives, such as IllumOS and OpenIndiana, need
+# special handling.
+#
+# TODO: Figure out the correct way to enable the POSIX extensions we require.
+# Defining __EXTENSIONS__ is almost certainly the wrong way to do this.
+if system == 'sunos' or system == 'solaris'
+    feature_test_args += ['-D__EXTENSIONS__', '-DAST_SUNOS']
+    add_global_arguments('-D__EXTENSIONS__', language: 'c')
+    add_global_arguments('-DAST_SUNOS', language: 'c')
+endif
+
 
 # The AST/ksh code is littered with aliasing that violates the assumptions the
 # compiler makes when `-fstrict-aliasing` is in effect so make sure those

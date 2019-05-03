@@ -41,6 +41,10 @@
 
 #include "ast_dir.h"
 
+#ifndef O_DIRECTORY
+#define O_DIRECTORY 0
+#endif
+
 #ifndef ERANGE
 #define ERANGE E2BIG
 #endif
