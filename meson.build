@@ -35,11 +35,12 @@ add_global_arguments('-std=gnu99', language: 'c')
 # GNU distros.
 add_global_arguments('-D_GNU_SOURCE', language: 'c')
 
-# BBI_SOL11_4: BEGIN: add preprocessor definition BBI_SOL11_4 and _ast_fltmax_double -- add math library for linking phase -lm
-# BBI_SOL11_4: TODO: option to enable this BEGIN/END section only for solaris 11.4 target systems. Processor architecture "sparc" and "i386" should work.
-add_global_arguments('-DBBI_SOL11_4', language: 'c')
-add_global_arguments('-D_ast_fltmax_double', language: 'c')
-add_global_link_arguments('-lm', language: 'c')
+# BBI_SOL11_4: BEGIN: add preprocessor definition BBI_SOL11_4 (should be backward operational to beyond solaris 10) -- define _ast_fltmax_double ::= 1 -- add math library for linking phase -lm
+if system == 'sunos'
+    add_global_arguments('-DBBI_SOL11_4', language: 'c')
+    add_global_arguments('-D_ast_fltmax_double=1', language: 'c')
+    add_global_link_arguments('-lm', language: 'c')
+endif
 # BBI_SOL11_4: END
 
 # The AST/ksh code is littered with aliasing that violates the assumptions the
