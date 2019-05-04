@@ -43,7 +43,7 @@ do	case $i in
 done
 if	test "$ok" = "1"
 then	libpath=lib:LD_LIBRARY_PATH
-	case $("$MESON_SOURCE_ROOT/bin/hosttype") in
+	case $("$MESON_SOURCE_ROOT/scripts/hosttype") in
 	sgi.*)	if	test -d /lib32
 		then	libpath="lib32:LD_LIBRARYN32_PATH:sgi.mips3|sgi.*-n32,$libpath"
 		fi
@@ -63,7 +63,7 @@ elif	test -x /lib/dld.sl
 then	libpath=lib:SHLIB_PATH
 elif	test -x /usr/lib/dyld
 then	libpath=lib:DYLD_LIBRARY_PATH
-else	case $("$MESON_SOURCE_ROOT/bin/hosttype") in
+else	case $("$MESON_SOURCE_ROOT/scripts/hosttype") in
 	ibm.*|mvs.*)
 		libpath=lib:LIBPATH
 		;;

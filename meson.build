@@ -35,10 +35,9 @@ add_global_arguments('-std=gnu99', language: 'c')
 # GNU distros.
 add_global_arguments('-D_GNU_SOURCE', language: 'c')
 
-# BBI_SOL11_4: BEGIN: add preprocessor definition BBI_SOL11_4 (should be backward operational to beyond solaris 10) -- define _ast_fltmax_double ::= 1 -- add math library for linking phase -lm
+# BBI_SOL11_4: BEGIN: add preprocessor definition BBI_SOL11_4 (should be backward operational to beyond solaris 10) -- add math library for linking phase -lm
 if system == 'sunos'
     add_global_arguments('-DBBI_SOL11_4', language: 'c')
-    add_global_arguments('-D_ast_fltmax_double=0', language: 'c')
     add_global_link_arguments('-lm', language: 'c')
 endif
 # BBI_SOL11_4: END

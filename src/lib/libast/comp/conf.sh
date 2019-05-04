@@ -338,7 +338,7 @@ sort -u > $tmp.g
 } > $tmp.t
 mv $tmp.t $tmp.g
 
-HOST=`"$MESON_SOURCE_ROOT/bin/hosttype" | sed -e 's,[0123456789.].*,,' | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
+HOST=`"$MESON_SOURCE_ROOT/scripts/hosttype" | sed -e 's,[0123456789.].*,,' | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 case $HOST in
 '')     HOST=SYSTEM ;;
 esac
