@@ -31,19 +31,16 @@ tmain() {
     UNUSED(argv);
 
     struct StringToStringTest tests[] = {
-        { "foo=bar", "bar" },
-        { "foo=baz", "baz" },
-        { "foo", NULL },
-        { NULL, NULL }
-    };
+        {"foo=bar", "bar"}, {"foo=baz", "baz"}, {"foo", NULL}, {NULL, NULL}};
 
     const char *actual_result;
 
-    for (int i=0; tests[i].input; ++i) {
+    for (int i = 0; tests[i].input; ++i) {
         sh_setenviron(tests[i].input);
         actual_result = sh_getenv("foo");
         if (tests[i].expected_result && strcmp(actual_result, tests[i].expected_result)) {
-            terror("Expected Result: %s, Actual Result: %s", tests[i].expected_result, actual_result);
+            terror("Expected Result: %s, Actual Result: %s", tests[i].expected_result,
+                   actual_result);
         } else if (tests[i].expected_result == NULL && actual_result != NULL) {
             terror("Expected Result: NULL, Actual Result: %s", actual_result);
         }
