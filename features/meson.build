@@ -103,19 +103,26 @@ feature_data.set10('_lib_syncfs',
 # https://github.com/att/ast/issues/1096
 # These math functions are not available on NetBSD
 feature_data.set10('_lib_nexttowardl',
-    cc.has_function('nexttowardl', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+    cc.has_function('nexttowardl', prefix: '#include <math.h>', args: feature_test_args,
+                    dependencies: [libm_dep]))
 feature_data.set10('_lib_expm1l',
-    cc.has_function('expm1l', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+    cc.has_function('expm1l', prefix: '#include <math.h>', args: feature_test_args,
+                    dependencies: [libm_dep]))
 feature_data.set10('_lib_log1pl',
-    cc.has_function('log1pl', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+    cc.has_function('log1pl', prefix: '#include <math.h>', args: feature_test_args,
+                    dependencies: [libm_dep]))
 feature_data.set10('_lib_remainderl',
-    cc.has_function('remainderl', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+    cc.has_function('remainderl', prefix: '#include <math.h>', args: feature_test_args,
+                    dependencies: [libm_dep]))
 feature_data.set10('_lib_log2l',
-    cc.has_function('log2l', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+    cc.has_function('log2l', prefix: '#include <math.h>', args: feature_test_args,
+                    dependencies: [libm_dep]))
 feature_data.set10('_lib_tgammal',
-    cc.has_function('tgammal', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+    cc.has_function('tgammal', prefix: '#include <math.h>', args: feature_test_args,
+                    dependencies: [libm_dep]))
 feature_data.set10('_lib_lgammal',
-    cc.has_function('lgammal', prefix: '#include <math.h>', args: feature_test_args, dependencies: [libm_dep]))
+    cc.has_function('lgammal', prefix: '#include <math.h>', args: feature_test_args,
+                    dependencies: [libm_dep]))
 
 
 socketpair_shutdown_feature_file = files('socketpair_shutdown.c')
@@ -192,13 +199,13 @@ posix_spawn_feature_result = cc.run(posix_spawn_feature_file,
                                     args: feature_test_args)
 feature_data.set10('_lib_posix_spawn', posix_spawn_feature_result.returncode() == 0)
 
-# Meson adds -D_FILE_OFFSET_BITS=64 flag by default, but it does not work with fts functions in older versions
-# of glibc. This feature test undefines it on such systems.
-# https://github.com/mesonbuild/meson/issues/3519
+# Meson adds -D_FILE_OFFSET_BITS=64 flag by default, but it does not work with
+# fts functions in older versions of glibc. This feature test undefines it on
+# such systems. https://github.com/mesonbuild/meson/issues/3519
 fts_feature_file = files('fts.c')
 fts_feature_result = cc.compiles(fts_feature_file,
-                                    name: 'Check if -D_FILE_OFFSET_BITS=64 works with fts functions',
-                                    args: feature_test_args + ['-D_FILE_OFFSET_BITS=64'])
+                                 name: 'Check if -D_FILE_OFFSET_BITS=64 works with fts functions',
+                                 args: feature_test_args + ['-D_FILE_OFFSET_BITS=64'])
 if not fts_feature_result
     add_global_arguments('-U_FILE_OFFSET_BITS', language: 'c')
 endif
