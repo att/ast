@@ -33,12 +33,14 @@ all_tests = [
 # test to verify [ctrl-Z] suspends the current foreground job fails even though doing the same thing
 # "by hand" works just fine. Possibly a quirk of the `expect` utility on macOS. In other cases,
 # such as Cygwin, things simply don't work as expected and probably never will due to quirks of the
-# platform.
+# platform. Another example is sunos/solaris has /proc but doesn't support manipulating directory
+# fd's.
 tests_to_skip = [
     ['cygwin', 'signal'],
     ['cygwin', 'jobs.exp'],
     ['darwin', 'jobs.exp'],
     ['openbsd', 'jobs.exp'],
+    ['sunos', 'directoryfd'],
     # Tests to be skipped because they are known to be broken when compiled by `shcomp`.
     # TODO: Fix these tests.
     ['shcomp', 'io'],
