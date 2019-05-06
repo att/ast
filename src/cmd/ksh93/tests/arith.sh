@@ -615,8 +615,12 @@ then
         actual=$(print -- $(( sqrt(-1.0) )))
         [[ $actual == ?(-)nan ]]|| log_error 'sqrt(-1.0) != NaN' "?(-)nan" "$actual"
     fi
-    (( pow(1.0,Inf) == 1.0 )) || log_error 'pow(1.0,Inf) != 1.0'
-    (( pow(Inf,0.0) == 1.0 )) || log_error 'pow(Inf,0.0) != 1.0'
+    if [[ $OS_NAME != SunOS ]]
+    then
+        # SunOS returns "nan" which is not unreasonable but not what every other platform returns.
+        (( pow(1.0,Inf) == 1.0 )) || log_error 'pow(1.0,Inf) != 1.0' "1.0" "$(( pow(1.0,Inf) ))"
+    fi
+    (( pow(Inf,0.0) == 1.0 )) || log_error 'pow(Inf,0.0) != 1.0' "1.0" "$(( pow(1.0,0.0) ))"
     actual=$(( NaN/Inf ))
     [[ $actual == ?(-)nan ]] || log_error 'NaN/Inf != NaN' "?(-)nan" "$actual"
     (( 4.0/Inf == 0.0 )) || log_error '4.0/Inf != 0.0'
