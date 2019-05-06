@@ -64,8 +64,9 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     char buf1[64];
     (void)snprintf(buf1, sizeof(buf1), "%s:%d", strrchr(fname, '/') + 1, lineno);
     char buf2[512];
-    pid_t pid = _dprintf_debug ? 1234 : getpid();
-    int n = snprintf(buf2, sizeof(buf2), "### %d %3" PRIu64 ".%03" PRIu64 " %-18s %15s() ", pid, ds,
+    // Use long rather than pid_t because pid_t may be an int or long depending on the platform.
+    long pid = _dprintf_debug ? 1234 : getpid();
+    int n = snprintf(buf2, sizeof(buf2), "### %ld %3" PRIu64 ".%03" PRIu64 " %-18s %15s() ", pid, ds,
                      dms, buf1, funcname);
     (void)vsnprintf(buf2 + n, sizeof(buf2) - n, fmt, ap);
     n = strlen(buf2);
@@ -94,9 +95,10 @@ void run_lsof() {
 
     DPRINTF("Running lsof...");
     static char pid_str[20];
-    snprintf(pid_str, sizeof(pid_str), "%d", getpid());
+    long pid = getpid();
+    snprintf(pid_str, sizeof(pid_str), "%ld", pid);
 
-    pid_t pid = fork();
+    pid = fork();
     if (pid == 0) {
         // Setup stdin, stdout, stderr. In this case we want the stdout of lsof
         // to go to our stderr so it is interleaved with DPRINTF() and other
@@ -318,7 +320,8 @@ void dump_backtrace(int max_frames) {
     char text[512];
     int n;
 
-    n = snprintf(text, sizeof(text), "### %d Function backtrace:\n", getpid());
+    long pid = getpid();
+    n = snprintf(text, sizeof(text), "### %ld Function backtrace:\n", pid);
     write(2, text, n);
 
     for (int i = 1; i < n_frames; i++) {

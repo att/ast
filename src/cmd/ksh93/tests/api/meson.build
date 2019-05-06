@@ -9,6 +9,13 @@ api_tests = [
     ['debug'],
 ]
 
+# Some tests need to be skipped because the platform has known incompatibilities that we're not
+# interested in dealing with. For example, `printf("%p", ptr)` does not include a leading `0x` on
+# Solaris. Unlike every other platform.
+tests_to_skip = [
+    ['sunos', 'debug'],
+]
+
 foreach testspec : api_tests
     testname = testspec[0]
     timeout = (testspec.length() == 2) ? testspec[1] : api_default_timeout
@@ -19,14 +26,23 @@ foreach testspec : api_tests
         parallel = true
     endif
 
-
-    test_target = executable(
-        testname, testname + '.c', c_args: shared_c_args,
-        include_directories: [configuration_incdir, ksh93_incdir],
-        link_with: [libksh, libast, libcmd, libdll],
-        dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
-        install: false)
-    test('API/ksh/' + testname, ksh93_exe, timeout: timeout, is_parallel: parallel,
-         args: [test_driver, 'api', test_target, testname],
-         env: [shell_var, lang_var, ld_library_path, libsample_path])
+    skip_test = false
+    foreach skip : tests_to_skip
+        if system == skip[0] and testname == skip[1]
+            warning('skipping ' + testname + ' on ' + system)
+            skip_test = true
+            # break  # Not until meson 0.49
+        endif
+    endforeach
+    if not skip_test
+        test_target = executable(
+            testname, testname + '.c', c_args: shared_c_args,
+            include_directories: [configuration_incdir, ksh93_incdir],
+            link_with: [libksh, libast, libcmd, libdll],
+            dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
+            install: false)
+        test('API/ksh/' + testname, ksh93_exe, timeout: timeout, is_parallel: parallel,
+            args: [test_driver, 'api', test_target, testname],
+            env: [shell_var, lang_var, ld_library_path, libsample_path])
+    endif
 endforeach

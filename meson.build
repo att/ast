@@ -72,7 +72,7 @@ add_global_arguments('-Wextra', language: 'c')
 #
 # TODO: Refactor the code so that the incompatible explicit function casts are
 # not needed.
-if cc.get_id() == 'gcc'
+if cc.get_id() == 'gcc' and cc.has_argument('-Wno-cast-function-type')
     add_global_arguments('-Wno-cast-function-type', language: 'c')
 endif
 

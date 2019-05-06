@@ -946,7 +946,9 @@ static_fn char *astconf_print(Sfio_t *sp, Lookup_t *look, const char *name, cons
                 if (!((p->flags & CONF_LIMIT_DEF))) flags |= CONF_MINMAX;
                 listflags &= ~ASTCONF_system;
             }
+#if !_lib_sysinfo
         predef:
+#endif
             if (look->standard == CONF_AST) {
                 if (!strcmp(p->name, "VERSION")) {
                     v = ast.version;

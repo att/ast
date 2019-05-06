@@ -121,9 +121,12 @@ log_info "TEST_DIR=$TEST_DIR"
 # external command of the same name in PATH that we use the command created by the unit test.
 # See issue #429.
 #
+# Note that a few additions to the path are to support specific platforms. For example, we want the
+# GNU version of utilities like `diff` that are in the /usr/gnu/bin directory on Solaris.
+#
 export ORIG_PATH=$PATH
 export SAFE_PATH="$TEST_DIR:$TEST_DIR/space dir:$TEST_SRC_DIR:$BUILD_DIR/src/cmd/builtin"
-export FULL_PATH=$SAFE_PATH:$ORIG_PATH
+export FULL_PATH=$SAFE_PATH:/usr/gnu/bin:$ORIG_PATH
 export PATH=$FULL_PATH
 
 #
