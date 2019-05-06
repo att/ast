@@ -79,7 +79,8 @@ actual=$(getconf -r)
 #                     XPG
 actual=$(getconf -s AST)
 [[ ! -z "$actual" ]] && [[ $? -eq 0 ]] || log_error "Failed to execute 'getconf -s'"
-[[ "$actual" =~ "UNIVERSE=ucb" ]] || log_error "'getconf -s AST' should include name/value pair for UNIVERSE"
+[[ "$actual" =~ "UNIVERSE=ucb" ]] ||
+    log_error "'getconf -s AST' should include name/value pair for UNIVERSE" "UNIVERSE=ucb" "$actual"
 # ==========
 #   -t, --table     Display the internal table that contains the name, standard,
 #                   standard section, and system call symbol prefix for each

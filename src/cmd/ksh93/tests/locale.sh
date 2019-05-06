@@ -273,6 +273,8 @@ then
     do
         # TODO: Remove this when char U+1680 is no longer broken on FreeBSD 11.
         [[ $OS_NAME == FreeBSD && $i == 1680 ]] && continue
+        # TODO: Remove this when char U+1680 is no longer broken on Solaris.
+        [[ $OS_NAME == SunOS && $i == 1680 ]] && continue
 
         if ! eval "[[ \$'\\u[$i]' == [[:space:]] ]]"
         then
