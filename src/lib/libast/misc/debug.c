@@ -66,8 +66,8 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     char buf2[512];
     // Use long rather than pid_t because pid_t may be an int or long depending on the platform.
     long pid = _dprintf_debug ? 1234 : getpid();
-    int n = snprintf(buf2, sizeof(buf2), "### %ld %3" PRIu64 ".%03" PRIu64 " %-18s %15s() ", pid, ds,
-                     dms, buf1, funcname);
+    int n = snprintf(buf2, sizeof(buf2), "### %ld %3" PRIu64 ".%03" PRIu64 " %-18s %15s() ", pid,
+                     ds, dms, buf1, funcname);
     (void)vsnprintf(buf2 + n, sizeof(buf2) - n, fmt, ap);
     n = strlen(buf2);
     assert(n < sizeof(buf2));
