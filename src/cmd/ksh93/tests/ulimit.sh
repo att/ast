@@ -38,7 +38,7 @@ actual=$(ulimit -f)
 
 # ==========
 # -m The number of K-bytes on the size of physical memory.
-if [[ $OS_NAME != OpenBSD ]]
+if [[ $OS_NAME != OpenBSD && $OS_NAME != SunOS ]]
 then
     ulimit -m unlimited
     expect=unlimited
@@ -90,7 +90,7 @@ fi
 # ==========
 # -x, --locks  The number of file locks.
 # Setting file lock limits is not supported on macOS
-if [[ $OS_NAME != Darwin && $OS_NAME != FreeBSD && $OS_NAME != OpenBSD ]]
+if [[ $OS_NAME != Darwin && $OS_NAME != FreeBSD && $OS_NAME != OpenBSD && $OS_NAME != SunOS ]]
 then
     ulimit -x unlimited
     expect=unlimited
@@ -100,15 +100,18 @@ fi
 
 # ==========
 # -l, --memlock  The locked address space in Kibytes.
-ulimit -l 0
-expect=0
-actual=$(ulimit -l)
-[[ "$actual" = "$expect" ]] || log_error "setting ulimit -l failed" "$expect" "$actual"
+if [[ $OS_NAME != SunOS ]]
+then
+    ulimit -l 0
+    expect=0
+    actual=$(ulimit -l)
+    [[ "$actual" = "$expect" ]] || log_error "setting ulimit -l failed" "$expect" "$actual"
+fi
 
 # ==========
 # -q, --msgqueue  The message queue size in Kibytes.
 # Setting message queue limits is not supported on macOS
-if [[ $OS_NAME != Darwin && $OS_NAME != FreeBSD && $OS_NAME != OpenBSD ]]
+if [[ $OS_NAME != Darwin && $OS_NAME != FreeBSD && $OS_NAME != OpenBSD && $OS_NAME != SunOS ]]
 then
     ulimit -q 800
     expect=800
@@ -119,7 +122,7 @@ fi
 # ==========
 # -e, --nice  The scheduling priority.
 # Setting scheduling priority is not supported on macOS and OpenBSD
-if [[ $OS_NAME != Darwin && $OS_NAME != FreeBSD && $OS_NAME != OpenBSD ]]
+if [[ $OS_NAME != Darwin && $OS_NAME != FreeBSD && $OS_NAME != OpenBSD && $OS_NAME != SunOS ]]
 then
     ulimit -e 0
     expect=0
@@ -130,7 +133,7 @@ fi
 # ==========
 # -r, --rtprio  The max real time priority.
 # Setting max real time priority is not supported on macOS and OpenBSD
-if [[ $OS_NAME != Darwin && $OS_NAME != FreeBSD && $OS_NAME != OpenBSD ]]
+if [[ $OS_NAME != Darwin && $OS_NAME != FreeBSD && $OS_NAME != OpenBSD && $OS_NAME != SunOS ]]
 then
     ulimit -r 0
     expect=0
