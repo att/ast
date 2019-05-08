@@ -124,12 +124,12 @@ log_info "TEST_DIR=$TEST_DIR"
 # Note that a few additions to the path are to support specific platforms. For example, we want the
 # GNU version of utilities like `diff` that are in the /usr/gnu/bin directory on Solaris. The
 # /usr/xpg4/bin is to get POSIX versions of various commands but that also causes ksh to default to
-# the "att" universe. The /bsd is to ensure ksh defaults to the "ucb" universe as almost all unit
-# tests expect GNU or BSD behavior.
+# the "att" universe. The /xxx/bsd is to ensure ksh defaults to the "ucb" universe as almost all
+# unit tests expect GNU or BSD behavior.
 #
 export ORIG_PATH=$PATH
 export SAFE_PATH="$TEST_DIR:$TEST_DIR/space dir:$TEST_SRC_DIR:$BUILD_DIR/src/cmd/builtin"
-export FULL_PATH=$SAFE_PATH:/bsd:/usr/gnu/bin:/usr/xpg4/bin:$ORIG_PATH
+export FULL_PATH=$SAFE_PATH:/xxx/bsd:/usr/gnu/bin:/usr/xpg4/bin:$ORIG_PATH
 export PATH=$FULL_PATH
 
 #
