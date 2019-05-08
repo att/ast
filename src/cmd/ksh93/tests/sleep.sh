@@ -75,4 +75,5 @@ expect=1.0
     log_error "sleep 1 should sleep for at least 1 second" "$expect" "$actual"
 
 # ======
-$SHELL -c 'sleep $(printf "%a" .95)' 2> /dev/null || log_error "sleep doesn't except %a format constants"
+$SHELL -c 'sleep $(printf "%a" .95)' ||
+    log_error "sleep doesn't except %a format constants"

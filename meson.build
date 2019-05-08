@@ -39,8 +39,10 @@ add_global_arguments('-D_GNU_SOURCE', language: 'c')
 # Solaris/SunOS and its derivatives, such as IllumOS and OpenIndiana, need
 # special handling.
 #
-# TODO: Figure out the correct way to enable the POSIX extensions we require.
-# Defining __EXTENSIONS__ is almost certainly the wrong way to do this.
+# TODO: Figure out the correct way to enable the POSIX extensions we require
+# on Solaris. Defining __EXTENSIONS__ is almost certainly the wrong way to do
+# this. But note it is also what the legacy ksh code did before we switched to
+# Meson+Ninja. So perhaps this is correct and there is no better solution.
 if system == 'sunos' or system == 'solaris'
     feature_test_args += ['-D__EXTENSIONS__', '-DAST_SUNOS']
     add_global_arguments('-D__EXTENSIONS__', language: 'c')

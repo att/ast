@@ -26,6 +26,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <math.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,7 +45,7 @@
 
 int b_sleep(int argc, char *argv[], Shbltin_t *context) {
     char *cp;
-    double d = 0;
+    long double d = 0.0;
     Shell_t *shp = context->shp;
     int sflag = 0;
     time_t tloc = 0;
@@ -77,15 +78,15 @@ int b_sleep(int argc, char *argv[], Shbltin_t *context) {
     argv += opt_info.index;
     cp = *argv;
     if (cp) {
-        d = strtod(cp, &last);
+        d = strtold(cp, &last);
         if (*last) {
             Time_t now = TMX_NOW, ns = 0;
             char *pp;
             if (*cp == 'P' || *cp == 'p') {
                 ns = tmxdate(cp, &last, now);
-            } else if (*last == '.' && shp->decomma && d == (unsigned long)d) {
+            } else if (*last == '.' && shp->decomma && d == truncl(d)) {
                 *(pp = last) = ',';
-                if (!strchr(cp, '.')) d = strtod(cp, &last);
+                if (!strchr(cp, '.')) d = strtold(cp, &last);
                 *pp = '.';
                 if (*last == 0) goto skip;
             } else if (*last != '.' && *last != ',') {
@@ -134,7 +135,7 @@ int b_sleep(int argc, char *argv[], Shbltin_t *context) {
         time(&tloc);
         tloc += (time_t)(d + .5);
     }
-    if (sflag && d == 0) {
+    if (sflag && d == 0.0) {
         pause();
     } else {
         while (1) {
@@ -145,7 +146,7 @@ int b_sleep(int argc, char *argv[], Shbltin_t *context) {
             if (sflag || tloc == 0 || errno != EINTR || shp->lastsig) break;
             sh_sigcheck(shp);
             if (tloc < (now = time(NULL))) break;
-            d = (double)(tloc - now);
+            d = tloc - now;
         }
     }
     return 0;
