@@ -46,7 +46,12 @@ add_global_arguments('-D_GNU_SOURCE', language: 'c')
 if system == 'sunos' or system == 'solaris'
     feature_test_args += ['-D__EXTENSIONS__', '-DAST_SUNOS']
     add_global_arguments('-D__EXTENSIONS__', language: 'c')
+    add_global_arguments('-D_LARGEFILE_SOURCE', language: 'c')
+    add_global_arguments('-D_LARGEFILE64_SOURCE', language: 'c')
+    add_global_arguments('-D_FILE_OFFSET_BITS=64', language: 'c')
     add_global_arguments('-DAST_SUNOS', language: 'c')
+    add_global_arguments('-m64', language: 'c')
+    add_global_link_arguments('-m64', language: 'c')
 endif
 
 

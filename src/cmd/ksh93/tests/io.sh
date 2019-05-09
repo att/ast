@@ -278,7 +278,7 @@ then
 	cat $TEST_DIR/seek | read -r <# *WWW*
 	[[ $REPLY == *WWWWW* ]] || log_error '<# not working for pipes'
     fi  # if [[ $OS_NAME == CYGWIN* ]]
-    { < $TEST_DIR/seek <# ((2358336120)) ;} 2> /dev/null || log_error 'long seek not working'
+    { < $TEST_DIR/seek <# ((2358336120)) ;} || log_error 'long seek not working'
 else
     log_error "$TEST_DIR/seek: cannot open for reading"
 fi
