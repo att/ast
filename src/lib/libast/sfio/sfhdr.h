@@ -479,7 +479,7 @@ typedef struct _sfextern_s {
     (((ssize_t)(n) >= (f)->size) || ((n) >= SF_GRAIN && (ssize_t)(n) >= (f)->size / 16))
 
 /* number of pages to memory map at a time */
-#if _ptr_bits >= 64
+#if _ast_sizeof_pointer >= 8
 #define SF_NMAP 1024
 #else
 #define SF_NMAP 32

@@ -263,7 +263,6 @@ feature_data.set10('const_const_fts_open', osname == 'freebsd' or osname == 'cyg
 # On Cygwin we can't use socketpair() for pipes.
 feature_data.set10('_pipe_socketpair', osname != 'cygwin')
 
-
 feature_data.set('_ast_sizeof_int', int_size)
 feature_data.set('_ast_sizeof_int32_t', int32_t_size)
 feature_data.set('_ast_sizeof_long', long_size)
@@ -271,7 +270,6 @@ feature_data.set('_ast_sizeof_size_t', size_t_size)
 feature_data.set('_ast_sizeof_off_t', off_t_size)
 feature_data.set('_ast_sizeof_pointer', ptr_size)
 feature_data.set('_ast_sizeof_wchar_t', wchar_t_size)
-feature_data.set('_ptr_bits', ptr_size * 8)
 
 subdir('features')
 

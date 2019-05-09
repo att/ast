@@ -63,7 +63,6 @@
 #mesondefine _pth_atos
 #mesondefine _pth_ed
 #mesondefine _pipe_rw
-#mesondefine _ptr_bits
 #mesondefine _socketpair_shutdown_mode
 #mesondefine _pipe_socketpair
 #mesondefine isnanl
