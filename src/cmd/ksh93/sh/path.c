@@ -272,6 +272,9 @@ char *path_pwd(Shell_t *shp) {
             case 3: {
                 cp = getcwd(NULL, 0);
                 if (cp) {
+                    // FWIW: This creates a memory leak since the dynamically allocated buffer is
+                    // never freed. Hopefully this is only executed in rare circumstances where the
+                    // leak doesn't matter. This is also never true on SVr4 systems like Solaris.
                     nv_offattr(PWDNOD, NV_NOFREE);
                     _nv_unset(PWDNOD, 0);
                     STORE_VT(PWDNOD->nvalue, const_cp, cp);
@@ -279,10 +282,11 @@ char *path_pwd(Shell_t *shp) {
                 }
                 break;
             }
-            default: { break; }
+            default: { return (char *)e_dot; }
         }
         if (cp && *cp == '/' && test_inode(cp, e_dot)) break;
     }
+
     if (count > 1) {
         nv_offattr(PWDNOD, NV_NOFREE);
         nv_putval(PWDNOD, cp, NV_RDONLY);
