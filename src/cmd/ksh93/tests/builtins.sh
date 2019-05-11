@@ -435,7 +435,7 @@ expect="/opt/ast/bin/cmp"
 # /usr/bin or vice versa. So make sure this handles both possibilities. That's because on some
 # platforms these two commands may be found in both directories.  Here we don't care which directory
 # prefixes the command other than it not being /opt/ast/bin.
-PATH=/bin:/usr/bin:/opt/ast/bin
+PATH=$NO_BUILTINS_PATH:/opt/ast/bin
 actual=$(whence basename)
 actual="${actual#/usr}"
 expect="${bin_basename#/usr}"
