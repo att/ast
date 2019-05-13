@@ -57,7 +57,7 @@ expect_prompt
 # fg should put last stopped process in foreground
 log_test_entry
 send "fg\r"
-sleep 0.1
+expect -re "\r\ncat\r\n"
 send "hello world\r\n"
 send [ctrl D]
 expect -re "\r\nhello world\r\n" {
