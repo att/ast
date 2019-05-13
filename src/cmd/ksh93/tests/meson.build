@@ -40,6 +40,7 @@ tests_to_skip = [
     ['cygwin', 'jobs.exp'],
     ['darwin', 'jobs.exp'],
     ['openbsd', 'jobs.exp'],
+    ['sunos', 'vi.exp'],
     ['sunos', 'directoryfd'],
     # Tests to be skipped because they are known to be broken when compiled by `shcomp`.
     # TODO: Fix these tests.

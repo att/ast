@@ -1,5 +1,9 @@
 # Test for vi keybindings
 
+# TODO: Figure out why some of these tests (starting with the test of `^` behavior) doesn't work on
+# Solaris. Interactively everything works fine. It's only this unit test where it fails. Presumably
+# this is due to a quirk of the `expect` utility.
+
 # vi mode requires being in control mode for ctrl-l to work
 # Send a [ctrl-L] to force the shell to redraw the prompt and command line. Doing so makes
 # it easier to verify the command line contains the expected text.
