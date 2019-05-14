@@ -365,8 +365,9 @@ then
     # this to work without special support for Cygwin (and perhaps not even then).
     log_warning 'skipping parent dir rename on Cygwin'
 else
+    mkdir t1
     (
-        cd $TEST_DIR/t1
+        cd t1
         > real_t1
         (
             cd ..
@@ -378,7 +379,6 @@ else
 fi
 
 cd "$TEST_DIR"
-
 > foobar
 CDPATH= $SHELL 2> /dev/null -c 'cd foobar' && log_error "cd to a regular file should fail"
 
