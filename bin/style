@@ -83,7 +83,7 @@ fi
 
 if [[ ${all} == yes ]]
 then
-    if [[ "$(git status --porcelain --short --untracked-files=all)" != "" ]]
+    if [[ "$(git status --porcelain --short --untracked-files=all)" != "" ]] && [[ -z "$SKIP_UNCOMMITTED_CHECK" ]]
     then
         echo >&2
         echo You have uncommitted changes. Cowardly refusing to restyle the entire code base. >&2

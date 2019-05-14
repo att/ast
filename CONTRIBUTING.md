@@ -375,6 +375,14 @@ circumstances it might be advisable to circumvent it with `git push
 
 To install the hook, put it in .git/hooks/pre-push and make it executable.
 
+To fix code styling issues before making a commit, add this script as a pre-commit hoook :
+
+```sh
+#!/bin/sh
+
+SKIP_UNCOMMITTED_CHECK=1 bin/style all
+```
+
 ### Test Coverage
 
 Test coverage report can be generated with these commands:
