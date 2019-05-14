@@ -377,9 +377,18 @@ else
     if [[ $shcomp == false ]]
     then
         $TEST_DIR/$test_script $test_name < /dev/null
+        exit_status=$?
     elif [[ $shcomp != skip ]]
     then
         $SHCOMP $test_script > $test_script.comp || exit
         $SHELL $TEST_DIR/$test_script.comp $test_name < /dev/null
+        exit_status=$?
     fi
+
+    if (( $exit_status == 0 ))
+    then
+        cd /tmp
+        rm -rf $TEST_DIR
+    fi
+    exit $exit_status
 fi

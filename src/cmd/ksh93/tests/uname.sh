@@ -2,7 +2,8 @@
 
 if [[ $OS_NAME != "Linux" ]]
 then
-    log_info "Output of this command varies on different operating systems, so these tests are run only on Linux"
+    log_info "Output of this command varies on different operating systems"
+    log_info "These tests are run only on Linux"
     exit 0
 fi
 
