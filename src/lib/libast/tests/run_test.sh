@@ -4,6 +4,11 @@
 # This helps ensure each API test runs in a unique temp dir that is automatically cleaned up when
 # the test successfully terminates.
 
+# API unit tests might call popen() which will use the value of SHELL. So this is hermetic we don't
+# want to risk using the user's SHELL. So ensure any subshells use the same shell uses the same one
+# running this script.
+SHELL=/bin/sh
+
 #
 # Make sure when called via `meson test` we've got the expected args.
 #

@@ -35,6 +35,7 @@
 #include <unistd.h>
 
 #include "aso.h"
+#include "ast_assert.h"
 
 #if !defined(MAP_ANONYMOUS) && defined(MAP_ANON)
 #define MAP_ANONYMOUS MAP_ANON
@@ -97,14 +98,7 @@ static char Tstfile[256][256];
 #endif
 
 static void tcleanup(void) {
-#ifndef DEBUG
-    int i;
-    for (i = 0; i < sizeof(Tstfile) / sizeof(Tstfile[0]); ++i)
-        if (Tstfile[i][0]) {
-            unlink(Tstfile[i]);
-            Tstfile[i][0] = 0;
-        }
-#endif
+    // This used to cleanup temp files but that is now down by the framework that runs unit tests.
 }
 
 __attribute__((unused)) static void tnote(char *note) {
@@ -277,42 +271,14 @@ int tstwait(pid_t *proc, int nproc) {
 }
 
 __attribute__((unused)) static char *tstfile(char *pfx, int n) {
-    static int Setatexit = 0;
+    assert(pfx);
+    assert(n >= 0 && n < sizeof(Tstfile) / sizeof(Tstfile[0]));
 
-    if (!Setatexit) {
-        Setatexit = 1;
-        atexit(tcleanup);
-    }
+    if (Tstfile[n][0]) return Tstfile[n];
 
-    if (n < 0)
-        for (n = 0; n < (int)(sizeof(Tstfile) / sizeof(Tstfile[0])); ++n)
-            if (Tstfile[n][0] == 0) break;
-    if (n >= sizeof(Tstfile) / sizeof(Tstfile[0])) terror("Bad temporary file request:%d\n", n);
-
-    pfx = (pfx && pfx[0]) ? pfx : "tmp";
-
-    if (!Tstfile[n][0]) {
-#ifdef DEBUG
-#if _SFIO_H
-        sfsprintf(Tstfile[n], sizeof(Tstfile[0]), "%s.%c%c%c.tst", pfx, '0' + n, '0' + n, '0' + n);
-#else
-        sprintf(Tstfile[n], "%s.%c%c%c.tst", pfx, '0' + n, '0' + n, '0' + n);
-#endif
-#else
-        static int pid;
-        static char *tmp;
-        if (!tmp) {
-            if (!(tmp = (char *)getenv("TMPDIR")) || access(tmp, 0) != 0) tmp = "/tmp";
-            pid = (int)getpid() % 10000;
-        }
-#if _SFIO_H
-        sfsprintf(Tstfile[n], sizeof(Tstfile[0]), "%s/%s.%c.%d.tst", tmp, pfx, '0' + n, pid);
-#else
-        sprintf(Tstfile[n], "%s/%s.%c.%d.tst", tmp, pfx, '0' + n, pid);
-#endif
-#endif
-    }
-
+    static int pid = 0;
+    if (!pid) pid = (int)(getpid() % 10000);
+    snprintf(Tstfile[n], sizeof(Tstfile[0]), "%s.%c.%d.tst", pfx, '0' + n, pid);
     return Tstfile[n];
 }
 
