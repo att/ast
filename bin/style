@@ -86,7 +86,9 @@ then
     if [[ "$(git status --porcelain --short --untracked-files=all)" != "" ]]
     then
         echo >&2
-        echo You have uncommitted changes. Cowardly refusing to restyle the entire code base. >&2
+        echo 'You have uncommitted changes. Cowardly refusing to restyle the entire code base.' >&2
+        echo 'We do not want to include style cleanups unrelated to your work in progress.' >&2
+        echo 'It should be sufficient to simply run `bin/style` to fix issues with your wip.' >&2
         echo >&2
         exit
     fi
@@ -176,4 +178,10 @@ else
             mv "${file}.new" "${file}"
         fi
     done
+fi
+
+# This feature is meant to be used from a git pre-commit hook.
+if [ "$STAGE_STYLE_FIXUPS" = 1 ]
+then
+    git add "${c_files[@]}"
 fi

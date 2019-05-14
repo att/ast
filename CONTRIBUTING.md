@@ -373,7 +373,17 @@ will run `meson test` and only allow the push if that succeeds. In some
 circumstances it might be advisable to circumvent it with `git push
 --no-verify`, but usually that should not be necessary.
 
-To install the hook, put it in .git/hooks/pre-push and make it executable.
+To install the hook, put it in *.git/hooks/pre-push* and make it
+executable.
+
+To fix code styling issues before making a commit, add this
+script as a pre-commit hoook; that is in an executable file named
+*.git/hooks/pre-commit*:
+
+```sh
+#!/bin/sh
+STAGE_STYLE_FIXUPS=1 bin/style
+```
 
 ### Test Coverage
 
