@@ -36,6 +36,7 @@
 #include <fts.h>  // OpenBSD and possibly others require the above includes first
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
@@ -155,22 +156,23 @@ extern int fts_flags();
 int b_chmod(int argc, char **argv, Shbltin_t *context) {
     int mode;
     int force = 0;
-    int flag, flags;
+    int flag;
     char *amode = NULL;
     FTS *fts;
     FTSENT *ent;
+    struct stat st;
     char *last;
     int (*chmodf)(const char *, mode_t);
-    int logical = 1;
     int notify = 0;
     int ignore = 0;
     int show = 0;
-    int chlink = 0;
-    struct stat st;
-    int recursive = 0;
+    bool recursive = false;
+    bool chlink = false;
+    bool flag_L = false;
+    bool flag_H = false;
+    bool flag_P = false;
 
     if (cmdinit(argc, argv, context, ERROR_NOTIFY)) return -1;
-    flags = fts_flags() | FTS_COMFOLLOW;
 
     //
     // NOTE: we diverge from the normal optget boilerplate to allow `chmod -x path`, and similar
@@ -186,7 +188,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 force = 1;
                 break;
             case 'h':
-                chlink = 1;
+                chlink = true;
                 break;
             case 'i':
                 ignore = 1;
@@ -198,28 +200,24 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 notify = 2;
                 break;
             case 'F':
-                if (stat(opt_info.arg, &st)) error(ERROR_exit(1), "%s: cannot stat", opt_info.arg);
+                if (stat(opt_info.arg, &st)) {
+                    error(ERROR_exit(1), "%s: cannot stat", opt_info.arg);
+                    __builtin_unreachable();
+                }
                 mode = st.st_mode;
                 amode = "";
                 break;
             case 'H':
-                flags |= FTS_COMFOLLOW | FTS_PHYSICAL;
-                logical = 0;
+                flag_H = true;
                 break;
             case 'L':
-                flags &= ~(FTS_COMFOLLOW | FTS_PHYSICAL);
-                logical = 0;
+                flag_L = true;
                 break;
             case 'P':
-                flags &= ~FTS_COMFOLLOW;
-                flags |= FTS_PHYSICAL;
-                logical = 0;
+                flag_P = true;
                 break;
             case 'R':
-                // Standard fts_open() does not support this flag, so instead use a different flag
-                // flags &= ~FTS_TOP;
-                recursive = 1;
-                logical = 0;
+                recursive = true;
                 break;
             case ':':
                 optget_done = true;  // probably a negative permission like `-x` or similar
@@ -231,16 +229,33 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
         }
     }
     argv += opt_info.index;
+
     if (error_info.errors || !*argv || (!amode && !*(argv + 1))) {
         error(ERROR_usage(2), "%s", optusage(NULL));
         __builtin_unreachable();
     }
-    if (chlink) {
-        flags &= ~FTS_COMFOLLOW;
-        flags |= FTS_PHYSICAL;
-        logical = 0;
+
+    int fts_opts = FTS_PHYSICAL;
+    if (recursive) {
+        if (chlink) {
+            error(ERROR_exit(1), "the -R and -h options may not be used together");
+            __builtin_unreachable();
+        }
+
+        if (flag_H) {
+            fts_opts = FTS_PHYSICAL | FTS_COMFOLLOW;
+        } else if (flag_L) {
+            fts_opts = FTS_LOGICAL;
+        }
+    } else {
+        if (flag_H || flag_L || flag_P) {
+            error(ERROR_exit(1), "options -H, -L, -P only useful with -R");
+            __builtin_unreachable();
+        }
+
+        if (!chlink) fts_opts = FTS_PHYSICAL | FTS_COMFOLLOW;
     }
-    if (logical) flags &= ~(FTS_COMFOLLOW | FTS_PHYSICAL);
+
     if (ignore) ignore = umask(0);
     if (amode) {
         amode = NULL;
@@ -250,14 +265,20 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
         if (*last) {
             if (ignore) umask(ignore);
             error(ERROR_exit(1), "%s: invalid mode", amode);
+            __builtin_unreachable();
         }
     }
-    fts = fts_open(argv, flags, NULL);
+
+    // One of FTS_LOGICAL or FTS_PHYSICAL must be set but not both.
+    assert(fts_opts & FTS_LOGICAL || fts_opts & FTS_PHYSICAL);
+    assert(!(fts_opts & FTS_LOGICAL && fts_opts & FTS_PHYSICAL));
+    fts = fts_open(argv, fts_opts, NULL);
     if (!fts) {
         if (ignore) umask(ignore);
         error(ERROR_system(1), "%s: not found", *argv);
         __builtin_unreachable();
     }
+
     while (!bltin_checksig(context) && (ent = fts_read(fts))) {
         switch (ent->fts_info) {
             case FTS_SL:

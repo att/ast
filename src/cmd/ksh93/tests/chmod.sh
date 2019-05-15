@@ -4,11 +4,27 @@
 
 # chmod - change the access permissions of files
 
+# ==========
+# We need `chmod` to be enabled as a builtin when this test is run. That's because the builtin is a
+# hybrid that implement SysV and BSD behaviors and flags. It is unlikely the platform chmod does so.
+# We don't bother to skip the subsequent tests because it is sufficient to log that we're not
+# testing the builtin.
+expect='chmod is a shell builtin'
+actual=$(type chmod)
+[[ $actual =~ $expect ]] || log_error "chmod is not a builtin" "$expect" "$actual"
+
+# ==========
+# Some tests require support for the lchmod() syscall.
+lchmod=no
+if grep -q '^#define _lib_lchmod 1' $BUILD_DIR/config_ast.h
+then
+    lchmod=yes
+fi
+
 #  chmod changes the permission of each file according to mode, which can be
 #  either a symbolic representation of changes to make, or an octal number
 #  representing the bit pattern for the new permissions.
 #
-
 umask 077  # start by disabling setting all group/other permission bits by default
 mkdir foo
 ln -s foo symlink_to_foo
@@ -26,13 +42,13 @@ if [[ $(stat -f '%Sp' a 2>/dev/null) == '-rw-------' ]]
 then
     # This appears to be a BSD `stat` command that supports the `-f` flag.
     function stat_perms {
-        stat -f '%Sp' "$1"
+        stat -f '%Sp' "$@"
     }
 elif [[ $(stat --format '%A' a 2>/dev/null) == '-rw-------' ]]
 then
     # This appears to be a GNU `stat` command that supports the `-A` flag.
     function stat_perms {
-        stat -c '%A' "$1"
+        stat -c '%A' "$@"
     }
 else
     # We have no idea how to report pathname permissions in a human readable form.
@@ -41,29 +57,62 @@ else
 fi
 
 # ==========
-#  -H, --metaphysical
-#                  Follow symbolic links for command arguments; otherwise don't
-#                  follow symbolic links when traversing directories.
-# chmod -H 0700 "$TEST_DIR/symlink_to_foo"
-# actual=$(stat_perms "$TEST_DIR/foo/bar")
-# expect="-rwx------"
-# [[ "$actual" = "$expect" ]] || log_error "chmod -H should follow symbolic links" "$expect" "$actual"
+# -H, --metaphysical
+# Follow symbolic links for command arguments; otherwise don't follow symbolic links when
+# traversing directories.
+#
+# Note that this is more convoluted than usual to ensure the test doesn't accidentally pass even if
+# unintended changes occur as a result of the `chmod -RH`.
+if [[ $lchmod == no ]]
+then
+    log_warning 'skipping test because platform does not have a working lchmod()'
+else
+    touch barH
+    chmod 000 barH
+    ln -s  ../barH foo/symlink_to_barH
+    chmod -h 777 symlink_to_foo
+    chmod -h 555 foo/symlink_to_barH
+    chmod 770 foo
+    chmod -h 573 foo/bar
+    chmod -RH 751 symlink_to_foo
+    actual=$(stat_perms barH foo foo/bar foo/symlink_to_barH symlink_to_foo | tr '\n' ' ')
+    expect="---------- drwxr-x--x -rwxr-x--x lr-xr-xr-x lrwxrwxrwx "
+    [[ "$actual" = "$expect" ]] ||
+        log_error "chmod -RH should not follow symbolic links" "$expect" "$actual"
+fi  # [[ $lchmod == no ]]
 
 # ==========
-#  -L, --logical|follow
-#                  Follow symbolic links when traversing directories.
-chmod -RL 0777 "$TEST_DIR/symlink_to_foo"
-actual=$(stat_perms "$TEST_DIR/foo/bar")
-expect="-rwxrwxrwx"
-[[ "$actual" = "$expect" ]] || log_error "chmod -L should follow symbolic links" "$expect" "$actual"
+# -L, --logical|follow
+# Follow symbolic links when traversing directories.
+#
+# Note that this is more convoluted than usual to ensure the test doesn't accidentally pass even if
+# unintended changes occur as a result of the `chmod -RL`.
+if [[ $lchmod == no ]]
+then
+    log_warning 'skipping test because platform does not have a working lchmod()'
+else
+    touch barL
+    chmod 000 barL
+    ln -s  ../barL foo/symlink_to_barL
+    chmod -h 777 symlink_to_foo
+    chmod -h 555 foo/symlink_to_barL
+    chmod 770 foo
+    chmod -h 573 foo/bar
+    chmod -RH 751 symlink_to_foo
+    actual=$(stat_perms barL foo foo/bar foo/symlink_to_barL symlink_to_foo | tr '\n' ' ')
+    expect="---------- drwxr-x--x -rwxr-x--x lr-xr-xr-x lrwxrwxrwx "
+    [[ "$actual" = "$expect" ]] ||
+        log_error "chmod -RL should follow symbolic links" "$expect" "$actual"
+fi  # [[ $lchmod == no ]]
 
 # ==========
 #  -P, --physical|nofollow
 #                  Don't follow symbolic links when traversing directories.
-# expect=$(stat_perms "$TEST_DIR/foo/bar")
-# chmod -RP 0755 "$TEST_DIR/symlink_to_foo"
-# actual=$(stat_perms "$TEST_DIR/foo/bar")
-# [[ "$actual" = "$expect" ]] || log_error "chmod -P should not follow symbolic links" "$expect" "$actual"
+expect=$(stat_perms "$TEST_DIR/foo/bar")
+chmod -RP 0755 "$TEST_DIR/symlink_to_foo"
+actual=$(stat_perms "$TEST_DIR/foo/bar")
+[[ "$actual" = "$expect" ]] ||
+    log_error "chmod -P should not follow symbolic links" "$expect" "$actual"
 
 # ==========
 #  -R, --recursive Change the mode for files in subdirectories recursively.
@@ -88,9 +137,15 @@ expect=""
 # ==========
 #  -h|l, --symlink Change the mode of symbolic links on systems that support
 #                  lchmod(2). Implies --physical.
-actual=$(chmod -vl 0777 "$TEST_DIR/symlink_to_foo")
-expect="$TEST_DIR/symlink_to_foo: mode changed to 0777 (rwxrwxrwx)"
-[[ "$actual" = "$expect" ]] || log_error "chmod -l failed should change permissions on symbolic link"
+if [[ $lchmod == no ]]
+then
+    log_warning 'skipping test because platform does not have a working lchmod()'
+else
+    actual=$(chmod -vl 0777 "$TEST_DIR/symlink_to_foo")
+    expect="$TEST_DIR/symlink_to_foo: mode changed to 0777 (rwxrwxrwx)"
+    [[ "$actual" = "$expect" ]] ||
+        log_error "chmod -l failed should change permissions on symbolic link"
+fi  # [[ $lchmod == no ]]
 
 # ==========
 #  -i, --ignore-umask
@@ -107,7 +162,8 @@ expect="-rwxrwxrwx"
 expect=$(stat_perms "$TEST_DIR/foo/bar")
 chmod -n 000 "$TEST_DIR/foo/bar"
 actual=$(stat_perms "$TEST_DIR/foo/bar")
-[[ "$actual" = "$expect" ]] || log_error "chmod -n should not change permissions" "$expect" "$actual"
+[[ "$actual" = "$expect" ]] ||
+    log_error "chmod -n should not change permissions" "$expect" "$actual"
 
 # ==========
 #  -F, --reference=file
@@ -116,7 +172,8 @@ touch "$TEST_DIR/foo/baz"
 expect=$(stat_perms "$TEST_DIR/foo/bar")
 chmod -F "$TEST_DIR/foo/bar" "$TEST_DIR/foo/baz"
 actual=$(stat_perms "$TEST_DIR/foo/baz")
-[[ "$actual" = "$expect" ]] || log_error "chmod -F should use permission bits from reference file" "$expect" "$actual"
+[[ "$actual" = "$expect" ]] ||
+    log_error "chmod -F should use permission bits from reference file" "$expect" "$actual"
 
 # ==========
 #  -v, --verbose   Describe changed permissions of all files.
@@ -133,11 +190,6 @@ actual=$(stat_perms a)
 [[ $actual == $expect ]] || log_error "file 'a' perms wrong at start of test" "$expect" "$actual"
 actual=$(stat_perms d/f)
 [[ $actual == $expect ]] || log_error "file 'd/f' perms wrong at start of test" "$expect" "$actual"
-
-# ==========
-# We expect `chmod` to be enabled as a builtin when this test is run. We don't bother to skip the
-# subsequent tests because it is sufficient to log that we're not testing the builtin.
-[[ $(whence chmod) == '/opt/ast/bin/chmod' ]] || log_error "chmod is not a builtin"
 
 # ==========
 # Can we change the perms on files and dirs without affecting the files in the dir.
