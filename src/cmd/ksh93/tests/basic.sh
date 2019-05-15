@@ -699,3 +699,47 @@ $SHELL 2> /dev/null -c $'for i;\ndo :;done' || log_error 'for i ; <newline> not 
 set +o pipefail
 foo=`false | true`
 [[ $? -eq 0 ]] || log_error "Incorrect exit status from command substitution"
+
+# ==========
+# Ensure "typeset" for "declare and assign" and "assign after declare" behaves the same.
+# Regression: https://github.com/att/ast/issues/1312
+typeset KEY='k1'
+
+unset A_ASSO
+typeset -A A_ASSO
+actual=$(typeset -p A_ASSO)
+expect='typeset -A A_ASSO=()'
+[[ "$actual" == "$expect" ]] ||
+    log_error 'typeset -p output incorrect' "$expect" "$actual"
+
+typeset -A A_ASSO[${KEY}].COMPOUND_SUBNAME="declare_and_assign_noindex_fail"
+actual=$(typeset -p A_ASSO)
+expect='typeset -A A_ASSO=([k1]=(typeset -A COMPOUND_SUBNAME=([0]=declare_and_assign_noindex_fail);))'
+[[ "$actual" == "$expect" ]] ||
+    log_error 'typeset -p output incorrect' "$expect" "$actual"
+
+unset B_ASSO
+typeset -A B_ASSO
+typeset -A B_ASSO[${KEY}].COMPOUND_SUBNAME[0]="declare_and_assign_index_succ"
+actual=$(typeset -p B_ASSO)
+expect='typeset -A B_ASSO=([k1]=(typeset -a COMPOUND_SUBNAME=(declare_and_assign_index_succ);))'
+[[ "$actual" == "$expect" ]] ||
+    log_error 'typeset -p output incorrect' "$expect" "$actual"
+
+unset C_ASSO
+typeset -A C_ASSO
+typeset -A C_ASSO[${KEY}].COMPOUND_SUBNAME
+C_ASSO[${KEY}].COMPOUND_SUBNAME="assign_after_declare_noindex_succ"
+actual=$(typeset -p C_ASSO)
+expect='typeset -A C_ASSO=([k1]=(typeset -A COMPOUND_SUBNAME=([0]=assign_after_declare_noindex_succ);))'
+[[ "$actual" == "$expect" ]] ||
+    log_error 'typeset -p output incorrect' "$expect" "$actual"
+
+unset D_ASSO
+typeset -A D_ASSO
+typeset -A D_ASSO[${KEY}].COMPOUND_SUBNAME
+D_ASSO[${KEY}].COMPOUND_SUBNAME[0]="assign_after_declare_index_succ"
+actual=$(typeset -p D_ASSO)
+expect='typeset -A D_ASSO=([k1]=(typeset -A COMPOUND_SUBNAME=([0]=assign_after_declare_index_succ);))'
+[[ "$actual" == "$expect" ]] ||
+    log_error 'typeset -p output incorrect' "$expect" "$actual"
