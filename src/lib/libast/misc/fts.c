@@ -23,8 +23,6 @@
  * Phong Vo
  * Glenn Fowler
  * AT&T Research
- *
- * fts implementation unwound from the kpv ftwalk() of 1988-10-30
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
