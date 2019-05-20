@@ -155,17 +155,15 @@ extern int fts_flags();
 
 int b_chmod(int argc, char **argv, Shbltin_t *context) {
     int mode;
-    int force = 0;
     int flag;
     char *amode = NULL;
-    FTS *fts;
-    FTSENT *ent;
     struct stat st;
     char *last;
     int (*chmodf)(const char *, mode_t);
     int notify = 0;
     int ignore = 0;
     int show = 0;
+    bool quiet = false;
     bool recursive = false;
     bool chlink = false;
     bool flag_L = false;
@@ -185,7 +183,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 notify = 1;
                 break;
             case 'f':
-                force = 1;
+                quiet = true;
                 break;
             case 'h':
                 chlink = true;
@@ -272,35 +270,36 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
     // One of FTS_LOGICAL or FTS_PHYSICAL must be set but not both.
     assert(fts_opts & FTS_LOGICAL || fts_opts & FTS_PHYSICAL);
     assert(!(fts_opts & FTS_LOGICAL && fts_opts & FTS_PHYSICAL));
-    fts = fts_open(argv, fts_opts, NULL);
+    FTS *fts = fts_open(argv, fts_opts, NULL);
     if (!fts) {
         if (ignore) umask(ignore);
         error(ERROR_system(1), "%s: not found", *argv);
         __builtin_unreachable();
     }
 
-    while (!bltin_checksig(context) && (ent = fts_read(fts))) {
+    while (!bltin_checksig(context)) {
+        FTSENT *ent = fts_read(fts);
+        if (!ent) break;
         switch (ent->fts_info) {
             case FTS_SL:
             case FTS_SLNONE:
-                if (chlink) {
 #if _lib_lchmod
-                    chmodf = lchmod;
-                    goto commit;
-#else
-                    if (!force) {
-                        errno = ENOSYS;
-                        error(ERROR_system(0), "%s: cannot change symlink mode", ent->fts_path);
-                    }
-#endif
+                if (!chlink) break;
+                    // FALLTHRU
+#else   // _lib_lchmod
+                if (chlink && !quiet) {
+                    errno = ENOSYS;
+                    error(ERROR_system(0), "%s: cannot change symlink mode", ent->fts_path);
                 }
                 break;
+#endif  // _lib_lchmod
             case FTS_F:
             case FTS_D:
-            anyway:
-                chmodf = chmod;
 #if _lib_lchmod
-            commit:
+                chmodf = chlink ? lchmod : chmod;
+#else
+                assert(!chlink);
+                chmodf = chmod;
 #endif
                 if (amode) mode = strperm(amode, &last, ent->fts_statp->st_mode);
                 if (show || (*chmodf)(ent->fts_accpath, mode) >= 0) {
@@ -309,25 +308,25 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                         sfprintf(sfstdout, "%s: mode changed to %0.4o (%s)\n", ent->fts_path, mode,
                                  fmtmode(mode, 1) + 1);
                     }
-                } else if (!force) {
+                } else if (!quiet) {
                     error(ERROR_system(0), "%s: cannot change mode", ent->fts_path);
                 }
                 // If this is a directory and `-R` wasn't used then don't descend into the dir.
                 if (ent->fts_info == FTS_D && !recursive) fts_set(fts, ent, FTS_SKIP);
                 break;
             case FTS_DC:
-                if (!force) error(ERROR_warn(0), "%s: directory causes cycle", ent->fts_path);
+                if (!quiet) error(ERROR_warn(0), "%s: directory causes cycle", ent->fts_path);
                 break;
             case FTS_DNR:
-                if (!force) error(ERROR_system(0), "%s: cannot read directory", ent->fts_path);
+                if (!quiet) error(ERROR_system(0), "%s: cannot read directory", ent->fts_path);
                 goto anyway;
             case FTS_ERR:
-                if (!force) {
+                if (!quiet) {
                     error(ERROR_system(0), "%s: %s", ent->fts_path, strerror(ent->fts_errno));
                 }
                 goto anyway;
             case FTS_NS:
-                if (!force) error(ERROR_system(0), "%s: not found", ent->fts_path);
+                if (!quiet) error(ERROR_system(0), "%s: not found", ent->fts_path);
                 break;
             default:
                 break;
