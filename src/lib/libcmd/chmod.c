@@ -154,12 +154,12 @@ extern int fts_flags();
 #endif
 
 int b_chmod(int argc, char **argv, Shbltin_t *context) {
+    int (*chmodf)(const char *, mode_t);
     int mode;
     int flag;
     char *amode = NULL;
     struct stat st;
     char *last;
-    int (*chmodf)(const char *, mode_t);
     int notify = 0;
     int ignore = 0;
     int show = 0;
@@ -319,12 +319,12 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 break;
             case FTS_DNR:
                 if (!quiet) error(ERROR_system(0), "%s: cannot read directory", ent->fts_path);
-                goto anyway;
+                break;
             case FTS_ERR:
                 if (!quiet) {
                     error(ERROR_system(0), "%s: %s", ent->fts_path, strerror(ent->fts_errno));
                 }
-                goto anyway;
+                break;
             case FTS_NS:
                 if (!quiet) error(ERROR_system(0), "%s: not found", ent->fts_path);
                 break;
