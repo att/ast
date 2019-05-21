@@ -80,9 +80,5 @@ extern int spawnvex_close(Spawnvex_t *);
 #endif  // USE_SPAWN
 
 extern char *fgetcwd(int, char *, size_t);
-#if !_lib_strlcat
-extern size_t strlcat(char *, const char *, size_t);
-extern size_t strlcpy(char *, const char *, size_t);
-#endif
 
 #endif

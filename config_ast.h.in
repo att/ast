@@ -248,10 +248,14 @@ extern char *sh_getenv(const char *name);
 // We need prototypes for each fallback implementation if the system doesn't
 // provide the function.
 #if !_lib_eaccess
-int eaccess(const char *pathname, int mode);
+extern int eaccess(const char *pathname, int mode);
 #endif
 #if !_lib_mkostemp
-int mkostemp(char *template, int oflags);
+extern int mkostemp(char *template, int oflags);
+#endif
+#if !_lib_strlcat
+extern size_t strlcat(char *, const char *, size_t);
+extern size_t strlcpy(char *, const char *, size_t);
 #endif
 
 // It is useful for some API unit tests to be able to make _dprintf() output deterministic with
@@ -297,5 +301,5 @@ extern void _dprint_nrp(const char *file_name, const int lineno, const char *fun
 #define DPRINT_NRP(nrp) _dprint_nrp(__FILE__, __LINE__, __FUNCTION__, 0, #nrp, nrp)
 
 // This can be used to convert an arbitrary nvflag bit mask to a symbolic form.
-const char *nvflag_to_syms(uint64_t nvflag);
+extern const char *nvflag_to_syms(uint64_t nvflag);
 #endif
