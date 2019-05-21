@@ -107,6 +107,7 @@
 #mesondefine _lib_iswalnum
 #mesondefine _lib_iswprint
 #mesondefine _lib_lchmod
+#mesondefine _lib_lchmod_fchmodat_fallback
 #mesondefine _lib_loadbind
 #mesondefine _lib_lseek64
 #mesondefine _lib_lstat
@@ -255,6 +256,9 @@ extern int mkostemp(char *template, int oflags);
 #if !_lib_strlcat
 extern size_t strlcat(char *, const char *, size_t);
 extern size_t strlcpy(char *, const char *, size_t);
+#endif
+#if _lib_lchmod_fchmodat_fallback
+extern int lchmod(const char *path, mode_t mode);
 #endif
 
 // It is useful for some API unit tests to be able to make _dprintf() output deterministic with

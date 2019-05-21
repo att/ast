@@ -96,3 +96,11 @@ int mkostemp(char *template, int oflags) {
     return -1;
 }
 #endif  // !_lib_mkostemp
+
+#if _lib_lchmod_fchmodat_fallback
+// This fallback is for platforms like OpenBSD which don't have lchmod() but provide the means for
+// implementing it via fchmodat().
+int lchmod(const char *path, mode_t mode) {
+    return fchmodat(AT_FDCWD, path, mode, AT_SYMLINK_NOFOLLOW);
+}
+#endif

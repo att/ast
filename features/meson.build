@@ -65,9 +65,21 @@ feature_data.set10('_hdr_malloc', cc.has_header('malloc.h', args: feature_test_a
 feature_data.set10('_hdr_filio', cc.has_header('filio.h', args: feature_test_args))
 feature_data.set10('_sys_filio', cc.has_header('sys/filio.h', args: feature_test_args))
 
+# The `lchmod()` function is a bit of a special-case. The platform may not provide it
+# directly but might provide the means to implement it.
 feature_data.set10('_lib_lchmod',
     cc.has_function('lchmod', prefix: '\n'.join(['#include <unistd.h>', '#include <sys/stat.h>']),
     args: feature_test_args))
+if feature_data.get('_lib_lchmod', 0) == 0
+    feature_file = files('lchmod_fallback.c')
+    feature_result = cc.run(feature_file, name: 'lchmod() fallback using fchmodat()',
+                            args: feature_test_args)
+    if feature_result.returncode() == 0
+        feature_data.set10('_lib_lchmod_fchmodat_fallback', 1)
+        feature_data.set10('_lib_lchmod', 1)
+    endif
+endif
+
 feature_data.set10('_lib_sigqueue',
     cc.has_function('sigqueue', prefix: '#include <signal.h>', args: feature_test_args))
 # TODO: Enable iswprint() detection when we understand why doing so causes the
