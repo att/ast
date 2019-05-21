@@ -79,6 +79,4 @@ extern int spawnvex_close(Spawnvex_t *);
 
 #endif  // USE_SPAWN
 
-extern char *fgetcwd(int, char *, size_t);
-
 #endif
