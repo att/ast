@@ -1,5 +1,8 @@
-#ifndef _AST_SYS_H
-#define _AST_SYS_H 1
+#ifndef _AST_SPAWNVEX_H
+#define _AST_SPAWNVEX_H 1
+
+#if USE_SPAWN
+
 #include <fcntl.h>
 #include <inttypes.h>
 #include <limits.h>
@@ -9,8 +12,6 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
-
-#if USE_SPAWN
 
 union _Spawnvex_u;
 typedef union _Spawnvex_u Spawnvex_u;

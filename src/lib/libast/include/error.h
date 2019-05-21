@@ -29,6 +29,7 @@
 #define _ERROR_H 1
 
 #include <errno.h>
+#include <locale.h>
 
 #include "ast.h"
 

@@ -57,13 +57,10 @@
 #include "shcmd.h"
 #include "shlex.h"
 #include "shnodes.h"
+#include "spawnvex.h"
 #include "stk.h"
 #include "streval.h"
 #include "variables.h"
-
-#if USE_SPAWN
-#include "ast_sys.h"
-#endif
 
 #if __CYGWIN__
 static int Skip;

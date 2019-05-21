@@ -37,10 +37,10 @@
 #include <unistd.h>
 
 #include "ast.h"
-#include "ast_sys.h"
 #include "error.h"
 #include "sfio.h"
 #include "sig.h"
+#include "spawnvex.h"
 
 #ifndef ENOSYS
 #define ENOSYS EINVAL

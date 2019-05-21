@@ -28,12 +28,12 @@
 
 #include <iconv.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <wchar.h>
 
 #include "ast_errorf.h"
-#include "ast_sys.h"
 #include "sfio.h"
 
 #ifndef PATH_MAX

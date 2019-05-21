@@ -64,15 +64,12 @@
 #include "shcmd.h"
 #include "shnodes.h"
 #include "shtable.h"
+#include "spawnvex.h"
 #include "stk.h"
 #include "streval.h"
 #include "terminal.h"
 #include "test.h"
 #include "variables.h"
-
-#if USE_SPAWN
-#include "ast_sys.h"
-#endif
 
 #if SHOPT_COSHELL
 #include "coshell.h"

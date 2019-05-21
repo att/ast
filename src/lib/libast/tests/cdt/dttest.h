@@ -17,6 +17,8 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
+#include <stddef.h>
+
 #include "cdt.h"
 
 __attribute__((unused)) static int compare(Dt_t *dt, void *o1, void *o2, Dtdisc_t *disc) {

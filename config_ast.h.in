@@ -22,6 +22,10 @@
 #ifndef _CONFIG_AST_H
 #define _CONFIG_AST_H 1
 
+#include <inttypes.h>
+#include <stdbool.h>
+#include <sys/types.h>
+
 #define _GNU_SOURCE 1
 #define _UNIV_DEFAULT "ucb"  // https://github.com/att/ast/issues/370
 #define _fd_self_dir_fmt "/proc/self/fd/%d%s%s"
@@ -219,15 +223,10 @@ typedef int (*Shbltin_f)(int, char **, Shbltin_t *);
 // `job_waitsafe()` function is called from an interrupt context and
 // indirectly calls `malloc()`. See issue #563.
 //
-#include <stdbool.h>
-#include <inttypes.h>
-
 extern volatile bool vmbusy_flag;
 #define vmbusy() vmbusy_flag
 
 #if !NO_MALLOC_WRAPPERS
-#include <sys/types.h>
-
 extern void *ast_malloc(size_t size);
 extern void *ast_calloc(size_t count, size_t size);
 extern void *ast_realloc(void *ptr, size_t size);
