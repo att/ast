@@ -412,7 +412,7 @@ struct Namval {
 // not static inline functions because they do more work and were historically extern functions.
 
 // Return true if the mask is set in nvflags.
-static inline int nv_isflag(const nvflag_t nvflags, const nvflag_t mask) {
+static inline bool nv_isflag(const nvflag_t nvflags, const nvflag_t mask) {
     return (nvflags & mask) == mask;
 }
 
