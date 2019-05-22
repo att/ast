@@ -1023,10 +1023,11 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
                             if (!nq && !(nq = nv_opensub(np))) {
                                 Namarr_t *ap = nv_arrayptr(np);
                                 if (!sub && (flags & NV_NOADD)) return 0;
-                                nvflags = mode | ((flags & NV_NOADD) ? 0 : NV_ADD);
-                                if (!(n & NV_ADD) && ap && tp) nvflags |= NV_ADD;
+                                nvflags = mode;
+                                if (!nv_isflag(flags, NV_NOADD)) nvflags |= NV_ADD;
+                                if (!nv_isflag(nvflags, NV_ADD) && ap && tp) nvflags |= NV_ADD;
 
-                                if (!ap && (nvflags & NV_ADD)) {
+                                if (!ap && nv_isflag(nvflags, NV_ADD)) {
                                     nv_putsub(np, sub, 0, ARRAY_FILL);
                                     ap = nv_arrayptr(np);
                                 }
