@@ -68,17 +68,6 @@
 
 #define H_NLEV (ssize_t)(DT_NBITS / H_BITA) /* #levels  */
 
-/* the base (starting search) position of an element in a given table and #search steps */
-#define HBASP(hh, lv, h) ((lv) >= (hh)->nlev ? 0 : (((h) >> (hh)->shft[lv]) & (hh)->mask[lv]))
-#define HSRCH(hh, lv)    \
-    ((lv) >= (hh)->nlev  \
-         ? (1 << H_BITA) \
-         : (lv) == 0 ? H_SRCH0 : (lv) == 1 ? H_SRCH1 : (lv) == 2 ? H_SRCH2 : H_SRCHA)
-
-/* the actual address of an element supposed to be at location p */
-#define HLNKP(tb, p) \
-    (((tb)->list[p] && HTABLE((tb)->list[p])) ? &((Htbl_t *)(tb)->list[p])->pobj : (tb)->list + (p))
-
 /* convenient short-hands for operation types requiring locks */
 #define H_INSERT (DT_INSERT | DT_INSTALL | DT_APPEND | DT_ATTACH | DT_RELINK)
 #define H_DELETE (DT_DELETE | DT_DETACH | DT_REMOVE)
@@ -113,6 +102,26 @@ typedef struct _hash_s /* recursive hashing data */
 
     Fngr_t fngr; /* finger to help dtnext/dtstep        */
 } Hash_t;
+
+// The base (starting search) position of an element in a given table and #search steps.
+static inline ssize_t HBASP(Hash_t *hh, ssize_t lv, uint h) {
+    if (lv >= hh->nlev) return 0;
+    return (h >> hh->shft[lv]) & hh->mask[lv];
+}
+
+static inline ssize_t HSRCH(Hash_t *hh, ssize_t lv) {
+    if (lv >= hh->nlev) return 1 << H_BITA;
+    if (lv == 0) return H_SRCH0;
+    if (lv == 1) return H_SRCH1;
+    if (lv == 2) return H_SRCH2;
+    return H_SRCHA;
+}
+
+// The actual address of an element supposed to be at location p.
+static inline Dtlink_t **HLNKP(Htbl_t *tb, ssize_t p) {
+    if (tb->list[p] && HTABLE(tb->list[p])) return &((Htbl_t *)tb->list[p])->pobj;
+    return tb->list + p;
+}
 
 // Return hash table size at a given level.
 // The original implementation was a macro:
