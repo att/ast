@@ -108,9 +108,7 @@ static const char usage[] =
     "The \b-h\b options can be specified to change the mode of the link. "
     "When traversing directories with \b-R\b, \bchmod\b either follows "
     "symbolic links or does not follow symbolic links, based on the "
-    "options \b-H\b, \b-L\b, and \b-P\b. The configuration parameter "
-    "\bPATH_RESOLVE\b determines the default behavior if none of these "
-    "options is specified.]"
+    "options \b-H\b, \b-L\b, and \b-P\b.]"
 
     "[+?When the \b-c\b or \b-v\b options are specified, change notifications "
     "are written to standard output using the format, "

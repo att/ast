@@ -333,11 +333,7 @@ void bash_init(Shell_t *shp, int mode) {
         } else {
             sh_offoption(shp, SH_XPG_ECHO);
         }
-        if (strcmp(astconf("PATH_RESOLVE", 0, 0), "physical") == 0) {
-            sh_onoption(shp, SH_PHYSICAL);
-        } else {
-            sh_offoption(shp, SH_PHYSICAL);
-        }
+        sh_offoption(shp, SH_PHYSICAL);
 
         // Add builtins.
         sh_addbuiltin(shp, "shopt", b_shopt, &sh);

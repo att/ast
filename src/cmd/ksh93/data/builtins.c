@@ -435,11 +435,8 @@ const char sh_optcd[] =
     "or if the two operand form is used, the new value of \bPWD\b will be "
     "written to standard output.]"
     "[+?If both \b-L\b and \b-P\b are specified, the last one specified will "
-    "be used.  If neither \b-P\b or \b-L\b is specified then the "
-    "behavior will be determined by the \bgetconf\b parameter "
-    "\bPATH_RESOLVE\b.  If \bPATH_RESOLVE\b is \bphysical\b, "
-    "then the behavior will be as if \b-P\b were specified.  Otherwise, "
-    "the behavior will be as if  \b-L\b were specified.]"
+    "be used.  If neither \b-P\b or \b-L\b is specified the default behavior is "
+    "as if \b-L\b was specified.]"
     "[f?The directory path is relative to the open file descriptor \adirfd\a.]#[dirfd]"
     "[L?Handle each pathname component \b..\b in a logical fashion by moving "
     "up one level by name in the present working directory.]"
@@ -457,7 +454,7 @@ const char sh_optcd[] =
     "[+0?Directory successfully changed.]"
     "[+>0?An error occurred.]"
     "}"
-    "[+SEE ALSO?\bpwd\b(1), \bgetconf\b(1)]";
+    "[+SEE ALSO?\bpwd\b(1)]";
 
 const char sh_optcommand[] =
     "[-1c?\n@(#)$Id: command (AT&T Research) 2003-08-01 $\n]" USAGE_LICENSE
@@ -1186,11 +1183,8 @@ const char sh_optpwd[] = "[-1c?\n@(#)$Id: pwd (AT&T Research) 2013-11-10 $\n]" U
                          "pathname that begins with \b/\b that does not contains any "
                          "\b.\b  or \b..\b components.]"
                          "[+?If both \b-L\b and \b-P\b are specified, the last one specified will "
-                         "be used.  If neither \b-P\b or \b-L\b is specified then the "
-                         "behavior will be determined by the \bgetconf\b parameter "
-                         "\bPATH_RESOLVE\b.  If \bPATH_RESOLVE\b is \bphysical\b, "
-                         "then the behavior will be as if \b-P\b were specified.  Otherwise, "
-                         "the behavior will be as if  \b-L\b were specified.]"
+                         "be used.  If neither \b-P\b or \b-L\b is specified the default "
+                         "behavior is as if \b-L\b was specified.]"
                          "[L?The absolute pathname may contains symbolic link components.  This is "
                          "the default.]"
                          "[P?The absolute pathname will not contain any symbolic link components.]"

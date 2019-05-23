@@ -633,12 +633,6 @@ void sh_applyopts(Shell_t *shp, Shopt_t newflags) {
     if (is_option(&newflags, SH_XPG_ECHO) && !sh_isoption(shp, SH_XPG_ECHO)) {
         astconf("UNIVERSE", 0, "att");
     }
-    if (!is_option(&newflags, SH_PHYSICAL) && sh_isoption(shp, SH_PHYSICAL)) {
-        astconf("PATH_RESOLVE", 0, "metaphysical");
-    }
-    if (is_option(&newflags, SH_PHYSICAL) && !sh_isoption(shp, SH_PHYSICAL)) {
-        astconf("PATH_RESOLVE", 0, "physical");
-    }
     if (is_option(&newflags, SH_HISTORY2) && !sh_isoption(shp, SH_HISTORY2)) {
         sh_onstate(shp, SH_HISTORY);
         sh_onoption(shp, SH_HISTORY);

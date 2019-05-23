@@ -97,7 +97,7 @@ is returned if
 has no configuration value.
 This simplifies the programming interface:
 .EX
-if (!strcmp(astconf("PATH_RESOLVE", NULL, NULL), "logical"))
+if (!strcmp(astconf("ARGLEBARGLE", NULL, NULL), "argle"))
 	/* the logical way ... */
 .EE
 If
@@ -117,21 +117,6 @@ universe = astconf("UNIVERSE", 0, "att");
 astconf("UNIVERSE", 0, universe);
 .EE
 The settable configuration names are:
-.TP
-.L PATH_RESOLVE
-.L logical
-if symbolic links are followed during file tree traversal,
-.L physical
-if symbolic links are not followed during file tree traversal,
-and
-.L metaphysical
-if symbolic links are followed at the top level during file tree traversal.
-These correspond to the generic
-.LR \-L ,
-.LR \-P ,
-and
-.L \-H
-command options.
 .TP
 .L UNIVERSE
 .L ucb
