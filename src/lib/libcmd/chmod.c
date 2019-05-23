@@ -285,14 +285,14 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
             case FTS_SLNONE:
 #if _lib_lchmod
                 if (!chlink) break;
-                    // FALLTHRU
-#else   // _lib_lchmod
+#else
                 if (chlink && !quiet) {
                     errno = ENOSYS;
                     error(ERROR_system(0), "%s: cannot change symlink mode", ent->fts_path);
                 }
                 break;
-#endif  // _lib_lchmod
+#endif
+                // FALLTHRU
             case FTS_F:
             case FTS_D:
 #if _lib_lchmod
