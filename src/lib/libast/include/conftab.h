@@ -19,9 +19,21 @@
 #define CONF_sysconf 3
 #define CONF_sysinfo 4
 
-{conf_standards}
+#define CONF_C 0
+#define CONF_SUN 1
+#define CONF_POSIX 2
+#define CONF_SVID 3
+#define CONF_XOPEN 4
+#define CONF_SCO 5
+#define CONF_AST 6
+#define CONF_AES 7
+#define CONF_XPG 8
+#define CONF_GNU 9
+#define CONF_TRUSTEDBSD 10
+#define CONF_call 11
 
-{getconf}
+#define _pth_getconf "/usr/bin/getconf"
+#define _pth_getconf_a "-a"
 
 #define CONF_DEFER_CALL 0x0001
 #define CONF_DEFER_MM 0x0002
@@ -42,28 +54,28 @@
 struct Conf_s;
 typedef struct Conf_s Conf_t;
 
-typedef struct Value_s {{
-        int64_t number;
-        const char *string;
-    }} Value_t;
+typedef struct Value_s {
+    int64_t number;
+    const char *string;
+} Value_t;
 
-struct Conf_s {{
-        const char name[{name_max}];
-        Value_t limit;
-        Value_t minmax;
-        unsigned int flags;
-        short standard;
-        short section;
-        short call;
-        short op;
-    }};
+struct Conf_s {
+    const char name[32];
+    Value_t limit;
+    Value_t minmax;
+    unsigned int flags;
+    short standard;
+    short section;
+    short call;
+    short op;
+};
 
-typedef struct Prefix_s {{
-        const char name[16];
-        short length;
-        short standard;
-        short call;
-    }} Prefix_t;
+typedef struct Prefix_s {
+    const char name[16];
+    short length;
+    short standard;
+    short call;
+} Prefix_t;
 
 extern const Conf_t conf[];
 extern const int conf_elements;
