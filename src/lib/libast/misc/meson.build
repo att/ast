@@ -5,7 +5,7 @@ libast_files += [
     'misc/optget.c', 'misc/procclose.c', 'misc/procfree.c',
     'misc/procopen.c', 'misc/sigcrit.c',
     'misc/state.c', 'misc/stk.c', 'misc/translate.c', 'misc/univdata.c',
-    'misc/fts.c', 'misc/vmbusy.c', 'misc/fallbacks.c'
+    'misc/vmbusy.c', 'misc/fallbacks.c'
 ]
 
 if shared_c_args.contains('-DUSE_SPAWN=1')

@@ -147,8 +147,6 @@ static const char usage[] =
     "[+SEE ALSO?\bchgrp\b(1), \bchown\b(1), \blchmod\b(1), \btw\b(1), \bgetconf\b(1), "
     "\bls\b(1), \bumask\b(2)]";
 
-extern int fts_flags();
-
 #ifndef ENOSYS
 #define ENOSYS EINVAL
 #endif
