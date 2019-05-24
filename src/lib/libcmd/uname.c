@@ -69,18 +69,10 @@ static const char usage[] =
     "[o:operating-system?The generic operating system name.]"
     "[h:host-id|id?The host id in hex.]"
     "[d:domain?The domain name returned by \agetdomainname\a(2).]"
-    "[R:extended-release?The extended release name.]"
-    "[A:everything?Equivalent to \b-snrvmpiohdR\b.]"
-    "[f:list?List all \bsysinfo\b(2) names and values, one per line.]"
-    "[S:sethost?Set the hostname or nodename to \aname\a. No output is"
-    "   written to standard output.]:[name]"
     "\n"
-    "\n[ name ... ]\n"
-    "\n"
-    "[+SEE ALSO?\bhostname\b(1), \bgetconf\b(1), \buname\b(2),"
-    "   \bsysconf\b(2), \bsysinfo\b(2)]";
+    "[+SEE ALSO?\bhostname\b(1), \buname\b(2)]";
 
-static const char hosttype[] = HOSTTYPE;
+static const char *hosttype = HOSTTYPE;
 
 #define OPT_system (1 << 0)
 #define OPT_nodename (1 << 1)
@@ -88,29 +80,18 @@ static const char hosttype[] = HOSTTYPE;
 #define OPT_version (1 << 3)
 #define OPT_machine (1 << 4)
 #define OPT_processor (1 << 5)
-
-#define OPT_STANDARD 6
-
 #define OPT_implementation (1 << 6)
 #define OPT_operating_system (1 << 7)
-
-#define OPT_ALL 8
-
 #define OPT_hostid (1 << 8)
 #define OPT_domain (1 << 10)
-#define OPT_extended_release (1 << 13)
 
-#define OPT_TOTAL 14
-
+#define OPT_ALL 8
 #define OPT_all (1L << 29)
-#define OPT_total (1L << 30)
-#define OPT_standard ((1 << OPT_STANDARD) - 1)
 
 static bool output(bool sep, uint32_t flags, uint32_t flag, const char *value, const char *name) {
     if (!(flags & flag)) return sep;
 
-    if (*value || ((flags & (OPT_all | OPT_total)) == OPT_all && (flag & OPT_standard)) ||
-        !(flags & (OPT_all | OPT_total))) {
+    if (*value || flags & OPT_all) {
         if (sep) {
             sfputc(sfstdout, ' ');
         } else {
@@ -130,11 +111,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
     uint32_t flags = 0;
     bool sep = false;
     int n;
-    char *s;
     char *t;
-    char *e;
-    char *sethost = NULL;
-    int list = 0;
     struct utsname ut;
     char buf[257];
 
@@ -146,9 +123,6 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
                 break;
             case 'd':
                 flags |= OPT_domain;
-                break;
-            case 'f':
-                list = 1;
                 break;
             case 'h':
                 flags |= OPT_hostid;
@@ -177,15 +151,6 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             case 'v':
                 flags |= OPT_version;
                 break;
-            case 'A':
-                flags |= OPT_total | ((1L << OPT_TOTAL) - 1);
-                break;
-            case 'R':
-                flags |= OPT_extended_release;
-                break;
-            case 'S':
-                sethost = opt_info.arg;
-                break;
             case ':':
                 s = "/usr/bin/uname";
                 if (strcmp(argv[0], s) != 0 && (!eaccess(s, X_OK) || !eaccess(s += 4, X_OK))) {
@@ -201,117 +166,57 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         }
     }
     argv += opt_info.index;
-    if (error_info.errors || (*argv && (flags || sethost)) || (sethost && flags)) {
+    if (error_info.errors || *argv) {
         error(ERROR_usage(2), "%s", optusage(NULL));
         __builtin_unreachable();
     }
-    if (sethost) {
-        if (sethostname(sethost, (int)strlen(sethost) + 1)) {
-            error(ERROR_system(1), "%s: cannot set host name", sethost);
-            __builtin_unreachable();
+
+    if (!flags) flags = OPT_system;
+    memset(&ut, 0, sizeof(ut));
+    if (uname(&ut) < 0) {
+        error(ERROR_usage(2), "information unavailable");
+        __builtin_unreachable();
+    }
+    sep = output(sep, flags, OPT_system, ut.sysname, "sysname");
+    if (flags & OPT_nodename) {
+        sep = output(sep, flags, OPT_nodename, ut.nodename, "nodename");
+    }
+    sep = output(sep, flags, OPT_release, ut.release, "release");
+    sep = output(sep, flags, OPT_version, ut.version, "version");
+    sep = output(sep, flags, OPT_machine, ut.machine, "machine");
+    if (flags & OPT_processor) {
+        sep = output(sep, flags, OPT_processor, ut.machine, "processor");
+    }
+    if (flags & OPT_implementation) {
+        t = strchr(hosttype, '.');
+        if (t) {
+            t++;
+        } else {
+            t = (char *)hosttype;
         }
-    } else if (list) {
-        astconflist(
-            sfstdout, NULL,
-            ASTCONF_base | ASTCONF_defined | ASTCONF_lower | ASTCONF_quote | ASTCONF_matchcall,
-            "CS|SI");
-    } else if (*argv) {
-        e = &buf[sizeof(buf) - 1];
-        while (*argv) {
-            s = *argv++;
-            t = buf;
-            *t++ = 'C';
-            *t++ = 'S';
-            *t++ = '_';
-            while (t < e && (n = *s++)) *t++ = islower(n) ? toupper(n) : n;
-            *t = 0;
-            sfprintf(sfstdout, "%s%c",
-                     *(t = astconf(buf, NULL, NULL))
-                         ? t
-                         : *(t = astconf(buf + 3, NULL, NULL)) ? t : "unknown",
-                     *argv ? ' ' : '\n');
+        if (strlcpy(buf, t, sizeof(buf)) >= sizeof(buf)) {
+            // TODO: Figure out what to do if the source is longer than the destination.
+            // It should be a can't happen situation but what to do if it does happen?
+            ;  // empty body
         }
-    } else {
-        if (!flags) flags = OPT_system;
-        memset(&ut, 0, sizeof(ut));
-        if (uname(&ut) < 0) {
-            error(ERROR_usage(2), "information unavailable");
-            __builtin_unreachable();
-        }
-        sep = output(sep, flags, OPT_system, ut.sysname, "sysname");
-        if (flags & OPT_nodename) {
-            sep = output(sep, flags, OPT_nodename, ut.nodename, "nodename");
-        }
-        sep = output(sep, flags, OPT_release, ut.release, "release");
-        sep = output(sep, flags, OPT_version, ut.version, "version");
-        sep = output(sep, flags, OPT_machine, ut.machine, "machine");
-        if (flags & OPT_processor) {
-            s = astconf("ARCHITECTURE", NULL, NULL);
-            if (!*s) s = ut.machine;
-            sep = output(sep, flags, OPT_processor, s, "processor");
-        }
-        if (flags & OPT_implementation) {
-            s = astconf("PLATFORM", NULL, NULL);
-            if (!*s) {
-                s = astconf("HW_NAME", NULL, NULL);
-                if (!*s) {
-                    t = strchr(hosttype, '.');
-                    if (t) {
-                        t++;
-                    } else {
-                        t = (char *)hosttype;
-                    }
-                    if (strlcpy(buf, t, sizeof(buf)) >= sizeof(buf)) {
-                        // TODO: Figure out what to do if the source is longer than the destination.
-                        // It should be a can't happen situation but what to do if it does happen?
-                        ;  // empty body
-                    }
-                    s = buf;
-                }
-            }
-            sep = output(sep, flags, OPT_implementation, s, "implementation");
-        }
-        if (flags & OPT_operating_system) {
-            s = astconf("OPERATING_SYSTEM", NULL, NULL);
-            if (!*s) {
-#ifdef _UNAME_os_DEFAULT
-                s = _UNAME_os_DEFAULT;
-#else
-                s = ut.sysname;
-#endif
-            }
-            sep = output(sep, flags, OPT_operating_system, s, "operating-system");
-        }
-        if (flags & OPT_extended_release) {
-            s = astconf("RELEASE", NULL, NULL);
-            sep = output(sep, flags, OPT_extended_release, s, "extended-release");
-        }
+        sep = output(sep, flags, OPT_implementation, buf, "implementation");
+    }
+    if (flags & OPT_operating_system) {
+        sep = output(sep, flags, OPT_operating_system, ut.sysname, "operating-system");
+    }
+    if (flags & OPT_hostid) {
 #if _mem_idnumber_utsname
         sep = output(sep, flags, OPT_hostid, ut.idnumber, "hostid");
 #else
-        if (flags & OPT_hostid) {
-            s = astconf("HW_SERIAL", NULL, NULL);
-            if (!(*s)) {
-                sfsprintf(s = buf, sizeof(buf), "%08x", gethostid());
-            }
-            sep = output(sep, flags, OPT_hostid, s, "hostid");
-        }
+        sfsprintf(buf, sizeof(buf), "%08x", gethostid());
+        sep = output(sep, flags, OPT_hostid, buf, "hostid");
 #endif
-        if (flags & OPT_domain) {
-#if AST_SUNOS
-            // TODO: Fix this for Solaris.
-            s = "domain.unknown";
-#else
-            s = astconf("SRPC_DOMAIN", NULL, NULL);
-            if (!(*s)) {
-                getdomainname(buf, sizeof(buf));
-                s = buf;
-            }
-#endif
-            sep = output(sep, flags, OPT_domain, s, "domain");
-        }
-        if (sep) sfputc(sfstdout, '\n');
     }
+    if (flags & OPT_domain) {
+        getdomainname(buf, sizeof(buf));
+        sep = output(sep, flags, OPT_domain, buf, "domain");
+    }
+    if (sep) sfputc(sfstdout, '\n');
 
     return error_info.errors;
 }

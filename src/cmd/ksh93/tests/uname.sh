@@ -80,33 +80,3 @@ uname -h | grep -q -v "[0-9a-f]*" && log_error "'uname -h' failed"
 #   -d, --domain    The domain name returned by getdomainname(2).
 actual=$(uname -d)
 [[ ! -z "$actual" ]] || log_error "'uname -d' failed"
-
-# ==========
-#   -R, --extended-release
-#                   The extended release name.
-actual=$(uname -R)
-expect=$(uname)
-[[ "$actual" =~ "$expect" ]] || log_error "'uname -R' failed" "$expect" "$actual" "$expect" "$actual"
-
-# ==========
-#   -A, --everything
-#                   Equivalent to -snrvmpiohdR.
-actual=$(uname -A)
-expect=$(uname -snrvmpiohdR)
-[[ "$actual" = "$expect" ]] || log_error "'uname -A' failed" "$expect" "$actual"
-
-# ==========
-#   -f, --list      List all sysinfo(2) names and values, one per line.
-actual=$(uname -f)
-[[ ! -z "$actual" ]] || log_error "'uname -f' should be non-empty" "$expect" "$actual"
-
-# ==========
-#   -S, --sethost=name
-#                   Set the hostname or nodename to name. No output is written to
-#                   standard output.
-# Try to run this command as non-root user, it should fail.
-if [[ $(id -u) -ne 0 ]]; then
-    actual=$(uname -S foo 2>&1)
-    expect="uname: foo: cannot set host name"
-    [[ "$actual" =~ "$expect" ]] || log_error "'uname -S' should fail when not run as root" "$expect" "$actual"
-fi
