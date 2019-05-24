@@ -152,11 +152,6 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
                 flags |= OPT_version;
                 break;
             case ':':
-                s = "/usr/bin/uname";
-                if (strcmp(argv[0], s) != 0 && (!eaccess(s, X_OK) || !eaccess(s += 4, X_OK))) {
-                    argv[0] = s;
-                    return bltin_run(context, argc, argv);
-                }
                 error(2, "%s", opt_info.arg);
                 break;
             case '?':
