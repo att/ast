@@ -546,7 +546,7 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
             env[2] = 0;
             if (!sh_setenviron(env)) goto cleanup;
         }
-        if ((flags & PROC_PARANOID) && setenv("PATH", astconf("PATH", NULL, NULL), 1)) goto cleanup;
+        if ((flags & PROC_PARANOID) && setenv("PATH", cs_path(), 1)) goto cleanup;
         if ((p = envv) && p != (char **)environ) {
             while (*p) {
                 if (!sh_setenviron(*p++)) goto cleanup;

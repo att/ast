@@ -14,7 +14,7 @@ tmain() {
     UNUSED(argv);
     int failed = 0;
     char *result = NULL;
-    char default_astconf_path[BUFSIZ];
+    char default_cs_path[BUFSIZ];
 
     char *custom_path = "/foo:/bar:/baz";
 
@@ -38,14 +38,14 @@ tmain() {
     }
 
     // When `PATH` is not set, `pathbin()` gets default value from `confstr()` function
-    if (confstr(_CS_PATH, default_astconf_path, BUFSIZ) == 0 && errno == EINVAL) {
-        fprintf(stderr, "Failed to get default astconf path");
+    if (confstr(_CS_PATH, default_cs_path, BUFSIZ) == 0 && errno == EINVAL) {
+        fprintf(stderr, "Failed to get default cs_path");
         failed = 1;
     }
 
     // Check return value of `pathbin()` when `PATH` is not set
     result = pathbin();
-    if (strcmp(result, default_astconf_path)) {
+    if (strcmp(result, default_cs_path)) {
         fprintf(stderr, "pathbin() function fails when PATH is not set");
         failed = 1;
     }
