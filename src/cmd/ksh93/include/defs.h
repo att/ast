@@ -356,10 +356,11 @@ extern const Shtable_t shtab_siginfo[];
 // sigqueue() may not be available on some platforms (e.g., macOS) or doesn't work on others
 // (e.g., WSL). So provide a fallback that mostly does what we need.
 #if !_lib_sigqueue || _WSL_
-static inline int sigqueue(pid_t pid, int sig, const union sigval sig_val) {
+static inline int sigqueue_fallback(pid_t pid, int sig, const union sigval sig_val) {
     UNUSED(sig_val);
     return kill(pid, sig);
 }
+#define sigqueue sigqueue_fallback
 #endif
 
 #define sh_sigaction(s, action)         \
