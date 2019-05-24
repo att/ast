@@ -189,11 +189,13 @@ bool sh_iovalidfd(Shell_t *shp, int fd) {
 
     if (fd < 0) return false;
     if (fd < shp->gd->lim.open_max) return true;
-    max = strtol(astconf("OPEN_MAX", NULL, NULL), NULL, 0);
+
+    max = sysconf(_SC_OPEN_MAX);
     if (fd >= max) {
         errno = EBADF;
         return false;
     }
+
     n = (fd + 16) & ~0xf;
     if (n++ > max) n = max + 1;
     max = shp->gd->lim.open_max;
