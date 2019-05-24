@@ -70,14 +70,12 @@ int pathexists(char *path, int mode) {
     int cc;
     int x;
     struct stat statbuf;
-    int (*cmp)(const char *, const char *);
 
     static Tree_t tree;
 
     current_tree = &tree;
     // If path starts with `/`, initialize next slash character after first character
     next_slash = (c = *path) == '/' ? path + 1 : path;
-    cmp = strchr(astconf("PATH_ATTRIBUTES", path, NULL), 'c') ? strcasecmp : strcmp;
     while (c) {
         parent_tree = current_tree;
         // Try to search for next slash character
@@ -90,7 +88,7 @@ int pathexists(char *path, int mode) {
         // and put a null character there to mark end of path, so `foo/bar/baz` becomes `foo`
         *next_slash = 0;
         for (current_tree = parent_tree->tree;
-             current_tree && (*cmp)(current_path_component, current_tree->name);
+             current_tree && strcmp(current_path_component, current_tree->name);
              current_tree = current_tree->next) {
             ;
         }

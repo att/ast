@@ -322,8 +322,8 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
     if (mode != '*') sh_onoption(shp, SH_MARKDIRS);
 
     {
-        char *cp = begin, *left = 0, *saveout = ".";
-        int nocase = 0, cmd_completion = 0;
+        char *cp = begin, *left = NULL;
+        int cmd_completion = 0;
         int size = 'x';
         while (cp > outbuff && ((size = cp[-1]) == ' ' || size == '\t')) cp--;
         if (!var && !strchr(ap->argval, '/') &&
@@ -376,10 +376,7 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
             if (dir) {
                 c = *dir;
                 *dir = 0;
-                saveout = begin;
             }
-            saveout = astconf("PATH_ATTRIBUTES", saveout, NULL);
-            if (saveout) nocase = (strchr(saveout, 'c') != 0);
             if (dir) *dir = c;
             // Just expand until name is unique.
             size += strlen(*com);
@@ -418,12 +415,12 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
             out = stpcpy(begin, *com++);
         }
         if (mode == '\\') {
-            saveout = ++out;
+            char *saveout = ++out;
             while (*com && *begin) {
                 if (cmd_completion) {
-                    out = overlaid(begin, path_basename(*com++), nocase);
+                    out = overlaid(begin, path_basename(*com++), false);
                 } else {
-                    out = overlaid(begin, *com++, nocase);
+                    out = overlaid(begin, *com++, false);
                 }
             }
             mode = (out == saveout);
