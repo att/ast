@@ -1096,28 +1096,6 @@ static Namfun_t NSPACE_init = {&NSPACE_disc, 1};
 static const Namdisc_t LC_disc = {.dsize = sizeof(Namfun_t), .putval = put_lang};
 
 //
-// This function will get called whenever a configuration parameter changes.
-//
-static_fn int newconf(const char *name, const char *path, const char *value) {
-    UNUSED(path);
-    Shell_t *shp = sh_getinterp();
-    char *arg;
-
-    if (!name) {
-        sh_setenviron(value);
-    } else if (strcmp(name, "UNIVERSE") == 0 && strcmp(astconf(name, 0, 0), value)) {
-        shp->universe = 0;
-        // Set directory in new universe.
-        if (*(arg = path_pwd(shp)) == '/') sh_chdir(arg);
-        // Clear out old tracked alias.
-        stkseek(shp->stk, 0);
-        sfputr(shp->stk, nv_getval(PATHNOD), 0);
-        nv_putval(PATHNOD, stkseek(shp->stk, 0), NV_RDONLY);
-    }
-    return 1;
-}
-
-//
 // Return SH_TYPE_* bitmask for path, 0 for "not a shell".
 //
 int sh_type(const char *path) {
@@ -1318,7 +1296,6 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     }
 #endif
     nv_putval(IFSNOD, (char *)e_sptbnl, NV_RDONLY);
-    astconfdisc(newconf);
     shp->st.tmout = READ_TIMEOUT;
     // Initialize jobs table.
     job_clear(shp);
