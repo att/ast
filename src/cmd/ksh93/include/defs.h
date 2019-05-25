@@ -94,8 +94,6 @@ struct limits {
     int clk_tck;                     // number of ticks per second
     int child_max;                   // maxumum number of children
     int ngroups_max;                 // maximum number of process groups
-    unsigned char posix_version;     // posix version number
-    unsigned char posix_jobcontrol;  // non-zero for job control systems
 };
 
 struct shared {

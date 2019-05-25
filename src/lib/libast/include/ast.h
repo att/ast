@@ -134,14 +134,12 @@
     ((u) > 0x0010FFFF || ((u) >= 0x0000D800 && (u) <= 0x0000DFFF) || \
      ((u) >= 0xFFFE && (u) <= 0xFFFF))
 
-#define UTF8_LEN_MAX 6 /* UTF-8 only uses 5 */
+#define UTF8_LEN_MAX 6  // UTF-8 only uses 5
 
-/*
- * common macros
- */
-
+//
+// Common macros.
+//
 #define elementsof(x) (sizeof(x) / sizeof(x[0]))
-#define getconf(x) strtol(astconf((x), NULL, NULL), NULL, 0)
 #define roundof(x, y) (((x) + ((y)-1)) & ~((y)-1))
 
 typedef struct Mbstate_s {

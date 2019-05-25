@@ -1209,12 +1209,10 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
         shgd->euserid = geteuid();
         shgd->groupid = getgid();
         shgd->egroupid = getegid();
-        shgd->lim.clk_tck = getconf("CLK_TCK");
-        shgd->lim.arg_max = getconf("ARG_MAX");
-        shgd->lim.child_max = getconf("CHILD_MAX");
-        shgd->lim.ngroups_max = getconf("NGROUPS_MAX");
-        shgd->lim.posix_version = getconf("VERSION");
-        shgd->lim.posix_jobcontrol = getconf("JOB_CONTROL");
+        shgd->lim.clk_tck = sysconf(_SC_CLK_TCK);
+        shgd->lim.arg_max = sysconf(_SC_ARG_MAX);
+        shgd->lim.child_max = sysconf(_SC_CHILD_MAX);
+        shgd->lim.ngroups_max = sysconf(_SC_NGROUPS_MAX);
         if (shgd->lim.arg_max <= 0) shgd->lim.arg_max = ARG_MAX;
         if (shgd->lim.child_max <= 0) shgd->lim.child_max = CHILD_MAX;
         if (shgd->lim.clk_tck <= 0) shgd->lim.clk_tck = CLK_TCK;
