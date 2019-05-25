@@ -28,14 +28,14 @@
 #include <signal.h>
 #include "ast.h"
 
-#define PROC_ARGMOD (1 << 0)      /* argv[-1],argv[0] can be modified   */
-#define PROC_BACKGROUND (1 << 1)  /* shell background (&) setup         */
-#define PROC_CLEANUP (1 << 2)     /* close parent redirect fds on error */
-#define PROC_DAEMON (1 << 3)      /* daemon setup                               */
-#define PROC_ENVCLEAR (1 << 4)    /* clear environment                  */
-#define PROC_GID (1 << 5)         /* setgid(getgid())                   */
-#define PROC_IGNORE (1 << 6)      /* ignore parent pipe errors          */
-#define PROC_OVERLAY (1 << 7)     /* overlay current process if possible        */
+#define PROC_ARGMOD (1 << 0)     /* argv[-1],argv[0] can be modified   */
+#define PROC_BACKGROUND (1 << 1) /* shell background (&) setup         */
+#define PROC_CLEANUP (1 << 2)    /* close parent redirect fds on error */
+#define PROC_DAEMON (1 << 3)     /* daemon setup                               */
+#define PROC_ENVCLEAR (1 << 4)   /* clear environment                  */
+#define PROC_GID (1 << 5)        /* setgid(getgid())                   */
+#define PROC_IGNORE (1 << 6)     /* ignore parent pipe errors          */
+#define PROC_OVERLAY (1 << 7)    /* overlay current process if possible        */
 // #define PROC_PARANOID (1 << 8)    /* restrict everything                        */
 #define PROC_PRIVELEGED (1 << 9)  /* setuid(0), setgid(getegid())               */
 #define PROC_READ (1 << 10)       /* proc pipe fd 1 returned            */
