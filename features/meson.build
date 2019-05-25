@@ -194,6 +194,11 @@ if libpath_result.returncode() == 0
 else
     feature_data.set_quoted('CONF_LIBPATH', '')
 endif
+# TODO: Properly detect these values. For now just use the defaults from
+# astconf.c so we can eventually remove that module. Note that we've been
+# using these defaults since switching to Meson two years ago.
+feature_data.set_quoted('CONF_LIBPREFIX', 'lib')
+feature_data.set_quoted('CONF_LIBSUFFIX', '.so')
 
 prog_result = run_command('prog.sh')
 if prog_result.returncode() == 0

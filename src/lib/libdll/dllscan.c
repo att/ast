@@ -116,8 +116,8 @@ Dllinfo_t *dllinfo(void) {
     if (!info.sibling[0] || !strcmp(info.sibling[0], bin)) info.sibling[0] = bin;
     if (strcmp(info.sibling[0], lib) != 0) info.sibling[1] = lib;
     if (!info.env) info.env = "LD_LIBRARY_PATH";
-    info.prefix = astconf("LIBPREFIX", NULL, NULL);
-    info.suffix = astconf("LIBSUFFIX", NULL, NULL);
+    info.prefix = CONF_LIBPREFIX;
+    info.suffix = CONF_LIBSUFFIX;
     if (!strcmp(info.suffix, ".dll")) {
         info.flags |= DLL_INFO_PREVER;
     } else {
