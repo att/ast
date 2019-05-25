@@ -36,7 +36,7 @@
 #define PROC_GID (1 << 5)         /* setgid(getgid())                   */
 #define PROC_IGNORE (1 << 6)      /* ignore parent pipe errors          */
 #define PROC_OVERLAY (1 << 7)     /* overlay current process if possible        */
-#define PROC_PARANOID (1 << 8)    /* restrict everything                        */
+// #define PROC_PARANOID (1 << 8)    /* restrict everything                        */
 #define PROC_PRIVELEGED (1 << 9)  /* setuid(0), setgid(getegid())               */
 #define PROC_READ (1 << 10)       /* proc pipe fd 1 returned            */
 #define PROC_SESSION (1 << 11)    /* session leader                     */

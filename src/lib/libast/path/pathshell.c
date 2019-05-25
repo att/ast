@@ -45,7 +45,7 @@
 //
 // root/administrator has its own test
 //
-// astconf("SH",NULL,NULL) is returned by default
+// "/bin/sh" is returned by default.
 //
 // NOTE: csh is rejected because the bsh/csh differentiation is
 //       not done for `csh script arg ...'
@@ -101,12 +101,6 @@ char *pathshell(void) {
     }
 defshell:
     shell = val;
-    if (!shell) {
-        shell = astconf("SH", NULL, NULL);
-        if (!*shell || *shell != '/' || eaccess(shell, X_OK) || !(shell = strdup(shell))) {
-            shell = "/bin/sh";
-        }
-        val = shell;
-    }
+    if (!shell) shell = "/bin/sh";
     return shell;
 }

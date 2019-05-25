@@ -360,13 +360,12 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
     proc->wfd = -1;
     proc->flags = flags;
     sfsync(NULL);
-    if (!envv && !(flags & (PROC_ENVCLEAR | PROC_PARANOID))) {
+    if (!envv && !(flags & PROC_ENVCLEAR)) {
         envv = environ;
     }
 #if _use_spawnveg
     else if (environ && envv != (char **)environ &&
-             (envv || (flags & PROC_PARANOID) ||
-              ((argv && (environ[0][0] != '_')) || environ[0][1] != '='))) {
+             (envv || ((argv && (environ[0][0] != '_')) || environ[0][1] != '='))) {
         if (!(flags & PROC_ORPHAN)) newenv = 1;
     }
 #endif
@@ -474,14 +473,14 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
                     goto cleanup;
                 }
             }
-            if (flags & (PROC_PARANOID | PROC_GID)) {
+            if (flags & PROC_GID) {
                 gid_t gid = getgid();
                 if (setgid(gid) < 0) {
                     error(ERROR_system(0), "setgid(%d) failed", gid);
                     goto cleanup;
                 }
             }
-            if (flags & (PROC_PARANOID | PROC_UID)) {
+            if (flags & PROC_UID) {
                 uid_t uid = getuid();
                 if (setuid(uid) < 0) {
                     error(ERROR_system(0), "setuid(%d) failed", uid);
@@ -546,7 +545,6 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
             env[2] = 0;
             if (!sh_setenviron(env)) goto cleanup;
         }
-        if ((flags & PROC_PARANOID) && setenv("PATH", cs_path(), 1)) goto cleanup;
         if ((p = envv) && p != (char **)environ) {
             while (*p) {
                 if (!sh_setenviron(*p++)) goto cleanup;
@@ -583,7 +581,7 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
             *p = path;
             *--p = "sh";
         }
-        strcpy(env + 2, (flags & PROC_PARANOID) ? astconf("SH", NULL, NULL) : pathshell());
+        strcpy(env + 2, pathshell());
         if (forked || (flags & PROC_OVERLAY)) execve(env + 2, p, environ);
 #if _use_spawnveg
         else
