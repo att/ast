@@ -191,6 +191,8 @@ libpath_result = run_command('libpath.sh')
 if libpath_result.returncode() == 0
     libpath_output = libpath_result.stdout().strip()
     feature_data.set_quoted('CONF_LIBPATH', libpath_output)
+else
+    feature_data.set_quoted('CONF_LIBPATH', '')
 endif
 
 prog_result = run_command('prog.sh')

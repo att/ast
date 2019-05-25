@@ -48,7 +48,6 @@ static char *lib = "lib";
 
 //
 // We need a sibling dir in PATH to search for dlls.
-// The confstr LIBPATH provides the local info.
 //
 //      <sibling-dir>[:<env-var>[:<host-pattern>]][,...]
 //
@@ -70,7 +69,7 @@ Dllinfo_t *dllinfo(void) {
     char pat[256];
 
     info.sibling = info.sib;
-    s = astconf("LIBPATH", NULL, NULL);
+    s = CONF_LIBPATH;
     if (*s) {
         while (*s == ':' || *s == ',') s++;
         if (*s) {
