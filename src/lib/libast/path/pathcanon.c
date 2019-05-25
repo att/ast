@@ -70,14 +70,6 @@ char *pathcanon(char *path, size_t size, int flags) {
 
     physical_canonical_path = path + ((flags >> 5) & 01777);
     if (!size) size = strlen(path) + 1;
-    if (*path == '/') {
-        if (*(path + 1) == '/' && *astconf("PATH_LEADING_SLASHES", NULL, NULL) == '1') {
-            do {
-                path++;
-            } while (*path == '/' && *(path + 1) == '/');
-        }
-        if (!path[1]) return path + 1;
-    }
     p = next_char_after_triple_dot = next = canonical_path = path;
     for (;;) {
         switch (*canonical_path++ = *next++) {

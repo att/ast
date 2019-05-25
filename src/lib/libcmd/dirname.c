@@ -45,10 +45,7 @@ static const char usage[] =
     "the name of the directory containing the file name by deleting "
     "the last component from \astring\a.]"
     "[+?If \astring\a consists solely of \b/\b characters the output will "
-    "be a single \b/\b unless \bPATH_LEADING_SLASHES\b returned by "
-    "\bgetconf\b(1) is \b1\b and \astring\a consists of multiple "
-    "\b/\b characters in which case \b//\b will be output.  "
-    "Otherwise, trailing \b/\b characters are removed, and if "
+    "be a single \b/\b. Trailing \b/\b characters are removed, and if "
     "there are no remaining \b/\b characters in \astring\a, "
     "the string \b.\b will be written to standard output.  "
     "Otherwise, all characters following the last \b/\b are removed. "
@@ -95,8 +92,7 @@ static void l_dirname(Sfio_t *outfile, const char *pathname) {
     /* preserve // */
     if (last != pathname && pathname[0] == '/' && pathname[1] == '/') {
         while (pathname[2] == '/' && pathname < last) pathname++;
-        if (last != pathname && pathname[0] == '/' && pathname[1] == '/' &&
-            *astconf("PATH_LEADING_SLASHES", NULL, NULL) != '1') {
+        if (last != pathname && pathname[0] == '/' && pathname[1] == '/') {
             pathname++;
         }
     }
