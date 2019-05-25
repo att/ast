@@ -28,29 +28,28 @@
 #include <signal.h>
 #include "ast.h"
 
-#define PROC_ARGMOD (1 << 0)      /* argv[-1],argv[0] can be modified   */
-#define PROC_BACKGROUND (1 << 1)  /* shell background (&) setup         */
-#define PROC_CLEANUP (1 << 2)     /* close parent redirect fds on error */
-#define PROC_DAEMON (1 << 3)      /* daemon setup                               */
-#define PROC_ENVCLEAR (1 << 4)    /* clear environment                  */
-#define PROC_GID (1 << 5)         /* setgid(getgid())                   */
-#define PROC_IGNORE (1 << 6)      /* ignore parent pipe errors          */
-#define PROC_OVERLAY (1 << 7)     /* overlay current process if possible        */
-// #define PROC_PARANOID (1 << 8)    /* restrict everything                        */
-#define PROC_PRIVELEGED (1 << 9)  /* setuid(0), setgid(getegid())               */
-#define PROC_READ (1 << 10)       /* proc pipe fd 1 returned            */
-#define PROC_SESSION (1 << 11)    /* session leader                     */
-#define PROC_UID (1 << 12)        /* setuid(getuid())                   */
-#define PROC_WRITE (1 << 13)      /* proc pipe fd 0 returned            */
-#define PROC_FOREGROUND (1 << 14) /* system(3) setup                    */
-#define PROC_ZOMBIE (1 << 15)     /* proc may leave a zombie behind     */
-// These two symbols were used by procrun() which no longer exists.
-// #define PROC_IGNOREPATH (1 << 16) /* procrun() intercept to ignore path      */
-// #define PROC_CHECK (1 << 17)      /* check that command exists               */
-#define PROC_ORPHAN (1 << 18) /* create orphaned process                */
+#define PROC_ARGMOD (1 << 0)       // argv[-1],argv[0] can be modified
+#define PROC_BACKGROUND (1 << 1)   // shell background (&) setup
+#define PROC_CLEANUP (1 << 2)      // close parent redirect fds on error
+#define PROC_DAEMON (1 << 3)       // daemon setup
+#define PROC_ENVCLEAR (1 << 4)     // clear environment
+#define PROC_GID (1 << 5)          // setgid(getgid())
+#define PROC_IGNORE (1 << 6)       // ignore parent pipe errors
+#define PROC_OVERLAY (1 << 7)      // overlay current process if possible
+#define PROC_PRIVELEGED (1 << 9)   // setuid(0), setgid(getegid())
+#define PROC_READ (1 << 10)        // proc pipe fd 1 returned
+#define PROC_SESSION (1 << 11)     // session leader
+#define PROC_UID (1 << 12)         // setuid(getuid())
+#define PROC_WRITE (1 << 13)       // proc pipe fd 0 returned
+#define PROC_FOREGROUND (1 << 14)  // system(3) setup
+#define PROC_ZOMBIE (1 << 15)      // proc may leave a zombie behind
+#define PROC_ORPHAN (1 << 18)      // create orphaned process
+// #define PROC_PARANOID (1 << 8)     // restrict everything
+// #define PROC_IGNOREPATH (1 << 16)  // procrun() intercept to ignore path
+// #define PROC_CHECK (1 << 17)       // check that command exists
 
-#define PROC_ARG_BIT 14 /* bits per op arg                      */
-#define PROC_OP_BIT 4   /* bits per op                          */
+#define PROC_ARG_BIT 14  // bits per op arg
+#define PROC_OP_BIT 4    // bits per op
 
 #define PROC_ARG_NULL ((1 << PROC_ARG_BIT) - 1)
 
