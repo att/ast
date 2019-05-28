@@ -58,7 +58,7 @@ static_fn int ulimit_infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) 
     UNUSED(dp);
     const Limit_t *tp;
 
-    for (tp = shtab_limits; tp->option; tp++) {
+    for (tp = shtab_limits; tp->name; tp++) {
         sfprintf(sp, "[%c=%d:%s?The %s", tp->option, tp - shtab_limits + 1, tp->name,
                  tp->description);
         if (tp->type != LIM_COUNT) sfprintf(sp, " in %ss", e_units[tp->type]);
@@ -77,10 +77,8 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
     Shell_t *shp = context->shp;
     struct rlimit rlp;
     const Limit_t *tp;
-    char *conf;
     int label, unit, nosupport;
     rlim_t i;
-    char tmp[32];
     Optdisc_t disc;
 
     memset(&disc, 0, sizeof(disc));
@@ -137,7 +135,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
         __builtin_unreachable();
     }
     if (mode == 0) mode = (HARD | SOFT);
-    for (tp = shtab_limits; tp->option && hit; tp++, hit >>= 1) {
+    for (tp = shtab_limits; tp->name && hit; tp++, hit >>= 1) {
         if (!(hit & 1)) continue;
         nosupport = (n = tp->index) == RLIMIT_UNKNOWN;
         unit = shtab_units[tp->type];
@@ -183,6 +181,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
                 if (mode & SOFT) i = rlp.rlim_cur;
             }
             if (label) {
+                char tmp[32];
                 if (tp->type != LIM_COUNT) {
                     sfsprintf(tmp, sizeof(tmp), "%s (%ss)", tp->description, e_units[tp->type]);
                 } else {
@@ -191,10 +190,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
                 sfprintf(sfstdout, "%-30s (-%c)  ", tmp, tp->option);
             }
             if (nosupport) {
-                if (!tp->conf || !*(conf = astconf(tp->conf, NULL, NULL))) {
-                    conf = (char *)e_nosupport;
-                }
-                sfputr(sfstdout, conf, '\n');
+                sfputr(sfstdout, e_nosupport, '\n');
             } else if (i != INFINITY) {
                 i += (unit - 1);
                 sfprintf(sfstdout, "%I*d\n", sizeof(i), i / unit);

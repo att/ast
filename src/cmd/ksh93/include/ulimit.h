@@ -114,10 +114,9 @@
 #define LIM_SECOND 4
 
 typedef struct Limit_s {
-    const char name[16];
+    const char *name;
     const char *description;
     int index;
-    const char *conf;
     unsigned char option;
     unsigned char type;
 } Limit_t;
