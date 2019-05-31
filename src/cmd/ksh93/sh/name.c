@@ -274,6 +274,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, nvflag_t flags, Namval_t
     bool maketype = nv_isflag(flags, NV_TYPE);
     struct sh_type shtp;
 
+    assert(!nv_isflag(flags, NV_INVALID));
     memset(&node, 0, sizeof(node));
     memset(&nr, 0, sizeof(nr));
 
@@ -713,6 +714,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
     long mode;
     int isref;
 
+    assert(!nv_isflag(flags, NV_INVALID));
     if (root == shp->var_tree) {
         if (dtvnext(root)) {
             top = 1;
@@ -1113,6 +1115,8 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
 void nv_delete(Namval_t *np, Dt_t *root, nvflag_t flags) {
     int c;
     struct Cache_entry *xp;
+
+    assert(!nv_isflag(flags, NV_INVALID));
     for (c = 0, xp = nvcache.entries; c < NVCACHE; xp = &nvcache.entries[++c]) {
         if (xp->np == np) xp->root = NULL;
     }
@@ -1187,6 +1191,7 @@ Namval_t *nv_open(const char *name, Dt_t *root, nvflag_t flags) {
     Dt_t *funroot;
     struct Cache_entry *xp;
 
+    assert(!nv_isflag(flags, NV_INVALID));
     // It's not clear why these two assignments are required before the check for non-empty name.
     shp->openmatch = NULL;
     shp->last_table = NULL;
@@ -1417,6 +1422,7 @@ void nv_putval(Namval_t *np, const void *vp, nvflag_t flags) {
     int dot = INT_MAX;  // make sure if used before set bad things happen
     bool was_local = nv_local;
 
+    assert(!nv_isflag(flags, NV_INVALID));
     if ((flags & NV_APPEND) && nv_isnull(np) && shp->var_tree->view) {
         Namval_t *mp = nv_search(np->nvname, shp->var_tree->view, 0);
         if (mp) nv_clone(mp, np, 0);
@@ -2017,6 +2023,8 @@ int nv_scan(Dt_t *root, void (*fn)(Namval_t *, void *), void *data, nvflag_t mas
     struct scan sdata;
     int (*hashfn)(Dt_t *, void *, void *);
 
+    assert(!nv_isflag(flags, NV_INVALID));
+    assert(!nv_isflag(mask, NV_INVALID));
     sdata.scanmask = mask;
     sdata.scanflags = flags & ~NV_NOSCOPE;
     sdata.scanfn = fn;
@@ -2146,6 +2154,7 @@ void _nv_unset(Namval_t *np, nvflag_t flags) {
     Shell_t *shp = sh_ptr(np);
     struct Value *up;
 
+    assert(!nv_isflag(flags, NV_INVALID));
     if (!(flags & NV_RDONLY) && nv_isattr(np, NV_RDONLY)) {
         errormsg(SH_DICT, ERROR_exit(1), e_readonly, nv_name(np));
         __builtin_unreachable();
@@ -2280,6 +2289,7 @@ static_fn void optimize_clear(Namval_t *np, Namfun_t *fp) {
 }
 
 static_fn void put_optimize(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
+    assert(!nv_isflag(flags, NV_INVALID));
     nv_putv(np, val, flags, fp);
     optimize_clear(np, fp);
 }
@@ -2290,6 +2300,7 @@ static_fn Namfun_t *clone_optimize(Namval_t *np, Namval_t *mp, nvflag_t flags, N
     UNUSED(flags);
     UNUSED(fp);
 
+    assert(!nv_isflag(flags, NV_INVALID));
     return NULL;
 }
 
@@ -2579,6 +2590,7 @@ void nv_newattr(Namval_t *np, nvflag_t newatts, int size) {
     Namfun_t *fp = (newatts & NV_NODISC) ? np->nvfun : 0;
     char *prefix = shp->prefix;
 
+    assert(!nv_isflag(newatts, NV_INVALID));
     newatts &= ~NV_NODISC;
     // Check for restrictions.
     if (sh_isoption(shp, SH_RESTRICTED) &&
@@ -2785,6 +2797,7 @@ bool nv_rename(Namval_t *np, nvflag_t flags) {
     char *prefix = shp->prefix;
     Namarr_t *ap;
 
+    assert(!nv_isflag(flags, NV_INVALID));
     if (nv_isattr(np, NV_PARAM) && shp->st.prevst) {
         hp = shp->st.prevst->save_tree;
         if (!hp) hp = dtvnext(shp->var_tree);
@@ -2933,6 +2946,7 @@ void nv_setref(Namval_t *np, Dt_t *hp, nvflag_t flags) {
     Namarr_t *ap = NULL;
     Namval_t *last_table = shp->last_table;
 
+    assert(!nv_isflag(flags, NV_INVALID));
     if (nv_isref(np)) return;
     if (nv_isarray(np)) {
         errormsg(SH_DICT, ERROR_exit(1), e_badref, nv_name(np));

@@ -92,23 +92,25 @@ done:
     return c;
 }
 
-static_fn Namval_t *create_tree(Namval_t *np, const void *name, nvflag_t flag, Namfun_t *dp) {
+static_fn Namval_t *create_tree(Namval_t *np, const void *name, nvflag_t flags, Namfun_t *dp) {
     Namfun_t *fp = dp;
 
+    assert(!nv_isflag(flags, NV_INVALID));
     fp->dsize = 0;
     while ((fp = fp->next)) {
         if (fp->disc && fp->disc->createf) {
-            np = (*fp->disc->createf)(np, name, flag, fp);
+            np = (*fp->disc->createf)(np, name, flags, fp);
             if (np) dp->last = fp->last;
             return np;
         }
     }
-    return (flag & NV_NOADD) ? 0 : np;
+    return nv_isflag(flags, NV_NOADD) ? NULL : np;
 }
 
 static_fn Namfun_t *clone_tree(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfun_t *fp) {
     Namfun_t *dp;
 
+    assert(!nv_isflag(flags, NV_INVALID));
     if ((flags & NV_MOVE) && nv_type(np)) return fp;
     dp = nv_clone_disc(fp, flags);
     if ((flags & NV_COMVAR) && !(flags & NV_RAW)) {
@@ -1032,6 +1034,7 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, nvflag_t flags) {
     Namval_t *table;
     char *xpname = xp ? stkcopy(shp->stk, nv_name(xp)) : 0;
 
+    assert(!nv_isflag(flags, NV_INVALID));
     memset(&walk, 0, sizeof(walk));
     walk.shp = shp;
     if (xp) {
@@ -1185,6 +1188,7 @@ static_fn void put_tree(Namval_t *np, const void *val, nvflag_t flags, Namfun_t 
     Namarr_t *ap;
     int nleft = 0;
 
+    assert(!nv_isflag(flags, NV_INVALID));
     if (!val && !fp->next && nv_isattr(np, NV_NOFREE)) return;
     if (!nv_isattr(np, (NV_INTEGER | NV_BINARY))) {
         Shell_t *shp = sh_ptr(np);

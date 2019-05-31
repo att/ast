@@ -371,8 +371,8 @@ struct Namval {
 #define NV_JSON NV_TAGGED      // for json formatting
 #define NV_JSON_LAST NV_TABLE  // last for json formatting
 #else
-#define NV_JSON 0
-#define NV_JSON_LAST 0
+#define NV_JSON NV_INVALID
+#define NV_JSON_LAST NV_INVALID
 #endif  // SUPPORT_JSON
 
 // These are for use with nodes which are not name-values.
@@ -400,6 +400,15 @@ struct Namval {
 #define NV_MOVE ((nvflag_t)1 << 27)    // for use with nv_clone()
 #define NV_ASSIGN ((nvflag_t)1 << 28)  // assignment is allowed
 #define NV_DECL ((nvflag_t)1 << 29)
+
+// This serves two purposes. First, it may help detect an nvflag_t value that has the high bit set
+// when that should not occur. Second, it provides a way to silence Coverity Scan warnings about
+// "logically dead code" due to constructs like `nvflag & NV_JSON` always being false when JSON
+// support is disabled and `NV_JSON` would otherwise be defined as zero.
+//
+// This definition causes only the high bit to be set in a portable manner regardless of the size
+// of nvflag_t.
+#define NV_INVALID (~(~(nvflag_t)0 >> 1))
 
 // See the uses of these symbols in name.c.
 #define NV_NOREF NV_REF    // don't follow reference
@@ -497,7 +506,7 @@ extern bool nv_isnull(Namval_t *);
 extern Namfun_t *nv_isvtree(Namval_t *);
 extern Namval_t *nv_lastdict(void *);
 extern Namval_t *nv_mkinttype(char *, size_t, int, const char *, Namdisc_t *);
-extern void nv_newattr(Namval_t *, unsigned, int);
+extern void nv_newattr(Namval_t *, nvflag_t, int);
 extern void nv_newtype(Namval_t *);
 extern Namval_t *nv_open(const char *, Dt_t *, nvflag_t);
 extern void nv_putval(Namval_t *, const void *, nvflag_t);
