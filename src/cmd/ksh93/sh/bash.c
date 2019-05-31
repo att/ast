@@ -328,7 +328,7 @@ void bash_init(Shell_t *shp, int mode) {
         sh_onoption(shp, SH_NOEMPTYCMDCOMPL);
         sh_onoption(shp, SH_POSIX);
         if (shp->login_sh == 2) sh_onoption(shp, SH_LOGIN_SHELL);
-        if (strcmp(astconf("UNIVERSE", 0, 0), "att") == 0) {
+        if (!path_is_bsd_universe()) {
             sh_onoption(shp, SH_XPG_ECHO);
         } else {
             sh_offoption(shp, SH_XPG_ECHO);

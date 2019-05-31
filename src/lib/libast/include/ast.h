@@ -212,6 +212,7 @@ extern char *pathcanon(char *, size_t, int);
 extern char *pathcat(const char *, int, const char *, const char *, char *, size_t);
 extern int pathexists(char *, int);
 extern int pathgetlink(const char *, char *, int);
+extern bool path_is_bsd_universe(void);
 extern char *pathpath(const char *, const char *, int, char *, size_t);
 extern size_t pathprog(const char *, char *, size_t);
 extern char *pathshell(void);

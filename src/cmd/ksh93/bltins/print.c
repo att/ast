@@ -107,7 +107,7 @@ static char *nullarg[] = {0, 0};
 //
 // Builtin `echo`.
 //
-// See https://github.com/att/ast/issues/370 for discussion around echo builtin
+// See https://github.com/att/ast/issues/370 for a discussion about the `echo` builtin.
 int B_echo(int argc, char *argv[], Shbltin_t *context) {
     static char bsd_univ;
     struct print prdata;
@@ -116,11 +116,10 @@ int B_echo(int argc, char *argv[], Shbltin_t *context) {
     prdata.sh = context->shp;
     UNUSED(argc);
 
-    // This mess is because /bin/echo on BSD is different.
+    // The external `echo` command is different on BSD and ATT platforms. So
+    // base our behavior on the contents of $PATH.
     if (!prdata.sh->echo_universe_valid) {
-        char *universe;
-        universe = astconf("UNIVERSE", 0, 0);
-        if (universe) bsd_univ = (strcmp(universe, "ucb") == 0);
+        bsd_univ = path_is_bsd_universe();
         prdata.sh->echo_universe_valid = true;
     }
     if (!bsd_univ) return b_print(0, argv, (Shbltin_t *)&prdata);
