@@ -48,39 +48,46 @@ static Time_t _dprintf_base_time = TMX_NOTIME;
 
 void _dprintf(const char *fname, int lineno, const char *funcname, const char *fmt, ...) {
     int oerrno = errno;
+    // Use long rather than pid_t because pid_t may be an int or long depending on the platform.
+    long pid = _dprintf_debug ? 1234 : getpid();
 
     va_list ap;
-    va_start(ap, fmt);
 
     if (_dprintf_base_time == TMX_NOTIME) _dprintf_base_time = tmxgettime();
     Time_t time_delta = _dprintf_debug ? 0.0 : tmxgettime() - _dprintf_base_time;
 
-    // The displayed timestamp will be seconds+milliseconds since the first DPRINTF(). The
+    // The displayed timestamp will be seconds + milliseconds since the first DPRINTF(). The
     // tmxgettime() return value has a theoretical resolution of nanoseconds but that is more
     // precision than we need or want in these debug messages. We could print microsecond
-    // resolution deltas but that is also too fine grained.
+    // resolution deltas but that is also too fine grained for our needs and takes too much space.
     uint64_t ds = time_delta / 1000000000;
     uint64_t dms = (time_delta % 1000000000) / 1000000;
     char buf1[64];
     (void)snprintf(buf1, sizeof(buf1), "%s:%d", strrchr(fname, '/') + 1, lineno);
-    char buf2[512];
-    // Use long rather than pid_t because pid_t may be an int or long depending on the platform.
-    long pid = _dprintf_debug ? 1234 : getpid();
+
+    // We don't do three separate writes (the preamble, the actual message, the newline) because
+    // that would not be atomic. Even though that would be simpler and less likely to truncate the
+    // debug message. We want all three portions of the message to be emitted by a single write()
+    // so the content can't be interleaved with other debug messages.
+    char buf2[1024];
     int n = snprintf(buf2, sizeof(buf2), "### %ld %3" PRIu64 ".%03" PRIu64 " %-18s %15s() ", pid,
                      ds, dms, buf1, funcname);
-    (void)vsnprintf(buf2 + n, sizeof(buf2) - n, fmt, ap);
-    n = strlen(buf2);
     assert(n < sizeof(buf2));
-    if (n < sizeof(buf2) - 1) {
-        buf2[n] = '\n';
-        buf2[n + 1] = '\0';
-        ++n;
-    } else {
-        buf2[n] = '\n';
-    }
-    write(2, buf2, n);
-
+    va_start(ap, fmt);
+    int n2 = vsnprintf(buf2 + n, sizeof(buf2) - n, fmt, ap);
     va_end(ap);
+    // This should be a "can't happen" situation but we want to be paranoid.
+    if (n2 < 0) n2 = snprintf(buf2 + n, sizeof(buf2) - n, "DEBUG PRINT FAILED; vsnprintf() %d", n2);
+    n += n2;
+    if (n >= sizeof(buf2)) {
+        // The message was too large for the buffer so try to make that clear to the reader.
+        n = sizeof(buf2) - 4;
+        buf2[n++] = '.';
+        buf2[n++] = '.';
+        buf2[n++] = '.';
+    }
+    buf2[n++] = '\n';
+    write(2, buf2, n);
     errno = oerrno;
 }
 
