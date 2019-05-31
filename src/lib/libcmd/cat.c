@@ -352,7 +352,7 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
     char states[UCHAR_MAX + 1];
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    att = !strcmp(astconf("UNIVERSE", NULL, NULL), "att");
+    att = !path_is_bsd_universe();
     mode = "r";
     while ((flag = optget(argv, usage))) {
         n = 0;
