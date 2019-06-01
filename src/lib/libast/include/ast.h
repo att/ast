@@ -206,7 +206,7 @@ extern char *fmtre(const char *);
 extern char *fmtscale(Sfulong_t, int);
 extern void *memdup(const void *, size_t);
 extern char *pathaccess(const char *, const char *, const char *, int, char *, size_t);
-extern const char *cs_path(void);
+extern char *cs_path(void);
 extern char *pathbin(void);
 extern char *pathcanon(char *, size_t, int);
 extern char *pathcat(const char *, int, const char *, const char *, char *, size_t);
