@@ -181,7 +181,6 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
 
     if (flags & Q_FLAG) flags &= ~A_FLAG;
     while ((name = *argv++)) {
-        bool tofree = false;
         char *sp = NULL;
 
         aflag = ((flags & A_FLAG) != 0);
@@ -273,7 +272,6 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                 if (*cp == 0) {
                     cp = NULL;
                 } else if (*cp != '/') {
-                    tofree = true;
                     sp = path_fullname(shp, cp);
                     cp = sp;
                 }
@@ -316,13 +314,14 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                 } else {
                     pp = NULL;
                 }
-                if (tofree) {
-                    free(sp);
-                    tofree = false;
-                }
             } else if (aflag <= 1) {
                 r |= 1;
                 if (flags & V_FLAG) errormsg(SH_DICT, ERROR_exit(0), e_found, sh_fmtq(name));
+            }
+
+            if (sp) {
+                free(sp);
+                sp = NULL;
             }
         } while (pp);
     }
