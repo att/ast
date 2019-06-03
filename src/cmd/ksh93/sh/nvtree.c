@@ -473,7 +473,7 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
         } else if (prefix && *prefix) {
             sfputr(out, prefix, ' ');
         }
-        for (tp = shtab_attributes; *tp->sh_name; tp++) {
+        for (tp = shtab_attributes; tp->sh_name; tp++) {
             val = tp->sh_number;
             mask = val;
 
@@ -511,7 +511,7 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
                 }
                 if (val == NV_UTOL || val == NV_LTOU) {
                     cp = (char *)nv_mapchar(np, NULL);
-                    if (cp && strcmp(cp, tp->sh_name + 2)) {
+                    if (cp && strcmp(cp, tp->sh_name + 3)) {
                         sfprintf(out, "-M %s ", cp);
                         continue;
                     }
@@ -523,7 +523,7 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
                         ip = NULL;
                     }
                 } else {
-                    sfputr(out, tp->sh_name + 2, ' ');
+                    sfputr(out, tp->sh_name + 3, ' ');
                 }
                 if ((val & (NV_LJUST | NV_RJUST | NV_ZFILL)) && !(val & NV_INTEGER) &&
                     val != NV_HOST) {

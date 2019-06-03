@@ -355,7 +355,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
             }
             case 'l': {
                 tdata.wctname = e_tolower;
-                nvflags |= NV_UTOL;
+                nvflags |= NV_UTOL;  // same as: nvflags |= NV_LONG
                 break;
             }
             case 'p': {
@@ -386,7 +386,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
             }
             case 'u': {
                 tdata.wctname = e_toupper;
-                nvflags |= NV_LTOU;
+                nvflags |= NV_LTOU;  // same as: nvflags |= NV_UNSIGN
                 break;
             }
             case 'x': {
@@ -468,7 +468,7 @@ endargs:
     if (isfloat) nvflags |= NV_DOUBLE;
     if (isshort) {
         nvflags &= ~NV_LONG;
-        nvflags |= NV_SHORT | NV_INTEGER;
+        nvflags |= NV_INT16;
     }
     if (sflag) {
         if (tdata.sh->mktype) {
@@ -767,7 +767,7 @@ static_fn int setall(char **argv, nvflag_t flag, Dt_t *troot, struct tdata *tp) 
             if (last) *last = 0;
             if (shp->typeinit) continue;
             curflag = np->nvflag;
-            if (!(flag & NV_INTEGER) && (flag & (NV_LTOU | NV_UTOL))) {
+            if (!(flag & NV_INTEGER) && (flag & (NV_UNSIGN | NV_LONG))) {
                 Namfun_t *fp;
                 char *cp;
                 if (!tp->wctname) {
@@ -781,11 +781,11 @@ static_fn int setall(char **argv, nvflag_t flag, Dt_t *troot, struct tdata *tp) 
                         if (cp && strcmp(cp, tp->wctname) == 0) {
                             nv_disc(np, fp, DISC_OP_POP);
                             if (!(fp->nofree & 1)) free(fp);
-                            nv_offattr(np, flag & (NV_LTOU | NV_UTOL));
+                            nv_offattr(np, flag & (NV_UNSIGN | NV_LONG));
                         }
                     } else if (!cp || strcmp(cp, tp->wctname)) {
                         nv_disc(np, fp, DISC_OP_LAST);
-                        nv_onattr(np, flag & (NV_LTOU | NV_UTOL));
+                        nv_onattr(np, flag & (NV_UNSIGN | NV_LONG));
                     }
                 }
             }
