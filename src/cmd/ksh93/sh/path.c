@@ -695,7 +695,8 @@ static_fn bool pwdinfpath(void) {
 // Do a path search and find the full pathname of file name.
 //
 Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
-    int f, isfun;
+    int isfun;
+    int f = -1;
     int noexec = 0;
     Pathcomp_t *oldpp;
     Namval_t *np;
@@ -704,7 +705,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
     shp->path_err = ENOENT;
     if (!pp && !(pp = path_get(shp, ""))) return 0;
     shp->path_err = 0;
-    while (1) {
+    while (true) {
         sh_sigcheck(shp);
         shp->bltin_dir = NULL;
         // In this loop, oldpp is the current pointer
@@ -838,7 +839,10 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
         }
         if (!pp || f >= 0) break;
         if (errno != ENOENT) noexec = errno;
+        // It's not clear this can actually happen but Coverity Scan says it is possible.
+        if (f != -1) sh_close(f);
     }
+
     if (f < 0) {
         shp->path_err = (noexec ? noexec : ENOENT);
         return NULL;
