@@ -574,8 +574,9 @@ unset z
 u_t -a x | read z
 [[ $z == unset ]]  && log_error 'unset discipline called on type creation'
 
-{ z=$($SHELL 2> /dev/null 'typeset -T foo; typeset -T') ;} 2> /dev/null
-[[ $z == 'typeset -T foo' ]] || log_error '"typeset -T foo; typeset -T" failed'
+expect='typeset -T foo'
+{ actual=$($SHELL 'typeset -T foo; typeset -T') ;}
+[[ $actual == $expect ]] || log_error '"typeset -T foo; typeset -T" failed' "$expect" "$actual"
 
 { z=$($SHELL 2> /dev/null 'typeset -T foo=bar; typeset -T') ;} 2> /dev/null
 [[ $z ]] && log_error '"typeset -T foo=bar" should not creates type foo'

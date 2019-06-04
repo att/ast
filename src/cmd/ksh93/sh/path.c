@@ -696,7 +696,7 @@ static_fn bool pwdinfpath(void) {
 //
 Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
     int isfun;
-    int f = -1;
+    int fd = -1;
     int noexec = 0;
     Pathcomp_t *oldpp;
     Namval_t *np;
@@ -813,18 +813,21 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
         }
         shp->bltin_dir = NULL;
         sh_stats(STAT_PATHS);
-        f = can_execute(shp, stkptr(shp->stk, PATH_OFFSET), isfun);
-        if (isfun && f >= 0 && (cp = strrchr(name, '.'))) {
+        fd = can_execute(shp, stkptr(shp->stk, PATH_OFFSET), isfun);
+        if (isfun && fd >= 0 && (cp = strrchr(name, '.'))) {
             *cp = 0;
-            if (nv_open(name, sh_subfuntree(shp, 1), NV_NOARRAY | NV_IDENT | NV_NOSCOPE)) f = -1;
+            if (nv_open(name, sh_subfuntree(shp, 1), NV_NOARRAY | NV_IDENT | NV_NOSCOPE)) {
+                sh_close(fd);
+                fd = -1;
+            }
             *cp = '.';
         }
-        if (isfun && f >= 0) {
+        if (isfun && fd >= 0) {
             nv_onattr(nv_open(name, sh_subfuntree(shp, 1), NV_NOARRAY | NV_IDENT | NV_NOSCOPE),
                       NV_LTOU | NV_FUNCTION);
-            funload(shp, f, name);
+            funload(shp, fd, name);
             return NULL;
-        } else if (f >= 0 && (oldpp->flags & PATH_STD_DIR)) {
+        } else if (fd >= 0 && (oldpp->flags & PATH_STD_DIR)) {
             int n = stktell(shp->stk);
             sfputr(shp->stk, "/bin/", -1);
             sfputr(shp->stk, name, 0);
@@ -837,16 +840,23 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                 nv_setattr(np, nvflags);
             }
         }
-        if (!pp || f >= 0) break;
+        if (!pp || fd >= 0) break;
         if (errno != ENOENT) noexec = errno;
         // It's not clear this can actually happen but Coverity Scan says it is possible.
-        if (f != -1) sh_close(f);
+        // No unit test causes this condition to be true.
+        if (fd != -1) {
+            sh_close(fd);
+            fd = -1;
+        }
     }
 
-    if (f < 0) {
+    if (fd == -1) {
         shp->path_err = (noexec ? noexec : ENOENT);
         return NULL;
     }
+
+    // If we reach this point fd must be stdin (i.e., zero) since we intend to read the file.
+    assert(fd == 0);
     sfputc(shp->stk, 0);
     return oldpp;
 }
