@@ -625,6 +625,9 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                         cur = var + cx;
                         up = var + ux;
                     }
+                    // There is a theoretical path to here where `cur` could be NULL. That should
+                    // never happen so assert it can't happen. Coverity CID#340037.
+                    assert(cur);
                     if (cur != (char *)cp) memcpy(cur, cp, c);
                     if (f) sfread(iop, cp, c);
                     cur += c;
