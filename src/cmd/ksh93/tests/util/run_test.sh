@@ -383,6 +383,8 @@ else
         $SHCOMP $test_script > $test_script.comp || exit
         $SHELL $TEST_DIR/$test_script.comp $test_name < /dev/null
         exit_status=$?
+    else
+        exit_status=0
     fi
 
     if (( $exit_status == 0 ))
