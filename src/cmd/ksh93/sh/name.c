@@ -1037,8 +1037,14 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
                                     ap->table = dtopen(&_Nvdisc, Dtoset);
                                     dtuserdata(ap->table, shp, 1);
                                 }
-                                if (ap && ap->table && (nq = nv_search(sub, ap->table, nvflags))) {
-                                    nq->nvenv = np;
+                                if (ap && ap->table) {
+                                    // Coverity Scan CID#340996 points out that at this juncture it
+                                    // should be impossible for `sub` to be NULL but there is a
+                                    // theoretical route here where it is NULL. So assert that
+                                    // requirement.
+                                    assert(sub);
+                                    nq = nv_search(sub, ap->table, nvflags);
+                                    if (nq) nq->nvenv = np;
                                 }
                                 if (nq && nv_isnull(nq)) nq = nv_arraychild(np, nq, c);
                             }
