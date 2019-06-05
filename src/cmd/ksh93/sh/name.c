@@ -1021,8 +1021,16 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
                             nq = NULL;
                             tp = nv_type(np);
                             if (tp && nv_hasdisc(np, &ENUM_disc)) goto enumfix;
-                            if (ap && ap->table && tp) nq = nv_search(sub, ap->table, 0);
-                            if (!nq && !(nq = nv_opensub(np))) {
+                            if (ap && ap->table && tp) {
+                                // Coverity Scan CID#340996 points out that at this juncture it
+                                // should be impossible for `sub` to be NULL but there is a
+                                // theoretical route here where it is NULL. So assert that
+                                // requirement.
+                                assert(sub);
+                                nq = nv_search(sub, ap->table, 0);
+                            }
+                            if (!nq) nq = nv_opensub(np);
+                            if (!nq) {
                                 Namarr_t *ap = nv_arrayptr(np);
                                 if (!sub && (flags & NV_NOADD)) return 0;
                                 nvflags = mode;
@@ -1038,11 +1046,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
                                     dtuserdata(ap->table, shp, 1);
                                 }
                                 if (ap && ap->table) {
-                                    // Coverity Scan CID#340996 points out that at this juncture it
-                                    // should be impossible for `sub` to be NULL but there is a
-                                    // theoretical route here where it is NULL. So assert that
-                                    // requirement.
-                                    assert(sub);
+                                    assert(sub);  // Coverity Scan CID#340996
                                     nq = nv_search(sub, ap->table, nvflags);
                                     if (nq) nq->nvenv = np;
                                 }
