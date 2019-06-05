@@ -171,13 +171,14 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
     const char *name;
     Namval_t *np;
     const char *cp;
-    int aflag, r = 0;
+    int aflag;
     const char *msg;
     Dt_t *root;
     Namval_t *nq;
     char *notused;
     Pathcomp_t *pp = NULL;
     bool notrack = true;
+    int rv = 0;
 
     if (flags & Q_FLAG) flags &= ~A_FLAG;
     while ((name = *argv++)) {
@@ -278,7 +279,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
             }
             if (flags & Q_FLAG) {
                 pp = NULL;
-                r |= !cp;
+                rv = cp == NULL;
             } else if (cp) {
                 if (flags & V_FLAG) {
                     if (*cp != '/') {
@@ -315,7 +316,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                     pp = NULL;
                 }
             } else if (aflag <= 1) {
-                r |= 1;
+                rv = 1;
                 if (flags & V_FLAG) errormsg(SH_DICT, ERROR_exit(0), e_found, sh_fmtq(name));
             }
 
@@ -325,5 +326,5 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
             }
         } while (pp);
     }
-    return r;
+    return rv;
 }
