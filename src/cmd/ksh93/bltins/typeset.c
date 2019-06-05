@@ -44,6 +44,7 @@
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "builtins.h"
 #include "cdt.h"
 #include "defs.h"
@@ -520,6 +521,11 @@ endargs:
         errormsg(SH_DICT, ERROR_exit(1), e_nounattr);
         __builtin_unreachable();
     }
+
+    // The setall() function dereferences argv[0]; i.e., it requires at least one value. But the
+    // `if (*argv ...)` test above implies that may not be true when we reach this statement.
+    // Tell lint tools we know that can't happen. Coverity Scan CID#340038.
+    assert(*argv);
     return setall(argv, nvflags, troot, &tdata);
 }
 
