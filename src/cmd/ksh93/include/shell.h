@@ -26,6 +26,7 @@
 #ifndef _SHELL_H
 #define _SHELL_H 1
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <sys/stat.h>
 
@@ -172,7 +173,7 @@ struct Shell_s {
     char deftype;
     char funload;
     char used_pos;  // used postional parameter
-    char universe;
+    bool echo_universe_valid;
     char winch;
     char inarith;           // set when in ((...))
     char indebug;           // set when in debug trap

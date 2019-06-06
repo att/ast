@@ -288,10 +288,10 @@ static_fn void put_restricted(Namval_t *np, const void *val, nvflag_t flags, Nam
         shp->pathlist = path_unsetfpath(shp);
     }
     nv_putv(np, val, flags, fp);
-    shp->universe = 0;
     if (shp->pathlist) {
         val = FETCH_VT(np->nvalue, const_cp);
         if (np == PATHNOD || path_scoped) {
+            shp->echo_universe_valid = false;
             pp = path_addpath(shp, shp->pathlist, val, PATH_PATH);
         } else if (val && (np == FPATHNOD || fpath_scoped)) {
             pp = path_addpath(shp, shp->pathlist, val, PATH_FPATH);

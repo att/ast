@@ -117,11 +117,11 @@ int B_echo(int argc, char *argv[], Shbltin_t *context) {
     UNUSED(argc);
 
     // This mess is because /bin/echo on BSD is different.
-    if (!prdata.sh->universe) {
+    if (!prdata.sh->echo_universe_valid) {
         char *universe;
         universe = astconf("UNIVERSE", 0, 0);
         if (universe) bsd_univ = (strcmp(universe, "ucb") == 0);
-        prdata.sh->universe = 1;
+        prdata.sh->echo_universe_valid = true;
     }
     if (!bsd_univ) return b_print(0, argv, (Shbltin_t *)&prdata);
     prdata.options = sh_optecho;
