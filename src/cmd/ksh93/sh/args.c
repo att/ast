@@ -627,12 +627,6 @@ void sh_applyopts(Shell_t *shp, Shopt_t newflags) {
     on_option(&newflags, SH_LITHIST);
     on_option(&newflags, SH_NOEMPTYCMDCOMPL);
 
-    if (!is_option(&newflags, SH_XPG_ECHO) && sh_isoption(shp, SH_XPG_ECHO)) {
-        astconf("UNIVERSE", 0, "ucb");
-    }
-    if (is_option(&newflags, SH_XPG_ECHO) && !sh_isoption(shp, SH_XPG_ECHO)) {
-        astconf("UNIVERSE", 0, "att");
-    }
     if (is_option(&newflags, SH_HISTORY2) && !sh_isoption(shp, SH_HISTORY2)) {
         sh_onstate(shp, SH_HISTORY);
         sh_onoption(shp, SH_HISTORY);
