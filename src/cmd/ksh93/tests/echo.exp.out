@@ -1,8 +1,10 @@
 bsd echo -n does not print new line
+bsd echo \c does print new line
 bsd echo -e interprets escape sequences
 bsd echo -ne does not print new line and interprets escape sequences
 bsd echo -en does not print new line and interprets escape sequences
 att echo -n does print new line
+att echo \c does not print new line
 att echo -e interprets escape sequences
 att echo -ne does print new line and interprets escape sequences
 att echo -en does print new line and interprets escape sequences

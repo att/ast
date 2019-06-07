@@ -20,6 +20,14 @@ expect_prompt
 
 # ==========
 log_test_entry
+send "echo 'hello world\\c\n'; echo EOT\r"
+expect "\r\nhello world\\\\c\r\n\r\nEOT" {
+    puts "bsd echo \\c does print new line"
+}
+expect_prompt
+
+# ==========
+log_test_entry
 send "echo -e 'hello\nworld'\r"
 expect "\r\nhello\r\nworld\r\n" {
     puts "bsd echo -e interprets escape sequences"
@@ -52,6 +60,14 @@ log_test_entry
 send "echo -n hello world; echo EOT\r"
 expect "\r\n-n hello world\r\nEOT\r\n" {
     puts "att echo -n does print new line"
+}
+expect_prompt
+
+# ==========
+log_test_entry
+send "echo 'hello world\\c\n'; echo EOT\r"
+expect "\r\nhello worldEOT\r\n" {
+    puts "att echo \\c does not print new line"
 }
 expect_prompt
 
