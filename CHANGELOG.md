@@ -22,7 +22,8 @@ None at this time.
 - Support for binary plugins written for ksh93u+ or earlier releases has been
   dropped (issue #983).
 - Support for coshell has been removed (issue #619).
-- Support for the `universe` command has been removed (issue #793).
+- The `universe` command has been removed (issue #793).
+- The `getconf` command has been removed (issue #1118).
 - Support for building on systems using EBCDIC has been removed (issue #742).
 - Support for the `LC_OPTIONS` env var has been removed (issue #579).
 - `case "[0-9]" in [0-9]) echo match;; esac` has stopped matching. When a case

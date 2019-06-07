@@ -8,7 +8,7 @@ all_tests = [
     ['alias'], ['append'], ['arith'], ['arrays'], ['arrays2'], ['attributes'], ['basename'],
     ['basic', 90], ['bracket'], ['builtins'], ['case'], ['cat'], ['cmp'], ['command'], ['comvar'],
     ['comvario'], ['coprocess', 50], ['cubetype'], ['cut'], ['directoryfd'], ['dirname'], ['enum'],
-    ['exit'], ['expand'], ['functions'], ['getconf'], ['glob'], ['grep'], ['getopts'], ['head'], ['heredoc'],
+    ['exit'], ['expand'], ['functions'], ['glob'], ['grep'], ['getopts'], ['head'], ['heredoc'],
     ['ifs'], ['io'], ['jobs'], ['leaks'], ['locale'], ['math', 50], ['mkdir'], ['nameref'], ['namespace'],
     ['modifiers'], ['options'], ['path'], ['pointtype'], ['print'], ['printf'], ['quoting'],
     ['quoting2'], ['read'], ['readcsv'], ['recttype'], ['restricted'], ['return'], ['rksh'],

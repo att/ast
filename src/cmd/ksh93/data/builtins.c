@@ -117,7 +117,6 @@ const struct shtable3 shtab_builtins[] = {
     {CMDLIST(basename)},
     {CMDLIST(chmod)},
     {CMDLIST(dirname)},
-    {CMDLIST(getconf)},
     {CMDLIST(head)},
     {CMDLIST(mkdir)},
     {CMDLIST(logname)},

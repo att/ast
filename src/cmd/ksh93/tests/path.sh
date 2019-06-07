@@ -243,15 +243,13 @@ then
 
 fi
 
+MINIMAL_PATH="$(getconf PATH)"
 PATH=/dev:$TEST_DIR
 x=$(whence rm)
 typeset foo=$(PATH=/xyz:/abc :)
 y=$(whence rm)
 [[ $x != "$y" ]] && log_error 'PATH not restored after command substitution'
-whence getconf > /dev/null  &&  log_error 'getconf should not be found'
-builtin /bin/getconf
-PATH=/bin
-PATH="$(getconf PATH)"
+PATH="$MINIMAL_PATH"
 x=$(whence ls)
 PATH=.:$PWD:${x%/ls}
 [[ $(whence ls) == "$x" ]] || log_error 'PATH search bug when .:$PWD in path'
