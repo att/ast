@@ -33,7 +33,6 @@
 // #define X_IFDOOR 0150000
 #define X_IFSOCK 0140000
 #define X_IFLNK 0120000
-#define X_IFCTG 0110000
 #define X_IFREG 0100000
 #define X_IFBLK 0060000
 #define X_IFDIR 0040000

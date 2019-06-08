@@ -383,26 +383,6 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
             if (*arg == 0 || arg[strlen(arg) - 1] == '/' || lstat(arg, &statb) < 0) return 0;
             return S_ISLNK(statb.st_mode);
         }
-        case 'C': {
-#ifdef S_ISCTG
-            return test_stat(arg, &statb) >= 0 && S_ISCTG(statb.st_mode);
-#else   // S_ISCTG
-            return 0;
-#endif  // S_ISCTG
-        }
-        case 'H': {
-#ifdef S_ISCDF
-            int offset = stktell(shp->stk);
-            if (test_stat(arg, &statb) >= 0 && S_ISCDF(statb.st_mode)) return 1;
-            sfputr(shp->stk, arg, '+');
-            sfputc(shp->stk, 0);
-            arg = (const char *)stkptr(shp->stk, offset);
-            stkseek(shp->stk, offset);
-            return test_stat(arg, &statb) >= 0 && S_ISCDF(statb.st_mode);
-#else
-            return 0;
-#endif  // S_ISCDF
-        }
         case 'S': {
             return isasock(arg, &statb);
         }
