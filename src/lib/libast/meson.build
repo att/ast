@@ -1,4 +1,4 @@
-libast_files = ['comp/conftab.c']
+libast_files = []
 libast_incdir = include_directories('include', 'aso', 'cdt', 'comp',
                                     'sfio', 'path', 'port', 'string', 'misc',
                                     'tm')

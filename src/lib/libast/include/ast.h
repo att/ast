@@ -55,25 +55,6 @@
 #define EXIT_TERM(x) (EXIT_CODE(x) | (1 << EXIT_BITS))
 
 /*
- * astconflist() flags
- */
-
-#define ASTCONF_parse 0x0001
-#define ASTCONF_write 0x0002
-#define ASTCONF_read 0x0004
-#define ASTCONF_lower 0x0008
-#define ASTCONF_base 0x0010
-#define ASTCONF_defined 0x0020
-#define ASTCONF_quote 0x0040
-#define ASTCONF_table 0x0080
-#define ASTCONF_matchcall 0x0100
-#define ASTCONF_matchname 0x0200
-#define ASTCONF_matchstandard 0x0400
-#define ASTCONF_error 0x0800
-#define ASTCONF_system 0x1000
-#define ASTCONF_AST 0x2000
-
-/*
  * pathcanon() flags and info
  */
 
@@ -160,8 +141,6 @@ typedef struct {
     wchar_t tmp_wchar;
 
     uint32_t env_serial;
-    // TODO: Remove this struct member.
-    uint32_t version;  // this exists solely for the benefit of astconf_print()
 
     int byte_max;
 
@@ -177,10 +156,6 @@ typedef int (*Strcmp_context_f)(const char *, const char *, void *);
 typedef int (*Strcmp_f)(const char *, const char *);
 
 extern char *ast_setlocale(int, const char *);
-extern char *astgetconf(const char *, const char *, const char *, int, Error_f);
-extern char *astconf(const char *, const char *, const char *);
-extern Ast_confdisc_f astconfdisc(Ast_confdisc_f);
-extern void astconflist(Sfio_t *, const char *, int, const char *);
 extern void astwinsize(int, int *, int *);
 
 extern ssize_t base64encode(const void *, size_t, void **, void *, size_t);
