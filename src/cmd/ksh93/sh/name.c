@@ -725,10 +725,12 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
     if (!dp->disc) copy = dp->nofree & 1;
     if (*cp == '.') cp++;
     while (1) {
-        // We have to use `memmove()` rather than `strcpy()` because the buffers may overlap.
-        if (zerosub && !np) memmove(sp, cp - 1, strlen(cp - 1) + 1);
-        zerosub = 0;
-        switch (c = *(unsigned char *)(sp = cp)) {
+        if (zerosub) {
+            if (!np) memcpy(sp, cp - 1, strlen(cp - 1) + 1);
+            zerosub = 0;
+        }
+        sp = cp;
+        switch (c = *(unsigned char *)sp) {
             case '[': {
                 if (flags & NV_NOARRAY) {
                     dp->last = cp;
