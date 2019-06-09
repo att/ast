@@ -2,7 +2,7 @@ libcmd_files = [ 'cmdinit.c' ]
 
 # These files contains builtins for standard commands.
 libcmd_files += [ 'basename.c', 'chmod.c', 'dirname.c', 'head.c', 'getconf.c', 'mkdir.c',
-                  'logname.c', 'cat.c', 'cmp.c', 'uname.c', 'sync.c', 'cut.c' , 'wc.c', 'wclib.c' ]
+                  'logname.c', 'cat.c', 'cmp.c', 'uname.c', 'sync.c', 'cut.c' , 'wc.c', ]
 
 libcmd_c_args = shared_c_args + [
     '-DUSAGE_LICENSE=""',
