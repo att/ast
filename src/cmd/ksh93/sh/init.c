@@ -441,13 +441,8 @@ static_fn char *get_ifs(Namval_t *np, Namfun_t *fp) {
 //
 // These functions are used to get and set the SECONDS variable.
 //
-#ifdef timeofday
 #define dtime(tp) ((double)((tp)->tv_sec) + 1e-6 * ((double)((tp)->tv_usec)))
 #define tms timeval
-#else
-#define dtime(tp) (((double)times(tp)) / shgd->lim.clk_tck)
-#define timeofday(a)
-#endif
 
 static_fn void put_seconds(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
     double d;

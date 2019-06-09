@@ -2120,11 +2120,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             struct tms before, after;
             const char *format = e_timeformat;
             clock_t at, tm[3];
-#ifdef timeofday
             struct timeval tb, ta;
-#else
-            clock_t bt;
-#endif  // timeofday
 #if SHOPT_COSHELL
             if (shp->inpool) {
                 if (t->par.partre) sh_exec(shp, t->par.partre, 0);
@@ -2140,37 +2136,24 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 long timer_on;
                 if (shp->subshell && shp->comsub == 1) sh_subfork();
                 timer_on = sh_isstate(shp, SH_TIMING);
-#ifdef timeofday
                 timeofday(&tb);
                 times(&before);
-#else   // timeofday
-                bt = times(&before);
-#endif  // timeofday
                 job.waitall = 1;
                 sh_onstate(shp, SH_TIMING);
                 sh_exec(shp, t->par.partre, OPTIMIZE);
                 if (!timer_on) sh_offstate(shp, SH_TIMING);
                 job.waitall = 0;
             } else {
-#ifdef timeofday
-                tb.tv_sec = tb.tv_usec = 0;
-#else
-                bt = 0;
-#endif  // timeofday
+                timeofday(&tb);
                 before.tms_utime = before.tms_cutime = 0;
                 before.tms_stime = before.tms_cstime = 0;
             }
-#ifdef timeofday
             times(&after);
             timeofday(&ta);
-            assert(tb.tv_sec);
             at = shp->gd->lim.clk_tck * (ta.tv_sec - tb.tv_sec);
             at += ((shp->gd->lim.clk_tck *
                     (((1000000L / 2) / shp->gd->lim.clk_tck) + (ta.tv_usec - tb.tv_usec))) /
                    1000000L);
-#else   // timeofday
-            at = times(&after) - bt;
-#endif  // timeofday
             tm[0] = at;
             if (t->par.partre) {
                 Namval_t *np = nv_open("TIMEFORMAT", shp->var_tree, NV_NOADD);
