@@ -1,0 +1,49 @@
+# Tests of `time` keyword and `times` alias.
+set pid [spawn $ksh]
+expect_prompt
+
+set zero_time_re "\[\t \]*0m0\.\[0-9\]\[0-9\]s"
+
+# ==========
+log_test_entry
+send "time\r"
+expect -re "\r\nuser$zero_time_re\r\nsys$zero_time_re\r\n" {
+    puts "time with no pipeline produces expected output"
+}
+expect_prompt
+
+# ==========
+# Timing a simple sleep command works.
+log_test_entry
+send "time sleep 1\r"
+expect -re "\r\nreal\[\t \]*0m1\.\[0-9\]\[0-9\]s\r\nuser$zero_time_re\r\nsys$zero_time_re\r\n" {
+    puts "time sleep 1 produces expected output"
+}
+expect_prompt
+
+# ==========
+# Timing a more complex pipeline works.
+log_test_entry
+send "time { sleep 0.05 | sleep 0.05; }\r"
+expect -re "\r\nreal\[\t \]*0m0\.0\[5-9\]s\r\nuser$zero_time_re\r\nsys$zero_time_re\r\n" {
+    puts "time sleep 0.05 pipeline produces expected output"
+}
+expect_prompt
+
+# ==========
+# The times command with no args produces reasonable output.
+log_test_entry
+send "times\r"
+expect -re "\r\nuser$zero_time_re\r\nsys$zero_time_re\r\n" {
+    puts "times produces expected output"
+}
+expect_prompt
+
+# ==========
+# The times command with args produces a syntax error.
+log_test_entry
+send "times sleep 1\r"
+expect ": syntax error: " {
+    puts "times sleep 1 produces syntax error"
+}
+expect_prompt

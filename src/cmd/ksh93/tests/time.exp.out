@@ -1,0 +1,5 @@
+time with no pipeline produces expected output
+time sleep 1 produces expected output
+time sleep 0.05 pipeline produces expected output
+times produces expected output
+times sleep 1 produces syntax error

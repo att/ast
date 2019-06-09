@@ -47,14 +47,9 @@ static char time_state;
 
 static_fn double getnow(void) {
     double now;
-#ifdef timeofday
     struct timeval tp;
     timeofday(&tp);
     now = tp.tv_sec + 1.e-6 * tp.tv_usec;
-
-#else
-    now = (double)time(NULL);
-#endif  // timeofday
     return now + .001;
 }
 
