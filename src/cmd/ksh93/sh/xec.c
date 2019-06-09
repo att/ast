@@ -2153,7 +2153,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 job.waitall = 0;
             } else {
 #ifdef timeofday
-                tb.tv_sec = tb.tv_usec = 0;
+                memset(&tb, 0, sizeof(tb));
 #else
                 bt = 0;
 #endif  // timeofday
@@ -2163,7 +2163,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
 #ifdef timeofday
             times(&after);
             timeofday(&ta);
-            assert(tb.tv_sec);
             at = shp->gd->lim.clk_tck * (ta.tv_sec - tb.tv_sec);
             at += ((shp->gd->lim.clk_tck *
                     (((1000000L / 2) / shp->gd->lim.clk_tck) + (ta.tv_usec - tb.tv_usec))) /

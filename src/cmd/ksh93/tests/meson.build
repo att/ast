@@ -13,7 +13,7 @@ all_tests = [
     ['modifiers'], ['options'], ['path'], ['pointtype'], ['print'], ['printf'], ['quoting'],
     ['quoting2'], ['read'], ['readcsv'], ['recttype'], ['restricted'], ['return'], ['rksh'],
     ['select'], ['set'], ['sh_match'], ['sigchld', 100], ['signal'], ['sleep'], ['statics'],
-    ['subshell', 100], ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
+    ['subshell', 100], ['substring'], ['tilde'], ['time'], ['timetype'], ['treemove'], ['types'],
     ['ulimit'], ['variables'], ['vartree1'], ['vartree2'], ['wc'], ['whence'], ['uname'],
     # Test non-special builtins; i.e., those that have to be enabled explicitly.
     ['chmod'],
