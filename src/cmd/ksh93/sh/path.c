@@ -843,11 +843,9 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
         if (!pp || fd >= 0) break;
         if (errno != ENOENT) noexec = errno;
         // It's not clear this can actually happen but Coverity Scan says it is possible.
-        // No unit test causes this condition to be true.
-        if (fd != -1) {
-            sh_close(fd);
-            fd = -1;
-        }
+        // No unit test causes this condition to be true. We don't bother to set fd = -1 because
+        // it is set by the `fd = can_execute()` assignment above before being used again.
+        if (fd != -1) sh_close(fd);
     }
 
     if (fd == -1) {
