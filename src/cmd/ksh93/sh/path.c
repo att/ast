@@ -1423,6 +1423,10 @@ static_fn bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, P
             if (m == 0 || (m == 6 && strncmp(sp, "FPATH=", m) == 0)) {
                 if (first) {
                     char *ptr = stkptr(shp->stk, offset + pp->len + 1);
+                    // This must be memmove() because the buffers will typically overlap. For
+                    // example, if ptr points to "FPATH=../xxfun" then ep will point to the start of
+                    // the path (e.g., the first period) and will copy that path over the "FPATH="
+                    // portion of the buffer to elide that prefix.
                     if (ep) memmove(ptr, ep, strlen(ep) + 1);
                     path_addcomp(shp, first, old, stkptr(shp->stk, offset),
                                  PATH_FPATH | PATH_BFPATH);
