@@ -16,17 +16,21 @@ actual=$(ulimit -c)
 
 # ==========
 # -d The number of K-bytes on the size of the data area.
-limit=$(ulimit -d)
-if [[ $limit == unlimited ]]
+# This test isn't compatible with ASAN.
+if [[ $ASAN_OPTIONS == '' ]]
 then
-    limit=$((512 * 1024))
-else
-    limit=$((limit - 1))
+    limit=$(ulimit -d)
+    if [[ $limit == unlimited ]]
+    then
+        limit=$((512 * 1024))
+    else
+        limit=$((limit - 1))
+    fi
+    ulimit -d $limit
+    expect=$limit
+    actual=$(ulimit -d)
+    [[ "$actual" = "$expect" ]] || log_error "setting ulimit -d failed" "$expect" "$actual"
 fi
-ulimit -d $limit
-expect=$limit
-actual=$(ulimit -d)
-[[ "$actual" = "$expect" ]] || log_error "setting ulimit -d failed" "$expect" "$actual"
 
 # ==========
 # -f The number of 512-byte blocks on files that can be written by the current process or by child
