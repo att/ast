@@ -30,6 +30,7 @@
 #include <sys/resource.h>
 
 #include "ast.h"
+#include "b_ulimit.h"
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
@@ -37,7 +38,6 @@
 #include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
-#include "ulimit.h"
 
 #define HARD 2
 #define SOFT 4

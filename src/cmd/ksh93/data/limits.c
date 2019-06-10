@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <sys/resource.h>
 
-#include "ulimit.h"
+#include "b_ulimit.h"
 
 const char e_unlimited[] = "unlimited";
 const char *e_units[] = {0, "block", "byte", "Kibyte", "second"};
