@@ -197,7 +197,7 @@ int _sfpopen(Sfio_t *f, int fd, int pid, int stdio) {
 
 #ifdef SIGPIPE /* protect from broken pipe signal */
     if (p->sigp) {
-        sig_t handler;
+        sighandler_t handler;
 
         (void)vtmtxlock(_Sfmutex);
         if ((handler = signal(SIGPIPE, ignoresig)) != SIG_DFL && handler != ignoresig) {
@@ -239,7 +239,7 @@ int _sfpclose(Sfio_t *f) {
 #ifdef SIGPIPE
         (void)vtmtxlock(_Sfmutex);
         if (p->sigp && (_Sfsigp -= 1) <= 0) {
-            sig_t handler;
+            sighandler_t handler;
             if ((handler = signal(SIGPIPE, SIG_DFL)) != SIG_DFL && handler != ignoresig) {
                 signal(SIGPIPE, handler); /* honor user handler */
             }

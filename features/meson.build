@@ -160,6 +160,10 @@ else
     feature_data.set('MAX_SIGNUM', '64')
 endif
 
+# Does the platform provide a `sighandler_t` type?
+feature_data.set10('_has_sighandler_t',
+    cc.has_type('sighandler_t', prefix: '#include <signal.h>', args: feature_test_args))
+
 feature_data.set10('_mem_d_fileno_dirent',
     cc.has_member('struct dirent', 'd_fileno', prefix: '#include <dirent.h>',
                   args: feature_test_args))

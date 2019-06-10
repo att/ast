@@ -105,9 +105,9 @@ typedef struct {
     struct Mod_s *mods;  // process modification state
     long flags;          // original PROC_* flags
     sigset_t mask;       // original blocked sig mask
-    sig_t sigchld;       // PROC_FOREGROUND SIG_DFL
-    sig_t sigint;        // PROC_FOREGROUND SIG_IGN
-    sig_t sigquit;       // PROC_FOREGROUND SIG_IGN
+    sighandler_t sigchld;       // PROC_FOREGROUND SIG_DFL
+    sighandler_t sigint;        // PROC_FOREGROUND SIG_IGN
+    sighandler_t sigquit;       // PROC_FOREGROUND SIG_IGN
 } Proc_t;
 
 extern Proc_t proc_default;  // first proc
