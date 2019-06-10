@@ -26,7 +26,6 @@
 #include <stdlib.h>
 #include <sys/resource.h>
 
-#ifndef _no_ulimit
 #include "ulimit.h"
 
 const char e_unlimited[] = "unlimited";
@@ -55,5 +54,3 @@ const Limit_t shtab_limits[] = {{"as", "address space limit", RLIMIT_AS, 'M', LI
                                 {"threads", "number of threads", RLIMIT_PTHREAD, 'T', LIM_COUNT},
                                 {"vmem", "process size", RLIMIT_VMEM, 'v', LIM_KBYTE},
                                 {NULL, NULL, RLIMIT_UNKNOWN, '\0', LIM_COUNT}};
-
-#endif

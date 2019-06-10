@@ -39,18 +39,8 @@
 #include "shcmd.h"
 #include "ulimit.h"
 
-#ifdef _no_ulimit
-
-int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
-    UNUSED(argc);
-    UNUSED(argv);
-    UNUSED(context);
-
-    errormsg(SH_DICT, ERROR_exit(2), e_nosupport);
-    __builtin_unreachable();
-}
-
-#else  // _no_ulimit
+#define HARD 2
+#define SOFT 4
 
 static_fn int ulimit_infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     UNUSED(op);
@@ -66,9 +56,6 @@ static_fn int ulimit_infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) 
     }
     return 1;
 }
-
-#define HARD 2
-#define SOFT 4
 
 int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
     char *limit;
@@ -201,5 +188,3 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
     }
     return 0;
 }
-
-#endif  // _no_ulimit
