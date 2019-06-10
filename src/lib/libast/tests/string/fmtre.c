@@ -10,7 +10,6 @@ static struct StringToStringTest tests[] = {
     {"x|y", "^x|y$"}, {"a?c*d", "^a.c.*d$"}, {"x?*|\\(|b?", "^x..*|\\(|(b.$"},
     {"(", NULL},      {NULL, NULL}};
 
-#include <stdio.h>
 tmain() {
     UNUSED(argc);
     UNUSED(argv);

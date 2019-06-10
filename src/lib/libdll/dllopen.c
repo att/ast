@@ -25,6 +25,7 @@
 
 #include <dlfcn.h>
 
+#include "dlldefs.h"
 #include "dlllib.h"
 
 #if 0

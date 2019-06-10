@@ -48,8 +48,11 @@
 #include "path.h"
 #include "sfio.h"
 #include "shnodes.h"
-#include "spawnvex.h"
 #include "variables.h"
+
+#if USE_SPAWN
+#include "spawnvex.h"
+#endif
 
 #ifndef PIPE_BUF
 #define PIPE_BUF 512

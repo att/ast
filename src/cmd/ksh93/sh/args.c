@@ -44,8 +44,11 @@
 #include "sfio.h"
 #include "shlex.h"
 #include "shtable.h"
-#include "spawnvex.h"
 #include "stk.h"
+
+#if USE_SPAWN
+#include "spawnvex.h"
+#endif
 
 #if SHOPT_BASH
 

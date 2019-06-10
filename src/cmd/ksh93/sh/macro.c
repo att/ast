@@ -36,6 +36,7 @@
 #include <pwd.h>
 #include <setjmp.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -57,10 +58,13 @@
 #include "shcmd.h"
 #include "shlex.h"
 #include "shnodes.h"
-#include "spawnvex.h"
 #include "stk.h"
 #include "streval.h"
 #include "variables.h"
+
+#if USE_SPAWN
+#include "spawnvex.h"
+#endif
 
 #if __CYGWIN__
 static int Skip;

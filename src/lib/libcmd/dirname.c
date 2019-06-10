@@ -29,7 +29,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <limits.h>
-#include <stddef.h>
 #include <stdlib.h>
 
 #include "ast.h"

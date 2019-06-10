@@ -28,6 +28,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "modelib.h"
+#include "modex.h"
 
 /*
  * convert external mode to internal

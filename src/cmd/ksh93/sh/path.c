@@ -51,10 +51,13 @@
 #include "path.h"
 #include "sfio.h"
 #include "shcmd.h"
-#include "spawnvex.h"
 #include "stk.h"
 #include "test.h"
 #include "variables.h"
+
+#if USE_SPAWN
+#include "spawnvex.h"
+#endif
 
 #define LIBCMD "cmd"
 

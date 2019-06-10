@@ -34,6 +34,7 @@
 #include <rld_interface.h>
 #endif
 
+#include "dlldefs.h"
 #include "dlllib.h"  // IWYU pragma: keep
 
 //

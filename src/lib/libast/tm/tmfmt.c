@@ -29,6 +29,7 @@
 
 #include <time.h>
 
+#include "tm.h"
 #include "tmx.h"
 
 /*

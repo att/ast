@@ -23,6 +23,7 @@
 #include <string.h>
 #endif
 
+#include "ast.h"
 #include "ast_assert.h"
 #include "tmx.h"
 

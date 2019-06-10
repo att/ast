@@ -24,6 +24,7 @@
 #include <sys/types.h>
 
 #include "ast.h"
+#include "stdlib.h"
 #include "terror.h"
 
 tmain() {

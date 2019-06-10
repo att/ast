@@ -19,6 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+
 #include "defs.h"
 #include "name.h"
 #include "shtable.h"

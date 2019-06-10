@@ -26,7 +26,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <fcntl.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
 #include <termios.h>

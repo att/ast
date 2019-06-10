@@ -27,7 +27,6 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ctype.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -35,7 +34,6 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 
-#include "ast.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"

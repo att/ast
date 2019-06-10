@@ -59,10 +59,13 @@
 #include "shcmd.h"
 #include "shlex.h"
 #include "shtable.h"
-#include "spawnvex.h"
 #include "stk.h"
 #include "variables.h"
 #include "version.h"
+
+#if USE_SPAWN
+#include "spawnvex.h"
+#endif
 
 char e_version[] =
     "\n@(#)$Id: Version "

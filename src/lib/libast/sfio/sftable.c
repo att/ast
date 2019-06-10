@@ -33,8 +33,6 @@
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
 
-#include "ast.h"
-
 /*      Dealing with $ argument addressing stuffs.
 **
 **      Written by Kiem-Phong Vo.

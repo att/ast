@@ -64,7 +64,6 @@
 #include "shcmd.h"
 #include "shnodes.h"
 #include "shtable.h"
-#include "spawnvex.h"
 #include "stk.h"
 #include "streval.h"
 #include "terminal.h"
@@ -73,6 +72,10 @@
 
 #if SHOPT_COSHELL
 #include "coshell.h"
+#endif
+
+#if USE_SPAWN
+#include "spawnvex.h"
 #endif
 
 #define SH_NTFORK SH_TIMING

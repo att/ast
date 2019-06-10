@@ -51,7 +51,6 @@
 #include "shtable.h"
 #include "stk.h"
 #include "terminal.h"
-#include "ulimit.h"
 #include "variables.h"
 
 #define abortsig(sig) (sig == SIGABRT || sig == SIGBUS || sig == SIGILL || sig == SIGSEGV)

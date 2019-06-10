@@ -59,11 +59,14 @@
 #include "sfio.h"
 #include "shcmd.h"
 #include "shnodes.h"
-#include "spawnvex.h"
 #include "stk.h"
 #include "terminal.h"
 #include "timeout.h"
 #include "variables.h"
+
+#if USE_SPAWN
+#include "spawnvex.h"
+#endif
 
 #ifdef FNDELAY
 #ifdef EAGAIN

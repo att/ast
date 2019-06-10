@@ -29,6 +29,7 @@
 
 #include <stdarg.h>
 
+#include "ast_errorf.h"
 #include "error.h"
 
 int errorf(void *handle, void *discipline, int level, ...) {

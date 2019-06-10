@@ -19,7 +19,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 // Returns true if the current universe as defined by the PATH env var, or the default universe,

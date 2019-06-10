@@ -21,6 +21,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include "cdt.h"
 #include "cdtlib.h"
 
 /* Hashing a string into an unsigned integer.
