@@ -23,7 +23,6 @@
 
 #include <stdio.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"

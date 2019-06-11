@@ -27,8 +27,8 @@
 
 #include <fcntl.h>
 #include <stdlib.h>
-#include <sys/ioctl.h>
-#include <termios.h>
+#include <sys/ioctl.h>  // IWYU pragma: keep
+#include <termios.h>    // IWYU pragma: keep
 #include <unistd.h>
 
 #if defined(TIOCGWINSZ)

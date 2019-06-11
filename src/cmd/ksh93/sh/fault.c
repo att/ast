@@ -32,7 +32,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/resource.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 #include "ast.h"

@@ -26,6 +26,8 @@
 
 #include <stdint.h>
 
+#include "ast.h"
+
 #define S2I_function strton64
 #define S2I_number int64_t
 #define S2I_unumber uint64_t

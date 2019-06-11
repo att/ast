@@ -1,7 +1,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <limits.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 #include "ast.h"

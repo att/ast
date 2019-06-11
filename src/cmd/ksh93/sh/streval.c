@@ -31,7 +31,6 @@
 #include <math.h>
 #include <stdbool.h>
 #include <string.h>
-#include <sys/types.h>
 
 #include "ast.h"
 #include "ast_float.h"

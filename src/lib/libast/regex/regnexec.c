@@ -35,7 +35,6 @@
 
 #include "ast.h"
 #include "reglib.h"
-#include "sfio.h"
 #include "stk.h"
 
 #if _AST_REGEX_DEBUG

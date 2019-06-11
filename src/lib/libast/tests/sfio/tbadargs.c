@@ -21,7 +21,6 @@
 
 #include <signal.h>
 #include <stdarg.h>
-#include <sys/types.h>
 
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"

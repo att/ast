@@ -27,12 +27,11 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include <wchar.h>
 
 #include "sfhdr.h"
 #include "sfio.h"
-
-#include "ast.h"
 
 /*      The main engine for reading formatted data
 **

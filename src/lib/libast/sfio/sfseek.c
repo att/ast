@@ -24,7 +24,6 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"

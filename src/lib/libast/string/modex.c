@@ -31,6 +31,7 @@
 
 #include "modecanon.h"
 #include "modelib.h"
+#include "modex.h"
 
 /*
  * convert internal mode to external

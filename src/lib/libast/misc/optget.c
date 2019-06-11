@@ -1604,7 +1604,7 @@ again:
             if ((c = *s) != '?') return optget_skip(s, 0, 0, 0, 1, level, 1, version);
             // The odd `+ 1` is to work around issue #836. The problem is `optget_label()` reads the
             // char before the start of the string. Which works most of the time but isn't valid.
-            w = C(" version") + 1;
+            w = &C(" version")[1];
             par = optget_item(sp, w, about, level, style, ip, version, id, ID, hflags);
             for (;;) {
                 while (isspace(*(s + 1))) s++;
@@ -2517,7 +2517,7 @@ again:
                             // The odd `+ 1` is to work around issue #836. The problem is
                             // `optget_label()` reads the char before the start of the string.
                             // Which works most of the time but isn't valid.
-                            s = C(" version") + 1;
+                            s = &C(" version")[1];
                         } else {
                             s = p + 1;
                         }
@@ -2880,7 +2880,7 @@ again:
                                          u - w, w);
                             } else {
                                 sfprintf(sp_info, " %s %s\bno%-.*s\b %s.",
-                                         T(NULL, ID, "On by default; use"), "--" + 2 - prefix,
+                                         T(NULL, ID, "On by default; use"), &"--"[2 - prefix],
                                          u - w, w, T(NULL, ID, "to turn off"));
                             }
                             if (!(t = sfstruse(sp_info))) goto nospace;

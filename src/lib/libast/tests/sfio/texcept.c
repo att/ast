@@ -20,7 +20,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stddef.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 #include "sfio.h"
