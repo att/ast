@@ -104,7 +104,6 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
     int flags;
     int alt;
     int pad;
-    int delimiter;
     int width;
     int prec;
     int parts;
@@ -120,6 +119,7 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
     Tm_t ts;
     char argbuf[256];
     char fmt[32];
+    int delimiter = 0;
 
     tmlocale();
     tm = tmxtm(&ts, t, NULL);
@@ -129,10 +129,9 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
     sp = &stack[0];
     cp = buf;
     ep = buf + len;
-    delimiter = 0;
-    for (;;) {
-        if ((c = *format++) == delimiter) {
-            delimiter = 0;
+    while (true) {
+        c = *format++;
+        if (c == delimiter) {
             if (sp <= &stack[0]) break;
             sp--;
             format = sp->format;
