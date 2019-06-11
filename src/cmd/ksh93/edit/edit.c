@@ -968,12 +968,7 @@ int ed_external(const genchar *src, char *dest) {
     if ((char *)src == dp) {
         char buffer[MAXLINE * sizeof(genchar)];
         c = ed_external(src, buffer);
-
-#if _lib_wcscpy
         wcscpy((wchar_t *)dest, (const wchar_t *)buffer);
-#else
-        strcpy(dest, buffer);
-#endif
         return c;
     }
     while ((wc = *src++) && dp < dpmax) {
