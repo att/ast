@@ -361,7 +361,7 @@ again:
                     s = b;
                     goto again;
                 case '&':
-                    x = tmx_gen(tm, &set);
+                    (void)tmx_gen(tm, &set);
                     x = tmxdate(s, e, t);
                     if (s == (const char *)*e) goto next;
                     t = x;
