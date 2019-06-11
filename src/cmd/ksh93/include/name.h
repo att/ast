@@ -31,6 +31,7 @@
 #include <stdio.h>
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "cdt.h"
 #include "option.h"
 
@@ -420,8 +421,24 @@ struct Namval {
 // particular validating the nvflag value; both current and new. Variants such as nv_isnull() are
 // not static inline functions because they do more work and were historically extern functions.
 
+// Check that nvflag is valid. At the moment this is just a sanity check that the high bit is
+// not set since that should never happen.
+#ifdef NDEBUG
+#define nv_isvalid(nvflag) ((vpoi)0)
+#else   // NDEBUG
+static inline void nv_isvalid(const nvflag_t nvflag) {
+    if (nvflag & NV_INVALID) {
+        DPRINTF("nvflag_t %" PRIX32 " is not valid", nvflag);
+        dump_backtrace(0);
+        abort();
+    }
+}
+#endif  // NDEBUG
+
 // Return true if the mask is set in nvflags.
 static inline bool nv_isflag(const nvflag_t nvflags, const nvflag_t mask) {
+    nv_isvalid(nvflags);
+    nv_isvalid(mask);
     return (nvflags & mask) == mask;
 }
 
@@ -432,16 +449,22 @@ static inline int nv_isattr(const Namval_t *np, const nvflag_t mask) { return np
 static inline bool nv_isarray(const Namval_t *np) { return nv_isattr(np, NV_ARRAY) == NV_ARRAY; }
 
 static inline void nv_onattr(Namval_t *np, nvflag_t nvflag) {
+    nv_isvalid(nvflag);
+    nv_isvalid(np->nvflag);
     nvflag &= ~(~(nvflag_t)0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
     np->nvflag |= nvflag;
 }
 
 static inline void nv_offattr(Namval_t *np, nvflag_t nvflag) {
+    nv_isvalid(nvflag);
+    nv_isvalid(np->nvflag);
     nvflag &= ~(~(nvflag_t)0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
     np->nvflag &= ~nvflag;
 }
 
 static inline void nv_setattr(Namval_t *np, nvflag_t nvflag) {
+    nv_isvalid(nvflag);
+    nv_isvalid(np->nvflag);
     nvflag &= ~(~(nvflag_t)0U << NV_nbits);  // strip bits valid for nv_open() but not nvflag
     np->nvflag = nvflag;
 }
