@@ -89,6 +89,11 @@
 #mesondefine _hdr_mman
 #mesondefine _hdr_rld_interface
 #mesondefine _hdr_stdlib
+#mesondefine _hdr_sys_filio
+#mesondefine _hdr_sys_ldr
+#mesondefine _hdr_sys_pstat
+#mesondefine _hdr_sys_ptem
+#mesondefine _hdr_sys_stream
 
 #mesondefine _lib_clock_gettime
 #mesondefine _lib_creat64
@@ -161,12 +166,6 @@
 #mesondefine _mem_m_type_utsname
 
 #mesondefine _mem_pgroup_inheritance
-
-#mesondefine _sys_filio
-#mesondefine _sys_ldr
-#mesondefine _sys_pstat
-#mesondefine _sys_ptem
-#mesondefine _sys_stream
 
 // These symbols are from src/lib/libast/include/ast_common.h that was
 // generated on a Linux platform by the legacay IFFE mechanism. They may not

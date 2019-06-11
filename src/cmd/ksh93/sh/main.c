@@ -604,7 +604,7 @@ static_fn void chkmail(Shell_t *shp, char *files) {
 #define EXECARGS 1
 #endif
 
-#if _lib_pstat && _sys_pstat
+#if _lib_pstat && _hdr_sys_pstat
 #include <sys/pstat.h>
 #define PSTAT 1
 #endif

@@ -54,9 +54,9 @@
 #if _hdr_filio
 #include <filio.h>
 #else
-#if _sys_filio
+#if _hdr_sys_filio
 #include <sys/filio.h>
-#endif /*_sys_filio*/
+#endif
 #endif /*_hdr_filio*/
 #endif /*_FIOCLEX*/
 #endif /*F_SETFD*/

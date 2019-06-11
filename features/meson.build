@@ -59,11 +59,14 @@ libiconv_dep = cc.find_library('iconv', required: false, dirs: lib_dirs)
 libcatgets_dep = cc.find_library('catgets', required: false, dirs: lib_dirs)
 
 feature_data.set10('_hdr_execinfo', cc.has_header('execinfo.h', args: feature_test_args))
-
-feature_data.set10('_hdr_stdlib', cc.has_header('stdlib.h', args: feature_test_args))
-feature_data.set10('_hdr_malloc', cc.has_header('malloc.h', args: feature_test_args))
 feature_data.set10('_hdr_filio', cc.has_header('filio.h', args: feature_test_args))
-feature_data.set10('_sys_filio', cc.has_header('sys/filio.h', args: feature_test_args))
+feature_data.set10('_hdr_malloc', cc.has_header('malloc.h', args: feature_test_args))
+feature_data.set10('_hdr_stdlib', cc.has_header('stdlib.h', args: feature_test_args))
+feature_data.set10('_hdr_sys_filio', cc.has_header('sys/filio.h', args: feature_test_args))
+feature_data.set10('_hdr_sys_ldr', cc.has_header('sys/ldr.h', args: feature_test_args))
+feature_data.set10('_hdr_sys_pstat', cc.has_header('sys/pstat.h', args: feature_test_args))
+feature_data.set10('_hdr_sys_ptem', cc.has_header('sys/ptem.h', args: feature_test_args))
+feature_data.set10('_hdr_sys_stream', cc.has_header('stream.h', args: feature_test_args))
 
 # The `lchmod()` function is a bit of a special-case. The platform may not provide it
 # directly but might provide the means to implement it.

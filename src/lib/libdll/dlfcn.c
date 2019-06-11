@@ -92,7 +92,7 @@ char *dlerror(void) {
 }
 
 #else
-#if _sys_ldr && _lib_loadbind
+#if _hdr_sys_ldr && _lib_loadbind
 
 //
 // rs6000

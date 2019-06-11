@@ -31,11 +31,9 @@
 #include <termios.h>    // IWYU pragma: keep
 #include <unistd.h>
 
-#if defined(TIOCGWINSZ)
-#if _sys_stream && _sys_ptem
+#if _hdr_stream && _hdr_ptem
 #include <sys/ptem.h>
 #include <sys/stream.h>
-#endif
 #endif
 
 static_fn int ttctl(int, int, void *);

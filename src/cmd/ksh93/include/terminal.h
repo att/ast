@@ -55,10 +55,8 @@
 #endif  // !VEOL
 #endif  // !ECHOCTL
 
-#if _sys_filio
-#ifndef FIONREAD
+#if _hdr_sys_filio
 #include <sys/filio.h>
-#endif  // FIONREAD
 #endif  // _sys_filio
 
 // This symbol is used by the CLI editor modes to signal an invalid character.
