@@ -98,16 +98,16 @@ static inline int PROC_ARG(long x, long n) {
 struct Mods_s;
 
 typedef struct {
-    pid_t pid;           // process id
-    pid_t pgrp;          // process group id
-    int rfd;             // read fd if applicable
-    int wfd;             // write fd if applicable
-    struct Mod_s *mods;  // process modification state
-    long flags;          // original PROC_* flags
-    sigset_t mask;       // original blocked sig mask
-    sighandler_t sigchld;       // PROC_FOREGROUND SIG_DFL
-    sighandler_t sigint;        // PROC_FOREGROUND SIG_IGN
-    sighandler_t sigquit;       // PROC_FOREGROUND SIG_IGN
+    pid_t pid;             // process id
+    pid_t pgrp;            // process group id
+    int rfd;               // read fd if applicable
+    int wfd;               // write fd if applicable
+    struct Mod_s *mods;    // process modification state
+    long flags;            // original PROC_* flags
+    sigset_t mask;         // original blocked sig mask
+    sighandler_t sigchld;  // PROC_FOREGROUND SIG_DFL
+    sighandler_t sigint;   // PROC_FOREGROUND SIG_IGN
+    sighandler_t sigquit;  // PROC_FOREGROUND SIG_IGN
 } Proc_t;
 
 extern Proc_t proc_default;  // first proc
