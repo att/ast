@@ -110,6 +110,7 @@ const struct shtable3 shtab_builtins[] = {
     {"type", NV_BLTIN | BLT_ENV, bltin(whence)},
     {"whence", NV_BLTIN | BLT_ENV, bltin(whence)},
     {"source", NV_BLTIN | BLT_ENV, bltin(dot_cmd)},
+    {"times", NV_BLTIN | BLT_ENV, bltin(times)},
     // These commands are implemented by the modules in src/lib/libcmd and are only usable if the
     // user does `builtin cmd` (e.g., `builtin basename`). Or has /opt/ast/bin in PATH ahead of the
     // directory with an external command of the same name. Otherwise the external command of the
@@ -1670,6 +1671,13 @@ const char sh_optulimit[] =
     "[+>0?A request for a higher limit was rejected or an error occurred.]"
     "}"
     "[+SEE ALSO?\bulimit\b(2), \bgetrlimit\b(2)]";
+
+const char sh_opttimes[] =
+    "[+NAME?times - display CPU usage by the shell and child processes]"
+    "[+DESCRIPTION?\btimes\b shows the user mode and system mode CPU time used by "
+    "the shell and all of its child processes."
+    "\n"
+    "[+SEE ALSO?\btime\b(1)]";
 
 const char sh_optumask[] =
     "[-1c?\n@(#)$Id: umask (AT&T Research) 1999-04-07 $\n]" USAGE_LICENSE

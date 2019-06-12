@@ -46,6 +46,5 @@ const struct shtable2 shtab_aliases[] = {{"autoload", NV_NOFREE, "typeset -fu"},
                                          {"stop", NV_NOFREE, "kill -s STOP"},
                                          {"suspend", NV_NOFREE, "kill -s STOP \"$$\""},
 #endif  // SIGTSTP
-                                         {"times", NV_NOFREE, "{ { time;} 2>&1;}"},
                                          {"type", NV_NOFREE, "whence -v"},
                                          {"", 0, NULL}};
