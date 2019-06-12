@@ -190,17 +190,31 @@ typedef void (*sighandler_t)(int);
 #define static_fn static
 #endif
 
-/// This is a macro that can be used to silence "unused parameter" warnings from the compiler for
-/// functions which need to accept parameters they do not use because they need to be compatible
-/// with an interface. It's similar to the Python idiom of doing `_ = param` at the top of a
-/// function in the same situation.
-///
-/// Do not use this for `param` values that have side-effects when evaluated.
-/// It should only be used for function parameters.
+// This is a macro that can be used to silence "unused parameter" warnings from the compiler for
+// functions which need to accept parameters they do not use because they need to be compatible with
+// an interface. It's similar to the Python idiom of doing `_ = param` at the top of a function in
+// the same situation.
+//
+// Do not use this for `param` symbols that have side-effects when evaluated. It should only be used
+// for function parameters. And even then only at the very top of a function definition.
 #define UNUSED(param)  \
     do {               \
         (void)(param);   \
     } while (0)
+
+// If running under the oclint tool try to suppress some platform specific warnings.
+// For example, on macOS many commonly used functions are defined in terms of macros
+// that contain expressions which always evalute true or false.
+#if _OCLINT_
+
+#undef strcat
+#undef strcpy
+#undef strlcat
+#undef strlcpy
+#undef memcpy
+#undef memmove
+
+#endif  // _OCLINT_
 
 // Types that are needed in many places but which are difficult to define in the header containing
 // the structure definition due to circular includes that would otherwise result.

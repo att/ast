@@ -271,18 +271,4 @@ extern unsigned long plugin_version(void);
 #define CC_esc 0033  // ESC character
 #define CC_vt 0013   // VT character
 
-// If running under the oclint tool try to suppress some platform specific warnings.
-// For example, on macOS many commonly used functions are defined in terms of macros
-// that contain expressions which always evalute true or false.
-#if _OCLINT_
-
-#undef strcat
-#undef strcpy
-#undef strlcat
-#undef strlcpy
-#undef memcpy
-#undef memmove
-
-#endif
-
 #endif  // _AST_H
