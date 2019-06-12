@@ -59,6 +59,8 @@ None at this time.
 - The ksh source now builds on Cygwin; albeit with many unit test failures.
 - The legacy Nmake build system has been replaced by Meson. This improves the
   build time by roughly an order of magnitude (issue #42).
+- The `times` command is now a builtin that conforms to POSIX rather than an
+  alias for the `time` command (issue #16).
 
 ## Other significant changes
 

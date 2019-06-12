@@ -34,7 +34,7 @@ expect_prompt
 # The times command with no args produces reasonable output.
 log_test_entry
 send "times\r"
-expect -re "\r\nuser$zero_time_re\r\nsys$zero_time_re\r\n" {
+expect -re "\r\n$zero_time_re $zero_time_re\r\n$zero_time_re $zero_time_re\r\n" {
     puts "times produces expected output"
 }
 expect_prompt
@@ -43,7 +43,7 @@ expect_prompt
 # The times command with args produces a syntax error.
 log_test_entry
 send "times sleep 1\r"
-expect ": syntax error: " {
+expect "times: unexpected arguments\r\nUsage: times" {
     puts "times sleep 1 produces syntax error"
 }
 expect_prompt

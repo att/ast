@@ -809,8 +809,6 @@ but can be unset or redefined:
 .TP
 .B "suspend=\(fmkill \-s \s-1STOP\s+1 \(dq$$\(dq\(fm"
 .TP
-.B "times=\(fm{ { time;} 2>&1;}\(fm"
-.TP
 .B "type=\(fmwhence \-v\(fm"
 .PD
 .RE
@@ -7341,6 +7339,9 @@ second given by
 .I seconds
 A suffix of one of \f3smhd\f3 can be used to indicate seconds, minutes, hours,
 and days respectively.  Seconds can also be specified using a date/time format.
+.TP
+\f3times\fP
+Display CPU time used by the shell and all of its child processes.
 .TP
 \(dg \f3trap\fP \*(OK \f3\-alp\fP \*(CK \*(OK \f2action\^\fP \*(CK \*(OK \f2sig\^\fP \*(CK .\|.\|.
 The

@@ -93,6 +93,7 @@ extern int b_printf(int, char *[], Shbltin_t *);
 extern int b_pwd(int, char *[], Shbltin_t *);
 extern int b_sleep(int, char *[], Shbltin_t *);
 extern int b_test(int, char *[], Shbltin_t *);
+extern int b_times(int, char *[], Shbltin_t *);
 extern int B_echo(int, char *[], Shbltin_t *);
 extern int b_complete(int, char *[], Shbltin_t *);
 
@@ -162,6 +163,7 @@ extern const char sh_optunalias[];
 extern const char sh_optwait[];
 extern const char sh_optunset[];
 extern const char sh_optwhence[];
+extern const char sh_opttimes[];
 extern const char e_dict[];
 
 #endif  // _BUILTINS_H
