@@ -2135,21 +2135,16 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 shp->exitval = !shp->exitval;
                 break;
             }
+            timeofday(&tb);
+            times(&before);
             if (t->par.partre) {
-                long timer_on;
                 if (shp->subshell && shp->comsub == 1) sh_subfork();
-                timer_on = sh_isstate(shp, SH_TIMING);
-                timeofday(&tb);
-                times(&before);
+                long timer_on = sh_isstate(shp, SH_TIMING);
                 job.waitall = 1;
                 sh_onstate(shp, SH_TIMING);
                 sh_exec(shp, t->par.partre, OPTIMIZE);
                 if (!timer_on) sh_offstate(shp, SH_TIMING);
                 job.waitall = 0;
-            } else {
-                timeofday(&tb);
-                before.tms_utime = before.tms_cutime = 0;
-                before.tms_stime = before.tms_cstime = 0;
             }
             times(&after);
             timeofday(&ta);
