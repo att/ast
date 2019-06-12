@@ -154,7 +154,6 @@ static_fn Time_t tmx_scan(const char *s, char **e, const char *format, char **f,
     char *p;
     Tm_t *tm;
     const char *b;
-    char *u;
     char *stack[4];
     int m;
     int hi;
@@ -164,7 +163,7 @@ static_fn Time_t tmx_scan(const char *s, char **e, const char *format, char **f,
     Set_t set;
     Tm_zone_t *zp;
     Tm_t ts;
-
+    char *u = NULL;
     char **sp = &stack[0];
 
     while (isspace(*s)) s++;
@@ -222,7 +221,7 @@ again:
                     continue;
                 case 'd':
                     if (pedantic && !isdigit(*s)) goto next;
-                    /*FALLTHROUGH*/
+                    // FALLTHRU
                 case 'e':
                     NUMBER(2, 1, 31);
                     set.mday = n;
@@ -267,7 +266,7 @@ again:
                         while (*s == '\n') s++;
                         continue;
                     }
-                    /*FALLTHROUGH*/
+                    // FALLTHRU
                 case 't':
                     while (isspace(*s)) s++;
                     continue;
@@ -345,7 +344,7 @@ again:
                         s = u;
                         u = zp->type;
                     } else {
-                        u = 0;
+                        u = NULL;
                     }
                     if (d == 'q') continue;
                 // FALLTHRU
