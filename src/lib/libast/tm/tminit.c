@@ -235,36 +235,33 @@ static_fn void tmlocal(void) {
         }
         local.daylight = s;
     } else {
-        /*
-         * tm_data.zone table lookup
-         */
-
-        t = 0;
+        //
+        // tm_data.zone table lookup.
+        //
+        t = NULL;
         for (zp = tm_data.zone; zp->standard; zp++) {
             if (zp->type) t = zp->type;
-            if (zp->west == n && zp->dst == m) {
-                local.type = t;
-                local.standard = zp->standard;
-                s = zp->daylight;
-                if (!s) {
-                    s = buf;
-                    e = s + sizeof(buf);
-                    s = tmpoff(s, e - s, zp->standard, 0, 0);
-                    if (s < e - 1) {
-                        *s++ = ' ';
-                        tmpoff(s, e - s, tm_info.format[TM_DT], m, TM_DST);
-                    }
-                    s = strdup(buf);
-                }
-                local.daylight = s;
-                break;
-            }
+            if (zp->west == n && zp->dst == m) break;
         }
-        if (!zp->standard) {
-            /*
-             * not in the table
-             */
-
+        if (zp->standard) {
+            local.type = t;
+            local.standard = zp->standard;
+            s = zp->daylight;
+            if (!s) {
+                s = buf;
+                e = s + sizeof(buf);
+                s = tmpoff(s, e - s, zp->standard, 0, 0);
+                if (s < e - 1) {
+                    *s++ = ' ';
+                    tmpoff(s, e - s, tm_info.format[TM_DT], m, TM_DST);
+                }
+                s = strdup(buf);
+            }
+            local.daylight = s;
+        } else {
+            //
+            // Not in the table.
+            //
             s = buf;
             e = s + sizeof(buf);
             s = tmpoff(s, e - s, tm_info.format[TM_UT], n, 0);
