@@ -581,8 +581,8 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
     int tabs = 0, c, more;
     bool associative = false;
     int saveI = Indent, dot = -1;
-    bool json = (special & NV_JSON);
-    bool json_last = (special & NV_JSON_LAST);
+    bool json = nv_isflag(special, NV_JSON);
+    bool json_last = nv_isflag(special, NV_JSON_LAST);
     Shell_t *shp = np->nvshell;
 
     special &= ~(NV_JSON | NV_JSON_LAST);
@@ -725,7 +725,7 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
     Namval_t *np, *nq;
     Namfun_t *fp;
     int isarray = 0, special = 0, mode = 0;
-    bool json = (wp->flags & NV_JSON);
+    bool json = nv_isflag(wp->flags, NV_JSON);
     Dt_t *root = wp->root ? wp->root : wp->shp->var_base;
 
     if (*name != '.' || vname[strlen(vname) - 1] == ']') mode = NV_ARRAY;
@@ -838,7 +838,7 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
     if (isarray && !special) {
         if (wp->indent > 0) {
             sfnputc(wp->out, '\t', wp->indent);
-            if (json && !(wp->flags & NV_JSON_LAST)) {
+            if (json && !nv_isflag(wp->flags, NV_JSON_LAST)) {
                 sfwrite(wp->out, "],\n", 3);
             } else {
                 sfwrite(wp->out, json ? "]\n" : ")\n", 2);
@@ -860,8 +860,8 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
     Namarr_t *ap;
     Namval_t *np, *tp;
     size_t m, l;
-    bool json = (wp->flags & NV_JSON);
-    bool array_parent = (wp->flags & NV_ARRAY);
+    bool json = nv_isflag(wp->flags, NV_JSON);
+    bool array_parent = nv_isflag(wp->flags, NV_ARRAY);
     char endchar = json ? '}' : ')';
 
     wp->flags &= ~NV_ARRAY;
@@ -972,7 +972,7 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
                         wp->flags &= ~NV_COMVAR;
                     }
                 }
-                if ((wp->flags & NV_JSON) &&
+                if (nv_isflag(wp->flags, NV_JSON) &&
                     (!argv[1] || strlen(argv[1]) < m + n || strncmp(argv[1], arg, m + n - 1))) {
                     wp->flags |= NV_JSON_LAST;
                 }

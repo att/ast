@@ -372,8 +372,8 @@ struct Namval {
 #define NV_JSON NV_TAGGED      // for json formatting
 #define NV_JSON_LAST NV_TABLE  // last for json formatting
 #else
-#define NV_JSON NV_INVALID
-#define NV_JSON_LAST NV_INVALID
+#define NV_JSON 0
+#define NV_JSON_LAST 0
 #endif  // SUPPORT_JSON
 
 // These are for use with nodes which are not name-values.
@@ -439,6 +439,7 @@ static inline void nv_isvalid(const nvflag_t nvflag) {
 static inline bool nv_isflag(const nvflag_t nvflags, const nvflag_t mask) {
     nv_isvalid(nvflags);
     nv_isvalid(mask);
+    if (!mask) return false;
     return (nvflags & mask) == mask;
 }
 
