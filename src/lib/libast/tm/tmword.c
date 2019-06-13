@@ -28,49 +28,52 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <stdbool.h>
 
-/*
- * match s against t ignoring case and .'s
- *
- * suf is an n element table of suffixes that may trail s
- * if all isalpha() chars in s match then 1 is returned
- * and if e is non-null it will point to the first unmatched
- * char in s, otherwise 0 is returned
- */
+//
+// Match s against t ignoring case and .'s.
+//
+// suf is an n element table of suffixes that may trail s
+// if all isalpha() chars in s match then true is returned
+// and if e is non-null it will point to the first unmatched
+// char in s, otherwise false is returned
+//
+bool tmword(const char *s, char **e, const char *t, char **suf, int n) {
+    if (!*s || !*t) return false;
 
-int tmword(const char *s, char **e, const char *t, char **suf, int n) {
+    const char *b = s;
     int c;
-    const char *b;
 
-    if (*s && *t) {
+    while (*s) {
+        c = *s;
+        if (c != '.') {
+            if (!isalpha(c) || (c != *t && (islower(c) ? toupper(c) : tolower(c)) != *t)) break;
+            t++;
+        }
+        s++;
+    }
+
+    if (!isalpha(c)) {
+        if (c == '_') s++;
+        if (e) *e = (char *)s;
+        return s > b;
+    }
+
+    if (!*t && s > (b + 1)) {
         b = s;
-        while ((c = *s++)) {
-            if (c != '.') {
-                if (!isalpha(c) || (c != *t && (islower(c) ? toupper(c) : tolower(c)) != *t)) break;
+        while (n-- && *suf) {
+            t = *suf++;
+            s = b;
+            while (isalpha(c = *s++) && (c == *t || (islower(c) ? toupper(c) : tolower(c)) == *t)) {
                 t++;
             }
-        }
-        s--;
-        if (!isalpha(c)) {
-            if (c == '_') s++;
-            if (e) *e = (char *)s;
-            return s > b;
-        }
-        if (!*t && s > (b + 1)) {
-            b = s;
-            while (n-- && (t = *suf++)) {
-                s = b;
-                while (isalpha(c = *s++) &&
-                       (c == *t || (islower(c) ? toupper(c) : tolower(c)) == *t)) {
-                    t++;
-                }
-                if (!*t && !isalpha(c)) {
-                    if (c != '_') s--;
-                    if (e) *e = (char *)s;
-                    return 1;
-                }
+            if (!*t && !isalpha(c)) {
+                if (c != '_') s--;
+                if (e) *e = (char *)s;
+                return true;
             }
         }
     }
-    return 0;
+
+    return false;
 }

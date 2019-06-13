@@ -28,6 +28,8 @@
 #ifndef _TM_H
 #define _TM_H 1
 
+#include <stdbool.h>
+
 #include "ast.h"
 #include "times.h"
 
@@ -162,7 +164,7 @@ extern int tmsleep(time_t, time_t);
 extern time_t tmtime(Tm_t *, int);
 extern Tm_zone_t *tmtype(const char *, char **);
 extern int tmweek(Tm_t *, int, int, int);
-extern int tmword(const char *, char **, const char *, char **, int);
+extern bool tmword(const char *, char **, const char *, char **, int);
 extern Tm_zone_t *tmzone(const char *, char **, const char *, int *);
 
 #endif  // _TM_H
