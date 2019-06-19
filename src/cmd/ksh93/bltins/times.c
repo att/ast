@@ -3,10 +3,8 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <errno.h>
-#include <math.h>
 #include <string.h>
-#include <sys/times.h>
+#include <sys/time.h>
 
 #include "builtins.h"
 #include "defs.h"
@@ -15,8 +13,71 @@
 #include "sfio.h"
 #include "shcmd.h"
 
+// Print user and system mode CPU times.
+static_fn void print_times(struct timeval utime, struct timeval stime) {
+    int ut_min = utime.tv_sec / 60;
+    int ut_sec = utime.tv_sec % 60;
+    int ut_ms = utime.tv_usec / 1000;
+    int st_min = stime.tv_sec / 60;
+    int st_sec = stime.tv_sec % 60;
+    int st_ms = stime.tv_usec / 1000;
+    sfprintf(sfstdout, "%dm%d.%03ds %dm%d.%03ds\n", ut_min, ut_sec, ut_ms, st_min, st_sec, st_ms);
+}
+
+#if _lib_getrusage
+
+// Use getrusage() rather than times() since the former typically has higher resolution.
+#include <sys/resource.h>
+
+// Print user and system mode CPU times for both the shell and its child processes.
+static_fn void print_cpu_times(Shell_t *shp) {
+    UNUSED(shp);
+    struct rusage usage;
+
+    // Print the time (user & system) consumed by the shell.
+    getrusage(RUSAGE_SELF, &usage);
+    print_times(usage.ru_utime, usage.ru_stime);
+    // Print the time (user & system) consumed by the child processes of the shell.
+    getrusage(RUSAGE_CHILDREN, &usage);
+    print_times(usage.ru_utime, usage.ru_stime);
+}
+
+#else  // _lib_getrusage
+
+// Use times() since getrusage() isn't available. Note that it typically has a lower resolution
+// which is why we prefer getrusage().
+#include <sys/times.h>
+
+// Print user and system mode CPU times for both the shell and its child processes.
+static_fn void print_cpu_times(Shell_t *shp) {
+    struct tms cpu_times;
+    struct timeval utime, stime;
+    double dtime;
+
+    times(&cpu_times);
+
+    // Print the time (user & system) consumed by the shell.
+    dtime = (double)cpu_times.tms_utime / shp->gd->lim.clk_tck;
+    utime.tv_sec = dtime / 60;
+    utime.tv_usec = 1000000 * (dtime - utime.tv_sec);
+    dtime = (double)cpu_times.tms_stime / shp->gd->lim.clk_tck;
+    stime.tv_sec = dtime / 60;
+    stime.tv_usec = 1000000 * (dtime - utime.tv_sec);
+    print_times(utime, stime);
+
+    // Print the time (user & system) consumed by the child processes of the shell.
+    dtime = (double)cpu_times.tms_cutime / shp->gd->lim.clk_tck;
+    utime.tv_sec = dtime / 60;
+    utime.tv_usec = 1000000 * (dtime - utime.tv_sec);
+    dtime = (double)cpu_times.tms_cstime / shp->gd->lim.clk_tck;
+    stime.tv_sec = dtime / 60;
+    stime.tv_usec = 1000000 * (dtime - utime.tv_sec);
+    print_times(utime, stime);
+}
+
+#endif  // _lib_getrusage
+
 int b_times(int argc, char *argv[], Shbltin_t *context) {
-    Shell_t *shp = context->shp;
     const char *cmd = argv[0];
 
     while ((argc = optget(argv, sh_opttimes))) {
@@ -44,31 +105,6 @@ int b_times(int argc, char *argv[], Shbltin_t *context) {
         __builtin_unreachable();
     }
 
-    struct tms cpu_times;
-    clock_t rv = times(&cpu_times);
-    if (rv == (clock_t)-1) {
-        errormsg(SH_DICT, ERROR_usage(2), "times() function unexpectedly failed: errno %d %s",
-                 errno, strerror(errno));
-        __builtin_unreachable();
-    }
-
-    double utime, stime, utime_min, utime_sec, stime_min, stime_sec;
-
-    utime = (double)cpu_times.tms_utime / shp->gd->lim.clk_tck;
-    utime_min = floor(utime / 60);
-    utime_sec = utime - utime_min;
-    stime = (double)cpu_times.tms_stime / shp->gd->lim.clk_tck;
-    stime_min = floor(stime / 60);
-    stime_sec = stime - stime_min;
-    sfprintf(sfstdout, "%dm%.2fs %dm%.2fs\n", (int)utime_min, utime_sec, (int)stime_min, stime_sec);
-
-    utime = (double)cpu_times.tms_cutime / shp->gd->lim.clk_tck;
-    utime_min = floor(utime / 60);
-    utime_sec = utime - utime_min;
-    stime = (double)cpu_times.tms_cstime / shp->gd->lim.clk_tck;
-    stime_min = floor(stime / 60);
-    stime_sec = stime - stime_min;
-    sfprintf(sfstdout, "%dm%.2fs %dm%.2fs\n", (int)utime_min, utime_sec, (int)stime_min, stime_sec);
-
+    print_cpu_times(context->shp);
     return 0;
 }

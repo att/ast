@@ -187,6 +187,6 @@ const char e_prohibited[] = "login setuid/setgid shells prohibited";
 const char hist_fname[] = "/.sh_history";
 const char e_dot[] = ".";
 const char e_envmarker[] = "A__z";
-const char e_timeformat[] = "\nreal\t%2lR\nuser\t%2lU\nsys\t%2lS";
+const char e_timeformat[] = "\nreal\t%3lR\nuser\t%3lU\nsys\t%3lS";
 const char e_dict[] = "libshell";
 const char e_funload[] = "function, built-in or type definition for %s not found in %s";

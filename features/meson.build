@@ -83,6 +83,10 @@ if feature_data.get('_lib_lchmod', 0) == 0
     endif
 endif
 
+feature_data.set10('_lib_getrusage',
+    cc.has_function('getrusage',
+        prefix: '\n'.join(['#include <sys/resource.h>', '#include <sys/time.h>']),
+        args: feature_test_args))
 feature_data.set10('_lib_sigqueue',
     cc.has_function('sigqueue', prefix: '#include <signal.h>', args: feature_test_args))
 # TODO: Enable iswprint() detection when we understand why doing so causes the
