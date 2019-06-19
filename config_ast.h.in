@@ -108,6 +108,7 @@
 #mesondefine _lib_ftruncate
 #mesondefine _lib_ftruncate64
 #mesondefine _lib_getexecname
+#mesondefine _lib_getrusage
 #mesondefine _lib_gettimeofday
 #mesondefine _lib_iswalnum
 #mesondefine _lib_iswprint
