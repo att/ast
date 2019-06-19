@@ -102,15 +102,6 @@ do
   fi
 done
 
-%verifyscript
-echo -n "Looking for ksh in /etc/shells... "
-if ! grep '^/bin/ksh$' /etc/shells > /dev/null; then
-    echo "missing"
-    echo "ksh missing from /etc/shells" >&2
-else
-    echo "found"
-fi
-
 # ksh-20120801-250 did not use alternatives, so while upgrading ensure that
 # alternatives are set correctly
 %triggerpostun -- ksh < 1:2020.0.0-0.1
