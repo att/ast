@@ -5,3 +5,4 @@ times produces expected output
 times sleep 1 produces syntax error
 time CPU bound pipeline produces expected output
 times produces expected non-zero output
+time %3P produces correct output

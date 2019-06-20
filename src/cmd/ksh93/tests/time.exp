@@ -59,15 +59,30 @@ expect -re "\r\nreal\[\t \]*$one_sec_re\r\nuser$one_sec_re\r\nsys$zero_sec_re\r\
 expect_prompt
 
 # ==========
-# Start a CPU bound job in the background to force child user time to be non-zero.
+# Verify `times` output accurately reflects CPU consumption by child processes.
+#
+# Start a CPU bound job in the background to force child user time to be non-zero. Note that we
+# expect system mode times to be less than one but user mode time for the shell and child processes
+# should be between one and two.
 log_test_entry
 send "$ksh -c 'SECONDS=0; while (( SECONDS < 1.5 )); do true; done'\r"
 expect_prompt
 
 send "times\r"
-# Note that we expect system mode times to be less than one but user mode time for the shell and
-# child processes should be between one and two.
 expect -re "\r\n$one_sec_re $zero_sec_re\r\n$one_sec_re $zero_sec_re\r\n" {
     puts "times produces expected non-zero output"
 }
 expect_prompt
+
+# ==========
+# Does `TIMEFORMAT=%3P` work and produce reasonable output?
+# Regression test; see https://github.com/att/ast/issues/1333.
+# This also verifies that a single `%` at the end of the format is the same as `%%`. Note that the
+# percentage will be close to 99% on most systems. But on a heavily loaded system or a virtual
+# machine that may not be true. But even there we would normally expect at least 90%.
+log_test_entry
+send "$ksh -c 'TIMEFORMAT=\"pct %3P%\"; "
+send "SECONDS=0; time while (( SECONDS < 0.5 )); do true; done;'\r"
+expect -re "pct 9\[0-9\].\[0-9\]\[0-9\]\[0-9\]%\r\n" {
+    puts "time %3P produces correct output"
+}
