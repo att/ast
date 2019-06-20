@@ -385,36 +385,6 @@ void nv_dirclose(void *dir) {
     free(dir);
 }
 
-static_fn void outtype(Namval_t *np, Namfun_t *fp, Sfio_t *out, const char *prefix) {
-    char *type = NULL;
-    Namval_t *tp = fp->type;
-
-    assert(fp->disc);
-    assert(fp->disc->typef);
-    if (!tp) tp = (*fp->disc->typef)(np, fp);
-    for (fp = fp->next; fp; fp = fp->next) {
-        if (fp->type || (fp->disc && fp->disc->typef && (*fp->disc->typef)(np, fp))) {
-            outtype(np, fp, out, prefix);
-            break;
-        }
-    }
-    if (prefix && *prefix == 't') {
-        type = "-T";
-    } else if (!prefix) {
-        type = "type";
-    }
-    if (type) {
-        char *cp = tp->nvname;
-        cp = strrchr(cp, '.');
-        if (cp) {
-            cp++;
-        } else {
-            cp = tp->nvname;
-        }
-        sfprintf(out, "%s %s ", type, cp);
-    }
-}
-
 //
 // Print the attributes of name value pair give by <np>.
 //
