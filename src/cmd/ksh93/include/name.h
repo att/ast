@@ -649,6 +649,8 @@ struct argnod;
 // An array is associative if it has a function pointer else it is a simple indexed array.
 #define is_associative(ap) ((ap)->fun)
 
+struct nvdir;
+
 extern int array_maxindex(Namval_t *);
 extern int array_isempty(Namval_t *);
 extern char *nv_endsubscript(Namval_t *, char *, nvflag_t, void *);
@@ -668,9 +670,9 @@ extern void nv_unref(Namval_t *);
 extern bool nv_hasget(Namval_t *);
 void clone_all_disc(Namval_t *, Namval_t *, nvflag_t);
 extern Namfun_t *nv_clone_disc(Namfun_t *, nvflag_t);
-extern void *nv_diropen(Namval_t *, const char *, void *);
+extern struct nvdir *nv_diropen(Namval_t *, const char *, void *);
 extern char *nv_dirnext(void *);
-extern void nv_dirclose(void *);
+extern void nv_dirclose(struct nvdir *);
 extern char *nv_getvtree(Namval_t *, Namfun_t *);
 extern void nv_attribute(Namval_t *, Sfio_t *, char *, int);
 extern Namval_t *nv_bfsearch(const char *, Dt_t *, Namval_t **, char **);

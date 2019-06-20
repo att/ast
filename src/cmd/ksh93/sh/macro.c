@@ -93,7 +93,7 @@ struct _mac_ {
     char macsub;              // set to 1 when running mac_substitute
     char maccase;             // set to 1 when expanding case pattern
     int dotdot;               // set for .. in subscript
-    void *nvwalk;             // for name space walking
+    struct nvdir *nvwalk;     // for name space walking
 };
 
 #undef ESCAPE

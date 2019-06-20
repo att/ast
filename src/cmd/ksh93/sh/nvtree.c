@@ -153,7 +153,7 @@ static_fn Namfun_t *nextdisc(Namval_t *np) {
     return NULL;
 }
 
-void *nv_diropen(Namval_t *np, const char *name, void *context) {
+struct nvdir *nv_diropen(Namval_t *np, const char *name, void *context) {
     Shell_t *shp = context;
     const char *last;
     char *next;
@@ -379,10 +379,9 @@ char *nv_dirnext(void *dir) {
     return NULL;
 }
 
-void nv_dirclose(void *dir) {
-    struct nvdir *dp = (struct nvdir *)dir;
+void nv_dirclose(struct nvdir *dp) {
     if (dp->prev) nv_dirclose(dp->prev);
-    free(dir);
+    free(dp);
 }
 
 //
@@ -995,7 +994,7 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, nvflag_t flags) {
     struct argnod *arglist = NULL;
     char *name, *cp, **argv;
     char *subscript = NULL;
-    void *dir;
+    struct nvdir *dir;
     int n = 0;
     bool noscope = nv_isflag(flags, NV_NOSCOPE);
     Namarr_t *arp = nv_arrayptr(np);
@@ -1067,7 +1066,7 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, nvflag_t flags) {
             mq = nv_open(stkptr(shp->stk, 0), last_root, NV_VARNAME | NV_NOFAIL);
             shp->var_tree = dp;
             if (nq && mq) {
-                struct nvdir *dp = (struct nvdir *)dir;
+                struct nvdir *dp = dir;
                 Namval_t *nvenv = mq->nvenv;
                 // Related to the TODO above this condition appears to only ever be true if
                 // flags&NV_MOVE is true.
