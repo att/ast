@@ -14,10 +14,17 @@ expect -re "\r\nuser$zero_sec_re\r\nsys$zero_sec_re\r\n" {
 expect_prompt
 
 # ==========
+# Ensure we get a useful `time` output. We don't want whatever is the default format. We do this
+# after the previous test since both user and system mode CPU times should be close to zero at that
+# point. That will not be true after this step so combining the two values is better.
+send "TIMEFORMAT='\nreal %3lR\ncpu %3lC'\r"
+expect_prompt
+
+# ==========
 # Timing a simple sleep command works.
 log_test_entry
 send "time sleep 1\r"
-expect -re "\r\nreal\[\t \]*0m1\.00\[0-9\]s\r\nuser$zero_sec_re\r\nsys$zero_sec_re\r\n" {
+expect -re "\r\nreal\[\t \]*0m1\.00\[0-9\]s\r\ncpu$zero_sec_re\r\n" {
     puts "time sleep 1 produces expected output"
 }
 expect_prompt
@@ -26,7 +33,7 @@ expect_prompt
 # Timing a more complex pipeline works.
 log_test_entry
 send "time { sleep 0.05 | sleep 0.05; }\r"
-expect -re "\r\nreal\[\t \]*0m0\.0\[0-9\]\[0-9\]s\r\nuser$zero_sec_re\r\nsys$zero_sec_re\r\n" {
+expect -re "\r\nreal\[\t \]*0m0\.0\[0-9\]\[0-9\]s\r\ncpu$zero_sec_re\r\n" {
     puts "time sleep 0.05 pipeline produces expected output"
 }
 expect_prompt
@@ -53,7 +60,7 @@ expect_prompt
 # Timing a CPU bound statement produces non-zero times.
 log_test_entry
 send "time { SECONDS=0; while (( SECONDS < 1.5 )); do true; done; }\r"
-expect -re "\r\nreal\[\t \]*$one_sec_re\r\nuser$one_sec_re\r\nsys$zero_sec_re\r\n" {
+expect -re "\r\nreal\[\t \]*$one_sec_re\r\ncpu$one_sec_re\r\n" {
     puts "time CPU bound pipeline produces expected output"
 }
 expect_prompt

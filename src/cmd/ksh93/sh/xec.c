@@ -276,6 +276,7 @@ static_fn void l_time(Sfio_t *outfile, struct timeval *tv, int precision) {
 static_fn void p_time(Shell_t *shp, Sfio_t *out, const char *format, struct timeval tm[3]) {
     int c, n, offset = stktell(shp->stk);
     const char *first;
+    struct timeval tv_cpu_sum;
     struct timeval *tvp;
     Stk_t *stkp = shp->stk;
 
@@ -326,6 +327,9 @@ static_fn void p_time(Shell_t *shp, Sfio_t *out, const char *format, struct time
             tvp = &tm[TM_USR_IDX];
         } else if (c == 'S') {
             tvp = &tm[TM_SYS_IDX];
+        } else if (c == 'C') {
+            timeradd(&tm[TM_USR_IDX], &tm[TM_SYS_IDX], &tv_cpu_sum);
+            tvp = &tv_cpu_sum;
         } else {
             errormsg(SH_DICT, ERROR_exit(0), e_badtformat, c);
             continue;

@@ -2273,8 +2273,11 @@ The number of CPU seconds spent in user mode.
 .B %[\fIp\fP][l]S
 The number of CPU seconds spent in system mode.
 .TP
+.B %[\fIp\fP][l]C
+The total number of CPU seconds; i.e., the sum of the time spent in user plus system mode.
+.TP
 .B %P
-The CPU percentage, computed as (U + S) / R.
+The CPU percentage (i.e., CPU utilization), computed as C / R.
 .PD
 .RE
 .IP
