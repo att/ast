@@ -38,6 +38,7 @@ all_tests = [
 tests_to_skip = [
     ['cygwin', 'signal'],
     ['cygwin', 'jobs.exp'],
+    ['cygwin', 'time.exp'],
     ['darwin', 'jobs.exp'],
     ['openbsd', 'jobs.exp'],
     ['sunos', 'vi.exp'],
