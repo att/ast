@@ -60,7 +60,7 @@ fi
 #
 # A test may need to alter its behavior based on the OS we're running on.
 #
-export OS_NAME=$(uname -s)
+export OS_NAME=$(uname -s | tr '[A-Z]' '[a-z]')
 
 # TODO: Enable the `io` test on Travis macOS once we understand why it dies from an abort().
 # I'm not seeing that failure happen on either of my macOS 10.12 or 10.13 systems.

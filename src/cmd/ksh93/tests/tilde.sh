@@ -29,7 +29,7 @@ function home # id
     typeset user=$1
 
     # On Cygwin on MS Windows we can't count on the Administrator account home dir existing.
-    if [[ $OS_NAME == CYGWIN* && $user == Administrator ]]
+    if [[ $OS_NAME == cygwin* && $user == Administrator ]]
     then
         print .
         return

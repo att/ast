@@ -615,7 +615,7 @@ then
         actual=$(print -- $(( sqrt(-1.0) )))
         [[ $actual == ?(-)nan ]]|| log_error 'sqrt(-1.0) != NaN' "?(-)nan" "$actual"
     fi
-    if [[ $OS_NAME != SunOS ]]
+    if [[ $OS_NAME != sunos ]]
     then
         # SunOS returns "nan" which is not unreasonable but not what every other platform returns.
         (( pow(1.0,Inf) == 1.0 )) || log_error 'pow(1.0,Inf) != 1.0' "1.0" "$(( pow(1.0,Inf) ))"

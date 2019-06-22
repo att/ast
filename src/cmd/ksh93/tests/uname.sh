@@ -1,6 +1,6 @@
 # Tests for `uname` builtin
 
-if [[ $OS_NAME != "Linux" ]]
+if [[ $OS_NAME != linux ]]
 then
     log_info "Output of this command varies on different operating systems"
     log_info "These tests are run only on Linux"

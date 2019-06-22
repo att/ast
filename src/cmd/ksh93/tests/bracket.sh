@@ -99,7 +99,7 @@ then
 fi
 
 chmod 000 $file
-if [[ $OS_NAME == CYGWIN* ]]
+if [[ $OS_NAME == cygwin* ]]
 then
     log_info 'skipping [[ -r $file ]] test on Cygwin'
 else
@@ -114,7 +114,7 @@ then
     log_error "-r: $file should be owned by me"
 fi
 
-if [[ $OS_NAME == CYGWIN* ]]
+if [[ $OS_NAME == cygwin* ]]
 then
     log_info 'skipping [[ -w $file ]] test on Cygwin'
 else
@@ -124,7 +124,7 @@ else
     fi
 fi
 
-if [[ $OS_NAME == CYGWIN* ]]
+if [[ $OS_NAME == cygwin* ]]
 then
     log_info 'skipping [[ -x $file ]] test on Cygwin'
 else
@@ -134,7 +134,7 @@ else
     fi
 fi
 
-if [[ $OS_NAME == CYGWIN* ]]
+if [[ $OS_NAME == cygwin* ]]
 then
     log_info 'skipping [[ -w $file || -r $file ]] test on Cygwin'
 else

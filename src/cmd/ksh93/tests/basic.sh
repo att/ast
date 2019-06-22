@@ -467,7 +467,7 @@ fi
 # break these tests. So skip this test on Cygwin.
 #
 # TODO: Remove this restriction when support for reading from regular pipes is fixed.
-if [[ $OS_NAME == CYGWIN* ]]
+if [[ $OS_NAME == cygwin* ]]
 then
     log_warning "skipping 'read' tests on Cygwin"
 else
@@ -493,7 +493,7 @@ else
     wait $pid || log_error "process substitution hangs"
     print -u 9 exit
     wait
-fi  # if [[ $OS_NAME == CYGWIN* ]]
+fi  # if [[ $OS_NAME == cygwin* ]]
 
 # TODO: Figure out why `empty_fifos` breaks the "set -o pipefail" test below.
 # Specifically, why does doing a `read -u8` or `read -u9` cause a problem.

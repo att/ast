@@ -271,13 +271,13 @@ then
     # which break these tests. So skip this test on Cygwin.
     #
     # TODO: Remove this restriction when support for reading from regular pipes is fixed.
-    if [[ $OS_NAME == CYGWIN* ]]
+    if [[ $OS_NAME == cygwin* ]]
     then
 	log_warning "skipping 'read' tests on Cygwin"
     else
 	cat $TEST_DIR/seek | read -r <# *WWW*
 	[[ $REPLY == *WWWWW* ]] || log_error '<# not working for pipes'
-    fi  # if [[ $OS_NAME == CYGWIN* ]]
+    fi  # if [[ $OS_NAME == cygwin* ]]
     { < $TEST_DIR/seek <# ((2358336120)) ;} || log_error 'long seek not working'
 else
     log_error "$TEST_DIR/seek: cannot open for reading"
@@ -403,7 +403,7 @@ fi
 # break these tests. So skip this test on Cygwin.
 #
 # TODO: Remove this restriction when support for reading from regular pipes is fixed.
-if [[ $OS_NAME == CYGWIN* ]]
+if [[ $OS_NAME == cygwin* ]]
 then
     log_warning "skipping 'read' tests on Cygwin"
 else
@@ -496,7 +496,7 @@ abcdefg
 	    done
 	done
     done
-fi  # if [[ $OS_NAME == CYGWIN* ]]
+fi  # if [[ $OS_NAME == cygwin* ]]
 
 export LC_ALL=en_US.UTF-8
 typeset -a c=( '' 'A' $'\303\274' $'\342\202\254' )
@@ -571,13 +571,13 @@ $SHELL -c "sed  -e 's/there //' $TEST_DIR/foobar  >; $TEST_DIR/foobar"
 
 # Cygwin lets you open a file for writing even though it doesn't have write permission.
 # So skip this test on Cygwin.
-if [[ $OS_NAME == CYGWIN* ]]
+if [[ $OS_NAME == cygwin* ]]
 then
     log_warning "skipping open for writing of read-only file on Cygwin"
 else
     chmod -w $TEST_DIR/foobar
     (: >; $TEST_DIR/foobar) 2> /dev/null && '>; should fail for a file without write permission'
-fi  # if [[ $OS_NAME == CYGWIN* ]]
+fi  # if [[ $OS_NAME == cygwin* ]]
 
 rm -f "$TEST_DIR/junk"
 for (( i=1; i < 50; i++ ))
@@ -650,7 +650,7 @@ actual=$( $SHELL -c 'while read foo; do echo "$foo"; done' <io_fifo_poll )
 # https://github.com/att/ast/issues/1336
 # Use the /proc psuedo filesystem on Linux as a convenient way to force a write I/O error.
 # TODO: Try to find a mechanism for forcing an I/O error on other platforms.
-if [[ $OS_NAME == Linux ]]
+if [[ $OS_NAME == linux ]]
 then
     actual=$($SHELL -c 'echo > /proc/self/uid_map; echo okay' 2>&1)
     expect='write.*failed.*okay'

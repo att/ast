@@ -91,7 +91,7 @@ then
 fi
 
 # TODO: On FreeBSD 11.1 it's `wc` command gives `LANG` higher priority than `LC_ALL`.
-if [[ $OS_NAME != FreeBSD ]]
+if [[ $OS_NAME != freebsd ]]
 then
 
 # The following bytes are the UTF-8 encoding of "\u[20ac]", twice.
@@ -127,7 +127,7 @@ actual=$*
 expect="6 2 6"
 [[ $actual == $expect ]] || log_error "builtin wc LC_ALL default failed" "$expect" "$actual"
 
-fi  # $OS_NAME != FreeBSD
+fi  # $OS_NAME != freebsd
 
 # multibyte char straddling buffer boundary
 
@@ -272,9 +272,9 @@ then
     for i in 9 b c d 20 1680 2000 2001 2002 2003 2004 2005 2006 2008 2009 200a 2028 2029 3000 # 1803 2007 202f  205f
     do
         # TODO: Remove this when char U+1680 is no longer broken on FreeBSD 11.
-        [[ $OS_NAME == FreeBSD && $i == 1680 ]] && continue
+        [[ $OS_NAME == freebsd && $i == 1680 ]] && continue
         # TODO: Remove this when char U+1680 is no longer broken on Solaris.
-        [[ $OS_NAME == SunOS && $i == 1680 ]] && continue
+        [[ $OS_NAME == sunos && $i == 1680 ]] && continue
 
         if ! eval "[[ \$'\\u[$i]' == [[:space:]] ]]"
         then

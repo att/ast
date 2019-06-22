@@ -1091,7 +1091,7 @@ set -- $(bar)
 
 # Note: When run under ASAN the stack needs to be larger than 16384KB. Setting it to 32768 works
 # for me on macOS. Otherwise it fails when the stack overflows.
-if [[ $OS_NAME == CYGWIN* ]]
+if [[ $OS_NAME == cygwin* ]]
 then
     # At the moment this causes the subshell to die with a memory fault (presumably a SIGSEGV but
     # that is unclear).

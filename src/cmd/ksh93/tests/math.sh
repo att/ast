@@ -242,7 +242,7 @@ actual=$(( ceil(0.1) ))
 
 # ==========
 # copysign
-if [[ $OS_NAME == CYGWIN* ]]
+if [[ $OS_NAME == cygwin* ]]
 then
     log_warning 'copysignl() function is broken  on Cygwin'
 else

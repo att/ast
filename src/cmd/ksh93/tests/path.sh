@@ -276,7 +276,7 @@ exp=126
 #
 # TODO: Figure out if there is some way to make ksh behave on Cygwin like it does on real UNIX/POSIX
 # compliant systems for these edge cases without greatly complicating the code.
-if [[ $OS_NAME != CYGWIN* ]]
+if [[ $OS_NAME != cygwin* ]]
 then
 
 : > $scr
@@ -322,7 +322,7 @@ got=$($SHELL -c "command $scr; print \$?" 2>/dev/null)
 [[ "$got" == "$exp" ]] ||
     log_error "\$SHELL -c of command of unreadable non-empty script should fail" "$exp" "$got"
 
-fi  # [[ $OS_NAME != CYGWIN* ]]
+fi  # [[ $OS_NAME != cygwin* ]]
 
 # whence -a bug fix
 cd "$TEST_DIR"

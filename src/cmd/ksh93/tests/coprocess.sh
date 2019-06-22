@@ -19,7 +19,7 @@
 ########################################################################
 # Test the behavior of co-processes
 
-if [[ $OS_NAME == CYGWIN* ]]
+if [[ $OS_NAME == cygwin* ]]
 then
     log_warning 'coprocess tests disabled on Cygwin - enable at the risk of wedging your system'
     exit 0

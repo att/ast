@@ -359,7 +359,7 @@ cd ..
 [[ $(pwd) == /usr ]] || log_error 'cd /usr/bin;cd ..;pwd is not /usr'
 
 cd "$TEST_DIR"
-if [[ $OS_NAME == CYGWIN* ]]
+if [[ $OS_NAME == cygwin* ]]
 then
     # This test fails on Cygwin due to underlying MS Windows behavior that makes it impossible for
     # this to work without special support for Cygwin (and perhaps not even then).
@@ -540,7 +540,7 @@ print ". $TEST_DIR/evalbug" >$TEST_DIR/envfile
 [[ $(ENV=$TEST_DIR/envfile $SHELL -i -c : 2> /dev/null) == ok ]] || log_error 'eval inside dot script called from profile file not working'
 
 # test cd to a directory that doesn't have execute permission
-if [[ $OS_NAME == CYGWIN* ]]
+if [[ $OS_NAME == cygwin* ]]
 then
     log_warning 'skipping test of cd to dir without execute permission on Cygwin'
 else
