@@ -645,3 +645,14 @@ mkfifo io_fifo_poll
 expect=$'abc\nABC'
 actual=$( $SHELL -c 'while read foo; do echo "$foo"; done' <io_fifo_poll )
 [[ "$actual" = "$expect" ]] || log_error "fifo I/O failed" "$expect" "$actual"
+
+# ==========
+# https://github.com/att/ast/issues/1336
+# Use the /proc psuedo filesystem on Linux as a convenient way to force a write I/O error.
+# TODO: Try to find a mechanism for forcing an I/O error on other platforms.
+if [[ $OS_NAME == Linux ]]
+then
+    actual=$($SHELL -c 'echo > /proc/self/uid_map; echo okay' 2>&1)
+    expect='write.*failed.*okay'
+    [[ "$actual" =~ $expect ]] || log_error "I/O failure not handled" "$expect" "$actual"
+fi

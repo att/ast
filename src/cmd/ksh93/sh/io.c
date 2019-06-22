@@ -253,7 +253,7 @@ void sh_ioinit(Shell_t *shp) {
 //
 static_fn int outexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
     Shell_t *shp = ((struct Iodisc *)handle)->sh;
-    static int active = 0;
+    static bool active = false;
 
     if (type == SF_DPOP || type == SF_FINAL) {
         free(handle);
@@ -271,26 +271,17 @@ static_fn int outexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
             }
             default: {
                 if (active) return -1;
-#if 0
-                int mode = shp->jmplist->mode;
-#endif
                 int save = errno;
-                active = 1;
+                int mode = shp->jmplist->mode;
+                active = true;
                 shp->jmplist->mode = 0;
                 sfpurge(iop);
                 sfpool(iop, NULL, SF_WRITE);
                 errno = save;
                 errormsg(SH_DICT, ERROR_system(1), e_badwrite, sffileno(iop));
-                __builtin_unreachable();
-                // See issue #846 for why these are commented out.
-                // TODO: Figure out if the preceding should be `ERROR_system(0)` so that it
-                // returns control so these statements are executed or if these should just
-                // be removed.
-#if 0
-                active = 0;
+                active = false;
                 shp->jmplist->mode = mode;
                 sh_exit(shp, 1);
-#endif
             }
         }
     }
