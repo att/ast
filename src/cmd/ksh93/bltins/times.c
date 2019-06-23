@@ -30,8 +30,7 @@ static_fn void print_times(struct timeval utime, struct timeval stime) {
 #include <sys/resource.h>
 
 // Print user and system mode CPU times for both the shell and its child processes.
-static_fn void print_cpu_times(Shell_t *shp) {
-    UNUSED(shp);
+static_fn void print_cpu_times() {
     struct rusage usage;
 
     // Print the time (user & system) consumed by the shell.
@@ -49,27 +48,27 @@ static_fn void print_cpu_times(Shell_t *shp) {
 #include <sys/times.h>
 
 // Print user and system mode CPU times for both the shell and its child processes.
-static_fn void print_cpu_times(Shell_t *shp) {
-    struct tms cpu_times;
+static_fn void print_cpu_times() {
     struct timeval utime, stime;
     double dtime;
-
+    long clk_tck = sysconf(_SC_CLK_TCK);
+    struct tms cpu_times;
     times(&cpu_times);
 
     // Print the time (user & system) consumed by the shell.
-    dtime = (double)cpu_times.tms_utime / shp->gd->lim.clk_tck;
+    dtime = (double)cpu_times.tms_utime / clk_tck;
     utime.tv_sec = dtime / 60;
     utime.tv_usec = 1000000 * (dtime - utime.tv_sec);
-    dtime = (double)cpu_times.tms_stime / shp->gd->lim.clk_tck;
+    dtime = (double)cpu_times.tms_stime / clk_tck;
     stime.tv_sec = dtime / 60;
     stime.tv_usec = 1000000 * (dtime - utime.tv_sec);
     print_times(utime, stime);
 
     // Print the time (user & system) consumed by the child processes of the shell.
-    dtime = (double)cpu_times.tms_cutime / shp->gd->lim.clk_tck;
+    dtime = (double)cpu_times.tms_cutime / clk_tck;
     utime.tv_sec = dtime / 60;
     utime.tv_usec = 1000000 * (dtime - utime.tv_sec);
-    dtime = (double)cpu_times.tms_cstime / shp->gd->lim.clk_tck;
+    dtime = (double)cpu_times.tms_cstime / clk_tck;
     stime.tv_sec = dtime / 60;
     stime.tv_usec = 1000000 * (dtime - utime.tv_sec);
     print_times(utime, stime);
@@ -78,6 +77,7 @@ static_fn void print_cpu_times(Shell_t *shp) {
 #endif  // _lib_getrusage
 
 int b_times(int argc, char *argv[], Shbltin_t *context) {
+    UNUSED(context);
     const char *cmd = argv[0];
 
     while ((argc = optget(argv, sh_opttimes))) {
@@ -105,6 +105,6 @@ int b_times(int argc, char *argv[], Shbltin_t *context) {
         __builtin_unreachable();
     }
 
-    print_cpu_times(context->shp);
+    print_cpu_times();
     return 0;
 }

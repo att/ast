@@ -1,11 +1,11 @@
 # ksh x.y.z (version TBD, this is a work in progress)
 
-This is meant to document changes since the AST code (including the `ksh`
-program) was open-sourced that will be in the next stable release based
-on the original AST code. The next stable version will be treated as a
-major release for several reasons. Not least of which is changing the
-build tool chain from the legacy Nmake system to Meson. Legacy changes
-can be found in the various `RELEASE` files.
+This documents changes since the AST code, which includes the `ksh` program,
+was moved to Github. That is, the ksh93v- source. The next stable version will
+be treated as a major release for several reasons. Not least of which is
+changing the build tool chain from the legacy Nmake system to Meson and
+replacing the AST Vmalloc subsystem with the platform Malloc subsystem. Legacy
+changes can be found in the various `RELEASE` files.
 
 Starting in June 2017 maintenance of the Korn shell (`ksh`) resumed with
 the merging of some fixes from Red Hat by Siteshwar Vashisht after he was
@@ -61,6 +61,8 @@ None at this time.
   build time by roughly an order of magnitude (issue #42).
 - The `times` command is now a builtin that conforms to POSIX rather than an
   alias for the `time` command (issue #16).
+- The `time` command now has millisecond resolution if the platform provides
+  `getrusage()` and its time values have millisecond or better resolution.
 
 ## Other significant changes
 
@@ -93,7 +95,7 @@ None at this time.
   `SHOPT_COMPLETE`, `SHOPT_BRACEPAT`, `SHOPT_RAWONLY`, `SHOPT_STATS,
   `SHOPT_OPTIMIZE`, `SHOPT_SUID_EXEC`, `SHOPT_FILESCAN`, `SHOPT_POLL,
   `SHOPT_AUDIT`, and `SHOPT_SYSRC`).
-- Unit tests can now be run under `valgrind` to help detect more bugs.
+- Unit tests can now be run under Valgrind and ASAN to help detect more bugs.
 - Any code not needed to build and run `ksh` has been removed from the master
   branch.
 - Fixes backported from OpenSuse (issue #377).

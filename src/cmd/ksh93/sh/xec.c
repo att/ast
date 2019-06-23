@@ -135,8 +135,7 @@ static_fn void fifo_check(void *handle) {
 // Use getrusage() rather than times() since the former typically has higher resolution.
 #include <sys/resource.h>
 
-static_fn void get_cpu_times(Shell_t *shp, struct timeval *tv_usr, struct timeval *tv_sys) {
-    UNUSED(shp);
+static_fn void get_cpu_times(struct timeval *tv_usr, struct timeval *tv_sys) {
     struct rusage usage_self, usage_child;
 
     getrusage(RUSAGE_SELF, &usage_self);
@@ -147,25 +146,25 @@ static_fn void get_cpu_times(Shell_t *shp, struct timeval *tv_usr, struct timeva
 
 #else  // _lib_getrusage
 
-static_fn void get_cpu_times(Shell_t *shp, struct timeval *tv_usr, struct timeval *tv_sys) {
-    struct tms cpu_times;
+static_fn void get_cpu_times(struct timeval *tv_usr, struct timeval *tv_sys) {
     struct timeval tv1, tv2;
     double dtime;
-
+    long clk_tck = sysconf(_SC_CLK_TCK);
+    struct tms cpu_times;
     times(&cpu_times);
 
-    dtime = (double)cpu_times.tms_utime / shp->gd->lim.clk_tck;
+    dtime = (double)cpu_times.tms_utime / clk_tck;
     tv1.tv_sec = dtime / 60;
     tv1.tv_usec = 1000000 * (dtime - tv1.tv_sec);
-    dtime = (double)cpu_times.tms_cutime / shp->gd->lim.clk_tck;
+    dtime = (double)cpu_times.tms_cutime / clk_tck;
     tv2.tv_sec = dtime / 60;
     tv2.tv_usec = 1000000 * (dtime - tv2.tv_sec);
     timeradd(&tv1, &tv2, tv_usr);
 
-    dtime = (double)cpu_times.tms_stime / shp->gd->lim.clk_tck;
+    dtime = (double)cpu_times.tms_stime / clk_tck;
     tv1.tv_sec = dtime / 60;
     tv1.tv_usec = 1000000 * (dtime - tv1.tv_sec);
-    dtime = (double)cpu_times.tms_cstime / shp->gd->lim.clk_tck;
+    dtime = (double)cpu_times.tms_cstime / clk_tck;
     tv2.tv_sec = dtime / 60;
     tv2.tv_usec = 1000000 * (dtime - tv2.tv_sec);
     timeradd(&tv1, &tv2, tv_sys);
@@ -2225,7 +2224,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 break;
             }
             gettimeofday(&tb, NULL);
-            get_cpu_times(shp, &before_usr, &before_sys);
+            get_cpu_times(&before_usr, &before_sys);
             if (t->par.partre) {
                 if (shp->subshell && shp->comsub == 1) sh_subfork();
                 long timer_on = sh_isstate(shp, SH_TIMING);
@@ -2235,7 +2234,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 if (!timer_on) sh_offstate(shp, SH_TIMING);
                 job.waitall = 0;
             }
-            get_cpu_times(shp, &after_usr, &after_sys);
+            get_cpu_times(&after_usr, &after_sys);
             gettimeofday(&ta, NULL);
             timersub(&ta, &tb, &tm[TM_REAL_IDX]);  // calculate elapsed real-time
             timersub(&after_usr, &before_usr, &tm[TM_USR_IDX]);

@@ -96,9 +96,6 @@ extern void bash_init(Shell_t *, int);
 #ifndef CHILD_MAX
 #define CHILD_MAX (1 * 1024)
 #endif
-#ifndef CLK_TCK
-#define CLK_TCK 60
-#endif  // CLK_TCK
 
 #ifndef environ
 extern char **environ;
@@ -1207,13 +1204,11 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
         shgd->euserid = geteuid();
         shgd->groupid = getgid();
         shgd->egroupid = getegid();
-        shgd->lim.clk_tck = sysconf(_SC_CLK_TCK);
         shgd->lim.arg_max = sysconf(_SC_ARG_MAX);
         shgd->lim.child_max = sysconf(_SC_CHILD_MAX);
         shgd->lim.ngroups_max = sysconf(_SC_NGROUPS_MAX);
         if (shgd->lim.arg_max <= 0) shgd->lim.arg_max = ARG_MAX;
         if (shgd->lim.child_max <= 0) shgd->lim.child_max = CHILD_MAX;
-        if (shgd->lim.clk_tck <= 0) shgd->lim.clk_tck = CLK_TCK;
         shgd->ed_context = ed_open(shp);
         error_info.exit = no_shell_context_sh_exit;
         error_info.id = path_basename(argv[0]);
