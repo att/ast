@@ -1086,6 +1086,7 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
     unsigned char buf[4 * (COLL_KEY_MAX + 1)];
     int ic;
     char mbc[COLL_KEY_MAX + 1];
+    Cchr_t *cc_keys = 0;
 
     if (!(e = regcomp_node(env, REX_CLASS, 1, 1, sizeof(Set_t)))) return 0;
     collate = complicated = elements = 0;
@@ -1314,7 +1315,7 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
         dt = lc_collate_data;
         if (ast.locale.serial != lc_collate_serial || !dt) {
             disc.key = offsetof(Cchr_t, key);
-            cc = calloc(1, elementsof(primary) * sizeof(Cchr_t));
+            cc_keys = cc = calloc(1, elementsof(primary) * sizeof(Cchr_t));
             if (cc && (dt = dtopen(&disc, Dtoset))) {
                 for (i = 0; i < elementsof(primary) - 1; i++, cc++) {
                     cc->nam[0] = primary[i];
@@ -1331,12 +1332,16 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                 return 0;
             }
         }
+
         if (dt) {
             drop(env->disc, e);
             ic = env->flags & REG_ICASE;
             if (ic) elements *= 2;
             e = regcomp_node(env, REX_COLL_CLASS, 1, 1, (elements + 3) * sizeof(Celt_t));
-            if (!e) return 0;
+            if (!e) {
+                free(cc_keys);
+                return 0;
+            }
             ce = (Celt_t *)e->re.data;
             e->re.collate.invert = neg;
             e->re.collate.elements = ce;
@@ -1410,7 +1415,9 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                         case 0:
                             goto error;
                         case ':':
-                            if (env->flags & REG_REGEXP) goto complicated_normal;
+                            if (env->flags & REG_REGEXP) {
+                                goto complicated_normal;
+                            }
                             if (inrange == 1) ce = regcomp_col(env, ce, ic, rp, rw, rc, NULL, 0, 0);
                             if (!(f = regclass((char *)env->cursor, (char **)&env->cursor))) {
                                 if (env->cursor == start && (c = *(env->cursor + 1)) &&
@@ -1430,6 +1437,7 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                                     if (i) {
                                         env->cursor += 5;
                                         drop(env->disc, e);
+                                        free(cc_keys);
                                         return regcomp_node(env, i, 0, 0, 0);
                                     }
                                 }
@@ -1442,8 +1450,12 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                             inrange = 0;
                             continue;
                         case '=':
-                            if (env->flags & REG_REGEXP) goto complicated_normal;
-                            if (inrange == 2) goto erange;
+                            if (env->flags & REG_REGEXP) {
+                                goto complicated_normal;
+                            }
+                            if (inrange == 2) {
+                                goto erange;
+                            }
                             if (inrange == 1) ce = regcomp_col(env, ce, ic, rp, rw, rc, NULL, 0, 0);
                             pp = (unsigned char *)cb[inrange];
                             rp = env->cursor + 1;
@@ -1516,7 +1528,9 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                             inrange = 0;
                             continue;
                         case '.':
-                            if (env->flags & REG_REGEXP) goto complicated_normal;
+                            if (env->flags & REG_REGEXP) {
+                                goto complicated_normal;
+                            }
                             pp = (unsigned char *)cb[inrange];
                             if ((w = regcollate((char *)env->cursor, (char **)&env->cursor,
                                                 (char *)pp, COLL_KEY_MAX, NULL)) < 0) {
@@ -1556,8 +1570,11 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                 rc = c;
             }
             ce->typ = COLL_end;
+            free(cc_keys);
             return e;
         }
+
+        free(cc_keys);
     }
 
     if (collate) goto ecollate;
@@ -1579,6 +1596,7 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
         for (i = 0; i < elementsof(e->re.charclass->bits); i++) e->re.charclass->bits[i] ^= ~0;
         if (env->explicit >= 0) setclr(e->re.charclass, env->explicit);
     }
+
     return e;
 ecollate:
     env->error = REG_ECOLLATE;
@@ -1586,6 +1604,7 @@ ecollate:
 erange:
     env->error = REG_ERANGE;
 error:
+    free(cc_keys);
     drop(env->disc, e);
     if (!env->error) env->error = REG_EBRACK;
     return 0;
