@@ -64,7 +64,7 @@ export OS_NAME=$(uname -s | tr '[A-Z]' '[a-z]')
 
 # TODO: Enable the `io` test on Travis macOS once we understand why it dies from an abort().
 # I'm not seeing that failure happen on either of my macOS 10.12 or 10.13 systems.
-if [[ $test_name == io && $OS_NAME == Darwin && $CI == true ]]
+if [[ $test_name == io && $OS_NAME == darwin && $CI == true ]]
 then
     log_info 'Skipping io test on macOS on Travis'
     exit 0
@@ -325,7 +325,7 @@ then
         exit 1
     fi
 
-    if [[ $OS_NAME == FreeBSD ]]
+    if [[ $OS_NAME == freebsd ]]
     then
         # TODO: Explore why this was blacklisted or if it can now be enabled on that platform.
         # These tests always fail on the first `expect_prompt` use. Which suggests a bug in how
