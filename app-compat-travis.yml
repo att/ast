@@ -15,9 +15,9 @@ matrix:
         # These tests are run from yash fork that contains list of tests and a test runner script
         - os: linux
           env:
-            - PROJECT_NAME=yash
-              GIT_URL="https://github.com/siteshwar/yash.git"
-              COMMANDS="git checkout ksh-tests; cd tests; LANG=C ./run-ksh-tests.sh"
+            - PROJECT_NAME="posix-shell-tests"
+              GIT_URL="https://github.com/siteshwar/posix-shell-tests.git"
+              COMMANDS="git checkout ksh-tests; cd src; LANG=C ./run-ksh-tests.sh"
 
 script:
     - docker pull fedora
