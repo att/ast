@@ -952,7 +952,7 @@ static void xcommands(Emacs_t *ep, int count) {
             }
             return;
         }
-        case cntl('H'): {                 // ^X^H show history info
+        case cntl('H'): {  // ^X^H show history info
             char hbuf[MAXLINE];
 
             strlcpy(hbuf, "Current command ", sizeof(hbuf));
