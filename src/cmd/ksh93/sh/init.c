@@ -1206,7 +1206,6 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
         shgd->egroupid = getegid();
         shgd->lim.arg_max = sysconf(_SC_ARG_MAX);
         shgd->lim.child_max = sysconf(_SC_CHILD_MAX);
-        shgd->lim.ngroups_max = sysconf(_SC_NGROUPS_MAX);
         if (shgd->lim.arg_max <= 0) shgd->lim.arg_max = ARG_MAX;
         if (shgd->lim.child_max <= 0) shgd->lim.child_max = CHILD_MAX;
         shgd->ed_context = ed_open(shp);

@@ -641,15 +641,13 @@ skip:
             mode <<= 3;
         } else {
             // On some systems you can be in several groups.
-            static int maxgroups;
+            static int maxgroups = 0;
             gid_t *groups;
             int n;
-            if (maxgroups == 0) {
-                // First time.
-                if ((maxgroups = getgroups(0, NULL)) <= 0) {
-                    // Pre-POSIX system.
-                    maxgroups = shgd->lim.ngroups_max;
-                }
+            if (maxgroups == 0) {  // first time
+                maxgroups = getgroups(0, NULL);
+                // Pre-POSIX system.  This should be a can't happen situation.
+                if (maxgroups == -1) maxgroups = sysconf(_SC_NGROUPS_MAX);
             }
             groups = stkalloc(shp->stk, (maxgroups + 1) * sizeof(gid_t));
             n = getgroups(maxgroups, groups);
