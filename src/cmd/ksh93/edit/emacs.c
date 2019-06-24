@@ -952,23 +952,22 @@ static void xcommands(Emacs_t *ep, int count) {
             }
             return;
         }
-#define itos(i) fmtbase((long)(i), 0, 0)  // want signed conversion
         case cntl('H'): {                 // ^X^H show history info
             char hbuf[MAXLINE];
 
             strlcpy(hbuf, "Current command ", sizeof(hbuf));
-            strlcat(hbuf, itos(hline), sizeof(hbuf));
+            strlcat(hbuf, fmtbase(hline, 0, 0), sizeof(hbuf));
             if (hloff) {
                 strlcat(hbuf, " (line ", sizeof(hbuf));
-                strlcat(hbuf, itos(hloff + 1), sizeof(hbuf));
+                strlcat(hbuf, fmtbase(hloff + 1, 0, 0), sizeof(hbuf));
                 strlcat(hbuf, ")", sizeof(hbuf));
             }
             if ((hline != location.hist_command) || (hloff != location.hist_line)) {
                 strlcat(hbuf, "; Previous command ", sizeof(hbuf));
-                strlcat(hbuf, itos(location.hist_command), sizeof(hbuf));
+                strlcat(hbuf, fmtbase(location.hist_command, 0, 0), sizeof(hbuf));
                 if (location.hist_line) {
                     strlcat(hbuf, " (line ", sizeof(hbuf));
-                    strlcat(hbuf, itos(location.hist_line + 1), sizeof(hbuf));
+                    strlcat(hbuf, fmtbase(location.hist_line + 1, 0, 0), sizeof(hbuf));
                     strlcat(hbuf, ")", sizeof(hbuf));
                 }
             }
@@ -980,17 +979,17 @@ static void xcommands(Emacs_t *ep, int count) {
                 char debugbuf[MAXLINE];
 
                 strcpy(debugbuf, "count=");
-                strcat(debugbuf, itos(count));
+                strcat(debugbuf, fmtbase(count, 0, 0));
                 strcat(debugbuf, " eol=");
-                strcat(debugbuf, itos(eol));
+                strcat(debugbuf, fmtbase(eol, 0, 0));
                 strcat(debugbuf, " cur=");
-                strcat(debugbuf, itos(cur));
+                strcat(debugbuf, fmtbase(cur, 0, 0));
                 strcat(debugbuf, " crallowed=");
-                strcat(debugbuf, itos(crallowed));
+                strcat(debugbuf, fmtbase(crallowed, 0, 0));
                 strcat(debugbuf, " plen=");
-                strcat(debugbuf, itos(plen));
+                strcat(debugbuf, fmtbase(plen, 0, 0));
                 strcat(debugbuf, " w_size=");
-                strcat(debugbuf, itos(w_size));
+                strcat(debugbuf, fmtbase(w_size, 0, 0));
 
                 show_info(ep,debugbuf);
                 return;

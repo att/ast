@@ -545,7 +545,7 @@ int ed_fulledit(Edit_t *ep) {
         hist_flush(shgd->hist_ptr);
     }
     cp = stpcpy((char *)ep->e_inbuf, e_runvi);
-    cp = stpcpy(cp, fmtbase((long)ep->e_hline, 10, 0));
+    cp = stpcpy(cp, fmtbase(ep->e_hline, 10, 0));
     ep->e_eol =
         ((unsigned char *)cp - (unsigned char *)ep->e_inbuf) - (sh_isoption(ep->sh, SH_VI) != 0);
     return 0;

@@ -924,7 +924,7 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
     sfwrite(shp->stk, e_devfdNN, 8);
     pv[2] = 0;
     sh_pipe(pv);
-    sfputr(shp->stk, fmtbase((long)pv[fd], 10, 0), 0);
+    sfputr(shp->stk, fmtbase(pv[fd], 10, 0), 0);
 #else   // has_dev_fd
     pv[0] = -1;
     shp->fifo = ast_temp_path("ksh.fifo");

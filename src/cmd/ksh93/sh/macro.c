@@ -102,7 +102,6 @@ struct _mac_ {
 #define isqescchar(s) ((s) >= S_QUOTE)
 #define isbracechar(c) \
     ((c) == RBRACE || sh_lexstates[ST_BRACE][c] == S_MOD1 || sh_lexstates[ST_BRACE][c] == S_MOD2)
-#define ltos(x) fmtbase((long)(x), 0, 0)
 
 // Type of macro expansions.
 #define M_BRACE 1      // ${var}
@@ -1152,7 +1151,7 @@ retry1:
                 d = fcget();
                 fcseek(-1);
                 if (!(d && strchr(":+-?=", d))) {
-                    errormsg(SH_DICT, ERROR_exit(1), e_notset, ltos(c));
+                    errormsg(SH_DICT, ERROR_exit(1), e_notset, fmtbase(c, 0, 0));
                     __builtin_unreachable();
                 }
             }
@@ -1444,7 +1443,7 @@ retry1:
             stkseek(stkp, offset);
             if (type == M_NAMECOUNT) {
                 c = namecount(mp, id);
-                v = ltos(c);
+                v = fmtbase(c, 0, 0);
             } else {
                 dolmax = (int)strlen(id);
                 dolg = -1;
@@ -1486,7 +1485,7 @@ retry1:
                 c = (v != 0);
             }
             dolg = dolmax = 0;
-            v = ltos(c);
+            v = fmtbase(c, 0, 0);
         }
         c = RBRACE;
     }
@@ -1832,7 +1831,7 @@ retry2:
             if (np) {
                 id = nv_name(np);
             } else if (idnum) {
-                id = ltos(idnum);
+                id = fmtbase(idnum, 0, 0);
             }
             if (*argp) {
                 sfputc(stkp, 0);
@@ -2534,29 +2533,29 @@ static_fn char *special(Shell_t *shp, int c) {
         case '#': {
             if (shp->cur_line) {
                 getdolarg(shp, MAX_ARGN, NULL);
-                return ltos(shp->offsets[0]);
+                return fmtbase(shp->offsets[0], 0, 0);
             }
-            return ltos(shp->st.dolc);
+            return fmtbase(shp->st.dolc, 0, 0);
         }
         case '!': {
             if (shp->bckpid) {
 #if SHOPT_COSHELL
                 return sh_pid2str(shp, shp->bckpid);
 #else
-                return ltos(shp->bckpid);
+                return fmtbase(shp->bckpid, 0, 0);
 #endif /* SHOPT_COSHELL */
             }
             break;
         }
         case '$': {
-            if (nv_isnull(SH_DOLLARNOD)) return ltos(shp->gd->pid);
+            if (nv_isnull(SH_DOLLARNOD)) return fmtbase(shp->gd->pid, 0, 0);
             return nv_getval(SH_DOLLARNOD);
         }
         case '-': {
             return sh_argdolminus(shp);
         }
         case '?': {
-            return ltos(shp->savexit);
+            return fmtbase(shp->savexit, 0, 0);
         }
         case 0: {
             if (sh_isstate(shp, SH_PROFILE) || shp->fn_depth == 0 || !shp->st.cmdname) {

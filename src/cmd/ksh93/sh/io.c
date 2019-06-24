@@ -2312,7 +2312,7 @@ static_fn void sftrack(Sfio_t *sp, int flag, void *data) {
     }
 #ifdef DEBUG
     if (flag == SF_READ || flag == SF_WRITE) {
-        char *z = fmtbase((long)getpid(), 0, 0);
+        char *z = fmtbase(getpid(), 0, 0);
         write(STDERR_FILENO, z, strlen(z));
         write(STDERR_FILENO, ": ", 2);
         write(STDERR_FILENO, "attempt to ", 11);
