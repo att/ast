@@ -910,15 +910,16 @@ char **sh_argbuild(Shell_t *shp, int *nargs, const struct comnod *comptr, int fl
 
 struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
     // Argument of the form <(cmd) or >(cmd).
-    struct argnod *ap;
-    int nn, monitor, fd, pv[3];
+    int nn, monitor, pv[3];
     int subshell = shp->subshell;
     pid_t pid0;
 
-    ap = (struct argnod *)stkseek(shp->stk, ARGVAL);
+    struct argnod *ap = stkseek(shp->stk, ARGVAL);
     ap->argflag |= ARG_MAKE;
     ap->argflag &= ~ARG_RAW;
-    fd = argp->argflag & ARG_RAW;
+
+    int fd = argp->argflag & ARG_RAW;
+    assert(fd == 0 || fd == 1);
     if (fd == 0 && shp->subshell) sh_subtmpfile(shp);
 #if has_dev_fd
     sfwrite(shp->stk, e_devfdNN, 8);
@@ -985,8 +986,7 @@ static_fn int arg_expand(Shell_t *shp, struct argnod *argp, struct argnod **argc
 
     argp->argflag &= ~ARG_MAKE;
     if (*argp->argval == 0 && (argp->argflag & ARG_EXP)) {
-        struct argnod *ap;
-        ap = sh_argprocsub(shp, argp);
+        struct argnod *ap = sh_argprocsub(shp, argp);
         ap->argchn.ap = *argchain;
         *argchain = ap;
         count++;

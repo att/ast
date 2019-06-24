@@ -146,7 +146,7 @@ static_fn void lex_advance(Sfio_t *iop, const char *buff, int size, void *contex
     if (lp->lexd.first) {
         size -= (lp->lexd.first - (char *)buff);
         buff = lp->lexd.first;
-        if (!lp->lexd.noarg) lp->arg = (struct argnod *)stkseek(stkp, ARGVAL);
+        if (!lp->lexd.noarg) lp->arg = stkseek(stkp, ARGVAL);
         lp->lexd.kiaoff += ARGVAL;
     }
     if (size > 0 && (lp->arg || lp->lexd.noarg)) {
@@ -1181,7 +1181,7 @@ breakloop:
     }
     if (!(state = lp->lexd.first)) state = fcfirst();
     n = fcseek(0) - (char *)state;
-    if (!lp->arg) lp->arg = (struct argnod *)stkseek(stkp, ARGVAL);
+    if (!lp->arg) lp->arg = stkseek(stkp, ARGVAL);
     if (n > 0) sfwrite(stkp, state, n);
     // Add balancing character if necessary.
     if (lp->lexd.balance) {

@@ -166,10 +166,11 @@ static_fn Vector_t *vecopen(int inc, int siz) {
     Stk_t *sp;
 
     if (inc <= 0) inc = 16;
-    if (!(sp = stkopen(STK_SMALL | STK_NULL))) return 0;
-    if (!(v = (Vector_t *)stkseek(sp, sizeof(Vector_t) + inc * siz))) {
+    if (!(sp = stkopen(STK_SMALL | STK_NULL))) return NULL;
+    v = stkseek(sp, sizeof(Vector_t) + inc * siz);
+    if (!v) {
         stkclose(sp);
-        return 0;
+        return NULL;
     }
     v->stk = sp;
     v->vec = (char *)v + sizeof(Vector_t);
@@ -186,7 +187,8 @@ static_fn void *vecseek(Vector_t **p, int index) {
         while ((v->max += v->inc) <= index) {
             ;
         }
-        if (!(v = (Vector_t *)stkseek(v->stk, sizeof(Vector_t) + v->max * v->siz))) return 0;
+        v = stkseek(v->stk, sizeof(Vector_t) + v->max * v->siz);
+        if (!v) return NULL;
         *p = v;
         v->vec = (char *)v + sizeof(Vector_t);
     }

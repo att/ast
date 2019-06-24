@@ -190,7 +190,7 @@ static_fn struct argnod *r_arg(Shell_t *shp) {
     Stk_t *stkp = shp->stk;
 
     while ((l = sfgetu(infile)) > 0) {
-        ap = (struct argnod *)stkseek(stkp, (unsigned)l + ARGVAL);
+        ap = stkseek(stkp, (unsigned)l + ARGVAL);
         if (!aptop) {
             aptop = ap;
         } else {

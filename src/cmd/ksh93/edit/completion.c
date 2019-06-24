@@ -249,7 +249,7 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
         }
     }
     comptr = stkalloc(shp->stk, sizeof(struct comnod));
-    ap = (struct argnod *)stkseek(shp->stk, ARGVAL);
+    ap = stkseek(shp->stk, ARGVAL);
 
     {
         // Adjust cur.

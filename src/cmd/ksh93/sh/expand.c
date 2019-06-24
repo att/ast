@@ -177,7 +177,7 @@ static_fn int scantree(Shell_t *shp, Dt_t *tree, const char *pattern, struct arg
     for (; np && !nv_isnull(np); (np = (Namval_t *)dtnext(tree, np))) {
         cp = nv_name(np);
         if (strmatch(cp, pattern)) {
-            (void)stkseek(shp->stk, ARGVAL);
+            stkseek(shp->stk, ARGVAL);
             sfputr(shp->stk, cp, -1);
             ap = (struct argnod *)stkfreeze(shp->stk, 1);
             ap->argbegin = NULL;
@@ -396,7 +396,7 @@ endloop1:
         brace = *cp;
         *cp = 0;
         sh_sigcheck(shp);
-        ap = (struct argnod *)stkseek(shp->stk, ARGVAL);
+        ap = stkseek(shp->stk, ARGVAL);
         ap->argflag = ARG_RAW;
         ap->argchn.ap = todo;
         sfputr(shp->stk, apin->argval, -1);

@@ -629,7 +629,7 @@ static_fn Shnode_t *arithfor(Lex_t *lexp, Shnode_t *tf) {
     // Split ((...)) into three expressions.
     for (n = 0;; n++) {
         int c;
-        argp = (struct argnod *)stkseek(stkp, ARGVAL);
+        argp = stkseek(stkp, ARGVAL);
         argp->argnxt.ap = NULL;
         argp->argchn.cp = NULL;
         argp->argflag = argflag;
@@ -948,7 +948,7 @@ static_fn struct argnod *parse_assign(Lex_t *lexp, struct argnod *ap, nvflag_t t
         settail = &ac->comset;
         ac->comline = sh_getlineno(lexp);
         while (n == LPAREN) {
-            ar = (struct argnod *)stkseek(stkp, ARGVAL);
+            ar = stkseek(stkp, ARGVAL);
             ar->argflag = ARG_ASSIGN;
             sfprintf(stkp, "[%d]=", index++);
             aq = ac->comarg;
@@ -965,7 +965,7 @@ static_fn struct argnod *parse_assign(Lex_t *lexp, struct argnod *ap, nvflag_t t
             settail = &(ar->argnxt.ap);
             if (aq) continue;
             while ((n = skipnl(lexp, 0)) == 0) {
-                ar = (struct argnod *)stkseek(stkp, ARGVAL);
+                ar = stkseek(stkp, ARGVAL);
                 ar->argflag = ARG_ASSIGN;
                 sfprintf(stkp, "[%d]=", index++);
                 sfputr(stkstd, lexp->arg->argval, 0);

@@ -388,7 +388,7 @@ void *stkalloc(Sfio_t *stream, size_t n) {
 //
 // Begin a new stack word of at least <n> bytes
 //
-char *stkseek(Sfio_t *stream, ssize_t n) {
+void *stkseek(Sfio_t *stream, ssize_t n) {
     if (!init) stkinit(n);
     increment(seek);
     if (stkleft(stream) <= n && !stkgrow(stream, n)) return 0;

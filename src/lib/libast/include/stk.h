@@ -56,7 +56,7 @@ extern int stklink(Stk_t *);
 extern void *stkalloc(Stk_t *, size_t);
 extern char *stkcopy(Stk_t *, const char *);
 extern char *stkset(Stk_t *, char *, size_t);
-extern char *stkseek(Stk_t *, ssize_t);
+extern void *stkseek(Stk_t *, ssize_t);
 extern char *stkfreeze(Stk_t *, size_t);
 extern int stkon(Stk_t *, char *);
 
