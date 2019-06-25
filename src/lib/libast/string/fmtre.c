@@ -28,6 +28,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdbool.h>
 #include <string.h>
 
 #include "ast.h"
@@ -45,7 +46,7 @@ char *fmtre(const char *as) {
     Stack_t *p;
     char *x;
     int n;
-    int end = 1;
+    bool end = true;
     char *buf;
     Stack_t stack[32];
 
@@ -66,20 +67,24 @@ char *fmtre(const char *as) {
     } else {
         s++;
     }
-    while (1) {
+
+    while (*s) {
         c = *s++;
+        if (c == '*' && !*s) {
+            end = false;
+            break;
+        }
+
         switch (c) {
-            case 0:
-                break;
             case '\\':
-                if (!(c = *s++) || c == '{' || c == '}') return 0;
+                if (!(c = *s++) || c == '{' || c == '}') return NULL;
                 *t++ = '\\';
                 if ((*t++ = c) == '(' && *s == '|') {
                     *t++ = *s++;
-                    if (!*s || *s == ')') return 0;
+                    if (!*s || *s == ')') return NULL;
                     *t++ = c;
                 }
-                continue;
+                break;
             case '[':
                 *t++ = c;
                 n = 0;
@@ -95,20 +100,20 @@ char *fmtre(const char *as) {
                     n = '^';
                 }
                 for (;;) {
-                    if (!(*t++ = c)) return 0;
+                    if (!(*t++ = c)) return NULL;
                     if ((c = *s++) == ']') {
                         if (n) *t++ = n;
                         *t++ = c;
                         break;
                     }
                 }
-                continue;
+                break;
             case '{':
                 for (x = s; *x && *x != '}'; x++) {
                     ;
                 }
                 if (*x++ && (*x == '(' || (*x == '-' && *(x + 1) == '('))) {
-                    if (p >= &stack[elementsof(stack)]) return 0;
+                    if (p >= &stack[elementsof(stack)]) return NULL;
                     p->beg = s - 1;
                     s = x;
                     p->len = s - p->beg;
@@ -119,20 +124,15 @@ char *fmtre(const char *as) {
                 } else {
                     *t++ = c;
                 }
-                continue;
+                break;
             case '*':
-                if (!*s) {
-                    end = 0;
-                    break;
-                }
-                /*FALLTHROUGH*/
             case '?':
             case '+':
             case '@':
             case '!':
             case '~':
                 if (*s == '(' || (c != '~' && *s == '-' && *(s + 1) == '(')) {
-                    if (p >= &stack[elementsof(stack)]) return 0;
+                    if (p >= &stack[elementsof(stack)]) return NULL;
                     p->beg = s - 1;
                     if (c == '~') {
                         if (*(s + 1) == 'E' && *(s + 2) == ')') {
@@ -164,43 +164,45 @@ char *fmtre(const char *as) {
                         case '!':
                             *t++ = '\\';
                             break;
+                        default:
+                            break;
                     }
                     *t++ = c;
                 }
-                continue;
+                break;
             case '(':
-                if (p >= &stack[elementsof(stack)]) return 0;
+                if (p >= &stack[elementsof(stack)]) return NULL;
                 p->beg = s - 1;
                 p->len = 0;
                 p->min = 0;
                 p++;
                 *t++ = c;
-                continue;
+                break;
             case ')':
-                if (p == stack) return 0;
+                if (p == stack) return NULL;
                 *t++ = c;
                 p--;
                 for (c = 0; c < p->len; c++) *t++ = p->beg[c];
                 if (p->min) *t++ = '?';
-                continue;
+                break;
             case '^':
             case '.':
             case '$':
                 *t++ = '\\';
                 *t++ = c;
-                continue;
+                break;
             case '|':
-                if (t == buf || *(t - 1) == '(') return 0;
-                if (!*s || *s == ')') return 0;
+                if (t == buf || *(t - 1) == '(') return NULL;
+                if (!*s || *s == ')') return NULL;
                 *t++ = c;
-                continue;
+                break;
             default:
                 *t++ = c;
-                continue;
+                break;
         }
-        break;
     }
-    if (p != stack) return 0;
+
+    if (p != stack) return NULL;
     if (end) *t++ = '$';
     *t = 0;
     return buf;
