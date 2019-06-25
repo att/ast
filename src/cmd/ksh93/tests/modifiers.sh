@@ -32,7 +32,10 @@ actual=$( $SHELL -c 'unset foo; print ${foo?bar not set}' 2>&1 )
 
 # When nothing is specified after :?, a default error message is printed
 unset foo
-[[ $( (print ${foo:?}) 2>&1) =~ "parameter not set" ]] || log_error 'Incorrect error message with ${foo:?}'
+[[ $( (print ${foo:?}) 2>&1) =~ "parameter not set" ]] || log_error 'Incorrect error message with ${foo:?} when foo is not set'
+
+foo=
+[[ $( (print ${foo:?}) 2>&1) =~ "parameter null" ]] || log_error 'Incorrect error message with ${foo:?} when foo is null'
 
 # Check ${parameter:+word} style of parameter expansion. ':' is optional and is used to check for null (empty string).
 unset foo
