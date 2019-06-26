@@ -277,6 +277,7 @@ actual=$(echo foo{bar,baz})
 set -C
 echo "bar" > foo
 echo "bar" > foo && log_error "set -C should prevent writing on existing files"
+echo "bar" >| foo || log_error ">| should override noclobber option"
 set +C
 echo "bar" > foo || log_error "set +C should not prevent writing on existing files"
 
