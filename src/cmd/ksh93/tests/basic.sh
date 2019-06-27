@@ -743,3 +743,13 @@ actual=$(typeset -p D_ASSO)
 expect='typeset -A D_ASSO=([k1]=(typeset -A COMPOUND_SUBNAME=([0]=assign_after_declare_index_succ);))'
 [[ "$actual" == "$expect" ]] ||
     log_error 'typeset -p output incorrect' "$expect" "$actual"
+
+# When `for` loop is used without `in`, it should loop over `$@`
+set -- foo bar baz
+actual=$(for name
+do
+    echo "$name"
+done)
+
+expect=$'foo\nbar\nbaz'
+[[ "$actual" = "$expect" ]] || log_error "for loop without 'in' should loop over '\$@'" "$expect" "$actual" "$actual" "$actual" 
