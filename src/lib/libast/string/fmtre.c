@@ -23,11 +23,13 @@
  * Glenn Fowler
  * AT&T Research
  *
- * return RE expression given strmatch() pattern
- * 0 returned for invalid RE
+ * Returns:
+ *   pointer to a short lived ERE pattern for a valid strmatch() pattern
+ *   NULL for invalid strmatch() pattern or one that cannot be convert to a ERE
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdbool.h>
 #include <string.h>
 
 #include "ast.h"
@@ -45,7 +47,7 @@ char *fmtre(const char *as) {
     Stack_t *p;
     char *x;
     int n;
-    int end = 1;
+    bool end = true;
     char *buf;
     Stack_t stack[32];
 
@@ -66,28 +68,37 @@ char *fmtre(const char *as) {
     } else {
         s++;
     }
-    while (1) {
+
+    while (*s) {
         c = *s++;
+        if (c == '*' && !*s) {
+            end = false;
+            break;
+        }
+
         switch (c) {
-            case 0:
-                break;
-            case '\\':
-                if (!(c = *s++) || c == '{' || c == '}') return 0;
+            case '\\': {
+                c = *s++;
+                if (!c || c == '{' || c == '}') return NULL;
                 *t++ = '\\';
-                if ((*t++ = c) == '(' && *s == '|') {
+                *t++ = c;
+                if (c == '(' && *s == '|') {
                     *t++ = *s++;
-                    if (!*s || *s == ')') return 0;
+                    if (!*s || *s == ')') return NULL;
                     *t++ = c;
                 }
-                continue;
-            case '[':
+                break;
+            }
+            case '[': {
                 *t++ = c;
                 n = 0;
-                if ((c = *s++) == '!') {
+                c = *s++;
+                if (c == '!') {
                     *t++ = '^';
                     c = *s++;
                 } else if (c == '^') {
-                    if ((c = *s++) == ']') {
+                    c = *s++;
+                    if (c == ']') {
                         *(t - 1) = '\\';
                         *t++ = '^';
                         continue;
@@ -95,20 +106,23 @@ char *fmtre(const char *as) {
                     n = '^';
                 }
                 for (;;) {
-                    if (!(*t++ = c)) return 0;
-                    if ((c = *s++) == ']') {
+                    *t++ = c;
+                    if (!c) return NULL;
+                    c = *s++;
+                    if (c == ']') {
                         if (n) *t++ = n;
                         *t++ = c;
                         break;
                     }
                 }
-                continue;
-            case '{':
+                break;
+            }
+            case '{': {
                 for (x = s; *x && *x != '}'; x++) {
                     ;
                 }
                 if (*x++ && (*x == '(' || (*x == '-' && *(x + 1) == '('))) {
-                    if (p >= &stack[elementsof(stack)]) return 0;
+                    if (p >= &stack[elementsof(stack)]) return NULL;
                     p->beg = s - 1;
                     s = x;
                     p->len = s - p->beg;
@@ -119,20 +133,26 @@ char *fmtre(const char *as) {
                 } else {
                     *t++ = c;
                 }
-                continue;
-            case '*':
-                if (!*s) {
-                    end = 0;
-                    break;
-                }
-                /*FALLTHROUGH*/
-            case '?':
-            case '+':
-            case '@':
-            case '!':
-            case '~':
+                break;
+            }
+            case '*': {
+                // FALLTHRU
+            }
+            case '?': {
+                // FALLTHRU
+            }
+            case '+': {
+                // FALLTHRU
+            }
+            case '@': {
+                // FALLTHRU
+            }
+            case '!': {
+                // FALLTHRU
+            }
+            case '~': {
                 if (*s == '(' || (c != '~' && *s == '-' && *(s + 1) == '(')) {
-                    if (p >= &stack[elementsof(stack)]) return 0;
+                    if (p >= &stack[elementsof(stack)]) return NULL;
                     p->beg = s - 1;
                     if (c == '~') {
                         if (*(s + 1) == 'E' && *(s + 2) == ')') {
@@ -161,46 +181,64 @@ char *fmtre(const char *as) {
                             c = '.';
                             break;
                         case '+':
+                            *t++ = '\\';
+                            break;
                         case '!':
                             *t++ = '\\';
+                            break;
+                        default:
                             break;
                     }
                     *t++ = c;
                 }
-                continue;
-            case '(':
-                if (p >= &stack[elementsof(stack)]) return 0;
+                break;
+            }
+            case '(': {
+                if (p >= &stack[elementsof(stack)]) return NULL;
                 p->beg = s - 1;
                 p->len = 0;
                 p->min = 0;
                 p++;
                 *t++ = c;
-                continue;
-            case ')':
-                if (p == stack) return 0;
+                break;
+            }
+            case ')': {
+                if (p == stack) return NULL;
                 *t++ = c;
                 p--;
                 for (c = 0; c < p->len; c++) *t++ = p->beg[c];
                 if (p->min) *t++ = '?';
-                continue;
-            case '^':
-            case '.':
-            case '$':
+                break;
+            }
+            case '^': {
                 *t++ = '\\';
                 *t++ = c;
-                continue;
-            case '|':
-                if (t == buf || *(t - 1) == '(') return 0;
-                if (!*s || *s == ')') return 0;
+                break;
+            }
+            case '.': {
+                *t++ = '\\';
                 *t++ = c;
-                continue;
-            default:
+                break;
+            }
+            case '$': {
+                *t++ = '\\';
                 *t++ = c;
-                continue;
+                break;
+            }
+            case '|': {
+                if (t == buf || *(t - 1) == '(') return NULL;
+                if (!*s || *s == ')') return NULL;
+                *t++ = c;
+                break;
+            }
+            default: {
+                *t++ = c;
+                break;
+            }
         }
-        break;
     }
-    if (p != stack) return 0;
+
+    if (p != stack) return NULL;
     if (end) *t++ = '$';
     *t = 0;
     return buf;
