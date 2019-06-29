@@ -390,9 +390,9 @@ STAGE_STYLE_FIXUPS=1 bin/style
 Test coverage report can be generated with these commands:
 
 ```
-meson -Db_coverage=true -Dbuild-api-tests=false build
-ninja -C build
 cd build
+meson -Db_coverage=true
+ninja
 meson test -t 2
 ninja coverage-html
 ```
