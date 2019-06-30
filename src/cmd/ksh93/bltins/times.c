@@ -11,7 +11,6 @@
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
-#include "shcmd.h"
 
 // Print user and system mode CPU times.
 static_fn void print_times(struct timeval utime, struct timeval stime) {
