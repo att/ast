@@ -210,11 +210,14 @@ function run_interactive {
 
     cp $TEST_SRC_DIR/util/interactive.kshrc $HOME/.kshrc
 
-    # Use pre-populated history file for history related tests
-    if [[ $test_name == "hist.exp" ]]; then
+    # Use pre-populated history file for `hist` command unit test.
+    if [[ $test_name == "b_hist.exp" ]]; then
         cp $TEST_SRC_DIR/util/sh_history $HISTFILE
     fi
 
+    # The use of the "dumb" terminal type is to minimize, and hopefully eliminate completely,
+    # terminal control/escape sequences that affect the terminal's behavior. This makes writing
+    # robust Expect scripts easier.
     export TERM=dumb
     expect -n -c "source $TEST_SRC_DIR/util/interactive.expect.rc" -f $test_path \
         >$test_name.out 2>$test_name.err
