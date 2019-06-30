@@ -1,6 +1,7 @@
 project('ksh93', 'c', default_options: ['b_lundef=false', 'default_library=static'])
 
 cc = meson.get_compiler('c')
+cpu = host_machine.cpu()
 system = host_machine.system()
 # So the `config_ast.h` and other dynamically generated headers can be found (see below).
 configuration_incdir = include_directories(['.'])
@@ -219,6 +220,8 @@ feature_data.set('MESON_BUILD', 1)
 if system == 'darwin'
     feature_data.set('_DARWIN_C_SOURCE', 1)
 endif
+bash_machtype = cpu + '-unknown-'+ system
+feature_data.set_quoted('BASH_MACHTYPE', bash_machtype)
 
 # We need symbols in the program to be visible to `dladdr()` and related
 # functions. This is necessary to be able to resolve addresses in the program

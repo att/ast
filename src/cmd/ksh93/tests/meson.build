@@ -116,6 +116,7 @@ tests_to_skip = [
     ['openbsd', 'b_jobs.exp'],
     ['sunos', 'vi.exp'],
     ['sunos', 'directoryfd'],
+    ['wsl', 'b_time.exp'],
     # Tests to be skipped because they are known to be broken when compiled by `shcomp`.
     # TODO: Fix these tests or the shcomp code.
     ['shcomp', 'io'],
