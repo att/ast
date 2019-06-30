@@ -33,6 +33,7 @@ all_tests = [
     ['b_sleep'],
     ['b_test.exp'],
     ['b_time.exp'],
+    ['b_times.exp'],
     ['b_ulimit'],
     ['b_uname'],
     ['b_wc'],
@@ -111,12 +112,14 @@ all_tests = [
 tests_to_skip = [
     ['cygwin', 'b_jobs.exp'],
     ['cygwin', 'b_time.exp'],
+    ['cygwin', 'b_times.exp'],
     ['cygwin', 'signal'],
     ['darwin', 'b_jobs.exp'],
     ['openbsd', 'b_jobs.exp'],
     ['sunos', 'vi.exp'],
     ['sunos', 'directoryfd'],
     ['wsl', 'b_time.exp'],
+    ['wsl', 'b_times.exp'],
     # Tests to be skipped because they are known to be broken when compiled by `shcomp`.
     # TODO: Fix these tests or the shcomp code.
     ['shcomp', 'io'],

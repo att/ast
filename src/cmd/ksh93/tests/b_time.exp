@@ -1,4 +1,4 @@
-# Tests of `time` keyword and `times` alias.
+# Tests of `time` keyword/builtin.
 set pid [spawn $ksh]
 expect_prompt
 
@@ -39,45 +39,11 @@ expect -re "\r\nreal\[\t \]*0m0\.0\[0-9\]\[0-9\]s\r\ncpu$zero_sec_re\r\n" {
 expect_prompt
 
 # ==========
-# The times command with no args produces reasonable output.
-log_test_entry
-send "times\r"
-expect -re "\r\n$zero_sec_re $zero_sec_re\r\n$zero_sec_re $zero_sec_re\r\n" {
-    puts "times produces expected output"
-}
-expect_prompt
-
-# ==========
-# The times command with args produces a syntax error.
-log_test_entry
-send "times sleep 1\r"
-expect "times: unexpected arguments\r\nUsage: times" {
-    puts "times sleep 1 produces syntax error"
-}
-expect_prompt
-
-# ==========
 # Timing a CPU bound statement produces non-zero times.
 log_test_entry
 send "time { SECONDS=0; while (( SECONDS < 1.5 )); do true; done; }\r"
 expect -re "\r\nreal\[\t \]*$one_sec_re\r\ncpu$one_sec_re\r\n" {
     puts "time CPU bound pipeline produces expected output"
-}
-expect_prompt
-
-# ==========
-# Verify `times` output accurately reflects CPU consumption by child processes.
-#
-# Start a CPU bound job in the background to force child user time to be non-zero. Note that we
-# expect system mode times to be less than one but user mode time for the shell and child processes
-# should be between one and two.
-log_test_entry
-send "$ksh -c 'SECONDS=0; while (( SECONDS < 1.5 )); do true; done'\r"
-expect_prompt
-
-send "times\r"
-expect -re "\r\n$one_sec_re $zero_sec_re\r\n$one_sec_re $zero_sec_re\r\n" {
-    puts "times produces expected non-zero output"
 }
 expect_prompt
 

@@ -1,0 +1,4 @@
+times produces expected output
+times sleep 1 produces syntax error
+times produces expected non-zero output for shell
+times produces expected non-zero output for child processes
