@@ -152,7 +152,7 @@ then
     log_error 'cd ../../tmp is not /tmp'
 fi
 
-( sleep 2; cat <<!
+( sleep 0.2; cat <<!
 foobar
 !
 ) | cat > $TEST_DIR/foobar &
@@ -382,11 +382,11 @@ foo()
 foo
 kill $pids
 
-actual=$( (trap 'print alarm' ALRM; sleep 4) & sleep 2; kill -ALRM $!; sleep 2; wait)
+actual=$( (trap 'print alarm' ALRM; sleep 1.0) & sleep 0.5; kill -ALRM $!; sleep 0.5; wait)
 expect=alarm
 [[ $actual == $expect ]] || log_error 'ALRM signal not working' "$expect" "$actual"
 
-actual=$($SHELL -c 'trap "" HUP; $SHELL -c "(sleep 2; kill -HUP $$) & sleep 4; print done"')
+actual=$($SHELL -c 'trap "" HUP; $SHELL -c "(sleep 0.5; kill -HUP $$) & sleep 1; print done"')
 expect=done
 [[ $actual == $expect ]] || log_error 'ignored traps not being ignored' "$expect" "$actual"
 
@@ -432,21 +432,21 @@ expect=$'x\ny\nz'
 for tee in "$(whence tee)" $bin_tee
 do
     print xxx > $TEST_DIR/file
-    $tee  >(sleep 1; cat > $TEST_DIR/file) <<< "hello" > /dev/null
+    $tee  >(sleep 0.1; cat > $TEST_DIR/file) <<< "hello" > /dev/null
     actual=$(< $TEST_DIR/file)
     expect=hello
     [[ $actual == $expect ]] ||
         log_error "process substitution does not wait for >() to complete with $tee" "$expect" "$actual"
 
     print yyy > $TEST_DIR/file2
-    $tee >(cat > $TEST_DIR/file) >(sleep 1; cat > $TEST_DIR/file2) <<< "hello" > /dev/null
+    $tee >(cat > $TEST_DIR/file) >(sleep 0.1; cat > $TEST_DIR/file2) <<< "hello" > /dev/null
     actual=$(< $TEST_DIR/file2)
     expect=hello
     [[ $actual == $expect ]] ||
         log_error "process substitution does not wait for second of two >() to complete with $tee" "$expect" "$actual"
 
     print xxx > $TEST_DIR/file
-    $tee  >(sleep 1; cat > $TEST_DIR/file) >(cat > $TEST_DIR/file2) <<< "hello" > /dev/null
+    $tee  >(sleep 0.1; cat > $TEST_DIR/file) >(cat > $TEST_DIR/file2) <<< "hello" > /dev/null
     actual=$(< $TEST_DIR/file)
     expect=hello
     [[ $actual == $expect ]] ||
@@ -521,9 +521,9 @@ chmod +x $TEST_DIR/scriptx
 cat > $TEST_DIR/scriptx <<- \EOF
     myfilter() { x=$(print ok | cat); print  -r -- $SECONDS;}
     set -o pipefail
-    sleep 3 | myfilter
+    sleep 0.6 | myfilter
 EOF
-(( $($SHELL $TEST_DIR/scriptx) > 2.0 )) && log_error 'command substitution causes pipefail option to hang'
+(( $($SHELL $TEST_DIR/scriptx) > 0.5 )) && log_error 'command substitution causes pipefail option to hang'
 exec 3<&-
 ( typeset -r foo=bar) 2> /dev/null || log_error 'readonly variables set in a subshell cannot unset'
 
@@ -573,16 +573,16 @@ unset foo
 unset foo
 foo=$(false) > /dev/null && log_error 'failed command substitution with redirection not returning false'
 expect=foreback
-actual=`print -n fore; (sleep 2;print back)&`
+actual=`print -n fore; (sleep 0.1; print back)&`
 [[ $actual == $expect ]] ||
     log_error "\`\`command substitution background process output error" "$expect" "$actual"
-actual=$(print -n fore; (sleep 2;print back)&)
+actual=$(print -n fore; (sleep 0.1; print back)&)
 [[ $actual == $expect ]] ||
     log_error "\$() command substitution background process output error" "$expect" "$actual"
 actual=${ print -n fore; (sleep 2;print back)& }
 [[ $actual == $expect ]] ||
     log_error "\${} command substitution background process output error" "$expect" "$actual"
-function abc { sleep 2; print back; }
+function abc { sleep 0.1; print back; }
 function abcd { abc & }
 actual=$(print -n fore;abcd)
 [[ $actual == $expect ]] ||
@@ -604,15 +604,15 @@ float s=SECONDS
 for i in 1 2
 do
       print $i
-done | while read sec; do ( $bin_sleep $sec; $bin_sleep $sec) done
-(( (SECONDS-s)  < 4)) && log_error '"command | while read...done" finishing too fast'
+done | while read sec; do ( sleep 0.1; $bin_sleep $sec) done
+(( (SECONDS - s) > 3 )) || log_error '"command | while read...done" finishing too fast'
 
 s=SECONDS
 set -o pipefail
 for ((i=0; i < 30; i++))
 do
     print hello
-    sleep .1
+    sleep 0.1
 done | $bin_sleep 1
 (( (SECONDS-s) < 2 )) || log_error 'early termination not causing broken pipe'
 
