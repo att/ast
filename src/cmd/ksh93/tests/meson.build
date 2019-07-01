@@ -116,6 +116,7 @@ tests_to_skip = [
     ['cygwin', 'signal'],
     ['darwin', 'b_jobs.exp'],
     ['openbsd', 'b_jobs.exp'],
+    ['openbsd', 'b_times.exp'],
     ['sunos', 'vi.exp'],
     ['sunos', 'directoryfd'],
     ['wsl', 'b_time.exp'],
