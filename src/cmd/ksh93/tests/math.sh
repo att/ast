@@ -181,57 +181,57 @@ test_has_iszero
 # ==========
 # Math functions
 
-# Rounds of floating point numbers to 8 decimal places
-function roundof {
+# Rounds floating point numbers to 8 decimal places
+function roundto {
     number=$1
     printf '%.8f' $number
 }
 
 # acos
 expect=3.14159265
-actual=$(roundof $(( acos(-1) )) )
+actual=$(roundto $(( acos(-1) )) )
 [[ $actual -eq $expect ]] || log_error "acos failed" "$expect" "$actual"
 
 # ==========
 # acosh
 expect=5.19292599
-actual=$(roundof $(( acosh(90) )) )
+actual=$(roundto $(( acosh(90) )) )
 [[ $actual -eq $expect ]] || log_error "acosh failed" "$expect" "$actual"
 
 # ==========
 # asin
 expect=1.57079633
-actual=$(roundof $(( asin(1) )) )
+actual=$(roundto $(( asin(1) )) )
 [[ $actual -eq $expect ]] || log_error "asin failed" "$expect" "$actual"
 
 # ==========
 # asinh
 expect=5.19298771
-actual=$(roundof $(( asinh(90) )) )
+actual=$(roundto $(( asinh(90) )) )
 [[ $actual -eq $expect ]] || log_error "asinh failed" "$expect" "$actual"
 
 # ==========
 # atan
 expect=1.55968567
-actual=$(roundof $(( atan(90) )) )
+actual=$(roundto $(( atan(90) )) )
 [[ $actual -eq $expect ]] || log_error "atan failed" "$expect" "$actual"
 
 # ==========
 # atan2
 expect=0.78539816
-actual=$(roundof $(( atan2(90, 90) )) )
+actual=$(roundto $(( atan2(90, 90) )) )
 [[ $actual -eq $expect ]] || log_error "atan2 failed" "$expect" "$actual"
 
 # ==========
 # atanh
 expect=0.54930614
-actual=$(roundof $(( atanh(0.5) )) )
+actual=$(roundto $(( atanh(0.5) )) )
 [[ $actual -eq $expect ]] || log_error "atanh failed" "$expect" "$actual"
 
 # ==========
 # cbrt
 expect=4.48140475
-actual=$(roundof $(( cbrt(90) )) )
+actual=$(roundto $(( cbrt(90) )) )
 [[ $actual -eq $expect ]] || log_error "cbrt failed" "$expect" "$actual"
 
 # ==========
@@ -247,14 +247,14 @@ then
     log_warning 'copysignl() function is broken  on Cygwin'
 else
     expect=-1.0
-    actual=$(roundof $(( copysign(1.0, -3) )) )
+    actual=$(roundto $(( copysign(1.0, -3) )) )
     [[ $actual -eq $expect ]] || log_error "copysign failed" "$expect" "$actual"
 fi
 
 # ==========
 # cos
 expect=0.15425145
-actual=$(roundof $(( cos(30) )) )
+actual=$(roundto $(( cos(30) )) )
 [[ $actual -eq $expect ]] || log_error "cos failed" "$expect" "$actual"
 
 # ==========
@@ -266,19 +266,19 @@ actual=$(( cosh(0) ))
 # ==========
 # erf
 expect=0.84270079
-actual=$(roundof $(( erf(1) )) )
+actual=$(roundto $(( erf(1) )) )
 [[ $actual -eq $expect ]] || log_error "erf failed" "$expect" "$actual"
 
 # ==========
 # erfc
 expect=0.15729921
-actual=$(roundof $(( erfc(1) )) )
+actual=$(roundto $(( erfc(1) )) )
 [[ $actual -eq $expect ]] || log_error "erfc failed" "$expect" "$actual"
 
 # ==========
 # exp
 expect=2.71828183
-actual=$(roundof $(( exp(1) )) )
+actual=$(roundto $(( exp(1) )) )
 [[ $actual -eq $expect ]] || log_error "exp failed" "$expect" "$actual"
 
 # ==========
@@ -290,7 +290,7 @@ actual=$(( exp2(1) ))
 # ==========
 # expm1
 expect=1.71828183
-actual=$(roundof $(( expm1(1) )) )
+actual=$(roundto $(( expm1(1) )) )
 [[ $actual -eq $expect ]] || log_error "expm1 failed" "$expect" "$actual"
 
 # ==========
@@ -335,22 +335,170 @@ actual=$(( fmin(1.0, 1.1) ))
 [[ $actual -eq $expect ]] || log_error "fmin failed" "$expect" "$actual"
 
 # ==========
+# finite
+expect=1
+actual=$(( finite(1.2) ))
+[[ $actual -eq $expect ]] || log_error "finite failed" "$expect" "$actual"
+
+expect=0
+actual=$(( finite(1.2 + inf) ))
+[[ $actual -eq $expect ]] || log_error "finite failed" "$expect" "$actual"
+
+expect=0
+actual=$(( finite(1.2 + nan) ))
+[[ $actual -eq $expect ]] || log_error "finite failed" "$expect" "$actual"
+
+# ==========
+# float
+expect=7.12345679
+actual=$(roundto $(( float(7.123456789) )) )
+[[ $actual -eq $expect ]] || log_error "float failed" "$expect" "$actual"
+
+# ==========
 # fmod
 expect=9.99
-actual=$(roundof $(( fmod(999.99, 10) )) )
+actual=$(roundto $(( fmod(999.99, 10) )) )
 [[ $actual -eq $expect ]] || log_error "fmod failed" "$expect" "$actual"
 
 # ==========
+# fpclassify
+# TODO: Remove this test when issue #1346 is resolved and the `fpclassify()` function is removed.
+actual=$(( fpclassify(nan) ))
+[[ $actual -ge 0 ]] || log_error "fpclassify failed" ">= 0" "$actual"
+
+# ==========
 # int
-expect=1
-actual=$(( int(1.9) ))
+expect=2
+actual=$(( int(2.9) ))
 [[ $actual -eq $expect ]] || log_error "int failed" "$expect" "$actual"
+
+expect=-3
+actual=$(( int(-3.1) ))
+[[ $actual -eq $expect ]] || log_error "int failed" "$expect" "$actual"
+
+# ==========
+# isfinite
+expect=1
+actual=$(( isfinite(1) ))
+[[ $actual -eq $expect ]] || log_error "isfinite(1) failed" "$expect" "$actual"
+
+expect=0
+actual=$(( isfinite(1 * inf) ))
+[[ $actual -eq $expect ]] || log_error "isfinite(1) failed" "$expect" "$actual"
+
+# ==========
+# isunordered
+expect=0
+actual=$(( isunordered(1, 2) ))
+[[ $actual -eq $expect ]] || log_error "isless(1, 2) failed" "$expect" "$actual"
+
+expect=1
+actual=$(( isunordered(2, nan) ))
+[[ $actual -eq $expect ]] || log_error "isunordered(2, nan) failed" "$expect" "$actual"
+
+expect=1
+actual=$(( isunordered(nan, 2) ))
+[[ $actual -eq $expect ]] || log_error "isunordered(nan, 2) failed" "$expect" "$actual"
+
+# ==========
+# isless
+expect=1
+actual=$(( isless(1, 2) ))
+[[ $actual -eq $expect ]] || log_error "isless(1, 2) failed" "$expect" "$actual"
+
+expect=0
+actual=$(( isless(2, 1) ))
+[[ $actual -eq $expect ]] || log_error "isless(2, 1) failed" "$expect" "$actual"
+
+expect=0
+actual=$(( isless(nan, 2) ))
+[[ $actual -eq $expect ]] || log_error "isless(nan, 2) failed" "$expect" "$actual"
+
+# ==========
+# islessequal
+expect=1
+actual=$(( islessequal(1.1, 1.1) ))
+[[ $actual -eq $expect ]] || log_error "islessequal(1.1, 1.1) failed" "$expect" "$actual"
+
+expect=0
+actual=$(( islessequal(1.2, 1.1) ))
+[[ $actual -eq $expect ]] || log_error "islessequal(1.2, 1.1) failed" "$expect" "$actual"
+
+expect=1
+actual=$(( islessequal(1.1, 1.2) ))
+[[ $actual -eq $expect ]] || log_error "islessequal(1.1, 1.2) failed" "$expect" "$actual"
+
+# ==========
+# islessgreater
+expect=0
+actual=$(( islessgreater(1.1, 1.1) ))
+[[ $actual -eq $expect ]] || log_error "islessgreater(1.1, 1.1) failed" "$expect" "$actual"
+
+expect=1
+actual=$(( islessgreater(1.2, 1.1) ))
+[[ $actual -eq $expect ]] || log_error "islessgreater(1.2, 1.1) failed" "$expect" "$actual"
+
+expect=1
+actual=$(( islessgreater(1.1, 1.2) ))
+[[ $actual -eq $expect ]] || log_error "islessgreater(1.1, 1.2) failed" "$expect" "$actual"
+
+expect=0
+actual=$(( islessgreater(1.1, nan) ))
+[[ $actual -eq $expect ]] || log_error "islessgreater(1.1, nan) failed" "$expect" "$actual"
 
 # ==========
 # isgreater
 expect=0
 actual=$(( isgreater(1, 2) ))
 [[ $actual -eq $expect ]] || log_error "isgreater(1, 2) failed" "$expect" "$actual"
+
+expect=1
+actual=$(( isgreater(2, 1) ))
+[[ $actual -eq $expect ]] || log_error "isgreater(2, 1) failed" "$expect" "$actual"
+
+expect=0
+actual=$(( isgreater(2, nan) ))
+[[ $actual -eq $expect ]] || log_error "isgreater(2, nan) failed" "$expect" "$actual"
+
+# ==========
+# isgreaterequal
+expect=1
+actual=$(( isgreaterequal(1.1, 1.1) ))
+[[ $actual -eq $expect ]] || log_error "isgreaterequal(1.1, 1.1) failed" "$expect" "$actual"
+
+expect=1
+actual=$(( isgreaterequal(1.2, 1.1) ))
+[[ $actual -eq $expect ]] || log_error "isgreaterequal(1.2, 1.1) failed" "$expect" "$actual"
+
+expect=0
+actual=$(( isgreaterequal(1.1, 1.2) ))
+[[ $actual -eq $expect ]] || log_error "isgreaterequal(1.1, 1.2) failed" "$expect" "$actual"
+
+# ==========
+# isnan
+expect=0
+actual=$(( isnan(1.2) ))
+[[ $actual -eq $expect ]] || log_error "isnan(1.2) failed" "$expect" "$actual"
+
+expect=1
+actual=$(( isnan(sqrt(-1)) ))
+[[ $actual -eq $expect ]] || log_error "isnan(sqrt(-1)) failed" "$expect" "$actual"
+
+# ==========
+# isnormal
+expect=1
+actual=$(( isnormal(1.2) ))
+[[ $actual -eq $expect ]] || log_error "isnormal(1.2) failed" "$expect" "$actual"
+
+expect=0
+actual=$(( isnormal(-inf) ))
+[[ $actual -eq $expect ]] || log_error "isnormal(-inf) failed" "$expect" "$actual"
+
+# ==========
+# issubnormal
+expect=0
+actual=$(( issubnormal(1.2) ))
+[[ $actual -eq $expect ]] || log_error "issubnormal(1.2) failed" "$expect" "$actual"
 
 # ==========
 expect=0
@@ -384,15 +532,28 @@ expect=1
 actual=$(( iszero(0) ))
 [[ $actual -eq $expect ]] || log_error "iszero(0) failed" "$expect" "$actual"
 
-# ==========
 expect=0
 actual=$(( iszero(1) ))
 [[ $actual -eq $expect ]] || log_error "iszero(1) failed" "$expect" "$actual"
 
 # ==========
+# isinf
+expect=0
+actual=$(( isinf(0) ))
+[[ $actual -eq $expect ]] || log_error "isinf(0) failed" "$expect" "$actual"
+
+expect=1
+actual=$(( isinf(-inf) ))
+[[ $actual -eq $expect ]] || log_error "isinf(-inf) failed" "$expect" "$actual"
+
+expect=1
+actual=$(( isinf(inf) ))
+[[ $actual -eq $expect ]] || log_error "isinf(inf) failed" "$expect" "$actual"
+
+# ==========
 # log
 expect=4.60517019
-actual=$(roundof $(( log(100) )) )
+actual=$(roundto $(( log(100) )) )
 [[ $actual -eq $expect ]] || log_error "log failed" "$expect" "$actual"
 
 # ==========
@@ -426,13 +587,13 @@ actual=$(( signbit(-1) ))
 # ==========
 # sin
 expect=0.89399666
-actual=$(roundof $(( sin(90) )) )
+actual=$(roundto $(( sin(90) )) )
 [[ $actual -eq $expect ]] || log_error "sin failed" "$expect" "$actual"
 
 # ==========
 # sinh
 expect=1634508.68623590
-actual=$(roundof $(( sinh(15) )) )
+actual=$(roundto $(( sinh(15) )) )
 [[ $actual -eq $expect ]] || log_error "sinh failed" "$expect" "$actual"
 
 # ==========
@@ -444,7 +605,7 @@ actual=$(( sqrt(1600) ))
 # ==========
 # tan
 expect=1.61977519
-actual=$(roundof $(( tan(45) )) )
+actual=$(roundto $(( tan(45) )) )
 [[ $actual -eq $expect ]] || log_error "tan failed" "$expect" "$actual"
 
 # ==========
@@ -458,3 +619,39 @@ actual=$(( tanh(45) ))
 expect=99
 actual=$(( trunc(99.9) ))
 [[ $actual -eq $expect ]] || log_error "trunc failed" "$expect" "$actual"
+
+# ==========
+# j0
+expect=0.76519769
+actual=$(roundto $(( j0(1) )) )
+[[ $actual -eq $expect ]] || log_error "j0 failed" "$expect" "$actual"
+
+# ==========
+# j1
+expect=0.44005059
+actual=$(roundto $(( j1(1) )) )
+[[ $actual -eq $expect ]] || log_error "j1 failed" "$expect" "$actual"
+
+# ==========
+# jn
+expect=0.57672481
+actual=$(roundto $(( jn(1, 2) )) )
+[[ $actual -eq $expect ]] || log_error "jn failed" "$expect" "$actual"
+
+# ==========
+# y0
+expect=0.08825696
+actual=$(roundto $(( y0(1) )) )
+[[ $actual -eq $expect ]] || log_error "y0 failed" "$expect" "$actual"
+
+# ==========
+# y1
+expect=-0.78121282
+actual=$(roundto $(( y1(1) )) )
+[[ $actual -eq $expect ]] || log_error "y1 failed" "$expect" "$actual"
+
+# ==========
+# yn
+expect=-0.10703243
+actual=$(roundto $(( yn(1, 2) )) )
+[[ $actual -eq $expect ]] || log_error "yn failed" "$expect" "$actual"

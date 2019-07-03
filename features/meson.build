@@ -121,9 +121,6 @@ feature_data.set10('_lib_syncfs',
 
 # https://github.com/att/ast/issues/1096
 # These math functions are not available on NetBSD
-feature_data.set10('_lib_nexttowardl',
-    cc.has_function('nexttowardl', prefix: '#include <math.h>', args: feature_test_args,
-                    dependencies: [libm_dep]))
 feature_data.set10('_lib_expm1l',
     cc.has_function('expm1l', prefix: '#include <math.h>', args: feature_test_args,
                     dependencies: [libm_dep]))

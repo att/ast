@@ -19,7 +19,9 @@ typedef Sfdouble_t (*Math_f)(Sfdouble_t, ...);
 // This used to use `finite()` but that function is deprecated and generates compiler warnings
 // on some platforms.
 static int local_finite(Sfdouble_t a1) {
-    return !isinf(a1) && !isnan(a1);  //!OCLINT(constant conditional operator)
+    if (isinf(a1)) return 0;  //!OCLINT(constant conditional operator)
+    if (isnan(a1)) return 0;  //!OCLINT(constant conditional operator)
+    return 1;
 }
 
 static Sfdouble_t local_float(Sfdouble_t a1) { return a1; }
@@ -43,7 +45,9 @@ static int local_isgreater(Sfdouble_t a1, Sfdouble_t a2) { return isgreater(a1, 
 static int local_isgreaterequal(Sfdouble_t a1, Sfdouble_t a2) { return isgreaterequal(a1, a2); }
 
 static int local_isinf(Sfdouble_t a1) {
-    return isinf(a1);  //!OCLINT(constant conditional operator)
+    // Some platforms return -1 for -inf and +1 for +inf while others only return +1. Normalize our
+    // return value to be zero (not inf) or one (inf).
+    return isinf(a1) != 0;  //!OCLINT(constant conditional operator)
 }
 
 static int local_isless(Sfdouble_t a1, Sfdouble_t a2) { return isless(a1, a2); }
@@ -53,7 +57,9 @@ static int local_islessequal(Sfdouble_t a1, Sfdouble_t a2) { return islessequal(
 static int local_islessgreater(Sfdouble_t a1, Sfdouble_t a2) { return islessgreater(a1, a2); }
 
 static int local_isnan(Sfdouble_t a1) {
-    return isnan(a1);  //!OCLINT(constant conditional operator)
+    // Some platforms return -1 for -nan and +1 for +nan while others only return +1. Normalize our
+    // return value to be zero (not -nan) or one (nan).
+    return isnan(a1) != 0;  //!OCLINT(constant conditional operator)
 }
 
 static int local_isnormal(Sfdouble_t a1) {
@@ -77,44 +83,6 @@ static Sfdouble_t local_j0(Sfdouble_t a1) { return j0(a1); }
 static Sfdouble_t local_j1(Sfdouble_t a1) { return j1(a1); }
 
 static Sfdouble_t local_jn(Sfdouble_t a1, Sfdouble_t a2) { return jn(a1, a2); }
-
-static Sfdouble_t local_nextafter(int type_1, Sfdouble_t arg_1, int type_2, Sfdouble_t arg_2) {
-    UNUSED(type_2);
-
-    switch (type_1) {
-        case 1: {
-            return nextafterf((float)arg_1, arg_2);
-        }
-        case 2: {
-            return nextafter((double)arg_1, arg_2);
-        }
-        case 3: {
-            return nextafterl(arg_1, arg_2);
-        }
-        default: { return 0; }
-    }
-}
-
-static Sfdouble_t local_nexttoward(int type_1, Sfdouble_t arg_1, int type_2, Sfdouble_t arg_2) {
-    UNUSED(type_2);
-
-    switch (type_1) {
-        case 1: {
-            return nexttowardf(arg_1, arg_2);
-        }
-        case 2: {
-            return nexttoward(arg_1, arg_2);
-        }
-        case 3: {
-#if _lib_nexttowardl
-            return nexttowardl(arg_1, arg_2);
-#else
-            return nexttoward(arg_1, arg_2);
-#endif
-        }
-        default: { return 0; }
-    }
-}
 
 static int local_signbit(Sfdouble_t a1) {
     return signbit(a1) != 0;  //!OCLINT(constant conditional operator)
@@ -229,8 +197,6 @@ const struct mathtab shtab_math[] = {{"\001acos", (Math_f)acosl},
                                      {"\001log2", (Math_f)log2l},
                                      {"\001logb", (Math_f)logbl},
                                      {"\001nearbyint", (Math_f)nearbyintl},
-                                     {"\102nextafter", (Math_f)local_nextafter},
-                                     {"\102nexttoward", (Math_f)local_nexttoward},
                                      {"\002pow", (Math_f)powl},
                                      {"\002remainder", (Math_f)remainderl},
                                      {"\001rint", (Math_f)rintl},

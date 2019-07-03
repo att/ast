@@ -148,7 +148,6 @@
 #mesondefine _lib_universe
 #mesondefine _lib_utime
 #mesondefine _lib_utimensat
-#mesondefine _lib_nexttowardl
 #mesondefine _lib_expm1l
 #mesondefine _lib_log1pl
 #mesondefine _lib_remainderl

@@ -15,10 +15,13 @@ was subsequently created to document the work being done.
 
 ## Deprecations
 
-None at this time.
+- Some libc/libm math functions not suitable for use by a ksh script (e.g.,
+  `j0()`) will likely be removed in the near future (issue #1346 and #88).
 
 ## Notable non-backward compatible changes
 
+- The broken math functions `nextforward` and `nexttoward` have been removed
+  (issue #1346).
 - Support for binary plugins written for ksh93u+ or earlier releases has been
   dropped (issue #983).
 - Support for coshell has been removed (issue #619).
