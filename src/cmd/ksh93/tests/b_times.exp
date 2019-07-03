@@ -50,3 +50,13 @@ expect -re "\r\n$one_sec_re $zero_sec_re\r\n$one_sec_re $zero_sec_re\r\n" {
     puts "times produces expected non-zero output for child processes"
 }
 expect_prompt
+
+# ==========
+# Exit shell with ctrl-d
+log_test_entry
+send [ctrl D]
+catch {expect default exp_continue} output
+log_debug "EOF output: $output"
+
+catch {wait}
+exit 0

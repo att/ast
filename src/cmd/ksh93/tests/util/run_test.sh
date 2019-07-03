@@ -338,7 +338,7 @@ then
     fi
 
     # Interactive tests are flakey on CI test environments like Travis. So make several attempts
-    # before reporting giving up and reporting failure.
+    # before giving up and reporting failure.
     status=0
     for i in 1 2 3
     do

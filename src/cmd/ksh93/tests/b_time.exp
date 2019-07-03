@@ -59,3 +59,14 @@ send "SECONDS=0; time while (( SECONDS < 0.5 )); do true; done;'\r"
 expect -re "pct 9\[0-9\].\[0-9\]\[0-9\]\[0-9\]%\r\n" {
     puts "time %3P produces correct output"
 }
+expect_prompt
+
+# ==========
+# Exit shell with ctrl-d
+log_test_entry
+send [ctrl D]
+catch {expect default exp_continue} output
+log_debug "EOF output: $output"
+
+catch {wait}
+exit 0
