@@ -77,3 +77,28 @@ expect=1.0
 # ======
 $SHELL -c 'sleep $(printf "%a" .95)' ||
     log_error "sleep doesn't except %a format constants"
+
+# ======
+# Verify unexpected arguments result in an error.
+expect="sleep: one operand expected"
+actual=$(sleep 0 .3 2>&1)
+[[ $actual == $expect ]] || log_error "unexpected args isn't an error" "$expect" "$actual"
+
+# ======
+# Verify an invalid interval results in an error.
+expect="sleep: 1sx: bad number"
+actual=$(sleep 1sx 2>&1)
+[[ $actual == $expect ]] || log_error "invalid interval isn't an error" "$expect" "$actual"
+
+# ======
+# Verify complex interval is parsed without error. We can't easily verify the interval is correctly
+# parsed so we just hope not to see an error message and the actual sleep is within a reasonable
+# window.
+SECONDS=0
+$SHELL -c 'sleep 0d0h0m0.01s' >fifo8 2>&1 &
+wait
+(( SECONDS <= 0.3 )) || log_error "complex interval isn't handled correctly" "<= 0.3" "$SECONDS"
+actual=''
+expect=''
+read -u8 -t0.01 actual
+[[ $actual == $expect ]] || log_error "complex interval isn't parsed" "$expect" "$actual"
