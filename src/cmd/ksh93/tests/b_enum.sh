@@ -21,20 +21,50 @@
 # =======
 enum 2>&1 | grep -q Usage || log_error "Running enum without any arguments should show usage info"
 
-# TODO: Moving this line below `for` loop changes output. That's a bug.
+# TODO: Moving this line after the `for` loop that below changes output. That's a bug. Fix it.
 # =======
-_Bool --man 2>&1 | grep -q "_Bool - create an instance of type _Bool" || log_error "Enum types should recognize --man option"
+_Bool --man 2>&1 | grep -q "_Bool - create an instance of type _Bool" ||
+    log_error "Enum types should recognize --man option"
 
 # =======
 enum Color_t=(red green blue orange yellow)
 enum -i Sex_t=(Male Female)
 
+Color_t color
+Sex_t sex
+
+actual=${sex.Female}
+expect=1
+[[ $actual == $expect ]] || log_error "valid enum sym to index wrong" "$expect" "$actual"
+
+actual=${sex.female}
+expect=1
+[[ $actual == $expect ]] || log_error "valid enum sym to index wrong" "$expect" "$actual"
+
+actual=${sex.MaLe}
+expect=0
+[[ $actual == $expect ]] || log_error "valid enum sym to index wrong" "$expect" "$actual"
+
+actual=${color.red}
+expect=0
+[[ $actual == $expect ]] || log_error "valid enum sym to index wrong" "$expect" "$actual"
+
+actual=${color.yellow}
+expect=4
+[[ $actual == $expect ]] || log_error "valid enum sym to index wrong" "$expect" "$actual"
+
+actual=$( { echo ${color.arglebargle}; } 2>&1 )
+expect=": arglebargle: invalid enum constant for color"
+[[ $actual =~ .*"$expect"$ ]] || log_error "invalid enum sym to index wrong" "$expect" "$actual"
+
+# Why is this looping 1000 times?
 for ((i=0; i < 1000; i++))
 do
     Color_t x
     [[ $x == red ]] || log_error 'Color_t does not default to red'
     x=orange
     [[ $x == orange ]] || log_error '$x should be orange'
+
     ( x=violet) 2> /dev/null && log_error 'x=violet should fail'
     x[2]=green
     [[ ${x[2]} == green ]] || log_error '${x[2]} should be green'

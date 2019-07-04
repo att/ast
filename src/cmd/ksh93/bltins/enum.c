@@ -208,17 +208,24 @@ static_fn char *get_enum(Namval_t *np, Namfun_t *fp) {
 
 static_fn Sfdouble_t get_nenum(Namval_t *np, Namfun_t *fp) { return nv_getn(np, fp); }
 
+//
+// This returns the index of an enum symbol when something like the following is executed. In this
+// case "2" would be echoed:
+//
+//     enum Color_t=(red green blue orange yellow)
+//     Color_t x
+//     echo ${x.blue}
+//
 static_fn Namval_t *create_enum(Namval_t *np, const void *vp, nvflag_t flags, Namfun_t *fp) {
     UNUSED(flags);
     const char *name = vp;
     struct Enum *ep = (struct Enum *)fp;
-    Namval_t *mp;
-    const char *v;
-    int i, n;
-    mp = nv_namptr(ep->node, 0);
+    Namval_t *mp = nv_namptr(ep->node, 0);
+
     mp->nvenv = np;
-    for (i = 0; i < ep->nelem; i++) {
-        v = ep->values[i];
+    for (int i = 0; i < ep->nelem; i++) {
+        const char *v = ep->values[i];
+        int n;
         if (ep->iflag) {
             n = strcasecmp(v, name);
         } else {
@@ -233,8 +240,8 @@ static_fn Namval_t *create_enum(Namval_t *np, const void *vp, nvflag_t flags, Na
         }
     }
 
-    error(ERROR_exit(1), "%s:  invalid enum constant for %s", name, nv_name(np));
-    return mp;
+    error(ERROR_exit(1), "%s: invalid enum constant for %s", name, nv_name(np));
+    __builtin_unreachable();
 }
 
 const Namdisc_t ENUM_disc = {.dsize = 0,
