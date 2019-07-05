@@ -174,7 +174,7 @@ extern char *fmtident(const char *);
 extern char *fmtfmt(const char *);
 extern char *fmtint(int64_t, int);
 extern char *fmtmatch(const char *);
-extern char *fmtmode(int, int);
+extern char *fmtmode(int);
 extern char *fmtperm(int);
 extern char *fmtquote(const char *, const char *, const char *, size_t, int);
 extern char *fmtre(const char *);

@@ -51,7 +51,7 @@ char*      fmtesc(const char* \fIstring\fP);
 char*      fmtfs(struct stat* \fIst\fP);
 char*      fmtgid(int \fIgid\fP);
 char*      fmtmatch(const char* \fIre\fP);
-char*      fmtmode(int \fImode\fP, int \fIexternal\fP);
+char*      fmtmode(int \fImode\fP);
 char*      fmtperm(int \fIperm\fP);
 char*      fmtre(const char* \fIpattern\fP);
 char*      fmttime(const char* \fIformat\fP, time_t \fItm\fP);
@@ -153,13 +153,6 @@ returns the
 .I "ls \-l"
 mode string for the file mode bits in
 .IR mode .
-If
-.I "external != 0"
-then 
-.I mode
-is
-.IR modecanon (3)
-canonical.
 .PP
 .L fmtperm
 returns the

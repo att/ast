@@ -24,24 +24,21 @@
 // AT&T Bell Laboratories
 //
 // Return ls -l style file mode string given file mode bits
-// if external!=0 then mode is modex canonical
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "ast.h"
 #include "modelib.h"
-#include "modex.h"
 
 //
 // This function always returns same static buffer.
 // It should be used with care.
 //
-char *fmtmode(int mode, int external) {
+char *fmtmode(int mode) {
     char *s;
     struct modeop *p;
     static char strbuf[MODELEN + 1];
 
-    if (!external) mode = modex(mode);
     s = strbuf;
     for (p = modetab; p < &modetab[MODELEN]; p++) {
         *s++ = p->name[((mode & p->mask1) >> p->shift1) | ((mode & p->mask2) >> p->shift2)];

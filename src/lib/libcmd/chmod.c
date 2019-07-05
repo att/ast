@@ -301,7 +301,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                     if (notify == 2 || (notify == 1 && (mode & ALLPERMS) !=
                                                            (ent->fts_statp->st_mode & ALLPERMS))) {
                         sfprintf(sfstdout, "%s: mode changed to %0.4o (%s)\n", ent->fts_path, mode,
-                                 fmtmode(mode, 1) + 1);
+                                 fmtmode(mode) + 1);
                     }
                 } else if (!quiet) {
                     error(ERROR_system(0), "%s: cannot change mode", ent->fts_path);

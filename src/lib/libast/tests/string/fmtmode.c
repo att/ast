@@ -18,7 +18,7 @@ tmain() {
                                           {0, NULL}};
 
     for (int i = 0; tests[i].input; ++i) {
-        actual_result = fmtmode(tests[i].input, 1);
+        actual_result = fmtmode(tests[i].input);
         if (strcmp(actual_result, tests[i].expected_result)) {
             terror(
                 "fmtmode() failed :: Failed to convert mode to formatted string :: Actual Result : "
