@@ -1,3 +1,6 @@
+// This is not built at this time as it is unused. It used to be used by the COSHELL facility
+// which has been removed. We're retaining this module because it is potentially useful.
+
 /***********************************************************************
  *                                                                      *
  *               This software is part of the ast package               *

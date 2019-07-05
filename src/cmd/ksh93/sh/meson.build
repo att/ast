@@ -5,7 +5,9 @@ ksh93_files += [
     'sh/bash.c',
     'sh/debug.c',
     'sh/defs.c',
-    'sh/deparse.c',
+    # There is no code that uses the code in these modules so don't bother compiling, linting,
+    # or styling it. But keep the module because it may prove useful in the future.
+    # 'sh/deparse.c',
     'sh/expand.c',
     'sh/fault.c',
     'sh/fcin.c',
