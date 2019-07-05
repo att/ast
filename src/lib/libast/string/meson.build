@@ -16,7 +16,6 @@ libast_files += [
     'string/fmttmx.c',
     'string/memdup.c',
     'string/modedata.c',
-    'string/modei.c',
     'string/strelapsed.c',
     'string/stresc.c',
     'string/strlcat.c',

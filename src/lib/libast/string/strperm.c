@@ -38,8 +38,6 @@
 #include <stdbool.h>
 #include <sys/stat.h>
 
-#include "modex.h"
-
 #ifndef ALLPERMS
 #ifdef S_ISTXT
 #define ALLPERMS (S_ISTXT | S_ISUID | S_ISGID | S_IRWXU | S_IRWXG | S_IRWXO)
@@ -233,7 +231,7 @@ int strperm(const char *aexpr, char **e, int perm) {
                                     who = S_ISVTX | S_ISUID | S_ISGID | S_IRWXU | S_IRWXG | S_IRWXO;
                                 }
                                 if (*expr < '0' || *expr > '7') {
-                                    typ |= modei(num);
+                                    typ |= num;
                                     num = 0;
                                 }
                                 break;

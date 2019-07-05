@@ -29,7 +29,6 @@
 #define _MODELIB_H 1
 
 #include "ast.h"
-#include "modex.h"
 
 #define MODELEN 10
 #define PERMLEN 24
