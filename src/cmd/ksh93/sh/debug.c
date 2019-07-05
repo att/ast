@@ -406,35 +406,35 @@ static_fn void _dprint_VT_uidp(const char *file_name, int lineno, const char *fu
 
 // This must be kept in the same order as the `enum value_type` in "name.h".
 static vtp_dprintf *dprint_vtp_dispatch[] = {
-    NULL,                   // VT_do_not_use
-    _dprint_VT_vp,          // VT_vp
-    _dprint_VT_cp,          // VT_cp
-    _dprint_VT_const_cp,    // VT_const_cp
-    _dprint_VT_pp,          // VT_pp
-    _dprint_VT_uc,          // VT_uc
-    _dprint_VT_h,           // VT_h
-    _dprint_VT_i,           // VT_i
-    _dprint_VT_l,           // VT_l
-    _dprint_VT_d,           // VT_d
-    _dprint_VT_f,           // VT_f
-    _dprint_VT_i16,         // VT_i16
-    _dprint_VT_ip,          // VT_ip
-    _dprint_VT_i16p,        // VT_i16p
-    _dprint_VT_i32p,        // VT_i32p
-    _dprint_VT_i64p,        // VT_i64p
-    _dprint_VT_dp,          // VT_dp
-    _dprint_VT_fp,          // VT_fp
-    _dprint_VT_sfdoublep,   // VT_sfdoublep
-    _dprint_VT_np,          // VT_np
-    _dprint_VT_up,          // VT_up
-    _dprint_VT_rp,          // VT_rp
-    _dprint_VT_funp,        // VT_funp
-    _dprint_VT_nrp,         // VT_nrp
-    _dprint_VT_shbltinp,    // VT_shbltinp
-    _dprint_VT_pathcomp,    // VT_pathcomp
-    _dprint_VT_pidp,        // VT_pidp
-    _dprint_VT_uidp,        // VT_uidp
-    NULL                    // VT_sentinal, must be last
+    NULL,                  // VT_do_not_use
+    _dprint_VT_vp,         // VT_vp
+    _dprint_VT_cp,         // VT_cp
+    _dprint_VT_const_cp,   // VT_const_cp
+    _dprint_VT_pp,         // VT_pp
+    _dprint_VT_uc,         // VT_uc
+    _dprint_VT_h,          // VT_h
+    _dprint_VT_i,          // VT_i
+    _dprint_VT_l,          // VT_l
+    _dprint_VT_d,          // VT_d
+    _dprint_VT_f,          // VT_f
+    _dprint_VT_i16,        // VT_i16
+    _dprint_VT_ip,         // VT_ip
+    _dprint_VT_i16p,       // VT_i16p
+    _dprint_VT_i32p,       // VT_i32p
+    _dprint_VT_i64p,       // VT_i64p
+    _dprint_VT_dp,         // VT_dp
+    _dprint_VT_fp,         // VT_fp
+    _dprint_VT_sfdoublep,  // VT_sfdoublep
+    _dprint_VT_np,         // VT_np
+    _dprint_VT_up,         // VT_up
+    _dprint_VT_rp,         // VT_rp
+    _dprint_VT_funp,       // VT_funp
+    _dprint_VT_nrp,        // VT_nrp
+    _dprint_VT_shbltinp,   // VT_shbltinp
+    _dprint_VT_pathcomp,   // VT_pathcomp
+    _dprint_VT_pidp,       // VT_pidp
+    _dprint_VT_uidp,       // VT_uidp
+    NULL                   // VT_sentinal, must be last
 };
 
 // Diagnostic print a struct Value object.
