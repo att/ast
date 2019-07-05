@@ -39,6 +39,17 @@ expect_status=2
 [[ $actual_status == $expect_status ]] ||
     log_error "wrong exit status" "$expect_status" "$actual_status"
 
+# ==========
+# If the shell is invoked with stdin and stdout closed it should ensure they are open on /dev/null.
+# ksh93u+ and older versions did not do so. Which would cause this test to fail because the shell
+# exit status would not be zero. We can't use ksh to perform the close because it now ensures all
+# child processes have stdin, stdout, and stderr open on something, possibly /dev/null. We want to
+# ensure that ksh behaves sensibly if that isn't true.
+actual=$(bash -c "0<&- 1<&- $SHELL -c 'print yes'")
+status=$?
+[[ $actual == "" ]] || log_error "stdout had unexpected text" "" "$actual"
+[[ $status -eq 0 ]] || log_error "exit status wrong" "0" "$actual"
+
 # test basic file operations like redirection, pipes, file expansion
 
 umask u=rwx,go=rx || log_error "umask u=rws,go=rx failed"
