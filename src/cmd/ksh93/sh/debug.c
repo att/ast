@@ -182,13 +182,6 @@ static_fn void debug_trap_sigsegv() {
 
 static_fn void debug_untrap_sigsegv() { sigaction(SIGSEGV, &debug_oact, NULL); }
 
-static_fn void _dprint_VT_do_not_use(const char *file_name, int lineno, const char *func_name,
-                                     int level, const char *var_name, const struct Value *vtp) {
-    UNUSED(vtp);
-    UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "undefined (type is VT_do_not_use)"));
-}
-
 static_fn void _dprint_VT_vp(const char *file_name, int lineno, const char *func_name, int level,
                              const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
@@ -411,19 +404,9 @@ static_fn void _dprint_VT_uidp(const char *file_name, int lineno, const char *fu
              BASE_ADDR(FETCH_VTP(vtp, uidp)), (uint64_t)*FETCH_VTP(vtp, uidp));
 }
 
-static_fn void _dprint_VT_sentinal(const char *file_name, int lineno, const char *func_name,
-                                   int level, const char *var_name, const struct Value *vtp) {
-    UNUSED(file_name);
-    UNUSED(lineno);
-    UNUSED(func_name);
-    UNUSED(level);
-    UNUSED(var_name);
-    UNUSED(vtp);
-}
-
 // This must be kept in the same order as the `enum value_type` in "name.h".
 static vtp_dprintf *dprint_vtp_dispatch[] = {
-    _dprint_VT_do_not_use,  // VT_do_not_use
+    NULL,                   // VT_do_not_use
     _dprint_VT_vp,          // VT_vp
     _dprint_VT_cp,          // VT_cp
     _dprint_VT_const_cp,    // VT_const_cp
@@ -451,7 +434,7 @@ static vtp_dprintf *dprint_vtp_dispatch[] = {
     _dprint_VT_pathcomp,    // VT_pathcomp
     _dprint_VT_pidp,        // VT_pidp
     _dprint_VT_uidp,        // VT_uidp
-    _dprint_VT_sentinal     // must be last
+    NULL                    // VT_sentinal, must be last
 };
 
 // Diagnostic print a struct Value object.
@@ -470,7 +453,7 @@ void _dprint_vtp(const char *file_name, int const lineno, const char *func_name,
     // We do this rather than a sizeof(dprint_vtp_dispatch) check because the latter is a constant
     // expression that causes lint warnings.
     const struct Value *vtp = vp;
-    assert(dprint_vtp_dispatch[VT_sentinal] == _dprint_VT_sentinal);
+    assert(dprint_vtp_dispatch[VT_sentinal] == NULL);  // ensure table is valid
     assert(vtp->type >= VT_do_not_use && vtp->type < VT_sentinal);
 
     if (vtp->type == VT_do_not_use) {
