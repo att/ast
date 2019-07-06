@@ -1664,6 +1664,9 @@ skip:
                 type = 0;
             }
         }
+        // The structure of this code causes Coverity Scan to warn that `argp` may be NULL.
+        // Coverity CID#253577. I'm pretty sure this can't happen so make that explicit.
+        assert(argp);
         pattern = strdup(argp);
         if ((type == '/' || c == '/') && (repstr = mac_getstring(pattern))) {
             replen = (int)strlen(repstr);
