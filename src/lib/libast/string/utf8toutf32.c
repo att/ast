@@ -57,8 +57,13 @@ int utf8towc(wchar_t *wp, const char *str, size_t n) {
     int c;
     wchar_t w = 0;
 
-    if (!sp || !n) goto nul;
-    if ((m = utf8tab[*sp]) > 0) {
+    if (!sp || !n) {
+        if (wp) *wp = 0;
+        return 0;
+    }
+
+    m = utf8tab[*sp];
+    if (m > 0) {
         if (m > n) return -2;
         if (wp) {
             if (m == 1) {
@@ -77,10 +82,10 @@ int utf8towc(wchar_t *wp, const char *str, size_t n) {
         return m;
     }
     if (!*sp) {
-    nul:
         if (wp) *wp = 0;
         return 0;
     }
+
 invalid:
     errno = EILSEQ;
     return -1;
