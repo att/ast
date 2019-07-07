@@ -443,7 +443,7 @@ void _dprint_vtp(const char *file_name, int const lineno, const char *func_name,
     int oerrno = errno;
 
     if (!vp) {
-        _dprintf(file_name, lineno, func_name, indent(level, "struct Value %s == NULL"), var_name);
+        _dprintf(file_name, lineno, func_name, indent(level, "struct Value *%s == NULL"), var_name);
         errno = oerrno;
         return;
     }

@@ -131,10 +131,70 @@ static void test_dprint_nv() {
     DPRINT_NV(nval1);
 }
 
+static char **pp = &str;
+static struct pathcomp *pathcomp = NULL;
+
+static void test_dprint_vt3() {
+    SET_BASE_ADDR(pp, 32);
+    STORE_VT(v1, pp, pp);
+    DPRINT_VT(v1);
+
+    SET_BASE_ADDR(pathcomp, 64);
+    STORE_VT(v1, pathcomp, pathcomp);
+    DPRINT_VT(v1);
+
+    STORE_VT(v1, uc, 'x');
+    DPRINT_VT(v1);
+
+    STORE_VT(v1, h, 439);
+    DPRINT_VT(v1);
+
+    STORE_VT(v1, l, 0x1234ABCD);
+    DPRINT_VT(v1);
+
+    STORE_VT(v1, f, 2.718282);
+    DPRINT_VT(v1);
+
+    STORE_VT(v1, d, 3.141593);
+    DPRINT_VT(v1);
+
+    // Verify that an invalid string pointer that causes a SIGSEGV is trapped and handled.
+    SET_BASE_ADDR(0x1234, 0x1234);
+    STORE_VT(v1, cp, (char *)0x1234);
+    DPRINT_VT(v1);
+
+    // Printing a NULL ptr to a struct Value should be handled gracefully.
+    struct Value *null_vtp = NULL;
+    DPRINT_VTP(null_vtp);
+
+    // Printing an uninitialized struct Value should be handled gracefully.
+    struct Value uninitialized_vt;
+    memset(&uninitialized_vt, 0, sizeof(uninitialized_vt));
+    DPRINT_VT(uninitialized_vt);
+}
+
+// Verify that printing nvflag_t objects produces correct output.
+static void test_dprint_nvflag() {
+    nvflag_t nvflag;
+
+    nvflag = 0;
+    DPRINTF("nvflag decoded: %s", nvflag_to_syms(nvflag));
+
+    nvflag = NV_NOPRINT;
+    DPRINTF("nvflag decoded: %s", nvflag_to_syms(nvflag));
+
+    // This test is to verify that unrecognized bits in the value are reported. This is fragile and
+    // will need to be changed if and when this particular bit is ever assigned a meaning.
+    nvflag = NV_LONG | ((nvflag_t)1 << 31);
+    DPRINTF("nvflag decoded: %s", nvflag_to_syms(nvflag));
+}
+
 int main() {
     _dprintf_debug = true;
     test_dprint_vt1();
     test_dprint_vt2();
     test_dprint_nv();
+    test_dprint_vt3();
+    test_dprint_nvflag();
     return 0;
 }
