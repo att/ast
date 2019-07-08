@@ -15,6 +15,7 @@
 
 #include "name.h"
 #include "sfio.h"
+#include "shcmd.h"
 
 static struct Value v1;
 static struct Value v2;
@@ -34,6 +35,8 @@ static char **pp = &str;
 static struct pathcomp *pathcomp = NULL;
 static char cp[] = "dval2";
 static Namval_t nval1, nval2;
+static struct Namref nref;
+static struct Namfun namfun;
 
 #define SET_BASE_ADDR(p, offset) _dprint_vt_base_addr = (char *)(p) - offset
 
@@ -60,6 +63,12 @@ static void test_dprint_vt() {
     DPRINT_VT(v1);
 
     STORE_VT(v1, np, &nval1);
+    DPRINT_VT(v1);
+
+    STORE_VT(v1, nrp, &nref);
+    DPRINT_VT(v1);
+
+    STORE_VT(v1, shbltinp, NULL);
     DPRINT_VT(v1);
 
     STORE_VT(v1, i, 321);
@@ -115,6 +124,10 @@ static void test_dprint_vt() {
 
     SET_BASE_ADDR(pp, 32);
     STORE_VT(v1, pp, pp);
+    DPRINT_VT(v1);
+
+    SET_BASE_ADDR(&namfun, 0x1234);
+    STORE_VT(v1, funp, &namfun);
     DPRINT_VT(v1);
 
     SET_BASE_ADDR(pathcomp, 64);

@@ -26,7 +26,7 @@
 // value will cause that value to be displayed rather than the actual line.
 void *_dprint_vt_base_addr = NULL;
 
-#define BASE_ADDR(p) (char *)((char *)(p) - (char *)_dprint_vt_base_addr)
+#define BASE_ADDR(p) (p ? (void *)((char *)(p) - (char *)_dprint_vt_base_addr) : NULL)
 
 // Max number of pointers we remember when following a cycle of pointers.
 #define MAX_PTRS 100
