@@ -1,7 +1,7 @@
 ksh93_files += [
     'bltins/bg.c',
+    'bltins/break_continue.c',
     'bltins/cd_pwd.c',
-    'bltins/cflow.c',
     'bltins/enum.c',
     'bltins/exec_login.c',
     'bltins/eval.c',
@@ -12,6 +12,7 @@ ksh93_files += [
     'bltins/math.c',
     'bltins/print.c',
     'bltins/read.c',
+    'bltins/return_exit.c',
     'bltins/shift.c',
     'bltins/sleep.c',
     'bltins/source.c',

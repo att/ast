@@ -17,15 +17,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-//
-// break [n]
-// continue [n]
-// return [n]
-// exit [n]
-//
-//   David Korn
-//   dgkorn@gmail.com
-//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stdlib.h>
@@ -74,6 +65,7 @@ done:
     if (n < 0 || n == 256 || n > SH_EXITMASK + shp->gd->sigmax) {
         n &= ((unsigned int)n) & SH_EXITMASK;
     }
+
     // Return outside of function, dotscript and profile is exit.
     if (shp->fn_depth == 0 && shp->dot_depth == 0 && !sh_isstate(shp, SH_PROFILE)) {
         pp->mode = SH_JMPEXIT;
@@ -81,53 +73,5 @@ done:
 
     shp->savexit = n;
     sh_exit(shp, shp->savexit);
-
-    abort();
-}
-
-//
-// Builtins `break` and `continue`.
-//
-int b_break(int n, char *argv[], Shbltin_t *context) {
-    char *arg;
-    int cont = **argv == 'c';
-    Shell_t *shp = context->shp;
-    while ((n = optget(argv, cont ? sh_optcont : sh_optbreak))) {
-        switch (n) {
-            case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
-                return 2;
-            }
-            default: { break; }
-        }
-    }
-
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-
-    argv += opt_info.index;
-    n = 1;
-    arg = *argv;
-
-    if (arg) {
-        n = (int)strtol(arg, &arg, 10);
-        if (n <= 0 || *arg) {
-            errormsg(SH_DICT, ERROR_exit(1), e_nolabels, *argv);
-            __builtin_unreachable();
-        }
-    }
-
-    if (shp->st.loopcnt) {
-        shp->st.execbrk = shp->st.breakcnt = n;
-        if (shp->st.breakcnt > shp->st.loopcnt) shp->st.breakcnt = shp->st.loopcnt;
-        if (cont) shp->st.breakcnt = -shp->st.breakcnt;
-    }
-
-    return 0;
+    __builtin_unreachable();
 }
