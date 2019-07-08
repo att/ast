@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include "name.h"
 #include "sfio.h"
@@ -29,10 +30,14 @@ static float f;
 static Sfdouble_t sfdouble;
 static pid_t pid;
 static uid_t uid;
+static char **pp = &str;
+static struct pathcomp *pathcomp = NULL;
+static char cp[] = "dval2";
+static Namval_t nval1, nval2;
 
 #define SET_BASE_ADDR(p, offset) _dprint_vt_base_addr = (char *)(p)-offset
 
-static void test_dprint_vt1() {
+static void test_dprint_vt() {
     SET_BASE_ADDR(&v1, 4);
     STORE_VT(v1, vp, &v1);
     DPRINT_VT(v1);
@@ -56,9 +61,7 @@ static void test_dprint_vt1() {
 
     STORE_VT(v1, i16, 357);
     DPRINT_VT(v1);
-}
 
-static void test_dprint_vt2() {
     SET_BASE_ADDR(&i, 16);
     i = 111;
     STORE_VT(v1, ip, &i);
@@ -103,36 +106,7 @@ static void test_dprint_vt2() {
     uid = 54321;
     STORE_VT(v1, uidp, &uid);
     DPRINT_VT(v1);
-}
 
-static char cp[] = "dval2";
-static Namval_t nval1, nval2;
-
-static void test_dprint_nv() {
-    memset(&nval1, 0, sizeof(nval1));
-    memset(&nval2, 0, sizeof(nval2));
-    nval1.nvname = "dvar1";
-    nval1.nvsize = 33;
-    STORE_VT(nval1.nvalue, i, 111);
-    nval2.nvname = "dvar2";
-    nval2.nvsize = 66;
-    nval2.nvenv = &nval1;
-    STORE_VT(nval2.nvalue, cp, cp);
-
-    SET_BASE_ADDR(&cp, 4);
-    DPRINT_NV(nval2);
-
-    nval1.nvsize = 99;
-    nv_setattr(&nval1, NV_DOUBLE);
-    nval1.nvenv = (Namval_t *)"nvenv is a string";
-    nval1.nvenv_is_cp = true;
-    DPRINT_NV(nval1);
-}
-
-static char **pp = &str;
-static struct pathcomp *pathcomp = NULL;
-
-static void test_dprint_vt3() {
     SET_BASE_ADDR(pp, 32);
     STORE_VT(v1, pp, pp);
     DPRINT_VT(v1);
@@ -171,6 +145,27 @@ static void test_dprint_vt3() {
     DPRINT_VT(uninitialized_vt);
 }
 
+static void test_dprint_nv() {
+    memset(&nval1, 0, sizeof(nval1));
+    memset(&nval2, 0, sizeof(nval2));
+    nval1.nvname = "dvar1";
+    nval1.nvsize = 33;
+    STORE_VT(nval1.nvalue, i, 111);
+    nval2.nvname = "dvar2";
+    nval2.nvsize = 66;
+    nval2.nvenv = &nval1;
+    STORE_VT(nval2.nvalue, cp, cp);
+
+    SET_BASE_ADDR(&cp, 4);
+    DPRINT_NV(nval2);
+
+    nval1.nvsize = 99;
+    nv_setattr(&nval1, NV_DOUBLE);
+    nval1.nvenv = (Namval_t *)"nvenv is a string";
+    nval1.nvenv_is_cp = true;
+    DPRINT_NV(nval1);
+}
+
 // Verify that printing nvflag_t objects produces correct output.
 static void test_dprint_nvflag() {
     nvflag_t nvflag;
@@ -190,10 +185,10 @@ static void test_dprint_nvflag() {
 int main() {
     _dprintf_debug = true;
     _dprint_fixed_line = 1;
-    test_dprint_vt1();
-    test_dprint_vt2();
+    test_dprint_vt();
+    write(2, "\n", 1);
     test_dprint_nv();
-    test_dprint_vt3();
+    write(2, "\n", 1);
     test_dprint_nvflag();
     return 0;
 }
