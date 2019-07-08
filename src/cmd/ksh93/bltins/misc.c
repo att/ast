@@ -148,34 +148,3 @@ int B_login(int argc, char *argv[], Shbltin_t *context) {
     }
     return 1;
 }
-
-int b_eval(int argc, char *argv[], Shbltin_t *context) {
-    int r;
-    Shell_t *shp = context->shp;
-    UNUSED(argc);
-
-    while ((r = optget(argv, sh_opteval))) {
-        switch (r) {
-            case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
-                return 2;
-            }
-            default: { break; }
-        }
-    }
-
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-    argv += opt_info.index;
-    if (*argv && **argv) {
-        sh_offstate(shp, SH_MONITOR);
-        sh_eval(shp, sh_sfeval((const char **)argv), 0);
-    }
-    return shp->exitval;
-}

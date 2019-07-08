@@ -3,6 +3,7 @@ ksh93_files += [
     'bltins/cd_pwd.c',
     'bltins/cflow.c',
     'bltins/enum.c',
+    'bltins/eval.c',
     'bltins/getopts.c',
     'bltins/hist.c',
     'bltins/jobs.c',
