@@ -276,6 +276,8 @@ extern int lchmod(const char *path, mode_t mode);
 // respect to portions of each log line it writes that would otherwise vary with each invocation
 // (e.g., the pid). This is a private API solely for use by unit tests.
 extern bool _dprintf_debug;
+extern void *_dprint_vt_base_addr;
+extern int _dprint_fixed_line;
 
 // This is useful for printing debugging messages that are tagged with useful
 // information such as the current file, line number, function name, and
@@ -289,7 +291,7 @@ extern void _dprintf(const char *fname, int lineno, const char *funcname, const 
 // Note that the function prototype uses a `const void*` because we can't use
 // `struct Value*` here as the src/ksh93/include/name.h header which defines
 // it can't be included before this header.
-extern void _dprint_vtp(const char *file_name, const int lineno, const char *func_name,
+extern void _dprint_vtp(const char *file_name, int lineno, const char *func_name,
                         int level, const char *var_name, const void *vp);
 #define DPRINT_VT(vt) _dprint_vtp(__FILE__, __LINE__, __FUNCTION__, 0, #vt, &(vt))
 #define DPRINT_VTP(vtp) _dprint_vtp(__FILE__, __LINE__, __FUNCTION__, 0, #vtp, vtp)

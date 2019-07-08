@@ -20,10 +20,12 @@
 #define INDENT 2
 #define MAX_LEVELS 5
 
-// This is to give unit tests some control over the addresses displayed. Setting this to the
-// address of the first var in the unit test module will cause all pointers to be displayed as
-// offsets to that var.
+// This is to give unit tests some control over line numbers and addresses are displayed. Setting
+// _dprint_vt_base_addr to the address of the first var in the unit test module will cause all
+// pointers to be displayed as offsets to that var. Setting _dprint_base_line to a non-zero
+// value will cause that value to be displayed rather than the actual line.
 void *_dprint_vt_base_addr = NULL;
+
 #define BASE_ADDR(p) (char *)((char *)(p) - (char *)_dprint_vt_base_addr)
 
 // Max number of pointers we remember when following a cycle of pointers.
@@ -438,7 +440,7 @@ static vtp_dprintf *dprint_vtp_dispatch[] = {
 };
 
 // Diagnostic print a struct Value object.
-void _dprint_vtp(const char *file_name, int const lineno, const char *func_name, int level,
+void _dprint_vtp(const char *file_name, int lineno, const char *func_name, int level,
                  const char *var_name, const void *vp) {
     int oerrno = errno;
 
@@ -448,6 +450,7 @@ void _dprint_vtp(const char *file_name, int const lineno, const char *func_name,
         return;
     }
 
+    if (_dprint_fixed_line) lineno = _dprint_fixed_line;
     if (level == 0) clear_ptrs();
 
     // We do this rather than a sizeof(dprint_vtp_dispatch) check because the latter is a constant
@@ -465,7 +468,8 @@ void _dprint_vtp(const char *file_name, int const lineno, const char *func_name,
 
     _dprintf(file_name, lineno, func_name,
              indent(level, "struct Value %s.%s stored @ %s:%d in %s() is..."), var_name,
-             value_type_names[vtp->type], vtp->filename ? vtp->filename : "undef", vtp->line_num,
+             value_type_names[vtp->type], vtp->filename ? vtp->filename : "undef",
+             _dprint_fixed_line ? _dprint_fixed_line : vtp->line_num,
              vtp->funcname ? vtp->funcname : "undef");
     debug_trap_sigsegv();
     if (sigsetjmp(jbuf, 1) == 0) {
@@ -485,11 +489,12 @@ void _dprint_vtp(const char *file_name, int const lineno, const char *func_name,
 #define NP_BASE_ADDR(np) (_dprint_vt_base_addr ? (void *)0x88 : (void *)np)
 
 // Diagnostic print a struct Namval (aka Namval_t) object.
-void _dprint_nvp(const char *file_name, const int lineno, const char *func_name, int level,
+void _dprint_nvp(const char *file_name, int lineno, const char *func_name, int level,
                  const char *var_name, const void *vp) {
     int oerrno = errno;
     const Namval_t *np = vp;
 
+    if (_dprint_fixed_line) lineno = _dprint_fixed_line;
     if (level == 0) clear_ptrs();
 
     _dprintf(file_name, lineno, func_name, indent(level, "struct Namval %s @ %p"), var_name,
@@ -524,11 +529,12 @@ void _dprint_nvp(const char *file_name, const int lineno, const char *func_name,
 }
 
 // Diagnostic print a struct Namref object.
-void _dprint_nrp(const char *file_name, const int lineno, const char *func_name, int level,
+void _dprint_nrp(const char *file_name, int lineno, const char *func_name, int level,
                  const char *var_name, const void *vp) {
     int oerrno = errno;
     const struct Namref *nr = vp;
 
+    if (_dprint_fixed_line) lineno = _dprint_fixed_line;
     if (level == 0) clear_ptrs();
 
     _dprintf(file_name, lineno, func_name, indent(level, "struct Namref %s @ %p"), var_name,

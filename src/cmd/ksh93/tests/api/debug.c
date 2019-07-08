@@ -15,8 +15,6 @@
 #include "name.h"
 #include "sfio.h"
 
-extern void *_dprint_vt_base_addr;
-
 static struct Value v1;
 static struct Value v2;
 static struct Value *v2p;
@@ -191,6 +189,7 @@ static void test_dprint_nvflag() {
 
 int main() {
     _dprintf_debug = true;
+    _dprint_fixed_line = 1;
     test_dprint_vt1();
     test_dprint_vt2();
     test_dprint_nv();

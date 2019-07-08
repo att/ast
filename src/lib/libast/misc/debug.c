@@ -37,6 +37,10 @@
 // (e.g., the pid).
 bool _dprintf_debug = false;
 
+// Setting _dprint_base_line to a non-zero value will cause that value to be displayed rather than
+// the actual line.
+int _dprint_fixed_line = 0;
+
 // This value is used by the dump_backtrace() code.
 static const char *ksh_pathname = NULL;
 
@@ -51,6 +55,7 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     int oerrno = errno;
     // Use long rather than pid_t because pid_t may be an int or long depending on the platform.
     long pid = _dprintf_debug ? 1234 : getpid();
+    if (_dprint_fixed_line) lineno = _dprint_fixed_line;
 
     va_list ap;
 
