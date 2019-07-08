@@ -11,6 +11,7 @@ ksh93_files += [
     'bltins/misc.c',
     'bltins/print.c',
     'bltins/read.c',
+    'bltins/shift.c',
     'bltins/sleep.c',
     'bltins/test.c',
     'bltins/times.c',
