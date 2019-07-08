@@ -8,11 +8,13 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
 #include <stdbool.h>
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "ast_assert.h"
 #include "name.h"
 #include "sfio.h"
 #include "shcmd.h"
@@ -158,11 +160,15 @@ static void test_dprint_vt() {
     // Verify that an invalid string pointer that causes a SIGSEGV is trapped and handled.
     SET_BASE_ADDR(0x1234, 0x1234);
     STORE_VT(v1, cp, (char *)0x1234);
+    errno = 666;
     DPRINT_VT(v1);
+    assert(errno == 666);
 
     // Printing a NULL ptr to a struct Value should be handled gracefully.
+    errno = 777;
     struct Value *null_vtp = NULL;
     DPRINT_VTP(null_vtp);
+    assert(errno == 777);
 
     // Printing an uninitialized struct Value should be handled gracefully.
     struct Value uninitialized_vt;
