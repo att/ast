@@ -19,13 +19,7 @@
  ***********************************************************************/
 //
 // exec [arg...]
-// eval [arg...]
 // login [arg...]
-// let expr...
-//
-//   David Korn
-//   AT&T Labs
-//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <string.h>
@@ -42,8 +36,6 @@
 #include "path.h"
 #include "shcmd.h"
 #include "shnodes.h"
-
-static_fn void noexport(Namval_t *, void *);
 
 struct login {
     Shell_t *sh;
