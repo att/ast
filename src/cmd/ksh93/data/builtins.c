@@ -63,7 +63,7 @@ const struct shtable3 shtab_builtins[] = {
     {"[", NV_BLTIN | BLT_ENV, bltin(test)},
     {"let", NV_BLTIN | BLT_ENV, bltin(let)},
     {"export", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_DCL, bltin(readonly)},
-    {".", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(dot_cmd)},
+    {".", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(source)},
     {"return", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(return )},
     {"enum", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_DCL, bltin(enum)},
 #if SHOPT_BASH
@@ -109,7 +109,7 @@ const struct shtable3 shtab_builtins[] = {
     {"wait", NV_BLTIN | BLT_ENV | BLT_EXIT, bltin(wait)},
     {"type", NV_BLTIN | BLT_ENV, bltin(whence)},
     {"whence", NV_BLTIN | BLT_ENV, bltin(whence)},
-    {"source", NV_BLTIN | BLT_ENV, bltin(dot_cmd)},
+    {"source", NV_BLTIN | BLT_ENV, bltin(source)},
     {"times", NV_BLTIN | BLT_ENV, bltin(times)},
     // These commands are implemented by the modules in src/lib/libcmd and are only usable if the
     // user does `builtin cmd` (e.g., `builtin basename`). Or has /opt/ast/bin in PATH ahead of the

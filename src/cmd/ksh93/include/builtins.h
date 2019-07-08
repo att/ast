@@ -50,7 +50,6 @@
 
 extern int b_alias(int, char *[], Shbltin_t *);
 extern int b_break(int, char *[], Shbltin_t *);
-extern int b_dot_cmd(int, char *[], Shbltin_t *);
 extern int b_enum(int, char *[], Shbltin_t *);
 extern int b_exec(int, char *[], Shbltin_t *);
 extern int b_eval(int, char *[], Shbltin_t *);
@@ -61,6 +60,7 @@ extern int b_false(int, char *[], Shbltin_t *);
 extern int b_readonly(int, char *[], Shbltin_t *);
 extern int b_set(int, char *[], Shbltin_t *);
 extern int b_shift(int, char *[], Shbltin_t *);
+extern int b_source(int, char *[], Shbltin_t *);
 extern int b_trap(int, char *[], Shbltin_t *);
 extern int b_typeset(int, char *[], Shbltin_t *);
 extern int b_unset(int, char *[], Shbltin_t *);

@@ -1250,7 +1250,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             }
                             shp->redir0 = 1;
                             sh_redirect(shp, io,
-                                        type | (FETCH_VT(np->nvalue, shbltinp) == b_dot_cmd
+                                        type | (FETCH_VT(np->nvalue, shbltinp) == b_source
                                                     ? 0
                                                     : IOHERESTRING | IOUSEVEX));
                             for (item = buffp->olist; item; item = item->next) item->strm = NULL;
@@ -2814,7 +2814,7 @@ static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], stru
         opt_info.index = opt_info.offset = 0;
         error_info.errors = 0;
         shp->st.loopcnt = 0;
-        b_dot_cmd(argn + 1, argv - 1, &shp->bltindata);
+        b_source(argn + 1, argv - 1, &shp->bltindata);
         shp->st.loopcnt = loopcnt;
         argv[-1] = save;
     } else {

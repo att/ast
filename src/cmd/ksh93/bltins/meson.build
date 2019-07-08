@@ -13,6 +13,7 @@ ksh93_files += [
     'bltins/read.c',
     'bltins/shift.c',
     'bltins/sleep.c',
+    'bltins/source.c',
     'bltins/test.c',
     'bltins/times.c',
     'bltins/trap.c',
