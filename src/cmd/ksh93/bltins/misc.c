@@ -362,34 +362,6 @@ int b_shift(int n, char *argv[], Shbltin_t *context) {
     return 0;
 }
 
-//
-// Builtin `wait`.
-//
-int b_wait(int n, char *argv[], Shbltin_t *context) {
-    Shell_t *shp = context->shp;
-    while ((n = optget(argv, sh_optwait))) {
-        switch (n) {
-            case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
-            }
-            default: { break; }
-        }
-    }
-
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-
-    argv += opt_info.index;
-    job_bwait(argv);
-    return shp->exitval;
-}
 
 #ifdef JOBS
 //
