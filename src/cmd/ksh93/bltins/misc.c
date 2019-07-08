@@ -326,26 +326,6 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
 }
 
 //
-// Builtins `:` and `true`.
-//
-int b_true(int argc, char *argv[], Shbltin_t *context) {
-    UNUSED(argc);
-    UNUSED(argv[0]);
-    UNUSED(context);
-    return 0;
-}
-
-//
-// Builtin `false`.
-//
-int b_false(int argc, char *argv[], Shbltin_t *context) {
-    UNUSED(argc);
-    UNUSED(argv[0]);
-    UNUSED(context);
-    return 1;
-}
-
-//
 // Builtin `shift`.
 //
 int b_shift(int n, char *argv[], Shbltin_t *context) {

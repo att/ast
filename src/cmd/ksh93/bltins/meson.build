@@ -13,6 +13,7 @@ ksh93_files += [
     'bltins/test.c',
     'bltins/times.c',
     'bltins/trap.c',
+    'bltins/true_false.c',
     'bltins/typeset.c',
     'bltins/ulimit.c',
     'bltins/umask.c',
