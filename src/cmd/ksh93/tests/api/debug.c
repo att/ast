@@ -71,6 +71,12 @@ static void test_dprint_vt() {
     STORE_VT(v1, shbltinp, NULL);
     DPRINT_VT(v1);
 
+    STORE_VT(v1, rp, NULL);
+    DPRINT_VT(v1);
+
+    STORE_VT(v1, funp, NULL);
+    DPRINT_VT(v1);
+
     STORE_VT(v1, i, 321);
     DPRINT_VT(v1);
 
