@@ -35,7 +35,7 @@ static struct pathcomp *pathcomp = NULL;
 static char cp[] = "dval2";
 static Namval_t nval1, nval2;
 
-#define SET_BASE_ADDR(p, offset) _dprint_vt_base_addr = (char *)(p)-offset
+#define SET_BASE_ADDR(p, offset) _dprint_vt_base_addr = (char *)(p) - offset
 
 static void test_dprint_vt() {
     SET_BASE_ADDR(&v1, 4);
@@ -54,6 +54,12 @@ static void test_dprint_vt() {
 
     SET_BASE_ADDR(const_str, 12);
     STORE_VT(v1, const_cp, const_str);
+    DPRINT_VT(v1);
+
+    STORE_VT(v1, np, NULL);
+    DPRINT_VT(v1);
+
+    STORE_VT(v1, np, &nval1);
     DPRINT_VT(v1);
 
     STORE_VT(v1, i, 321);
