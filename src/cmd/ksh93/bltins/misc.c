@@ -20,7 +20,6 @@
 //
 // exec [arg...]
 // eval [arg...]
-// jobs [-lnp] [job...]
 // login [arg...]
 // let expr...
 // . file [arg...]
@@ -36,7 +35,6 @@
 #include <setjmp.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 
 #include "argnod.h"
 #include "ast.h"
@@ -359,53 +357,3 @@ int b_shift(int n, char *argv[], Shbltin_t *context) {
     }
     return 0;
 }
-
-
-#ifdef JOBS
-//
-// Builtin `bg`.
-//
-int b_bg(int n, char *argv[], Shbltin_t *context) {
-    int flag = **argv;
-    Shell_t *shp = context->shp;
-    const char *optstr = sh_optbg;
-    if (*argv[0] == 'f') {
-        optstr = sh_optfg;
-    } else if (*argv[0] == 'd') {
-        optstr = sh_optdisown;
-    }
-
-    while ((n = optget(argv, optstr))) {
-        switch (n) {
-            case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
-            }
-            default: { break; }
-        }
-    }
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-
-    argv += opt_info.index;
-    if (!sh_isoption(shp, SH_MONITOR) || !job.jobcontrol) {
-        if (sh_isstate(shp, SH_INTERACTIVE)) {
-            errormsg(SH_DICT, ERROR_exit(1), e_no_jctl);
-            __builtin_unreachable();
-        }
-        return 1;
-    }
-    if (flag == 'd' && *argv == 0) argv = NULL;
-    if (job_walk(shp, sfstdout, job_switch, flag, argv)) {
-        errormsg(SH_DICT, ERROR_exit(1), e_no_job);
-        __builtin_unreachable();
-    }
-    return shp->exitval;
-}
-#endif  // JOBS

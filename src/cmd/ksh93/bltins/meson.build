@@ -1,4 +1,5 @@
 ksh93_files += [
+    'bltins/bg.c',
     'bltins/cd_pwd.c',
     'bltins/cflow.c',
     'bltins/enum.c',
