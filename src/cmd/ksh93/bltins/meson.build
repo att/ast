@@ -4,6 +4,7 @@ ksh93_files += [
     'bltins/enum.c',
     'bltins/getopts.c',
     'bltins/hist.c',
+    'bltins/jobs.c',
     'bltins/let.c',
     'bltins/math.c',
     'bltins/misc.c',

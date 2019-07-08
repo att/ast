@@ -24,10 +24,8 @@
 // login [arg...]
 // let expr...
 // . file [arg...]
-// :, true, false
 // vpath [top] [base]
 // vmap [top] [base]
-// wait [job...]
 // shift [n]
 //
 //   David Korn
@@ -408,53 +406,6 @@ int b_bg(int n, char *argv[], Shbltin_t *context) {
         errormsg(SH_DICT, ERROR_exit(1), e_no_job);
         __builtin_unreachable();
     }
-    return shp->exitval;
-}
-
-//
-// Builtin `jobs`.
-//
-int b_jobs(int n, char *argv[], Shbltin_t *context) {
-    int flag = 0;
-    Shell_t *shp = context->shp;
-    while ((n = optget(argv, sh_optjobs))) {
-        switch (n) {
-            case 'l': {
-                flag = JOB_LFLAG;
-                break;
-            }
-            case 'n': {
-                flag = JOB_NFLAG;
-                break;
-            }
-            case 'p': {
-                flag = JOB_PFLAG;
-                break;
-            }
-            case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
-            }
-            default: { break; }
-        }
-    }
-
-    argv += opt_info.index;
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-
-    if (*argv == 0) argv = NULL;
-    if (job_walk(shp, sfstdout, job_list, flag, argv)) {
-        errormsg(SH_DICT, ERROR_exit(1), e_no_job);
-        __builtin_unreachable();
-    }
-    job_wait((pid_t)0);
     return shp->exitval;
 }
 #endif  // JOBS
