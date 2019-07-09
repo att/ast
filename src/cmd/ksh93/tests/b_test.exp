@@ -3,19 +3,55 @@ set pid [spawn $ksh]
 expect_prompt
 
 # ==========
+# Very basic tests of `test -t`.
 log_test_entry
-send "test -t 1 && echo PASS || echo FAILED\r"
+send "test -t 0 && echo PASS || echo FAILED\r"
 expect "\r\nPASS\r\n" {
     puts "stdin is a terminal device"
 }
 expect_prompt
 
-# ==========
-# `test -t` without argument should check for stdout
+log_test_entry
+send "test -t 1 && echo PASS || echo FAILED\r"
+expect "\r\nPASS\r\n" {
+    puts "stdout is a terminal device"
+}
+expect_prompt
+
 log_test_entry
 send "test -t && echo PASS || echo FAILED\r"
 expect "\r\nPASS\r\n" {
-    puts "stdout is a terminal device"
+    puts "implicit stdout is a terminal device"
+}
+expect_prompt
+
+log_test_entry
+send "test -t 1 > /dev/null && echo FAILED || echo PASS\r"
+expect "\r\nPASS\r\n" {
+    puts "stdout is not a terminal device"
+}
+expect_prompt
+
+log_test_entry
+send "test -t > /dev/null && echo FAILED || echo PASS\r"
+expect "\r\nPASS\r\n" {
+    puts "implicit stdout is not a terminal device"
+}
+expect_prompt
+
+# ==========
+# `test -t` as one of two or more conditions works.
+log_test_entry
+send "test -t 0 -a -t 1 -a -t 2 && echo PASS || echo FAILED\r"
+expect "\r\nPASS\r\n" {
+    puts "test -t true in complex expression"
+}
+expect_prompt
+
+log_test_entry
+send "test -t 0 -a -t 123 && echo PASS || echo FAILED\r"
+expect "\r\nFAILED\r\n" {
+    puts "test -t false in complex expression"
 }
 expect_prompt
 

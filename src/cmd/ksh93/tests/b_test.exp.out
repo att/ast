@@ -1,4 +1,9 @@
 stdin is a terminal device
 stdout is a terminal device
+implicit stdout is a terminal device
+stdout is not a terminal device
+implicit stdout is not a terminal device
+test -t true in complex expression
+test -t false in complex expression
 -t1 in comsub works correctly
 -t1 in comsub with exec >/dev/tty works correctly
