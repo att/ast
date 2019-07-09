@@ -195,6 +195,12 @@ static void test_dprint_nv() {
     nval1.nvenv = (Namval_t *)"nvenv is a string";
     nval1.nvenv_is_cp = true;
     DPRINT_NV(nval1);
+
+    // Verify that pointer loops are handled.
+    SET_BASE_ADDR(&nval1, 4);
+    STORE_VT(nval1.nvalue, np, &nval2);
+    STORE_VT(nval2.nvalue, np, &nval1);
+    DPRINT_NV(nval1);
 }
 
 // Verify that printing nvflag_t objects produces correct output.

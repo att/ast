@@ -322,7 +322,8 @@ static_fn void _dprint_VT_np(const char *file_name, int lineno, const char *func
     void *p = FETCH_VTP(vtp, np);
     if (ptr_seen(p)) {
         _dprintf(file_name, lineno, func_name,
-                 indent(level, "WARN: %s ptr %p already dumped; not following it"), buf, p);
+                 indent(level, "WARN: %s ptr %p already dumped; not following it"), buf,
+                 BASE_ADDR(p));
         return;
     }
     _dprint_nvp(file_name, lineno, func_name, level, buf, p);
@@ -343,7 +344,8 @@ static_fn void _dprint_VT_up(const char *file_name, int lineno, const char *func
              BASE_ADDR(p));
     if (ptr_seen(p)) {
         _dprintf(file_name, lineno, func_name,
-                 indent(level, "WARN: %s ptr %p already dumped; not following it"), buf, p);
+                 indent(level, "WARN: %s ptr %p already dumped; not following it"), buf,
+                 BASE_ADDR(p));
         return;
     }
     _dprint_vtp(file_name, lineno, func_name, level + 1, buf, p);
@@ -372,7 +374,8 @@ static_fn void _dprint_VT_nrp(const char *file_name, int lineno, const char *fun
     void *p = FETCH_VTP(vtp, nrp);
     if (ptr_seen(p)) {
         _dprintf(file_name, lineno, func_name,
-                 indent(level, "WARN: %s ptr %p already dumped; not following it"), buf, p);
+                 indent(level, "WARN: %s ptr %p already dumped; not following it"), buf,
+                 BASE_ADDR(p));
         return;
     }
     _dprint_nrp(file_name, lineno, func_name, level, buf, p);
@@ -519,7 +522,8 @@ void _dprint_nvp(const char *file_name, int lineno, const char *func_name, int l
                      NP_BASE_ADDR(np->nvenv));
             if (ptr_seen(np->nvenv)) {
                 _dprintf(file_name, lineno, func_name,
-                         indent(level, "WARN: ptr %p already dumped; not following it"), np->nvenv);
+                         indent(level, "WARN: ptr %p already dumped; not following it"),
+                         BASE_ADDR(np->nvenv));
             } else {
                 _dprint_nvp(file_name, lineno, func_name, level + 1, "->nvenv", np->nvenv);
             }
@@ -547,7 +551,7 @@ void _dprint_nrp(const char *file_name, int lineno, const char *func_name, int l
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->np is..."));
     if (ptr_seen(nr->np)) {
         _dprintf(file_name, lineno, func_name,
-                 indent(level, "WARN: ptr %p already dumped; not following it"), nr->np);
+                 indent(level, "WARN: ptr %p already dumped; not following it"), BASE_ADDR(nr->np));
     } else {
         _dprint_nvp(file_name, lineno, func_name, level + 1, "np", nr->np);
     }
@@ -555,7 +559,8 @@ void _dprint_nrp(const char *file_name, int lineno, const char *func_name, int l
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->table is..."));
     if (ptr_seen(nr->table)) {
         _dprintf(file_name, lineno, func_name,
-                 indent(level, "WARN: ptr %p already dumped; not following it"), nr->table);
+                 indent(level, "WARN: ptr %p already dumped; not following it"),
+                 BASE_ADDR(nr->table));
     } else {
         _dprint_nvp(file_name, lineno, func_name, level + 1, "table", nr->table);
     }
@@ -563,7 +568,8 @@ void _dprint_nrp(const char *file_name, int lineno, const char *func_name, int l
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->oldnp is..."));
     if (ptr_seen(nr->oldnp)) {
         _dprintf(file_name, lineno, func_name,
-                 indent(level, "WARN: ptr %p already dumped; not following it"), nr->oldnp);
+                 indent(level, "WARN: ptr %p already dumped; not following it"),
+                 BASE_ADDR(nr->oldnp));
     } else {
         _dprint_nvp(file_name, lineno, func_name, level + 1, "oldnp", nr->oldnp);
     }
