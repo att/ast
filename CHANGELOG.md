@@ -20,6 +20,8 @@ was subsequently created to document the work being done.
 
 ## Notable non-backward compatible changes
 
+- The nonportable, unusable, `fpclassify` math function has been removed
+  (issue #1346).
 - The broken math functions `nextforward` and `nexttoward` have been removed
   (issue #1346).
 - Support for binary plugins written for ksh93u+ or earlier releases has been

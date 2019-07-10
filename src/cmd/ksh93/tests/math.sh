@@ -361,12 +361,6 @@ actual=$(roundto $(( fmod(999.99, 10) )) )
 [[ $actual -eq $expect ]] || log_error "fmod failed" "$expect" "$actual"
 
 # ==========
-# fpclassify
-# TODO: Remove this test when issue #1346 is resolved and the `fpclassify()` function is removed.
-actual=$(( fpclassify(nan) ))
-[[ $actual -ge 0 ]] || log_error "fpclassify failed" ">= 0" "$actual"
-
-# ==========
 # int
 expect=2
 actual=$(( int(2.9) ))
