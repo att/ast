@@ -137,7 +137,8 @@ static_fn void clear_ptrs() {
 // Return true if we've already seen the pointer; otherwise, remember it.
 static_fn bool ptr_seen(void *p) {
     if (next_ptr == MAX_PTRS) {
-        if (!max_ptrs_warned) DPRINTF("Too many pointers already cached when checking %p", p);
+        if (!max_ptrs_warned)
+            DPRINTF("Too many pointers already cached when checking 0x%" PRIXPTR "", p);
         return true;  // return true to avoid cycles we can't detect -- should never happen
     }
 
@@ -187,7 +188,7 @@ static_fn void debug_untrap_sigsegv() { sigaction(SIGSEGV, &debug_oact, NULL); }
 static_fn void _dprint_VT_vp(const char *file_name, int lineno, const char *func_name, int level,
                              const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "void* %p"),
+    _dprintf(file_name, lineno, func_name, indent(level, "void* 0x%" PRIXPTR ""),
              BASE_ADDR(FETCH_VTP(vtp, vp)));
 }
 
@@ -195,16 +196,16 @@ static_fn void _dprint_VT_cp(const char *file_name, int lineno, const char *func
                              const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
     char *cp = FETCH_VTP(vtp, cp);
-    _dprintf(file_name, lineno, func_name, indent(level, "char* %p %d|%s|"), BASE_ADDR(cp),
-             strlen(cp), cp);
+    _dprintf(file_name, lineno, func_name, indent(level, "char* 0x%" PRIXPTR " %d|%s|"),
+             BASE_ADDR(cp), strlen(cp), cp);
 }
 
 static_fn void _dprint_VT_const_cp(const char *file_name, int lineno, const char *func_name,
                                    int level, const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
     const char *cp = FETCH_VTP(vtp, const_cp);
-    _dprintf(file_name, lineno, func_name, indent(level, "const char* %p %d|%s|"), BASE_ADDR(cp),
-             strlen(cp), cp);
+    _dprintf(file_name, lineno, func_name, indent(level, "const char* 0x%" PRIXPTR " %d|%s|"),
+             BASE_ADDR(cp), strlen(cp), cp);
 }
 
 static_fn void _dprint_VT_uc(const char *file_name, int lineno, const char *func_name, int level,
@@ -217,7 +218,7 @@ static_fn void _dprint_VT_uc(const char *file_name, int lineno, const char *func
 static_fn void _dprint_VT_pp(const char *file_name, int lineno, const char *func_name, int level,
                              const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "char** %p"),
+    _dprintf(file_name, lineno, func_name, indent(level, "char** 0x%" PRIXPTR ""),
              BASE_ADDR(FETCH_VTP(vtp, pp)));
 }
 
@@ -264,7 +265,7 @@ static_fn void _dprint_VT_i16(const char *file_name, int lineno, const char *fun
 static_fn void _dprint_VT_ip(const char *file_name, int lineno, const char *func_name, int level,
                              const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "int* %p => %i (0x%X)"),
+    _dprintf(file_name, lineno, func_name, indent(level, "int* 0x%" PRIXPTR " => %i (0x%X)"),
              BASE_ADDR(FETCH_VTP(vtp, ip)), *FETCH_VTP(vtp, ip), *FETCH_VTP(vtp, ip));
 }
 
@@ -272,7 +273,7 @@ static_fn void _dprint_VT_i16p(const char *file_name, int lineno, const char *fu
                                const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
     _dprintf(file_name, lineno, func_name,
-             indent(level, "int16_t* %p => %" PRIi16 " (0x%" PRIX16 ")"),
+             indent(level, "int16_t* 0x%" PRIXPTR " => %" PRIi16 " (0x%" PRIX16 ")"),
              BASE_ADDR(FETCH_VTP(vtp, i16p)), *FETCH_VTP(vtp, i16p), *FETCH_VTP(vtp, i16p));
 }
 
@@ -280,7 +281,7 @@ static_fn void _dprint_VT_i32p(const char *file_name, int lineno, const char *fu
                                const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
     _dprintf(file_name, lineno, func_name,
-             indent(level, "int32_t* %p => %" PRIi32 " (0x%" PRIX32 ")"),
+             indent(level, "int32_t* 0x%" PRIXPTR " => %" PRIi32 " (0x%" PRIX32 ")"),
              BASE_ADDR(FETCH_VTP(vtp, i32p)), *FETCH_VTP(vtp, i32p), *FETCH_VTP(vtp, i32p));
 }
 
@@ -288,28 +289,28 @@ static_fn void _dprint_VT_i64p(const char *file_name, int lineno, const char *fu
                                const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
     _dprintf(file_name, lineno, func_name,
-             indent(level, "int64_t* %p => %" PRIi64 " (0x%" PRIX64 ")"),
+             indent(level, "int64_t* 0x%" PRIXPTR " => %" PRIi64 " (0x%" PRIX64 ")"),
              BASE_ADDR(FETCH_VTP(vtp, i64p)), *FETCH_VTP(vtp, i64p), *FETCH_VTP(vtp, i64p));
 }
 
 static_fn void _dprint_VT_dp(const char *file_name, int lineno, const char *func_name, int level,
                              const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "double* %p => %g"),
+    _dprintf(file_name, lineno, func_name, indent(level, "double* 0x%" PRIXPTR " => %g"),
              BASE_ADDR(FETCH_VTP(vtp, dp)), *FETCH_VTP(vtp, dp));
 }
 
 static_fn void _dprint_VT_fp(const char *file_name, int lineno, const char *func_name, int level,
                              const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "float* %p => %g"),
+    _dprintf(file_name, lineno, func_name, indent(level, "float* 0x%" PRIXPTR " => %g"),
              BASE_ADDR(FETCH_VTP(vtp, fp)), *FETCH_VTP(vtp, fp));
 }
 
 static_fn void _dprint_VT_sfdoublep(const char *file_name, int lineno, const char *func_name,
                                     int level, const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "Sfdouble_t* %p => %Lg"),
+    _dprintf(file_name, lineno, func_name, indent(level, "Sfdouble_t* 0x%" PRIXPTR " => %Lg"),
              BASE_ADDR(FETCH_VTP(vtp, sfdoublep)), *FETCH_VTP(vtp, sfdoublep));
 }
 
@@ -322,7 +323,7 @@ static_fn void _dprint_VT_np(const char *file_name, int lineno, const char *func
     void *p = FETCH_VTP(vtp, np);
     if (ptr_seen(p)) {
         _dprintf(file_name, lineno, func_name,
-                 indent(level, "WARN: %s ptr %p already dumped; not following it"), buf,
+                 indent(level, "WARN: %s ptr 0x%" PRIXPTR " already dumped; not following it"), buf,
                  BASE_ADDR(p));
         return;
     }
@@ -340,11 +341,11 @@ static_fn void _dprint_VT_up(const char *file_name, int lineno, const char *func
     // another struct Value. So to provide context we need to print that pointer addr now before
     // printing info about the struct Value that pointer refers to.
     void *p = FETCH_VTP(vtp, up);
-    _dprintf(file_name, lineno, func_name, indent(level, "struct Value %s %p is..."), buf,
-             BASE_ADDR(p));
+    _dprintf(file_name, lineno, func_name, indent(level, "struct Value %s 0x%" PRIXPTR " is..."),
+             buf, BASE_ADDR(p));
     if (ptr_seen(p)) {
         _dprintf(file_name, lineno, func_name,
-                 indent(level, "WARN: %s ptr %p already dumped; not following it"), buf,
+                 indent(level, "WARN: %s ptr 0x%" PRIXPTR " already dumped; not following it"), buf,
                  BASE_ADDR(p));
         return;
     }
@@ -354,14 +355,14 @@ static_fn void _dprint_VT_up(const char *file_name, int lineno, const char *func
 static_fn void _dprint_VT_rp(const char *file_name, int lineno, const char *func_name, int level,
                              const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "struct Ufunction* %p"),
+    _dprintf(file_name, lineno, func_name, indent(level, "struct Ufunction* 0x%" PRIXPTR ""),
              BASE_ADDR(FETCH_VTP(vtp, rp)));
 }
 
 static_fn void _dprint_VT_funp(const char *file_name, int lineno, const char *func_name, int level,
                                const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "struct Namfun* %p"),
+    _dprintf(file_name, lineno, func_name, indent(level, "struct Namfun* 0x%" PRIXPTR ""),
              BASE_ADDR(FETCH_VTP(vtp, funp)));
 }
 
@@ -374,7 +375,7 @@ static_fn void _dprint_VT_nrp(const char *file_name, int lineno, const char *fun
     void *p = FETCH_VTP(vtp, nrp);
     if (ptr_seen(p)) {
         _dprintf(file_name, lineno, func_name,
-                 indent(level, "WARN: %s ptr %p already dumped; not following it"), buf,
+                 indent(level, "WARN: %s ptr 0x%" PRIXPTR " already dumped; not following it"), buf,
                  BASE_ADDR(p));
         return;
     }
@@ -384,28 +385,28 @@ static_fn void _dprint_VT_nrp(const char *file_name, int lineno, const char *fun
 static_fn void _dprint_VT_shbltinp(const char *file_name, int lineno, const char *func_name,
                                    int level, const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "struct Shbltin_f %p"),
+    _dprintf(file_name, lineno, func_name, indent(level, "struct Shbltin_f 0x%" PRIXPTR ""),
              BASE_ADDR(FETCH_VTP(vtp, shbltinp)));
 }
 
 static_fn void _dprint_VT_pathcomp(const char *file_name, int lineno, const char *func_name,
                                    int level, const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "struct pathcomp* %p"),
+    _dprintf(file_name, lineno, func_name, indent(level, "struct pathcomp* 0x%" PRIXPTR ""),
              BASE_ADDR(FETCH_VTP(vtp, pathcomp)));
 }
 
 static_fn void _dprint_VT_pidp(const char *file_name, int lineno, const char *func_name, int level,
                                const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "pid_t* %p => %" PRIu64),
+    _dprintf(file_name, lineno, func_name, indent(level, "pid_t* 0x%" PRIXPTR " => %" PRIu64),
              BASE_ADDR(FETCH_VTP(vtp, pidp)), (uint64_t)*FETCH_VTP(vtp, pidp));
 }
 
 static_fn void _dprint_VT_uidp(const char *file_name, int lineno, const char *func_name, int level,
                                const char *var_name, const struct Value *vtp) {
     UNUSED(var_name);
-    _dprintf(file_name, lineno, func_name, indent(level, "uid_t* %p => %" PRIu64),
+    _dprintf(file_name, lineno, func_name, indent(level, "uid_t* 0x%" PRIXPTR " => %" PRIu64),
              BASE_ADDR(FETCH_VTP(vtp, uidp)), (uint64_t)*FETCH_VTP(vtp, uidp));
 }
 
@@ -478,7 +479,8 @@ void _dprint_vtp(const char *file_name, int lineno, const char *func_name, int l
     if (sigsetjmp(jbuf, 1) == 0) {
         (dprint_vtp_dispatch[vtp->type])(file_name, lineno, func_name, level + 1, var_name, vtp);
     } else {
-        _dprintf(file_name, lineno, func_name, indent(level, "SIGSEGV on invalid void* %p"),
+        _dprintf(file_name, lineno, func_name,
+                 indent(level, "SIGSEGV on invalid void* 0x%" PRIXPTR ""),
                  BASE_ADDR(FETCH_VTP(vtp, vp)));
     }
     debug_untrap_sigsegv();
@@ -494,13 +496,13 @@ void _dprint_nvp(const char *file_name, int lineno, const char *func_name, int l
     if (_dprint_fixed_line) lineno = _dprint_fixed_line;
     if (level == 0) clear_ptrs();
 
-    _dprintf(file_name, lineno, func_name, indent(level, "struct Namval %s @ %p"), var_name,
-             BASE_ADDR(np));
+    _dprintf(file_name, lineno, func_name, indent(level, "struct Namval %s @ 0x%" PRIXPTR ""),
+             var_name, BASE_ADDR(np));
     if (!np) {
         errno = oerrno;
         return;
     }
-    _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvname %p |%s|"),
+    _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvname 0x%" PRIXPTR " |%s|"),
              BASE_ADDR(np->nvname), np->nvname);
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvsize %d"), np->nvsize);
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvflag 0x%X %s"), np->nvflag,
@@ -509,14 +511,14 @@ void _dprint_nvp(const char *file_name, int lineno, const char *func_name, int l
     _dprint_vtp(file_name, lineno, func_name, level + 1, "", &np->nvalue);
     if (np->nvenv) {
         if (np->nvenv_is_cp) {
-            _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvenv %p |%s|"),
+            _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvenv 0x%" PRIXPTR " |%s|"),
                      BASE_ADDR(np->nvenv), np->nvenv);
         } else {
             _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvenv is..."),
                      BASE_ADDR(np->nvenv));
             if (ptr_seen(np->nvenv)) {
                 _dprintf(file_name, lineno, func_name,
-                         indent(level, "WARN: ptr %p already dumped; not following it"),
+                         indent(level, "WARN: ptr 0x%" PRIXPTR " already dumped; not following it"),
                          BASE_ADDR(np->nvenv));
             } else {
                 _dprint_nvp(file_name, lineno, func_name, level + 1, "->nvenv", np->nvenv);
@@ -535,8 +537,8 @@ void _dprint_nrp(const char *file_name, int lineno, const char *func_name, int l
     if (_dprint_fixed_line) lineno = _dprint_fixed_line;
     if (level == 0) clear_ptrs();
 
-    _dprintf(file_name, lineno, func_name, indent(level, "struct Namref %s @ %p"), var_name,
-             BASE_ADDR(nr));
+    _dprintf(file_name, lineno, func_name, indent(level, "struct Namref %s @ 0x%" PRIXPTR ""),
+             var_name, BASE_ADDR(nr));
     if (!nr) {
         errno = oerrno;
         return;
@@ -545,7 +547,8 @@ void _dprint_nrp(const char *file_name, int lineno, const char *func_name, int l
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->np is..."));
     if (ptr_seen(nr->np)) {
         _dprintf(file_name, lineno, func_name,
-                 indent(level, "WARN: ptr %p already dumped; not following it"), BASE_ADDR(nr->np));
+                 indent(level, "WARN: ptr 0x%" PRIXPTR " already dumped; not following it"),
+                 BASE_ADDR(nr->np));
     } else {
         _dprint_nvp(file_name, lineno, func_name, level + 1, "np", nr->np);
     }
@@ -553,7 +556,7 @@ void _dprint_nrp(const char *file_name, int lineno, const char *func_name, int l
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->table is..."));
     if (ptr_seen(nr->table)) {
         _dprintf(file_name, lineno, func_name,
-                 indent(level, "WARN: ptr %p already dumped; not following it"),
+                 indent(level, "WARN: ptr 0x%" PRIXPTR " already dumped; not following it"),
                  BASE_ADDR(nr->table));
     } else {
         _dprint_nvp(file_name, lineno, func_name, level + 1, "table", nr->table);
@@ -562,13 +565,13 @@ void _dprint_nrp(const char *file_name, int lineno, const char *func_name, int l
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->oldnp is..."));
     if (ptr_seen(nr->oldnp)) {
         _dprintf(file_name, lineno, func_name,
-                 indent(level, "WARN: ptr %p already dumped; not following it"),
+                 indent(level, "WARN: ptr 0x%" PRIXPTR " already dumped; not following it"),
                  BASE_ADDR(nr->oldnp));
     } else {
         _dprint_nvp(file_name, lineno, func_name, level + 1, "oldnp", nr->oldnp);
     }
 
-    _dprintf(file_name, lineno, func_name, indent(level + 1, "->sub %p |%s|"),
+    _dprintf(file_name, lineno, func_name, indent(level + 1, "->sub 0x%" PRIXPTR " |%s|"),
              BASE_ADDR(nr->sub), nr->sub);
     errno = oerrno;
 }

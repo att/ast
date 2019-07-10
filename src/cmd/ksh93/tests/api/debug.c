@@ -10,8 +10,8 @@
 
 #include <errno.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -52,29 +52,13 @@ static Namval_t nval1, nval2;
 static struct Namref nref;
 static struct Namfun namfun;
 
+// Do not alter the initialization of this table. If new vars need to be inserted use function
+// append_map_addr(). This helps keep the addresses stable so that test output doesn't contain
+// gratuitous changes that requires updating file debug.err.
 #define MAX_ADDRS 64
 static const void *addr_map[MAX_ADDRS] = {
-    &v1,
-    &v2,
-    &v2p,
-    &i,
-    &i16,
-    &i32,
-    &i64,
-    &d,
-    &f,
-    &sfdouble,
-    &pid,
-    &uid,
-    &pathcomp,
-    &nval1,
-    &nval2,
-    &nref,
-    &namfun,
-    &dvar1,
-    &dvar2,
-    NULL
-};
+    &v1,  &v2,  &v2p,      &i,     &i16,   &i32,  &i64,    &d,     &f,     &sfdouble,
+    &pid, &uid, &pathcomp, &nval1, &nval2, &nref, &namfun, &dvar1, &dvar2, NULL};
 
 // Append an address to the `addr_map[]` above. This is needed because some addresses can't be
 // determined at compile time.
