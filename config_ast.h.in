@@ -272,13 +272,6 @@ extern size_t strlcpy(char *, const char *, size_t);
 extern int lchmod(const char *path, mode_t mode);
 #endif
 
-// It is useful for some API unit tests to be able to make _dprintf() output deterministic with
-// respect to portions of each log line it writes that would otherwise vary with each invocation
-// (e.g., the pid). This is a private API solely for use by unit tests.
-extern bool _dprintf_debug;
-extern void *_dprint_vt_base_addr;
-extern int _dprint_fixed_line;
-
 // This is useful for printing debugging messages that are tagged with useful
 // information such as the current file, line number, function name, and
 // duration since the previous debug message. You must pass a format string

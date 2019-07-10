@@ -20,13 +20,13 @@
 #define INDENT 2
 #define MAX_LEVELS 5
 
-// This is to give unit tests some control over line numbers and addresses are displayed. Setting
-// _dprint_vt_base_addr to the address of the first var in the unit test module will cause all
-// pointers to be displayed as offsets to that var. Setting _dprint_base_line to a non-zero
-// value will cause that value to be displayed rather than the actual line.
-void *_dprint_vt_base_addr = NULL;
+extern int _dprint_fixed_line;
 
-#define BASE_ADDR(p) (p ? (void *)((char *)(p) - (char *)_dprint_vt_base_addr) : NULL)
+// This is to give unit tests some control over line numbers and addresses are displayed. Set this
+// to a function that maps random addrs to constant addrs. The default is an identity function.
+static_fn const void *_dprint_map_addr(const void *p) { return p; }
+const void *(*_dprint_map_addr_fn)(const void *) = _dprint_map_addr;
+#define BASE_ADDR(p) (*_dprint_map_addr_fn)(p)
 
 // Max number of pointers we remember when following a cycle of pointers.
 #define MAX_PTRS 100
@@ -485,12 +485,6 @@ void _dprint_vtp(const char *file_name, int lineno, const char *func_name, int l
     errno = oerrno;
 }
 
-// If a unit test has set a base addr for struct Value objects just use a constant for the printed
-// address of a Namval_t*. This is needed because different environments have different padding and
-// alignment of these structures. That makes it impossible to emit a consistent address in the
-// diagnostic message.
-#define NP_BASE_ADDR(np) (_dprint_vt_base_addr ? (void *)0x88 : (void *)np)
-
 // Diagnostic print a struct Namval (aka Namval_t) object.
 void _dprint_nvp(const char *file_name, int lineno, const char *func_name, int level,
                  const char *var_name, const void *vp) {
@@ -501,13 +495,13 @@ void _dprint_nvp(const char *file_name, int lineno, const char *func_name, int l
     if (level == 0) clear_ptrs();
 
     _dprintf(file_name, lineno, func_name, indent(level, "struct Namval %s @ %p"), var_name,
-             NP_BASE_ADDR(np));
+             BASE_ADDR(np));
     if (!np) {
         errno = oerrno;
         return;
     }
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvname %p |%s|"),
-             NP_BASE_ADDR(np->nvname), np->nvname);
+             BASE_ADDR(np->nvname), np->nvname);
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvsize %d"), np->nvsize);
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvflag 0x%X %s"), np->nvflag,
              nvflag_to_syms(np->nvflag));
@@ -516,10 +510,10 @@ void _dprint_nvp(const char *file_name, int lineno, const char *func_name, int l
     if (np->nvenv) {
         if (np->nvenv_is_cp) {
             _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvenv %p |%s|"),
-                     NP_BASE_ADDR(np->nvenv), np->nvenv);
+                     BASE_ADDR(np->nvenv), np->nvenv);
         } else {
             _dprintf(file_name, lineno, func_name, indent(level + 1, "->nvenv is..."),
-                     NP_BASE_ADDR(np->nvenv));
+                     BASE_ADDR(np->nvenv));
             if (ptr_seen(np->nvenv)) {
                 _dprintf(file_name, lineno, func_name,
                          indent(level, "WARN: ptr %p already dumped; not following it"),
@@ -542,7 +536,7 @@ void _dprint_nrp(const char *file_name, int lineno, const char *func_name, int l
     if (level == 0) clear_ptrs();
 
     _dprintf(file_name, lineno, func_name, indent(level, "struct Namref %s @ %p"), var_name,
-             NP_BASE_ADDR(nr));
+             BASE_ADDR(nr));
     if (!nr) {
         errno = oerrno;
         return;
@@ -575,6 +569,6 @@ void _dprint_nrp(const char *file_name, int lineno, const char *func_name, int l
     }
 
     _dprintf(file_name, lineno, func_name, indent(level + 1, "->sub %p |%s|"),
-             NP_BASE_ADDR(nr->sub), nr->sub);
+             BASE_ADDR(nr->sub), nr->sub);
     errno = oerrno;
 }
