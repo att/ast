@@ -26,10 +26,6 @@ static int local_finite(Sfdouble_t a1) {
 
 static Sfdouble_t local_float(Sfdouble_t a1) { return a1; }
 
-static int local_fpclassify(Sfdouble_t a1) {
-    return fpclassify(a1);  //!OCLINT(constant conditional operator)
-}
-
 static Sfdouble_t local_int(Sfdouble_t a1) {
     if (a1 < LLONG_MIN || a1 > ULLONG_MAX) return 0.0;
     if (a1 < 0) return (Sfdouble_t)((Sflong_t)a1);
@@ -170,7 +166,6 @@ const struct mathtab shtab_math[] = {{"\001acos", (Math_f)acosl},
                                      {"\002fmax", (Math_f)fmaxl},
                                      {"\002fmin", (Math_f)fminl},
                                      {"\002fmod", (Math_f)fmodl},
-                                     {"\011fpclassify", (Math_f)local_fpclassify},
                                      {"\002hypot", (Math_f)hypotl},
                                      {"\011ilogb", (Math_f)ilogbl},
                                      {"\001int", (Math_f)local_int},
