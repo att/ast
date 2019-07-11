@@ -271,28 +271,6 @@ uint64_t _aso_cas64(uint64_t volatile *p, uint64_t o, uint64_t n) {
  * sync and return "current" value
  */
 
-#ifndef asoget8
-uint8_t asoget8(uint8_t volatile *p) {
-    int o;
-
-    do {
-        o = *p;
-    } while (asocas8(p, o, o) != o);
-    return o;
-}
-#endif
-
-#ifndef asoget16
-uint16_t asoget16(uint16_t volatile *p) {
-    int o;
-
-    do {
-        o = *p;
-    } while (asocas16(p, o, o) != o);
-    return o;
-}
-#endif
-
 #ifndef asoget32
 uint32_t asoget32(uint32_t volatile *p) {
     uint32_t o;
@@ -302,21 +280,6 @@ uint32_t asoget32(uint32_t volatile *p) {
     } while (asocas32(p, o, o) != o);
     return o;
 }
-#endif
-
-#ifdef _ast_int8_t
-
-#ifndef asoget64
-uint64_t asoget64(uint64_t volatile *p) {
-    uint64_t o;
-
-    do {
-        o = *p;
-    } while (asocas64(p, o, o) != o);
-    return o;
-}
-#endif
-
 #endif
 
 #ifndef asogetptr
@@ -532,120 +495,6 @@ uint64_t asodec64(uint64_t volatile *p) {
     do {
         o = *p;
     } while (asocas64(p, o, o - 1) != o);
-    return o;
-}
-#endif
-
-#endif
-
-/*
- * if *p <= n then return *p
- * else *p = n and return n
- */
-
-#ifndef asomin8
-uint8_t asomin8(uint8_t volatile *p, int n) {
-    int o;
-
-    for (;; asospinrest()) {
-        if ((o = *p) <= n) return o;
-        if (asocas8(p, o, n) == o) break;
-    }
-    return n;
-}
-#endif
-
-#ifndef asomin16
-uint16_t asomin16(uint16_t volatile *p, int n) {
-    int o;
-
-    for (;; asospinrest()) {
-        if ((o = *p) <= n) return o;
-        if (asocas16(p, o, n) == o) break;
-    }
-    return o;
-}
-#endif
-
-#ifndef asomin32
-uint32_t asomin32(uint32_t volatile *p, uint32_t n) {
-    uint32_t o;
-
-    for (;; asospinrest()) {
-        if ((o = *p) <= n) return o;
-        if (asocas32(p, o, n) == o) break;
-    }
-    return o;
-}
-#endif
-
-#ifdef _ast_int8_t
-
-#ifndef asomin64
-uint64_t asomin64(uint64_t volatile *p, uint64_t n) {
-    uint64_t o;
-
-    for (;; asospinrest()) {
-        if ((o = *p) <= n) return o;
-        if (asocas64(p, o, n) == o) break;
-    }
-    return o;
-}
-#endif
-
-#endif
-
-/*
- * if *p >= n then return *p
- * else *p = n and return n
- */
-
-#ifndef asomax8
-uint8_t asomax8(uint8_t volatile *p, int n) {
-    int o;
-
-    for (;; asospinrest()) {
-        if ((o = *p) >= n) return o;
-        if (asocas8(p, o, n) == o) break;
-    }
-    return n;
-}
-#endif
-
-#ifndef asomax16
-uint16_t asomax16(uint16_t volatile *p, int n) {
-    int o;
-
-    for (;; asospinrest()) {
-        if ((o = *p) >= n) return o;
-        if (asocas16(p, o, n) == o) break;
-    }
-    return o;
-}
-#endif
-
-#ifndef asomax32
-uint32_t asomax32(uint32_t volatile *p, uint32_t n) {
-    uint32_t o;
-
-    for (;; asospinrest()) {
-        if ((o = *p) >= n) return o;
-        if (asocas32(p, o, n) == o) break;
-    }
-    return o;
-}
-#endif
-
-#ifdef _ast_int8_t
-
-#ifndef asomax64
-uint64_t asomax64(uint64_t volatile *p, uint64_t n) {
-    uint64_t o;
-
-    for (;; asospinrest()) {
-        if ((o = *p) >= n) return o;
-        if (asocas64(p, o, n) == o) break;
-    }
     return o;
 }
 #endif
