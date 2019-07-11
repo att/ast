@@ -122,6 +122,24 @@
 ### 1234   0.000 debug.c:1           test_dprint_nv()     WARN: ptr 0xE0 already dumped; not following it
 ### 1234   0.000 debug.c:1           test_dprint_nv()   ->nvenv 0x160 |nvenv is a string|
 
+### 1234   0.000 debug.c:1           test_dprint_nv() struct Namval nval1 @ 0xE0
+### 1234   0.000 debug.c:1           test_dprint_nv()   ->nvname 0x140 |dvar1|
+### 1234   0.000 debug.c:1           test_dprint_nv()   ->nvsize 99
+### 1234   0.000 debug.c:1           test_dprint_nv()   ->nvflag 0x12 NV_INTEGER | NV_ZFILL | NV_BLTINOPT (aka NV_ZFILL) | NV_DOUBLE (aka NV_INTEGER | NV_ZFILL) | NV_INT32 (aka NV_INTEGER) | NV_FTMP (aka NV_ZFILL) | NV_STATICF (aka NV_INTEGER)
+### 1234   0.000 debug.c:1           test_dprint_nv()   ->nvalue is...
+### 1234   0.000 debug.c:1           test_dprint_nv()   struct Value .np stored @ debug.c:1 in test_dprint_nv() is...
+### 1234   0.000 debug.c:1           test_dprint_nv()     struct Namval .np @ 0xF0
+### 1234   0.000 debug.c:1           test_dprint_nv()       ->nvname 0x150 |dvar2|
+### 1234   0.000 debug.c:1           test_dprint_nv()       ->nvsize 66
+### 1234   0.000 debug.c:1           test_dprint_nv()       ->nvflag 0x0 No NV_* bits set
+### 1234   0.000 debug.c:1           test_dprint_nv()       ->nvalue is...
+### 1234   0.000 debug.c:1           test_dprint_nv()       struct Value .np stored @ debug.c:1 in test_dprint_nv() is...
+### 1234   0.000 debug.c:1                 ptr_seen() Too many pointers already cached when checking 0xE0
+### 1234   0.000 debug.c:1           test_dprint_nv()         WARN: .np ptr 0xE0 already dumped; not following it
+### 1234   0.000 debug.c:1           test_dprint_nv()       ->nvenv is...
+### 1234   0.000 debug.c:1           test_dprint_nv()     WARN: ptr 0xE0 already dumped; not following it
+### 1234   0.000 debug.c:1           test_dprint_nv()   ->nvenv 0x160 |nvenv is a string|
+
 ### 1234   0.000 debug.c:1          test_dprint_nvflag() nvflag decoded: No NV_* bits set
 ### 1234   0.000 debug.c:1          test_dprint_nvflag() nvflag decoded: NV_LTOU | NV_UTOL | NV_LONG (aka NV_UTOL) | NV_UNSIGN (aka NV_LTOU) | NV_NOPRINT (aka NV_LTOU | NV_UTOL)
 ### 1234   0.000 debug.c:1          test_dprint_nvflag() nvflag decoded: 0x80000000 (unrecognized bits) | NV_UTOL | NV_LONG (aka NV_UTOL)

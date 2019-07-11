@@ -26,6 +26,7 @@
 // (e.g., the pid). This is a private API solely for use by unit tests.
 extern bool _dprintf_debug;
 extern int _dprint_fixed_line;
+extern int _debug_max_ptrs;
 extern const void *(*_dprint_map_addr_fn)(const void *);
 
 static char *str = "str";
@@ -217,6 +218,15 @@ static void test_dprint_nv() {
     STORE_VT(nval1.nvalue, np, &nval2);
     STORE_VT(nval2.nvalue, np, &nval1);
     DPRINT_NV(nval1);
+
+    // Verify that too many pointers to detect loops is handled.
+    write(2, "\n", 1);
+    int saved_debug_max_ptrs = _debug_max_ptrs;
+    _debug_max_ptrs = 1;
+    STORE_VT(nval1.nvalue, np, &nval2);
+    STORE_VT(nval2.nvalue, np, &nval1);
+    DPRINT_NV(nval1);
+    _debug_max_ptrs = saved_debug_max_ptrs;
 }
 
 // Verify that printing nvflag_t objects produces correct output.

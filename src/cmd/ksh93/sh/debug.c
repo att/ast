@@ -30,6 +30,7 @@ const void *(*_dprint_map_addr_fn)(const void *) = _dprint_map_addr;
 
 // Max number of pointers we remember when following a cycle of pointers.
 #define MAX_PTRS 100
+int _debug_max_ptrs = MAX_PTRS;
 static void *ptrs_seen[MAX_PTRS];
 static int next_ptr = 0;
 static bool max_ptrs_warned = false;
@@ -136,9 +137,11 @@ static_fn void clear_ptrs() {
 
 // Return true if we've already seen the pointer; otherwise, remember it.
 static_fn bool ptr_seen(void *p) {
-    if (next_ptr == MAX_PTRS) {
-        if (!max_ptrs_warned)
-            DPRINTF("Too many pointers already cached when checking 0x%" PRIXPTR "", p);
+    if (next_ptr == _debug_max_ptrs) {
+        if (!max_ptrs_warned) {
+            DPRINTF("Too many pointers already cached when checking 0x%" PRIXPTR "", BASE_ADDR(p));
+            max_ptrs_warned = true;
+        }
         return true;  // return true to avoid cycles we can't detect -- should never happen
     }
 
