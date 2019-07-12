@@ -8,7 +8,7 @@ readonly test_name=${0##*/}
 # Make sure the unit test can't inadvertantly modify several critical env vars.
 #
 readonly FULL_PATH
-readonly ORIG_PATH
+readonly OLD_PATH
 readonly SAFE_PATH
 readonly TEST_DIR
 readonly TEST_SRC_DIR

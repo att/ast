@@ -127,9 +127,9 @@ log_info "TEST_DIR=$TEST_DIR"
 # the "att" universe. The /xxx/bsd is to ensure ksh defaults to the "ucb" universe as almost all
 # unit tests expect GNU or BSD behavior.
 #
-export ORIG_PATH=$PATH
+export OLD_PATH=$PATH
 export SAFE_PATH="$TEST_DIR:$TEST_DIR/space dir:$TEST_SRC_DIR:$BUILD_DIR/src/cmd/builtin"
-export FULL_PATH=$SAFE_PATH:/xxx/bsd:/usr/gnu/bin:/usr/xpg4/bin:$ORIG_PATH
+export FULL_PATH=$SAFE_PATH:/xxx/bsd:/usr/gnu/bin:/usr/xpg4/bin:$OLD_PATH
 export PATH=$FULL_PATH
 
 #

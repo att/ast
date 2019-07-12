@@ -76,9 +76,9 @@ log_info "TEST_DIR=$TEST_DIR"
 # external command of the same name in PATH that we use the command created by the unit test.
 # See issue #429.
 #
-export ORIG_PATH="$PATH"
+export OLD_PATH="$PATH"
 export SAFE_PATH="$TEST_DIR:$TEST_DIR/space dir:$test_src_dir:$BUILD_DIR/src/cmd/builtin"
-export FULL_PATH="$SAFE_PATH:$ORIG_PATH"
+export FULL_PATH="$SAFE_PATH:$OLD_PATH"
 export PATH="$FULL_PATH"
 
 #

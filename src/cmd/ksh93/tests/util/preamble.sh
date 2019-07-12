@@ -33,7 +33,7 @@ FULL_PATH=$PATH
 #
 readonly NO_BUILTINS_PATH
 readonly FULL_PATH
-readonly ORIG_PATH
+readonly OLD_PATH
 readonly SAFE_PATH
 readonly TEST_DIR
 readonly TEST_SRC_DIR
