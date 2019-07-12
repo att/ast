@@ -174,41 +174,59 @@ then
 fi
 
 t="<$$>.profile.<$$>"
-echo "echo '$t'" > .profile
+echo "echo '$t'" > $HOME/.profile
 cp $SHELL ./-ksh
 if [[ -o privileged ]]
 then
-    [[ $(HOME=$PWD $SHELL -l </dev/null 2>&1) == *$t* ]] &&
-        log_error 'privileged -l reads .profile'
-    [[ $(HOME=$PWD $SHELL --login </dev/null 2>&1) == *$t* ]] &&
-        log_error 'privileged --login reads .profile'
-    [[ $(HOME=$PWD $SHELL --login-shell </dev/null 2>&1) == *$t* ]] &&
-        log_error 'privileged --login-shell reads .profile'
-    [[ $(HOME=$PWD $SHELL --login_shell </dev/null 2>&1) == *$t* ]] &&
-        log_error 'privileged --login_shell reads .profile'
-    [[ $(HOME=$PWD exec -a -ksh $SHELL </dev/null 2>&1) == *$t* ]] &&
-        log_error 'privileged exec -a -ksh ksh reads .profile'
-    [[ $(HOME=$PWD ./-ksh -i </dev/null 2>&1) == *$t* ]] &&
-        log_error 'privileged ./-ksh reads .profile'
-    [[ $(HOME=$PWD ./-ksh -ip </dev/null 2>&1) == *$t* ]] &&
-        log_error 'privileged ./-ksh -p reads .profile'
+    log_warning WTF privileged
+    actual=$($SHELL -l </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] &&
+        log_error 'privileged -l reads .profile' "*$t*" "$actual"
+    actual=$($SHELL --login </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] &&
+        log_error 'privileged --login reads .profile' "*$t*" "$actual"
+    actual=$($SHELL --login-shell </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] &&
+        log_error 'privileged --login-shell reads .profile' "*$t*" "$actual"
+    actual=$($SHELL --login_shell </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] &&
+        log_error 'privileged --login_shell reads .profile' "*$t*" "$actual"
+    actual=$(exec -a -ksh $SHELL </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] &&
+        log_error 'privileged exec -a -ksh ksh reads .profile' "*$t*" "$actual"
+    actual=$(./-ksh -i </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] &&
+        log_error 'privileged ./-ksh reads .profile' "*$t*" "$actual"
+    actual=$(./-ksh -ip </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] &&
+        log_error 'privileged ./-ksh -p reads .profile' "*$t*" "$actual"
 else
-    [[ $(HOME=$PWD $SHELL -l </dev/null 2>&1) == *$t* ]] ||
-        log_error '-l ignores .profile'
-    [[ $(HOME=$PWD $SHELL --login </dev/null 2>&1) == *$t* ]] ||
-        log_error '--login ignores .profile'
-    [[ $(HOME=$PWD $SHELL --login-shell </dev/null 2>&1) == *$t* ]] ||
-        log_error '--login-shell ignores .profile'
-    [[ $(HOME=$PWD $SHELL --login_shell </dev/null 2>&1) == *$t* ]] ||
-        log_error '--login_shell ignores .profile'
-    [[ $(HOME=$PWD exec -a -ksh $SHELL </dev/null 2>/dev/null) == *$t* ]] ||
-        log_error 'exec -a -ksh ksh 2>/dev/null ignores .profile'
-    [[ $(HOME=$PWD exec -a -ksh $SHELL </dev/null 2>&1) == *$t* ]] ||
-        log_error 'exec -a -ksh ksh 2>&1 ignores .profile'
-    [[ $(HOME=$PWD ./-ksh -i </dev/null 2>&1) == *$t* ]] ||
-        log_error './-ksh ignores .profile'
-    [[ $(HOME=$PWD ./-ksh -ip </dev/null 2>&1) == *$t* ]] &&
-        log_error './-ksh -p does not ignore .profile'
+    log_warning WTF HOME $HOME
+    log_warning WTF PWD  $PWD
+    actual=$($SHELL -l </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] ||
+        log_error '-l ignores .profile' "*$t*" "$actual"
+    actual=$($SHELL --login </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] ||
+        log_error '--login ignores .profile' "*$t*" "$actual"
+    actual=$($SHELL --login-shell </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] ||
+        log_error '--login-shell ignores .profile' "*$t*" "$actual"
+    actual=$($SHELL --login_shell </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] ||
+        log_error '--login_shell ignores .profile' "*$t*" "$actual"
+    actual=$(exec -a -ksh $SHELL </dev/null 2>/dev/null)
+    [[ "$actual" == *$t* ]] ||
+        log_error 'exec -a -ksh ksh 2>/dev/null ignores .profile' "*$t*" "$actual"
+    actual=$(exec -a -ksh $SHELL </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] ||
+        log_error 'exec -a -ksh ksh 2>&1 ignores .profile' "*$t*" "$actual"
+    actual=$(./-ksh -i </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] ||
+        log_error './-ksh ignores .profile' "*$t*" "$actual"
+    actual=$(./-ksh -ip </dev/null 2>&1)
+    [[ "$actual" == *$t* ]] &&
+        log_error './-ksh -p does not ignore .profile' "*$t*" "$actual"
 fi
 
 cd ~-
