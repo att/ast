@@ -46,7 +46,6 @@ Dt_t*       dtview(Dt_t* dt, Dt_t* view);
 int         dtcustomize(Dt_t* dt, int type, int action);
 int         dtuserlock(Dt_t* dt, unsigned int key, int action);
 void*     dtuserdata(Dt_t* dt, void* data, int set);
-int         dtuserevent(Dt_t* dt, int flags, void* data);
 .Ce
 .Ss "STORAGE METHODS"
 .Cs
@@ -257,11 +256,7 @@ of the container data structures in use.
 .Ss "  void* dtuserdata(Dt_t* dt, void* data, int set)"
 This function returns the current value of \f5dt->user->data\fP.
 In addition, if \f5set\fP is non-zero,
-the value of \f5dt->user->data\fP will be changed to \f5data\fP. 
-.PP
-.Ss "  int dtuserevent(Dt_t* dt, int flags, void* data)"
-This function invokes the discipline event function
-with the event \f5DT_ANNOUNCE|DT_USER|flags\fP and the given data.
+the value of \f5dt->user->data\fP will be changed to \f5data\fP.
 
 .PP
 .Ss "STORAGE METHODS"

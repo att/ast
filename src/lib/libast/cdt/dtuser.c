@@ -46,9 +46,3 @@ void *dtuserdata(Dt_t *dt, void *data, int set) {
         if (asocasptr(&dt->data->user.data, current, data) == current) return current;
     }
 }
-
-/* announcing an event on the user's behalf */
-int dtuserevent(Dt_t *dt, int flags, void *data) {
-    if (!dt->disc->eventf) return 0;
-    return (*dt->disc->eventf)(dt, DT_ANNOUNCE | DT_USER | flags, data, dt->disc);
-}

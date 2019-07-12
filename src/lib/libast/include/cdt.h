@@ -236,7 +236,6 @@ extern unsigned int dtstrhash(unsigned int, char *, int);
 extern int dtuserlock(Dt_t *);
 extern int dtuserunlock(Dt_t *);
 extern void *dtuserdata(Dt_t *, void *, int);
-extern int dtuserevent(Dt_t *, int, void *);
 extern ssize_t dtstat(Dt_t *, Dtstat_t *);
 
 extern Dt_t *dtopen(Dtdisc_t *, Dtmethod_t *);
