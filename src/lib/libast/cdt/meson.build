@@ -4,7 +4,6 @@ libast_files += [
     'cdt/dthash.c',
     'cdt/dtlist.c',
     'cdt/dtmethod.c',
-    'cdt/dtnew.c',
     'cdt/dtopen.c',
     'cdt/dtrehash.c',
     'cdt/dtstat.c',
