@@ -36,10 +36,12 @@
 // respect to portions of each log line it writes that would otherwise vary with each invocation
 // (e.g., the pid).
 bool _dprintf_debug = false;
-
+int _dprintf_buf_sz = 0;
 // Setting _dprint_base_line to a non-zero value will cause that value to be displayed rather than
 // the actual line.
 int _dprint_fixed_line = 0;
+char *_debug_lsof = "lsof";
+int (*_debug_getpid)() = getpid;
 
 // This value is used by the dump_backtrace() code.
 static const char *ksh_pathname = NULL;
@@ -54,7 +56,7 @@ static Time_t _dprintf_base_time = TMX_NOTIME;
 void _dprintf(const char *fname, int lineno, const char *funcname, const char *fmt, ...) {
     int oerrno = errno;
     // Use long rather than pid_t because pid_t may be an int or long depending on the platform.
-    long pid = _dprintf_debug ? 1234 : getpid();
+    long pid = _dprintf_debug ? 1234 : _debug_getpid();
     if (_dprint_fixed_line) lineno = _dprint_fixed_line;
 
     va_list ap;
@@ -85,9 +87,9 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     // This should be a "can't happen" situation but we want to be paranoid.
     if (n2 < 0) n2 = snprintf(buf2 + n, sizeof(buf2) - n, "DEBUG PRINT FAILED; vsnprintf() %d", n2);
     n += n2;
-    if (n >= sizeof(buf2)) {
+    if (n >= sizeof(buf2) || (_dprintf_buf_sz && n >= _dprintf_buf_sz)) {
         // The message was too large for the buffer so try to make that clear to the reader.
-        n = sizeof(buf2) - 4;
+        n = (_dprintf_buf_sz ? _dprintf_buf_sz : sizeof(buf2)) - 4;
         buf2[n++] = '.';
         buf2[n++] = '.';
         buf2[n++] = '.';
@@ -106,9 +108,9 @@ void run_lsof() {
     sigaddset(&sigchld_mask, SIGCHLD);
     sigprocmask(SIG_BLOCK, &sigchld_mask, &omask);
 
-    DPRINTF("Running lsof...");
+    DPRINTF("Running lsof:");
     static char pid_str[20];
-    long pid = getpid();
+    long pid = _debug_getpid();
     snprintf(pid_str, sizeof(pid_str), "%ld", pid);
 
     pid = fork();
@@ -121,7 +123,7 @@ void run_lsof() {
         (void)open("/dev/null", O_RDONLY);
         dup2(2, 1);
         // Run the program we hope will give us detailed info about each address.
-        execlp("lsof", "lsof", "-p", pid_str, NULL);
+        execlp(_debug_lsof, "lsof", "-p", pid_str, NULL);
     }
 
     // We ignore the return value because a) it should be impossible for this to fail and b) there
@@ -191,10 +193,15 @@ static_fn void run_addr2lines_prog(int n_frames, char *path, const char **argv) 
         // cppcheck-suppress leakReturnValNotUsed
         (void)open("/dev/null", O_RDONLY);  // stdin
         // cppcheck-suppress leakReturnValNotUsed
-        (void)open("/dev/null", O_RDONLY);  // stderr
+        (void)open("/dev/null", O_WRONLY);  // stderr
 
         // Run the program we hope will give us detailed info about each address.
-        execv(path, (char *const *)argv);
+        if (_dprintf_debug) {
+            char *av[] = {"echo", "hello unit test", NULL};
+            execvp("echo", (char *const *)av);
+        } else {
+            execv(path, (char *const *)argv);
+        }
     }
     close(fds[1]);
 
@@ -246,11 +253,12 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
     argv[0] = _pth_atos;
     argv[1] = "-p";
     static char pid_str[20];
-    snprintf(pid_str, sizeof(pid_str), "%d", getpid());
+    snprintf(pid_str, sizeof(pid_str), "%d", _debug_getpid());
     argv[2] = pid_str;
     for (int i = 0; i < n_frames; ++i) {
         char *addr = argv_addrs + i * 20;
-        if (snprintf(addr, 20, "%p", addrs[i]) >= 20) *addr = '\0';
+        uintptr_t vp = _dprintf_debug ? ((uintptr_t)i + 1) * 8 : (uintptr_t)addrs[i];
+        if (snprintf(addr, 20, "0x%" PRIXPTR "", (uintptr_t)vp) >= 20) *addr = '\0';
         argv[i + 3] = addr;
     }
     argv[n_frames + 3] = NULL;
@@ -279,7 +287,8 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
     argv[2] = ksh_pathname;
     for (int i = 0; i < n_frames; ++i) {
         char *addr = argv_addrs + i * 20;
-        if (snprintf(addr, 20, "%p", addrs[i]) >= 20) *addr = '\0';
+        uintptr_t vp = _dprintf_debug ? ((uintptr_t)i + 1) * 8 : (uintptr_t)addrs[i];
+        if (snprintf(addr, 20, "0x%" PRIXPTR "", vp) >= 20) *addr = '\0';
         argv[i + 3] = addr;
     }
     argv[n_frames + 3] = NULL;
@@ -290,11 +299,20 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
 
 #else  // _pth_addr2line
 
-// We don't seem to have a usable command for converting addresses to symbol info.
+// We don't seem to have a usable command for converting addresses to symbol
+// info. This code is solely for the benefit of the unit tests which might run
+// on a system where this fallback is needed.
 static_fn char **addrs2info(int n_frames, void *addrs[]) {
     UNUSED(n_frames);
     UNUSED(addrs);
-    memset(info, 0, sizeof(info));
+
+    snprintf(info, sizeof(info), "-p %d", _debug_getpid());
+    for (int i = 0; i < n_frames; ++i) {
+        char *addr = argv_addrs + i * 20;
+        uintptr_t vp = _dprintf_debug ? ((uintptr_t)i + 1) * 8 : (uintptr_t)addrs[i];
+        if (snprintf(addr, 20, " 0x%" PRIXPTR "", vp) >= 20) *addr = '\0';
+        strlcat(info, addr, sizeof(info));
+    }
     return info;
 }
 
@@ -333,7 +351,7 @@ void dump_backtrace(int max_frames) {
     char text[512];
     int n;
 
-    long pid = getpid();
+    long pid = _debug_getpid();
     n = snprintf(text, sizeof(text), "### %ld Function backtrace:\n", pid);
     write(2, text, n);
 
@@ -343,8 +361,12 @@ void dump_backtrace(int max_frames) {
         } else {
             Dl_info info;
             dladdr(callstack[i], &info);
-            n = snprintf(text, sizeof(text), "%-3d %s + %td\n", i, info.dli_sname,
-                         (char *)callstack[i] - (char *)info.dli_saddr);
+            if (_dprintf_debug) {
+                n = snprintf(text, sizeof(text), "%-3d %s + 0\n", i, info.dli_sname);
+            } else {
+                n = snprintf(text, sizeof(text), "%-3d %s + %td\n", i, info.dli_sname,
+                             (char *)callstack[i] - (char *)info.dli_saddr);
+            }
         }
         write(2, text, n);
     }

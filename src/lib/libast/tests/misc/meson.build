@@ -1,6 +1,6 @@
 test_dir = meson.current_source_dir()
 # TODO: Enable 'opt' tests
-tests = [ 'stk', 'environ' ]
+tests = [ 'debug', 'stk', 'environ' ]
 incdir = include_directories('..', '../../include/')
 
 foreach test_name: tests

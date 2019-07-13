@@ -6,14 +6,14 @@ api_default_timeout = 30
 lang_var = 'LANG=en_US.UTF-8'
 
 api_tests = [
-    ['debug'],
+    ['ksh_debug'],
 ]
 
 # Some tests need to be skipped because the platform has known incompatibilities that we're not
 # interested in dealing with. For example, `printf("%p", ptr)` does not include a leading `0x` on
 # Solaris. Unlike every other platform.
 tests_to_skip = [
-    ['sunos', 'debug'],
+    ['sunos', 'ksh_debug'],
 ]
 
 foreach testspec : api_tests
