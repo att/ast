@@ -186,32 +186,6 @@ found:
 }
 
 /*
- * associate the ctype function fun with name
- */
-
-int regaddclass(const char *name, regclass_t fun) {
-    Ctype_t *cp;
-    Ctype_t *np;
-    size_t n;
-
-    n = strlen(name);
-    for (cp = ctypes; cp; cp = cp->next) {
-        if (cp->size == n && !strncmp(name, cp->name, n)) {
-            cp->ctype = fun;
-            return 0;
-        }
-    }
-    np = calloc(1, sizeof(Ctype_t) + n + 1);
-    if (!np) return REG_ESPACE;
-    np->size = n;
-    np->name = strcpy((char *)(np + 1), name);
-    np->ctype = fun;
-    np->next = ctypes;
-    ctypes = np;
-    return 0;
-}
-
-/*
  * return pointer to ctype function for token
  */
 

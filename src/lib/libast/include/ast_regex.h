@@ -195,7 +195,6 @@ extern void regfree(regex_t *);
 /* nonstandard hooks */
 
 extern regclass_t regclass(const char *, char **);
-extern int regaddclass(const char *, regclass_t);
 extern int regcollate(const char *, char **, char *, size_t, wchar_t *);
 extern int regcomb(regex_t *, regex_t *);
 extern int regdup(regex_t *, regex_t *);

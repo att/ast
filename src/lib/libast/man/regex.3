@@ -49,7 +49,6 @@ size_t     regerror(int \fIcode\fP, const regex_t* \fIre\fP, char* \fIerrbuf\fP,
 void       regfree(regex_t* \fIre\fP);
 
 regclass_t regclass(const char* \fIstr\fP, char** \fIend\fP);
-int        regaddclass(const char* \fIname\fP, regclass_t \fIclassf\fP);
 int        regcollate(const char* \fIstr\fP, char** \fIend\fP, char* \fIbuf\fP, int \fIsize\fP);
 
 int        regcomb(regex_t* \fIre_1\fP, regex_t* \fIre_2\fP);
