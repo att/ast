@@ -1,7 +1,17 @@
-### 1234   0.000 debug.c:987               run_lsof() Running lsof:
+### 666   0.000 debug.c:987               run_lsof() Running lsof:
 -p 666
 addr2info(): hello unit test
 ### 666 Function backtrace:
 1   test_backtrace + 0
 2   main + 0
-### 1234   0.000 debug.c:987                   main() 0123456789012345678901...
+### 666 Function backtrace:
+1   test_backtrace + 0
+2   main + 0
+### 666 Function backtrace:
+1   test_backtrace + 0
+2   main + 0
+### 666 Function backtrace:
+1   test_backtrace + 0
+2   main + 0
+### 666   0.000 debug.c:987                   main() 01234567890123456789012...
+### 666   0.000 debug.c:987                   main() 0123456789012...

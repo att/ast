@@ -10,16 +10,15 @@
 
 #include <errno.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 #include "ast_assert.h"
 #include "name.h"
 #include "sfio.h"
-#include "shcmd.h"
 
 // It is useful for some API unit tests to be able to make _dprintf() output deterministic with
 // respect to portions of each log line it writes that would otherwise vary with each invocation
@@ -28,6 +27,7 @@ extern bool _dprintf_debug;
 extern int _dprint_fixed_line;
 extern int _debug_max_ptrs;
 extern const void *(*_dprint_map_addr_fn)(const void *);
+extern int (*_debug_getpid)();
 
 static char *str = "str";
 static char *cp = "dval2";
@@ -79,6 +79,8 @@ static const void *_map_addr_fn(const void *p) {
     }
     return p;
 }
+
+static_fn int debug_getpid() { return 1234; }
 
 static void test_dprint_vt() {
     STORE_VT(v1, vp, &v1);
@@ -249,6 +251,7 @@ int main() {
     _dprintf_debug = true;
     _dprint_fixed_line = 1;
     _dprint_map_addr_fn = _map_addr_fn;
+    _debug_getpid = debug_getpid;
     append_map_addr(dvar1);
     append_map_addr(dvar2);
     append_map_addr(nvenv);

@@ -1,10 +1,10 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
-#include <string.h>
+#include <stdbool.h>
+#include <stdio.h>
 
 #include "ast.h"
-#include "stdlib.h"
 #include "terror.h"
 
 extern bool _dprintf_debug;
@@ -31,6 +31,9 @@ static_fn void test_backtrace() {
     errno = 456;
     dump_backtrace(2);
     if (errno != 456) terror("Expected errno == 456 but it is %d", errno);
+    dump_backtrace(-1);
+    dump_backtrace(0);
+    dump_backtrace(999999);
 }
 
 tmain() {
@@ -48,6 +51,8 @@ tmain() {
     // properly truncated.
     _dprintf_buf_sz = 80;
     DPRINTF("0123456789012345678901234567890123456789");
+    _dprintf_buf_sz = 70;
+    DPRINTF("012345678901234567890123456789");
 
     texit(0);
 }

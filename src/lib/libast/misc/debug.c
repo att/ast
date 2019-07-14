@@ -11,9 +11,9 @@
 #include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -36,7 +36,7 @@
 // respect to portions of each log line it writes that would otherwise vary with each invocation
 // (e.g., the pid).
 bool _dprintf_debug = false;
-int _dprintf_buf_sz = 0;
+int _dprintf_buf_sz = 1024;  // must match size of buf2[] below
 // Setting _dprint_base_line to a non-zero value will cause that value to be displayed rather than
 // the actual line.
 int _dprint_fixed_line = 0;
@@ -48,6 +48,10 @@ static const char *ksh_pathname = NULL;
 
 void set_debug_filename(const char *pathname) { ksh_pathname = pathname; }
 
+static_fn uintptr_t _debug_addr(int i, void **addrs) {
+    return _dprintf_debug ? ((uintptr_t)i + 1) * 8 : (uintptr_t)addrs[i];
+}
+
 // This is initialized to the current timestamp when the first DPRINTF() is executed. This allows us
 // to print time deltas in the debug print messages. A delta from the previous debug print is
 // usually more helpful than an absolute time.
@@ -56,7 +60,7 @@ static Time_t _dprintf_base_time = TMX_NOTIME;
 void _dprintf(const char *fname, int lineno, const char *funcname, const char *fmt, ...) {
     int oerrno = errno;
     // Use long rather than pid_t because pid_t may be an int or long depending on the platform.
-    long pid = _dprintf_debug ? 1234 : _debug_getpid();
+    long pid = _debug_getpid();
     if (_dprint_fixed_line) lineno = _dprint_fixed_line;
 
     va_list ap;
@@ -87,9 +91,9 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     // This should be a "can't happen" situation but we want to be paranoid.
     if (n2 < 0) n2 = snprintf(buf2 + n, sizeof(buf2) - n, "DEBUG PRINT FAILED; vsnprintf() %d", n2);
     n += n2;
-    if (n >= sizeof(buf2) || (_dprintf_buf_sz && n >= _dprintf_buf_sz)) {
+    if (n >= _dprintf_buf_sz) {
         // The message was too large for the buffer so try to make that clear to the reader.
-        n = (_dprintf_buf_sz ? _dprintf_buf_sz : sizeof(buf2)) - 4;
+        n = _dprintf_buf_sz - 4;
         buf2[n++] = '.';
         buf2[n++] = '.';
         buf2[n++] = '.';
@@ -122,7 +126,7 @@ void run_lsof() {
         // cppcheck-suppress leakReturnValNotUsed
         (void)open("/dev/null", O_RDONLY);
         dup2(2, 1);
-        // Run the program we hope will give us detailed info about each address.
+        // Run the program we hope will give us detailed info about each open file descriptor.
         execlp(_debug_lsof, "lsof", "-p", pid_str, NULL);
     }
 
@@ -197,11 +201,11 @@ static_fn void run_addr2lines_prog(int n_frames, char *path, const char **argv) 
 
         // Run the program we hope will give us detailed info about each address.
         if (_dprintf_debug) {
-            char *av[] = {"echo", "hello unit test", NULL};
-            execvp("echo", (char *const *)av);
-        } else {
-            execv(path, (char *const *)argv);
+#define msg "hello unit test\n"
+            write(1, msg, sizeof(msg) - 1);
+            _exit(0);
         }
+        execv(path, (char *const *)argv);
     }
     close(fds[1]);
 
@@ -257,8 +261,7 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
     argv[2] = pid_str;
     for (int i = 0; i < n_frames; ++i) {
         char *addr = argv_addrs + i * 20;
-        uintptr_t vp = _dprintf_debug ? ((uintptr_t)i + 1) * 8 : (uintptr_t)addrs[i];
-        if (snprintf(addr, 20, "0x%" PRIXPTR "", (uintptr_t)vp) >= 20) *addr = '\0';
+        (void)snprintf(addr, 20, "0x%" PRIXPTR "", _debug_addr(i, addrs));
         argv[i + 3] = addr;
     }
     argv[n_frames + 3] = NULL;
@@ -287,8 +290,7 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
     argv[2] = ksh_pathname;
     for (int i = 0; i < n_frames; ++i) {
         char *addr = argv_addrs + i * 20;
-        uintptr_t vp = _dprintf_debug ? ((uintptr_t)i + 1) * 8 : (uintptr_t)addrs[i];
-        if (snprintf(addr, 20, "0x%" PRIXPTR "", vp) >= 20) *addr = '\0';
+        (void)snprintf(addr, 20, "0x%" PRIXPTR "", _debug_addr(i, addrs));
         argv[i + 3] = addr;
     }
     argv[n_frames + 3] = NULL;
@@ -309,8 +311,7 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
     snprintf(info, sizeof(info), "-p %d", _debug_getpid());
     for (int i = 0; i < n_frames; ++i) {
         char *addr = argv_addrs + i * 20;
-        uintptr_t vp = _dprintf_debug ? ((uintptr_t)i + 1) * 8 : (uintptr_t)addrs[i];
-        if (snprintf(addr, 20, " 0x%" PRIXPTR "", vp) >= 20) *addr = '\0';
+        (void)snprintf(addr, 20, " 0x%" PRIXPTR "", _debug_addr(i, addrs));
         strlcat(info, addr, sizeof(info));
     }
     return info;
@@ -335,12 +336,12 @@ const char *addr2info(void *addr) {
 void dump_backtrace(int max_frames) {
     int oerrno = errno;
 
-    assert(max_frames >= 0);
     if (max_frames > 0 && max_frames < MAX_FRAMES) {
         max_frames += 1;  // add room for this function's frame
     } else {
         max_frames = MAX_FRAMES;
     }
+    if (_dprintf_debug) max_frames = 3;  // more results in symbols that vary across systems
 
     void *callstack[MAX_FRAMES];
     int n_frames = backtrace(callstack, max_frames);
