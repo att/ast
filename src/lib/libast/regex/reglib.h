@@ -444,7 +444,6 @@ typedef struct reglib_s /* library private regex_t info */
     unsigned char once;                /* if 1st parse fails, quit      */
     unsigned char separate;            /* cannot combine                */
     unsigned char stack;               /* hard comp or exec             */
-    unsigned char sub;                 /* re_sub is valid               */
     unsigned char test;                /* debug/test bitmask            */
 } Env_t;
 

@@ -1868,16 +1868,6 @@ void regfree(regex_t *p) {
     Env_t *env;
 
     if (p && (env = p->env)) {
-#if 0
-        // This is only set to true by regsubcomp() which is not used and thus should never be true.
-        if (env->sub) {
-            regsubfree(p);
-            p->re_sub = 0;
-        }
-#else
-        assert(!env->sub);
-#endif
-
         p->env = 0;
         if (!(env->disc->re_flags & REG_NOFREE)) {
             drop(env->disc, env->rex);

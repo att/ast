@@ -181,7 +181,6 @@ struct regex_s {
     struct reglib_s *re_info; /* library private info           */
     size_t re_npat;           /* number of pattern chars used   */
     regdisc_t *re_disc;       /* REG_DISCIPLINE discipline      */
-    regsub_t *re_sub;         /* regsubcomp() data              */
 };
 
 // #define reginit(disc) (memset(disc, 0, sizeof(*(disc))), (disc)->re_version = REG_VERSION)
@@ -197,8 +196,6 @@ extern void regfree(regex_t *);
 extern regclass_t regclass(const char *, char **);
 extern int regcollate(const char *, char **, char *, size_t, wchar_t *);
 extern int regnexec(const regex_t *, const char *, size_t, size_t, regmatch_t *, regflags_t);
-extern void regfatal(regex_t *, int, int);
-extern void regfatalpat(regex_t *, int, int, const char *);
 extern int regrecord(const regex_t *);
 extern int regrexec(const regex_t *, const char *, size_t, size_t, regmatch_t *, regflags_t, int,
                     void *, regrecord_t);

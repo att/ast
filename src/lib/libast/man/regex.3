@@ -58,8 +58,6 @@ regex_t*   regcache(const char* \fIpattern\fP, regflags_t \fIflags\fP, int* \fIp
 int        regnexec(const regex_t* \fIre\fP, const char* \fIsubject\fP, size_t \fIsize\fP, size_t \fInmatch\fP, regmatch_t* \fImatch\fP, regflags_t \fIflags\fP);
 int        regrecord(const regex_t* \fIre\fP);
 int        regrexec(const regex_t* \fIre\fP, const char* \fIbuf\fP, size_t \fIsize\fP, size_t \fInmatch\fP, regmatch_t* \fImatch\fP, regflags_t \fIflags\fP, int \fIsep\fP, void* \fIhandle\fP, regrecord_t \fIrecordf\fP);
-void       regfatal(regex_t* \fIre\fP, int \fIlevel\fP, int \fIcode\fP);
-void       regfatalpat(regex_t* \fIre\fP, int \fIlevel\fP, int \fIcode\fP, const char* \fIpattern\fP);
 
 int        regsubflags(regex_t* \fIre\fP, const char* \fIstr\fP, char** \fIend\fP, int \fIdelim\fP, const regflags_t* \fImap\fP, int* \fIpm\fP, regflags_t* \fIpf\fP);
 void       regsubfree(regex_t* \fIre\fP);
