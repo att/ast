@@ -3130,22 +3130,3 @@ bad:
     }
     return fatal(disc, env.error, pattern);
 }
-
-/*
- * regcomp() on sized pattern
- * the lazy way around adding and checking env.end
- */
-
-int regncomp(regex_t *p, const char *pattern, size_t size, regflags_t flags) {
-    char *s;
-    int r;
-
-    if (!(s = malloc(size + 1))) {
-        return fatal((flags & REG_DISCIPLINE) ? p->re_disc : &state.disc, REG_ESPACE, pattern);
-    }
-    memcpy(s, pattern, size);
-    s[size] = 0;
-    r = regcomp(p, s, flags);
-    free(s);
-    return r;
-}

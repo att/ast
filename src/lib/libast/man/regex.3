@@ -55,7 +55,6 @@ regstat_t* regstat(const regex_t* \fIre\fP);
 
 regex_t*   regcache(const char* \fIpattern\fP, regflags_t \fIflags\fP, int* \fIpcode\fP);
 
-int        regncomp(regex_t* \fIre\fP, const char* \fIpattern\fP, size_t \fIsize\fP, regflags_t \fIflags\fP);
 int        regnexec(const regex_t* \fIre\fP, const char* \fIsubject\fP, size_t \fIsize\fP, size_t \fInmatch\fP, regmatch_t* \fImatch\fP, regflags_t \fIflags\fP);
 int        regrecord(const regex_t* \fIre\fP);
 int        regrexec(const regex_t* \fIre\fP, const char* \fIbuf\fP, size_t \fIsize\fP, size_t \fInmatch\fP, regmatch_t* \fImatch\fP, regflags_t \fIflags\fP, int \fIsep\fP, void* \fIhandle\fP, regrecord_t \fIrecordf\fP);

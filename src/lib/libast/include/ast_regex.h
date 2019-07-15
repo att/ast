@@ -196,7 +196,6 @@ extern void regfree(regex_t *);
 
 extern regclass_t regclass(const char *, char **);
 extern int regcollate(const char *, char **, char *, size_t, wchar_t *);
-extern int regncomp(regex_t *, const char *, size_t, regflags_t);
 extern int regnexec(const regex_t *, const char *, size_t, size_t, regmatch_t *, regflags_t);
 extern void regfatal(regex_t *, int, int);
 extern void regfatalpat(regex_t *, int, int, const char *);
