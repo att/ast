@@ -1691,9 +1691,6 @@ static_fn Rex_t *regcomp_rep(Cenv_t *env, Rex_t *e, int number, int last) {
             e->hi = n;
             if (minimal >= 0) regcomp_mark(e, minimal);
             return e;
-#if HUH_2002_08_07
-        case REX_BEG:
-#endif
         case REX_BEG_STR:
         case REX_END_STR:
         case REX_FIN_STR:
