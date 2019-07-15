@@ -45,7 +45,6 @@ regex \- regular expression interface
 
 int        regcomp(regex_t* \fIre\fP, const char* \fIregex\fP, int \fIcflags\fP);
 int        regexec(const regex_t* \fIre\fP, const char* \fIstring\fP, size_t \fInmatch\fP, regmatch_t \fIpmatch\fP[], int \fIeflags\fP);
-size_t     regerror(int \fIcode\fP, const regex_t* \fIre\fP, char* \fIerrbuf\fP, size_t \fIerrbuf_size\fP);
 void       regfree(regex_t* \fIre\fP);
 
 regclass_t regclass(const char* \fIstr\fP, char** \fIend\fP);
@@ -66,7 +65,6 @@ void       regsubfree(regex_t* \fIre\fP);
 .SH DESCRIPTION
 .LR regcomp() ,
 .LR regexec() ,
-.LR regerror() ,
 and
 .L regfree()
 are the POSIX regular expression functions.
@@ -78,12 +76,9 @@ also provides
 .I flags
 extensions to the
 .LR regcomp() ,
+and
 .LR regexec()
-functions and
-.I code
-extensions to the
-.L regerror()
-function.
+functions.
 
 .PP
 .L regcache()

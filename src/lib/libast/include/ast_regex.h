@@ -113,10 +113,9 @@
 #define REG_ENULL 14     /* empty subexpr in pattern    */
 #define REG_ECOUNT 15    /* re component count overflow */
 #define REG_BADESC 16    /* invalid \char escape                */
-#define REG_VERSIONID 17 /* version id (pseudo error)   */
-#define REG_EFLAGS 18    /* flags conflict              */
-#define REG_EDELIM 19    /* invalid or omitted delimiter        */
-#define REG_PANIC 20     /* unrecoverable internal error        */
+#define REG_EFLAGS 17    /* flags conflict              */
+#define REG_EDELIM 18    /* invalid or omitted delimiter        */
+#define REG_PANIC 19     /* unrecoverable internal error        */
 
 struct regex_s;
 typedef struct regex_s regex_t;
@@ -186,7 +185,6 @@ struct regex_s {
 // #define reginit(disc) (memset(disc, 0, sizeof(*(disc))), (disc)->re_version = REG_VERSION)
 
 extern int regcomp(regex_t *, const char *, regflags_t);
-extern size_t regerror(int, const regex_t *, char *, size_t);
 extern int regexec(const regex_t *, const char *, size_t, regmatch_t *, regflags_t);
 extern void *regalloc(regdisc_t *, void *, size_t);
 extern void regfree(regex_t *);

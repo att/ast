@@ -29,8 +29,6 @@
 #include "ast.h"
 #include "reglib.h"
 
-static const char id[] = "\n@(#)$Id: regex (AT&T Research) 2012-09-27 $\0\n";
-
 static const char *reg_error[] = {
     /* REG_ENOSYS       */ "not supported",
     /* REG_SUCCESS      */ "success",
@@ -50,31 +48,10 @@ static const char *reg_error[] = {
     /* REG_ENULL        */ "empty subexpr in pattern",
     /* REG_ECOUNT       */ "re component count overflow",
     /* REG_BADESC       */ "invalid \\char escape",
-    /* REG_VERSIONID*/ &id[10],
     /* REG_EFLAGS       */ "conflicting flags",
     /* REG_EDELIM       */ "invalid or omitted delimiter",
     /* REG_PANIC        */ "unrecoverable internal error",
 };
-
-size_t regerror(int code, const regex_t *p, char *buf, size_t size) {
-    const char *s;
-
-    UNUSED(p);
-    if (code++ == REG_VERSIONID) {
-        s = (const char *)fmtident(&id[1]);
-    } else if (code >= 0 && code < elementsof(reg_error)) {
-        s = reg_error[code];
-    } else {
-        s = (const char *)"unknown error";
-    }
-    if (size) {
-        strlcpy(buf, s, size);
-        buf[size - 1] = 0;
-    } else {
-        buf = (char *)s;
-    }
-    return strlen(buf) + 1;
-}
 
 /*
  * discipline error intercept
