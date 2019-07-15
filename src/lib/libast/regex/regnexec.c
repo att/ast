@@ -1879,7 +1879,7 @@ void regfree(regex_t *p) {
 #endif
 
         p->env = 0;
-        if (--env->refs <= 0 && !(env->disc->re_flags & REG_NOFREE)) {
+        if (!(env->disc->re_flags & REG_NOFREE)) {
             drop(env->disc, env->rex);
             if (env->pos) vecclose(env->pos);
             if (env->bestpos) vecclose(env->bestpos);

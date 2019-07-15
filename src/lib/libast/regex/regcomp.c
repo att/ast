@@ -3118,7 +3118,6 @@ again:
     p->env->flags = env.flags & REG_COMP;
     p->env->min = env.stats.m;
     p->env->nsub = env.stats.p + env.stats.u;
-    p->env->refs = 1;
     return 0;
 bad:
     regfree(p);
