@@ -434,7 +434,7 @@ typedef struct reglib_s /* library private regex_t info */
     int error;                         /* last error                    */
     int explicit;                      /* explicit match on this char   */
     int leading;                       /* leading match on this char    */
-    int refs;                          /* regcomp()+regdup() references*/
+    int refs;                          /* regcomp() references*/
     Mbstate_t q;                       /* pattern mb state              */
     Mbstate_t s;                       /* subject mb state              */
     int i;                             /* macro tmp int         */

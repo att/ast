@@ -3245,16 +3245,3 @@ int regcomb(regex_t *p, regex_t *q) {
     p->env->min = g->re.trie.min;
     return 0;
 }
-
-/*
- * copy a reference of p into q
- * p and q may then have separate regsubcomp() instantiations
- */
-
-int regdup(regex_t *p, regex_t *q) {
-    if (!p || !q) return REG_BADPAT;
-    *q = *p;
-    p->env->refs++;
-    q->re_sub = 0;
-    return 0;
-}
