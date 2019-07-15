@@ -25,7 +25,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <locale.h>
-#include <stdlib.h>
 #include <string.h>
 #include <wctype.h>
 
@@ -42,8 +41,6 @@ struct Ctype_s {
     Ctype_t *next;
     wctype_t wtype;
 };
-
-static Ctype_t *ctypes;
 
 static int Isalnum(int c) { return iswalnum(c); }
 static int Isalpha(int c) { return iswalpha(c); }
@@ -62,23 +59,6 @@ static int Isword(int c) { return iswalnum(c) || c == '_'; }
 static int Notword(int c) { return !iswalnum(c) && c != '_'; }
 static int Isxdigit(int c) { return iswxdigit(c); }
 
-static int Is_wc_1(int);
-static int Is_wc_2(int);
-static int Is_wc_3(int);
-static int Is_wc_4(int);
-static int Is_wc_5(int);
-static int Is_wc_6(int);
-static int Is_wc_7(int);
-static int Is_wc_8(int);
-static int Is_wc_9(int);
-static int Is_wc_10(int);
-static int Is_wc_11(int);
-static int Is_wc_12(int);
-static int Is_wc_13(int);
-static int Is_wc_14(int);
-static int Is_wc_15(int);
-static int Is_wc_16(int);
-
 #define SZ(s) s, (sizeof(s) - 1)
 
 static Ctype_t ctype[] = {
@@ -89,36 +69,7 @@ static Ctype_t ctype[] = {
     {SZ("punct"), Ispunct, NULL, 0},   {SZ("space"), Isspace, NULL, 0},
     {SZ("upper"), Isupper, NULL, 0},   {SZ("word"), Isword, NULL, 0},
     {SZ("xdigit"), Isxdigit, NULL, 0},
-
-#define CTYPES 13
-
-    {NULL, 0, Is_wc_1, NULL, 0},       {NULL, 0, Is_wc_2, NULL, 0},
-    {NULL, 0, Is_wc_3, NULL, 0},       {NULL, 0, Is_wc_4, NULL, 0},
-    {NULL, 0, Is_wc_5, NULL, 0},       {NULL, 0, Is_wc_6, NULL, 0},
-    {NULL, 0, Is_wc_7, NULL, 0},       {NULL, 0, Is_wc_8, NULL, 0},
-    {NULL, 0, Is_wc_9, NULL, 0},       {NULL, 0, Is_wc_10, NULL, 0},
-    {NULL, 0, Is_wc_11, NULL, 0},      {NULL, 0, Is_wc_12, NULL, 0},
-    {NULL, 0, Is_wc_13, NULL, 0},      {NULL, 0, Is_wc_14, NULL, 0},
-    {NULL, 0, Is_wc_15, NULL, 0},      {NULL, 0, Is_wc_16, NULL, 0},
-
 };
-
-static int Is_wc_1(int c) { return iswctype(c, ctype[CTYPES + 0].wtype); }
-static int Is_wc_2(int c) { return iswctype(c, ctype[CTYPES + 1].wtype); }
-static int Is_wc_3(int c) { return iswctype(c, ctype[CTYPES + 2].wtype); }
-static int Is_wc_4(int c) { return iswctype(c, ctype[CTYPES + 3].wtype); }
-static int Is_wc_5(int c) { return iswctype(c, ctype[CTYPES + 4].wtype); }
-static int Is_wc_6(int c) { return iswctype(c, ctype[CTYPES + 5].wtype); }
-static int Is_wc_7(int c) { return iswctype(c, ctype[CTYPES + 6].wtype); }
-static int Is_wc_8(int c) { return iswctype(c, ctype[CTYPES + 7].wtype); }
-static int Is_wc_9(int c) { return iswctype(c, ctype[CTYPES + 8].wtype); }
-static int Is_wc_10(int c) { return iswctype(c, ctype[CTYPES + 9].wtype); }
-static int Is_wc_11(int c) { return iswctype(c, ctype[CTYPES + 10].wtype); }
-static int Is_wc_12(int c) { return iswctype(c, ctype[CTYPES + 11].wtype); }
-static int Is_wc_13(int c) { return iswctype(c, ctype[CTYPES + 12].wtype); }
-static int Is_wc_14(int c) { return iswctype(c, ctype[CTYPES + 13].wtype); }
-static int Is_wc_15(int c) { return iswctype(c, ctype[CTYPES + 14].wtype); }
-static int Is_wc_16(int c) { return iswctype(c, ctype[CTYPES + 15].wtype); }
 
 /*
  * return pointer to ctype function for :class:] in s
@@ -136,51 +87,18 @@ regclass_t regclass(const char *s, char **e) {
     size_t n;
     const char *t;
     Ctype_t *lc;
-    Ctype_t *xp;
-    Ctype_t *zp;
 
-    if (!(c = *s++)) return 0;
+    if (!(c = *s++)) return NULL;
     for (t = s; *t && (*t != c || *(t + 1) != ']'); t++) {
-        ;
+        ;  // empty loop
     }
-    if (*t != c || !(n = t - s)) return 0;
-    for (cp = ctypes; cp; cp = cp->next) {
-        if (n == cp->size && !strncmp(s, cp->name, n)) goto found;
-    }
-    xp = zp = NULL;
+
+    if (*t != c || !(n = t - s)) return NULL;
     lc = (Ctype_t *)ast_setlocale(LC_CTYPE, NULL);
     for (cp = ctype; cp < &ctype[elementsof(ctype)]; cp++) {
-        if (!zp) {
-            if (!cp->size) {
-                zp = cp;
-            } else if (!xp && cp->next && cp->next != lc) {
-                xp = cp;
-            }
-        }
-        if (n == cp->size && !strncmp(s, cp->name, n) && (!cp->next || cp->next == lc)) goto found;
+        if (n == cp->size && !strncmp(s, cp->name, n) && (!cp->next || cp->next == lc)) break;
     }
-    if (!(cp = zp)) {
-        if (!(cp = xp)) return 0;
-        cp->size = 0;
-        if (strcmp(cp->name, s) != 0) {
-            free((void *)cp->name);  // discard const qualifier
-            cp->name = NULL;
-        }
-    }
-    if (!cp->name) {
-        cp->name = memdup(s, n + 1);
-        if (!cp->name) return 0;
-        *((char *)cp->name + n) = 0;
-    }
-    /* mvs.390 needs the (char*) cast -- barf */
-    if (!(cp->wtype = wctype((char *)cp->name))) {
-        free((void *)cp->name);  // discard const qualifier
-        cp->name = NULL;
-        return 0;
-    }
-    cp->size = n;
-    cp->next = lc;
-found:
+
     if (e) *e = (char *)t + 2;
     return cp->ctype;
 }
