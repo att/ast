@@ -1785,8 +1785,7 @@ static_fn int regcomp_insert(Cenv_t *env, Rex_t *f, Rex_t *g) {
 
 /*
  * trie() tries to combine nontrivial e and f into a REX_TRIE
- * unless 0 is returned, e and f are deleted as far as possible
- * also called by regcomb
+ * unless 0 is returned, e and f are deleted as far as possible.
  */
 
 static_fn Rex_t *regcomp_trie(Cenv_t *env, Rex_t *e, Rex_t *f) {
@@ -3149,99 +3148,4 @@ int regncomp(regex_t *p, const char *pattern, size_t size, regflags_t flags) {
     r = regcomp(p, s, flags);
     free(s);
     return r;
-}
-
-/*
- * combine two compiled regular expressions if possible,
- * replacing first with the combination and freeing second.
- * return 0 on success.
- * the only combinations handled are building a Trie
- * from String|Kmp|Trie and String|Kmp
- */
-
-int regcomb(regex_t *p, regex_t *q) {
-    Rex_t *e = p->env->rex;
-    Rex_t *f = q->env->rex;
-    Rex_t *g;
-    Rex_t *h;
-    Cenv_t env;
-
-    if (!e || !f) return fatal(p->env->disc, REG_BADPAT, NULL);
-    if (p->env->separate || q->env->separate) return REG_ESUBREG;
-    memset(&env, 0, sizeof(env));
-    env.disc = p->env->disc;
-    if (e->type == REX_BM) {
-        p->env->rex = e->next;
-        e->next = NULL;
-        drop(env.disc, e);
-        e = p->env->rex;
-    }
-    if (f->type == REX_BM) {
-        q->env->rex = f->next;
-        f->next = NULL;
-        drop(env.disc, f);
-        f = q->env->rex;
-    }
-    if (e->type == REX_BEG && f->type == REX_BEG) {
-        p->env->flags |= REG_LEFT;
-        p->env->rex = e->next;
-        e->next = NULL;
-        drop(env.disc, e);
-        e = p->env->rex;
-        q->env->rex = f->next;
-        f->next = NULL;
-        drop(env.disc, f);
-        f = q->env->rex;
-    }
-    for (g = e; g->next; g = g->next) {
-        ;
-    }
-    for (h = f; h->next; h = h->next) {
-        ;
-    }
-    if (g->next && g->next->type == REX_END && h->next && h->next->type == REX_END) {
-        p->env->flags |= REG_RIGHT;
-        drop(env.disc, g->next);
-        g->next = NULL;
-        drop(env.disc, h->next);
-        h->next = NULL;
-    }
-    if (!(g = regcomp_trie(&env, f, e))) return fatal(p->env->disc, REG_BADPAT, NULL);
-    p->env->rex = g;
-    if (!q->env->once) p->env->once = 0;
-    q->env->rex = 0;
-    if (p->env->flags & REG_LEFT) {
-        if (!(e = regcomp_node(&env, REX_BEG, 0, 0, 0))) {
-            regfree(p);
-            return fatal(p->env->disc, REG_ESPACE, NULL);
-        }
-        e->next = p->env->rex;
-        p->env->rex = e;
-        p->env->once = 1;
-    }
-    if (p->env->flags & REG_RIGHT) {
-        for (f = p->env->rex; f->next; f = f->next) {
-            ;
-        }
-        if (f->type != REX_END) {
-            if (!(e = regcomp_node(&env, REX_END, 0, 0, 0))) {
-                regfree(p);
-                return fatal(p->env->disc, REG_ESPACE, NULL);
-            }
-            f->next = e;
-        }
-    }
-    env.explicit = p->env->explicit;
-    env.flags = p->env->flags;
-    env.disc = p->env->disc;
-    if (regcomp_stats(&env, p->env->rex)) {
-        regfree(p);
-        return fatal(p->env->disc, env.error ? env.error : REG_ECOUNT, NULL);
-    }
-    if (regcomp_special(&env, p)) {
-        regfree(p);
-        return fatal(p->env->disc, env.error ? env.error : REG_ESPACE, NULL);
-    }
-    p->env->min = g->re.trie.min;
-    return 0;
 }
