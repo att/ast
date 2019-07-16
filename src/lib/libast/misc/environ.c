@@ -40,7 +40,7 @@ char *sh_getenv(const char *name) { return getenv(name); }
 //      setenviron("N")         delete N
 //
 char *sh_setenviron(const char *akey) {
-    assert(akey);
+    // assert(akey);
     ast.env_serial++;
     if (strchr(akey, '=')) {
         putenv((char *)akey);
