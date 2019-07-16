@@ -51,7 +51,7 @@
 
 #define DEBUG 1
 
-#if DEBUG
+#ifdef DEBUG
 
 typedef ssize_t (*Write_f)(int, const void *, size_t);
 
@@ -67,13 +67,13 @@ void *_dll_next(int flags, _DLL_RLD_SYM_TYPE *here) {
     char *b;
     char *e;
     char dummy[256];
-#if DEBUG
+#ifdef DEBUG
     Write_f wr = 0;
     Write_f xr;
     char buf[1024];
 #endif
 
-#if DEBUG
+#ifdef DEBUG
     if (getenv("DLL_DEBUG") && (vp = (char *)_rld_new_interface(_RLD_FIRST_PATHNAME))) {
         do {
             if (strcmp(vp, "MAIN") && (lp = dllopen(vp, flags))) {
@@ -120,18 +120,18 @@ void *_dll_next(int flags, _DLL_RLD_SYM_TYPE *here) {
                         }
                     }
                     if (lp) {
-#if DEBUG
+#ifdef DEBUG
                         if (wr) (*wr)(2, buf, sfsprintf(buf, sizeof(buf), "dll: next %s\n", vp));
 #endif
                         return lp;
                     }
-#if DEBUG
+#ifdef DEBUG
                     else if (wr) {
                         (*wr)(2, buf, sfsprintf(buf, sizeof(buf), "dll: skip %s\n", vp));
                     }
 #endif
                 } else if ((_DLL_RLD_SYM_TYPE *)dlsym(lp, _DLL_RLD_SYM_STR) == here) {
-#if DEBUG
+#ifdef DEBUG
                     if (wr) (*wr)(2, buf, sfsprintf(buf, sizeof(buf), "dll: this %s\n", vp));
 #endif
                     found = 1;
