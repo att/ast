@@ -1724,7 +1724,7 @@ int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatc
     DEBUG_CODE(0x0001, sfprintf(sfstdout, "AHA#%04d 0x%04x regnexec %d 0x%08x `%-.*s'\n", __LINE__,
                                 debug_flag, nmatch, flags, len, s));
     if (!p || !(env = p->env)) return REG_BADPAT;
-    if (!s) return fatal(env->disc, REG_BADPAT, NULL);
+    if (!s) return regfatal(env->disc, REG_BADPAT, NULL);
     if (len < env->min) {
         DEBUG_CODE(0x0080,
                    sfprintf(sfstdout, "AHA#%04d REG_NOMATCH %d %d\n", __LINE__, len, env->min));
@@ -1860,7 +1860,7 @@ hit:
 done:
     stkold(env->mst, &env->stk);
     env->stk.base = 0;
-    if (k > REG_NOMATCH) fatal(p->env->disc, k, NULL);
+    if (k > REG_NOMATCH) regfatal(p->env->disc, k, NULL);
     return k;
 }
 

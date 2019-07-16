@@ -57,7 +57,7 @@ static const char *reg_error[] = {
  * discipline error intercept
  */
 
-int fatal(regdisc_t *disc, int code, const char *pattern) {
+int regfatal(regdisc_t *disc, int code, const char *pattern) {
     if (disc->re_errorf) {
         if (pattern) {
             (*disc->re_errorf)(NULL, disc, disc->re_errorlevel, "regular expression: %s: %s",

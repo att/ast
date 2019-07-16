@@ -2986,7 +2986,7 @@ int regcomp(regex_t *p, const char *pattern, regflags_t flags) {
     }
     if (!disc->re_errorlevel) disc->re_errorlevel = 2;
     p->env = 0;
-    if (!pattern) return fatal(disc, REG_BADPAT, pattern);
+    if (!pattern) return regfatal(disc, REG_BADPAT, pattern);
     if (!state.initialized) {
         state.initialized = 1;
         for (i = 0; i < elementsof(state.escape); i++) {
@@ -2996,15 +2996,15 @@ int regcomp(regex_t *p, const char *pattern, regflags_t flags) {
     fold = lc_ctype_data;
     if (ast.locale.serial != lc_ctype_serial || !fold) {
         fold = calloc(1, UCHAR_MAX + 1);
-        if (!fold) return fatal(disc, REG_ESPACE, pattern);
+        if (!fold) return regfatal(disc, REG_ESPACE, pattern);
         for (i = 0; i <= UCHAR_MAX; i++) fold[i] = toupper(i);
         lc_ctype_data = fold;
         lc_ctype_serial = ast.locale.serial;
     }
 again:
-    if (!(p->env = regalloc(disc, 0, sizeof(Env_t)))) return fatal(disc, REG_ESPACE, pattern);
+    if (!(p->env = regalloc(disc, 0, sizeof(Env_t)))) return regfatal(disc, REG_ESPACE, pattern);
     memset(p->env, 0, sizeof(*p->env));
-    if (!(p->env->mst = stkopen(STK_SMALL | STK_NULL))) return fatal(disc, REG_ESPACE, pattern);
+    if (!(p->env->mst = stkopen(STK_SMALL | STK_NULL))) return regfatal(disc, REG_ESPACE, pattern);
     memset(&env, 0, sizeof(env));
     env.regex = p;
     env.flags = flags;
@@ -3061,7 +3061,7 @@ again:
         if (p->env->rex->type == REX_ALT) env.flags &= ~REG_FIRST;
         if (!(e = regcomp_node(&env, REX_BEG, 0, 0, 0))) {
             regfree(p);
-            return fatal(disc, REG_ESPACE, pattern);
+            return regfatal(disc, REG_ESPACE, pattern);
         }
         e->next = p->env->rex;
         p->env->rex = e;
@@ -3076,7 +3076,7 @@ again:
         if (p->env->rex->type == REX_ALT) env.flags &= ~REG_FIRST;
         if (!(f = regcomp_node(&env, REX_END, 0, 0, 0))) {
             regfree(p);
-            return fatal(disc, REG_ESPACE, pattern);
+            return regfatal(disc, REG_ESPACE, pattern);
         }
         f->flags = e->flags;
         f->map = e->map;
@@ -3127,5 +3127,5 @@ bad:
         pattern = (const char *)env.literal;
         goto again;
     }
-    return fatal(disc, env.error, pattern);
+    return regfatal(disc, env.error, pattern);
 }
