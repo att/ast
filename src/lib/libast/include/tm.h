@@ -153,7 +153,6 @@ extern Tm_info_t *_tm_infop_;
 
 extern int tmequiv(Tm_t *);
 extern Tm_t *tmfix(Tm_t *);
-extern char *tmfmt(char *, size_t, const char *, time_t *);
 extern int tmgoff(const char *, char **, int);
 extern void tminit(Tm_zone_t *);
 extern int tmlex(const char *, char **, char **, int, char **, int);

@@ -1,6 +1,6 @@
 libast_files += [
     'tm/tmdata.c', 'tm/tmequiv.c', 'tm/tmfix.c',
-    'tm/tmfmt.c', 'tm/tmgoff.c', 'tm/tminit.c',
+    'tm/tmgoff.c', 'tm/tminit.c',
     'tm/tmlex.c', 'tm/tmlocale.c', 'tm/tmmake.c',
     'tm/tmpoff.c', 'tm/tmsleep.c', 'tm/tmtime.c',
     'tm/tmtype.c', 'tm/tmweek.c', 'tm/tmword.c', 'tm/tmxdate.c',
