@@ -82,17 +82,6 @@ Error_info_t _error_info_ = {
 
 Error_info_t *_error_infop_ = &_error_info_;
 
-/*
- * these should probably be in error_info
- */
-
-static struct State_s {
-    char *prefix;
-    Sfio_t *tty;
-    unsigned long count;
-    regex_t *match;
-} error_state;
-
 #define ERROR_CATALOG (ERROR_LIBRARY << 1)
 
 /*
@@ -218,7 +207,6 @@ void errorv(const char *id, int level, va_list ap) {
         off = stktell(stkstd);
         if (off) stkfreeze(stkstd, 0);
         file = error_info.id;
-        if (error_state.prefix) sfprintf(stkstd, "%s: ", error_state.prefix);
         if (flags & ERROR_USAGE) {
             if (flags & ERROR_NOID) {
                 sfprintf(stkstd, "       ");
