@@ -1723,7 +1723,7 @@ int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatc
     DEBUG_INIT();
     DEBUG_CODE(0x0001, sfprintf(sfstdout, "AHA#%04d 0x%04x regnexec %d 0x%08x `%-.*s'\n", __LINE__,
                                 debug_flag, nmatch, flags, len, s));
-    if (!p || !(env = p->env)) return REG_BADPAT;
+    if (!p || !(env = p->re_info)) return REG_BADPAT;
     if (!s) return regfatal(env->disc, REG_BADPAT, NULL);
     if (len < env->min) {
         DEBUG_CODE(0x0080,
@@ -1860,15 +1860,15 @@ hit:
 done:
     stkold(env->mst, &env->stk);
     env->stk.base = 0;
-    if (k > REG_NOMATCH) regfatal(p->env->disc, k, NULL);
+    if (k > REG_NOMATCH) regfatal(p->re_info->disc, k, NULL);
     return k;
 }
 
 void regfree(regex_t *p) {
     Env_t *env;
 
-    if (p && (env = p->env)) {
-        p->env = 0;
+    if (p && (env = p->re_info)) {
+        p->re_info = NULL;
         if (!(env->disc->re_flags & REG_NOFREE)) {
             regdrop(env->disc, env->rex);
             if (env->pos) vecclose(env->pos);

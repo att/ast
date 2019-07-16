@@ -26,4 +26,4 @@
 
 #include "reglib.h"
 
-int regrecord(const regex_t *p) { return p && p->env && p->env->rex->type == REX_BM; }
+int regrecord(const regex_t *p) { return p && p->re_info && p->re_info->rex->type == REX_BM; }

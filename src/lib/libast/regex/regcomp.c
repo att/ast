@@ -2780,7 +2780,7 @@ static_fn int regcomp_special(Cenv_t *env, regex_t *p) {
     int k;
 
     DEBUG_INIT();
-    e = p->env->rex;
+    e = p->re_info->rex;
     if (e) {
         x = env->stats.x;
         if (x && x->re.string.size < 3) x = 0;
@@ -2920,7 +2920,7 @@ static_fn int regcomp_special(Cenv_t *env, regex_t *p) {
 #endif
             (void)regalloc(env->disc, q, 0);
             a->next = e;
-            p->env->rex = a;
+            p->re_info->rex = a;
             return 0;
         }
         switch (e->type) {
@@ -2957,7 +2957,7 @@ static_fn int regcomp_special(Cenv_t *env, regex_t *p) {
                     f[k] = m;
                 }
                 a->next = e->next;
-                p->env->rex = a;
+                p->re_info->rex = a;
                 e->next = NULL;
                 regdrop(env->disc, e);
                 break;
@@ -2965,7 +2965,7 @@ static_fn int regcomp_special(Cenv_t *env, regex_t *p) {
                 return 0;
         }
     }
-    p->env->once = 1;
+    p->re_info->once = 1;
     return 0;
 }
 
@@ -2985,7 +2985,7 @@ int regcomp(regex_t *p, const char *pattern, regflags_t flags) {
         disc = &regstate.disc;
     }
     if (!disc->re_errorlevel) disc->re_errorlevel = 2;
-    p->env = 0;
+    p->re_info = NULL;
     if (!pattern) return regfatal(disc, REG_BADPAT, pattern);
     if (!regstate.initialized) {
         regstate.initialized = 1;
@@ -3002,20 +3002,24 @@ int regcomp(regex_t *p, const char *pattern, regflags_t flags) {
         lc_ctype_serial = ast.locale.serial;
     }
 again:
-    if (!(p->env = regalloc(disc, 0, sizeof(Env_t)))) return regfatal(disc, REG_ESPACE, pattern);
-    memset(p->env, 0, sizeof(*p->env));
-    if (!(p->env->mst = stkopen(STK_SMALL | STK_NULL))) return regfatal(disc, REG_ESPACE, pattern);
+    if (!(p->re_info = regalloc(disc, 0, sizeof(Env_t)))) {
+        return regfatal(disc, REG_ESPACE, pattern);
+    }
+    memset(p->re_info, 0, sizeof(*p->re_info));
+    if (!(p->re_info->mst = stkopen(STK_SMALL | STK_NULL))) {
+        return regfatal(disc, REG_ESPACE, pattern);
+    }
     memset(&env, 0, sizeof(env));
     env.regex = p;
     env.flags = flags;
-    env.disc = p->env->disc = disc;
+    env.disc = p->re_info->disc = disc;
     if (env.flags & REG_AUGMENTED) env.flags |= REG_EXTENDED;
     env.mappeddot = '.';
     env.mappednewline = '\n';
     env.mappedslash = '/';
     if (disc->re_version >= REG_VERSION_MAP && disc->re_map) {
         env.map = disc->re_map;
-        env.MAP = p->env->fold;
+        env.MAP = p->re_info->fold;
         for (i = 0; i <= UCHAR_MAX; i++) {
             env.MAP[i] = fold[env.map[i]];
             if (env.map[i] == '.') env.mappeddot = i;
@@ -3036,7 +3040,7 @@ again:
         env.flags &= ~(REG_SHELL_DOT | REG_SHELL_ESCAPED | REG_SHELL_GROUP | REG_SHELL_PATH);
     }
     if ((env.flags & (REG_NEWLINE | REG_SPAN)) == REG_NEWLINE) env.explicit = env.mappednewline;
-    p->env->leading = (env.flags & REG_SHELL_DOT) ? env.mappeddot : -1;
+    p->re_info->leading = (env.flags & REG_SHELL_DOT) ? env.mappeddot : -1;
     env.posixkludge = !(env.flags & (REG_EXTENDED | REG_SHELL));
     env.token.lex = 0;
     env.token.push = 0;
@@ -3052,28 +3056,28 @@ again:
         env.terminator = '\n';
     }
     env.literal = env.pattern = env.cursor = (unsigned char *)pattern;
-    if (!(p->env->rex = regcomp_alt(&env, 1, 0))) goto bad;
+    if (!(p->re_info->rex = regcomp_alt(&env, 1, 0))) goto bad;
     if (env.parnest) {
         env.error = REG_EPAREN;
         goto bad;
     }
-    if ((env.flags & REG_LEFT) && p->env->rex->type != REX_BEG) {
-        if (p->env->rex->type == REX_ALT) env.flags &= ~REG_FIRST;
+    if ((env.flags & REG_LEFT) && p->re_info->rex->type != REX_BEG) {
+        if (p->re_info->rex->type == REX_ALT) env.flags &= ~REG_FIRST;
         if (!(e = regcomp_node(&env, REX_BEG, 0, 0, 0))) {
             regfree(p);
             return regfatal(disc, REG_ESPACE, pattern);
         }
-        e->next = p->env->rex;
-        p->env->rex = e;
-        p->env->once = 1;
+        e->next = p->re_info->rex;
+        p->re_info->rex = e;
+        p->re_info->once = 1;
     }
-    for (e = p->env->rex; e->next; e = e->next) {
+    for (e = p->re_info->rex; e->next; e = e->next) {
         ;
     }
-    p->env->done.type = REX_DONE;
-    p->env->done.flags = e->flags;
+    p->re_info->done.type = REX_DONE;
+    p->re_info->done.flags = e->flags;
     if ((env.flags & REG_RIGHT) && e->type != REX_END) {
-        if (p->env->rex->type == REX_ALT) env.flags &= ~REG_FIRST;
+        if (p->re_info->rex->type == REX_ALT) env.flags &= ~REG_FIRST;
         if (!(f = regcomp_node(&env, REX_END, 0, 0, 0))) {
             regfree(p);
             return regfatal(disc, REG_ESPACE, pattern);
@@ -3082,25 +3086,25 @@ again:
         f->map = e->map;
         e->next = f;
     }
-    if (regcomp_stats(&env, p->env->rex)) {
+    if (regcomp_stats(&env, p->re_info->rex)) {
         if (!env.error) env.error = REG_ECOUNT;
         goto bad;
     }
     if (env.stats.b) {
-        p->env->hard = p->env->separate = 1;
+        p->re_info->hard = p->re_info->separate = 1;
     } else if (!(env.flags & REG_FIRST) &&
                (env.stats.a || (env.stats.c > 1 && env.stats.c != env.stats.s) ||
                 (env.stats.t && (env.stats.t > 1 || env.stats.a || env.stats.c)))) {
-        p->env->hard = 1;
+        p->re_info->hard = 1;
     }
-    if (p->env->hard || env.stats.c || env.stats.i) {
-        p->env->stats.re_min = p->env->stats.re_max = -1;
+    if (p->re_info->hard || env.stats.c || env.stats.i) {
+        p->re_info->stats.re_min = p->re_info->stats.re_max = -1;
     } else {
-        if (!(p->env->stats.re_min = env.stats.m)) p->env->stats.re_min = -1;
-        if (!(p->env->stats.re_max = env.stats.n)) p->env->stats.re_max = -1;
+        if (!(p->re_info->stats.re_min = env.stats.m)) p->re_info->stats.re_min = -1;
+        if (!(p->re_info->stats.re_max = env.stats.n)) p->re_info->stats.re_max = -1;
     }
     if (regcomp_special(&env, p)) goto bad;
-    regcomp_serialize(&env, p->env->rex, 1);
+    regcomp_serialize(&env, p->re_info->rex, 1);
     p->re_nsub = env.stats.p;
     if (env.type == KRE) p->re_nsub /= 2;
     if (env.flags & REG_DELIMITED) {
@@ -3114,11 +3118,12 @@ again:
             env.flags &= ~REG_DELIMITED;
         }
     }
-    p->env->explicit = env.explicit;
-    p->env->flags = env.flags & REG_COMP;
-    p->env->min = env.stats.m;
-    p->env->nsub = env.stats.p + env.stats.u;
+    p->re_info->explicit = env.explicit;
+    p->re_info->flags = env.flags & REG_COMP;
+    p->re_info->min = env.stats.m;
+    p->re_info->nsub = env.stats.p + env.stats.u;
     return 0;
+
 bad:
     regfree(p);
     if (!env.error) env.error = REG_ESPACE;

@@ -29,19 +29,19 @@
 regstat_t *regstat(const regex_t *p) {
     Rex_t *e;
 
-    p->env->stats.re_flags = p->env->flags;
-    p->env->stats.re_info = 0;
-    e = p->env->rex;
+    p->re_info->stats.re_flags = p->re_info->flags;
+    p->re_info->stats.re_info = 0;
+    e = p->re_info->rex;
     if (e && e->type == REX_BM) {
-        p->env->stats.re_record = p->env->rex->re.bm.size;
+        p->re_info->stats.re_record = p->re_info->rex->re.bm.size;
         e = e->next;
     } else {
-        p->env->stats.re_record = 0;
+        p->re_info->stats.re_record = 0;
     }
     if (e && e->type == REX_BEG) e = e->next;
     if (e && e->type == REX_STRING) e = e->next;
-    if (!e || (e->type == REX_END && !e->next)) p->env->stats.re_info |= REG_LITERAL;
-    p->env->stats.re_record =
-        (p->env->rex && p->env->rex->type == REX_BM) ? p->env->rex->re.bm.size : -1;
-    return &p->env->stats;
+    if (!e || (e->type == REX_END && !e->next)) p->re_info->stats.re_info |= REG_LITERAL;
+    p->re_info->stats.re_record =
+        (p->re_info->rex && p->re_info->rex->type == REX_BM) ? p->re_info->rex->re.bm.size : -1;
+    return &p->re_info->stats;
 }

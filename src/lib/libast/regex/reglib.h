@@ -39,8 +39,6 @@
 #define REG_VERSION_EXEC 20020509L
 #define REG_VERSION_MAP 20030916L /* regdisc_t.re_map   */
 
-#define re_info env
-
 #include "ast.h"
 #include "ast_regex.h"
 #include "cdt.h"

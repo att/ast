@@ -57,7 +57,7 @@ int regrexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatc
     Env_t *env;
     Rex_t *e;
 
-    if (!s || !p || !(env = p->env) || (e = env->rex)->type != REX_BM) return REG_BADPAT;
+    if (!s || !p || !(env = p->re_info) || (e = env->rex)->type != REX_BM) return REG_BADPAT;
     inv = (flags & REG_INVERT) != 0;
     buf = beg = (unsigned char *)s;
     end = buf + len;
