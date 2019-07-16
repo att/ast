@@ -42,7 +42,6 @@
 #define re_info env
 
 #define classfun _reg_classfun
-#define state _reg_state
 
 #include "ast.h"
 #include "ast_regex.h"
@@ -466,7 +465,7 @@ typedef struct State_s /* shared state          */
     Dtdisc_t dtdisc;
 } State_t;
 
-extern State_t state;
+extern State_t regstate;
 
 extern regclass_t classfun(int);
 extern void regdrop(regdisc_t *, Rex_t *);

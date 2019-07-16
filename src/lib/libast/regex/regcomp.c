@@ -627,7 +627,7 @@ static_fn int regcomp_magic(Cenv_t *env, int c, int escaped) {
     short *mp;
     char *ep;
 
-    mp = state.magic[c];
+    mp = regstate.magic[c];
     if (mp) {
         c = mp[env->type + escaped];
         if (c >= T_META) {
@@ -2982,15 +2982,15 @@ int regcomp(regex_t *p, const char *pattern, regflags_t flags) {
         flags &= ~REG_DISCIPLINE;
         disc = p->re_disc;
     } else {
-        disc = &state.disc;
+        disc = &regstate.disc;
     }
     if (!disc->re_errorlevel) disc->re_errorlevel = 2;
     p->env = 0;
     if (!pattern) return regfatal(disc, REG_BADPAT, pattern);
-    if (!state.initialized) {
-        state.initialized = 1;
-        for (i = 0; i < elementsof(state.escape); i++) {
-            state.magic[state.escape[i].key] = state.escape[i].val;
+    if (!regstate.initialized) {
+        regstate.initialized = 1;
+        for (i = 0; i < elementsof(regstate.escape); i++) {
+            regstate.magic[regstate.escape[i].key] = regstate.escape[i].val;
         }
     }
     fold = lc_ctype_data;

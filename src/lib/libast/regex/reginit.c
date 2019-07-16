@@ -33,7 +33,7 @@
  * state shared by all threads
  */
 
-State_t state = {
+State_t regstate = {
     {-1, -1},
 
     /*

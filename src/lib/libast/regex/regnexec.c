@@ -285,7 +285,7 @@ static_fn int _matchpush(Env_t *env, Rex_t *rex) {
     s = f->save;
     while (m < e) {
         *s++ = *m;
-        *m++ = state.nomatch;
+        *m++ = regstate.nomatch;
     }
     return 0;
 }
@@ -1749,7 +1749,7 @@ int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, regmatc
         env->best = &env->match[n + 1];
         env->best[0].rm_so = 0;
         env->best[0].rm_eo = -1;
-        for (i = 0; i <= n; i++) env->match[i] = state.nomatch;
+        for (i = 0; i <= n; i++) env->match[i] = regstate.nomatch;
         if (flags & REG_ADVANCE) advance = true;
     }
     DEBUG_CODE(0x1000, regnexec_list(env, env->rex));
@@ -1844,7 +1844,7 @@ hit:
         for (i = j = m = 0; j < nmatch; i++) {
             if (!i || !k || (i & 1)) {
                 if (i > n) {
-                    match[j] = state.nomatch;
+                    match[j] = regstate.nomatch;
                 } else {
                     match[m = j] = env->best[i];
                 }
