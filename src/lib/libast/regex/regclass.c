@@ -107,7 +107,7 @@ regclass_t regclass(const char *s, char **e) {
  * return pointer to ctype function for token
  */
 
-regclass_t classfun(int type) {
+regclass_t regclassfun(int type) {
     switch (type) {
         case T_ALNUM:
             return Isword;

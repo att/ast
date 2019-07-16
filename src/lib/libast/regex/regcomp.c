@@ -1128,7 +1128,7 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                     env->token.len = 1;
                     w = regcomp_magic(env, *env->cursor, 2);
                     if (env->token.len > 1 || w != T_BAD) {
-                        if (env->token.len == 1 && (f = classfun(w))) {
+                        if (env->token.len == 1 && (f = regclassfun(w))) {
                             if (inrange > 1) {
                                 if (env->type < SRE && !(env->flags & (REG_LENIENT | REG_REGEXP))) {
                                     goto erange;
@@ -1364,7 +1364,7 @@ static_fn Rex_t *regcomp_bra(Cenv_t *env) {
                             env->token.len = 1;
                             w = regcomp_magic(env, *env->cursor, 2);
                             if (env->token.len > 1 || w != T_BAD) {
-                                if (env->token.len == 1 && (f = classfun(w))) {
+                                if (env->token.len == 1 && (f = regclassfun(w))) {
                                     if (inrange > 1) {
                                         if (env->type < SRE &&
                                             !(env->flags & (REG_LENIENT | REG_REGEXP))) {
@@ -1615,7 +1615,7 @@ static_fn Rex_t *regcomp_ccl(Cenv_t *env, int type) {
     Celt_t *ce;
     regclass_t f;
 
-    f = classfun(type);
+    f = regclassfun(type);
     if (!f) {
         env->error = REG_BADESC;
         return NULL;
