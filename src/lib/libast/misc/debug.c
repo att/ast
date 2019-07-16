@@ -377,13 +377,23 @@ void dump_backtrace(int max_frames) {
 
 #else  // _hdr_execinfo
 
-#define header_msg "### Sorry, but dump_backtrace() does not work on your system.\n"
+#define addr2info_msg "### Sorry, but addr2info() does not work on your system.\n"
+#define backtrace_msg "### Sorry, but dump_backtrace() does not work on your system.\n"
+
+const char *addr2info(void *addr) {
+    UNUSED(addr);
+    int oerrno = errno;
+
+    write(2, addr2info_msg, sizeof(addr2info_msg) - 1);
+    errno = oerrno;
+    return "";
+}
 
 void dump_backtrace(int max_frames) {
     UNUSED(max_frames);
     int oerrno = errno;
 
-    write(2, header_msg, sizeof(header_msg));
+    write(2, backtrace_msg, sizeof(backtrace_msg) - 1);
     errno = oerrno;
 }
 
