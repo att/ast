@@ -41,7 +41,6 @@
 
 #define re_info env
 
-#define alloc _reg_alloc
 #define classfun _reg_classfun
 #define state _reg_state
 
@@ -469,7 +468,6 @@ typedef struct State_s /* shared state          */
 
 extern State_t state;
 
-extern void *alloc(regdisc_t *, void *, size_t);
 extern regclass_t classfun(int);
 extern void regdrop(regdisc_t *, Rex_t *);
 extern int regfatal(regdisc_t *, int, const char *);
