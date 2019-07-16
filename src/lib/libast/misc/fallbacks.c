@@ -21,7 +21,7 @@
 // We define this symbol, which is otherwise unused, to ensure this module isn't empty. That's
 // because empty modules can cause build time warnings.
 //
-void do_not_use_this_fallback() { abort(); }
+int __do_not_use_this_fallback_sym = 0;
 
 #if !_lib_eaccess
 #if _lib_euidaccess
