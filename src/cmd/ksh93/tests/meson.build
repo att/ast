@@ -31,6 +31,7 @@ all_tests = [
     ['b_set.exp'],
     ['b_set'],
     ['b_sleep'],
+    ['b_sync'],
     ['b_test.exp'],
     ['b_time.exp'],
     ['b_times.exp'],

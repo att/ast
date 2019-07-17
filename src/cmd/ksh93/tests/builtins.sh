@@ -33,6 +33,7 @@ for name in $(builtin -l | grep -Ev '(echo|test|true|false|login|newgrp|uname|ge
 done
 
 # ==========
+# Verify --man works for the builtins.
 for name in $(builtin -l | grep -Ev '(echo|test|true|false|login|newgrp|hash|type|source|\[|:)')
 do
     # Extract builtin name from /opt path
