@@ -1,13 +1,11 @@
 # Tests for `uname` builtin
 
-if [[ $OS_NAME != linux ]]
-then
-    log_info "Output of this command varies on different operating systems"
-    log_info "These tests are run only on Linux"
-    exit 0
-fi
-
-bin_uname=$(which uname)
+# ==========
+# uname -x
+# Verify an unknown flag is handled as a usage error.
+actual=$(uname -x 2>&1)
+expect="uname: -x: unknown option"
+[[ "$actual" =~ "$expect".* ]] || log_error "uname -x" "$expect" "$actual"
 
 # ==========
 #   -a, --all       Equivalent to -snrvmpio.
@@ -65,18 +63,23 @@ expect=$($bin_uname -m)
 [[ "$actual" = "$expect" ]] || log_error "'uname -i' failed" "$expect" "$actual"
 
 # ==========
-#   -o, --operating-system
-#                   The generic operating system name.
+# -o, --operating-system
+# The generic operating system name. Some systems (e.g., macOS) don't have a `-o` flag but usually
+# their `-s` flag is an acceptable substituate.
 actual=$(uname -o)
-expect=$($bin_uname -o)
+expect=$($bin_uname -o 2>/dev/null || $bin_uname -s 2>&1)
 [[ "$expect" =~ "$actual" ]] || log_error "'uname -o' failed" "$expect" "$actual"
 
 # ==========
-#   -h, --host-id|id
-#                   The host id in hex.
+# -h, --host-id|id
+# The host id in hex.
 uname -h | grep -q -v "[0-9a-f]*" && log_error "'uname -h' failed"
 
 # ==========
-#   -d, --domain    The domain name returned by getdomainname(2).
+# -d, --domain
+# The domain name returned by getdomainname(2). We can't actually verify the output because it may
+# be an empty string or a non-empty string. This is mostly to verify the flag is handled and ensure
+# the associated code is covered.
 actual=$(uname -d)
-[[ ! -z "$actual" ]] || log_error "'uname -d' failed"
+# [[ ! -z "$actual" ]] || log_error "'uname -d' failed"
+[[ $? == 0 ]] || log_error "'uname -d' failed"

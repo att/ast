@@ -22,6 +22,7 @@ bin_rm=$(whence -p rm)
 bin_sleep=$(whence -p sleep)
 bin_tee=$(whence -p tee)
 bin_true=$(whence -p true)
+bin_uname=$(whence -p uname)
 # There are at least two tests that are broken if all builtins are enabled by munging PATH.
 # So make it easy for a unit test to not enable all builtins by default. See issue #960.
 NO_BUILTINS_PATH=$PATH
