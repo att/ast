@@ -96,26 +96,26 @@
 
 /* regex error codes */
 
-#define REG_ENOSYS (-1)  /* not supported               */
-#define REG_NOMATCH 1    /* regexec didn't match                */
-#define REG_BADPAT 2     /* invalid regular expression  */
-#define REG_ECOLLATE 3   /* invalid collation element   */
-#define REG_ECTYPE 4     /* invalid character class     */
-#define REG_EESCAPE 5    /* trailing \ in pattern       */
-#define REG_ESUBREG 6    /* invalid \digit backreference        */
-#define REG_EBRACK 7     /* [...] imbalance             */
-#define REG_EPAREN 8     /* \(...\) or (...) imbalance  */
-#define REG_EBRACE 9     /* \{...\} or {...} imbalance  */
-#define REG_BADBR 10     /* invalid {...} digits                */
-#define REG_ERANGE 11    /* invalid [...] range endpoint        */
-#define REG_ESPACE 12    /* out of space                        */
-#define REG_BADRPT 13    /* unary op not preceded by re */
-#define REG_ENULL 14     /* empty subexpr in pattern    */
-#define REG_ECOUNT 15    /* re component count overflow */
-#define REG_BADESC 16    /* invalid \char escape                */
-#define REG_EFLAGS 17    /* flags conflict              */
-#define REG_EDELIM 18    /* invalid or omitted delimiter        */
-#define REG_PANIC 19     /* unrecoverable internal error        */
+#define REG_ENOSYS (-1) /* not supported               */
+#define REG_NOMATCH 1   /* regexec didn't match                */
+#define REG_BADPAT 2    /* invalid regular expression  */
+#define REG_ECOLLATE 3  /* invalid collation element   */
+#define REG_ECTYPE 4    /* invalid character class     */
+#define REG_EESCAPE 5   /* trailing \ in pattern       */
+#define REG_ESUBREG 6   /* invalid \digit backreference        */
+#define REG_EBRACK 7    /* [...] imbalance             */
+#define REG_EPAREN 8    /* \(...\) or (...) imbalance  */
+#define REG_EBRACE 9    /* \{...\} or {...} imbalance  */
+#define REG_BADBR 10    /* invalid {...} digits                */
+#define REG_ERANGE 11   /* invalid [...] range endpoint        */
+#define REG_ESPACE 12   /* out of space                        */
+#define REG_BADRPT 13   /* unary op not preceded by re */
+#define REG_ENULL 14    /* empty subexpr in pattern    */
+#define REG_ECOUNT 15   /* re component count overflow */
+#define REG_BADESC 16   /* invalid \char escape                */
+#define REG_EFLAGS 17   /* flags conflict              */
+#define REG_EDELIM 18   /* invalid or omitted delimiter        */
+#define REG_PANIC 19    /* unrecoverable internal error        */
 
 struct regex_s;
 typedef struct regex_s regex_t;
