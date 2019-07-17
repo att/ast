@@ -57,6 +57,13 @@ else
 fi
 
 # ==========
+# chmod -Z
+# Is an invalid option handled reasonably?
+actual=$(chmod -Z 2>&1)
+expect="Usage:"
+[[ "$actual" =~ ^"$expect".* ]] || log_error "chmod -x" "$expect" "$actual"
+
+# ==========
 # -H, --metaphysical
 # Follow symbolic links for command arguments; otherwise don't follow symbolic links when
 # traversing directories.
@@ -106,10 +113,19 @@ else
 fi  # [[ $lchmod == no ]]
 
 # ==========
-#  -P, --physical|nofollow
-#                  Don't follow symbolic links when traversing directories.
+# -L, --logical|follow
+# Follow symbolic links when traversing directories.
 expect=$(stat_perms "$TEST_DIR/foo/bar")
-chmod -RP 0755 "$TEST_DIR/symlink_to_foo"
+chmod -RL 0777 "$TEST_DIR/symlink_to_foo"
+actual=$(stat_perms "$TEST_DIR/foo/bar")
+[[ "$actual" != "$expect" ]] ||
+    log_error "chmod -L should follow symbolic links" "$expect" "$actual"
+
+# ==========
+# -P, --physical|nofollow
+# Don't follow symbolic links when traversing directories.
+expect=$(stat_perms "$TEST_DIR/foo/bar")
+chmod -RP 0747 "$TEST_DIR/symlink_to_foo"
 actual=$(stat_perms "$TEST_DIR/foo/bar")
 [[ "$actual" = "$expect" ]] ||
     log_error "chmod -P should not follow symbolic links" "$expect" "$actual"
@@ -166,8 +182,12 @@ actual=$(stat_perms "$TEST_DIR/foo/bar")
     log_error "chmod -n should not change permissions" "$expect" "$actual"
 
 # ==========
-#  -F, --reference=file
-#                  Omit the mode operand and use the mode of file instead.
+# -F, --reference=file
+# Omit the mode operand and use the mode of file instead.
+expect="chmod: /argle/bargle: cannot stat"
+actual=$(chmod -F /argle/bargle 2>&1)
+[[ "$actual" == "$expect" ]] || log_error "chmod -F of a nonexistent file" "$expect" "$actual"
+
 touch "$TEST_DIR/foo/baz"
 expect=$(stat_perms "$TEST_DIR/foo/bar")
 chmod -F "$TEST_DIR/foo/bar" "$TEST_DIR/foo/baz"
@@ -249,3 +269,17 @@ actual=$(stat_perms a)
 expect='drwxr-xr-x'
 actual=$(stat_perms d)
 [[ $actual == $expect ]] || log_error "dir 'd' perms wrong" "$expect" "$actual"
+
+# ==========
+# Invalid symbolic perms produce an error.
+expect="chmod: -xyz: invalid mode"
+actual=$(chmod -xyz a 2>&1)
+[[ $actual == $expect ]] || log_error "Invalid numeric perms not handled" "$expect" "$actual"
+
+# ==========
+# Invalid numeric perms produce an error.
+# Note: the use of `z` rather than `r`, `w`, or other symbolic mode is deliberate.
+# See https://github.com/att/ast/issues/1358.
+expect="chmod: 123z: invalid mode"
+actual=$(chmod 123z a 2>&1)
+[[ $actual == $expect ]] || log_error "Invalid numeric perms not handled" "$expect" "$actual"
