@@ -24,7 +24,6 @@
 #endif
 
 #include "ast.h"
-#include "ast_assert.h"
 #include "tmx.h"
 
 // This is the maximum number of stack frames we'll output from dump_backtrace(). It is also the
@@ -84,13 +83,9 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     char buf2[1024];
     int n = snprintf(buf2, sizeof(buf2), "### %ld %3" PRIu64 ".%03" PRIu64 " %-18s %15s() ", pid,
                      ds, dms, buf1, funcname);
-    assert(n < sizeof(buf2));
     va_start(ap, fmt);
-    int n2 = vsnprintf(buf2 + n, sizeof(buf2) - n, fmt, ap);
+    n += vsnprintf(buf2 + n, sizeof(buf2) - n, fmt, ap);
     va_end(ap);
-    // This should be a "can't happen" situation but we want to be paranoid.
-    if (n2 < 0) n2 = snprintf(buf2 + n, sizeof(buf2) - n, "DEBUG PRINT FAILED; vsnprintf() %d", n2);
-    n += n2;
     if (n >= _dprintf_buf_sz) {
         // The message was too large for the buffer so try to make that clear to the reader.
         n = _dprintf_buf_sz - 4;
