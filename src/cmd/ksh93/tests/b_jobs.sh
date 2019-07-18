@@ -53,3 +53,11 @@ expect="(pwd: $OLDPWD)"
 [[ "$actual" =~ "$expect" ]] || log_error "jobs builtin does not list correct working directory"
 kill -15 $!
 cd $OLDPWD
+
+# ======
+# When interactive mode and job monitoring disabled verify that trying to fg a non-existent job
+# produces no output.
+actual="${ fg %99 2>&1; }"
+expect=""
+[[ "$actual" == "$expect" ]] ||
+    log_error "fg invalid job with job monitoring disabled" "$expect" "$actual"

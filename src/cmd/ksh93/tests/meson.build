@@ -104,19 +104,14 @@ all_tests = [
     ['special-dev-paths', 0],
 ]
 
-# Some tests fail for inexplicable reasons on some platforms. For example, on macOS the jobs.exp
-# test to verify [ctrl-Z] suspends the current foreground job fails even though doing the same thing
-# "by hand" works just fine. Possibly a quirk of the `expect` utility on macOS. In other cases,
-# such as Cygwin, things simply don't work as expected and probably never will due to quirks of the
-# platform. Another example is sunos/solaris has /proc but doesn't support manipulating directory
-# fd's.
+# Some tests fail for inexplicable reasons on some platforms. In some cases, such as Cygwin, things
+# simply don't work as expected and probably never will due to quirks of the platform. Another
+# example is sunos/solaris has /proc but doesn't support manipulating directory fd's.
 tests_to_skip = [
     ['cygwin', 'b_jobs.exp'],
     ['cygwin', 'b_time.exp'],
     ['cygwin', 'b_times.exp'],
     ['cygwin', 'signal'],
-    ['darwin', 'b_jobs.exp'],
-    ['openbsd', 'b_jobs.exp'],
     ['openbsd', 'b_times.exp'],
     ['sunos', 'vi.exp'],
     ['sunos', 'directoryfd'],

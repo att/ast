@@ -49,15 +49,16 @@ set prompt_counter 1
 # is matched at most once. The matching only ends once the prompt is
 # found.
 #
-# The weird `|\\^D\\x08\\x08` component in prompt_pat is to deal with unit tests which send a
-# [ctrl-D] to terminate the input to a program. There is at least one unit test that causes that
-# sequence to appear just before the next prompt. Solaris (and probably other SVR4 based systems)
-# behaves weird in this regard (at least when compared to Linux and BSD).
+# The weird `|\\^C|\\^D\\x08\\x08` component in prompt_pat is to deal with unit tests which send a
+# [ctrl-C] to terminate a process or [ctrl-D] to terminate the input to a program. There is at least
+# one unit test that causes that sequence to appear just before the next prompt. Solaris (and
+# probably other SVR4 based systems) behaves weird in this regard (at least when compared to Linux
+# and BSD).
 #
 proc expect_prompt {args} {
     global prompt_counter
     upvar expect_out expect_out
-    set prompt_pat [list -re "(?:^|\\r\\n?)(?:\\\[.\\\] |\\^D\\x08\\x08)?KSH PROMPT:$prompt_counter: "]
+    set prompt_pat [list -re "(?:^|\\r\\n?)(?:\\\[.\\\] |\\^C|\\^D\\x08\\x08)?KSH PROMPT:$prompt_counter: "]
     if {[llength $args] == 1 && [string match "\n*" $args]} {
         set args [join $args]
     }

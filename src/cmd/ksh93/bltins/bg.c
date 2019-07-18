@@ -31,7 +31,7 @@
 
 #ifdef JOBS
 //
-// Builtin `bg`.
+// Builtin `bg`, `fg`, and `disown`.
 //
 int b_bg(int n, char *argv[], Shbltin_t *context) {
     int flag = **argv;

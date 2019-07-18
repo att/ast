@@ -3,13 +3,27 @@ set pid [spawn $ksh]
 expect_prompt
 
 # ======
+# Get the current stty values to aid debugging failures. This is also necessary so the [ctrl-Z] test
+# below works reliably on BSD systems (e.g., macOS). That fact may indicate a bug in this project
+# but it's just as likely to be a BSD/GNU/SysV/other difference in behavior.
+log_test_entry
+send "stty -a\r"
+expect_prompt
+
+# ======
+# An invalid job id should be an error.
+send "fg %3\r"
+expect -re ": fg: no such job\r\n"
+expect_prompt
+
+# ======
 # Ctrl-Z should stop current process
 log_test_entry
-send "cat\r"
-sleep 0.5
+send "sleep 60\r"
+sleep 0.1
 send [ctrl Z]
-expect -re ".*Stopped.*cat\r\n" {
-    puts "Ctrl-z stops cat processs"
+expect -re ".*Stopped.*sleep 60\r\n" {
+    puts "Ctrl-z stops sleep 60 processs"
 }
 expect_prompt
 
@@ -17,8 +31,8 @@ expect_prompt
 # Test if jobs builtin lists stopped process
 log_test_entry
 send "jobs\r"
-expect -re ".*Stopped.*cat\r\n" {
-    puts "jobs lists stopped cat process"
+expect -re ".*Stopped.*sleep 60\r\n" {
+    puts "jobs lists stopped sleep 60 process"
 }
 expect_prompt
 
@@ -26,8 +40,8 @@ expect_prompt
 # Test if jobs builtin lists pid of stopped process
 log_test_entry
 send "jobs -l\r"
-expect -re "\[1\].*\[0-9\]+.*Stopped.*cat\r\n" {
-    puts "jobs -l lists pid of stopped cat process"
+expect -re "\[1\].*\[0-9\]+.*Stopped.*sleep 60\r\n" {
+    puts "jobs -l lists pid of stopped sleep 60 process"
 }
 expect_prompt
 
@@ -36,7 +50,7 @@ expect_prompt
 log_test_entry
 send "jobs -p\r"
 expect -re "\[0-9\]+\r\n" {
-    puts "jobs -p lists process group of stopped cat process"
+    puts "jobs -p lists process group of stopped sleep 60 process"
 }
 expect_prompt
 
@@ -44,53 +58,71 @@ expect_prompt
 # bg should put last stopped process in background
 log_test_entry
 send "bg\r"
-expect -re ".*cat&\r\n"
+expect -re ".*sleep 60&\r\n"
 expect_prompt
 
 send "jobs\r"
-expect -re ".*Stopped.*SIGTTIN.*cat\r\n" {
+expect -re ".*Running.*sleep 60\r\n" {
     puts "bg brings last stopped process to background"
 }
 expect_prompt
 
 # ======
-# fg should put last stopped process in foreground
+# fg should bring the last stopped process to the foreground
 log_test_entry
 send "fg\r"
-expect -re "\r\ncat\r\n"
-send "hello world\r\n"
-send [ctrl D]
-expect -re "\r\nhello world\r\n" {
-    puts "fg brings last stopped process to foreground"
-}
+expect -re "\r\nsleep 60\r\n"
+
+# ======
+# Killing the job should get a new prompt.
+log_test_entry
+send [ctrl C]
+expect_prompt
+
+# ======
+# Disable job monitoring.
+log_test_entry
+send "set +o monitor\r"
 expect_prompt
 
 # ======
 # There should be a warning if shell attempts exit with stopped processes.
+#
 # The signal delivery timing (especially on platforms like Windows Subsystem for Linux, WSL) might
 # result in the next prompt being issued before the "Stopped" message and a second prompt being
 # displayed. So we might need to increment the prompt counter.
+
 log_test_entry
-send "cat\r"
-sleep 0.5
+send "sleep 60\r"
+sleep 0.1
 send [ctrl Z]
-expect -re ".*Stopped.*cat\r\n"
+expect -re ".*Stopped.*sleep 60\r\n"
 if {[string match "\r\nKSH PROMPT:*" $expect_out(buffer)]} {
     incr prompt_counter
 }
 expect_prompt
 
-# Try to exit shell
+# ======
+# Verify we can't fg that job again with job monitoring disabled.
+send "fg\r"
+expect -re ": fg: No job control\r\n"
+expect_prompt
+
+# ======
+# Try to exit shell.
+log_test_entry
 send [ctrl D]
 expect -re ".*You have stopped jobs\r\n" {
     puts "Warning before exit for stopped jobs works"
 }
 expect_prompt
 
-# This should actually exit the shell
+# ======
+# This should exit the shell but we don't actually verify this happens other than via the test
+# not timing out.
+log_test_entry
 send [ctrl D]
 catch {expect default exp_continue} output
 log_debug "EOF output: $output"
-
 catch {wait}
 exit 0
