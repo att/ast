@@ -48,7 +48,7 @@ int b_shift(int n, char *argv[], Shbltin_t *context) {
     char *arg;
     Shell_t *shp = context->shp;
     while ((n = optget(argv, sh_optshift))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
                 break;
@@ -57,7 +57,6 @@ int b_shift(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: { break; }
         }
     }
 

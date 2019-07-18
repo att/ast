@@ -38,7 +38,7 @@ int b_jobs(int n, char *argv[], Shbltin_t *context) {
     int flag = 0;
     Shell_t *shp = context->shp;
     while ((n = optget(argv, sh_optjobs))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'l': {
                 flag = JOB_LFLAG;
                 break;
@@ -59,7 +59,6 @@ int b_jobs(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
 

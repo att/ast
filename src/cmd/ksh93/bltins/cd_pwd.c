@@ -107,7 +107,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     }
 
     while ((rval = optget(argv, sh_optcd))) {
-        switch (rval) {
+        switch (rval) {  //!OCLINT(MissingDefaultStatement)
             case 'f': {
                 dirfd = opt_info.num;
                 fflag = true;
@@ -129,7 +129,6 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
 
@@ -315,7 +314,7 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
     UNUSED(argc);
 
     while ((n = optget(argv, sh_optpwd))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'f': {
                 ffd = opt_info.num;
                 break;
@@ -336,7 +335,6 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
 

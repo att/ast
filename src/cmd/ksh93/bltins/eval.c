@@ -42,12 +42,12 @@
 #include "variables.h"
 
 int b_eval(int argc, char *argv[], Shbltin_t *context) {
-    int r;
+    int n;
     Shell_t *shp = context->shp;
     UNUSED(argc);
 
-    while ((r = optget(argv, sh_opteval))) {
-        switch (r) {
+    while ((n = optget(argv, sh_opteval))) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
                 break;
@@ -56,7 +56,6 @@ int b_eval(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: { break; }
         }
     }
 

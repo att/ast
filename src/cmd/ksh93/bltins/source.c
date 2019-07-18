@@ -60,7 +60,7 @@ int b_source(int n, char *argv[], Shbltin_t *context) {
     opt_info.disc = &disc;
 
     while ((n = optget(argv, sh_optdot))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
                 break;
@@ -69,7 +69,6 @@ int b_source(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: { break; }
         }
     }
 

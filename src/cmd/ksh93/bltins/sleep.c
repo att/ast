@@ -44,17 +44,19 @@
 #include "tv.h"
 
 int b_sleep(int argc, char *argv[], Shbltin_t *context) {
+    UNUSED(argc);
     char *cp;
     long double d = 0.0;
     Shell_t *shp = context->shp;
     int sflag = 0;
     time_t tloc = 0;
     char *last;
+    int n;
 
     if (shp->subshell) sh_subfork();
     if (!(shp->sigflag[SIGALRM] & (SH_SIGFAULT | SH_SIGOFF))) sh_sigtrap(shp, SIGALRM);
-    while ((argc = optget(argv, sh_optsleep))) {
-        switch (argc) {
+    while ((n = optget(argv, sh_optsleep))) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 's': {
                 sflag = 1;
                 break;
@@ -67,7 +69,6 @@ int b_sleep(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
     if (error_info.errors) {

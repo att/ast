@@ -588,7 +588,7 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
     comp.sh = context->shp;
 
     while ((n = optget(argv, sh_optcomplete))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'A': {
                 if ((n = action(Action_names, opt_info.arg)) == 0) {
                     errormsg(SH_DICT, ERROR_exit(1), "invalid -%c option name %s", 'A',
@@ -686,7 +686,6 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
 

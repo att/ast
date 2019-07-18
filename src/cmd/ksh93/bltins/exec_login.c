@@ -55,7 +55,7 @@ int b_exec(int argc, char *argv[], Shbltin_t *context) {
     logdata.sh = context->shp;
     logdata.sh->st.ioset = 0;
     while ((n = optget(argv, sh_optexec))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'a': {
                 logdata.arg0 = opt_info.arg;
                 break;
@@ -72,7 +72,6 @@ int b_exec(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: { break; }
         }
     }
 

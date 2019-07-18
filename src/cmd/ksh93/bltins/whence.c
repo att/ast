@@ -67,7 +67,7 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
     opt_info.index = opt_info.offset = 0;
 
     while ((n = optget(argv, sh_optcommand))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'p': {
                 if (sh_isoption(shp, SH_RESTRICTED)) {
                     errormsg(SH_DICT, ERROR_exit(1), e_restricted, "-p");
@@ -98,7 +98,6 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
     if (argc == 0) return flags ? 0 : opt_info.index;
@@ -120,7 +119,7 @@ int b_whence(int argc, char *argv[], Shbltin_t *context) {
 
     if (*argv[0] == 't') flags = V_FLAG;
     while ((n = optget(argv, sh_optwhence))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 't': {
                 flags |= T_FLAG;
                 break;
@@ -155,7 +154,6 @@ int b_whence(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
     argv += opt_info.index;

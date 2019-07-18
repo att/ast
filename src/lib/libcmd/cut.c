@@ -535,7 +535,7 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
     ldelim.chr = '\n';
     wdelim.len = ldelim.len = 1;
     while ((n = optget(argv, usage))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'b':
             case 'c':
                 if (mode & C_FIELDS) {
@@ -603,7 +603,6 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
-            default: { abort(); }
         }
     }
     argv += opt_info.index;

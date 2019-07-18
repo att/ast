@@ -35,7 +35,7 @@ int b_break(int n, char *argv[], Shbltin_t *context) {
     int cont = **argv == 'c';
     Shell_t *shp = context->shp;
     while ((n = optget(argv, cont ? sh_optcont : sh_optbreak))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
                 break;
@@ -44,7 +44,6 @@ int b_break(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: { break; }
         }
     }
 

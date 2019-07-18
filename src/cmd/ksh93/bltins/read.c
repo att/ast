@@ -238,7 +238,7 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
         goto bypass;
     }
     while ((r = optget(argv, sh_optread))) {
-        switch (r) {
+        switch (r) {  //!OCLINT(MissingDefaultStatement)
             case 'a': {
                 // `read -a` is an alias for `read -A`
                 flags |= A_FLAG;
@@ -343,7 +343,6 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
     argv += opt_info.index;

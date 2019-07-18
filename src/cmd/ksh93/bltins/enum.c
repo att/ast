@@ -294,7 +294,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
 
     if (cmdinit(argc, argv, context, ERROR_NOTIFY)) return -1;
     while ((n = optget(argv, enum_usage))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'p': {
                 pflag = true;
                 break;
@@ -311,7 +311,6 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
 

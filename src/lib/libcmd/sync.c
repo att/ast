@@ -77,7 +77,7 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
 
     if (cmdinit(argc, argv, context, 0)) return -1;
     while ((n = optget(argv, usage))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'f':
                 do_sfsync = 1;
                 break;
@@ -97,7 +97,6 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
-            default: { abort(); }
         }
     }
     argv += opt_info.index;

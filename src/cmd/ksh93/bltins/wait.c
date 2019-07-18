@@ -34,7 +34,7 @@
 int b_wait(int n, char *argv[], Shbltin_t *context) {
     Shell_t *shp = context->shp;
     while ((n = optget(argv, sh_optwait))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
                 break;
@@ -43,7 +43,6 @@ int b_wait(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
 

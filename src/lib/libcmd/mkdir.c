@@ -81,7 +81,7 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
 
     if (cmdinit(argc, argv, context, 0)) return -1;
     while ((n = optget(argv, usage))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'm':
                 mflag = 1;
                 mode = strperm(opt_info.arg, &part, mode);
@@ -99,7 +99,6 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
-            default: { abort(); }
         }
     }
     argv += opt_info.index;

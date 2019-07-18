@@ -204,7 +204,7 @@ int b_shopt(int argc, char *argv[], Shbltin_t *extra) {
 
     memset(&opt, 0, sizeof(opt));
     while ((n = optget(argv, sh_optshopt))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'p': {
                 verbose &= ~PRINT_VERBOSE;
                 break;

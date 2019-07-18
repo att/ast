@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
     error_info.id = argv[0];
     shp = sh_init(argc, argv, (Shinit_f)0);
     while ((n = optget(argv, usage))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'D': {
                 dflag = 1;
                 break;
@@ -103,7 +103,6 @@ int main(int argc, char *argv[]) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
     shp->shcomp = 1;

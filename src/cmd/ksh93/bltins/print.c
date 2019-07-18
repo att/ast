@@ -205,7 +205,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
         }
     }
     while ((n = optget(argv, options))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'n': {
                 nflag++;
                 break;
@@ -301,7 +301,6 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
 

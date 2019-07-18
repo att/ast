@@ -105,7 +105,7 @@ int b_readonly(int argc, char *argv[], Shbltin_t *context) {
     // Do not change size.
     tdata.argnum = -1;
     while ((flag = optget(argv, *command == 'e' ? sh_optexport : sh_optreadonly))) {
-        switch (flag) {
+        switch (flag) {  //!OCLINT(MissingDefaultStatement)
             case 'n': {
                 if (*command != 'e') {
                     errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
@@ -126,7 +126,6 @@ int b_readonly(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: { break; }
         }
     }
     if (error_info.errors) {
@@ -165,7 +164,7 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
     tdata.argnum = 0;
     tdata.aflag = *argv[1];
     while ((n = optget(argv, sh_optalias))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'p': {
                 tdata.prefix = argv[0];
                 break;
@@ -186,7 +185,6 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: { break; }
         }
     }
     if (error_info.errors) {
@@ -242,7 +240,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
     opt_info.index = 0;
     while ((n = optget(argv, optstring))) {
         if (tdata.aflag == 0) tdata.aflag = *opt_info.option;
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'a': {
                 nvflags |= NV_IARRAY;
                 if (opt_info.arg && *opt_info.arg != '[') {
@@ -404,7 +402,6 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
                 opt_info.disc = NULL;
                 return 2;
             }
-            default: { break; }
         }
     }
 endargs:
@@ -984,7 +981,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     stkp = tdata.sh->stk;
     if (!tdata.sh->pathlist) path_absolute(tdata.sh, argv[0], NULL);
     while ((n = optget(argv, sh_optbuiltin))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 's': {
                 flag = BLT_SPC;
                 break;
@@ -1018,7 +1015,6 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
     argv += opt_info.index;
@@ -1174,7 +1170,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
         name = sh_optunset;
     }
     while ((r = optget(argv, name))) {
-        switch (r) {
+        switch (r) {  //!OCLINT(MissingDefaultStatement)
             case 'f': {
                 troot = sh_subfuntree(shp, 1);
                 break;
@@ -1199,7 +1195,6 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
             }
-            default: { break; }
         }
     }
     argv += opt_info.index;

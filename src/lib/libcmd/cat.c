@@ -356,7 +356,7 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
     mode = "r";
     while ((flag = optget(argv, usage))) {
         n = 0;
-        switch (flag) {
+        switch (flag) {  //!OCLINT(MissingDefaultStatement)
             case 'A':
                 n = T_FLAG | E_FLAG | V_FLAG;
                 break;
@@ -405,7 +405,6 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
-            default: { abort(); }
         }
         if (!n) break;
         if (opt_info.num) {

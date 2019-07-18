@@ -44,7 +44,7 @@ int b_bg(int n, char *argv[], Shbltin_t *context) {
     }
 
     while ((n = optget(argv, optstr))) {
-        switch (n) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
                 break;
@@ -53,7 +53,6 @@ int b_bg(int n, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 __builtin_unreachable();
             }
-            default: { break; }
         }
     }
     if (error_info.errors) {
