@@ -20,40 +20,41 @@ expect=$($bin_uname)
 [[ "$actual" =~ "$expect" ]] || log_error "'uname -a' failed" "$expect" "$actual"
 
 # ==========
-#   -s, --system|sysname|kernel-name
-#                   The detailed kernel name. This is the default.
+# -s, --system|sysname|kernel-name
+# The detailed kernel name. This is the default.
 actual=$(uname -s)
 expect=$($bin_uname -s)
 [[ "$actual" = "$expect" ]] || log_error "'uname -s' failed" "$expect" "$actual"
 
 # ==========
-#   -n, --nodename  The hostname or nodename.
+# -n, --nodename  The hostname or nodename.
 actual=$(uname -n)
 expect=$($bin_uname -n)
 [[ "$actual" = "$expect" ]] || log_error "'uname -n' failed" "$expect" "$actual"
 
 # ==========
-#   -r, --release|kernel-release
-#                   The kernel release level.
+# -r, --release|kernel-release
+# The kernel release level.
 actual=$(uname -r)
 expect=$($bin_uname -r)
 [[ "$actual" = "$expect" ]] || log_error "'uname -r' failed" "$expect" "$actual"
 
 # ==========
-#   -v, --version|kernel-version
-#                   The kernel version level.
+# -v, --version|kernel-version
+# The kernel version.
+# Ugh! On FreeBSD the external command adds a space to the end of the line so remove it.
 actual=$(uname -v)
-expect=$($bin_uname -v)
+expect=$($bin_uname -v | sed -e 's/ *$//')
 [[ "$actual" = "$expect" ]] || log_error "'uname -v' failed" "$expect" "$actual"
 
 # ==========
-#   -m, --machine   The name of the hardware type the system is running on.
+# -m, --machine   The name of the hardware type the system is running on.
 actual=$(uname -m)
 expect=$($bin_uname -m)
 [[ "$actual" = "$expect" ]] || log_error "'uname -m' failed" "$expect" "$actual"
 
 # ==========
-#   -p, --processor The name of the processor instruction set architecture.
+# -p, --processor The name of the processor instruction set architecture.
 actual=$(uname -p)
 # Coreutils `uname -p` is unportable, instead use `uname -m`
 expect=$($bin_uname -m)
