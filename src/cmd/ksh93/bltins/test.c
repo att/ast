@@ -120,7 +120,7 @@ static_fn int test_strmatch(Shell_t *shp, const char *str, const char *pat) {
 int b_test(int argc, char *argv[], Shbltin_t *context) {
     struct test tdata;
     char *cp = argv[0];
-    int not;
+    bool negate;
     Shell_t *shp = context->shp;
     int jmpval = 0, result = 0;
     checkpt_t buff;
@@ -156,13 +156,13 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
     cp = argv[1];
     if (c_eq(cp, '(') && argc <= 6 && c_eq(argv[argc - 1], ')')) {
         // Special case  ( binop ) to conform with standard.
-        if (!(argc == 4 && (not = sh_lookup(cp = argv[2], shtab_testops)))) {
+        if (!(argc == 4 && sh_lookup(cp = argv[2], shtab_testops))) {
             cp = (++argv)[1];
             argc -= 2;
         }
     }
-    not = c_eq(cp, '!');
-    if (not&&c_eq(argv[2], '(') && argc <= 7 && c_eq(argv[argc - 1], ')')) {
+    negate = c_eq(cp, '!');
+    if (negate && c_eq(argv[2], '(') && argc <= 7 && c_eq(argv[argc - 1], ')')) {
         int i;
         for (i = 2; i < argc; i++) tdata.av[i] = tdata.av[i + 1];
         tdata.av[i] = 0;
@@ -171,7 +171,7 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
     // Posix portion for test.
     switch (argc) {
         case 5: {
-            if (!not) break;
+            if (!negate) break;
             argv++;
         }
         // FALLTHRU
@@ -180,24 +180,24 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
             if (op & TEST_BINOP) break;
             if (!op) {
                 if (argc == 5) break;
-                if (not&&cp[0] == '-' && cp[2] == 0) {
+                if (negate && cp[0] == '-' && cp[2] == 0) {
                     result = (test_unop(tdata.sh, cp[1], argv[3]) != 0);
                     goto done;
                 } else if (argv[1][0] == '-' && argv[1][2] == 0) {
                     result = !test_unop(tdata.sh, argv[1][1], cp);
                     goto done;
-                } else if (not&&c_eq(argv[2], '!')) {
+                } else if (negate && c_eq(argv[2], '!')) {
                     result = (*argv[3] == 0);
                     goto done;
                 }
                 errormsg(SH_DICT, ERROR_exit(2), e_badop, cp);
                 __builtin_unreachable();
             }
-            result = (test_binop(tdata.sh, op, argv[1], argv[3]) ^ (argc != 5));
+            result = test_binop(tdata.sh, op, argv[1], argv[3]) ^ (argc != 5);
             goto done;
         }
         case 3: {
-            if (not) {
+            if (negate) {
                 result = (*argv[2] != 0);
                 goto done;
             }
@@ -304,7 +304,7 @@ static_fn int eval_e3(Shell_t *shp, struct test *tp) {
             long l = strtol(cp, &binop, 10);
             if (*binop) return 0;
             if (l > INT_MAX || l < INT_MIN) return 0;
-            op = (int)l;
+            op = l;
             if (shp->subshell && op == STDOUT_FILENO) return 0;
             return tty_check(op);
         }
