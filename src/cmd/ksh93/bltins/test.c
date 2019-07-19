@@ -201,21 +201,11 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
                 result = (*argv[2] != 0);
                 goto done;
             }
-
-            if (cp[0] != '-' || cp[2] || cp[1] == '?') {
-                if (cp[0] == '-' && (cp[1] == '-' || cp[1] == '?') && strcmp(argv[2], "--") == 0) {
-                    char *av[3];
-                    av[0] = argv[0];
-                    av[1] = argv[1];
-                    av[2] = 0;
-                    (void)optget(av, sh_opttest);
-                    errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                    __builtin_unreachable();
-                }
-                break;
+            if (cp[0] == '-' && strlen(cp) == 2) {
+                result = !test_unop(tdata.sh, cp[1], argv[2]);
+                goto done;
             }
-            result = !test_unop(tdata.sh, cp[1], argv[2]);
-            goto done;
+            break;
         }
         case 2: {
             result = (*cp == 0);
