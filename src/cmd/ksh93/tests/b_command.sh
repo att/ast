@@ -64,8 +64,10 @@ unset y
 expect='outside f, 1, 2, 3, outside f'
 actual=$(
     f() {
-        if [ -n "${_called_f+_}" ]; then
-            for y; do
+        if [[ -n "${_called_f+_}" ]]
+        then
+            for y
+            do
                 printf '%s, ' "$y"
             done
         else

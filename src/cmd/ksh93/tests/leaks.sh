@@ -59,7 +59,7 @@ do
     PATH=.
     for DIR in /usr/bin /usr/sbin /bin /usr/local/bin
     do
-        if [ -d ${DIR} ]
+        if [[ -d ${DIR} ]]
         then
             PATH=${PATH}:${DIR}
         fi

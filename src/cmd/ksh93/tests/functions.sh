@@ -91,7 +91,7 @@ function foobar
 > $TEST_DIR/test1
 {
 foobar
-if [ -r $TEST_DIR/test1 ]
+if [[ -r $TEST_DIR/test1 ]]
 then
     rm -r $TEST_DIR/test1
 else

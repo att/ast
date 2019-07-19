@@ -204,7 +204,7 @@ do
             log_error "\${$string##$pattern} not null"
         fi
 
-        if [ "${string##$pattern}" != '' ]
+        if [[ "${string##$pattern}" != '' ]]
         then
             log_error "\"\${$string##$pattern}\" not null"
         fi

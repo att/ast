@@ -667,15 +667,3 @@ expect="umask: foo: bad format"
 actual=$(logname)
 expect=$(command logname)
 [[ "$actual" = "$expect" ]] || log_error "logname failed" "$expect" "$actual"
-
-# ==========
-# Verify that the POSIX `test` builtin complains loudly when the `=~` operator is used rather than
-# failing silently. See //github.com/att/ast/issues/1152.
-actual=$($SHELL -c 'test foo =~ foo' 2>&1)
-actual_status=$?
-actual=${actual#*: }
-expect='test: =~ operator not supported; use [[...]]'
-expect_status=2
-[[ "$actual" = "$expect" ]] || log_error "test =~ failed" "$expect" "$actual"
-[[ "$actual_status" = "$expect_status" ]] ||
-    log_error "test =~ failed with wrong status" "$expect_status" "$actual_status"
