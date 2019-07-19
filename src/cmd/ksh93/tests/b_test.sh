@@ -10,6 +10,30 @@ expect=": [: ']' missing"
 [[ $status == 2 ]] || log_error "missing close ] wrong status" "2" "$status"
 
 # =======
+# Some basic syntax tests that were originally in the bracket.sh unit test.
+test '(' = ')' && log_error '"test ( = )" should not be true'
+test ! ! ! 2> /dev/null || log_error 'test ! ! ! should return 0'
+test ! ! x 2> /dev/null || log_error 'test ! ! x should return 0'
+test ! ! '' 2> /dev/null && log_error 'test ! ! "" should return non-zero'
+test ! = -o a || log_error 'test ! \( = -o a \) should return 0'
+test ! \( = -o a \) || log_error 'test ! \( = -o a \) should return 0'
+
+# ==========
+# POSIX specifies that on error, test builtin should always return value > 1
+test 123 -eq 123x 2>/dev/null
+[[ $? -ge 2 ]] || log_error 'test builtin should return value greater than 1 on error'
+
+# ==========
+# Running test without any arguments should return 1
+test
+[[ $? -eq 1 ]] || log_error "test builtin should return 1 if expression is missing"
+
+# ==========
+# This is not required by POSIX and this behavior seems incompatible with external `test` builtin
+# but since `ksh` supports it, we should test it.
+test 4/2 -eq 3-1 || log_error "Arithmetic expressions should work inside test builtin"
+
+# =======
 # An invalid operator is treated as an error.
 actual=$(test -@ arglebargle 2>&1)
 expect=": test: -@: unknown operator"
@@ -128,3 +152,12 @@ expect_status=2
 [[ "$actual" = "$expect" ]] || log_error "test =~ failed" "$expect" "$actual"
 [[ "$actual_status" = "$expect_status" ]] ||
     log_error "test =~ failed with wrong status" "$expect_status" "$actual_status"
+
+test -d .  -a '(' ! -f . ')' || log_error 'test not working'
+if [[ '!' != ! ]]
+then
+    log_error 'quoting unary operator not working'
+fi
+
+test \( -n x \) -o \( -n y \) 2> /dev/null || log_error 'test ( -n x ) -o ( -n y) not working'
+test \( -n x \) -o -n y 2> /dev/null || log_error 'test ( -n x ) -o -n y not working'

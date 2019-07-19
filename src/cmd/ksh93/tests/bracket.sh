@@ -280,14 +280,6 @@ then
     log_error "setgid on $SHELL"
 fi
 
-test -d .  -a '(' ! -f . ')' || log_error 'test not working'
-if [[ '!' != ! ]]
-then
-    log_error 'quoting unary operator not working'
-fi
-
-test \( -n x \) -o \( -n y \) 2> /dev/null || log_error 'test ( -n x ) -o ( -n y) not working'
-test \( -n x \) -o -n y 2> /dev/null || log_error 'test ( -n x ) -o -n y not working'
 chmod 600 $file
 exec 4> $file
 print -u4 foobar
@@ -370,7 +362,6 @@ e=$($SHELL -c '[ -z "" -a -z "" ]' 2>&1)
 [[ $e ]] && log_error "[ ... ] compatibility check failed -- $e"
 i=hell
 [[ hell0 == $i[0] ]]  ||  log_error 'pattern $i[0] interpreded as array ref'
-test '(' = ')' && log_error '"test ( = )" should not be true'
 [[ $($SHELL -c 'case  F in ~(Eilr)[a-z0-9#]) print ok;;esac' 2> /dev/null) == ok ]] || log_error '~(Eilr) not working in case command'
 [[ $($SHELL -c "case  Q in ~(Fi)q |  \$'\E') print ok;;esac" 2> /dev/null) == ok ]] || log_error '~(Fi)q | \E  not working in case command'
 
@@ -468,13 +459,6 @@ float var
 unset var
 [[ -v var ]] &&  log_error '[[ -v var ]] should be false after unset var again'
 
-test ! ! ! 2> /dev/null || log_error 'test ! ! ! should return 0'
-test ! ! x 2> /dev/null || log_error 'test ! ! x should return 0'
-test ! ! '' 2> /dev/null && log_error 'test ! ! "" should return non-zero'
-
-test ! = -o a  || log_error 'test ! \( = -o a \) should return 0'
-test ! \( = -o a \)  || log_error 'test ! \( = -o a \) should return 0'
-
 $SHELL 2> /dev/null -c '[[ 1<2 ]]' ||  log_error '[[ 1<2 ]] not parsed correctly'
 
 false
@@ -492,18 +476,3 @@ $SHELL -c 2> /dev/null '[[ AATAATCCCAATAAT =~ (AAT){2}CCC(AAT){2} ]]' || log_err
 x=10
 
 ([[ x -eq 10 ]]) 2> /dev/null || log_error 'x -eq 10 fails in [[...]] with x=10'
-
-# ==========
-# POSIX specifies that on error, test builtin should always return value > 1
-test 123 -eq 123x 2>/dev/null
-[[ $? -ge 2 ]] || log_error 'test builtin should return value greater than 1 on error'
-
-# ==========
-# Running test without any arguments should return 1
-test
-[[ $? -eq 1 ]] || log_error "test builtin should return 1 if expression is missing"
-
-# ==========
-# This is not required by POSIX and this behavior seems incompatible with external `test` builtin
-# but since `ksh` supports it, we should test it.
-test 4/2 -eq 3-1 || log_error "Arithmetic expressions should work inside test builtin"
