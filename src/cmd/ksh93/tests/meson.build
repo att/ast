@@ -33,6 +33,7 @@ all_tests = [
     ['b_sleep'],
     ['b_sync'],
     ['b_test.exp'],
+    ['b_test'],
     ['b_time.exp'],
     ['b_times.exp'],
     ['b_ulimit'],
