@@ -69,6 +69,31 @@ expect=1
 [[ $actual == $expect ]] || log_error "test -f" "$expect" "$actual"
 
 # =======
+# test -r
+# Verify file readability works.
+test -r ""
+actual=$?
+expect=1
+[[ $actual == $expect ]] || log_error "test -r" "$expect" "$actual"
+
+actual=$(test -r arglebargle 2>&1)
+actual=$?
+expect=1
+[[ $actual == $expect ]] || log_error "test -r" "$expect" "$actual"
+
+test -r b_test.sh  # "b_test.sh" should be readable 
+actual=$?
+expect=0
+[[ $actual == $expect ]] || log_error "test -r" "$expect" "$actual"
+
+touch test-r
+chmod 333 test-r
+test -r test-r  # "test-r" should not be readable
+actual=$?
+expect=1
+[[ $actual == $expect ]] || log_error "test -r" "$expect" "$actual"
+
+# =======
 # test -b
 # Verify block device detection works.
 actual=$(test -b arglebargle 2>&1)
@@ -153,7 +178,7 @@ expect_status=2
 [[ "$actual_status" = "$expect_status" ]] ||
     log_error "test =~ failed with wrong status" "$expect_status" "$actual_status"
 
-test -d .  -a '(' ! -f . ')' || log_error 'test not working'
+test -d . -a '(' ! -f . ')' || log_error 'test not working'
 if [[ '!' != ! ]]
 then
     log_error 'quoting unary operator not working'

@@ -95,8 +95,7 @@ expect=dir
     log_error 'file expansion leading . not working' "$expect" "$actual"
 cd ..
 
-date > dat1 || log_error "date > dat1 failed"
-test -r dat1 || log_error "dat1 is not readable"
+echo maybe > dat1 || log_error "echo yes > dat1 failed"
 x=dat1
 cat <$x > dat2 || log_error "cat < $x > dat2 failed"
 cat dat1 dat2 | cat  | cat | cat > dat3 || log_error "cat pipe failed"
