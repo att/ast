@@ -77,6 +77,15 @@ expect "\r\n-t1 is true\r\nend\r\nv=:begin:\r\n" {
 expect_prompt
 
 # ==========
+# Very basic tests of `test -c`. See also the b_test.sh unit test for other `test -c` tests.
+log_test_entry
+send "test -c /dev/stdout && echo PASS || echo FAILED\r"
+expect "\r\nPASS\r\n" {
+    puts "stdout is a char device"
+}
+expect_prompt
+
+# ==========
 # Exit shell with ctrl-d
 log_test_entry
 send [ctrl D]

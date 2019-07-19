@@ -29,6 +29,11 @@ actual=$?
 expect=1
 [[ $actual == $expect ]] || log_error "test -f" "$expect" "$actual"
 
+actual=$(test -f arglebargle 2>&1)
+actual=$?
+expect=1
+[[ $actual == $expect ]] || log_error "test -f" "$expect" "$actual"
+
 test -f b_test.sh  # "b_test.sh" should be a regular file
 actual=$?
 expect=0
@@ -42,6 +47,11 @@ expect=1
 # =======
 # test -b
 # Verify block device detection works.
+actual=$(test -b arglebargle 2>&1)
+actual=$?
+expect=1
+[[ $actual == $expect ]] || log_error "test -b" "$expect" "$actual"
+
 test -b /dev/stdout
 actual=$?
 expect=1
@@ -62,8 +72,33 @@ then
 fi
 
 # =======
+# test -c
+# Verify char device detection works.
+actual=$(test -c arglebargle 2>&1)
+actual=$?
+expect=1
+[[ $actual == $expect ]] || log_error "test -c" "$expect" "$actual"
+
+# This test fails because we're not interactive. See b_test.exp for where we verify this works when
+# the shell is interactive.
+test -c /dev/stdout
+actual=$?
+expect=1
+[[ $actual == $expect ]] || log_error "test -c" "$expect" "$actual"
+
+test -c /dev/null
+actual=$?
+expect=0
+[[ $actual == $expect ]] || log_error "test -c" "$expect" "$actual"
+
+# =======
 # test -S
 # Verify unix domain socket detection works. This requires `nc` (netcat) to create the special file.
+actual=$(test -S arglebargle 2>&1)
+actual=$?
+expect=1
+[[ $actual == $expect ]] || log_error "test -S" "$expect" "$actual"
+
 if whence -p nc >/dev/null
 then
     nc -U socket -l &
@@ -85,7 +120,7 @@ fi
 # ==========
 # Verify that the POSIX `test` builtin complains loudly when the `=~` operator is used rather than
 # failing silently. See //github.com/att/ast/issues/1152.
-actual=$($SHELL -c 'test foo =~ foo' 2>&1)
+actual=$(test foo =~ foo 2>&1)
 actual_status=$?
 actual=${actual#*: }
 expect='test: =~ operator not supported; use [[...]]'
