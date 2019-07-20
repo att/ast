@@ -18,7 +18,7 @@ libast = library('ast', libast_files,
                  include_directories: [configuration_incdir, libast_incdir],
                  c_args: libast_c_args,
                  dependencies: [libm_dep, libiconv_dep, libcatgets_dep, libexecinfo_dep, libdl_dep,
-                                libsocket_dep, libnsl_dep],
+                                libsocket_dep, libnsl_dep, libfts_dep],
                  install: get_option('default_library') == 'shared')
 
 # This library exists solely to support libast unit tests so that `sh_getenv()` and
