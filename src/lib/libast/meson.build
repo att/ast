@@ -1,18 +1,17 @@
 libast_files = []
-libast_incdir = include_directories('include', 'aso', 'cdt', 'comp',
-                                    'sfio', 'path', 'port', 'string', 'misc',
-                                    'tm')
+libast_incdir = include_directories(
+    'aso', 'cdt', 'comp', 'include', 'misc', 'path', 'sfio', 'string', 'tm',
+)
 libast_c_args = shared_c_args
 
 subdir('aso')
-subdir('comp')
 subdir('cdt')
-subdir('sfio')
-subdir('path')
-subdir('port')
-subdir('regex')
-subdir('string')
+subdir('comp')
 subdir('misc')
+subdir('path')
+subdir('regex')
+subdir('sfio')
+subdir('string')
 subdir('tm')
 
 libast = library('ast', libast_files,
