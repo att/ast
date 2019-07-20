@@ -52,6 +52,10 @@ libdl_dep = cc.find_library('dl', required: false, dirs: lib_dirs)
 # on others they are found in libexecinfo.
 libexecinfo_dep = cc.find_library('execinfo', required: false, dirs: lib_dirs)
 
+# On some platforms `fts` functions are found in libc,
+# on others they are found in musl-fts.
+libfts_dep = cc.find_library('fts', required: false, dirs: lib_dirs)
+
 # On some systems (e.g., OpenBSD) `iconv()` is in libiconv.
 libiconv_dep = cc.find_library('iconv', required: false, dirs: lib_dirs)
 
