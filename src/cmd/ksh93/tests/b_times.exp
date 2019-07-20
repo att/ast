@@ -1,5 +1,10 @@
+# vim: set filetype=expect:
+#
 # Tests of `time` keyword and `times` alias.
 set pid [spawn $ksh]
+expect_prompt
+# Terminal rows and columns may default to zero so ensure sane values.
+send "stty rows 24 cols 80\r"
 expect_prompt
 
 set zero_sec_re "\[\t \]*0m0\.\[0-9\]\[0-9\]\[0-9\]s"

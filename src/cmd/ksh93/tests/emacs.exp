@@ -1,5 +1,10 @@
+# vim: set filetype=expect:
+#
 # Check emacs keybindings
 set pid [spawn $ksh]
+expect_prompt
+# Terminal rows and columns may default to zero so ensure sane values.
+send "stty rows 24 cols 80\r"
 expect_prompt
 
 # ==========
@@ -249,7 +254,7 @@ log_test_entry
 send [ctrl esc]
 send "<"
 redraw_prompt
-expect -ex ": set -o emacs" {
+expect -ex ": stty rows 24 cols 80" {
     puts "alt-< fetches least recent history line"
 }
 

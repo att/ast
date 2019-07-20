@@ -1,4 +1,11 @@
+# vim: set filetype=expect:
+#
 # Test for vi keybindings
+set pid [spawn $ksh]
+expect_prompt
+# Terminal rows and columns may default to zero so ensure sane values.
+send "stty rows 24 cols 80\r"
+expect_prompt
 
 # TODO: Figure out why some of these tests (starting with the test of `^` behavior) doesn't work on
 # Solaris. Interactively everything works fine. It's only this unit test where it fails. Presumably
@@ -39,9 +46,6 @@ proc clear_prompt args {
     send [ctrl C]
     expect_prompt
 }
-
-set pid [spawn $ksh]
-expect_prompt
 
 # Enter vi mode
 send "set -o vi\r"

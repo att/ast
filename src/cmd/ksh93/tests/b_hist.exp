@@ -1,38 +1,37 @@
+# vim: set filetype=expect:
+#
 # Interactive tests for hist builtin
 set pid [spawn $ksh]
+expect_prompt
+# Terminal rows and columns may default to zero so ensure sane values.
+send "stty rows 24 cols 80\r"
 expect_prompt
 
 # ==========
 # hist -l lists commands on standard output
 log_test_entry
 send "hist -l\r"
-
-expect -re "hist -l\r\n8(\t| +)cd foo2\r\n9(\t| +)cd ..\r\n10(\t| +)mkdir foo3\r\n11(\t| +)cd foo3\r\n12(\t| +)cd ..\r\n13(\t| +)echo hello world\r\n14(\t| +)echo hello world1 > foo\r\n15(\t| +)echo hello world2 >> foo\r\n16(\t| +)echo hello world3 >> foo\r\n17(\t| +)echo hello world1 > bar\r\n18(\t| +)echo hello world2 >> bar\r\n19(\t| +)echo hello world3 >> bar\r\n20(\t| +)echo hello world1 > baz\r\n21(\t| +)echo hello world2 >> baz\r\n22(\t| +)echo hello world3 >> baz\r\n23(\t| +)hist -l\r\n" {
+expect -re "\r\n13(\t| +)echo hello world\r\n.*\r\n23(\t| +)stty rows 24 cols 80\r\n24(\t| +)hist -l\r\n" {
     puts "hist -l lists commands on standard output"
 }
-
 expect_prompt
 
 # ==========
 # hist -lr lists commands on standard output in reverse order
 log_test_entry
 send "hist -lr\r"
-
-expect -re "hist -lr\r\n24(\t| +)hist -lr\r\n23(\t| +)hist -l\r\n22(\t| +)echo hello world3 >> baz\r\n21(\t| +)echo hello world2 >> baz\r\n20(\t| +)echo hello world1 > baz\r\n19(\t| +)echo hello world3 >> bar\r\n18(\t| +)echo hello world2 >> bar\r\n17(\t| +)echo hello world1 > bar\r\n16(\t| +)echo hello world3 >> foo\r\n15(\t| +)echo hello world2 >> foo\r\n14(\t| +)echo hello world1 > foo\r\n13(\t| +)echo hello world\r\n12(\t| +)cd ..\r\n11(\t| +)cd foo3\r\n10(\t| +)mkdir foo3\r\n9(\t| +)cd ..\r\n" {
+expect -re "hist -lr\r\n25(\t| +)hist -lr\r\n.*\r\n13\techo hello world\r\n" {
     puts "hist -lr lists commands on standard output in reverse order"
 }
-
 expect_prompt
 
 # ==========
 # hist -ln skips command numbers while listing commands
 log_test_entry
 send "hist -ln\r"
-
-expect -re "hist -ln\r\n(\t| +)mkdir foo3\r\n(\t| +)cd foo3\r\n(\t| +)cd ..\r\n(\t| +)echo hello world\r\n(\t| +)echo hello world1 > foo\r\n(\t| +)echo hello world2 >> foo\r\n(\t| +)echo hello world3 >> foo\r\n(\t| +)echo hello world1 > bar\r\n(\t| +)echo hello world2 >> bar\r\n(\t| +)echo hello world3 >> bar\r\n(\t| +)echo hello world1 > baz\r\n(\t| +)echo hello world2 >> baz\r\n(\t| +)echo hello world3 >> baz\r\n(\t| +)hist -l\r\n(\t| +)hist -lr\r\n(\t| +)hist -ln\r\n" {
+expect -re "\r\n(\t| +)echo hello world\r\n.*\r\n(\t| +)stty rows 24 cols 80\r\n(\t| +)hist -l\r\n(\t| +)hist -lr\r\n(\t| +)hist -ln\r\n" {
     puts "hist -ln skips command numbers while listing commands"
 }
-
 expect_prompt
 
 # ==========
