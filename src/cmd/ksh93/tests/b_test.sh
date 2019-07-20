@@ -128,12 +128,18 @@ actual=$?
 expect=1
 [[ $actual == $expect ]] || log_error "test -c" "$expect" "$actual"
 
-# This test fails because we're not interactive. See b_test.exp for where we verify this works when
-# the shell is interactive.
-test -c /dev/stdout
-actual=$?
-expect=1
-[[ $actual == $expect ]] || log_error "test -c" "$expect" "$actual"
+# The `test -c` is expected to fail because we're not interactive. See b_test.exp for where we
+# verify this works when the shell is interactive.
+#
+# On some platforms (e.g., FreeBSD) /dev/stdout is a char device even though it is a pipe.
+# We have to skip this test on those platforms.
+if [[ $(ls -Ll /dev/stdout) != c* ]]
+then
+    test -c /dev/stdout
+    actual=$?
+    expect=1
+    [[ $actual == $expect ]] || log_error "test -c" "$expect" "$actual"
+fi
 
 test -c /dev/null
 actual=$?
