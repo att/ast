@@ -375,9 +375,10 @@ printv:
         // with syncing history if -s and -f are used together. History is synced
         // later with histflush() function.
         // https://github.com/att/ast/issues/425
-        if (!sflag && sffileno(outfile) != sffileno(sfstderr)) sfsync(outfile);
+        if (!sflag && sffileno(outfile) != sffileno(sfstderr))
+            if (sfsync(outfile) < 0) exitval = 1;
         sfpool(sfstderr, pool, SF_WRITE);
-        exitval = pdata.err;
+        if (pdata.err) exitval = 1;
     } else if (vflag) {
         while (*argv) {
             fmtbase64(shp, outfile, *argv++, fmttype, vflag == 'C');
@@ -386,7 +387,7 @@ printv:
     } else {
         // Echo style print.
         if (nflag && !argv[0]) {
-            sfsync(NULL);
+            if (sfsync(NULL) < 0) exitval = 1;
         } else if (sh_echolist(shp, outfile, rflag, argv) && !nflag) {
             sfputc(outfile, '\n');
         }
@@ -399,8 +400,9 @@ printv:
         sh_offstate(shp, SH_HISTORY);
     } else if (n & SF_SHARE) {
         sfset(outfile, SF_SHARE | SF_PUBLIC, 1);
-        sfsync(outfile);
+        if (sfsync(outfile) < 0) exitval = 1;
     }
+    if (exitval) errormsg(SH_DICT, 2, e_io);
     return exitval;
 }
 
