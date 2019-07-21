@@ -20,7 +20,7 @@ expect_prompt
 # hist -lr lists commands on standard output in reverse order
 log_test_entry
 send "hist -lr\r"
-expect -re "hist -lr\r\n25(\t| +)hist -lr\r\n.*\r\n13\techo hello world\r\n" {
+expect -re "hist -lr\r\n25(\t| +)hist -lr\r\n.*\r\n13(\t| +)echo hello world\r\n" {
     puts "hist -lr lists commands on standard output in reverse order"
 }
 expect_prompt
@@ -29,7 +29,7 @@ expect_prompt
 # hist -ln skips command numbers while listing commands
 log_test_entry
 send "hist -ln\r"
-expect -re "\r\n(\t| +)echo hello world\r\n.*\r\n(\t| +)stty rows 24 cols 80\r\n(\t| +)hist -l\r\n(\t| +)hist -lr\r\n(\t| +)hist -ln\r\n" {
+expect -re "\r\necho hello world\r\n.*\r\nstty rows 24 cols 80\r\nhist -l\r\nhist -lr\r\nhist -ln\r\n" {
     puts "hist -ln skips command numbers while listing commands"
 }
 expect_prompt
