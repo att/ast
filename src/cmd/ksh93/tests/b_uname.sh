@@ -72,10 +72,14 @@ expect=$($bin_uname -m)
 # ==========
 # -o, --operating-system
 # The generic operating system name. Some systems (e.g., macOS) don't have a `-o` flag but usually
-# their `-s` flag is an acceptable substituate.
+# their `-s` flag is an acceptable substitute. However, on Solaris clones like IllumOS and
+# Openindiana the value is the prefix of the `uname -v` output. Note that the ksh93u+ release
+# reports "SunOS" for `uname -o`. So there isn't any point changing the implementation. Instead,
+# adapt the unit test.
 actual=$(uname -o)
 expect=$($bin_uname -o 2>/dev/null || $bin_uname -s 2>&1)
-[[ "$expect" =~ "$actual" ]] || log_error "'uname -o' failed" "$expect" "$actual"
+[[ "$expect" =~ "$actual" || "$actual" == "SunOS" ]] ||
+    log_error "'uname -o' failed" "$expect" "$actual"
 
 # ==========
 # -h, --host-id|id
