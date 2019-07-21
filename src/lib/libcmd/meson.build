@@ -12,5 +12,6 @@ incdir = include_directories('../libast/include')
 
 libcmd = library('cmd', libcmd_files, c_args: libcmd_c_args,
                  include_directories: [configuration_incdir, incdir],
+                 dependencies: libfts_dep,
                  link_with: libast,
                  install: get_option('default_library') == 'shared')

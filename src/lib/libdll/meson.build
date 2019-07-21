@@ -7,6 +7,7 @@ libdll_c_args = shared_c_args + [
 
 libdll = library('dll', libdll_files, c_args: libdll_c_args,
                  include_directories: [configuration_incdir, libast_incdir],
+                 dependencies: libfts_dep,
                  link_with: libast,
                  install: get_option('default_library') == 'shared')
 
