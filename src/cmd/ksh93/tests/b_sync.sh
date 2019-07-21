@@ -1,10 +1,13 @@
 # Tests for `sync` builtin
 
 # ==========
-# sync -S1: will succeed silently if the system has syncfs() otherwise it fails.
+# sync -S1
+# Will succeed silently if the system has syncfs() otherwise it fails in a predictable manner.
 actual=$(sync -S1 2>&1)
-expect="sync: syncfs(1) failed [Function not implemented]"
-[[ "$actual" == "" || "$actual" == "$expect" ]] || log_error "sync -S1" "$expect" "$actual"
+e1="sync: syncfs(1) failed [Function not implemented]"
+e2="sync: syncfs(1) failed [Operation not applicable]"
+[[ "$actual" == "" || "$actual" == "$e1" || "$actual" == "$e2" ]] ||
+    log_error "sync -S1" "$e1" "$actual"
 
 # ==========
 # sync -s1
