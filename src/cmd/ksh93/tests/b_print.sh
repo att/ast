@@ -104,3 +104,24 @@ then
 else
     log_error 'print -s -f fails'
 fi
+
+# ======
+# Check that I/O errors are detected <https://github.com/att/ast/issues/1093>
+actual=$(
+    {
+        (
+            trap "" PIPE
+            for ((i = SECONDS + 1; SECONDS < i; )); do
+                print hi || {
+                    print $? >&2
+                    exit
+                }
+            done
+        ) | true
+    } 2>&1
+)
+expect=$': print: I/O error\n1'
+if [[ $actual != *"$expect" ]]
+then
+    log_error 'I/O error not detected' "$expect" "$actual"
+fi

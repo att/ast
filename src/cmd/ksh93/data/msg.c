@@ -76,6 +76,7 @@ const char e_access[] = "permission denied";
 const char e_direct[] = "bad directory";
 const char e_file[] = "%s: bad file unit number";
 const char e_redirect[] = "redirection failed";
+const char e_io[] = "I/O error";
 const char e_trap[] = "%s: bad trap";
 const char e_readonly[] = "%s: is read only";
 const char e_badfield[] = "%d: negative field size";
