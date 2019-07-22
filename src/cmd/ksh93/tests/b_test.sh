@@ -156,7 +156,7 @@ expect=1
 
 if whence -p nc >/dev/null
 then
-    nc -U socket -l &
+    nc -l -U socket &
     sleep 0.1  # need to give `nc` time to create the socket
     test -S /dev/stdout
     actual=$?
