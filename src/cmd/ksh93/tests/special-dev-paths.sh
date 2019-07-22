@@ -14,9 +14,6 @@ fd_check=no
 [[ -d /proc/self/fd ]] && fd_check=yes
 [[ $fd_check == yes ]] && fd_count=$( ls -1 /proc/$$/fd | wc -l )
 
-# Check if the `nc` (netcat) command is available.
-whence -q nc && readonly nc_available=yes || readonly nc_available=no
-
 # Check if the system supports the /dev/{stdin,stdout,stderr} paths.
 [[ -e /dev/stdin ]] && readonly dev_stdin=yes || readonly dev_stdin=no
 

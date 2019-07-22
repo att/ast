@@ -154,8 +154,10 @@ actual=$?
 expect=1
 [[ $actual == $expect ]] || log_error "test -S" "$expect" "$actual"
 
-if whence -p nc >/dev/null
+if [[ $nc_available == no ]]
 then
+    log_info 'Skipping the "test -S" test because nc is not available'
+else
     nc -l -U socket &
     sleep 0.1  # need to give `nc` time to create the socket
     test -S /dev/stdout
