@@ -86,12 +86,17 @@ actual=$?
 expect=0
 [[ $actual == $expect ]] || log_error "test -r" "$expect" "$actual"
 
-touch test-r
-chmod 333 test-r
-test -r test-r  # "test-r" should not be readable
-actual=$?
-expect=1
-[[ $actual == $expect ]] || log_error "test -r" "$expect" "$actual"
+if [[ $OS_NAME == cygwin* ]]
+then
+    log_info "Skipping test-r test because the platform support for readability is broken"
+else
+    touch test-r
+    chmod 333 test-r
+    test -r test-r  # "test-r" should not be readable
+    actual=$?
+    expect=1
+    [[ $actual == $expect ]] || log_error "test -r" "$expect" "$actual"
+fi
 
 # =======
 # test -b
