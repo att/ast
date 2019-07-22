@@ -17,7 +17,7 @@ tests_to_skip = [
 ]
 
 foreach testspec : api_tests
-    testname = testspec[0]
+    test_name = testspec[0]
     timeout = (testspec.length() == 2) ? testspec[1] : api_default_timeout
     if timeout <= 0
         parallel = false
@@ -28,21 +28,21 @@ foreach testspec : api_tests
 
     skip_test = false
     foreach skip : tests_to_skip
-        if system == skip[0] and testname == skip[1]
-            warning('skipping ' + testname + ' on ' + system)
+        if system == skip[0] and test_name == skip[1]
+            warning('skipping ' + test_name + ' on ' + system)
             skip_test = true
             # break  # Not until meson 0.49
         endif
     endforeach
     if not skip_test
         test_target = executable(
-            testname, testname + '.c', c_args: shared_c_args,
+            test_name, test_name + '.c', c_args: shared_c_args,
             include_directories: [configuration_incdir, ksh93_incdir],
             link_with: [libksh, libast, libcmd, libdll],
             dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
             install: false)
-        test('API/ksh/' + testname, ksh93_exe, timeout: timeout, is_parallel: parallel,
-            args: [test_driver, 'api', test_target, testname],
+        test('API/ksh/' + test_name, ksh93_exe, timeout: timeout, is_parallel: parallel,
+            args: [test_driver, 'api', test_target, test_name],
             env: [shell_var, lang_var, ld_library_path, libsample_path])
     endif
 endforeach

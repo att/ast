@@ -127,7 +127,7 @@ tests_to_skip = [
 
 # The test cases are executed in parallel by default
 foreach testspec : all_tests
-    testname = testspec[0]
+    test_name = testspec[0]
     timeout = (testspec.length() == 2) ? testspec[1] : default_timeout
     if timeout <= 0
         parallel = false
@@ -138,14 +138,14 @@ foreach testspec : all_tests
 
     skip_test = false
     foreach skip : tests_to_skip
-        if system == skip[0] and testname == skip[1]
-            warning('skipping ' + testname + ' on ' + system)
+        if system == skip[0] and test_name == skip[1]
+            warning('skipping ' + test_name + ' on ' + system)
             skip_test = true
             # break  # Not until meson 0.49
         endif
     endforeach
     if not skip_test
-        if testname.endswith('.exp')
+        if test_name.endswith('.exp')
             # The interactive `expect` based tests are highly sensitive to timing variations.
             # Never run them in parallel with any other test.
             parallel = false
@@ -153,24 +153,24 @@ foreach testspec : all_tests
 
         # Run the test without compiling the script (which is how most people use ksh).
         lang_var = 'LANG=en_US.UTF-8'
-        test(testname, ksh93_exe, timeout: timeout, is_parallel: parallel,
-            args: [test_driver, testname],
+        test(test_name, ksh93_exe, timeout: timeout, is_parallel: parallel,
+            args: [test_driver, test_name],
             env: [shell_var, lang_var, ld_library_path, libsample_path])
 
         # The shcomp variants are only applicable to the non-interactive tests.
-        if not testname.endswith('.exp')
+        if not test_name.endswith('.exp')
             skip_test = false
             foreach skip : tests_to_skip
-                if 'shcomp' == skip[0] and testname == skip[1]
-                    warning('skipping ' + testname + '/shcomp on ' + system)
+                if 'shcomp' == skip[0] and test_name == skip[1]
+                    warning('skipping ' + test_name + '/shcomp on ' + system)
                     skip_test = true
                     # break  # Not until meson 0.49
                 endif
             endforeach
             if not skip_test
                 # Run the test after compiling the script with `shcomp`.
-                test(testname + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
-                    args: [ test_driver, 'shcomp', testname],
+                test(test_name + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
+                    args: [ test_driver, 'shcomp', test_name],
                     env: [shell_var, lang_var, shcomp_var, ld_library_path, libsample_path])
             endif
         endif
