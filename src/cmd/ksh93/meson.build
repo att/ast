@@ -24,7 +24,7 @@ libksh = library('ksh', ksh93_files,
                  include_directories: [configuration_incdir, ksh93_incdir],
                  c_args: shared_c_args,
                  dependencies: [libm_dep, libexecinfo_dep, libdl_dep, libsocket_dep, libnsl_dep],
-                 install: false)
+                 install: get_option('default_library') == 'shared')
 
 ksh93_exe = executable('ksh', ['sh/pmain.c'], c_args: shared_c_args,
     include_directories: [configuration_incdir, ksh93_incdir],
