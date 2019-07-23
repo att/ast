@@ -93,11 +93,6 @@ feature_data.set10('_lib_getrusage',
         args: feature_test_args))
 feature_data.set10('_lib_sigqueue',
     cc.has_function('sigqueue', prefix: '#include <signal.h>', args: feature_test_args))
-# TODO: Enable iswprint() detection when we understand why doing so causes the
-# `wchar` unit test to fail. For now we force it to false to use the AST definition.
-# feature_data.set10('_lib_iswprint',
-#     cc.has_function('iswprint', prefix: '#include <wctype.h>', args: feature_test_args))
-feature_data.set10('_lib_iswprint', 0)
 
 if not cc.has_function('isnanl', prefix: '#include <math.h>', args: feature_test_args)
     feature_data.set('isnanl', 'isnan')

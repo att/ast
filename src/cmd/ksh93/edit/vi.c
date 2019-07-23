@@ -51,9 +51,6 @@
 #define genlen(str) ed_genlen(str)
 #define digit(c) ((c & ~STRIP) == 0 && isdigit(c))
 #define is_print(c) ((c & ~STRIP) || isprint(c))
-#if !_lib_iswprint && !defined(iswprint)
-#define iswprint(c) ((c & ~0177) || isprint(c))
-#endif  // !_lib_iswprint && !defined(iswprint)
 static_fn int _vi_isalph(int);
 static_fn int _vi_isblank(int);
 #define vi_isblank(v) _vi_isblank(virtual[v])
