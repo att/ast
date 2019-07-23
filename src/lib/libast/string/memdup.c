@@ -29,7 +29,5 @@
 //
 void *memdup(const void *s, size_t n) {
     void *t = malloc(n);
-
-    if (!t) return NULL;
     return memcpy(t, s, n);
 }
