@@ -78,8 +78,13 @@
 [[ X =~ [[:blank:]] ]] && log_error 'pattern [[:blank:]] broken'
 [[ ' ' =~ [[:blank:]] ]] || log_error 'pattern [[:blank:]] broken'
 [[ $'\t' =~ [[:blank:]] ]] || log_error 'pattern [[:blank:]] broken'
-[[ $'\v' =~ [[:blank:]] ]] && log_error 'pattern [[:blank:]] broken'
-[[ $'\f' =~ [[:blank:]] ]] && log_error 'pattern [[:blank:]] broken'
+if [[ $OS_NAME == openbsd ]]
+then
+    log_warning 'skipping two [[:blank:]] tests because isblank() is broken on openbsd'
+else
+    [[ $'\v' =~ [[:blank:]] ]] && log_error 'pattern [[:blank:]] broken'
+    [[ $'\f' =~ [[:blank:]] ]] && log_error 'pattern [[:blank:]] broken'
+fi
 [[ $'\n' =~ [[:blank:]] ]] && log_error 'pattern [[:blank:]] broken'
 [[ Z =~ [[:print:]] ]] || log_error 'pattern [[:print:]] broken'
 [[ ' ' =~ [[:print:]] ]] || log_error 'pattern [[:print:]] broken'
