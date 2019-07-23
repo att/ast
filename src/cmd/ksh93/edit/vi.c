@@ -34,6 +34,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <wchar.h>
+#include <wctype.h>
 
 #include "ast.h"
 #include "defs.h"
@@ -1963,15 +1964,9 @@ addin:
     return GOOD;
 }
 
-static_fn int _vi_isalph(int v) {
-#if _lib_iswalnum
-    return iswalnum(v) || v == '_';
-#else
-    return (v & ~STRIP) || isalnum(v) || v == '_';
-#endif
-}
+static_fn inline int _vi_isalph(int v) { return iswalnum(v) || v == '_'; }
 
-static_fn int _vi_isblank(int v) { return (v & ~STRIP) == 0 && isspace(v); }
+static_fn inline int _vi_isblank(int v) { return (v & ~STRIP) == 0 && isspace(v); }
 
 //
 // Get a character, after ^V processing.

@@ -110,7 +110,6 @@
 #mesondefine _lib_getexecname
 #mesondefine _lib_getrusage
 #mesondefine _lib_gettimeofday
-#mesondefine _lib_iswalnum
 #mesondefine _lib_iswprint
 #mesondefine _lib_lchmod
 #mesondefine _lib_lchmod_fchmodat_fallback
