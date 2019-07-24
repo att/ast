@@ -31,6 +31,7 @@
 #include <limits.h>
 #include <string.h>
 #include <sys/types.h>
+#include "stdlib.h"
 
 #include "ast.h"         // IWYU pragma: keep
 #include "ast_assert.h"  // IWYU pragma: keep
@@ -46,47 +47,36 @@
 
 static unsigned char map[UCHAR_MAX + 1];
 
-static const char alp[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+static const unsigned char alp[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-/*
- * mime base64 encode
- */
-
-ssize_t base64encode(const void *fb, size_t fz, void **fn, void *tb, size_t tz) {
-    unsigned char *fp;
+//
+// Mime base64 encode.
+//
+ssize_t base64encode(const void *fb, size_t fz, void *tb, size_t tz) {
+    const unsigned char *fp;
+    const unsigned char *fe;
     unsigned char *tp;
-    unsigned char *fe;
     unsigned char *te;
     unsigned char *tc;
-    unsigned char *m;
     unsigned long b;
-    size_t n;
     unsigned char tmp[B64_EC * B64_CHUNK];
+    const unsigned char *m = alp;
 
-    m = (unsigned char *)alp;
-    fp = fe = (unsigned char *)fb;
+    fp = fe = fb;
     if (fz >= 3) {
-        n = fz % 3;
+        int n = fz % 3;
         fe += fz - n;
         fz = n;
     }
-    tp = (unsigned char *)tb;
-    if (tp) {
-        te = tp + tz - B64_EC + 1;
-        n = 0;
-    } else {
-        if (fn) *fn = fp;
-        tp = tmp;
-        te = tp + sizeof(tmp) - B64_EC + 1;
-        n = 1;
-    }
+    tp = tb;
+    te = tp + tz - B64_EC + 1;
+
     for (;;) {
         tc = tp + B64_EC * B64_CHUNK;
         do {
             if (fp >= fe) goto done;
             if (tp >= te) {
-                if (fn) *fn = fp;
-                n = tp - (unsigned char *)tb + 1;
                 tp = tmp;
                 te = tp + sizeof(tmp) - B64_EC + 1;
             }
@@ -98,18 +88,11 @@ ssize_t base64encode(const void *fb, size_t fz, void **fn, void *tb, size_t tz) 
             *tp++ = m[(b >> 6) & 077];
             *tp++ = m[b & 077];
         } while (tp < tc);
-        if (n) {
-            n += tp - tmp + (fp < fe);
-            tp = tmp;
-        } else {
-            *tp++ = '\n';
-        }
+        *tp++ = '\n';
     }
 done:
     if (fz) {
         if (tp >= te) {
-            if (fn) *fn = fp;
-            n = tp - (unsigned char *)tb + 1;
             tp = tmp;
             te = tp + sizeof(tmp) - B64_EC + 1;
         }
@@ -120,26 +103,15 @@ done:
         *tp++ = (fz == 2) ? m[(b >> 6) & 077] : PAD;
         *tp++ = PAD;
     }
-    if (n) {
-        n += (tp - tmp) - 1;
-    } else {
-        // Static analysis warns that there is a theoretical path where the next `if` can be reached
-        // with tp == tmp. If that happens the `*(tp - 1)` would access the byte before the start of
-        // the tmp array.
-        assert(tp != tmp);
-        if (tp > (unsigned char *)tb && *(tp - 1) == '\n') tp--;
-        if (tp < te) *tp = 0;
-        n = tp - (unsigned char *)tb;
-        if (fn) *fn = fp;
-    }
-    return n;
+    if (tp > (unsigned char *)tb && *(tp - 1) == '\n') tp--;
+    if (tp < te) *tp = 0;
+    return tp - (unsigned char *)tb;
 }
 
-/*
- * mime base64 decode
- */
-
-ssize_t base64decode(const void *fb, size_t fz, void **fn, void *tb, size_t tz) {
+//
+// Mime base64 decode.
+//
+ssize_t base64decode(const void *fb, size_t fz, void *tb, size_t tz) {
     unsigned char *fp;
     unsigned char *tp;
     unsigned char *fe;
@@ -149,30 +121,24 @@ ssize_t base64decode(const void *fb, size_t fz, void **fn, void *tb, size_t tz) 
     int c;
     int state;
     unsigned long v;
-    unsigned char *fc;
     ssize_t n;
 
     m = map;
     if (!map[0]) {
         memset(m, B64_IGN, sizeof(map));
-        for (tp = (unsigned char *)alp; *tp; tp++) m[*tp] = tp - (unsigned char *)alp;
+        for (const unsigned char *ap = alp; *ap; ++ap) m[*ap] = ap - alp;
         m[PAD] = B64_PAD;
         m[' '] = m['\t'] = m['\n'] = B64_SPC;
     }
     fp = (unsigned char *)fb;
     fe = fp + fz;
     tp = (unsigned char *)tb;
-    if (tp) {
-        te = tp + tz;
-        if (tz > 2) tz = 2;
-        tx = te - tz;
-        n = 0;
-    } else {
-        te = tx = tp;
-        n = 1;
-    }
+    te = tp + tz;
+    if (tz > 2) tz = 2;
+    tx = te - tz;
+    n = 0;
+
     for (;;) {
-        fc = fp;
         state = 0;
         v = 0;
         while (fp < fe) {
@@ -191,14 +157,12 @@ ssize_t base64decode(const void *fb, size_t fz, void **fn, void *tb, size_t tz) 
                                     if (tp < te) *tp++ = (v);
                                 }
                             }
-                            if (fn) *fn = fc;
                         }
                     } else {
                         *tp++ = (v >> 16);
                         *tp++ = (v >> 8);
                         *tp++ = (v);
                     }
-                    fc = fp;
                     state = 0;
                     v = 0;
                 }
@@ -209,6 +173,8 @@ ssize_t base64decode(const void *fb, size_t fz, void **fn, void *tb, size_t tz) 
         switch (state) {
             case 0:
                 goto done;
+            case 1:
+                break;
             case 2:
                 if (tp < te) {
                     *tp++ = v >> 4;
@@ -216,7 +182,6 @@ ssize_t base64decode(const void *fb, size_t fz, void **fn, void *tb, size_t tz) 
                     n++;
                 } else {
                     n = tp - (unsigned char *)tb + 2;
-                    if (fn) *fn = fc;
                 }
                 break;
             case 3:
@@ -226,17 +191,15 @@ ssize_t base64decode(const void *fb, size_t fz, void **fn, void *tb, size_t tz) 
                         *tp++ = v >> 2;
                     } else {
                         n = tp - (unsigned char *)tb + 2;
-                        if (fn) *fn = fc;
                     }
                 } else if (n) {
                     n += 2;
                 } else {
                     n = tp - (unsigned char *)tb + 3;
-                    if (fn) *fn = fc;
                 }
                 break;
             default:
-                break;  // is this a "can't happen" that should be abort()?
+                abort();
         }
         while (fp < fe && ((c = m[*fp++]) == B64_PAD || c == B64_SPC)) {
             ;  // empty body
@@ -250,7 +213,6 @@ done:
     } else {
         if (tp < te) *tp = 0;
         n = tp - (unsigned char *)tb;
-        if (fn) *fn = fp;
     }
     return n;
 }

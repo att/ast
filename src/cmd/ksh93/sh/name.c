@@ -1708,7 +1708,7 @@ void nv_putval(Namval_t *np, const void *vp, nvflag_t flags) {
                 if (oldsize) memcpy(cp, FETCH_VTP(up, const_cp), oldsize);
                 STORE_VTP(up, cp, cp);
                 if (size <= oldsize) return;
-                dot = base64decode(sp, dot, NULL, cp + oldsize, size - oldsize);
+                dot = base64decode(sp, dot, cp + oldsize, size - oldsize);
                 dot += oldsize;
                 if (!nv_isattr(np, NV_ZFILL) || nv_size(np) == 0) {
                     nv_setsize(np, dot);
@@ -2490,7 +2490,7 @@ done:
     if (FETCH_VTP(up, const_cp) && nv_isattr(np, NV_BINARY) && !nv_isattr(np, NV_RAW)) {
         int size = nv_size(np), insize = (4 * size) / 3 + size / 45 + 8;
         char *cp = getbuf(insize);
-        base64encode(FETCH_VTP(up, const_cp), size, NULL, cp, insize);
+        base64encode(FETCH_VTP(up, const_cp), size, cp, insize);
         return cp;
     }
 

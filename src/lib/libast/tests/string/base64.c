@@ -33,8 +33,7 @@ tmain() {
     ssize_t result_size;
 
     for (int i = 0; tests[i].string; ++i) {
-        // TODO: What does the third parameter of this function do ? It's not used by ksh.
-        result_size = base64encode(tests[i].string, strlen(tests[i].string), NULL, encoded_result,
+        result_size = base64encode(tests[i].string, strlen(tests[i].string), encoded_result,
                                    sizeof(encoded_result));
 
         if (result_size != strlen(encoded_result)) {
@@ -47,7 +46,7 @@ tmain() {
                    tests[i].base64_string, encoded_result);
         }
 
-        result_size = base64decode(encoded_result, strlen(encoded_result), NULL, decoded_result,
+        result_size = base64decode(encoded_result, strlen(encoded_result), decoded_result,
                                    sizeof(decoded_result));
 
         if (result_size != strlen(decoded_result)) {
