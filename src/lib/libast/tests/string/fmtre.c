@@ -1,3 +1,4 @@
+// See also src/lib/libast/tests/string/fmtmatch.c.
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <string.h>
@@ -5,7 +6,7 @@
 #include "ast.h"
 #include "terror.h"
 
-static struct StringToStringTest tests[] = {
+static const struct StringToStringTest tests[] = {
     {"", ""},  // empty ksh pattern should yield an empty ERE pattern
     {"*", "$"},
     {"*(xyz)", "^(xyz)*$"},
@@ -28,6 +29,7 @@ static struct StringToStringTest tests[] = {
     {"x[^]y", "^x\\^y$"},
     {"x[^abc]y", "^x[abc^]y$"},
     {"x|y", "^x|y$"},
+    {"@(x|y)", "^(x|y)$"},
     {"x{", "^x{$"},
     {"x{}", "^x{}$"},
     {"{", "^{$"},
@@ -51,7 +53,7 @@ static struct StringToStringTest tests[] = {
     {".", "^\\.$"},
     {"(x|y)", "^(x|y)$"},
 
-    // ksh shell patterns that cannot be translated to ERE patterns.
+    // Ksh patterns that cannot be translated to ERE patterns.
     {"(", NULL},
     {"\\", NULL},
     {"~E)z.?a", NULL},
@@ -114,15 +116,19 @@ tmain() {
         if (!tests[i].expected_result && !actual_result) continue;
 
         if (!tests[i].expected_result || !actual_result) {
-            terror("fmtre() :: Failed to convert ksh pattern to ERE\nExpect: |%s|\nActual: |%s|",
-                   tests[i].expected_result ? tests[i].expected_result : "(null)",
-                   actual_result ? actual_result : "(null)");
+            terror(
+                "fmtre() :: Failed to convert ksh pattern to ERE\nInput: %d |%s|\n"
+                "Expect: |%s|\nActual: |%s|",
+                i, tests[i].input, tests[i].expected_result ? tests[i].expected_result : "(null)",
+                actual_result ? actual_result : "(null)");
             continue;
         }
 
         if (strcmp(actual_result, tests[i].expected_result)) {
-            terror("fmtre() :: Failed to convert ksh pattern to ERE\nExpect: |%s|\nActual: |%s|",
-                   tests[i].expected_result, actual_result);
+            terror(
+                "fmtre() :: Failed to convert ksh pattern to ERE\nInput: %d |%s|\n"
+                "Expect: |%s|\nActual: |%s|",
+                i, tests[i].input, tests[i].expected_result, actual_result);
         }
     }
 

@@ -1,7 +1,29 @@
 test_dir = meson.current_source_dir()
-tests = ['base64', 'chresc', 'fmtbase', 'fmtesc', 'fmtelapsed', 'fmtfmt', 'fmtint', 'fmtmode',
-         'fmtperm', 'fmtre', 'fmtscale', 'fmttmx', 'strelapsed', 'stresc', 'strlcat',
-         'strlcpy', 'strmatch', 'strperm', 'strsort', 'strtonll', 'struniq', 'utf']
+tests = [
+    'base64',
+    'chresc',
+    'fmtbase',
+    'fmtelapsed',
+    'fmtesc',
+    'fmtfmt',
+    'fmtint',
+    'fmtmatch',
+    'fmtmode',
+    'fmtperm',
+    'fmtre',
+    'fmtscale',
+    'fmttmx',
+    'strelapsed',
+    'stresc',
+    'strlcat',
+    'strlcpy',
+    'strmatch',
+    'strperm',
+    'strsort',
+    'strtonll',
+    'struniq',
+    'utf',
+]
 
 incdir = include_directories('..', '../../include/')
 

@@ -410,8 +410,8 @@ struct StringToIntegerTest {
 
 // Test conversion of string
 struct StringToStringTest {
-    char *input;
-    char *expected_result;
+    const char *input;
+    const char *expected_result;
 };
 
 #endif  // _TERROR_H
