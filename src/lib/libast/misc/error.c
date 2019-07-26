@@ -42,7 +42,6 @@
 #include <unistd.h>
 
 #include "ast.h"
-#include "ast_regex.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"

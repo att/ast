@@ -1,11 +1,10 @@
 #include "config_ast.h"  // iwyu pragma: keep
 
-#include <ctype.h>
-#include <errno.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
-#include "ast.h"
 #include "ast_glob.h"
 #include "terror.h"
 

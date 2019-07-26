@@ -25,11 +25,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <fcntl.h>
-#include <stdlib.h>
+#include <fcntl.h>      // IWYU pragma: keep
+#include <stdlib.h>     // IWYU pragma: keep
 #include <sys/ioctl.h>  // IWYU pragma: keep
 #include <termios.h>    // IWYU pragma: keep
-#include <unistd.h>
+#include <unistd.h>     // IWYU pragma: keep
 
 #if _hdr_stream && _hdr_ptem
 #include <sys/ptem.h>

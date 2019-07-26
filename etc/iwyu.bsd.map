@@ -115,6 +115,8 @@
     { symbol: ["towlower", "private", "<wctype.h>", "public"] },
     { symbol: ["iswlower", "private", "<wctype.h>", "public"] },
     { symbol: ["iswupper", "private", "<wctype.h>", "public"] },
+    { symbol: ["iswalnum", "private", "<wctype.h>", "public"] },
+    { symbol: ["iswprint", "private", "<wctype.h>", "public"] },
     { symbol: ["isdigit", "private", "<ctype.h>", "public"] },
     { symbol: ["isxdigit", "private", "<ctype.h>", "public"] },
     { symbol: ["isspace", "private", "<ctype.h>", "public"] },

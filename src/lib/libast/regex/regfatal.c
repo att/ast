@@ -26,7 +26,7 @@
 
 #include <string.h>
 
-#include "ast.h"
+#include "ast_regex.h"
 #include "reglib.h"
 
 static const char *reg_error[] = {

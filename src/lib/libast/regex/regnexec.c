@@ -34,7 +34,7 @@
 #include <wctype.h>
 
 #include "ast.h"
-#include "ast_assert.h"
+#include "ast_regex.h"
 #include "reglib.h"
 #include "stk.h"
 

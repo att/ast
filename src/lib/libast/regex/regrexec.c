@@ -28,6 +28,7 @@
 #include <stddef.h>
 
 #include "ast.h"  // IWYU pragma: keep
+#include "ast_regex.h"
 #include "reglib.h"
 
 /*

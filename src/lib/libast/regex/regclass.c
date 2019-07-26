@@ -29,6 +29,7 @@
 #include <wctype.h>
 
 #include "ast.h"
+#include "ast_regex.h"
 #include "reglib.h"
 
 struct Ctype_s;

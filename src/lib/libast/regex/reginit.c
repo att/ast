@@ -27,6 +27,7 @@
 #include <stdlib.h>
 
 #include "ast.h"
+#include "ast_regex.h"
 #include "reglib.h"
 
 /*

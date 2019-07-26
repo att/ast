@@ -24,6 +24,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include "ast_regex.h"
 #include "reglib.h"
 
 int regrecord(const regex_t *p) { return p && p->re_info && p->re_info->rex->type == REX_BM; }

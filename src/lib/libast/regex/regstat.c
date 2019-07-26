@@ -24,6 +24,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include "ast_regex.h"
 #include "reglib.h"
 
 regstat_t *regstat(const regex_t *p) {

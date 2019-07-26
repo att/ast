@@ -23,7 +23,7 @@
 
 #include <stdint.h>
 
-#include "aso.h"
+#include "aso.h"  // IWYU pragma: keep
 #include "ast_aso.h"
 
 /*

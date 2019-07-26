@@ -22,7 +22,6 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ctype.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
