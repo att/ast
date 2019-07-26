@@ -1,6 +1,6 @@
 test_dir = meson.current_source_dir()
 # TODO: Enable 'opt' tests
-tests = [ 'debug', 'stk', 'environ' ]
+tests = [ 'debug', 'glob', 'stk', 'environ' ]
 incdir = include_directories('..', '../../include/')
 #
 # Some tests fail for inexplicable reasons on some platforms. In some cases, such as Cygwin, things

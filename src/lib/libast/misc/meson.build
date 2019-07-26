@@ -12,6 +12,7 @@ libast_files += [
     'misc/procclose.c',
     'misc/procfree.c',
     'misc/procopen.c',
+    'misc/setlocale.c',
     'misc/sigcrit.c',
     'misc/state.c',
     'misc/stk.c',

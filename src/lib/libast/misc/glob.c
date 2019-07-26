@@ -110,10 +110,9 @@ static_fn int gl_attr(glob_t *gp, const char *path, int flags) {
     return 0;
 }
 
-/*
- * default gl_nextdir
- */
-
+//
+// Default (glob_t*)->gl_nextdir.
+//
 static_fn char *gl_nextdir(glob_t *gp, char *dir) {
     if (!(dir = gp->gl_nextpath)) dir = gp->gl_nextpath = stkcopy(stkstd, pathbin());
     switch (*gp->gl_nextpath) {
@@ -506,17 +505,17 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
         gp->gl_ignorei = 0;
         gp->gl_starstar = 0;
         if (!(flags & GLOB_DISC)) {
-            gp->gl_fignore = 0;
-            gp->gl_suffix = 0;
-            gp->gl_intr = 0;
+            gp->gl_fignore = NULL;
+            gp->gl_suffix = NULL;
+            gp->gl_intr = NULL;
             gp->gl_delim = 0;
             gp->gl_handle = NULL;
-            gp->gl_diropen = 0;
-            gp->gl_dirnext = 0;
-            gp->gl_dirclose = 0;
-            gp->gl_type = 0;
-            gp->gl_attr = 0;
-            gp->gl_nextdir = 0;
+            gp->gl_diropen = NULL;
+            gp->gl_dirnext = NULL;
+            gp->gl_dirclose = NULL;
+            gp->gl_type = NULL;
+            gp->gl_attr = NULL;
+            gp->gl_nextdir = NULL;
             gp->gl_stat = 0;
             gp->gl_lstat = 0;
             gp->gl_extra = 0;
