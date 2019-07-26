@@ -122,6 +122,32 @@ expect -re "hello world\r\n" {
 expect_prompt
 
 # ==========
+# Enable csh style ! history expansion
+log_test_entry
+send "set -o histexpand\r"
+expect_prompt
+
+# ==========
+# Executing the previous command.
+log_test_entry
+send "print hello abc\r"
+expect_prompt
+send "!!\r"
+expect -re "\r\nprint hello abc\r\nhello abc\r\n" {
+    puts "!! executes prev command"
+}
+expect_prompt
+
+# ==========
+# Executing the previous command with text substitution.
+log_test_entry
+send "!!:s/hello/goodbye/\r"
+expect -re "\r\nprint goodbye abc\r\ngoodbye abc\r\n" {
+    puts "!!:s/// executes prev command w/substitution"
+}
+expect_prompt
+
+# ==========
 # Verify that asking the shell to exit works.
 log_test_entry
 send "exit\r"

@@ -9,3 +9,5 @@ hist -p writes history expansion on standard output
 hist -e vi triggers vi editor
 HISTEDIT=vi triggers vi editor
 When both HISTEDIT and FCEDIT are set, HISTEDIT takes priority
+!! executes prev command
+!!:s/// executes prev command w/substitution
