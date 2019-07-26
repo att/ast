@@ -206,11 +206,13 @@ int b_trap(int argc, char *argv[], Shbltin_t *context) {
 }
 
 int b_kill(int argc, char *argv[], Shbltin_t *context) {
-    char *signame;
-    int sig = SIGTERM, flag = 0, n;
+    UNUSED(argc);
+    char *signame = NULL;
+    int sig = SIGTERM;
+    int flag = 0;
+    int n;
     Shell_t *shp = context->shp;
     int usemenu = 0;
-    UNUSED(argc);
 
     while ((n = optget(argv, sh_optkill))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
