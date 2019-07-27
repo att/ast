@@ -164,7 +164,7 @@ then
     log_info 'Skipping the "test -S" test because nc is not available'
 else
     nc -l -U socket &
-    sleep 0.1  # need to give `nc` time to create the socket
+    sleep 0.2  # need to give `nc` time to create the socket
     test -S /dev/stdout
     actual=$?
     expect=1
