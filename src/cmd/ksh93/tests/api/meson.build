@@ -43,6 +43,6 @@ foreach testspec : api_tests
             install: false)
         test('API/ksh/' + test_name, ksh93_exe, timeout: timeout, is_parallel: parallel,
             args: [test_driver, 'api', test_target, test_name],
-            env: [shell_var, lang_var, ld_library_path, libsample_path])
+            env: [shell_var, lang_var, test_root, ld_library_path, libsample_path])
     endif
 endforeach

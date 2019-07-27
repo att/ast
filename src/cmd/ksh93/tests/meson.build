@@ -155,7 +155,7 @@ foreach testspec : all_tests
         lang_var = 'LANG=en_US.UTF-8'
         test(test_name, ksh93_exe, timeout: timeout, is_parallel: parallel,
             args: [test_driver, test_name],
-            env: [shell_var, lang_var, ld_library_path, libsample_path])
+            env: [shell_var, lang_var, test_root, ld_library_path, libsample_path])
 
         # The shcomp variants are only applicable to the non-interactive tests.
         if not test_name.endswith('.exp')
@@ -171,7 +171,8 @@ foreach testspec : all_tests
                 # Run the test after compiling the script with `shcomp`.
                 test(test_name + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
                     args: [ test_driver, 'shcomp', test_name],
-                    env: [shell_var, lang_var, shcomp_var, ld_library_path, libsample_path])
+                    env: [shell_var, lang_var, test_root, shcomp_var, ld_library_path,
+                          libsample_path])
             endif
         endif
     endif

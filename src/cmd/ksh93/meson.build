@@ -44,6 +44,7 @@ test_dir = join_paths(meson.current_source_dir(), 'tests')
 test_driver = join_paths(test_dir, 'util', 'run_test.sh')
 
 # This variable is used by some tests while executing subtests
+test_root = 'TEST_ROOT=' + test_dir
 shell_var = 'SHELL=' + ksh93_exe.full_path()
 shcomp_var = 'SHCOMP=' + shcomp_exe.full_path()
 

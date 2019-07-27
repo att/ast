@@ -74,21 +74,19 @@ fi
 #
 # Setup the environment for the unit test.
 #
-export TEST_SRC_DIR=${0%/*/*}  # capture the parent directory containing this script
-
 readonly test_name=$1
 if [[ $test_name == *.exp ]]
 then
-    readonly test_path=$TEST_SRC_DIR/$test_name
+    readonly test_path=$TEST_ROOT/$test_name
 elif [[ $api_test == true ]]
 then
     readonly test_path=$api_binary
     # Ugh! This is somewhat ugly. There should be a better way to figure out the directory that
     # contains auxiliary files. One option is to put everything, not just API tests, one level below
     # the parent dir of this script.
-    TEST_SRC_DIR=$TEST_SRC_DIR/api
+    TEST_ROOT=$TEST_ROOT/api
 else
-    readonly test_path=$TEST_SRC_DIR/$test_name.sh
+    readonly test_path=$TEST_ROOT/$test_name.sh
 fi
 
 if [[ ! -f $test_path ]]
@@ -128,7 +126,7 @@ log_info "TEST_DIR=$TEST_DIR"
 # unit tests expect GNU or BSD behavior.
 #
 export OLD_PATH=$PATH
-export SAFE_PATH="$TEST_DIR:$TEST_DIR/space dir:$TEST_SRC_DIR:$BUILD_DIR/src/cmd/builtin"
+export SAFE_PATH="$TEST_DIR:$TEST_DIR/space dir:$TEST_ROOT:$BUILD_DIR/src/cmd/builtin"
 export FULL_PATH=$SAFE_PATH:/xxx/bsd:/usr/gnu/bin:/usr/xpg4/bin:$OLD_PATH
 export PATH=$FULL_PATH
 
@@ -157,12 +155,12 @@ function run_api {
     $test_path >$test_name.out 2>$test_name.err
     exit_status=$?
 
-    if [[ -e $TEST_SRC_DIR/$test_name.out ]]
+    if [[ -e $TEST_ROOT/$test_name.out ]]
     then
-        if ! diff -q $TEST_SRC_DIR/$test_name.out $test_name.out >/dev/null
+        if ! diff -q $TEST_ROOT/$test_name.out $test_name.out >/dev/null
         then
             log_error "Stdout for $test_name had unexpected differences:"
-            diff -U3 $TEST_SRC_DIR/$test_name.out $test_name.out >&2
+            diff -U3 $TEST_ROOT/$test_name.out $test_name.out >&2
             exit_status=1
         fi
     elif [[ -s $test_name.out ]]
@@ -172,12 +170,12 @@ function run_api {
             exit_status=1
     fi
 
-    if [[ -e $TEST_SRC_DIR/$test_name.err ]]
+    if [[ -e $TEST_ROOT/$test_name.err ]]
     then
-        if ! diff -q $TEST_SRC_DIR/$test_name.err $test_name.err >/dev/null
+        if ! diff -q $TEST_ROOT/$test_name.err $test_name.err >/dev/null
         then
             log_error "Stderr for $test_name had unexpected differences:"
-            diff -U3 $TEST_SRC_DIR/$test_name.err $test_name.err >&2
+            diff -U3 $TEST_ROOT/$test_name.err $test_name.err >&2
             exit_status=1
         fi
     elif [[ -s $test_name.err ]]
@@ -208,27 +206,27 @@ function run_interactive {
         mkdir $HOME
     fi
 
-    cp $TEST_SRC_DIR/util/interactive.kshrc $HOME/.kshrc
+    cp $TEST_ROOT/util/interactive.kshrc $HOME/.kshrc
 
     # Use pre-populated history file for `hist` command unit test.
     if [[ $test_name == "b_hist.exp" ]]; then
-        cp $TEST_SRC_DIR/util/sh_history $HISTFILE
+        cp $TEST_ROOT/data/sh_history $HISTFILE
     fi
 
     # The use of the "dumb" terminal type is to minimize, and hopefully eliminate completely,
     # terminal control/escape sequences that affect the terminal's behavior. This makes writing
     # robust Expect scripts easier.
     export TERM=dumb
-    expect -n -c "source $TEST_SRC_DIR/util/interactive.expect.rc" -f $test_path \
+    expect -n -c "source $TEST_ROOT/util/interactive.expect.rc" -f $test_path \
         >$test_name.out 2>$test_name.err
     exit_status=$?
 
-    if [[ -e $TEST_SRC_DIR/$test_name.out ]]
+    if [[ -e $TEST_ROOT/$test_name.out ]]
     then
-        if ! diff -q $TEST_SRC_DIR/$test_name.out $test_name.out >/dev/null
+        if ! diff -q $TEST_ROOT/$test_name.out $test_name.out >/dev/null
         then
             log_error "Stdout for $test_name had unexpected differences:"
-            diff -U3 $TEST_SRC_DIR/$test_name.out $test_name.out >&2
+            diff -U3 $TEST_ROOT/$test_name.out $test_name.out >&2
             exit_status=1
         fi
     elif [[ -s $test_name.out ]]
@@ -238,12 +236,12 @@ function run_interactive {
             exit_status=1
     fi
 
-    if [[ -e $TEST_SRC_DIR/$test_name.err ]]
+    if [[ -e $TEST_ROOT/$test_name.err ]]
     then
-        if ! diff -q $TEST_SRC_DIR/$test_name.err $test_name.err >/dev/null
+        if ! diff -q $TEST_ROOT/$test_name.err $test_name.err >/dev/null
         then
             log_error "Stderr for $test_name had unexpected differences:"
-            diff -U3 $TEST_SRC_DIR/$test_name.err $test_name.err >&2
+            diff -U3 $TEST_ROOT/$test_name.err $test_name.err >&2
             exit_status=1
         fi
     elif [[ -s $test_name.err ]]
@@ -372,10 +370,10 @@ else
     # Create the actual unit test script by concatenating the stock preamble and postscript to the
     # unit test. Then run the composed script.
     readonly test_script=$test_name.sh
-    echo "#!$SHELL"                       > $test_script
-    cat $TEST_SRC_DIR/util/preamble.sh   >> $test_script
-    cat $test_path                       >> $test_script
-    cat $TEST_SRC_DIR/util/postscript.sh >> $test_script
+    echo "#!$SHELL"                    > $test_script
+    cat $TEST_ROOT/util/preamble.sh   >> $test_script
+    cat $test_path                    >> $test_script
+    cat $TEST_ROOT/util/postscript.sh >> $test_script
     chmod 755 $test_script
     if [[ $shcomp == false ]]
     then

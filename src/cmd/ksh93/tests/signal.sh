@@ -120,10 +120,10 @@ expected[x.d]="1-main 2-main 3-main SIGINT 3-intr 2-intr 1-0000"
 expected[xt.]="1-main 2-main 3-main SIGINT 3-intr 2-intr 1-intr 1-0000"
 expected[xtd]="1-main 2-main 3-main SIGINT 3-intr 2-intr 1-intr 1-0000"
 
-cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst0 > sigtst0
-cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst1 > sigtst1
-cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst2 > sigtst2
-cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst3 > sigtst3
+cat $TEST_ROOT/util/util.sh $TEST_ROOT/data/sigtst0 > sigtst0
+cat $TEST_ROOT/util/util.sh $TEST_ROOT/data/sigtst1 > sigtst1
+cat $TEST_ROOT/util/util.sh $TEST_ROOT/data/sigtst2 > sigtst2
+cat $TEST_ROOT/util/util.sh $TEST_ROOT/data/sigtst3 > sigtst3
 chmod +x sigtst?
 $SHELL sigtst0 > sigtst.out
 while read ops actual
