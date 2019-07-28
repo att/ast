@@ -81,7 +81,7 @@ all_tests = [
     ['restricted'],
     ['rksh'],
     ['select'],
-    ['sh_match'],
+    ['sh_match', 120],
     ['sigchld', 100],
     ['signal'],
     ['statics'],
@@ -107,17 +107,20 @@ all_tests = [
 
 # Some tests fail for inexplicable reasons on some platforms. In some cases, such as Cygwin, things
 # simply don't work as expected and probably never will due to quirks of the platform. Another
-# example is sunos/solaris has /proc but doesn't support manipulating directory fd's.
+# example is sunos/solaris has /proc but doesn't support manipulating directory fd's. Also, some
+# tests are simply too slow on particular platforms when hosted on a VM.
 tests_to_skip = [
     ['cygwin', 'b_jobs.exp'],
     ['cygwin', 'b_time.exp'],
     ['cygwin', 'b_times.exp'],
     ['cygwin', 'signal'],
+    ['cygwin', 'sh_match'],  # too slow, times out
     ['openbsd', 'b_times.exp'],
     ['sunos', 'vi.exp'],
     ['sunos', 'directoryfd'],
     ['wsl', 'b_time.exp'],
     ['wsl', 'b_times.exp'],
+    ['wsl', 'sh_match'],  # too slow, times out
     # Tests to be skipped because they are known to be broken when compiled by `shcomp`.
     # TODO: Fix these tests or the shcomp code.
     ['shcomp', 'io'],
@@ -155,7 +158,7 @@ foreach testspec : all_tests
         lang_var = 'LANG=en_US.UTF-8'
         test(test_name, ksh93_exe, timeout: timeout, is_parallel: parallel,
             args: [test_driver, test_name],
-            env: [shell_var, lang_var, test_root, ld_library_path, libsample_path])
+            env: [shell_var, lang_var, src_root, test_root, ld_library_path, libsample_path])
 
         # The shcomp variants are only applicable to the non-interactive tests.
         if not test_name.endswith('.exp')
@@ -171,7 +174,7 @@ foreach testspec : all_tests
                 # Run the test after compiling the script with `shcomp`.
                 test(test_name + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
                     args: [ test_driver, 'shcomp', test_name],
-                    env: [shell_var, lang_var, test_root, shcomp_var, ld_library_path,
+                    env: [shell_var, lang_var, src_root, test_root, shcomp_var, ld_library_path,
                           libsample_path])
             endif
         endif

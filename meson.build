@@ -1,5 +1,6 @@
 project('ksh93', 'c', default_options: ['b_lundef=false', 'default_library=static'])
 
+source_dir = meson.current_source_dir()
 cc = meson.get_compiler('c')
 cpu = host_machine.cpu()
 system = host_machine.system()

@@ -411,12 +411,121 @@ function test_nomatch
     [[ $got == "$expect" ]] || log_error 'unset submatches not handled correctly'
 }
 
-# run tests
+# ========
+# This is a regexp to extract pattern to pattern entries from related API unit test source. It emits
+# the patterns in a form this script can easily use; i.e., the two patterns separated by a tab.
+# See the next two test functions.
+p2p_sep=$'\t'
+p2p_re=$'/ tests\\[\\] =/,/NULL, NULL/s/^.*{"\\(.*\\)", "\\(.*\\)"},$/\\1\t\\2/p'
+# Generate a list of files from the source tree of the project. Then generate a file containing some
+# text from those files.
+find "$SRC_ROOT/src" -type f > glob2ere.files
+: > glob2ere.txt
+while read file
+do
+    sort --random-sort $file | head -5 >> glob2ere.txt
+done < glob2ere.files
+# These patterns are known not to be correctly converted to a glob. We still test them but only
+# issue a warning rather than failing the test. See https://github.com/att/ast/issues/1367.
+typeset -A ere2glob_blacklist
+ere2glob_blacklist['^x\!y$']=1
+ere2glob_blacklist['^x|y$']=1
+ere2glob_blacklist['^x\a|b$']=1
+# These patterns are known not to be correctly converted to a ere. We still test them but only
+# issue a warning rather than failing the test. See https://github.com/att/ast/issues/1367.
+typeset -A glob2ere_blacklist
+glob2ere_blacklist['x!y']=1
+glob2ere_blacklist['x|y']=1
+glob2ere_blacklist['~(E)z.?a']=1
+glob2ere_blacklist['x\a|b']=1
+
+# ========
+# This is related to unit test API/string/fmtmatch. The difference is this uses ksh to convert the
+# pattern then uses ksh to verify both patterns match the same lines.
+function test_ere2glob {
+    # Extract the patterns from the API test and verify the equivalence of the two forms.
+    IFS="$p2p_sep"
+    integer i=0
+    sed -ne "$p2p_re" "$SRC_ROOT/src/lib/libast/tests/string/fmtmatch.c" |
+        while read ere glob
+        do
+            let i=i+1
+            # log_info "pattern #$i ere=|$ere|  glob=|$glob|"
+            actual=$(print -f '%P' -- "$ere")
+            [[ "$actual" == "$glob" ]] ||
+                log_error "pattern #$i converting ere |$ere| to glob" "$glob" "$actual"
+
+            : > ere2glob.glob
+            : > ere2glob.ere
+            while read line
+            do
+                [[ "$line" = $glob ]] && print -- "$line" >> ere2glob.glob
+                [[ "$line" =~ $ere ]] && print -- "$line" >> ere2glob.ere
+            done < glob2ere.txt
+
+            if ! cmp -s ere2glob.glob ere2glob.ere
+            then
+                if [[ ${ere2glob_blacklist["$ere"]} == 1 ]]
+                then
+                    log_warning "pattern #$i ere |$ere| and glob |$glob| produce diff output"
+                else
+                    mv ere2glob.glob ere2glob.glob.$i
+                    mv ere2glob.ere ere2glob.ere.$i
+                    log_error "pattern #$i ere |$ere| and glob |$glob| produce diff output" \
+                        "see content of ere2glob.glob.$i" "see content of ere2glob.ere.$i"
+                fi
+            fi
+        done
+}
+
+# ========
+# This is related to unit test API/string/fmtre. The difference is this uses ksh to convert the
+# pattern then uses ksh to verify both patterns match the same lines.
+function test_glob2ere {
+    # Extract the patterns from the API test and verify the equivalence of the two forms.
+    IFS="$p2p_sep"
+    integer i=0
+    sed -ne "$p2p_re" "$SRC_ROOT/src/lib/libast/tests/string/fmtre.c" |
+        while read glob ere
+        do
+            let i=i+1
+            # log_info "pattern #$i ere=|$ere|  glob=|$glob|"
+            actual=$(print -f '%R' -- "$glob")
+            [[ "$actual" == "$ere" ]] ||
+                log_error "pattern #$i converting glob |$glob| to ere" "$ere" "$actual"
+
+            : > glob2ere.glob
+            : > glob2ere.ere
+            while read line
+            do
+                [[ "$line" = $glob ]] && print -- "$line" >> glob2ere.glob
+                [[ "$line" =~ $ere ]] && print -- "$line" >> glob2ere.ere
+            done < glob2ere.txt
+
+            if ! cmp -s glob2ere.glob glob2ere.ere
+            then
+                if [[ ${glob2ere_blacklist["$glob"]} == 1 ]]
+                then
+                    log_warning "pattern #$i ere |$ere| and glob |$glob| produce diff output"
+                else
+                    mv glob2ere.glob glob2ere.glob.$i
+                    mv glob2ere.ere glob2ere.ere.$i
+                    log_error "pattern #$i ere |$ere| and glob |$glob| produce diff output" \
+                        "see content of glob2ere.glob.$i" "see content of glob2ere.ere.$i"
+                fi
+            fi
+        done
+}
+
+# ========
+# Run the tests.
 test_xmlfragment1
 test_testop_v1
 test_testop_v2
 test_num_elements1
 test_nomatch
+test_ere2glob
+test_glob2ere
 
 set +u
 x=1234

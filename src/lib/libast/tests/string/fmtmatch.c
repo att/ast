@@ -1,4 +1,5 @@
 // See also src/lib/libast/tests/string/fmtre.c.
+// See also src/lib/cmd/ksh93/tests/sh_match.sh.
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <string.h>
@@ -7,7 +8,7 @@
 #include "terror.h"
 
 static const struct StringToStringTest tests[] = {
-    {"", "**"},
+    {"", "**"},  // empty ERE pattern should yield a weird but equivalent and valid glob
     {".*", "*"},
     {"^(xyz)*$", "*(xyz)"},
     {"^(x)*?$", "*-(x)"},
@@ -48,7 +49,7 @@ static const struct StringToStringTest tests[] = {
     {"^(x|y)$", "@(x|y)"},
 
     // ERE patterns that cannot be translated to ksh patterns.
-    {"^x..*|\\(|(b.$", NULL},  // {"^x..*|\\(|(b.$", "x?*|\\(|b?"},
+    {"^x..*|\\(|(b.$", NULL},  // "x?*|\\(|b?"
     {"^x{$", NULL},            // "x{"
     {"^{$", NULL},             // "{"
     {"^{}$", NULL},            // "{}"

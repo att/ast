@@ -1,4 +1,5 @@
 // See also src/lib/libast/tests/string/fmtmatch.c.
+// See also src/lib/cmd/ksh93/tests/sh_match.sh.
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <string.h>
