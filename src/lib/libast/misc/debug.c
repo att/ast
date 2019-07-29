@@ -27,9 +27,10 @@
 #include "tmx.h"
 
 // This is the maximum number of stack frames we'll output from dump_backtrace(). It is also the
-// default if the caller specifies zero for the number of frames to output. It's 21 rather than 20
-// because we want to ignore the frame for the `dump_backtrace()` and still dump 20 frames.
-#define MAX_FRAMES 21
+// default if the caller specifies zero for the number of frames to output. It's 22 rather than 20
+// because we want to ignore the frame for the `dump_backtrace()` and still dump 20 frames. Also,
+// some backtrace() implementations include themselves as the first frame in the call stack.
+#define MAX_FRAMES 22
 
 // It is useful for some API unit tests to be able to make _dprintf() output deterministic with
 // respect to portions of each log line it writes that would otherwise vary with each invocation
@@ -330,38 +331,44 @@ const char *addr2info(void *addr) {
 // value greater than zero but less than `MAX_FRAMES`.
 void dump_backtrace(int max_frames) {
     int oerrno = errno;
-
-    if (max_frames > 0 && max_frames < MAX_FRAMES) {
-        max_frames += 1;  // add room for this function's frame
-    } else {
-        max_frames = MAX_FRAMES;
-    }
-    if (_dprintf_debug) max_frames = 3;  // more results in symbols that vary across systems
-
     void *callstack[MAX_FRAMES];
-    int n_frames = backtrace(callstack, max_frames);
-    // On macOS the top frame has an address of 0x1. Ignore it.
-    if (callstack[n_frames - 1] == (void *)0x1) --n_frames;
-
+    int n_frames = backtrace(callstack, MAX_FRAMES);
     char **details = addrs2info(n_frames, callstack);
     char text[512];
     int n;
-
     long pid = _debug_getpid();
+
     n = snprintf(text, sizeof(text), "### %ld Function backtrace:\n", pid);
     write(2, text, n);
 
+    // Some backtrace() implementations include that function as the first entry in the call stack;
+    // e.g., OpenBSD. But most implementations do not and instead have this function as the first
+    // entry in the call stack.
+    //
+    // cppcheck-suppress arithOperationsOnVoidPointer
+    int bias = callstack[0] >= (void *)backtrace && callstack[0] < (void *)backtrace + 0x20 ? 1 : 0;
+    if (_dprintf_debug) {
+        // Only the bottom two frames are consistent across systems. So limit our output to those
+        // two frames when testing this code.
+        n_frames = 3;
+    } else {
+        int max = max_frames > 0 ? max_frames : MAX_FRAMES - 2;
+        if (max < n_frames) n_frames = max + 1;
+    }
     for (int i = 1; i < n_frames; i++) {
+        // On macOS the top frame has an address of 0x1. Ignore it.
+        if (callstack[i] == (void *)0x1) break;
+
         if (details[i]) {
             n = snprintf(text, sizeof(text), "%-3d %s\n", i, details[i]);
         } else {
             Dl_info info;
-            dladdr(callstack[i], &info);
+            dladdr(callstack[i + bias], &info);
             if (_dprintf_debug) {
                 n = snprintf(text, sizeof(text), "%-3d %s + 0\n", i, info.dli_sname);
             } else {
                 n = snprintf(text, sizeof(text), "%-3d %s + %td\n", i, info.dli_sname,
-                             (char *)callstack[i] - (char *)info.dli_saddr);
+                             (char *)callstack[i + bias] - (char *)info.dli_saddr);
             }
         }
         write(2, text, n);
