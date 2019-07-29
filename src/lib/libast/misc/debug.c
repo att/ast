@@ -11,6 +11,7 @@
 #include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -343,33 +344,34 @@ void dump_backtrace(int max_frames) {
 
     // Some backtrace() implementations include that function as the first entry in the call stack;
     // e.g., OpenBSD. But most implementations do not and instead have this function as the first
-    // entry in the call stack.
-    //
-    // cppcheck-suppress arithOperationsOnVoidPointer
-    int bias = callstack[0] >= (void *)backtrace && callstack[0] < (void *)backtrace + 0x20 ? 1 : 0;
-    if (_dprintf_debug) {
+    // entry in the call stack. Enabling ASAN can also affect the results.
+    int bias = callstack[0] >= (char *)backtrace && callstack[0] < (char *)backtrace + 0x20 ? 1 : 0;
+    if (_dprintf_debug) {  // we're running via a unit test
         // Only the bottom two frames are consistent across systems. So limit our output to those
         // two frames when testing this code.
         n_frames = 3;
+        // When built with ASAN enabled on GNU there is a bogus NULL frame at the bottom of the
+        // stack. If we detect that skip that frame.
+        Dl_info info;
+        dladdr(callstack[0], &info);
+        if (info.dli_sname == NULL) bias += 1;
     } else {
         int max = max_frames > 0 ? max_frames : MAX_FRAMES - 2;
         if (max < n_frames) n_frames = max + 1;
     }
+
     for (int i = 1; i < n_frames; i++) {
-        // On macOS the top frame has an address of 0x1. Ignore it.
+        // On macOS the top frame has an address of 0x1. Ignore it and stop.
         if (callstack[i] == (void *)0x1) break;
 
-        if (details[i]) {
-            n = snprintf(text, sizeof(text), "%-3d %s\n", i, details[i]);
+        if (details[i + bias]) {
+            n = snprintf(text, sizeof(text), "%-3d %s\n", i, details[i + bias]);
         } else {
             Dl_info info;
             dladdr(callstack[i + bias], &info);
-            if (_dprintf_debug) {
-                n = snprintf(text, sizeof(text), "%-3d %s + 0\n", i, info.dli_sname);
-            } else {
-                n = snprintf(text, sizeof(text), "%-3d %s + %td\n", i, info.dli_sname,
-                             (char *)callstack[i + bias] - (char *)info.dli_saddr);
-            }
+            ptrdiff_t offset =
+                _dprintf_debug ? 0 : (char *)callstack[i + bias] - (char *)info.dli_saddr;
+            n = snprintf(text, sizeof(text), "%-3d %s + %td\n", i, info.dli_sname, offset);
         }
         write(2, text, n);
     }
