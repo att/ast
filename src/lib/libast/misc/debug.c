@@ -254,7 +254,7 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
     argv[0] = _pth_atos;
     argv[1] = "-p";
     static char pid_str[20];
-    snprintf(pid_str, sizeof(pid_str), "%d", _debug_getpid());
+    (void)snprintf(pid_str, sizeof(pid_str), "%d", _debug_getpid());
     argv[2] = pid_str;
     for (int i = 0; i < n_frames; ++i) {
         char *addr = argv_addrs + i * 20;
@@ -305,7 +305,7 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
     UNUSED(n_frames);
     UNUSED(addrs);
 
-    snprintf(info, sizeof(info), "-p %d", _debug_getpid());
+    (void)snprintf(info, sizeof(info), "-p %d", _debug_getpid());
     for (int i = 0; i < n_frames; ++i) {
         char *addr = argv_addrs + i * 20;
         (void)snprintf(addr, 20, " 0x%" PRIXPTR "", _debug_addr(i, addrs));
@@ -336,16 +336,19 @@ void dump_backtrace(int max_frames) {
     int n_frames = backtrace(callstack, MAX_FRAMES);
     char **details = addrs2info(n_frames, callstack);
     char text[512];
-    int n;
     long pid = _debug_getpid();
 
-    n = snprintf(text, sizeof(text), "### %ld Function backtrace:\n", pid);
-    write(2, text, n);
+    (void)snprintf(text, sizeof(text), "### %ld Function backtrace:\n", pid);
+    write(2, text, strlen(text));
 
     // Some backtrace() implementations include that function as the first entry in the call stack;
     // e.g., OpenBSD. But most implementations do not and instead have this function as the first
     // entry in the call stack. Enabling ASAN can also affect the results.
-    int bias = callstack[0] >= (char *)backtrace && callstack[0] < (char *)backtrace + 0x20 ? 1 : 0;
+    int bias = 0;
+    if ((char *)callstack[0] >= (char *)backtrace &&
+        (char *)callstack[0] < (char *)backtrace + 0x20) {
+        bias = 1;
+    }
     if (_dprintf_debug) {  // we're running via a unit test
         // Only the bottom two frames are consistent across systems. So limit our output to those
         // two frames when testing this code.
@@ -365,15 +368,15 @@ void dump_backtrace(int max_frames) {
         if (callstack[i] == (void *)0x1) break;
 
         if (details[i + bias]) {
-            n = snprintf(text, sizeof(text), "%-3d %s\n", i, details[i + bias]);
+            (void)snprintf(text, sizeof(text), "%-3d %s\n", i, details[i + bias]);
         } else {
             Dl_info info;
             dladdr(callstack[i + bias], &info);
             ptrdiff_t offset =
                 _dprintf_debug ? 0 : (char *)callstack[i + bias] - (char *)info.dli_saddr;
-            n = snprintf(text, sizeof(text), "%-3d %s + %td\n", i, info.dli_sname, offset);
+            (void)snprintf(text, sizeof(text), "%-3d %s + %td\n", i, info.dli_sname, offset);
         }
-        write(2, text, n);
+        write(2, text, strlen(text));
     }
 
     errno = oerrno;
