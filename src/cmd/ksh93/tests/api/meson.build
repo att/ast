@@ -16,6 +16,12 @@ tests_to_skip = [
     ['sunos', 'ksh_debug'],
 ]
 
+# ASAN has probably installed a SIGSEGV handler. The `ksh_debug` API test also does so. The two may
+# not be compatible. So avoid false negative test failures when ASAN is enabled.
+if get_option('ASAN') == true
+    tests_to_skip += [['*', 'ksh_debug']]
+endif
+
 foreach testspec : api_tests
     test_name = testspec[0]
     timeout = (testspec.length() == 2) ? testspec[1] : api_default_timeout
@@ -28,7 +34,7 @@ foreach testspec : api_tests
 
     skip_test = false
     foreach skip : tests_to_skip
-        if system == skip[0] and test_name == skip[1]
+        if ('*' == skip[0] or system == skip[0]) and test_name == skip[1]
             warning('skipping ' + test_name + ' on ' + system)
             skip_test = true
             # break  # Not until meson 0.49
