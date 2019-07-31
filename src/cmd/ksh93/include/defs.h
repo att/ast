@@ -252,7 +252,6 @@ extern int sh_mathstd(const char *);
 extern void sh_printopts(Shell_t *, Shopt_t, int, Shopt_t *);
 extern int sh_readline(Shell_t *, char **, void *, volatile int, int, ssize_t, long);
 extern Sfio_t *sh_sfeval(const char **);
-extern char *sh_fmtj(const char *);
 extern char *sh_fmtstr(const char *, int);
 extern void sh_setmatch(Shell_t *, const char *, int, int, int[], int);
 extern Dt_t *sh_subaliastree(Shell_t *, int);

@@ -403,8 +403,6 @@ char *sh_fmtstr(const char *string, int quote) {
 
 char *sh_fmtq(const char *string) { return sh_fmtstr(string, '\''); }
 
-char *sh_fmtj(const char *string) { return sh_fmtstr(string, '"'); }
-
 //
 // Print <str> quoting chars so that it can be read by the shell. Puts null terminated result on
 // stack, but doesn't freeze it. Flags is a bitmask of SFFMT_* flags. Fold>0 prints raw newlines and

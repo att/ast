@@ -589,7 +589,7 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
             if (!json) {
                 sfprintf(out, "[%s]=", sh_fmtstr(fmtq, '['));
             } else if (associative) {
-                sfprintf(out, "%s: ", sh_fmtj(fmtq));
+                sfprintf(out, "%s: ", sh_fmtstr(fmtq, '"'));
             }
         }
         if (ap && !is_associative(ap)) scan = ap->flags & ARRAY_SCAN;
@@ -639,7 +639,7 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
                     sfprintf(shp->strbuf, "%.*Lg", sizeof(d), d);
                     fmtq = sfstruse(shp->strbuf);
                 }
-            } else if (!(fmtq = sh_fmtj(ep))) {
+            } else if (!(fmtq = sh_fmtstr(ep, '"'))) {
                 fmtq = "\"\"";
             }
         } else if (!ep && !mp && nv_isarray(np)) {
