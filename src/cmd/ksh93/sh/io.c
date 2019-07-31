@@ -1280,7 +1280,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     char *cp;
                     Sfoff_t off = sftell(sp);
                     sfset(sp, SF_MALLOC, 0);
-                    cp = sfsetbuf(sp, (char *)sp, 0);
+                    cp = sfgetbuf(sp);
                     sfset(sp, SF_MALLOC, 1);
                     r = (int)(sfseek(sp, (Sfoff_t)0, SEEK_END) - off);
                     sfseek(sp, off, SEEK_SET);

@@ -85,7 +85,7 @@ void main_varargs(int argc, char **argv, ...) {
     CALL(sfsscanf(0, 0));
     CALL(sfseek(0, 0, 0));
     CALL(sfset(0, 0, 0));
-    CALL(sfsetbuf(0, 0, 0));
+    CALL(sfsetbuf(NULL, NULL, 0));
     CALL(sfsetfd(0, 0));
     CALL(sfsize(0));
     CALL(sfsk(0, 0, 0, 0));
