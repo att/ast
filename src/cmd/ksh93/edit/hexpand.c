@@ -143,10 +143,9 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
     Histloc_t hl;                             // history location
     static Namval_t *np = NULL;               // histchars variable
     static struct subst sb = {{NULL, NULL}};  // substition strings
-    static Sfio_t *wm = NULL;                 // word match from !?string? event designator
+    static Sfio_t *wm;                        // word match from !?string? event designator
 
-    if (!wm) wm = sfopen(NULL, NULL, "swr");
-
+    wm = sfopen(NULL, NULL, "swr");
     hc[0] = '!';
     hc[1] = '^';
     hc[2] = 0;
@@ -522,7 +521,13 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
 
                 if (c == 's') {
                     // Preset old with match from !?string?.
-                    if (!sb.str[0] && wm) sb.str[0] = strdup(sfgetbuf(wm));
+                    if (!sb.str[0] && wm) {
+                        char *sbuf = sfgetbuf(wm);
+                        int n = sftell(wm);
+                        sb.str[0] = malloc(n + 1);
+                        sb.str[0][n] = '\0';
+                        memcpy(sb.str[0], sbuf, n);
+                    }
                     cp = parse_subst(shp, cp, &sb);
                 }
 
