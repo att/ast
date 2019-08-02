@@ -853,7 +853,7 @@ char *hist_word(char *string, int size, int word) {
     History_t *hp = hist_ptr;
 
     if (!hp) return NULL;
-    hist_copy(string, size, (int)hp->histind - 1, -1);
+    hist_copy(string, size, hp->histind - 1, -1);
     for (; (c = *cp); cp++) {
         c = isspace(c);
         if (c && flag) {
@@ -866,7 +866,12 @@ char *hist_word(char *string, int size, int word) {
         }
     }
     *cp = 0;
-    if (s1 != string) memcpy(string, s1, strlen(s1) + 1);
+
+    // These strings can overlap if the text preceding the word we want to
+    // return has a length less than or equal to the length of the word to be
+    // returned. Therefore memmove() must be used. See https://github.com/att/ast/issues/1370.
+    if (s1 != string) memmove(string, s1, strlen(s1) + 1);
+
     return string;
 }
 
