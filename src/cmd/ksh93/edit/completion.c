@@ -26,6 +26,7 @@
 #include <limits.h>
 #include <stdbool.h>
 #include <string.h>
+#include <wchar.h>
 
 #include "argnod.h"
 #include "ast.h"
@@ -254,13 +255,13 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
     {
         // Adjust cur.
         int c;
-        genchar *cp;
-        cp = (genchar *)outbuff + *cur;
+        wchar_t *cp;
+        cp = (wchar_t *)outbuff + *cur;
         c = *cp;
         *cp = 0;
-        *cur = ed_external((genchar *)outbuff, (char *)stkptr(shp->stk, 0));
+        *cur = ed_external((wchar_t *)outbuff, (char *)stkptr(shp->stk, 0));
         *cp = c;
-        *eol = ed_external((genchar *)outbuff, outbuff);
+        *eol = ed_external((wchar_t *)outbuff, outbuff);
     }
 
     out = outbuff + *cur + (sh_isoption(shp, SH_VI) != 0);
@@ -490,7 +491,7 @@ done:
         outbuff[*cur] = c;
         *cur = n;
         outbuff[*eol + 1] = 0;
-        *eol = ed_internal(outbuff, (genchar *)outbuff);
+        *eol = ed_internal(outbuff, (wchar_t *)outbuff);
     }
 
     return rval;
@@ -503,7 +504,7 @@ done:
 int ed_macro(Edit_t *ep, int i) {
     char *out;
     Namval_t *np;
-    genchar buff[LOOKAHEAD + 1];
+    wchar_t buff[LOOKAHEAD + 1];
 
     if (i != '@') ep->e_macro[1] = i;
     // Undocumented feature, macros of the form <ESC>[c evoke alias __c.

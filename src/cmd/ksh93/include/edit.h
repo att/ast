@@ -34,7 +34,6 @@
 #define STRIP 0377
 #define LOOKAHEAD 80
 
-typedef wchar_t genchar;
 #define CHARSIZE _ast_sizeof_wchar_t
 
 #define TABSIZE 8
@@ -91,13 +90,13 @@ struct edit {
     char *e_outbase;            // pointer to start of output buffer
     char *e_outptr;             // pointer to position in output buffer
     char *e_outlast;            // pointer to end of output buffer
-    genchar *e_inbuf;           // pointer to input buffer
+    wchar_t *e_inbuf;           // pointer to input buffer
     char *e_prompt;             // pointer to buffer containing the prompt
-    genchar *e_ubuf;            // pointer to the undo buffer
-    genchar *e_killbuf;         // pointer to delete buffer
+    wchar_t *e_ubuf;            // pointer to the undo buffer
+    wchar_t *e_killbuf;         // pointer to delete buffer
     char e_search[SEARCHSIZE];  // search string
-    genchar *e_Ubuf;            // temporary workspace buffer
-    genchar *e_physbuf;         // temporary workspace buffer
+    wchar_t *e_Ubuf;            // temporary workspace buffer
+    wchar_t *e_physbuf;         // temporary workspace buffer
     int e_lbuf[LOOKAHEAD];      // pointer to look-ahead buffer
     int e_tabcount;
     ino_t e_tty_ino;
@@ -106,7 +105,7 @@ struct edit {
     int e_curchar;
     int e_cursize;
     int *e_globals;            // global variables
-    genchar *e_window;         // display window  image
+    wchar_t *e_window;         // display window  image
     char e_inmacro;            // processing macro expansion
     char e_vi_insert[2];       // for sh_keytrap
     int32_t e_col;             // for sh_keytrap
@@ -172,24 +171,24 @@ extern void ed_ringbell(void);
 extern void ed_setup(Edit_t *, int, int);
 extern void ed_flush(Edit_t *);
 extern int ed_getchar(Edit_t *, int);
-extern int ed_virt_to_phys(Edit_t *, genchar *, genchar *, int, int, int);
+extern int ed_virt_to_phys(Edit_t *, wchar_t *, wchar_t *, int, int, int);
 extern int ed_window(void);
 extern void ed_ungetchar(Edit_t *, int);
 extern int ed_viread(void *, int, char *, int, int);
 extern int ed_read(void *, int, char *, int, int);
 extern int ed_emacsread(void *, int, char *, int, int);
-extern Edpos_t ed_curpos(Edit_t *, genchar *, int, int, Edpos_t);
-extern int ed_setcursor(Edit_t *, genchar *, int, int, int);
+extern Edpos_t ed_curpos(Edit_t *, wchar_t *, int, int, Edpos_t);
+extern int ed_setcursor(Edit_t *, wchar_t *, int, int, int);
 extern char **ed_pcomplete(struct Complete *, const char *, const char *, int);
 extern int ed_macro(Edit_t *, int);
 extern int ed_expand(Edit_t *, char[], int *, int *, int, int);
 extern int ed_fulledit(Edit_t *);
 extern Edit_t *ed_open(Shell_t *);
-extern int ed_internal(const char *, genchar *);
-extern int ed_external(const genchar *, char *);
-extern void ed_gencpy(genchar *, const genchar *);
-extern void ed_genncpy(genchar *, const genchar *, int);
-extern int ed_genlen(const genchar *);
+extern int ed_internal(const char *, wchar_t *);
+extern int ed_external(const wchar_t *, char *);
+extern void ed_gencpy(wchar_t *, const wchar_t *);
+extern void ed_genncpy(wchar_t *, const wchar_t *, int);
+extern int ed_genlen(const wchar_t *);
 extern int ed_histgen(Edit_t *, const char *);
 extern void ed_histlist(Edit_t *, int);
 

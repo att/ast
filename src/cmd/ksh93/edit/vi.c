@@ -71,7 +71,7 @@ typedef struct _vi_ {
     char repeat_set;
     char nonewline;
     int findchar;  // last find char
-    genchar *lastline;
+    wchar_t *lastline;
     int first_wind;    // first column of window
     int last_wind;     // last column in window
     int lastmotion;    // last motion
@@ -85,8 +85,8 @@ typedef struct _vi_ {
     int lastrepeat;    // last repeat count for motion cmds
     int u_column;      // undo current column
     int U_saved;       // original virtual saved
-    genchar *U_space;  // used for U command
-    genchar *u_space;  // used for u command
+    wchar_t *U_space;  // used for U command
+    wchar_t *u_space;  // used for u command
     int bigvi;
     Edit_t *ed;  // pointer to edit data
 } Vi_t;
@@ -164,10 +164,10 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
     int i;  // general variable
     Vi_t *vp = ed->e_vi;
     char prompt[PRSIZE + 2];        // prompt
-    genchar Physical[2 * MAXLINE];  // physical image
-    genchar Ubuf[MAXLINE];          // used for U command
-    genchar ubuf[MAXLINE];          // used for u command
-    genchar Window[MAXLINE];        // window image
+    wchar_t Physical[2 * MAXLINE];  // physical image
+    wchar_t Ubuf[MAXLINE];          // used for U command
+    wchar_t ubuf[MAXLINE];          // used for u command
+    wchar_t Window[MAXLINE];        // window image
     int Globals[9];                 // local global variables
 
     if (!vp) {
@@ -189,8 +189,8 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
     i = last_virt - 1;
 
     // Initialize some things.
-    virtual = (genchar *)shbuf;
-    virtual = (genchar *)roundof((ptrdiff_t) virtual, sizeof(genchar));
+    virtual = (wchar_t *)shbuf;
+    virtual = (wchar_t *)roundof((ptrdiff_t) virtual, sizeof(wchar_t));
     shbuf[i + 1] = 0;
     i = ed_internal(shbuf, virtual) - 1;
     globals = Globals;
@@ -335,8 +335,8 @@ static_fn void backword(Vi_t *vp, int nwords, int cmd) {
 static_fn int cntlmode(Vi_t *vp) {
     int c;
     int i;
-    genchar tmp_u_space[MAXLINE];  // temporary u_space
-    genchar *real_u_space;         // points to real u_space
+    wchar_t tmp_u_space[MAXLINE];  // temporary u_space
+    wchar_t *real_u_space;         // points to real u_space
     int tmp_u_column = INVALID;    // temporary u_column
     int was_inmacro;
 
@@ -580,7 +580,7 @@ static_fn int cntlmode(Vi_t *vp) {
             // FALLTHRU
             case '#': {  // insert(delete) # to (no)comment command
                 if (cur_virt != INVALID) {
-                    genchar *p = &virtual[last_virt + 1];
+                    wchar_t *p = &virtual[last_virt + 1];
                     *p = 0;
                     // See whether first char is comment char.
                     c = (virtual[0] == '#');
@@ -672,7 +672,7 @@ static_fn void cursor(Vi_t *vp, int x) {
 //
 static_fn void cdelete(Vi_t *vp, int nchars, int mode) {
     int i;
-    genchar *cp;
+    wchar_t *cp;
 
     if (cur_virt < first_virt) {
         ed_ringbell();
@@ -859,7 +859,7 @@ static_fn void vigetline(Vi_t *vp, int mode) {
     int c;
     int tmp;
     int max_virt = 0, last_save = 0;
-    genchar saveline[MAXLINE];
+    wchar_t saveline[MAXLINE];
     vp->addnl = 1;
 
     if (mode == ESC) {
@@ -1484,7 +1484,7 @@ static_fn void replace(Vi_t *vp, int c, int increment) {
 //
 static_fn void restore_v(Vi_t *vp) {
     int tmpcol;
-    genchar tmpspace[MAXLINE];
+    wchar_t tmpspace[MAXLINE];
 
     if (vp->u_column == INVALID - 1) {
         // Never saved anything.
@@ -1672,9 +1672,9 @@ static_fn void sync_cursor(Vi_t *vp) {
 //
 static_fn int textmod(Vi_t *vp, int c, int mode) {
     int i;
-    genchar *p = vp->lastline;
+    wchar_t *p = vp->lastline;
     int trepeat = vp->repeat;
-    genchar *savep;
+    wchar_t *savep;
     int ch;
 
     if (mode && (fold(vp->lastmotion) == 'F' || fold(vp->lastmotion) == 'T')) vp->lastmotion = ';';
@@ -1747,9 +1747,9 @@ addin:
         case '_': {  // append last argument of prev command
             save_v(vp);
             {
-                genchar tmpbuf[MAXLINE];
+                wchar_t tmpbuf[MAXLINE];
                 if (vp->repeat_set == 0) vp->repeat = -1;
-                p = (genchar *)hist_word((char *)tmpbuf, MAXLINE, vp->repeat);
+                p = (wchar_t *)hist_word((char *)tmpbuf, MAXLINE, vp->repeat);
                 if (!p) {
                     ed_ringbell();
                     break;

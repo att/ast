@@ -62,6 +62,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <wchar.h>
 
 #include "ast.h"
 #include "defs.h"
@@ -83,8 +84,8 @@ static int _isword(int);
 #define digit(c) ((c & ~STRIP) == 0 && isdigit(c))
 
 typedef struct _emacs_ {
-    genchar *screen;  // pointer to window buffer
-    genchar *cursor;  // Cursor in real screen
+    wchar_t *screen;  // pointer to window buffer
+    wchar_t *cursor;  // Cursor in real screen
     int mark;
     int in_mult;
     char cr_ok;
@@ -145,9 +146,9 @@ typedef enum {
 } Draw_t;
 
 static void draw(Emacs_t *, Draw_t);
-static int escape(Emacs_t *, genchar *, int);
+static int escape(Emacs_t *, wchar_t *, int);
 static void putstring(Emacs_t *, char *);
-static void search(Emacs_t *, genchar *, int);
+static void search(Emacs_t *, wchar_t *, int);
 static void setcursor(Emacs_t *, int, int);
 static void show_info(Emacs_t *, const char *);
 static void xcommands(Emacs_t *, int);
@@ -156,14 +157,14 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
     Edit_t *ed = context;
     int c;
     int i;
-    genchar *out;
+    wchar_t *out;
     int count;
     Emacs_t *ep = ed->e_emacs;
     int adjust, oadjust;
     char backslash;
-    genchar *kptr;
+    wchar_t *kptr;
     char prompt[PRSIZE];
-    genchar Screen[MAXLINE];
+    wchar_t Screen[MAXLINE];
 
     memset(Screen, 0, sizeof(Screen));
     if (!ep) {
@@ -182,7 +183,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
 
     // This mess in case the read system call fails.
     ed_setup(ep->ed, fd, reedit);
-    out = (genchar *)roundof((ptrdiff_t)buff, sizeof(genchar));
+    out = (wchar_t *)roundof((ptrdiff_t)buff, sizeof(wchar_t));
     if (reedit) ed_internal(buff, out);
     if (!kstack) {
         kstack = malloc(CHARSIZE * MAXLINE);
@@ -616,9 +617,9 @@ process:
 }
 
 static void show_info(Emacs_t *ep, const char *str) {
-    genchar *out = drawbuff;
+    wchar_t *out = drawbuff;
     int c;
-    genchar string[LBUF];
+    wchar_t string[LBUF];
     int sav_cur = cur;
 
     // Save current line.
@@ -641,7 +642,7 @@ static void putstring(Emacs_t *ep, char *sp) {
     while ((c = *sp++)) putchar(ep->ed, c);
 }
 
-static int escape(Emacs_t *ep, genchar *out, int count) {
+static int escape(Emacs_t *ep, wchar_t *out, int count) {
     int i, value;
     int digit, ch;
 
@@ -761,7 +762,7 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
         }
         case '_':
         case '.': {
-            genchar name[MAXLINE];
+            wchar_t name[MAXLINE];
             char buf[MAXLINE];
             char *ptr;
             ptr = hist_word(buf, MAXLINE, (count ? count : -1));
@@ -878,8 +879,8 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
                         (cur < (SEARCHSIZE - 2) || ep->prevdirection == -2)) {
                         if (ep->lastdraw == APPEND && ep->prevdirection != -2) {
                             out[cur] = 0;
-                            gencpy((genchar *)lstring + 1, out);
-                            ed_external((genchar *)lstring + 1, lstring + 1);
+                            gencpy((wchar_t *)lstring + 1, out);
+                            ed_external((wchar_t *)lstring + 1, lstring + 1);
                             *lstring = '^';
                             ep->prevdirection = -2;
                         }
@@ -1002,10 +1003,10 @@ static void xcommands(Emacs_t *ep, int count) {
     }
 }
 
-static void search(Emacs_t *ep, genchar *out, int direction) {
+static void search(Emacs_t *ep, wchar_t *out, int direction) {
     int i, sl;
-    genchar str_buff[LBUF];
-    genchar *string = drawbuff;
+    wchar_t str_buff[LBUF];
+    wchar_t *string = drawbuff;
     int sav_cur = cur;  // save current line
 
     genncpy(str_buff, string, sizeof(str_buff) / sizeof(*str_buff));
@@ -1091,13 +1092,13 @@ static void draw(Emacs_t *ep, Draw_t option) {
 #define BOTH '*'
 #define UPPER '>'
 
-    genchar *sptr;                 // pointer within screen
-    genchar nscreen[2 * MAXLINE];  // new entire screen
-    genchar *ncursor;              // new cursor
-    genchar *nptr;                 // pointer to New screen
+    wchar_t *sptr;                 // pointer within screen
+    wchar_t nscreen[2 * MAXLINE];  // new entire screen
+    wchar_t *ncursor;              // new cursor
+    wchar_t *nptr;                 // pointer to New screen
     char longline;                 // line overflow
-    genchar *logcursor;
-    genchar *nscend;  // end of logical screen
+    wchar_t *logcursor;
+    wchar_t *nscend;  // end of logical screen
     int i;
 
     nptr = nscreen;
