@@ -57,10 +57,11 @@ IFS=',' read -S a b c <<<'foo,"""title"" data",bar'
 #-u fd Read from file descriptor number fd instead of standard input. If fd is p, the co-process
 # input file descriptor is used. The default value is 0.
 echo bar > $TEST_DIR/bar
-exec 9< $TEST_DIR/bar
-read -u9 foo
+exec 7< $TEST_DIR/bar
+read -u7 foo
 [[ $foo = "bar" ]] || log_error "read -u does not work"
 unset foo
+exec 7<&-
 
 # -u without arguments should show an error
 actual=$(read -u 2>&1)

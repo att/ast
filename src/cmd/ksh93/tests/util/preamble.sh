@@ -84,13 +84,30 @@ alias log_error='log_error $LINENO'
 exec 9<>fifo9
 exec 8<>fifo8
 function empty_fifos {
+    # We used to do something like this:
+    #
+    #     read -u8 -t0.01 _x && { log_warning ...
+    #
+    # The problem is that tiny timeouts aren't reliable and cause flakey test behavior. Usually in
+    # the form of the read hanging thus causing a test timeout. That is obviously a bug in its own
+    # right but we don't want that bug to cause flakey failures of tests that aren't explicitly
+    # testing `read -t` behavior.
+    typeset _line_num=$1
     typeset _x
-    read -u9 -t0.01 _x && {
-        'log_warning' $1 "fifo9 unexpectedly had data: '$_x'"
-    }
-    read -u8 -t0.01 _x && {
-        'log_warning' $1 "fifo9 unexpectedly had data: '$_x'"
-    }
+
+    print -u8 fifo8
+    while read -u8 _x  # try to empty the fifo
+    do
+        [[ $_x == fifo8 ]] && break
+        'log_error' $_line_num "fifo8 unexpectedly had data" "" "$_x"
+    done
+
+    print -u9 fifo9
+    while read -u9 _x  # try to empty the fifo
+    do
+        [[ $_x == fifo9 ]] && break
+        'log_error' $_line_num "fifo9 unexpectedly had data" "" "$_x"
+    done
 }
 alias empty_fifos='empty_fifos $LINENO'
 
