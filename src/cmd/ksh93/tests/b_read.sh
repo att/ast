@@ -137,21 +137,26 @@ expect=d
 actual="$b"
 [[ $actual == $expect ]] || log_error "read -N1 here-document failed" "$expect" "$actual"
 
-typeset -F3 start_x=SECONDS total_t delay=0.02
-typeset reps=50 leeway=5
-sleep $(( 2 * leeway * reps * delay )) |
-for (( i=0 ; i < reps ; i++ ))
-do
-    read -N1 -t $delay
-done
-
-(( total_t = SECONDS - start_x ))
-if (( total_t > leeway * reps * delay ))
+# This test is flakey under Cygwin. The actual execution time is sometimes double what is allowed.
+# See https://github.com/att/ast/issues/1289.
+# TODO: Figure out how to make this behavior reliable on Cygwin.
+if [[ $OS_NAME != cygwin* ]]
 then
-    log_error "read -t in pipe taking $total_t secs - $(( reps * delay )) minimum - too long"
-elif (( total_t < reps * delay ))
-then
-    log_error "read -t in pipe taking $total_t secs - $(( reps * delay )) minimum - too fast"
+    typeset -F3 start_x=SECONDS total_t delay=0.02
+    typeset reps=50 leeway=5
+    sleep $(( 2 * leeway * reps * delay )) |
+        for (( i=0 ; i < reps ; i++ ))
+        do
+            read -N1 -t $delay
+        done
+    (( total_t = SECONDS - start_x ))
+    if (( total_t > leeway * reps * delay ))
+    then
+        log_error "read -t in pipe taking $total_t secs - $(( reps * delay )) minimum - too long"
+    elif (( total_t < reps * delay ))
+    then
+        log_error "read -t in pipe taking $total_t secs - $(( reps * delay )) minimum - too fast"
+    fi
 fi
 
 print "one\ntwo" | { read line
