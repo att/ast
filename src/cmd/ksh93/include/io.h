@@ -76,7 +76,7 @@ extern bool sh_isdevfd(const char *);
 extern bool sh_source(Shell_t *, Sfio_t *, const char *);
 
 // The following are readonly.
-extern const char e_pexists[];
+extern const char e_copexists[];
 extern const char e_query[];
 extern const char e_history[];
 extern const char e_argtype[];
