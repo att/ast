@@ -61,7 +61,7 @@ expect_prompt
 log_test_entry
 send "$ksh -c 'TIMEFORMAT=\"pct %3P%\"; "
 send "SECONDS=0; time while (( SECONDS < 0.5 )); do true; done;'\r"
-expect -re "pct 9\[0-9\].\[0-9\]\[0-9\]\[0-9\]%\r\n" {
+expect -re "pct (100|9\[0-9\]).\[0-9\]\[0-9\]\[0-9\]%\r\n" {
     puts "time %3P produces correct output"
 }
 expect_prompt
