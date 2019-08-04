@@ -2904,7 +2904,7 @@ int sh_fun(Shell_t *shp, Namval_t *np, Namval_t *nq, char *argv[]) {
 static_fn void coproc_init(Shell_t *shp, int pipes[]) {
     int outfd;
     if (shp->coutpipe >= 0 && shp->cpid) {
-        errormsg(SH_DICT, ERROR_exit(1), e_pexists);
+        errormsg(SH_DICT, ERROR_exit(1), e_copexists);
         __builtin_unreachable();
     }
     shp->cpid = 0;
