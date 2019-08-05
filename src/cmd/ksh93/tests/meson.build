@@ -113,6 +113,9 @@ tests_to_skip = [
     ['cygwin', 'b_jobs.exp'],
     ['cygwin', 'b_time.exp'],
     ['cygwin', 'b_times.exp'],
+    ['cygwin', 'b_ulimit'],
+    ['cygwin', 'b_uname'],  # too many trivial diffs in uname output
+    ['cygwin', 'coprocess'],
     ['cygwin', 'signal'],
     ['cygwin', 'sh_match'],  # too slow, times out
     ['openbsd', 'b_times.exp'],

@@ -1,11 +1,5 @@
 # Tests for `uname` builtin
 
-if [[ $OS_NAME == cygwin* ]]
-then
-    log_info "This test is skipped on Cygwin due to too many trivial differences in uname output"
-    exit 0
-fi
-
 # ==========
 # uname -x
 # Verify an unknown flag is handled as a usage error.

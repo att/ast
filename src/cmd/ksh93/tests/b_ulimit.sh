@@ -1,11 +1,4 @@
 # Tests for ulimit builtin
-if [[ $OS_NAME == cygwin* ]]
-then
-    # Most of these tests fail on Cygwin. Rather than try to make them pass on Cygwin just skip
-    # running them on that atypical platform.
-    log_info 'skipping ulimit tests on Cygwin'
-    exit 0
-fi
 
 # ==========
 # -c The number of 512-byte blocks on the size of core dumps.
