@@ -124,6 +124,7 @@ expect_prompt
 # ==========
 # Enable csh style ! history expansion
 log_test_entry
+# This is also `set -H`.
 send "set -o histexpand\r"
 expect_prompt
 
@@ -145,6 +146,23 @@ send "!!:s/hello/goodbye/\r"
 expect -re "\r\nprint goodbye abc\r\ngoodbye abc\r\n" {
     puts "!!:s/// executes prev command w/substitution"
 }
+expect_prompt
+
+# ==========
+# Spawn a new shell to hopefully force the history file to be trimmed. Note that we're not actually
+# testing anything. We're just hoping to trigger the execution of some code to ensure it doesn't
+# blow up and to get some test coverage of hist_trim().
+log_test_entry
+# The sleep duration is meant to be greater than HIST_RECENT to trigger hist_trim().
+send "cp sh_history sh_history_to_trim\r"
+expect_prompt
+sleep 5.1
+send [concat "env HISTFILE=sh_history_to_trim " $ksh]
+send "\r"
+send "ls -l sh_history*\r"
+send "exit\r"
+expect_prompt
+send "ls -l sh_history*\r"
 expect_prompt
 
 # ==========

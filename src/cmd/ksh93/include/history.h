@@ -36,14 +36,16 @@
 // different in version 1 then in version 0.  Version 1 allows commands to use the full 8 bit
 // character set.  It can understand version 0 format files.
 //
+#ifndef HIST_DFLT
+#define HIST_DFLT 512  // default size of history list
 #define HIST_MAX (sizeof(int) * HIST_BSIZE)
+#define HIST_RECENT 600
+#endif
 #define HIST_LINE 32  // typical length for history line
 #define HIST_MARKSZ 6
-#define HIST_RECENT 600
 #define HIST_UNDO 0201   // invalidate previous command
 #define HIST_CMDNO 0202  // next 3 bytes give command number
 #define HIST_BSIZE 4096  // size of history file buffer
-#define HIST_DFLT 512    // default size of history list
 
 typedef struct {
     Sfdisc_t histdisc;  // discipline for history

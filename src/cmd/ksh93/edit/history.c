@@ -211,7 +211,9 @@ retry:
         hp->histind = first = hist_nearend(hp, hp->histfp, hsize - size);
         histinit = 1;
         hist_eof(hp);  // this sets histind to last command
-        if ((hist_start = (last = (int)hp->histind) - maxlines) <= 0) hist_start = 1;
+        last = hp->histind;
+        hist_start = last - maxlines;
+        if (hist_start <= 0) hist_start = 1;
         mark = hp->histmarker;
         while (first > hist_start) {
             size += size;
@@ -231,16 +233,17 @@ retry:
         unlink(fname);
         free(fname);
     }
+
     if (hist_clean(fd) && hist_start > 1 && hsize > HIST_MAX) {
-#ifdef DEBUG
-        sfprintf(sfstderr, "%d: hist_trim hsize=%d\n", getpid(), hsize);
-        sfsync(sfstderr);
-#endif  // DEBUG
         hp = hist_trim(hp, (int)hp->histind - maxlines);
     }
     sfdisc(hp->histfp, &hp->histdisc);
     STORE_VT((HISTCUR)->nvalue, i32p, &hp->histind);
+#if HIST_RECENT > 30
     sh_timeradd(1000L * (HIST_RECENT - 30), 1, hist_touch, hp->histname);
+#else
+    sh_timeradd(1000L * HIST_RECENT, 1, hist_touch, hp->histname);
+#endif
     hp->auditfp = NULL;
 
     char buff[SF_BUFSIZE];
@@ -305,41 +308,11 @@ static History_t *hist_trim(History_t *hp, int n) {
     char *cp;
     int incmd = 1, c = 0;
     History_t *hist_new, *hist_old = hp;
-    char *buff, *endbuff, *tmpname = NULL;
+    char *buff, *endbuff;
     off_t oldp, newp;
     struct stat statb;
 
     unlink(hist_old->histname);
-    if (access(hist_old->histname, F_OK) >= 0) {
-        // The unlink can fail on windows 95.
-        int fd;
-        char *last, *name = hist_old->histname;
-        sh_close(sffileno(hist_old->histfp));
-        last = strrchr(name, '/');
-        if (last) {
-            *last = 0;
-            tmpname = ast_temp_file(name, "hist", &fd, 0);
-            *last = '/';
-        } else {
-            tmpname = ast_temp_file(".", "hist", &fd, 0);
-        }
-        if (!tmpname) {
-            errormsg(SH_DICT, ERROR_exit(1), e_create, "hist");
-            __builtin_unreachable();
-        }
-        close(fd);
-        if (rename(name, tmpname) < 0) {
-            free(tmpname);
-            tmpname = name;
-        }
-        fd = open(tmpname, O_RDONLY | O_CLOEXEC);
-        // What happens if this fails and returns -1? Coverity Scan #310940.
-        (void)sfsetfd(hist_old->histfp, fd);
-        if (tmpname == name) {
-            free(tmpname);
-            tmpname = NULL;
-        }
-    }
     hist_ptr = NULL;
     if (fstat(sffileno(hist_old->histfp), &statb) >= 0) {
         histinit = 1;
@@ -387,10 +360,6 @@ static History_t *hist_trim(History_t *hp, int n) {
     }
     hist_cancel(hist_new);
     sfclose(hist_old->histfp);
-    if (tmpname) {
-        unlink(tmpname);
-        free(tmpname);
-    }
     free(hist_old);
     hist_ptr = hist_new;
     return hist_ptr;

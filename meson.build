@@ -198,6 +198,17 @@ if get_option('ASAN') == true
     endif
 endif
 
+# If we're doing a unit test or code coverage build we may need to set certain
+# symbols to non-default values to ensure some code is covered. For example,
+# reducing limits to trigger some behavior. We don't base this on whether the
+# build type is "debug" because we want to be able to create a debuggable ksh
+# binary without incurring the cost of setting limits needed for unit testing.
+if get_option('b_coverage') == true or get_option('unittest') == true
+    add_global_arguments('-DHIST_RECENT=5', language: 'c')
+    add_global_arguments('-DHIST_MAX=512', language: 'c')
+    add_global_arguments('-DHIST_DFLT=25', language: 'c')
+endif
+
 # Error on implicit declarations.
 if cc.has_argument('-Werror=implicit')
     add_global_arguments('-Werror=implicit', language: 'c')
