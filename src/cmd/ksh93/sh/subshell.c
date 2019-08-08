@@ -58,14 +58,12 @@
 #define PIPE_BUF 512
 #endif
 
-//
-// Note that the following structure must be the same size as the Dtlink_t structure.
-//
 struct Link {
     struct Link *next;
     Namval_t *child;
     Dt_t *dict;
     Namval_t *node;
+    Namval_t *np_node;
 };
 
 //
@@ -273,9 +271,7 @@ Namval_t *sh_assignok(Namval_t *np, int add) {
         if (lp->node == np) return np;
     }
 
-    // First two pointers use linkage from np.
-    lp = malloc(sizeof(*np) + 2 * sizeof(void *));
-    memset(lp, 0, sizeof(*mp) + 2 * sizeof(void *));
+    lp = calloc(1, sizeof(*lp));
     lp->node = np;
     if (!add && nv_isvtree(np)) {
         Namval_t fake;
@@ -297,13 +293,14 @@ Namval_t *sh_assignok(Namval_t *np, int add) {
         }
     }
 
+    mp = calloc(1, sizeof(*mp));
+    mp->nvname = np->nvname;
+    lp->np_node = mp;
     lp->dict = dp;
-    mp = (Namval_t *)&lp->dict;
     lp->next = active_subshell_data->svar;
     active_subshell_data->svar = lp;
     save = shp->subshell;
     shp->subshell = 0;
-    mp->nvname = np->nvname;
     if (nv_isattr(np, NV_NOFREE)) nv_onattr(mp, NV_CLONED);
     nv_clone(np, mp, (add ? (nv_isnull(np) ? 0 : NV_NOFREE) | NV_ARRAY : NV_MOVE));
     shp->subshell = save;
@@ -321,7 +318,7 @@ static_fn void nv_restore(struct subshell *sp) {
     int flags, nofree;
     sp->shpwd = NULL;  // make sure sh_assignok doesn't save with nv_unset()
     for (lp = sp->svar; lp; lp = lq) {
-        np = (Namval_t *)&lp->dict;
+        np = lp->np_node;
         lq = lp->next;
         mp = lp->node;
         if (!mp->nvname) continue;
@@ -361,6 +358,7 @@ static_fn void nv_restore(struct subshell *sp) {
             dtinsert(lp->dict, mp);
         }
         free(lp);
+        free(np);
         sp->svar = lq;
     }
     sp->shpwd = save;
