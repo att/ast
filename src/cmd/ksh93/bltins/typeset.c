@@ -705,12 +705,7 @@ static_fn int setall(char **argv, nvflag_t flag, Dt_t *troot, struct tdata *tp) 
                 print_value(sfstdout, np, tp);
                 continue;
             }
-#if 0
-            if(flag==NV_ASSIGN && !ref && tp->aflag!='-' && (shp->nodelist || !strchr(name,'=')))
-#else
-            if (flag == NV_ASSIGN && !ref && tp->aflag != '-' && !strchr(name, '='))
-#endif
-            {
+            if (flag == NV_ASSIGN && !ref && tp->aflag != '-' && !strchr(name, '=')) {
                 if (troot != shp->var_tree &&
                     (nv_isnull(np) || !print_namval(sfstdout, np, false, tp))) {
                     sfprintf(sfstderr, sh_translate(e_noalias), name);

@@ -89,11 +89,9 @@ static const char enum_type[] =
     "with the \bfunction\b reserved word, the specified variables "
     "will have function static scope.  Otherwise, the variable is "
     "unset prior to processing the assignment list.]"
-#if 0
-"[p?Causes the output to be in a form of \b\f?\f\b commands that can be "
-        "used as input to the shell to recreate the current type of "
-        "these variables.]"
-#endif
+    "[p?Causes the output to be in a form of \b\f?\f\b commands that can be "
+    "used as input to the shell to recreate the current type of "
+    "these variables.]"
     "\n"
     "\n[name[=value]...]\n"
     "\n"

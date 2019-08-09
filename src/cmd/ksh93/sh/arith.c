@@ -539,11 +539,6 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
         }
         case MESSAGE: {
             sfsync(NULL);
-#if 0
-                if(warn)
-                        errormsg(SH_DICT,ERROR_warn(0),lvalue->value,*ptr);
-                else
-#endif
             if (lvalue->emode & ARITH_COMP) return -1;
 
             errormsg(SH_DICT, ERROR_exit((lvalue->emode & 3) != 0), lvalue->value, *ptr);

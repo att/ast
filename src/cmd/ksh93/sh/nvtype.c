@@ -306,18 +306,10 @@ static_fn int fixnode(Namtype_t *np1, Namtype_t *np2, int i, struct Namref *nrp,
             }
             if (fp) nv_disc(np, fp, DISC_OP_LAST);
         }
-#if 0
-        if (FETCH_VT(nq->nvalue, const_cp) >= np2->data &&
-            FETCH_VT(nq->nvalue, const_cp) < (char *)np2 + np2->fun.dsize) {
-            FETCH_VT(nq->nvalue, const_cp) =
-                np1->data + (FETCH_VT(nq->nvalue, const_cp) - np2->data);
-        }
-#else
+
         if (data >= np2->data && data < (char *)np2 + np2->fun.dsize) {
             STORE_VT(nq->nvalue, const_cp, np1->data + (data - np2->data));
-        }
-#endif
-        else if (!nq->nvfun && np2->childfun.ttype != np2->childfun.ptype) {
+        } else if (!nq->nvfun && np2->childfun.ttype != np2->childfun.ptype) {
             Namval_t *nr = nv_namptr(np2->childfun.ttype->nodes, i);
             if (FETCH_VT(nr->nvalue, const_cp) != FETCH_VT(nq->nvalue, const_cp)) {
                 i = nv_size(nq);
@@ -367,17 +359,10 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, nvflag_t flags, Namfu
         memset(nrp, 0, pp->nref * sizeof(struct Namref));
     }
     memcpy(dp, pp, size);
-#if 0
-        dp->parent = nv_lastdict(np->nvshell);
-#else
     dp->parent = mp;
-#endif
     dp->fun.nofree = (flags & (NV_RDONLY | NV_NOFREE) ? 1 : 0);
     dp->np = mp;
     dp->childfun.ptype = dp;
-#if 0
-        dp->childfun.ttype = (Namtype_t*)nv_hasdisc(dp->fun.type,&type_disc);
-#endif
     dp->nodes = (char *)(dp + 1);
     dp->data = (char *)dp + (pp->data - (char *)pp);
     for (i = dp->numnodes; --i >= 0;) {

@@ -310,13 +310,6 @@ extern void *const builtin_disable;
 #define sh_getstate(shp) ((shp)->st.states)
 #define sh_setstate(shp, x) ((shp)->st.states = (x))
 
-#if 0
-#define sh_sigcheck(shp)                                           \
-    do {                                                           \
-        if (shp->trapnote & SH_SIGSET) sh_exit((shp), SH_EXITSIG); \
-    } while (0)
-#endif
-
 extern int32_t sh_mailchk;
 extern const char e_dict[];
 
