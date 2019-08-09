@@ -304,10 +304,6 @@ static_fn void put_restricted(Namval_t *np, const void *val, nvflag_t flags, Nam
             Namval_t *mp = dtsearch(shp->var_tree, np);
             if (mp && (val = nv_getval(mp))) nv_putval(mp, val, NV_RDONLY);
         }
-#if 0
-sfprintf(sfstderr,"%d: name=%s val=%s\n",getpid(),name,val);
-path_dump(shp->pathlist);
-#endif
     }
 }
 
@@ -322,19 +318,6 @@ static_fn void put_cdpath(Namval_t *np, const void *val, nvflag_t flags, Namfun_
     shp->cdpathlist = pp;
     if (pp) pp->shp = shp;
 }
-
-#if 0
-// TODO: Decide if this function serves a purpose.
-//
-// This function needs to be modified to handle international
-// error message translations
-//
-static_fn char *msg_translate(const char *catalog, const char *message) {
-    UNUSED(catalog);
-
-    return (char *)message;
-}
-#endif
 
 // Trap for LC_ALL, LC_CTYPE, LC_MESSAGES, LC_COLLATE and LANG.
 static_fn void put_lang(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *fp) {
@@ -697,14 +680,6 @@ static_fn char *get_options(Namval_t *np, Namfun_t *fp) {
     return (char *)FETCH_VT(np->nvalue, const_cp);
 }
 
-#if 0
-// TODO: Decide if this function serves a purpose.
-static_fn int hasgetdisc(Namfun_t *fp) {
-    while (fp && !fp->disc->getnum && !fp->disc->getval) fp = fp->next;
-    return fp != 0;
-}
-#endif
-
 static_fn void match2d(Shell_t *shp, struct match *mp) {
     Namval_t *np;
     int i;
@@ -1031,9 +1006,6 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
     Namval_t *mp, fake;
     char *name;
     int off = stktell(shp->stk);
-#if 0
-    bool getname = false;
-#endif
 
     memset(&fake, 0, sizeof(fake));
     fake.nvname = nv_name(np);
@@ -1045,23 +1017,11 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
     // path to here currently is from the `nv_setdisc()` in the `case TFUN:` block in `sh_exec()`.
     // AFAICT that will never pass a NULL event pointer.
     assert(event);
-#if 0
-    if (!event) {
-        if (!action) {
-            mp = dtprev(shp->fun_tree, &fake);
-            return (char *)dtnext(shp->fun_tree, mp);
-        }
-        getname = true;
-    }
-#endif
     sfputr(shp->stk, fake.nvname, '.');
     sfputr(shp->stk, event, 0);
     name = stkptr(shp->stk, off);
     mp = nv_search(name, shp->fun_tree, action ? NV_ADD : 0);
     stkseek(shp->stk, off);
-#if 0
-    if (getname) return mp ? (char *)dtnext(shp->fun_tree, mp) : 0;
-#endif
     if (action == np) action = mp;
     return action ? (char *)action : "";
 }
@@ -1072,21 +1032,6 @@ static const Namdisc_t SH_MATH_disc = {
 #if SHOPT_COSHELL
 static const Namdisc_t SH_JOBPOOL_disc = {.dsize = 0, .setdisc = setdisc_any};
 #endif  // SHOPT_COSHELL
-
-#if 0
-// TODO: Decide if this function serves a purpose.
-static_fn char *get_nspace(Namval_t *np, Namfun_t *fp) {
-    Shell_t *shp = sh_ptr(np);
-    if (shp->namespace) return nv_name(shp->namespace);
-    return (char *)FETCH_VT(np->nvalue, const_cp);
-}
-#endif
-
-#if 0
-// TODO: Decide if this variable serves a purpose.
-static const Namdisc_t NSPACE_disc = {0, NULL, get_nspace};
-static Namfun_t NSPACE_init = {&NSPACE_disc, 1};
-#endif
 
 static const Namdisc_t LC_disc = {.dsize = sizeof(Namfun_t), .putval = put_lang};
 
@@ -1138,39 +1083,6 @@ int sh_type(const char *path) {
     }
     return t & ~(SH_TYPE_BASH | SH_TYPE_KSH | SH_TYPE_PROFILE | SH_TYPE_RESTRICTED);
 }
-
-#if 0
-// TODO: Decide if this function serves a purpose.
-static_fn void put_mode(Namval_t *np, const char *val, int flag, Namfun_t *nfp) {
-    if (val) {
-        mode_t mode;
-        char *last = NULL;
-        if (flag & NV_INTEGER) {
-            if (flag & NV_LONG) {
-                mode = *(Sfdouble_t *)val;
-            } else {
-                mode = *(double *)val;
-            }
-        } else {
-            mode = strperm(val, &last, 0);
-            if (*last) {
-                errormsg(SH_DICT, ERROR_exit(1), "%s: invalid mode string", val);
-                __builtin_unreachable();
-            }
-        }
-        nv_putv(np, (char *)&mode, NV_INTEGER, nfp);
-    } else {
-        nv_putv(np, val, flag, nfp);
-    }
-}
-#endif
-
-#if 0
-// TODO: Decide if this variable serves a purpose.
-static const Namdisc_t modedisc = {
-    0, put_mode, get_mode,
-};
-#endif
 
 // The need for the function below is unfortunate. It is due to the API split on 2012-07-20 that
 // required many functions to be passed a pointer to the shell interpreter context. And some
@@ -1374,24 +1286,6 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     shp->bltindata.shp = shp;
     shp->bltindata.shrun = sh_run;
     shp->bltindata.shexit = sh_exit;
-
-#if 0
-#define NV_MKINTTYPE(x, y, z) nv_mkinttype(#x, sizeof(x), (x)-1 < 0, (y), (Namdisc_t *)z);
-        NV_MKINTTYPE(pid_t,"process id",0);
-        NV_MKINTTYPE(gid_t,"group id",0);
-        NV_MKINTTYPE(uid_t,"user id",0);
-        NV_MKINTTYPE(size_t,(const char*)0,0);
-        NV_MKINTTYPE(ssize_t,(const char*)0,0);
-        NV_MKINTTYPE(off_t,"offset in bytes",0);
-        NV_MKINTTYPE(ino_t,"\ai-\anode number",0);
-        NV_MKINTTYPE(mode_t,(const char*)0,&modedisc);
-        NV_MKINTTYPE(dev_t,"device id",0);
-        NV_MKINTTYPE(nlink_t,"hard link count",0);
-        NV_MKINTTYPE(blkcnt_t,"block count",0);
-        NV_MKINTTYPE(time_t,"seconds since the epoch",0);
-        nv_mkstat();
-
-#endif
     shp->userinit = userinit;
     if (userinit) (*userinit)(shp, 0);
     shp->exittrap = 0;
@@ -1495,11 +1389,6 @@ Namfun_t *nv_cover(Namval_t *np) {
 
 static const char *shdiscnames[] = {"tilde", 0};
 
-#if 0
-// TODO: Decide if this function serves a purpose.
-static_fn Namval_t *create_sig(Namval_t *np, const char *name, int flag, Namfun_t *fp) { return 0; }
-#endif
-
 typedef struct Svars {
     Namfun_t namfun;
     Shell_t *sh;
@@ -1584,11 +1473,6 @@ static_fn char *name_svar(const Namval_t *np, Namfun_t *fp) {
 }
 
 static const Namdisc_t svar_child_disc = {.dsize = 0, .namef = name_svar};
-
-#if 0
-// TODO: Decide if this variable serves a purpose.
-static Namfun_t svar_child_fun = {&svar_child_disc, 1, 0, sizeof(Namfun_t)};
-#endif
 
 static_fn int svar_init(Shell_t *shp, Namval_t *pp, const Shtable_t *tab, size_t extra) {
     int i;

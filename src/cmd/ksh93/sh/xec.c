@@ -1123,10 +1123,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     } else {
                         nvflags |= NV_VARNAME;
                     }
-#if 0
-                                    if(OPTIMIZE)
-                                            nvflags |= NV_TAGGED;
-#endif
                     if (np && nv_isattr(np, BLT_DCL)) nvflags |= NV_DECL;
                     if (t->com.comtyp & COMFIXED) ((Shnode_t *)t)->com.comtyp &= ~COMFIXED;
                     shp->nodelist = sh_setlist(shp, argp, nvflags, tp);
@@ -1402,10 +1398,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
 #endif
                     shp->redir0 = 0;
                     if (jmpval) siglongjmp(shp->jmplist->buff, jmpval);
-#if 0
-                                    if(nvflags&NV_STATIC)
-                                            ((Shnode_t*)t)->com.comset = NULL;
-#endif
                     if (shp->exitval >= 0) goto setexit;
                     np = NULL;
                     type = 0;
@@ -1666,12 +1658,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 was_interactive = sh_isstate(shp, SH_INTERACTIVE);
                 sh_offstate(shp, SH_INTERACTIVE);
                 shp->pipepid = simple;
-#if 0
-                            sh_vexsave(shp,0,shp->inpipe[0],0,0);
-#else
                 sh_iosave(shp, 0, shp->topfd, NULL);
                 sh_iorenumber(shp, shp->inpipe[0], 0);
-#endif
                 // if read end of pipe is a simple command treat as non-sharable to improve
                 // performance.
                 if (simple) sfset(sfstdin, SF_PUBLIC | SF_SHARE, 0);
@@ -2830,11 +2818,7 @@ static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], stru
     lp->maxlevel = level;
     STORE_VT(SH_LEVELNOD->nvalue, i16, lp->maxlevel);
     shp->last_root = nv_dict(DOTSHNOD);
-#if 0
-    nv_putval(SH_FUNNAMENOD,shp->st.funname,NV_NOFREE);
-#else
     nv_putval(SH_FUNNAMENOD, fname, NV_NOFREE);
-#endif
     nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
     shp->pipepid = pipepid;
     FETCH_VT(np->nvalue, rp)->running -= 2;
@@ -3137,9 +3121,6 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
     } else {
         shp->options = shp->glob_options;
     }
-#if 0
-    shp->st.lineno = error_info.line;
-#endif
     prevscope = shp->st.self;
     *prevscope = shp->st;
     sh_offoption(shp, SH_ERREXIT);

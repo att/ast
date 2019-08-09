@@ -419,16 +419,8 @@ static_fn void p_redirect(const struct ionod *iop) {
             io_op[2] = '|';
         }
         if (iop->iodelim) {  // here document
-#if 0
-            // TODO: Figure out if this should be enabled. Originally excluded via `#ifdef xxx`.
-            iop->iolink = (char *)here_doc;
-#endif
             here_doc = iop;
             io_op[2] = '<';
-#if 0
-// TODO: Figure out if this should be enabled. Originally excluded via `#ifdef future`.
-            if (iof & IOSTRIP) io_op[3] = '-';
-#endif
         }
         sfputr(outfile, cp, ' ');
         if (iop->ionxt) {
@@ -504,11 +496,6 @@ static_fn void p_switch(const struct regnod *reg) {
 // Output `here` documents.
 static_fn void here_body(const struct ionod *iop) {
     Sfio_t *infile;
-#if 0
-    // TODO: Figure out if this should be enabled. Originally excluded via `#ifdef xxx`.
-    if (iop->iolink) here_body((struct inode *)iop->iolink);
-    iop->iolink = 0;
-#endif
     if (iop->iofile & IOSTRG) {
         infile = sfnew(NULL, iop->ioname, iop->iosize, -1, SF_STRING | SF_READ);
     } else {

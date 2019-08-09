@@ -929,12 +929,7 @@ again:
                     if (vp->errmsg.value) vp->errstr = pos;
                     ERROR(vp, op == A_LIT ? e_charconst : e_synbad);
                 }
-#if 0
-                        if(op==A_DIG || op==A_LIT)
-#else
-                if (op == A_DIG || op == A_LIT || lvalue.isfloat == TYPE_LD)
-#endif
-                {
+                if (op == A_DIG || op == A_LIT || lvalue.isfloat == TYPE_LD) {
                     sfputc(shp->stk, A_PUSHN);
                     if (vp->staksize++ >= vp->stakmaxsize) vp->stakmaxsize = vp->staksize;
                     stkpush(shp->stk, vp, d, Sfdouble_t);
