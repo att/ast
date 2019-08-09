@@ -1112,10 +1112,6 @@ int job_kill(struct process *pw, int sig) {
 #ifdef SIGTSTP
             if (r >= 0 && (sig == SIGHUP || sig == SIGTERM || sig == SIGCONT)) job_unstop(pw);
 #endif  // SIGTSTP
-#if 0
-                        if(r>=0)
-                                sh_delay(.05);
-#endif
         }
         while (pw && pw->p_pgrp == 0 && (r = kill(pw->p_pid, sig)) >= 0) {
 #ifdef SIGTSTP

@@ -354,19 +354,6 @@ static_fn char *path_lib(Shell_t *shp, Pathcomp_t *pp, char *path) {
     return NULL;
 }
 
-#if 0
-void path_dump(Pathcomp_t *pp)
-{
-        sfprintf(sfstderr,"dump\n");
-        while(pp)
-        {
-                sfprintf(sfstderr,"pp=%x dev=%d ino=%d len=%d flags=%o name=%.*s\n",
-                        pp,pp->dev,pp->ino,pp->len,pp->flags,pp->len,pp->name);
-                pp = pp->next;
-        }
-}
-#endif
-
 //
 // Check for duplicate directories on PATH.
 //
@@ -1155,12 +1142,7 @@ retry:
                     if (pid > 0) return pid;
                 } while (_sh_fork(shp, pid, 0, NULL) < 0);
 #if USE_SPAWN
-                if (shp->vex) {
-                    spawnvex_apply(shp->vex, 0, 0);
-#if 0
-                                spawnvex_apply(shp->vexp,0,SPAWN_RESET);
-#endif
-                }
+                if (shp->vex) spawnvex_apply(shp->vex, 0, 0);
 #endif  // USE_SPAWN
                 shp->jmplist->mode = SH_JMPEXIT;
             }
@@ -1566,9 +1548,6 @@ void path_newdir(Shell_t *shp, Pathcomp_t *first) {
             pp->next = next;
         }
     }
-#if 0
-        path_dump(first);
-#endif
 }
 
 Pathcomp_t *path_unsetfpath(Shell_t *shp) {

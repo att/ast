@@ -1521,12 +1521,8 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
             writedefs(lexp, argp, line, 0, NULL);
         } else if (argp && strcmp(argp->argval, "read") == 0) {
             writedefs(lexp, argp, line, 0, NULL);
-        }
-#if 0
-                else if(argp && strcmp(argp->argval,"unset")==0)
-                        writedefs(lexp,argp,line,'u', NULL);
-#endif
-        else if (argp && *argp->argval == '.' && argp->argval[1] == 0 && (argp = argp->argnxt.ap)) {
+        } else if (argp && *argp->argval == '.' && argp->argval[1] == 0 &&
+                   (argp = argp->argnxt.ap)) {
             r = kiaentity(lexp, sh_argstr(argp), -1, 'p', 0, 0, lexp->script, 'd', 0, "");
             sfprintf(lexp->kiatmp, "p;%..64d;p;%..64d;%d;%d;d;\n", lexp->current, r, line, line);
         }

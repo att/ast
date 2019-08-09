@@ -958,9 +958,6 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
                             cp = nv_endsubscript(np, sp, nvflags, np->nvshell);
                             ap = nv_arrayptr(np);  // nv_endsubscript() may have moved the array
                             shp->last_table = table;
-#if 0
-                            if(scan) nv_putsub(np,NULL,0,ARRAY_SCAN);
-#endif
                         } else {
                             cp = sp;
                         }
@@ -1164,13 +1161,6 @@ void nv_delete(Namval_t *np, Dt_t *root, nvflag_t flags) {
                 free(np);
             }
         }
-#if 0
-                else
-                {
-                        sfprintf(sfstderr,"%s not deleted\n",nv_name(np));
-                        sfsync(sfstderr);
-                }
-#endif
     }
 }
 
@@ -2722,19 +2712,8 @@ char *sh_getenv(const char *name) {
     Shell_t *shp = sh_getinterp();
     Namval_t *np;
 
-    if (!shp->var_tree) {
-#if 0
-        if(name[0] == 'P' && name[1] == 'A' && name[2] == 'T' && name[3] == 'H' && name[4] == 0 ||
-                name[0] == 'L' && ((name[1] == 'C' || name[1] == 'D') && name[2] == '_' || name[1]
-                    == 'A' && name[1] == 'N') || name[0] == 'V' && name[1] == 'P' && name[2] == 'A'
-                && name[3] == 'T' && name[4] == 'H' && name[5] == 0 || name[0] == '_' && name[1] ==
-                'R' && name[2] == 'L' && name[3] == 'D' || name[0] == '_' && name[1] == 'A' &&
-                name[2] == 'S' && name[3] == 'T' && name[4] == '_')
-#endif
-        return oldgetenv(name);
-    } else if ((np = nv_search(name, shp->var_tree, 0)) && nv_isattr(np, NV_EXPORT)) {
-        return nv_getval(np);
-    }
+    if (!shp->var_tree) return oldgetenv(name);
+    if ((np = nv_search(name, shp->var_tree, 0)) && nv_isattr(np, NV_EXPORT)) return nv_getval(np);
     return NULL;
 }
 
