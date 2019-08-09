@@ -2134,13 +2134,6 @@ struct alias {
 //
 // This code gets called whenever an end of string is found with alias.
 //
-#ifndef SF_ATEXIT
-#define SF_ATEXIT 0
-#endif
-
-//
-// This code gets called whenever an end of string is found with alias.
-//
 #ifdef SF_BUFCONST
 static_fn int alias_exceptf(Sfio_t *iop, int type, void *data, Sfdisc_t *handle)
 #else

@@ -2489,14 +2489,10 @@ static_fn int subexcept(Sfio_t *sp, int mode, void *data, Sfdisc_t *handle) {
         free(disp->io_buffer);
         free(disp);
         return 0;
-    }
-#ifdef SF_ATEXIT
-    else if (mode == SF_ATEXIT) {
+    } else if (mode == SF_ATEXIT) {
         sfdisc(sp, SF_POPDISC);
         return 0;
-    }
-#endif
-    else if (mode == SF_READ) {
+    } else if (mode == SF_READ) {
         return 0;
     }
     return -1;
