@@ -493,6 +493,9 @@ static bool delete_and_add(const char *name, struct Complete *comp) {
     if (comp->globpat) size += (g = strlen(comp->globpat) + 1);
     if (comp->command) size += (c = strlen(comp->command) + 1);
     if (comp->fname) size += (fn = strlen(comp->fname) + 1);
+    // TODO: Refactor this into two separate allocations. The only reason I'm not doing so right now
+    // is that none of this code is tested.
+    // See https://github.com/att/ast/issues/1002
     old = malloc(sizeof(struct Complete) + size);
     *old = *comp;
     cp = (char *)(old + 1);
