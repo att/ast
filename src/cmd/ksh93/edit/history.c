@@ -130,20 +130,6 @@ int sh_histinit(void *sh_context) {
         histname = stkptr(shp->stk, offset);
     }
 
-#if 0
-// TODO: Figure out if this should be enabled. Originally excluded via `#ifdef future`.
-    if (hp = wasopen) {
-        // Reuse history file if same name.
-        wasopen = 0;
-        shgd->hist_ptr = hist_ptr = hp;
-        if (strcmp(histname, hp->histname) == 0) {
-            return 1;
-        } else {
-            hist_free();
-        }
-    }
-#endif  // future
-
 retry:
     cp = path_relative(shp, histname);
     if (!histinit) histmode = S_IRUSR | S_IWUSR;
@@ -455,16 +441,6 @@ again:
                 if (cp > first) {
                     count += (cp - first);
                     n = hist_ind(hp, ++hp->histind);
-#if 0
-// TODO: Figure out if this should be enabled. Originally excluded via `#ifdef future`.
-                    if (count == hp->histcmds[n]) {
-                        sfprintf(sfstderr, "count match n=%d\n", n);
-                        if (histinit) {
-                            histinit = 0;
-                            return;
-                        }
-                    } else if (n >= histinit)
-#endif
                     hp->histcmds[n] = count;
                     first = cp;
                 }

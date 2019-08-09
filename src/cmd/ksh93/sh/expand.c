@@ -85,10 +85,6 @@ int path_expand(Shell_t *shp, const char *pattern, struct argnod **arghead) {
     if (sh_isoption(shp, SH_MARKDIRS)) flags |= GLOB_MARK;
     if (sh_isoption(shp, SH_GLOBSTARS)) flags |= GLOB_STARSTAR;
 #if SHOPT_BASH
-#if 0
-        if(sh_isoption(shp,SH_BASH) && !sh_isoption(shp,SH_EXTGLOB))
-                flags &= ~GLOB_AUGMENTED;
-#endif
     if (sh_isoption(shp, SH_NULLGLOB)) flags &= ~GLOB_NOCHECK;
     if (sh_isoption(shp, SH_NOCASEGLOB)) flags |= GLOB_ICASE;
 #endif

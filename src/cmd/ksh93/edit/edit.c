@@ -74,10 +74,6 @@ static int keytrap(Edit_t *, char *, int, int, int);
 #define _POSIX_DISABLE 0
 #endif
 
-#if 0
-// TODO: Figure out if this should be enabled. Originally excluded via `#ifdef future`.
-static int compare(const char *, const char *, int);
-#endif  // future
 #define ttyparm (ep->e_ttyparm)
 #define nttyparm (ep->e_nttyparm)
 static const char bellchr[] = "\a";  // bell char
@@ -122,10 +118,6 @@ int tty_set(int fd, int action, struct termios *tty) {
     Edit_t *ep = shgd->ed_context;
 
     if (fd >= 0) {
-#if 0
-// TODO: Figure out if this should be enabled. Originally excluded via `#ifdef future`.
-        if (ep->e_savefd >= 0 && compare(&ep->e_savetty, tty, sizeof(struct termios))) return 0;
-#endif  // future
         while (tcsetattr(fd, action, tty) == SYSERR) {
             if (errno != EINTR) return SYSERR;
             errno = 0;
@@ -1017,19 +1009,6 @@ int ed_genlen(const wchar_t *str) {
     }
     return sp - str - 1;
 }
-
-#if 0
-// TODO: Figure out if this should be enabled. Originally excluded via `#ifdef future`.
-//
-// Returns 1 when <n> bytes starting at <a> and <b> are equal.
-//
-static int compare(const char *a, const char *b, int n) {
-    while (n-- > 0) {
-        if (*a++ != *b++) return 0;
-    }
-    return 1;
-}
-#endif  // future
 
 //
 // Execute keyboard trap on given buffer <inbuff> of given size <isize>.

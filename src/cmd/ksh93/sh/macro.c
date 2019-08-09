@@ -775,9 +775,6 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                     !mp->lit) {
                     tilde = stktell(stkp) + (c + 1);
                 } else if (n == S_SLASH && mp->pattern == 2) {
-#if 0
-                    goto pattern;
-#else
                     if (mp->quote || mp->lit) goto pattern;
                     sfwrite(stkp, first, c + 1);
                     first = fcseek(c + 1);
@@ -787,7 +784,6 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                     cp = fcseek(-1);
                     sfwrite(stkp, first, cp - first);
                     first = cp;
-#endif
                 }
                 break;
             }
@@ -1272,11 +1268,6 @@ retry1:
                         break;
                     } else {
                         np = nv_open(v, mp->shp->var_tree, nvflags | NV_NOFAIL);
-#if 0
-                                        type = M_BRACE;
-                                if(c!='}')
-                                        mac_error(np);
-#endif
                     }
                 }
             }
@@ -1738,9 +1729,6 @@ retry2:
                 }
             }
             if (vsize) {
-#if 0
-                if (c == ',' || c == '^') offset = stktell(stkp);
-#endif
                 mac_copy(mp, v, vsize > 0 ? vsize : strlen(v));
 #if 0
                 // This code supports case modification in parameter substitution.

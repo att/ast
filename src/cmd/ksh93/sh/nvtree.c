@@ -290,21 +290,11 @@ char *nv_dirnext(void *dir) {
     while (1) {
         if (!shp && dp->hp) shp = sh_ptr(dp->hp);
         while ((np = dp->hp)) {
-#if 0
-                        char *sptr;
-#endif
             ap = nv_arrayptr(np);
             if (ap) nv_putsub(np, NULL, 0, ARRAY_UNDEF);
             dp->hp = nextnode(dp);
             if (nv_isnull(np) && !nv_isarray(np) && !nv_isattr(np, NV_INTEGER)) continue;
             last_table = shp->last_table;
-#if 0
-                        if(dp->table && dp->otable && !nv_isattr(dp->table,NV_MINIMAL))
-                        {
-                                sptr = dp->table->nvenv;
-                                dp->table->nvenv = (char*)dp->otable;
-                        }
-#endif
             shp->last_table = dp->table;
             if (!dp->table) dot = -1;
             if (dot >= 0) {
@@ -313,11 +303,6 @@ char *nv_dirnext(void *dir) {
             }
             cp = nv_name(np);
             if (dot >= 0) nv_putsub(dp->table, NULL, xdot, xdot < dot ? 0 : flags);
-
-#if 0
-                        if(dp->table && dp->otable && !nv_isattr(dp->table,NV_MINIMAL))
-                                dp->table->nvenv = sptr;
-#endif
             if (dp->nextnode && !dp->hp && (nq = dp->table)) {
                 Namarr_t *aq = nv_arrayptr(nq);
                 if (aq && (aq->flags & ARRAY_SCAN) && nv_nextsub(nq)) {
@@ -357,11 +342,6 @@ char *nv_dirnext(void *dir) {
             dp->data = (char *)(save + 1);
             memcpy(dp->data, cp, len + 1);
             if (nfp && np->nvfun) {
-#if 0
-                Namarr_t *ap = nv_arrayptr(np);
-                if(ap && (ap->flags&ARRAY_UNDEF))
-                        nv_putsub(np,(char*)0,0,ARRAY_SCAN);
-#endif
                 dp->nextnode = nfp->disc->nextf;
                 dp->otable = dp->table;
                 dp->table = np;
@@ -742,10 +722,6 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
         }
     }
     wp->flags &= ~NV_COMVAR;
-#if 0
-        if(nv_isnull(np) && !nv_isarray(np) && !nv_isattr(np,NV_INTEGER))
-                return;
-#else
     if (!nv_isarray(np) && !nv_isattr(np, NV_INTEGER)) {
         if (nv_isnull(np)) return;
         if (FETCH_VT(np->nvalue, const_cp) == Empty && tp &&
@@ -756,7 +732,6 @@ static_fn void outval(char *name, const char *vname, struct Walk *wp) {
             if (!fp) return;
         }
     }
-#endif
     if (special || (nv_isarray(np) && nv_arrayptr(np))) {
         isarray = 1;
         if (array_elem(nv_arrayptr(np)) == 0) {

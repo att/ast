@@ -195,16 +195,6 @@ static int cmp(const char *file1, Sfio_t *f1, const char *file2, Sfio_t *f2, int
                         if (!differences) return 1;
                         differences--;
                     }
-#if 0
-                    if (!flags) {
-                        sfprintf(sfstdout, "%s %s differ: char %I*d, line %I*u\n", file1, file2,
-                                 sizeof(pos), pos - (last - p1), sizeof(lines), lines);
-                    } else {
-                        sfprintf(sfstdout, "%6I*d", sizeof(pos), pos - (last - p1));
-                        pretty(sfstdout, c1, -1, flags);
-                        pretty(sfstdout, *(p2 - 1), '\n', flags);
-                    }
-#else
                     if (flags & CMP_VERBOSE) {
                         sfprintf(sfstdout, "%6I*d", sizeof(pos), pos - (last - p1));
                     } else {
@@ -218,7 +208,6 @@ static int cmp(const char *file1, Sfio_t *f1, const char *file2, Sfio_t *f2, int
                     } else {
                         sfputc(sfstdout, '\n');
                     }
-#endif
                     if (!differences || (differences < 0 && !(flags & CMP_VERBOSE))) return 1;
                     ret = 1;
                 }
