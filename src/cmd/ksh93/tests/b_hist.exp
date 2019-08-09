@@ -151,7 +151,7 @@ expect_prompt
 # ==========
 # Spawn a new shell to hopefully force the history file to be trimmed. Note that we're not actually
 # testing anything. We're just hoping to trigger the execution of some code to ensure it doesn't
-# blow up and to get some test coverage of hist_trim().
+# blow up and to get some test coverage of function hist_trim().
 log_test_entry
 # The sleep duration is meant to be greater than HIST_RECENT to trigger hist_trim().
 send "cp sh_history sh_history_to_trim\r"
@@ -159,6 +159,8 @@ expect_prompt
 sleep 5.1
 send [concat "env HISTFILE=sh_history_to_trim " $ksh]
 send "\r"
+# We can't use `expect_prompt` here because the subshell will reset the prompt counter to one.
+expect -re "\r\nKSH PROMPT:1:"
 send "ls -l sh_history*\r"
 send "exit\r"
 expect_prompt
