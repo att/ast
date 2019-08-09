@@ -110,16 +110,6 @@ struct Namtype {
     unsigned short nref;
 };
 
-#if 0
-struct type
-{
-        Namtype_t       hdr;
-        unsigned short  ndisc;
-        unsigned short  current;
-        unsigned short  nref;
-};
-#endif
-
 typedef struct {
     char _cSfdouble_t;
     Sfdouble_t _dSfdouble_t;
