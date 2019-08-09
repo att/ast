@@ -157,6 +157,7 @@ struct subfile {
     off_t offset;
     long size;
     long left;
+    char *io_buffer;
 };
 
 struct Eof {
@@ -2444,13 +2445,14 @@ static_fn Sfio_t *subopen(Shell_t *shp, Sfio_t *sp, off_t offset, long size) {
     struct subfile *disp;
 
     if (sfseek(sp, offset, SEEK_SET) < 0) return NULL;
-    disp = malloc(sizeof(struct subfile) + IOBSIZE + 1);
+    disp = malloc(sizeof(struct subfile));
+    disp->io_buffer = malloc(IOBSIZE);
     if (!disp) return NULL;
     disp->disc = sub_disc;
     disp->oldsp = sp;
     disp->offset = offset;
     disp->size = disp->left = size;
-    sp = sfnew(NULL, (char *)(disp + 1), IOBSIZE, PSEUDOFD, SF_READ);
+    sp = sfnew(NULL, disp->io_buffer, IOBSIZE, PSEUDOFD, SF_READ);
     sfdisc(sp, &disp->disc);
     return sp;
 }
@@ -2484,6 +2486,7 @@ static_fn int subexcept(Sfio_t *sp, int mode, void *data, Sfdisc_t *handle) {
         sfsetfd(sp, -1);
         return 0;
     } else if (disp && (mode == SF_DPOP || mode == SF_FINAL)) {
+        free(disp->io_buffer);
         free(disp);
         return 0;
     }
