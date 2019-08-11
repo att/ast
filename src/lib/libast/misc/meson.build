@@ -17,7 +17,6 @@ libast_files += [
     'misc/state.c',
     'misc/stk.c',
     'misc/translate.c',
-    'misc/univdata.c',
     'misc/vmbusy.c',
 ]
 

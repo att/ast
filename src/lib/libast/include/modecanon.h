@@ -28,18 +28,6 @@
 #ifndef _MODECANON_H
 #define _MODECANON_H 1
 
-#define X_IFMT 0170000
-// #define X_IFWHT 0160000
-// #define X_IFDOOR 0150000
-#define X_IFSOCK 0140000
-#define X_IFLNK 0120000
-#define X_IFREG 0100000
-#define X_IFBLK 0060000
-#define X_IFDIR 0040000
-#define X_IFCHR 0020000
-#define X_IFIFO 0010000
-
-#define X_IPERM 0007777
 #define X_ISUID 0004000
 #define X_ISGID 0002000
 #define X_ISVTX 0001000

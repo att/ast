@@ -84,15 +84,8 @@
 
 /* regsub flags */
 
-#define REG_SUB_ALL 0x00000001    /* substitute all occurrences */
 #define REG_SUB_LOWER 0x00000002  /* substitute to lower case   */
 #define REG_SUB_UPPER 0x00000004  /* substitute to upper case   */
-#define REG_SUB_PRINT 0x00000010  /* internal no-op             */
-#define REG_SUB_NUMBER 0x00000020 /* internal no-op             */
-#define REG_SUB_STOP 0x00000040   /* internal no-op             */
-#define REG_SUB_WRITE 0x00000080  /* internal no-op             */
-#define REG_SUB_LAST 0x00000100   /* last substitution option   */
-#define REG_SUB_FULL 0x00000200   /* fully delimited            */
 
 /* regex error codes */
 
@@ -199,8 +192,5 @@ extern int regrexec(const regex_t *, const char *, size_t, size_t, regmatch_t *,
                     void *, regrecord_t);
 extern regstat_t *regstat(const regex_t *);
 extern regex_t *regcache(const char *, regflags_t, int *);
-extern int regsubflags(regex_t *, const char *, char **, int, const regflags_t *, int *,
-                       regflags_t *);
-extern void regsubfree(regex_t *);
 
 #endif  // _REGEX_H

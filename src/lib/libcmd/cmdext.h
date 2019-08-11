@@ -29,7 +29,6 @@ extern int b_chmod(int, char **, Shbltin_t *);
 extern int b_cmp(int, char **, Shbltin_t *);
 extern int b_cut(int, char **, Shbltin_t *);
 extern int b_dirname(int, char **, Shbltin_t *);
-extern int b_getconf(int, char **, Shbltin_t *);
 extern int b_head(int, char **, Shbltin_t *);
 extern int b_logname(int, char **, Shbltin_t *);
 extern int b_mkdir(int, char **, Shbltin_t *);

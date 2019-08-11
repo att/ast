@@ -76,8 +76,6 @@
 #define ERROR_SILENT 0x0002      /* context is silent           */
 #define ERROR_NOTIFY 0x0004      /* main(-sig,0,ctx) on signal  */
 
-#define ERROR_FREE 0x0010 /* free context on pop                */
-#define ERROR_POP 0x0020  /* pop context                        */
 #define ERROR_PUSH 0x0040 /* push context                       */
 // #define ERROR_SET 0x0080  /* set context                     */
 

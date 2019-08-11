@@ -202,7 +202,6 @@ struct _dtstat_s {
                                /* the actual event will be this bit */
                                /* combined with the operation bit       */
 #define DT_OPTIMIZE 0100000000 /* optimizing data structure             */
-#define DT_USER 0200000000     /* an announcement on user's behalf      */
 
 /* events for discipline and method event-handling functions */
 #define DT_OPEN 1      /* a dictionary is being opened          */
