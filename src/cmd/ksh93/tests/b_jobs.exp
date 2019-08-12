@@ -1,10 +1,32 @@
 # vim: set filetype=expect:
 #
-# Interactive tests for jobs, bg, fg and related builtins
-set pid [spawn $ksh]
+# Interactive tests for jobs, bg, fg, disown, and related builtins.
+#
+# Note the `-l` arg to force an interactive login shell. Most of the expect based unit tests don't
+# bother with that flag since they only need an interactive shell. This unit test however is
+# different because some tests (e.g., of the `disown` command) only work in a login shell.
+set pid [spawn $ksh -l]
 expect_prompt
 # Terminal rows and columns may default to zero so ensure sane values.
 send "stty rows 24 cols 80\r"
+expect_prompt
+send "set -o\r"
+expect_prompt
+
+# WTF
+send "print PATH=\$PATH\r"
+expect_prompt
+send "ls -l /bin/ps\r"
+expect_prompt
+send "type ps\r"
+expect_prompt
+send "ps -fp 999999\r"
+expect_prompt
+
+# ======
+# Enable job monitoring. This should already be enabled but let's be paranoid and explicit.
+log_test_entry
+send "set -o monitor\r"
 expect_prompt
 
 # ======
@@ -16,9 +38,86 @@ send "stty -a\r"
 expect_prompt
 
 # ======
-# An invalid job id should be an error.
-send "fg %3\r"
-expect -re ": fg: no such job\r\n"
+# An invalid `disown` job ID should be an error.
+log_test_entry
+send "disown 666\r"
+expect -re ": disown: no such job\r\n" {
+    puts "disown invalid job ID fails"
+}
+expect_prompt
+
+# ======
+# Put a job in the background and verify that not disowning it causes the job to be killed when
+# the shell terminates.
+log_test_entry
+# See https://github.com/att/ast/issues/1377 for why this test is commented out.
+# TODO: enable this test when that issue is fixed.
+puts "background job killed when shell exits"
+#send "$ksh -l\r"
+## We can't use `expect_prompt` here because the subshell will reset the prompt counter to one.
+#expect -re "\r\nKSH PROMPT:1:"
+#send "\$(type -p sleep) 17 &\r"
+#expect -re "\r\nKSH PROMPT:2:"
+#send "ps waux | grep '\[s\]leep 17'\r"
+#expect -re "\r\nKSH PROMPT:3:"
+#send "echo status $?\r"
+#expect -re "\r\nKSH PROMPT:4:"
+#send "set -o\r"
+#expect -re "\r\nKSH PROMPT:5:"
+#send "exit\r"
+#expect_prompt
+#send "ps waux | grep '\[s\]leep 17'\r"
+#expect_prompt
+#send "echo status $?\r"
+#expect -re "\r\nstatus 1\r\n" {
+#    puts "background job killed when shell exits"
+#}
+#expect_prompt
+
+# ======
+# Put a job in the background and verify that disowning it causes the job to continue running when
+# the shell terminates.
+log_test_entry
+send "$ksh -l\r"
+# We can't use `expect_prompt` here because the subshell will reset the prompt counter to one.
+expect -re "\r\nKSH PROMPT:1:"
+send "\$(type -p sleep) 17 &\r"
+expect -re "\r\nKSH PROMPT:2:"
+send "disown %1\r"
+expect -re "\r\nKSH PROMPT:3:"
+send "ps waux | grep '\[s\]leep 17'\r"
+expect -re "\r\nKSH PROMPT:4:"
+send "echo status $?\r"
+expect -re "\r\nKSH PROMPT:5:"
+send "exit\r"
+expect_prompt
+send "ps waux | grep '\[s\]leep 17'\r"
+expect_prompt
+send "echo status $?\r"
+expect -re "\r\nstatus 0\r\n" {
+    puts "disowned background job not killed when shell exits"
+}
+expect_prompt
+# Kill the backgrounded, and orphaned, sleep.
+send "ps waux | grep '\[s\]leep 17' | read user pid x; kill $pid\r"
+expect_prompt
+
+# ======
+# An invalid `bg` job ID should be an error.
+log_test_entry
+send "bg %9\r"
+expect -re ": bg: no such job\r\n" {
+    puts "bg invalid job ID fails"
+}
+expect_prompt
+
+# ======
+# An invalid `fg` job ID should be an error.
+log_test_entry
+send "fg %9\r"
+expect -re ": fg: no such job\r\n" {
+    puts "fg invalid job ID fails"
+}
 expect_prompt
 
 # ======

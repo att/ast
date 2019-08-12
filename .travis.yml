@@ -14,7 +14,7 @@ matrix:
           compiler: gcc
           env:
             - DISTRO_TYPE=fedora
-              INSTALL_REQUIREMENTS="dnf repolist; dnf --allowerasing install -y gcc python3 meson sudo langpacks-zh_CN ed ncurses vi findutils which nmap-ncat expect git glibc-all-langpacks"
+              INSTALL_REQUIREMENTS="dnf repolist; dnf --allowerasing install -y gcc python3 meson sudo langpacks-zh_CN ed ncurses vi findutils which nmap-ncat expect git glibc-all-langpacks procps"
           before_install:
               - docker pull ${DISTRO_TYPE}
 
@@ -35,7 +35,7 @@ matrix:
           compiler: gcc
           env:
             - DISTRO_TYPE=ubuntu
-              INSTALL_REQUIREMENTS="apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -yq gcc python3 sudo locales ed vim python3-pip ninja-build findutils debianutils netcat-openbsd expect git; pip3 install meson==0.44.0; locale-gen en_US.UTF-8"
+              INSTALL_REQUIREMENTS="apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -yq gcc python3 sudo locales ed vim python3-pip ninja-build findutils debianutils netcat-openbsd expect git procps; pip3 install meson==0.44.0; locale-gen en_US.UTF-8"
           before_install:
               - docker pull ${DISTRO_TYPE}
 
