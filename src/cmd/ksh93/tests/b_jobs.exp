@@ -123,10 +123,10 @@ expect_prompt
 # ======
 # Ctrl-Z should stop current process
 log_test_entry
-send "sleep 60\r"
+send "\$(type -p sleep) 60\r"
 sleep 0.1
 send [ctrl Z]
-expect -re ".*Stopped.*sleep 60\r\n" {
+expect -re ".*Stopped.*.\\(type -p sleep\\) 60\r\n" {
     puts "Ctrl-z stops sleep 60 processs"
 }
 expect_prompt
@@ -135,7 +135,7 @@ expect_prompt
 # Test if jobs builtin lists stopped process
 log_test_entry
 send "jobs\r"
-expect -re ".*Stopped.*sleep 60\r\n" {
+expect -re ".*Stopped.*.\\(type -p sleep\\) 60\r\n" {
     puts "jobs lists stopped sleep 60 process"
 }
 expect_prompt
@@ -144,7 +144,7 @@ expect_prompt
 # Test if jobs builtin lists pid of stopped process
 log_test_entry
 send "jobs -l\r"
-expect -re "\[1\].*\[0-9\]+.*Stopped.*sleep 60\r\n" {
+expect -re "\[1\].*\[0-9\]+.*Stopped.*.\\(type -p sleep\\) 60\r\n" {
     puts "jobs -l lists pid of stopped sleep 60 process"
 }
 expect_prompt
@@ -162,11 +162,11 @@ expect_prompt
 # bg should put last stopped process in background
 log_test_entry
 send "bg\r"
-expect -re ".*sleep 60&\r\n"
+expect -re ".*..type -p sleep. 60&\r\n"
 expect_prompt
 
 send "jobs\r"
-expect -re ".*Running.*sleep 60\r\n" {
+expect -re ".*Running.*.\\(type -p sleep\\) 60\r\n" {
     puts "bg brings last stopped process to background"
 }
 expect_prompt
@@ -175,7 +175,7 @@ expect_prompt
 # fg should bring the last stopped process to the foreground
 log_test_entry
 send "fg\r"
-expect -re "\r\nsleep 60\r\n"
+expect -re "\r\n.\\(type -p sleep\\) 60\r\n"
 
 # ======
 # Killing the job should get a new prompt.
@@ -195,12 +195,11 @@ expect_prompt
 # The signal delivery timing (especially on platforms like Windows Subsystem for Linux, WSL) might
 # result in the next prompt being issued before the "Stopped" message and a second prompt being
 # displayed. So we might need to increment the prompt counter.
-
 log_test_entry
-send "sleep 60\r"
+send "\$(type -p sleep) 60\r"
 sleep 0.1
 send [ctrl Z]
-expect -re ".*Stopped.*sleep 60\r\n"
+expect -re ".*Stopped.*.\\(type -p sleep\\) 60\r\n"
 if {[string match "\r\nKSH PROMPT:*" $expect_out(buffer)]} {
     incr prompt_counter
 }
@@ -219,6 +218,17 @@ send [ctrl D]
 expect -re ".*You have stopped jobs\r\n" {
     puts "Warning before exit for stopped jobs works"
 }
+expect_prompt
+
+# ======
+# Enable job monitoring, fg and kill the stopped job. This shouldn't be necessary but not doing this
+# causes the test to timeout on WSL (Windows Subsystem for Linux).
+log_test_entry
+send "set -o monitor\r"
+expect_prompt
+send "fg\r"
+expect -re ".*.\\(type -p sleep\\) 60\r\n"
+send [ctrl C]
 expect_prompt
 
 # ======
