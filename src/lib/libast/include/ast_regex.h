@@ -84,8 +84,8 @@
 
 /* regsub flags */
 
-#define REG_SUB_LOWER 0x00000002  /* substitute to lower case   */
-#define REG_SUB_UPPER 0x00000004  /* substitute to upper case   */
+#define REG_SUB_LOWER 0x00000002 /* substitute to lower case   */
+#define REG_SUB_UPPER 0x00000004 /* substitute to upper case   */
 
 /* regex error codes */
 
