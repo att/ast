@@ -23,6 +23,8 @@
 #include "option.h"
 #include "shtable.h"
 
+// These definitions must be kept in sync with `shtab_builtins[]` in
+// src/cmd/ksh93/data/builtins.c
 #define SYSLOGIN (shgd->bltin_cmds + 0)
 #define SYSEXEC (shgd->bltin_cmds + 1)
 #define SYSSET (shgd->bltin_cmds + 2)
@@ -40,11 +42,8 @@
 #define SYSDOT (shgd->bltin_cmds + 14)
 #define SYSRETURN (shgd->bltin_cmds + 15)
 #define SYSENUM (shgd->bltin_cmds + 16)
-#if SHOPT_BASH
-#define SYSLOCAL (shgd->bltin_cmds + 17)
-#else
-#define SYSLOCAL NULL
-#endif
+// #define SYSDECLARE (shgd->bltin_cmds + 17)
+#define SYSLOCAL (shgd->bltin_cmds + 18)
 
 // Entry point for shell special builtins.
 

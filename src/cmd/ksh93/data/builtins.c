@@ -45,9 +45,8 @@
 #undef basename
 #undef dirname
 
-//
-// The order up through "[" is significant.
-//
+// The order of the entries in this table must be kept in sync with the SYS...
+// symbols in src/cmd/ksh93/include/builtins.h
 const struct shtable3 shtab_builtins[] = {
     {"login", NV_BLTIN | BLT_ENV | BLT_SPC, Bltin(login)},
     {"exec", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(exec)},
@@ -66,10 +65,8 @@ const struct shtable3 shtab_builtins[] = {
     {".", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(source)},
     {"return", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(return )},
     {"enum", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_DCL, bltin(enum)},
-#if SHOPT_BASH
     {"declare", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_DCL, bltin(typeset)},
     {"local", NV_BLTIN | BLT_ENV | BLT_DCL, bltin(typeset)},
-#endif  // SHOPT_BASH
     {"newgrp", NV_BLTIN | BLT_ENV | BLT_SPC, Bltin(login)},
     {"alias", NV_BLTIN | BLT_SPC | BLT_DCL, bltin(alias)},
     {"hash", NV_BLTIN | BLT_SPC | BLT_DCL, bltin(alias)},
@@ -615,7 +612,7 @@ const char sh_optexport[] =
     "[+0?Successful completion.]"
     "[+>0?An error occurred.]"
     "}"
-    "[+SEE ALSO?\bsh\b(1), \btypeset\b(1)]";
+    "[+SEE ALSO?\bsh\b(1), \bdeclare\b(1), \btypeset\b(1)]";
 
 const char sh_optgetopts[] =
     ":[-1c?\n@(#)$Id: getopts (AT&T Research) 2005-01-01 $\n]"
@@ -1282,7 +1279,7 @@ const char sh_optreadonly[] =
     "[+0?Successful completion.]"
     "[+>0?An error occurred.]"
     "}"
-    "[+SEE ALSO?\bsh\b(1), \btypeset\b(1)]";
+    "[+SEE ALSO?\bsh\b(1), \bdeclare\b(1), \btypeset\b(1)]";
 
 const char sh_optreturn[] =
     "[-1c?\n@(#)$Id: return (AT&T Research) 1999-07-07 $\n]" USAGE_LICENSE
@@ -1415,7 +1412,7 @@ const char sh_optset[] =
     "[+0?No errors occurred.]"
     "[+>0?An error occurred.]"
     "}"
-    "[+SEE ALSO?\btypeset\b(1), \bshift\b(1)]";
+    "[+SEE ALSO?\bdeclare\b(1), \btypeset\b(1), \bshift\b(1)]";
 
 const char sh_optshift[] = "[-1c?\n@(#)$Id: shift (AT&T Research) 1999-07-07 $\n]" USAGE_LICENSE
                            "[+NAME?shift - shift positional parameters]"
@@ -1525,7 +1522,11 @@ const char sh_opttrap[] =
 const char sh_opttypeset[] =
     "+[-1c?\n@(#)$Id: typeset (AT&T Research) 2013-05-21 $\n]" USAGE_LICENSE
     "[+NAME?\f?\f - declare or display variables with attributes]"
-    "[+DESCRIPTION?Without the \b-f\b option, \b\f?\f\b sets, unsets, "
+    "[+DESCRIPTION?This can also be invoked as \bdeclare\b. It can also be invoked as "
+    "\blocal\b inside a function to create vars lexically scoped to the function. "
+    "These variants are primarily for compatibility with shells like bash.\n"
+    "\n"
+    "Without the \b-f\b option, \b\f?\f\b sets, unsets, "
     "or displays attributes of variables as specified with the "
     "options.  If the first option is specified with a \b-\b "
     "then the attributes are set for each of the given \aname\as. "
@@ -1637,7 +1638,7 @@ const char sh_opttypeset[] =
     "[+0?No errors occurred.]"
     "[+>0?An error occurred.]"
     "}"
-    "[+SEE ALSO?\breadonly\b(1), \bexport\b(1)]";
+    "[+SEE ALSO?\breadonly\b(1), \bexport\b(1), \bdeclare\b(1)]";
 
 const char sh_optulimit[] =
     "[-1c?@(#)$Id: ulimit (AT&T Research) 2014-06-19 $\n]" USAGE_LICENSE
@@ -1726,7 +1727,7 @@ const char sh_optunset[] =
     "[+>0?One or more \aname\a operands could not be unset "
     "or an error occurred.]"
     "}"
-    "[+SEE ALSO?\btypeset\b(1)]";
+    "[+SEE ALSO?\bdeclare\b(1), \btypeset\b(1)]";
 
 const char sh_optunalias[] = "[-1c?\n@(#)$Id: unalias (AT&T Research) 1999-07-07 $\n]" USAGE_LICENSE
                              "[+NAME?unalias - remove alias definitions]"

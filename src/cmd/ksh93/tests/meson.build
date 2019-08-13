@@ -21,6 +21,7 @@ all_tests = [
     ['b_hist.exp'],
     ['b_jobs.exp'],
     ['b_jobs'],
+    ['b_local'],
     ['b_mkdir'],
     ['b_nameref'],
     ['b_print'],

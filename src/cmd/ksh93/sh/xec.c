@@ -1067,7 +1067,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         }
                     }
                     if (np) nvflags |= NV_UNJUST;
-#if SHOPT_BASH
                     if (np == SYSLOCAL) {
                         if (!nv_getval(SH_FUNNAMENOD)) {
                             errormsg(SH_DICT, ERROR_exit(1), "%s: can only be used in a function",
@@ -1079,7 +1078,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             shp->st.var_local = shp->var_tree;
                         }
                     }
-#endif  // SHOPT_BASH
                     if (np == SYSTYPESET || (np && FETCH_VT(np->nvalue, shbltinp) ==
                                                        FETCH_VT(SYSTYPESET->nvalue, shbltinp))) {
                         if (np != SYSTYPESET) {

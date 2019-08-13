@@ -1,7 +1,7 @@
-# ksh x.y.z (version TBD, this is a work in progress)
+# ksh 2017.0.0 (version TBD, this is a work in progress)
 
 This documents changes since the AST code, which includes the `ksh` program,
-was moved to Github. That is, the ksh93v- source. The next stable version will
+was moved to Github. That is, the ksh93u+ source. The next stable version will
 be treated as a major release for several reasons. Not least of which is
 changing the build tool chain from the legacy Nmake system to Meson and
 replacing the AST Vmalloc subsystem with the platform Malloc subsystem. Legacy
@@ -49,6 +49,9 @@ was subsequently created to document the work being done.
 
 ## Notable fixes and improvements
 
+- `declare` has been added as an alias for `typeset` (issue #220).
+- `local` has been added as a contrainsed alias for `typeset` when used inside
+  a function (issue #220).
 - Mention of the `getconf` builtin has been removed from the main ksh man
   page. That command has never been enabled by default and is now deprecated
   in favor of the platform command of the same name (issue #1118).
@@ -57,7 +60,7 @@ was subsequently created to document the work being done.
 - Doing `[ -t1 ]` inside a command substitution behaves correctly
   (issue #1079).
 - The project now passes its unit tests when built with malloc debugging
-  enabled (i.e., `meson test --setup=malloc`).
+  enabled (i.e., `meson test --setup=malloc`) or with ASAN enabled.
 - Changes to the project are now validated by running unit tests on the Travis
   continuous integration system.
 - The ksh source now builds on BSD based systems such as macOS and FreeBSD.
