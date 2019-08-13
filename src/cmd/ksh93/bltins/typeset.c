@@ -224,9 +224,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
     Namdecl_t *ntp = (Namdecl_t *)context->ptr;
     Dt_t *troot;
     bool isfloat = false, isshort = false, sflag = false;
-#if SHOPT_BASH
-    bool local = *argv[0] == 'l' && strcmp(argv[0], "local") == 0;
-#endif  // SHOPT_BASH
+    bool local = strcmp(argv[0], "local") == 0;
     UNUSED(argc);
 
     memset(&tdata, 0, sizeof(tdata));
@@ -406,12 +404,12 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
     }
 endargs:
     argv += opt_info.index;
-#if SHOPT_BASH
+
     if (local && context->shp->var_base == context->shp->var_tree) {
         errormsg(SH_DICT, ERROR_exit(1), "local can only be used in a function");
         __builtin_unreachable();
     }
-#endif  // SHOPT_BASH
+
     opt_info.disc = NULL;
     // Handle argument of + and - specially.
     if (*argv && argv[0][1] == 0 && (*argv[0] == '+' || *argv[0] == '-')) {
