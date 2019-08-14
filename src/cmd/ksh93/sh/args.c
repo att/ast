@@ -1009,7 +1009,7 @@ static_fn int arg_expand(Shell_t *shp, struct argnod *argp, struct argnod **argc
         argp->argchn.ap = *argchain;
         *argchain = argp;
         argp->argflag |= ARG_MAKE;
-        count++;
+        count = 1;
     }
     return count;
 }

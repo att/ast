@@ -88,6 +88,8 @@ struct argnod {
         char *cp;
         int len;
     } argchn;
+    // This has to be 8 bits because the code expects that assigning to it will mask off any high
+    // bits; e.g., ARG_ARITH and friends.
     unsigned char argflag;
     char argval[4];
 };
@@ -97,23 +99,24 @@ struct argnod {
 #define sh_argstr(ap) ((ap)->argflag & ARG_RAW ? sh_fmtq((ap)->argval) : (ap)->argval)
 #define ARG_SPARE 1
 
-// Legal argument flags.
-#define ARG_RAW 0x1       // string needs no processing
-#define ARG_MAKE 0x2      // bit set during argument expansion
-#define ARG_MAC 0x4       // string needs macro expansion
-#define ARG_EXP 0x8       // string needs file expansion
-#define ARG_ASSIGN 0x10   // argument is an assignment
-#define ARG_QUOTED 0x20   // word contained quote characters
-#define ARG_MESSAGE 0x40  // contains international string
-#define ARG_APPEND 0x80   // for += assignment
-#define ARG_ARRAY 0x2     // for typeset -a
+// Legal argnod flags.
+#define ARG_RAW (1 << 0)      // string needs no processing
+#define ARG_MAKE (1 << 1)     // bit set during argument expansion
+#define ARG_MAC (1 << 2)      // string needs macro expansion
+#define ARG_EXP (1 << 3)      // string needs file expansion
+#define ARG_ASSIGN (1 << 4)   // argument is an assignment
+#define ARG_QUOTED (1 << 5)   // word contained quote characters
+#define ARG_MESSAGE (1 << 6)  // contains international string
+#define ARG_APPEND (1 << 7)   // for += assignment
+#define ARG_ARRAY (ARG_MAKE)  // for typeset -a
+
 // The following can be passed as options to sh_macexpand().
-#define ARG_ARITH 0x100     // arithmetic expansion
-#define ARG_OPTIMIZE 0x200  // try to optimize
-#define ARG_NOGLOB 0x400    // no file name expansion
-#define ARG_LET 0x800       // processing let command arguments
-#define ARG_ARRAYOK 0x1000  // $x[sub] ==> ${x[sub]}
-#define ARG_CASE 0x2000     // expanding case patterns
+#define ARG_ARITH (1 << 8)     // arithmetic expansion
+#define ARG_OPTIMIZE (1 << 9)  // try to optimize
+#define ARG_NOGLOB (1 << 10)   // no file name expansion
+#define ARG_LET (1 << 11)      // processing let command arguments
+#define ARG_ARRAYOK (1 << 12)  // $x[sub] ==> ${x[sub]}
+#define ARG_CASE (1 << 13)     // expanding case patterns
 
 extern struct dolnod *sh_argcreate(char *[]);
 extern char *sh_argdolminus(Shell_t *);
