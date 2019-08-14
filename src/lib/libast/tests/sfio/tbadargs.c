@@ -21,6 +21,7 @@
 
 #include <signal.h>
 #include <stdarg.h>
+#include <stddef.h>
 
 #include "sfhdr.h"  // IWYU pragma: keep
 #include "sfio.h"
@@ -49,60 +50,60 @@ void main_varargs(int argc, char **argv, ...) {
     signal(SIGBUS, handler);
     signal(SIGSEGV, handler);
 
-    CALL(sfclose(0));
-    CALL(sfclrlock(0));
-    CALL(sfopen(0, 0, 0));
-    CALL(sfdisc(0, 0));
+    CALL(sfclose(NULL));
+    CALL(sfclrlock(NULL));
+    CALL(sfopen(NULL, NULL, NULL));
+    CALL(sfdisc(NULL, NULL));
     CALL(_sffilbuf(0, 0));
     CALL(_sfflsbuf(0, 0));
-    CALL(sfgetd(0));
-    CALL(sfgetl(0));
-    CALL(sfgetm(0, 0));
-    CALL(sfgetr(0, 0, 0));
-    CALL(sfgetu(0));
-    CALL(sfmove(0, 0, 0, 0));
-    CALL(sfmutex(0, 0));
-    CALL(sfnew(0, 0, 0, 0, 0));
-    CALL(sfnputc(0, 0, 0));
-    CALL(sfopen(0, 0, 0));
-    CALL(sfpool(0, 0, 0));
-    CALL(sfpopen(0, 0, 0));
-    CALL(sfprintf(0, 0));
-    CALL(sfsprintf(0, 0, 0));
-    CALL(sfprints(0));
-    CALL(sfpurge(0));
-    CALL(sfputd(0, 0));
-    CALL(sfputl(0, 0));
-    CALL(sfputm(0, 0, 0));
-    CALL(sfputr(0, 0, 0));
-    CALL(sfputu(0, 0));
-    CALL(sfraise(0, 0, 0));
-    CALL(sfrd(0, 0, 0, 0));
-    CALL(sfread(0, 0, 0));
-    CALL(sfreserve(0, 0, 0));
-    CALL(sfresize(0, 0));
-    CALL(sfscanf(0, 0));
-    CALL(sfsscanf(0, 0));
-    CALL(sfseek(0, 0, 0));
-    CALL(sfset(0, 0, 0));
+    CALL(sfgetd(NULL));
+    CALL(sfgetl(NULL));
+    CALL(sfgetm(NULL, 0));
+    CALL(sfgetr(NULL, 0, 0));
+    CALL(sfgetu(NULL));
+    CALL(sfmove(NULL, NULL, 0, 0));
+    CALL(sfmutex(NULL, 0));
+    CALL(sfnew(NULL, NULL, 0, 0, 0));
+    CALL(sfnputc(NULL, 0, 0));
+    CALL(sfopen(NULL, NULL, NULL));
+    CALL(sfpool(NULL, NULL, 0));
+    CALL(sfpopen(NULL, NULL, NULL));
+    CALL(sfprintf(NULL, NULL));
+    CALL(sfsprintf(NULL, 0, NULL));
+    CALL(sfprints(NULL));
+    CALL(sfpurge(NULL));
+    CALL(sfputd(NULL, 0));
+    CALL(sfputl(NULL, 0));
+    CALL(sfputm(NULL, 0, 0));
+    CALL(sfputr(NULL, NULL, 0));
+    CALL(sfputu(NULL, 0));
+    CALL(sfraise(NULL, 0, NULL));
+    CALL(sfrd(NULL, NULL, 0, NULL));
+    CALL(sfread(NULL, NULL, 0));
+    CALL(sfreserve(NULL, 0, 0));
+    CALL(sfresize(NULL, 0));
+    CALL(sfscanf(NULL, NULL));
+    CALL(sfsscanf(NULL, NULL));
+    CALL(sfseek(NULL, 0, 0));
+    CALL(sfset(NULL, 0, 0));
     CALL(sfsetbuf(NULL, NULL, 0));
-    CALL(sfsetfd(0, 0));
-    CALL(sfsize(0));
-    CALL(sfsk(0, 0, 0, 0));
-    CALL(sfstack(0, 0));
-    CALL(sfswap(0, 0));
-    CALL(sfsync(0));
-    CALL(sftell(0));
+    CALL(sfsetfd(NULL, 0));
+    CALL(sfsize(NULL));
+    CALL(sfsk(NULL, 0, 0, NULL));
+    CALL(sfstack(NULL, NULL));
+    CALL(sfswap(NULL, NULL));
+    CALL(sfsync(NULL));
+    CALL(sftell(NULL));
     CALL(sftmp(0));
-    CALL(sfungetc(0, 0));
-    CALL(sfwr(0, 0, 0, 0));
-    CALL(sfwrite(0, 0, 0));
+    CALL(sfungetc(NULL, 0));
+    CALL(sfwr(NULL, NULL, 0, NULL));
+    CALL(sfwrite(NULL, NULL, 0));
 
     va_start(args, argv);
-    CALL(sfvprintf(0, 0, args));
-    CALL(sfvscanf(0, 0, args));
-    CALL(sfvsprintf(0, 0, 0, args));
-    CALL(sfvsscanf(0, 0, args));
+    CALL(sfvprintf(NULL, NULL, args));
+    CALL(sfvscanf(NULL, NULL, args));
+    CALL(sfvsprintf(NULL, 0, NULL, args));
+    CALL(sfvsscanf(NULL, NULL, args));
     va_end(args);
 }
 
