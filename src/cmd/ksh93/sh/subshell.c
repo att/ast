@@ -508,13 +508,13 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     if (!comsub || !shp->subshare) {
         sp->shpwd = shp->pwd;
         sp->shpwdfd = ((shp->pwdfd >= 0)) ? sh_fcntl(shp->pwdfd, F_DUPFD_CLOEXEC, 10) : -1;
-#ifdef O_SEARCH
+#if O_SEARCH
         // If shell starts in a directory that it does not have access to, this will cause error.
         // if (sp->shpwdfd < 0) {
         //     errormsg(SH_DICT, ERROR_system(1), "Can't obtain directory fd.");
         //     __builtin_unreachable();
         // }
-#endif
+#endif  // O_SEARCH
         sp->pwd = (shp->pwd ? strdup(shp->pwd) : 0);
         sp->mask = shp->mask;
         sh_stats(STAT_SUBSHELL);
@@ -698,9 +698,9 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
             Namval_t *pwdnod = sh_scoped(shp, PWDNOD);
             if (shp->pwd) {
                 shp->pwd = sp->pwd;
-#ifndef O_SEARCH
+#if !O_SEARCH
                 if (sp->shpwdfd < 0) chdir(shp->pwd);
-#endif
+#endif  // O_SEARCH
                 path_newdir(shp, shp->pathlist);
             }
             if (nv_isattr(pwdnod, NV_NOFREE)) STORE_VT(pwdnod->nvalue, const_cp, sp->pwd);

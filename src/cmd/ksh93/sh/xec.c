@@ -1204,15 +1204,15 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     int was_nofork = execflg ? sh_isstate(shp, SH_NOFORK) : 0;
                     checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
                     volatile unsigned long was_vi = 0, was_emacs = 0, was_gmacs = 0;
-#ifndef O_SEARCH
+#if !O_SEARCH
                     struct stat statb;
-#endif
+#endif  // O_SEARCH
                     bp = &shp->bltindata;
                     save_ptr = bp->ptr;
                     save_data = bp->data;
-#ifndef O_SEARCH
+#if !O_SEARCH
                     memset(&statb, 0, sizeof(struct stat));
-#endif
+#endif  // O_SEARCH
                     if (strchr(nv_name(np), '/')) {
                         // Disable editors for built-in versions of commands on PATH.
                         was_vi = sh_isoption(shp, SH_VI);
@@ -1247,12 +1247,12 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         if (!nv_isattr(np, BLT_ENV) && !nv_isattr(np, BLT_SPC)) {
                             if (!shp->pwd) {
                                 path_pwd(shp);
-#ifndef O_SEARCH
+#if !O_SEARCH
                             } else if (shp->pwdfd >= 0) {
                                 fstat(shp->pwdfd, &statb);
                             } else if (shp->pwd) {
                                 stat(e_dot, &statb);
-#endif
+#endif  // O_SEARCH
                             }
                             sfsync(NULL);
                             share = sfset(sfstdin, SF_SHARE, 0);
@@ -1340,9 +1340,9 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     if (bp->ptr != nv_context(np)) np->nvfun = (Namfun_t *)bp->ptr;
                     if (execflg && !was_nofork) sh_offstate(shp, SH_NOFORK);
                     if (!(nv_isattr(np, BLT_ENV))) {
-#ifdef O_SEARCH
+#if O_SEARCH
                         while ((sh_fchdir(shp->pwdfd) < 0) && errno == EINTR) errno = 0;
-#else
+#else   // O_SEARCH
                         if (shp->pwd || (shp->pwdfd >= 0)) {
                             struct stat stata;
                             stat(e_dot, &stata);
