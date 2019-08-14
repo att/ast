@@ -535,20 +535,10 @@ static_fn Shnode_t *term(Lex_t *lexp, int flag) {
         t->par.partyp = TTIME;
         if (lexp->token == NOTSYM) t->par.partyp |= COMSCAN;
         t->par.partre = term(lexp, 0);
-    }
-#if SHOPT_COSHELL
-    else if ((t = item(lexp, SH_NL | SH_EMPTY | (flag & SH_SEMI))) &&
-             (lexp->token == '|' || lexp->token == PIPESYM2))
-#else   // SHOPT_COSHELL
-    else if ((t = item(lexp, SH_NL | SH_EMPTY | (flag & SH_SEMI))) && lexp->token == '|')
-#endif  // SHOPT_COSHELL
-    {
+    } else if ((t = item(lexp, SH_NL | SH_EMPTY | (flag & SH_SEMI))) && lexp->token == '|') {
         Shnode_t *tt;
         int showme = t->tre.tretyp & FSHOWME;
         t = makeparent(lexp, TFORK | FPOU, t);
-#if SHOPT_COSHELL
-        if (lexp->token == PIPESYM2) t->tre.tretyp |= FALTPIPE;
-#endif  // SHOPT_COSHELL
         tt = term(lexp, SH_NL);
         if (tt) {
             switch (tt->tre.tretyp & COMMSK) {
@@ -1248,23 +1238,6 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
             t->par.partyp = TPAR;
             break;
         }
-#if SHOPT_COSHELL
-        case '&': {
-            tok = sh_lex(lexp);
-            if (tok) {
-                if (tok != NL) sh_syntax(lexp);
-                t = getnode(comnod);
-                memset(t, 0, sizeof(struct comnod));
-                t->com.comline = sh_getlineno(lexp);
-            } else {
-                t = simple(lexp, SH_NOIO, NULL);
-            }
-            t->com.comtyp |= FAMP;
-            if (lexp->token == '&' || lexp->token == '|') sh_syntax(lexp);
-            return t;
-            break;
-        }
-#endif  // SHOPT_COSHELL
         default: {
             if (io == 0) return NULL;
         }

@@ -75,10 +75,6 @@ char e_version[] =
 #define ATTRS 1
     "B"
 #endif
-#if SHOPT_COSHELL
-#define ATTRS 1
-    "J"
-#endif
 #if ATTRS
     " "
 #endif
@@ -153,9 +149,6 @@ typedef struct _init_ {
     Namfun_t SH_VERSION_init;
     struct match SH_MATCH_init;
     Namfun_t SH_MATH_init;
-#if SHOPT_COSHELL
-    Namfun_t SH_JOBPOOL_init;
-#endif  // SHOPT_COSHELL
     Namfun_t LC_TIME_init;
     Namfun_t LC_TYPE_init;
     Namfun_t LC_NUM_init;
@@ -1029,10 +1022,6 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
 static const Namdisc_t SH_MATH_disc = {
     .dsize = 0, .getval = get_math, .setdisc = setdisc_any, .createf = create_math};
 
-#if SHOPT_COSHELL
-static const Namdisc_t SH_JOBPOOL_disc = {.dsize = 0, .setdisc = setdisc_any};
-#endif  // SHOPT_COSHELL
-
 static const Namdisc_t LC_disc = {.dsize = sizeof(Namfun_t), .putval = put_lang};
 
 //
@@ -1632,11 +1621,6 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     ip->SH_MATCH_init.namfun.nofree = 1;
     ip->SH_MATH_init.disc = &SH_MATH_disc;
     ip->SH_MATH_init.nofree = 1;
-#if SHOPT_COSHELL
-    ip->SH_JOBPOOL_init.disc = &SH_JOBPOOL_disc;
-    ip->SH_JOBPOOL_init.nofree = 1;
-    nv_stack(SH_JOBPOOL, &ip->SH_JOBPOOL_init);
-#endif  // SHOPT_COSHELL
     ip->SH_VERSION_init.disc = &SH_VERSION_disc;
     ip->SH_VERSION_init.nofree = 1;
     ip->LINENO_init.disc = &LINENO_disc;

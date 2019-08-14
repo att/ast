@@ -273,11 +273,6 @@ extern bool sh_trace(Shell_t *, char *[], int);
 extern void sh_trim(char *);
 extern int sh_type(const char *);
 extern void sh_unscope(Shell_t *);
-#if SHOPT_COSHELL
-extern bool sh_coaddfile(Shell_t *, char *);
-extern int sh_copipe(Shell_t *, int[], int);
-extern int sh_coaccept(Shell_t *, int[], int);
-#endif /* SHOPT_COSHELL */
 extern Namval_t *sh_fsearch(Shell_t *, const char *, nvflag_t);
 extern int sh_diropenat(Shell_t *, int, const char *);
 extern int sh_strchr(const char *, const char *, size_t);

@@ -758,62 +758,6 @@ void sh_rpipe(int pv[]) {
     sh_subsavefd(pv[1]);
 }
 
-#if SHOPT_COSHELL
-int sh_coaccept(Shell_t *shp, int *pv, int out) {
-    int fd = accept(pv[0], NULL, NULL);
-
-    if (fd > 2) (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
-    sh_close(pv[0]);
-    pv[0] = -1;
-    if (fd < 0) {
-        errormsg(SH_DICT, ERROR_system(1), e_pipe);
-        __builtin_unreachable();
-    }
-    if ((pv[out] = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10)) >= 10) {
-        sh_close(fd);
-    } else {
-        pv[out] = sh_iomovefd(shp, fd);
-    }
-    (void)fcntl(pv[out], F_SETFD, FD_CLOEXEC);
-    shp->fdstatus[pv[out]] = (out ? IOWRITE : IOREAD);
-    shp->fdstatus[pv[out]] |= IONOSEEK | IOCLEX;
-    sh_subsavefd(pv[out]);
-#if defined(SHUT_RD) && defined(SHUT_WR)
-    shutdown(pv[out], out ? SHUT_RD : SHUT_WR);
-#endif
-    return 0;
-}
-
-int sh_copipe(Shell_t *shp, int *pv, int out) {
-    int r, port = 20000;
-    struct sockaddr_in sin;
-    socklen_t slen;
-
-    pv[out] = socket(AF_INET, SOCK_STREAM, 0);
-    if (pv[out] < 0) {
-        errormsg(SH_DICT, ERROR_system(1), e_pipe);
-        __builtin_unreachable();
-    }
-    (void)fcntl(pv[out], F_SETFD, FD_CLOEXEC);
-    do {
-        sin.sin_family = AF_INET;
-        sin.sin_port = htons(++port);
-        sin.sin_addr.s_addr = INADDR_ANY;
-        slen = sizeof(sin);
-        r = bind(pv[out], (struct sockaddr *)&sin, slen);
-    } while (r == -1 && errno == EADDRINUSE);
-    if (r < 0 || listen(pv[out], 5) < 0) {
-        sh_close(pv[out]);
-        errormsg(SH_DICT, ERROR_system(1), e_pipe);
-        __builtin_unreachable();
-    }
-    shp->fdstatus[pv[out]] |= IOCLEX;
-    pv[1 - out] = -1;
-    pv[2] = port;
-    return 0;
-}
-#endif  // SHOPT_COSHELL
-
 static_fn int pat_seek(void *handle, const char *str, size_t sz) {
     UNUSED(sz);
     char **bp = (char **)handle;
@@ -1164,12 +1108,6 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
         }
         errno = 0;
         np = NULL;
-#if SHOPT_COSHELL
-        if (shp->inpool) {
-            if (!(iof & (IODOC | IOLSEEK | IOMOV))) sh_coaddfile(shp, fname);
-            continue;
-        }
-#endif  // SHOPT_COSHELL
         if (iop->iovname) {
             np = nv_open(iop->iovname, shp->var_tree, NV_VARNAME);
             if (nv_isattr(np, NV_RDONLY)) {

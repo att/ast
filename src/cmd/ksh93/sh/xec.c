@@ -71,10 +71,6 @@
 #include "test.h"
 #include "variables.h"
 
-#if SHOPT_COSHELL
-#include "coshell.h"
-#endif
-
 #if USE_SPAWN
 #include "spawnvex.h"
 #endif
@@ -1510,12 +1506,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             bool unpipe = false;
 #endif
 
-#if SHOPT_COSHELL
-            if (shp->inpool) {
-                sh_exec(shp, t->fork.forktre, 0);
-                break;
-            }
-#endif  // SHOPT_COSHELL
             if (shp->subshell) {
                 sh_subtmpfile(shp);
                 if ((type & (FAMP | TFORK)) == (FAMP | TFORK)) {
@@ -1582,9 +1572,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 parent = sh_fork(shp, type, &jobid);
 #endif  // USE_SPAWN
             }
-#if SHOPT_COSHELL
-        skip:
-#endif /* SHOPT_COSHELL */
             job.parent = parent;
             if (!job.parent) {
                 forked_child(shp, t, flags, type, no_fork, com0, com, parent, topfd, vexi);
@@ -1627,11 +1614,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 if (sh_isstate(shp, SH_PROFILE) || sh_isstate(shp, SH_INTERACTIVE)) {
                     /* print job number */
 #ifdef JOBS
-#if SHOPT_COSHELL
-                    sfprintf(sfstderr, "[%d]\t%s\n", jobid, sh_pid2str(shp, parent));
-#else
                     sfprintf(sfstderr, "[%d]\t%d\n", jobid, parent);
-#endif  // SHOPT_COSHELL
 #else   // JOBS
                     sfprintf(sfstderr, "%d\n", parent);
 #endif  // JOBS
@@ -1645,13 +1628,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             int jmpval, waitall;
             int simple = (t->fork.forktre->tre.tretyp & COMMSK) == TCOM;
             checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
-#if SHOPT_COSHELL
-            if (shp->inpool) {
-                sh_redirect(shp, t->fork.forkio, 0);
-                sh_exec(shp, t->fork.forktre, 0);
-                break;
-            }
-#endif  // SHOPT_COSHELL
             if (shp->subshell) execflg = 0;
             sh_pushcontext(shp, buffp, SH_JMPIO);
             if (type & FPIN) {
@@ -1718,12 +1694,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             break;
         }
         case TPAR: {
-#if SHOPT_COSHELL
-            if (shp->inpool) {
-                sh_exec(shp, t->par.partre, 0);
-                break;
-            }
-#endif /* SHOPT_COSHELL */
             echeck = 1;
             flags &= ~OPTIMIZE_FLAG;
             if (!shp->subshell && !shp->st.trapcom[0] && !shp->st.trap[SH_ERRTRAP] &&
@@ -1775,27 +1745,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             int savejobid = job.curjobid;
             int *exitval = NULL, *saveexitval = job.exitval;
             pid_t savepgid = job.curpgid;
-#if SHOPT_COSHELL
-            int copipe = 0;
-            Shnode_t *tt;
-#endif  // SHOPT_COSHELL
             job.exitval = NULL;
-#if SHOPT_COSHELL
-            if (shp->inpool) {
-                do {
-                    sh_exec(shp, t->lst.lstlef, 0);
-                    t = t->lst.lstrit;
-                    if (flags &&
-                        (t->tre.tretyp != TFIL || !(t->lst.lstlef->tre.tretyp & FALTPIPE))) {
-                        goto coskip1;
-                    }
-                } while (t->tre.tretyp == TFIL);
-                sh_exec(shp, t, 0);
-            coskip1:
-                break;
-            }
-            pvo[2] = pvn[2] = 0;
-#endif  // SHOPT_COSHELL
             job.curjobid = 0;
             if (shp->subshell) {
                 sh_subtmpfile(shp);
@@ -1888,22 +1838,11 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             break;
         }
         case TAND: {
-#if SHOPT_COSHELL
-            if (shp->inpool) {
-            andor:
-                sh_exec(shp, t->lst.lstlef, 0);
-                sh_exec(shp, t->lst.lstrit, 0);
-                break;
-            }
-#endif  // SHOPT_COSHELL
             if (type & TTEST) skipexitset++;
             if (sh_exec(shp, t->lst.lstlef, OPTIMIZE) == 0) sh_exec(shp, t->lst.lstrit, flags);
             break;
         }
         case TORF: {
-#if SHOPT_COSHELL
-            if (shp->inpool) goto andor;
-#endif  // SHOPT_COSHELL
             if (type & TTEST) skipexitset++;
             if (sh_exec(shp, t->lst.lstlef, OPTIMIZE) != 0) sh_exec(shp, t->lst.lstrit, flags);
             break;
@@ -1919,9 +1858,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             char *nullptr = NULL;
             int nameref, refresh = 1;
             char *av[5];
-#if SHOPT_COSHELL
-            int poolfiles;
-#endif /* SHOPT_COSHELL */
             int jmpval = shp->jmplist->mode;
             checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
             void *optlist = shp->optlist;
@@ -2003,13 +1939,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     av[4] = 0;
                     sh_debug(shp, trap, NULL, NULL, av, 0);
                 }
-#if SHOPT_COSHELL
-                if (shp->inpool) {
-                    poolfiles = shp->poolfiles;
-                    sh_exec(shp, t->for_.fortre, 0);
-                    if (poolfiles == shp->poolfiles) break;
-                }
-#endif  // SHOPT_COSHELL
                 sh_exec(shp, t->for_.fortre, flag);
                 flag &= ~OPTIMIZE_FLAG;
                 if (t->tre.tretyp & COMSCAN) {
@@ -2041,23 +1970,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             int jmpval = shp->jmplist->mode;
             checkpt_t *buffp = stkalloc(shp->stk, sizeof(checkpt_t));
             void *optlist = shp->optlist;
-#if SHOPT_COSHELL
-            if (shp->inpool) {
-                int poolfiles;
-                if (type == TWH && tt->tre.tretyp == TCOM && !tt->com.comarg && tt->com.comio) {
-                    sh_redirect(shp, tt->com.comio, 0);
-                    break;
-                }
-                sh_exec(shp, tt, 0);
-                do {
-                    if ((sh_exec(shp, tt, 0) == 0) != (type == TWH)) break;
-                    poolfiles = shp->poolfiles;
-                    sh_exec(shp, t->wh.dotre, 0);
-                    if (t->wh.whinc) sh_exec(shp, (Shnode_t *)t->wh.whinc, 0);
-                } while (poolfiles != shp->poolfiles);
-                break;
-            }
-#endif  // SHOPT_COSHELL
             shp->optlist = NULL;
             sh_tclear(shp, t->wh.whtre);
             sh_tclear(shp, t->wh.dotre);
@@ -2133,13 +2045,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             break;
         }
         case TIF: {
-#if SHOPT_COSHELL
-            if (shp->inpool) {
-                sh_exec(shp, t->if_.thtre, 0);
-                if (t->if_.eltre) sh_exec(shp, t->if_.eltre, 0);
-                break;
-            }
-#endif  // SHOPT_COSHELL
             if (sh_exec(shp, t->if_.iftre, OPTIMIZE) == 0) {
                 sh_exec(shp, t->if_.thtre, flags);
             } else if (t->if_.eltre) {
@@ -2165,12 +2070,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             }
             while (t) {
                 struct argnod *rex = (struct argnod *)t->reg.regptr;
-#if SHOPT_COSHELL
-                if (shp->inpool) {
-                    sh_exec(shp, t->reg.regcom, 0);
-                    continue;
-                }
-#endif  // SHOPT_COSHELL
                 while (rex) {
                     char *s;
                     if (rex->argflag & ARG_MAC) {
@@ -2200,12 +2099,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             struct timeval ta, tb, tm[3];
             struct timeval before_usr, before_sys, after_usr, after_sys;
 
-#if SHOPT_COSHELL
-            if (shp->inpool) {
-                if (t->par.partre) sh_exec(shp, t->par.partre, 0);
-                break;
-            }
-#endif  // SHOPT_COSHELL
             if (type != TTIME) {
                 sh_exec(shp, t->par.partre, OPTIMIZE);
                 shp->exitval = !shp->exitval;
@@ -2247,12 +2140,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             char *fname = ((struct functnod *)t)->functnam;
             Namval_t *npv = 0, *mp;
             cp = strrchr(fname, '.');
-#if SHOPT_COSHELL
-            if (shp->inpool) {
-                sh_exec(shp, t->funct.functtre, 0);
-                break;
-            }
-#endif  // SHOPT_COSHELL
             if (t->tre.tretyp == TNSPACE) {
                 Namval_t *oldnspace = NULL;
                 int offset = stktell(stkp);
@@ -2389,9 +2276,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             int n;
             char *left;
             int negate = (type & TNEGATE) != 0;
-#if SHOPT_COSHELL
-            if (shp->inpool) break;
-#endif  // SHOPT_COSHELL
             if (type & TTEST) skipexitset++;
             error_info.line = t->tst.tstline - shp->st.firstline;
             echeck = 1;
@@ -2491,12 +2375,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
         }
     }
     if (!skipexitset) exitset(shp);
-#if SHOPT_COSHELL
-    if (!shp->inpool && !(OPTIMIZE))
-#else
-    if (!(OPTIMIZE))
-#endif  // SHOPT_COSHELL
-    {
+    if (!(OPTIMIZE)) {
         if (sav != stkptr(stkp, 0)) {
             stkset(stkp, sav, 0);
         } else if (stktell(stkp)) {

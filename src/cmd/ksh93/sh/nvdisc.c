@@ -943,10 +943,6 @@ Namval_t *nv_search(const char *name, Dt_t *root, nvflag_t mode) {
     Shell_t *shp = sh_getinterp();
     Dt_t *dp = NULL;
 
-#if SHOPT_COSHELL
-    if (shp->inpool) mode |= NV_NOSCOPE;
-#endif  // SHOPT_COSHELL
-
     if (mode & NV_NOSCOPE) dp = dtview(root, 0);
     if (*name == '.' && root == shp->var_tree && !dp) root = shp->var_base;
 
@@ -971,10 +967,6 @@ Namval_t *nv_search_namval(const Namval_t *mp, Dt_t *root, nvflag_t mode) {
     Shell_t *shp = sh_getinterp();
     Dt_t *dp = NULL;
     const char *name = NULL;
-
-#if SHOPT_COSHELL
-    if (shp->inpool) mode |= NV_NOSCOPE;
-#endif  // SHOPT_COSHELL
 
     if (nv_isflag(mode, NV_NOSCOPE)) dp = dtview(root, 0);
 
