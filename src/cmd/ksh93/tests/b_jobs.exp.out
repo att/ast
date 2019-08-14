@@ -1,8 +1,8 @@
 disown invalid job ID fails
-background job killed when shell exits
-disowned background job not killed when shell exits
 bg invalid job ID fails
 fg invalid job ID fails
+background job killed when shell exits
+disowned background job not killed when shell exits
 Ctrl-z stops sleep 60 processs
 jobs lists stopped sleep 60 process
 jobs -l lists pid of stopped sleep 60 process

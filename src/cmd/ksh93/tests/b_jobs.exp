@@ -10,18 +10,6 @@ expect_prompt
 # Terminal rows and columns may default to zero so ensure sane values.
 send "stty rows 24 cols 80\r"
 expect_prompt
-send "set -o\r"
-expect_prompt
-
-# WTF
-send "print PATH=\$PATH\r"
-expect_prompt
-send "ls -l /bin/ps\r"
-expect_prompt
-send "type ps\r"
-expect_prompt
-send "ps -fp 999999\r"
-expect_prompt
 
 # ======
 # Enable job monitoring. This should already be enabled but let's be paranoid and explicit.
@@ -43,6 +31,24 @@ log_test_entry
 send "disown 666\r"
 expect -re ": disown: no such job\r\n" {
     puts "disown invalid job ID fails"
+}
+expect_prompt
+
+# ======
+# An invalid `bg` job ID should be an error.
+log_test_entry
+send "bg %9\r"
+expect -re ": bg: no such job\r\n" {
+    puts "bg invalid job ID fails"
+}
+expect_prompt
+
+# ======
+# An invalid `fg` job ID should be an error.
+log_test_entry
+send "fg %9\r"
+expect -re ": fg: no such job\r\n" {
+    puts "fg invalid job ID fails"
 }
 expect_prompt
 
@@ -100,24 +106,6 @@ expect -re "\r\nstatus 0\r\n" {
 expect_prompt
 # Kill the backgrounded, and orphaned, sleep.
 send "ps waux | grep '\[s\]leep 17' | read user pid x; kill $pid\r"
-expect_prompt
-
-# ======
-# An invalid `bg` job ID should be an error.
-log_test_entry
-send "bg %9\r"
-expect -re ": bg: no such job\r\n" {
-    puts "bg invalid job ID fails"
-}
-expect_prompt
-
-# ======
-# An invalid `fg` job ID should be an error.
-log_test_entry
-send "fg %9\r"
-expect -re ": fg: no such job\r\n" {
-    puts "fg invalid job ID fails"
-}
 expect_prompt
 
 # ======
