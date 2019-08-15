@@ -223,7 +223,7 @@ static_fn void run_addr2lines_prog(int n_frames, char *path, const char **argv) 
 
     sigprocmask(SIG_SETMASK, &omask, NULL);
 
-    if (len == sizeof(atos_data)) return;
+    if (len == 0 || len >= sizeof(atos_data)) return;
     // Null terminate the final string. We assume the last character is a newline. That should be a
     // safe assumption since it would be perverse for the program we ran to not newline terminate
     // the final line.
