@@ -551,7 +551,7 @@ __attribute__((noreturn)) void sh_done(void *ptr, int sig) {
 #ifdef JOBS
     if ((sh_isoption(shp, SH_INTERACTIVE) && shp->login_sh) ||
         (!sh_isoption(shp, SH_INTERACTIVE) && (sig == SIGHUP))) {
-        job_walk(shp, sfstderr, job_terminate, SIGHUP, NULL);
+        job_walk(shp, sfstdout, job_terminate, SIGHUP, NULL);
     }
 #endif  // JOBS
     job_close(shp);

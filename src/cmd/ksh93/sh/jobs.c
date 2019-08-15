@@ -476,11 +476,11 @@ bool job_reap(int sig) {
         nochild = true;
     }
     if (sh_isoption(shp, SH_NOTIFY) && sh_isstate(shp, SH_TTYWAIT)) {
-        outfile = sfstderr;
+        outfile = sfstdout;
         assert(pw);
         job_list(pw, JOB_NFLAG | JOB_NLFLAG);
         job_unpost(shp, pw, 1);
-        sfsync(sfstderr);
+        sfsync(sfstdout);
     }
     shp->trapnote |= (shp->sigflag[SIGCHLD] & SH_SIGTRAP);
     if (!sig && (shp->trapnote & SH_SIGTRAP)) {
@@ -1308,9 +1308,9 @@ bool job_wait(pid_t pid) {
             for (px = job.pwlist; px; px = px->p_nxtjob) {
                 if (px != pw && (px->p_flag & P_NOTIFY)) {
                     if (sh_isoption(shp, SH_NOTIFY)) {
-                        outfile = sfstderr;
+                        outfile = sfstdout;
                         job_list(px, JOB_NFLAG | JOB_NLFLAG);
-                        sfsync(sfstderr);
+                        sfsync(sfstdout);
                     } else if (!sh_isoption(shp, SH_INTERACTIVE) && (px->p_flag & P_SIGNALLED)) {
                         job_prmsg(shp, px);
                         px->p_flag &= ~P_NOTIFY;
@@ -1355,7 +1355,7 @@ bool job_wait(pid_t pid) {
                 continue;
             }
         }
-        sfsync(sfstderr);
+        sfsync(sfstdout);
         job.waitsafe = 0;
         nochild = job_reap(job.savesig);
         if (job.waitsafe) continue;

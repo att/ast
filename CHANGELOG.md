@@ -49,6 +49,7 @@ was subsequently created to document the work being done.
 
 ## Notable fixes and improvements
 
+- Interactive prompts are now written to stdout rather than stderr (issue #1380)
 - `declare` has been added as an alias for `typeset` (issue #220).
 - `local` has been added as a constrained alias for `typeset` when used inside
   a function (issue #220).

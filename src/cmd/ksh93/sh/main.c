@@ -138,7 +138,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
         // Decide whether shell is interactive.
         if (!sh_isoption(shp, SH_INTERACTIVE) && !sh_isoption(shp, SH_TFLAG) &&
             !sh_isoption(shp, SH_CFLAG) && sh_isoption(shp, SH_SFLAG) && tty_check(0) &&
-            tty_check(STDERR_FILENO)) {
+            tty_check(STDOUT_FILENO)) {
             sh_onoption(shp, SH_INTERACTIVE);
         }
         if (sh_isoption(shp, SH_INTERACTIVE)) {
@@ -440,7 +440,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
             sh_offstate(shp, SH_MONITOR);
             if (sh_isoption(shp, SH_MONITOR)) sh_onstate(shp, SH_MONITOR);
             if (job.pwlist) {
-                job_walk(shp, sfstderr, job_list, JOB_NFLAG, NULL);
+                job_walk(shp, sfstdout, job_list, JOB_NFLAG, NULL);
                 job_wait((pid_t)0);
             }
 #endif  // JOBS
@@ -471,7 +471,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
         if (tdone || !sfreserve(iop, 0, 0)) {
         eof_or_error:
             if (sh_isstate(shp, SH_INTERACTIVE) && !sferror(iop)) {
-                if (--maxtry > 0 && sh_isoption(shp, SH_IGNOREEOF) && !sferror(sfstderr)) {
+                if (--maxtry > 0 && sh_isoption(shp, SH_IGNOREEOF) && !sferror(sfstdout)) {
                     // It is theoretically possible for fno == -1 at this point. That would be bad.
                     assert(fno >= 0);
                     if ((shp->fdstatus[fno] & IOTTY)) {
@@ -495,7 +495,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
         if (sh_isstate(shp, SH_INTERACTIVE) && shp->gd->hist_ptr) {
             job_wait((pid_t)0);
             hist_eof(shp->gd->hist_ptr);
-            sfsync(sfstderr);
+            sfsync(sfstdout);
         }
         if (sh_isoption(shp, SH_HISTORY)) sh_onstate(shp, SH_HISTORY);
         job.waitall = job.curpgid = 0;
@@ -523,7 +523,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
 done:
     sh_popcontext(shp, &buff);
     if (sh_isstate(shp, SH_INTERACTIVE)) {
-        sfputc(sfstderr, '\n');
+        sfputc(sfstdout, '\n');
         job_close(shp);
     }
     if (jmpval == SH_JMPSCRIPT) {

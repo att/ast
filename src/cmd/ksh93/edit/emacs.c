@@ -176,7 +176,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
     Prompt = prompt;
     ep->screen = Screen;
     ep->lastdraw = FINAL;
-    if (tty_raw(STDERR_FILENO, 0) < 0) {
+    if (tty_raw(STDOUT_FILENO, 0) < 0) {
         return reedit ? reedit : ed_read(context, fd, buff, scend, 0);
     }
     raw = 1;
@@ -207,7 +207,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
             draw(ep, FINAL);
             ed_flush(ep->ed);
         }
-        tty_cooked(STDERR_FILENO);
+        tty_cooked(STDOUT_FILENO);
         if (i == UEOF) return 0;  // EOF
         return -1;                // some other error
     }
@@ -266,7 +266,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
             }
             case EOFCHAR: {
                 ed_flush(ep->ed);
-                tty_cooked(STDERR_FILENO);
+                tty_cooked(STDOUT_FILENO);
                 return 0;
             }
             case '\t': {
@@ -600,7 +600,7 @@ process:
         *out = '\0';
     }
     draw(ep, FINAL);
-    tty_cooked(STDERR_FILENO);
+    tty_cooked(STDOUT_FILENO);
     if (ed->e_nlist) {
         ed->e_nlist = 0;
         stkset(stkstd, ed->e_stkptr, ed->e_stkoff);

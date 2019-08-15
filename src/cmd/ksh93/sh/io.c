@@ -1568,8 +1568,8 @@ static_fn int io_heredoc(Shell_t *shp, struct ionod *iop, const char *name, int 
         infile = subopen(shp, shp->heredocs, iop->iooffset, iop->iosize);
         if (traceon) {
             char *cp = sh_fmtq(iop->iodelim);
-            fd = (*cp == '$' || *cp == '\'') ? ' ' : '\\';
-            sfprintf(sfstderr, " %c%s\n", fd, cp);
+            int c = (*cp == '$' || *cp == '\'') ? ' ' : '\\';
+            sfprintf(sfstderr, " %c%s\n", c, cp);
             sfdisc(outfile, &tee_disc);
         }
         tmp = outfile;
@@ -2134,7 +2134,7 @@ int sh_iocheckfd(Shell_t *shp, int fd, int fn) {
 }
 
 //
-// Display prompt PS<flag> on standard error.
+// Display prompt PS<flag> on standard out (stdout).
 //
 static_fn int io_prompt(Shell_t *shp, Sfio_t *iop, int flag) {
     char *cp;
@@ -2145,9 +2145,9 @@ static_fn int io_prompt(Shell_t *shp, Sfio_t *iop, int flag) {
 
     if (flag < 3 && !sh_isstate(shp, SH_INTERACTIVE)) flag = 0;
     if (flag == 2 && sfpkrd(sffileno(iop), &buff, 1, '\n', 0, 1) >= 0) flag = 0;
-    if (flag == 0) return sfsync(sfstderr);
-    sfflags = sfset(sfstderr, SF_SHARE | SF_PUBLIC | SF_READ, 0);
-    if (!(shp->prompt = (char *)sfreserve(sfstderr, 0, 0))) shp->prompt = "";
+    if (flag == 0) return sfsync(sfstdout);
+    sfflags = sfset(sfstdout, SF_SHARE | SF_PUBLIC | SF_READ, 0);
+    if (!(shp->prompt = (char *)sfreserve(sfstdout, 0, 0))) shp->prompt = "";
     sh_onstate(shp, SH_IOPROMPT);
     switch (flag) {
         case 1: {
@@ -2157,7 +2157,7 @@ static_fn int io_prompt(Shell_t *shp, Sfio_t *iop, int flag) {
                 !sh_isoption(shp, SH_GMACS)) {
                 // Re-enable output in case the user has disabled it.  Not needed with edit mode.
                 int mode = LFLUSHO;
-                ioctl(sffileno(sfstderr), TIOCLBIC, &mode);
+                ioctl(sffileno(sfstdout), TIOCLBIC, &mode);
             }
 #endif /* TIOCLBIC */
             cp = sh_mactry(shp, nv_getval(sh_scoped(shp, PS1NOD)));
@@ -2170,14 +2170,14 @@ static_fn int io_prompt(Shell_t *shp, Sfio_t *iop, int flag) {
                 } else if (c == HIST_CHAR && escape_index == 0) {
                     c = *++cp;             // look at next character
                     if (c != HIST_CHAR) {  // print out line number if not !!
-                        sfprintf(sfstderr, "%d",
+                        sfprintf(sfstdout, "%d",
                                  shp->gd->hist_ptr ? (int)shp->gd->hist_ptr->histind : ++cmdno);
                     }
                     if (c == 0) goto done;
                 } else {
                     escape_index = 0;
                 }
-                sfputc(sfstderr, c);
+                sfputc(sfstdout, c);
             }
             goto done;
         }
@@ -2191,13 +2191,13 @@ static_fn int io_prompt(Shell_t *shp, Sfio_t *iop, int flag) {
         }
         default: { goto done; }
     }
-    if (cp) sfputr(sfstderr, cp, -1);
+    if (cp) sfputr(sfstdout, cp, -1);
 
 done:
     sh_offstate(shp, SH_IOPROMPT);
-    if (*shp->prompt && (endprompt = (char *)sfreserve(sfstderr, 0, 0))) *endprompt = 0;
-    sfset(sfstderr, (sfflags & SF_READ) | SF_SHARE | SF_PUBLIC, 1);
-    return sfsync(sfstderr);
+    if (*shp->prompt && (endprompt = (char *)sfreserve(sfstdout, 0, 0))) *endprompt = 0;
+    sfset(sfstdout, (sfflags & SF_READ) | SF_SHARE | SF_PUBLIC, 1);
+    return sfsync(sfstdout);
 }
 
 //

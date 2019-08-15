@@ -263,7 +263,7 @@ int ed_window(void) {
 //
 void ed_flush(Edit_t *ep) {
     int n = ep->e_outptr - ep->e_outbase;
-    int fd = STDERR_FILENO;
+    int fd = STDOUT_FILENO;
 
     if (n <= 0) return;
     write(fd, ep->e_outbase, (unsigned)n);
@@ -273,7 +273,7 @@ void ed_flush(Edit_t *ep) {
 //
 // Send the bell character ^G to the terminal.
 //
-void ed_ringbell(void) { write(STDERR_FILENO, bellchr, 1); }
+void ed_ringbell(void) { write(STDOUT_FILENO, bellchr, 1); }
 
 //
 // Send a carriage return line feed to the terminal.
@@ -429,21 +429,21 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
         ep->e_plen -= shift;
         last[-ep->e_plen - 2] = '\r';
     }
-    sfsync(sfstderr);
-    if (fd == sffileno(sfstderr)) {
-        // Can't use output buffer when reading from stderr.
+    sfsync(sfstdout);
+    if (fd == sffileno(sfstdout)) {
+        // Can't use output buffer when reading from stdout.
         static char *buff;
         if (!buff) buff = malloc(MAXLINE);
         ep->e_outbase = ep->e_outptr = buff;
         ep->e_outlast = ep->e_outptr + MAXLINE;
         return;
     }
-    qlen = sfset(sfstderr, SF_READ, 0);
+    qlen = sfset(sfstdout, SF_READ, 0);
     // Make sure SF_READ not on.
-    ep->e_outbase = ep->e_outptr = sfreserve(sfstderr, SF_UNBOUND, SF_LOCKR);
-    ep->e_outlast = ep->e_outptr + sfvalue(sfstderr);
-    if (qlen) sfset(sfstderr, SF_READ, 1);
-    sfwrite(sfstderr, ep->e_outptr, 0);
+    ep->e_outbase = ep->e_outptr = sfreserve(sfstdout, SF_UNBOUND, SF_LOCKR);
+    ep->e_outlast = ep->e_outptr + sfvalue(sfstdout);
+    if (qlen) sfset(sfstdout, SF_READ, 1);
+    sfwrite(sfstdout, ep->e_outptr, 0);
     ep->e_eol = reedit;
     if (ep->e_multiline) {
 #ifdef _cmd_tput

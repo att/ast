@@ -357,9 +357,9 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
                     *ptrcom = path_basename(*ptrcom);
                 }
             }
-            sfputc(sfstderr, '\n');
-            sh_menu(shp, sfstderr, narg, com);
-            sfsync(sfstderr);
+            sfputc(sfstdout, '\n');
+            sh_menu(shp, sfstdout, narg, com);
+            sfsync(sfstdout);
             ep->e_nlist = narg;
             ep->e_clist = com;
             goto done;

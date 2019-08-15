@@ -1293,7 +1293,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             shp->exitval = (*shp->bltinfun)(argn, com, bp);
                             sfsync(NULL);
                         }
-                        if (error_info.flags & ERROR_INTERACTIVE) tty_check(STDERR_FILENO);
+                        if (error_info.flags & ERROR_INTERACTIVE) tty_check(STDOUT_FILENO);
                         ((Shnode_t *)t)->com.comstate = shp->bltindata.data;
                         bp->data = (void *)save_data;
                         if (shp->exitval && errno == EINTR && shp->lastsig) {
