@@ -50,7 +50,7 @@ was subsequently created to document the work being done.
 ## Notable fixes and improvements
 
 - `declare` has been added as an alias for `typeset` (issue #220).
-- `local` has been added as a contrainsed alias for `typeset` when used inside
+- `local` has been added as a constrained alias for `typeset` when used inside
   a function (issue #220).
 - Mention of the `getconf` builtin has been removed from the main ksh man
   page. That command has never been enabled by default and is now deprecated
