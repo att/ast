@@ -8,6 +8,7 @@ env:
 before_install:
     - sudo apt-get update
     - sudo apt-get install python3-pip
+    - sudo apt-get install python3-setuptools
     - sudo pip3 install meson==0.44.0
     # Ubuntu repositories have older version of ninja
     - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
@@ -29,10 +30,12 @@ addons:
         # Commands to prepare for build_command
         build_command_prepend: meson -Dbuild-api-tests=false build
 
-        # The command that will be added as an argument to "cov-build" to compile your project for analysis,
+        # The command that will be added as an argument to "cov-build" to
+        # compile your project for analysis,
         build_command: ninja -C build
 
-        # Pattern to match selecting branches that will run analysis. We recommend leaving this set to 'coverity_scan'.
-        # Take care in resource usage, and consider the build frequency allowances per
+        # Pattern to match selecting branches that will run analysis. We
+        # recommend leaving this set to 'coverity_scan'. Take care in resource
+        # usage, and consider the build frequency allowances per
         #   https://scan.coverity.com/faq#frequency
         branch_pattern: coverity_scan
