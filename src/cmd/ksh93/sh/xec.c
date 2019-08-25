@@ -1413,6 +1413,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             }
                         }
 
+                        assert(np);  // Coverity CID#253708
                         if (!FETCH_VT(np->nvalue, ip)) {
                             if (indx == 1) {
                                 errormsg(SH_DICT, ERROR_exit(0), e_defined, com0);
