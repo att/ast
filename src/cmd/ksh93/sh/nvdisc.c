@@ -301,7 +301,7 @@ static_fn void assign(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *h
         // Don't free functions during reinitialization.
         nv_putv(np, val, flags, handle);
     } else if (!nq || !isblocked(bp, type)) {
-        Dt_t *root = sh_subfuntree(shp, 1);
+        Dt_t *root = sh_subfuntree(shp, true);
         Namval_t *pp = NULL;
         int n;
 
@@ -1341,5 +1341,6 @@ Namval_t *sh_fsearch(Shell_t *shp, const char *fname, nvflag_t add) {
     sfputr(stkp, nv_name(shp->namespace), '.');
     sfputr(stkp, fname, 0);
     fname = stkptr(stkp, offset);
-    return nv_search(fname, sh_subfuntree(shp, add & NV_ADD), add);
+    Dt_t *funtree = sh_subfuntree(shp, nv_isflag(add, NV_ADD));
+    return nv_search(fname, funtree, add);
 }

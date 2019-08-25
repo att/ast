@@ -2193,7 +2193,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 np = sh_fsearch(shp, fname, NV_ADD | NV_NOSCOPE);
             }
             if (!np) {
-                np = nv_open(fname, sh_subfuntree(shp, 1), NV_NOARRAY | NV_VARNAME | NV_NOSCOPE);
+                np = nv_open(fname, sh_subfuntree(shp, true), NV_NOARRAY | NV_VARNAME | NV_NOSCOPE);
             }
             if (npv) {
                 if (!shp->mktype) cp = nv_setdisc(npv, cp, np, (Namfun_t *)npv);

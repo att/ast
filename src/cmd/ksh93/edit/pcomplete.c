@@ -292,10 +292,13 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
         if (comp->globpat) gen_wordlist(tmp, comp->globpat);
         if (comp->wordlist) gen_wordlist(tmp, comp->wordlist);
     }
-    if (comp->fname && !comp->fun &&
-        !(comp->fun = nv_search(comp->fname, sh_subfuntree(shp, 0), 0))) {
-        errormsg(SH_DICT, ERROR_exit(1), "%s: function not found", comp->fname);
-        __builtin_unreachable();
+    if (comp->fname && !comp->fun) {
+        Dt_t *funtree = sh_subfuntree(shp, false);
+        comp->fun = nv_search(comp->fname, funtree, 0);
+        if (!comp->fun) {
+            errormsg(SH_DICT, ERROR_exit(1), "%s: function not found", comp->fname);
+            __builtin_unreachable();
+        }
     }
     if (comp->command || comp->fun) {
         char *cpsave;

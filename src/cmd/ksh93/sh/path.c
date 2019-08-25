@@ -553,7 +553,7 @@ static_fn void funload(Shell_t *shp, int fno, const char *name) {
 
     pname = path_fullname(shp, stkptr(shp->stk, PATH_OFFSET));
     if (shp->fpathdict && (rp = dtmatch(shp->fpathdict, pname))) {
-        Dt_t *funtree = sh_subfuntree(shp, 1);
+        Dt_t *funtree = sh_subfuntree(shp, true);
         while (1) {
             rpfirst = dtprev(shp->fpathdict, rp);
             if (!rpfirst || strcmp(pname, rpfirst->fname)) break;
@@ -806,14 +806,14 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
         fd = can_execute(shp, stkptr(shp->stk, PATH_OFFSET), isfun);
         if (isfun && fd >= 0 && (cp = strrchr(name, '.'))) {
             *cp = 0;
-            if (nv_open(name, sh_subfuntree(shp, 1), NV_NOARRAY | NV_IDENT | NV_NOSCOPE)) {
+            if (nv_open(name, sh_subfuntree(shp, true), NV_NOARRAY | NV_IDENT | NV_NOSCOPE)) {
                 sh_close(fd);
                 fd = -1;
             }
             *cp = '.';
         }
         if (isfun && fd >= 0) {
-            nv_onattr(nv_open(name, sh_subfuntree(shp, 1), NV_NOARRAY | NV_IDENT | NV_NOSCOPE),
+            nv_onattr(nv_open(name, sh_subfuntree(shp, true), NV_NOARRAY | NV_IDENT | NV_NOSCOPE),
                       NV_LTOU | NV_FUNCTION);
             funload(shp, fd, name);
             return NULL;

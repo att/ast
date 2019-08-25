@@ -623,7 +623,7 @@ static_fn int setall(char **argv, nvflag_t flag, Dt_t *troot, struct tdata *tp) 
                     if (shp->namespace) {
                         np = sh_fsearch(shp, name, NV_ADD | NV_NOSCOPE);
                     } else {
-                        np = nv_open(name, sh_subfuntree(shp, 1),
+                        np = nv_open(name, sh_subfuntree(shp, true),
                                      NV_NOARRAY | NV_IDENT | NV_NOSCOPE);
                     }
                 } else {
@@ -1165,7 +1165,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
     while ((r = optget(argv, name))) {
         switch (r) {  //!OCLINT(MissingDefaultStatement)
             case 'f': {
-                troot = sh_subfuntree(shp, 1);
+                troot = sh_subfuntree(shp, true);
                 break;
             }
             case 'a': {

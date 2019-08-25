@@ -381,7 +381,7 @@ Dt_t *sh_subaliastree(Shell_t *shp, int create) {
 // Return pointer to function tree. Create new one if in a subshell and one doesn't exist and create
 // is non-zero.
 //
-Dt_t *sh_subfuntree(Shell_t *shp, int create) {
+Dt_t *sh_subfuntree(Shell_t *shp, bool create) {
     struct subshell *sp = active_subshell_data;
     if (!sp || shp->curenv == 0) return shp->fun_tree;
     if (!sp->sfun && create) {

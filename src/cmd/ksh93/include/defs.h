@@ -263,7 +263,7 @@ extern void sh_sigdone(Shell_t *);
 extern void sh_sigreset(Shell_t *, int);
 extern void sh_sigtrap(Shell_t *, int);
 extern void sh_siglist(Shell_t *, Sfio_t *, int);
-extern Dt_t *sh_subfuntree(Shell_t *, int);
+extern Dt_t *sh_subfuntree(Shell_t *, bool);
 extern void sh_subjobcheck(pid_t);
 extern int sh_subsavefd(int);
 extern void sh_subtmpfile(Shell_t *);
