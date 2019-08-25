@@ -2365,7 +2365,6 @@ static_fn Sfio_t *subopen(Shell_t *shp, Sfio_t *sp, off_t offset, long size) {
     if (sfseek(sp, offset, SEEK_SET) < 0) return NULL;
     disp = malloc(sizeof(struct subfile));
     disp->io_buffer = malloc(IOBSIZE);
-    if (!disp) return NULL;
     disp->disc = sub_disc;
     disp->oldsp = sp;
     disp->offset = offset;
