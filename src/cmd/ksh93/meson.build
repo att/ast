@@ -38,7 +38,7 @@ shcomp_exe = executable('shcomp', ['sh/shcomp.c'], c_args: shared_c_args,
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep, libsocket_dep, libnsl_dep],
     install: true)
 
-install_man('ksh.1')
+install_man('docs/ksh.1')
 
 test_dir = join_paths(meson.current_source_dir(), 'tests')
 test_driver = join_paths(test_dir, 'util', 'run_test.sh')
