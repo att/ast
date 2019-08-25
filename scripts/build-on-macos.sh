@@ -1,10 +1,7 @@
 #!/bin/sh
 set -e
 
-# As of 2018-06-30 meson 0.46.1 was being installed which fails with a
-# StopIteration exception while configuring the build. So force using the
-# head of the branch.
-brew install --HEAD meson
+brew install meson
 
 . scripts/travis_common.sh
 
