@@ -3,7 +3,6 @@ build_dir = meson.build_root()
 ksh93_files = []
 ksh93_incdir = include_directories('include',
                                    '../../lib/libast/include/',
-                                   '../../lib/libcmd/',
                                    '../../lib/libdll/')
 
 subdir('include')

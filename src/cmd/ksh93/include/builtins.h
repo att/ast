@@ -163,6 +163,20 @@ extern const char sh_optwait[];
 extern const char sh_optunset[];
 extern const char sh_optwhence[];
 extern const char sh_opttimes[];
+// Optional builtins from src/lib/libcmd.
+extern const char sh_optbasename[];
+extern const char sh_optcat[];
+extern const char sh_optchmod[];
+extern const char sh_optcmp[];
+extern const char sh_optcut[];
+extern const char sh_opthead[];
+extern const char sh_optdirname[];
+extern const char sh_optlogname[];
+extern const char sh_optmkdir[];
+extern const char sh_optsync[];
+extern const char sh_optuname[];
+extern const char sh_optwc[];
+
 extern const char e_dict[];
 
 #endif  // _BUILTINS_H

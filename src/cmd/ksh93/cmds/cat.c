@@ -33,50 +33,11 @@
 #include <string.h>
 
 #include "ast.h"
+#include "builtins.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
-
-static const char usage[] =
-    "[-?\n@(#)$Id: cat (AT&T Research) 2013-09-13 $\n]" USAGE_LICENSE
-    "[+NAME?cat - concatenate files]"
-    "[+DESCRIPTION?\bcat\b copies each \afile\a in sequence to the standard"
-    "   output. If no \afile\a is given, or if the \afile\a is \b-\b,"
-    "   \bcat\b copies from standard input starting at the current location.]"
-
-    "[b:number-nonblank?Number lines as with \b-n\b but omit line numbers from"
-    "   blank lines.]"
-    "[d:dos-input?Input files are opened in \atext\amode which removes carriage"
-    "   returns in front of new-lines on some systems.]"
-    "[e?Equivalent to \b-vE\b.]"
-    "[n:number?Causes a line number to be inserted at the beginning of each line.]"
-    "[s?Equivalent to \b-S\b for \aatt\a universe and \b-B\b otherwise.]"
-    "[t?Equivalent to \b-vT\b.]"
-    "[u:unbuffer?The output is not delayed by buffering.]"
-    "[v:show-nonprinting|print-chars?Print characters as follows: space and "
-    "printable characters as themselves; control characters as \b^\b "
-    "followed by a letter of the alphabet; and characters with the high bit "
-    "set as the lower 7 bit character prefixed by \bM^\b for 7 bit "
-    "non-printable characters and \bM-\b for all other characters. If the 7 "
-    "bit character encoding is not ASCII then the characters are converted "
-    "to ASCII to determine \ahigh bit set\a, and if set it is cleared and "
-    "converted back to the native encoding. Multibyte characters in the "
-    "current locale are treated as printable characters.]"
-    "[A:show-all?Equivalent to \b-vET\b.]"
-    "[B:squeeze-blank?Multiple adjacent new-line characters are replace by one"
-    "   new-line.]"
-    "[D:dos-output?Output files are opened in \atext\amode which inserts carriage"
-    "   returns in front of new-lines on some systems.]"
-    "[E:show-ends?Causes a \b$\b to be inserted before each new-line.]"
-    "[S:silent?\bcat\b is silent about non-existent files.]"
-    "[T:show-blank?Causes tabs to be copied as \b^I\b and formfeeds as \b^L\b.]"
-
-    "\n"
-    "\n[file ...]\n"
-    "\n"
-
-    "[+SEE ALSO?\bcp\b(1), \bgetconf\b(1), \bpr\b(1)]";
 
 static char *stdin_argv[] = {"-", NULL};
 
@@ -354,7 +315,7 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
     if (cmdinit(argc, argv, context, 0)) return -1;
     att = !path_is_bsd_universe();
     mode = "r";
-    while ((flag = optget(argv, usage))) {
+    while ((flag = optget(argv, sh_optcat))) {
         n = 0;
         switch (flag) {  //!OCLINT(MissingDefaultStatement)
             case 'A':

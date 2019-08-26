@@ -30,41 +30,11 @@
 
 #include <string.h>
 
+#include "builtins.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
-
-static const char usage[] =
-    "[-?\n@(#)$Id: basename (AT&T Research) 2010-05-06 $\n]" USAGE_LICENSE
-    "[+NAME?basename - strip directory and suffix from filenames]"
-    "[+DESCRIPTION?\bbasename\b removes all leading directory components "
-    "from the file name defined by \astring\a. If the file name defined by "
-    "\astring\a has a suffix that ends in \asuffix\a, it is removed as "
-    "well.]"
-    "[+?If \astring\a consists solely of \b/\b characters the output will be "
-    "a single \b/\b. Trailing "
-    "\b/\b characters are removed, and if there are any remaining \b/\b "
-    "characters in \astring\a, all characters up to and including the last "
-    "\b/\b are removed. Finally, if \asuffix\a is specified, and is "
-    "identical the end of \astring\a, these characters are removed. The "
-    "characters not removed from \astring\a will be written on a single line "
-    "to the standard output.]"
-    "[a:all?All operands are treated as \astring\a and each modified "
-    "pathname is printed on a separate line on the standard output.]"
-    "[s:suffix?All operands are treated as \astring\a and each modified "
-    "pathname, with \asuffix\a removed if it exists, is printed on a "
-    "separate line on the standard output.]:[suffix]"
-    "\n"
-    "\n string [suffix]\n"
-    "string ...\n"
-    "\n"
-    "[+EXIT STATUS?]"
-    "{"
-    "[+0?Successful Completion.]"
-    "[+>0?An error occurred.]"
-    "}"
-    "[+SEE ALSO?\bdirname\b(1), \bgetconf\b(1), \bbasename\b(3)]";
 
 static void namebase(Sfio_t *outfile, char *pathname, char *suffix) {
     char *first, *last;
@@ -106,7 +76,7 @@ int b_basename(int argc, char **argv, Shbltin_t *context) {
     int n;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, usage))) {
+    while ((n = optget(argv, sh_optbasename))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'a':
                 all = 1;

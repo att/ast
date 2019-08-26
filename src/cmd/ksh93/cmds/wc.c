@@ -37,47 +37,12 @@
 #include <wctype.h>
 
 #include "ast.h"
+#include "builtins.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
-
-static const char usage[] =
-    "[-?\n@(#)$Id: wc (AT&T Research) 2009-11-28 $\n]" USAGE_LICENSE
-    "[+NAME?wc - print the number of bytes, words, and lines in files]"
-    "[+DESCRIPTION?\bwc\b reads one or more input files and, by default, "
-    "for each file writes a line containing the number of newlines, "
-    "\aword\as, and bytes contained in each file followed by the "
-    "file name to standard output in that order.  A \aword\a is "
-    "defined to be a non-zero length string delimited by \bisspace\b(3) "
-    "characters.]"
-    "[+?If more than one file is specified, \bwc\b writes a total count "
-    "for all of the named files with \btotal\b written instead "
-    "of the file name.]"
-    "[+?By default, \bwc\b writes all three counts.  Options can specified "
-    "so that only certain counts are written.  The options \b-c\b "
-    "and \b-m\b are mutually exclusive.]"
-    "[+?If no \afile\a is given, or if the \afile\a is \b-\b, \bwc\b "
-    "reads from standard input and no filename is written to standard "
-    "output.  The start of the file is defined as the current offset.]"
-    "[l:lines?List the line counts.]"
-    "[w:words?List the word counts.]"
-    "[c:bytes|chars:chars?List the byte counts.]"
-    "[m|C:multibyte-chars?List the character counts.]"
-    "[q:quiet?Suppress invalid multibyte character warnings.]"
-    "[L:longest-line|max-line-length?List the longest line length; the newline,"
-    "if any, is not counted in the length.]"
-    "[N!:utf8?For \bUTF-8\b locales \b--noutf8\b disables \bUTF-8\b "
-    "optimzations and relies on the native \bmbtowc\b(3).]"
-    "\n"
-    "\n[file ...]\n"
-    "\n"
-    "[+EXIT STATUS?]{"
-    "[+0?All files processed successfully.]"
-    "[+>0?One or more files failed to open or could not be read.]"
-    "}"
-    "[+SEE ALSO?\bcat\b(1), \bisspace\b(3)]";
 
 #define ERRORMAX 125
 
@@ -116,7 +81,7 @@ int b_wc(int argc, char **argv, Shbltin_t *context) {
     struct stat statb;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, usage))) {
+    while ((n = optget(argv, sh_optwc))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'c':
                 mode |= WC_CHARS;

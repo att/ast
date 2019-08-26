@@ -33,36 +33,10 @@
 #include <unistd.h>
 
 #include "ast.h"
+#include "builtins.h"
 #include "error.h"
 #include "option.h"
 #include "shcmd.h"
-
-static const char usage[] = "[-?\n@(#)$Id: mkdir (AT&T Research) 2010-04-08 $\n]" USAGE_LICENSE
-                            "[+NAME?mkdir - make directories]"
-                            "[+DESCRIPTION?\bmkdir\b creates one or more directories.  By "
-                            "default, the mode of created directories is \ba=rwx\b minus the "
-                            "bits set in the \bumask\b(1).]"
-                            "[m:mode]:[mode?Set the mode of created directories to \amode\a.  "
-                            "\amode\a is symbolic or octal mode as in \bchmod\b(1).  Relative "
-                            "modes assume an initial mode of \ba=rwx\b.]"
-                            "[p:parents?Create any missing intermediate pathname components. For "
-                            "each dir operand that does not name an existing directory, effects "
-                            "equivalent to those caused by the following command shall occur: "
-                            "\vmkdir -p -m $(umask -S),u+wx $(dirname dir) && mkdir [-m mode]] "
-                            "dir\v where the \b-m\b mode option represents that option supplied to "
-                            "the original invocation of \bmkdir\b, if any. Each dir operand that "
-                            "names an existing directory shall be ignored without error.]"
-                            "[v:verbose?Print a message on the standard error for each created "
-                            "directory.]"
-                            "\n"
-                            "\ndirectory ...\n"
-                            "\n"
-                            "[+EXIT STATUS?]{"
-                            "[+0?All directories created successfully, or the \b-p\b option "
-                            "was specified and all the specified directories now exist.]"
-                            "[+>0?An error occurred.]"
-                            "}"
-                            "[+SEE ALSO?\bchmod\b(1), \brmdir\b(1), \bumask\b(1)]";
 
 #define DIRMODE (S_IRWXU | S_IRWXG | S_IRWXO)
 
@@ -80,7 +54,7 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
     struct stat st;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, usage))) {
+    while ((n = optget(argv, sh_optmkdir))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'm':
                 mflag = 1;

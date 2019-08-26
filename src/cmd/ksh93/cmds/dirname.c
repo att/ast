@@ -32,38 +32,11 @@
 #include <stdlib.h>
 
 #include "ast.h"
+#include "builtins.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
-
-static const char usage[] =
-    "[-?\n@(#)$Id: dirname (AT&T Research) 2009-01-31 $\n]" USAGE_LICENSE
-    "[+NAME?dirname - return directory portion of file name]"
-    "[+DESCRIPTION?\bdirname\b treats \astring\a as a file name and returns "
-    "the name of the directory containing the file name by deleting "
-    "the last component from \astring\a.]"
-    "[+?If \astring\a consists solely of \b/\b characters the output will "
-    "be a single \b/\b. Trailing \b/\b characters are removed, and if "
-    "there are no remaining \b/\b characters in \astring\a, "
-    "the string \b.\b will be written to standard output.  "
-    "Otherwise, all characters following the last \b/\b are removed. "
-    "If the remaining string consists solely of \b/\b characters, "
-    "the output will be as if the original string had consisted solely "
-    "as \b/\b characters as described above.  Otherwise, all "
-    "trailing slashes are removed and the output will be this string "
-    "unless this string is empty.  If empty the output will be \b.\b.]"
-    "[f:file?Print the \b$PATH\b relative regular file path for \astring\a.]"
-    "[r:relative?Print the \b$PATH\b relative readable file path for \astring\a.]"
-    "[x:executable?Print the \b$PATH\b relative executable file path for \astring\a.]"
-    "\n"
-    "\nstring\n"
-    "\n"
-    "[+EXIT STATUS?]{"
-    "[+0?Successful Completion.]"
-    "[+>0?An error occurred.]"
-    "}"
-    "[+SEE ALSO?\bbasename\b(1), \bgetconf\b(1), \bdirname\b(3), \bpathname\b(3)]";
 
 static void l_dirname(Sfio_t *outfile, const char *pathname) {
     const char *last;
@@ -104,7 +77,7 @@ int b_dirname(int argc, char **argv, Shbltin_t *context) {
     int n;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, usage))) {
+    while ((n = optget(argv, sh_optdirname))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'f':
                 mode |= PATH_REGULAR;

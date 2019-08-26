@@ -29,27 +29,11 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include "builtins.h"
 #include "error.h"
 #include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
-
-static const char usage[] = "[-?\n@(#)$Id: logname (AT&T Research) 1999-04-30 $\n]" USAGE_LICENSE
-                            "[+NAME?logname - return the user's login name]"
-                            "[+DESCRIPTION?\blogname\b writes the users's login name to standard "
-                            "output.  The login name is the string that is returned by the "
-                            "\bgetlogin\b(2) function.  If \bgetlogin\b(2) does not return "
-                            "successfully, the corresponding to the real user id of the calling "
-                            "process is used instead.]"
-
-                            "\n"
-                            "\n\n"
-                            "\n"
-                            "[+EXIT STATUS?]{"
-                            "[+0?Successful Completion.]"
-                            "[+>0?An error occurred.]"
-                            "}"
-                            "[+SEE ALSO?\bgetlogin\b(2)]";
 
 int b_logname(int argc, char **argv, Shbltin_t *context) {
     char *logname;
@@ -57,7 +41,7 @@ int b_logname(int argc, char **argv, Shbltin_t *context) {
     int n;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, usage))) {
+    while ((n = optget(argv, sh_optlogname))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
             case ':':
                 error(2, "%s", opt_info.arg);
