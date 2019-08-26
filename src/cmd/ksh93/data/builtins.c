@@ -126,6 +126,9 @@ const struct shtable3 shtab_builtins[] = {
     {CMDLIST(sync)},
     {"", 0, NULL}};
 
+// This is used in infof(), in src/cmd/ksh93/sh/args.c, which is only used by sh_argopts(). Why is
+// unclear but it appears to be due to flags shared by the `ksh` command and the `set` builtin. The
+// two use cases should not be entangled in that manner.
 const char sh_set[] =
     "[a?Set the export attribute for each variable whose name does not "
     "contain a \b.\b that you assign a value in the current shell "
