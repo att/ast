@@ -14,8 +14,6 @@ PATH=$bin_dir:$PATH
 INC_DIRS=""
 INC_DIRS="$INC_DIRS -I$MESON_BUILD_ROOT"
 INC_DIRS="$INC_DIRS -I$MESON_SOURCE_ROOT/src/lib/libast/include"
-INC_DIRS="$INC_DIRS -I$MESON_SOURCE_ROOT/src/lib/libast/features"
-INC_DIRS="$INC_DIRS -I$MESON_SOURCE_ROOT/src/cmd/std"
 
 if [ -z "$CC" ]
 then
