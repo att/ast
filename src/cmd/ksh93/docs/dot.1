@@ -1,0 +1,13 @@
+[-1c?
+@(#)$Id: \b.\b (AT&T Research) 2000-04-02 $
+]
+[+NAME?\b.\b - execute commands in the current environment]
+[+DESCRIPTION?\f?\f is a special built-in command that executes commands from a function or a file in the current environment.]
+[+?If \aname\a refers to a function defined with the \bfunction\b \aname\a syntax, the function executes in the current environment as if it had been defined with the \aname\a\b()\b syntax so that there is no scoping.  Otherwise, commands from the file defined by \aname\a are executed in the current environment.  Note that the complete script is read before it begins to execute so that any aliases defined in this script will not take effect until the script completes execution.]
+[+?When \aname\a refers to a file, the \bPATH\b variable is searched for the file containing commands.  In this case execute permission is not required for \aname\a.]
+[+?If any \aarg\as are specified, these become the positional parameters for the duration of the function or script and are restored upon completion.]
+
+name [arg ...]
+
+[+EXIT STATUS?If \aname\a is found, then the exit status is that of the last command executed.  Otherwise, since this is a special built-in, an error will cause a non-interactive shell to exit with a non-zero exit status.  An interactive shell returns a non-zero exit status to indicate an error.]
+[+SEE ALSO?\bcommand\b(1), \bksh\b(1)]

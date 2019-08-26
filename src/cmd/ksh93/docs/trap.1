@@ -1,0 +1,27 @@
+[-1c?
+@(#)$Id: trap (AT&T Research) 2014-06-19 $
+]
+[+NAME?trap - trap signals and conditions]
+[+DESCRIPTION?\btrap\b is a special built-in that defines actions to be taken when conditions such as receiving a signal occur.  Also, \btrap\b can be used to display the current trap settings on standard output.]
+[+?If \aaction\a is \b-\b, \btrap\b resets each \acondition\a to the default value.  If \aaction\a is an empty string, the shell ignores each of the \acondition\as if they arise. Otherwise, the argument \aaction\a will be read and executed by the shell as if it were processed by \beval\b(1) when one of the corresponding conditions arise.  The action of the trap will override any previous action associated with each specified \acondition\a.  The value of \b$?\b is not altered by the trap execution.]
+[+?\acondition\a can be the name or number of a signal, or one of the following:]{
+[+EXIT?This trap is executed when the shell exits.  If defined within a function defined with the \bfunction\b reserved word, the trap is executed in the caller's environment when the function returns and the trap action is restored to the value it had when it called the function.]
+[+0?Same as EXIT.]
+[+DEBUG?Executed before each simple command is executed but after the arguments are expanded.]
+[+ERR?Executed whenever \bset -e\b would cause the shell to exit.]
+[+KEYBD?Executed when a key is entered from a terminal device.]
+}
+[+?Signal names are case insensitive and the \bsig\b prefix is optional.  Signals that were ignored on entry to a noninteractive shell cannot trapped or reset although doing so will not report an error.  The use of signal numbers other than \b1\b, \b2\b, \b3\b, \b6\b, \b9\b, \b14\b, and \b15\b is not portable.]
+[+?Although \btrap\b is a special built-in, specifying a condition that the shell does not know about causes \btrap\b to exit with a non-zero exit status, but does not terminate the invoking shell.]
+[+?If no \aaction\a or \acondition\as are specified then all the current trap settings are written to standard output.]
+[a?append the current trap setting to the specified \aaction\a.]
+[p?Causes the current traps to be output in a format that can be processed as input to the shell to recreate the current traps.]
+[l?Output the list of signals and their numbers to standard output.]
+
+[action condition ...]
+
+[+EXIT STATUS?]{
+[+0?Successful completion.]
+[+>0?An error occurred.]
+}
+[+SEE ALSO?\bkill\b(1), \beval\b(1), \bsignal\b(3)]

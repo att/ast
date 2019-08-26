@@ -1,0 +1,20 @@
+[-1c?
+@(#)$Id: command (AT&T Research) 2003-08-01 $
+]
+[+NAME?command - execute a simple command]
+[+DESCRIPTION?Without \b-v\b or \b-V\b,  \bcommand\b executes \acommand\a with arguments given by \aarg\a, suppressing the shell function lookup that normally occurs.  In addition, if \acommand\a is a special built-in command, then the special properties are removed so that failures will not cause the script that executes it to terminate.]
+[+?With the \b-v\b or \b-V\b options, \bcommand\b is equivalent to the \bwhence\b(1) command.]
+[p?Causes a default path to be searched rather than the one defined by the value of \bPATH\b.]
+[v?Equivalent to \bwhence\b \acommand\a [\aarg\a ...]].]
+[x?If \acommand\a fails because there are too many \aarg\as, it will be invoked multiple times with a subset of the arguments on each invocation.  Arguments that occur prior to the first word that expand to multiple arguments and arguments that occur after the last word that expands to multiple arguments will be passed on each invocation. The exit status will be the maximum invocation exit status.]
+[V?Equivalent to \bwhence \b-v\b \acommand\a [\aarg\a ...]].]
+
+[command [arg ...]]
+
+[+EXIT STATUS?If \acommand\a is invoked, the exit status of \bcommand\b will be that of \acommand\a.  Otherwise, it will be one of the following:]{
+[+0?\bcommand\b completed successfully.]
+[+>0?\b-v\b or \b-V\b has been specified and an error occurred.]
+[+126?\acommand\a was found but could not be invoked.]
+[+127?\acommand\a could not be found.]
+}
+[+SEE ALSO?\bwhence\b(1), \bgetconf\b(1)]

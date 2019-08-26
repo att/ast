@@ -1,0 +1,23 @@
+[-1c?
+@(#)$Id: wait (AT&T Research) 1999-06-17 $
+]
+[+NAME?wait - wait for process or job completion]
+[+DESCRIPTION?\bwait\b with no operands, waits until all jobs known to the invoking shell have terminated.  If one or more \ajob\a operands are specified, \bwait\b waits until all of them have completed.]
+[+?Each \ajob\a can be specified as one of the following:]{
+[+\anumber\a?\anumber\a refers to a process id.]
+[+-\anumber\a?\anumber\a refers to a process group id.]
+[+%\anumber\a?\anumber\a refer to a job number.]
+[+%\astring\a?Refers to a job whose name begins with \astring\a.]
+[+%??\astring\a?Refers to a job whose name contains \astring\a.]
+[+%+ \bor\b %%?Refers to the current job.]
+[+%-?Refers to the previous job.]
+}
+[+?If one ore more \ajob\a operands is a process id or process group id not known by the current shell environment, \bwait\b treats each of them as if it were a process that exited with status 127.]
+
+[job ...]
+
+[+EXIT STATUS?If \await\a is invoked with one or more \ajob\as, and all of them have terminated or were not known by the invoking shell, the exit status of \bwait\b  will be that of the last \ajob\a.  Otherwise, it will be one of the following:]{
+[+0?\bwait\b utility was invoked with no operands and all processes known by the invoking process have terminated.]
+[+127?\ajob\a is a process id or process group id that is unknown to the current shell environment.]
+}
+[+SEE ALSO?\bjobs\b(1), \bps\b(1)]

@@ -1,0 +1,63 @@
+:[-1c?
+@(#)$Id: getopts (AT&T Research) 2005-01-01 $
+]
+[+NAME?\f?\f - parse utility options]
+[+DESCRIPTION?The \bgetopts\b utility can be used to retrieve options and arguments from a list of arguments given by \aargs\a or the positional parameters if \aargs\a is omitted.  It can also generate usage messages and a man page for the command based on the information in \aoptstring\a.]
+[+?Each time it is invoked, the \bgetopts\b utility places the value of the next option in the shell variable specified by the \aname\a operand and the index of the next argument to be processed in the shell variable \bOPTIND\b.  When the shell is invoked \bOPTIND\b is initialized to \b1\b.  When an option requires or permits an option argument, \bgetopts\b places the option argument in the shell variable \bOPTARG\b. Otherwise \bOPTARG\b is set to \b1\b when the option is set and \b0\b when the option is unset.]
+[+?The \aoptstring\a string consists of alpha-numeric characters, the special characters +, -, ?, :, and <space>, or character groups enclosed in [...]].  Character groups may be nested in {...}. Outside of a [...]] group, a single new-line followed by zero or more blanks is ignored.  One or more blank lines separate the options from the command argument synopsis.]
+[+?Each [...]] group consists of an optional label, optional attributes separated by :, and an optional description string following ?.  The characters from the ? to the end of the next ]] are ignored for option parsing and short usage messages.  They are used for generating verbose help or man pages. The : character may not appear in the label. The ? character must be specified as ?? in the label and the ]] character must be specified as ]]]] in the description string. Text between two \\b (backspace) characters indicates that the text should be emboldened when displayed. Text between two \\a (bell) characters indicates that the text should be emphasized or italicized when displayed. Text between two \\v (vertical tab) characters indicates that the text should displayed in a fixed width font. Text between two \\f (formfeed) characters will be replaced by the output from the shell function whose name is that of the enclosed text.]
+[+?All output from this interface is written to the standard error.]
+[+?There are several group types:]{
+[+1.?A group of the form [-[\aversion\a]][\aflag\a[\anumber\a]]]]...[?\atext\a]]]] appearing as the first group enables the extended interface. \aversion\a specifies the interface version, currently \b1\b. The latest version is assumed if \aversion\a is omitted. Future enhancements may increment \aversion\a, but all versions will be supported. \atext\a typically specifies an SCCS or CVS identification string. Zero or more \aflags\a with optional \anumber\a values may be specified to control option parsing. The flags are:]{
+[++?Arguments beginning with + are considered options.]
+[+c?Cache this \aoptstring\a for multiple passes. Used to optimize builtins that may be called many times within the same process.]
+[+i?Ignore this \aoptstring\a when generating help. Used when combining \aoptstring\a values from multiple passes.]
+[+l?Display only \alongname\a options in help messages.]
+[+n?Associate -\anumber\a and +\anumber\a options with the first option with numeric arguments.]
+[+o?The \b-\b option character prefix is optional (supports obsolete \bps\b(1) option syntax.)]
+[+p?\anumber\a specifies the number of \b-\b characters that must prefix long option names. The default is \b2\b; \b0\b, \b1\b or \b2\b are accepted (e.g., \bp0\b for \bdd\b(1) and \bp1\b for \bfind\b(1).)]
+[+s?\anumber\a specifies the \b--??man\b section number, \b1\b by default.]
+}
+[+2.?An option specification of the form [\aoption\a[!]][=\anumber\a]][:\alongname\a]][?\atext\a]]]]. In this case the first field is the option character; this is the value returned in the \aname\a operand when the option is matched.  If there is no option character then a two or more digit number should be specified. This number will be returned as the value of the \aname\a operand if the long option is matched. If \aoption\a is followed by \b!\b then the option character sense is the inverse of the longname sense. For options that do not take values \bOPTARG\b will be set to \b0\b for \b!\b inverted option characters and \b1\b otherwise. =\anumber\a optionally specifies a number to be returned in the \aname\a operand instead of the option character. A longname is specified by \b--\b\alongname\a and is matched by the shortest non-ambiguous prefix of all long options. * in the \alongname\a field indicates that only characters up to that point need to match, provided any additional characters match exactly. The enclosing [ and ]] can be omitted for an option that does not have a longname or descriptive text.]
+[+3.?An option argument specification. Options that take arguments can be followed by : (string value) or # (numeric value) and an option argument specification.  An option argument specification consists of the option argument name as field 1. The remaining \b:\b separated fields are a type name and zero or more of the special attribute words \blistof\b, \boneof\b, and \bignorecase\b. A default option value may be specified in the final field as \b:=\b\adefault\a. The option argument specification may be followed by a list of option value descriptions enclosed in braces. A long option that takes an argument is specified as \b--\b\alongname\a=\avalue\a. If the : or # is followed by ? then the option argument is optional. If only the option character form is specified then the optional argument value is not set if the next argument starts with - or +. The special attributes are currently informational with respect to \boptget\b(3), but may be useful to applications that parse \b--api\b output. The special attributes are:]{
+[+listof?zero or more of the possible option values may be specified, separated by \b,\b or space.]
+[+oneof?exactly one of the possible option values must be specified]
+[+ignorecase?case ignored in matching the long option name]
+}
+[+4.?A option value description.]
+[+5.?A argument specification. A list of valid option argument values can be specified by enclosing them inside a {...} following the option argument specification.  Each of the permitted values can be specified with a [...]] containing the value followed by a description.]
+[+6.?A group of the form [+\\n...]] will display the characters representing ... in fixed with font without adding line breaks.]
+[+7.?A group of the form [+\aname\a?\atext\a]] specifies a section \aname\a with descriptive \atext\a. If \aname\a is omitted then \atext\a is placed in a new paragraph.]
+[+8.?A group of the form [-\aname\a?\atext\a]] specifies entries for the \bIMPLEMENTATION\b section.]
+}
+[+?A leading : character in \aoptstring\a affects the way errors are handled.  If an option character or longname argument not specified in \aoptstring\a is encountered when processing options, the shell variable whose name is \aname\a will be set to the ? character.  The shell variable \bOPTARG\b will be set to the character found.  If an option argument is missing or has an invalid value, then \aname\a will be set to the : character and the shell variable \bOPTARG\b will be set to the option character found. Without the leading :, \aname\a will be set to the ? character, \bOPTARG\b will be unset, and an error message will be written to standard error when errors are encountered.]
+[+?A leading + character or a + following a leading : in \aoptstring\a specifies that arguments beginning with + will also be considered options.]
+[+?The end of options occurs when:]{
+[+1.?The special argument \b--\b is encountered.]
+[+2.?An argument that does not begin with a \b-\b is encountered.]
+[+3.?A help argument is specified.]
+[+4.?An error is encountered.]
+}
+[+?If \bOPTIND\b is set to the value \b1\b, a new set of arguments can be used.]
+[+?\bgetopts\b can also be used to generate help messages containing command usage and detailed descriptions.  Specify \aargs\a as:]
+{ 
+[+-???To generate a usage synopsis.]
+[+--?????To generate a verbose usage message.]
+[+--????man?To generate a formatted man page.]
+[+--????api?To generate an easy to parse usage message.]
+[+--????html?To generate a man page in \bhtml\b format.]
+[+--????nroff?To generate a man page in \bnroff\b format.]
+[+--????usage?List the current \aoptstring\a.]
+[+--??????\aname\a?List \bversion=\b\an\a, \an\a>0, if the option \aname\a is recognized by \bgetopts\b.]
+}
+[+?When the end of options is encountered, \bgetopts\b exits with a non-zero return value and the variable \bOPTIND\b is set to the index of the first non-option argument.]
+[+?The obsolete long option forms \aflag\a(\along-name\a) and \aflag\a:(\along-name\a) for options that take arguments is supported for backwards compatibility.]
+a:[name?Use \aname\a instead of the command name in usage messages.]
+
+opstring name [args...]
+
+[+EXIT STATUS]{
+[+0?An option specified was found.]
+[+1?An end of options was encountered.]
+[+2?A usage or information message was generated.]
+}

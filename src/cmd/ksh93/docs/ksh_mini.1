@@ -1,0 +1,37 @@
++[-1?
+@(#)$Id: sh (AT&T Research) $
+]
+[+NAME?\b\f?\f\b - Shell, the standard command language interpreter]
+[+DESCRIPTION?\b\f?\f\b is a command language interpreter that executes commands read from a command line string, the standard input, or a specified file.]
+[+?If the \b-i\b option is present, or there are no \aarg\as and the standard input and standard error are attached to a terminal, the shell is considered to be interactive.]
+[+?The \b-s\b and \b-c\b options are mutually exclusive.  If the \b-c\b option is specified, the first \aarg\a is the command-line string and must be specified.  Any remaining \aarg\as will be used to initialize \b$0\b and positional parameters.]
+[+?If the neither \b-s\b nor \b-c\b is specified, then the first \barg\b will be the pathname of the file containing commands and \b$0\b will be set to this value.  If there is no file with this pathname, and this pathame does not contain a \b/\b, then the \bPATH\b will be searched for an executable with this name.  Any remaining \aarg\as will be used to initialize the positional parmaeters.]
+[+?Any option can use a \b+\b instead of a \b-\b to disable the corresponding option.]
+[c?Read the commands from the first \aarg\a.]
+[i?Specifies that the shell is interactive.]
+[l?Invoke the shell as a login shell; \b/etc/profile\b and \b$HOME/.profile\b, if they exist, are read before the first command.]
+[r\f:restricted\f?Invoke the shell in a restricted mode.  A restricted shell does not permit any of the following:]{
+[+-?Changing the working directory.]
+[+-?Setting values or attributes of the variables \bSHELL\b, \bENV\b, \bFPATH\b, or \bPATH\b.]
+[+-?Executing any command whose name as a \b/\b in it.]
+[+-?Redirecting output of a command with \b>\b, \b>|\b, \b<>\b, or \b>>\b.]
+[+-?Adding or deleting built-in commands or libraries with \bbuiltin\b.]
+[+-?Executing \bcommand -p\b \a...\a .]
+}
+[s?Read the commands from standard input.  The positional parameters will be initialized from \aarg\a.]
+[D\f:dump-strings\f?Do not execute the script, but output the set of double quoted strings preceded by a \b$\b.  These strings are needed for localization of the script to different locales.]
+[E?Reads the file \b/etc/ksh.kshrc\b, if it exists, as a profile, followed by \b${ENV-$HOME/.kshrc}\b, if it exists, as a profile. On by default for interactive shells; use \b+E\b to disable.]
+[R]:[file?Do not execute the script, but create a cross reference database in \afile\a that can be used a separate shell script browser.  The -R option requires a script to be specified as the first operand.]
+\fabc\f
+?
+[T?Enable implementation specific test code defined by mask.]#[mask]
+
+[arg ...]
+
+[+EXIT STATUS?If \b\f?\f\b executes command, the exit status will be that of the last command executed.  Otherwise, it will be one of the following:]{
+[+0?The script or command line to be executed consists entirely of zero or more blank lines or comments.]
+[+>1-125?A noninteractive shell detected a syntax error, a variable assignment error, or an error in a special built-in.]
+[+126?\b-c\b and \b-s\b were not specified and the command script was found on \bPATH\b but was not executable.]
+[+127?\b-c\b and \b-s\b were not specified and the command script corresponding to \aarg\a could not be found.]
+}
+[+SEE ALSO?\bset\b(1), \bbuiltin\b(1)]

@@ -1,0 +1,23 @@
+[-1c?
+@(#)$Id: bg (AT&T Research) 2000-04-02 $
+]
+[+NAME?bg - resume jobs in the background]
+[+DESCRIPTION?\bbg\b places the given \ajob\as into the background and sends them a \bCONT\b signal to start them running.]
+[+?If \ajob\a is omitted, the most recently started or stopped background job is resumed or continued in the background.]
+[+?Each \ajob\a can be specified as one of the following:]{
+[+\anumber\a?\anumber\a refers to a process id.]
+[+-\anumber\a?\anumber\a refers to a process group id.]
+[+%\anumber\a?\anumber\a refer to a job number.]
+[+%\astring\a?Refers to a job whose name begins with \astring\a.]
+[+%??\astring\a?Refers to a job whose name contains \astring\a.]
+[+%+ \bor\b %%?Refers to the current job.]
+[+%-?Refers to the previous job.]
+}
+
+[job ...]
+
+[+EXIT STATUS?]{
+[+0?If all background jobs are started.]
+[+>0?If one more jobs does not exist or there are no background jobs.]
+}
+[+SEE ALSO?\bwait\b(1), \bfg\b(1), \bdisown\b(1), \bjobs\b(1)]

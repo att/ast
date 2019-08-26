@@ -1,0 +1,14 @@
+[-1c?
+@(#)$Id: unalias (AT&T Research) 1999-07-07 $
+]
+[+NAME?unalias - remove alias definitions]
+[+DESCRIPTION?\bunalias\b removes the definition of each named alias from the current shell execution environment, or all aliases if \b-a\b is specified.  It will not affect any commands that have already been read and subsequently executed.]
+[a?Causes all alias definitions to be removed.  \aname\a operands are optional and ignored in this case.]
+
+name...
+
+[+EXIT STATUS?]{
+[+0?Successful completion.]
+[+>0?\b-a\b was not specified and one or more \aname\a operands did not have an alias definition, or an error occurred.]
+}
+[+SEE ALSO?\balias\b(1)]

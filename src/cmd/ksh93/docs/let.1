@@ -1,0 +1,11 @@
+[+NAME?let - evaluate arithmetic expressions]
+[+DESCRIPTION?\blet\b evaluates each \aexpr\a in the current shell environment as an arithmetic expression using ANSI C syntax.  Variables names are shell variables and they are recursively evaluated as arithmetic expressions to get numerical values.]
+[+?\blet\b has been made obsolete by the \b((\b...\b))\b syntax of \bksh\b(1) which does not require quoting of the operators to pass them as command arguments.]
+
+[expr ...]
+
+[+EXIT STATUS?]{
+[+0?The last \aexpr\a evaluates to a non-zero value.]
+[+>0?The last \aexpr\a evaluates to \b0\b or an error occurred.]
+}
+[+SEE ALSO?\bexpr\b(1), \btest\b(1), \bksh\b(1)]

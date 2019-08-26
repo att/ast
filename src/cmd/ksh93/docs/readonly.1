@@ -1,0 +1,17 @@
+[-1c?
+@(#)$Id: readonly (AT&T Research) 2008-06-16 $
+]
+[+NAME?readonly - set readonly attribute on variables]
+[+DESCRIPTION?\breadonly\b sets the readonly attribute on each of the variables specified by \aname\a which prevents their values from being changed.  If \b=\b\avalue\a is specified, the variable \aname\a is set to \avalue\a before the variable is made readonly.]
+[+?Within a type definition, if the value is not specified, then a value must be specified when creating each instance of the type and the value is readonly for each instance.]
+[+?If no \aname\as are specified then the names and values of all readonly variables are written to standard output.]
+[+?\breadonly\b is built-in to the shell as a declaration command so that field splitting and pathname expansion are not performed on the arguments.  Tilde expansion occurs on \avalue\a.]
+[p?Causes the output to be in a form of \breadonly\b commands that can be used as input to the shell to recreate the current set of readonly variables.]
+
+[name[=value]...]
+
+[+EXIT STATUS?]{
+[+0?Successful completion.]
+[+>0?An error occurred.]
+}
+[+SEE ALSO?\bsh\b(1), \bdeclare\b(1), \btypeset\b(1)]

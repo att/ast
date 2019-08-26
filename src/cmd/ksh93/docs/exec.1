@@ -1,0 +1,19 @@
+[-1c?
+@(#)$Id: exec (AT&T Research) 1999-07-10 $
+]
+[+NAME?exec - execute command, open/close and duplicate file descriptors]
+[+DESCRIPTION?\bexec\b is a special built-in command that can be used to manipulate file descriptors or to replace the current shell with a new command.]
+[+?If \acommand\a is specified, then the current shell process will be replaced by \acommand\a rather than running \acommand\a and waiting for it to complete.  Note that there is no need to use \bexec\b to enhance performance since the shell implicitly uses the exec mechanism internally whenever possible.]
+[+?If no operands are specified, \bexec\b can be used to open or close files, or to manipulate file descriptors from \b0\b to \b9\b in the current shell environment using the standard redirection mechanism available with all commands.  The close-on-exec flags will be set on file descriptor numbers greater than \b2\b that are opened this way so that they will be closed when another program is invoked.]
+[+?Because \bexec\b is a special command, any failure will cause the script that invokes it to exit.  This can be prevented by invoking \bexec\b from the \bcommand\b utility.]
+[+?\bexec\b cannot be invoked from a restricted shell to create files or to open a file for writing or appending.]
+[c?Clear all environment variables before executions except variable assignments that are part of the current \bexec\b command.]
+[a]:[name?\bargv[0]]\b will be set to \aname\a for \acommand\a]
+
+[command [arg ...]]
+
+[+EXIT STATUS?If \acommand\a is specified, \bexec\b does not return.  Otherwise, the exit status is one of the following:]{
+[+0?All I/O redirections were successful.]
+[+>0?An error occurred.]
+}
+[+SEE ALSO?\bcommand\b(1), \beval\b(1)]

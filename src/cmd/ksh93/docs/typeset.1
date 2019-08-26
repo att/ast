@@ -1,0 +1,54 @@
++[-1c?
+@(#)$Id: typeset (AT&T Research) 2013-05-21 $
+]
+[+NAME?\f?\f - declare or display variables with attributes]
+[+DESCRIPTION?This can also be invoked as \bdeclare\b. It can also be invoked as \blocal\b inside a function to create vars lexically scoped to the function. These variants are primarily for compatibility with shells like bash.
+
+Without the \b-f\b option, \b\f?\f\b sets, unsets, or displays attributes of variables as specified with the options.  If the first option is specified with a \b-\b then the attributes are set for each of the given \aname\as. If the first option is specified with a \b+\b, then the specified attributes are unset.  If \b=\b\avalue\a is specified value is assigned before the attributes are set.]
+[+?When \b\f?\f\b is called inside a function defined with the \bfunction\b reserved word, and \aname\a does not contain a \b.\b, then a local variable statically scoped to  that function will be created.]
+[+?Not all option combinations are possible.  For example, the numeric options \b-i\b, \b-E\b, and \b-F\b cannot be specified with the justification options \b-L\b, \b-R\b, and \b-Z\b.]
+[+?Note that the following preset aliases are set by the shell:]{
+[+compound?\btypeset -C\b.]
+[+float?\btypeset -lE\b.]
+[+functions?\btypeset -f\b.]
+[+integer?\btypeset -li\b.]
+[+nameref?\btypeset -n\b.]
+}
+[+?If no \aname\as are specified then variables that have the specified options are displayed.  If the first option is specified with a leading \b-\b then the name and value of each variable is written to standard output.  Otherwise, only the names are written.  If no options are specified or just \b-p\b is specified, then the names and attributes of all variables that have attributes are written to standard output.  When \b-f\b is specified, the names displayed will be function names.]
+[+?If \b-f\b is specified, then each \aname\a refers to a function and the only valid options are \b-u\b and \b-t\b.  In this case no \b=\b\avalue\a can be specified.]
+[+?\b\f?\f\b is built-in to the shell as a declaration command so that field splitting and pathname expansion are not performed on the arguments.  Tilde expansion occurs on \avalue\a.]
+[a]:?[type?Indexed array.  This is the default. If \b[\b\atype\a\b]]\b is specified, each subscript is interpreted as a value of type \atype\a.]
+[b?Each \aname\a may contain binary data.  Its value is the mime base64 encoding of the data. It can be used with \b-Z\b, to specify fixed sized fields.]
+[f?Each of the options and \aname\as refers to a function.]
+[i]#?[base:=10?An integer. \abase\a represents the arithmetic base from 2 to 64.]
+[l?Without \b-i\b, sets character mapping to \btolower\b. When used with \b-i\b, \b-E\b, \b-F\b, or  \b-X\b indicates long variant.]
+[m?Move.  The value is the name of a variable whose value will be moved to \aname\a.  The orignal variable will be unset.  Cannot be used with any other options.]
+[n?Name reference.  The value is the name of a variable that \aname\a references.  \aname\a cannot contain a \b.\b.  Cannot be use with any other options.]
+[p?Causes the output to be in a format that can be used as input to the shell to recreate the attributes for variables.]
+[r?Enables readonly.  Once enabled it cannot be disabled.  See \breadonly\b(1).]
+[s?Used with \b-i\b to restrict integer size to short integer or with \b-E\b ,\b-F\b, or \b-X\b to represent a float.]
+[t?When used with \b-f\b, enables tracing for each of the specified functions.  Otherwise, \b-t\b is a user defined attribute and has no meaning to the shell.]
+[u?Without \b-f\b or \b-i\b, sets character mapping to \btoupper\b.  When used with \b-f\b specifies that \aname\a is a function that hasn't been loaded yet.  With \b-i\b specifies that the value will be displayed as an unsigned integer.]
+[x?Puts each \aname\a on the export list.  See \bexport\b(1).  \aname\a cannot contain a \b.\b.]
+[A?Associative array.  Each \aname\a will converted to an associate array.  If a variable already exists, the current value will become index \b0\b.]
+[C?Compound variable.  Each \aname\a will be a compound variable.  If \avalue\a names a compound variable it will be copied to \aname\a. Otherwise if the variable already exists, it will first be unset.]
+[E]#?[n:=\avar\a.DIG?Floating point number represented in scientific notation. \an\a specifies the number of significant figures when the value is expanded.]
+[F]#?[n:=\avar\a.DIG?Floating point.  \an\a is the number of places after the decimal point when the value is expanded.]
+[H?Hostname mapping.  Each \aname\a holds a native pathname.  Assigning a UNIX format pathname will cause it to be converted to a pathname suitable for the current host.  This has no effect when the native system is UNIX.]
+[L]#?[n?Left justify.  If \an\a is given it represents the field width.  If the \b-Z\b attribute is also specified, then leading zeros are stripped.]
+[M]:?[mapping?\amapping\a is the name of a character mapping known by \bwctrans\b(3) such as \btolower\b or \btoupper\b.  When the option value \bmapping\b is omitted and there are no operands, all mapped variables are displayed.]
+[R]#?[n?Right justify.  If \an\a is given it represents the field width.  If the \b-Z\b attribute is also specified, then zeros will be used as the fill character.  Otherwise, spaces are used.]
+[X]#?[n:=2*sizeof(long long)?Floating point number represented in hexadecimal notation.  \an\a specifies the number of significant figures when the value is expanded.]
+[h]:[string?Used within a type definition to provide a help string  for variable \aname\a.  Otherwise, it is ignored.]
+[S?Used with a type definition to indicate that the variable is shared by each instance of the type.  When used inside a function defined with the \bfunction\b reserved word, the specified variables will have function static scope.  Otherwise, the variable is unset prior to processing the assignment list.]
+[T]:?[tname?\atname\a is the name of a type name given to each \aname\a.]
+[Z]#?[n?Zero fill.  If \an\a is given it represents the field width.]
+
+[name[=value]...]
+-f [name...]
+
+[+EXIT STATUS?]{
+[+0?No errors occurred.]
+[+>0?An error occurred.]
+}
+[+SEE ALSO?\breadonly\b(1), \bexport\b(1), \bdeclare\b(1)]

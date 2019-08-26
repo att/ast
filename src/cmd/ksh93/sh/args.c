@@ -252,7 +252,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
         argc = -argc;
     }
 
-    while ((n = optget(argv, setflag ? sh_optset : sh_optksh))) {
+    while ((n = optget(argv, setflag ? sh_optset : sh_optksh_mini))) {
         o = 0;
         f = *opt_info.option == '-' && (opt_info.num || opt_info.arg);
         switch (n) {

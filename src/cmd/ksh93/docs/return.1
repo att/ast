@@ -1,0 +1,12 @@
+[-1c?
+@(#)$Id: return (AT&T Research) 1999-07-07 $
+]
+[+NAME?return - return from a function or dot script ]
+[+DESCRIPTION?\breturn\b is a shell special built-in that causes the function or dot script that invokes it to exit.  If \breturn\b is invoked outside of a function or dot script it is equivalent to \bexit\b.]
+[+?If \breturn\b is invoked inside a function defined with the \bfunction\b reserved word syntax, then any \bEXIT\b trap set within the then function will be invoked in the context of the caller before the function returns.]
+[+?If \an\a is given, it will be used to set the exit status.]
+\n
+\n[n]\n
+\n
+[+EXIT STATUS?If \an\a is specified, the exit status is the least significant eight bits of the value of \an\a.  Otherwise, the exit status is the exit status of preceding command.]
+[+SEE ALSO?\bbreak\b(1), \bexit\b(1)]

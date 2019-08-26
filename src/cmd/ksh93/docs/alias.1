@@ -1,0 +1,18 @@
+[-1c?
+@(#)$Id: alias (AT&T Research) 1999-07-07 $
+]
+[+NAME?alias - define or display aliases]
+[+DESCRIPTION?\balias\b creates or redefines alias definitions or writes the existing alias definitions to standard output.  An alias definitions provides a string value that will replace a command name when the command is read.  Alias names can contain any printable character which is not special to the shell.  If an alias value ends in a space or tab, then the word following the command name the alias replaces is also checked to see whether it is an alias.]
+[+?If no \aname\as are specified then the names and values of all aliases are written to standard output.  Otherwise, for each \aname\a that is specified, and \b=\b\avalue\a  is not specified, the current value of the alias corresponding to \aname\a is written to standard output.  If \b=\b\avalue\a is specified, the alias \aname\a will be created or redefined.]
+[+?\balias\b is built-in to the shell as a declaration command so that field splitting and pathname expansion are not performed on the arguments.  Tilde expansion occurs on \avalue\a.  An alias definition only affects scripts read by the current shell environment.  It does not effect scripts run by this shell.]
+[p?Causes the output to be in the form of alias commands that can be used as input to the shell to recreate the current aliases.]
+[t?Used for tracked aliases.  These are aliases that connect a command name to the pathname of the command and are reset when the \bPATH\b variable is unset.  The tracked aliases feature is now obsolete.]
+[x?Ignored, this option is obsolete.]
+
+[name[=value]...]
+
+[+EXIT STATUS?]{
+[+0?Successful completion.]
+[+>0?One or more \aname\a operands did not have an alias definition, or an error occurred.]
+}
+[+SEE ALSO?\bsh\b(1), \bunalias\b(1)]
