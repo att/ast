@@ -94,7 +94,8 @@ done
 typeset -T X_t=( typeset name=aha )
 typeset -a "[X_t]" arr
 ) 2> /dev/null
-[[ $? == 1 ]] || log_error 'typeset -a [X_t] should generate an error message when X-t is not an enumeriation type'
+[[ $? == 1 ]] ||
+    log_error 'typeset -a [X_t] should generate error when X-t is not an enumeration type'
 
 typeset -a "[Color_t]" arr
 arr[green]=foo
