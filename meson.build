@@ -295,7 +295,6 @@ configure_file(input : 'config_ast.h.in',
 run_command('scripts/libast_prereq.sh')
 
 subdir('src/lib/libast')
-subdir('src/lib/libcmd')
 subdir('src/lib/libdll')
 
 # Check if api tests should be built

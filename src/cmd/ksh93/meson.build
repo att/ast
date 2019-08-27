@@ -8,6 +8,7 @@ ksh93_incdir = include_directories('include',
 
 subdir('include')
 subdir('bltins')
+subdir('cmds')
 subdir('data')
 subdir('edit')
 subdir('sh')
