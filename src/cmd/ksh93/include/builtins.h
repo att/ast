@@ -129,9 +129,7 @@ extern const char sh_optcd[];
 extern const char sh_optcommand[];
 extern const char sh_optcont[];
 extern const char sh_optdot[];
-#ifndef ECHOPRINT
 extern const char sh_optecho[];
-#endif  // !ECHOPRINT
 extern const char sh_opteval[];
 extern const char sh_optexec[];
 extern const char sh_optexit[];
