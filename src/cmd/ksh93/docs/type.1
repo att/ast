@@ -1,0 +1,21 @@
+[-1c?
+@(#)$Id: type (AT&T Labs Research) 2008-07-01 $
+]
+[+NAME?\f?\f - set the type of variables to \b\f?\f\b]
+[+DESCRIPTION?\b\f?\f\b sets the type on each of the variables specified by \aname\a to \b\f?\f\b. If \b=\b\avalue\a is specified, the variable \aname\a is set to \avalue\a before the variable is converted to \b\f?\f\b.]
+[+?If no \aname\as are specified then the names and values of all variables of this type are written to standard output.]
+[+?\b\f?\f\b is built-in to the shell as a declaration command so that field splitting and pathname expansion are not performed on the arguments.  Tilde expansion occurs on \avalue\a.]
+[r?Enables readonly.  Once enabled, the value cannot be changed or unset.]
+[a]:?[type?Indexed array. Each \aname\a will converted to an index array of type \b\f?\f\b.  If a variable already exists, the current value will become index \b0\b.  If \b[\b\atype\a\b]]\b is specified, each subscript is interpreted as a value of enumeration type \atype\a.]
+[A?Associative array.  Each \aname\a will converted to an associate array of type \b\f?\f\b.  If a variable already exists, the current value will become subscript \b0\b.]
+[h]:[string?Used within a type definition to provide a help string  for variable \aname\a.  Otherwise, it is ignored.]
+[S?Used with a type definition to indicate that the variable is shared by each instance of the type.  When used inside a function defined with the \bfunction\b reserved word, the specified variables will have function static scope.  Otherwise, the variable is unset prior to processing the assignment list.]
+[+DETAILS]\ftypes\f
+
+[name[=value]...]
+
+[+EXIT STATUS?]{
+[+0?Successful completion.]
+[+>0?An error occurred.]
+}
+[+SEE ALSO?\fother\f \breadonly\b(1), \btypeset\b(1)]

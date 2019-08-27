@@ -15,11 +15,7 @@ libcmd_files = [
     'wc.c',
 ]
 
-libcmd_c_args = shared_c_args + [
-    '-DUSAGE_LICENSE=""',
-]
-
-libcmd = library('cmd', libcmd_files, c_args: libcmd_c_args,
+libcmd = library('cmd', libcmd_files, c_args: shared_c_args,
                  include_directories: [configuration_incdir, ksh93_incdir],
                  dependencies: libfts_dep,
                  link_with: libast,

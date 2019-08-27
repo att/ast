@@ -25,6 +25,7 @@
 #include <sys/types.h>
 
 #include "ast_assert.h"
+#include "builtins.h"
 #include "cdt.h"
 #include "defs.h"
 #include "error.h"
@@ -33,74 +34,6 @@
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
-
-static const char enum_usage[] =
-    "[-?@(#)$Id: enum (AT&T Research) 2013-04-29 $\n]" USAGE_LICENSE
-    "[+NAME?enum - create an enumeration type]"
-    "[+DESCRIPTION?\benum\b is a declaration command that creates an enumeration "
-    "type \atypename\a that can only store any one of the values in the indexed "
-    "array variable \atypename\a.]"
-    "[+?If the list of \avalue\as is omitted, then \atypename\a must name an "
-    "indexed array variable with at least two elements.]"
-    "[+?When an enumeration variable is used in arithmetic expression, its value "
-    "is the index into the array that defined it starting from index 0. "
-    "Enumeration strings can be used in an arithmetic expression when "
-    "comparing against an enumeration variable.]"
-    "[+?The enum \b_Bool\b exists by default with values \btrue\b and \bfalse\b. "
-    "The predefined alias \bbool\b is defined as \b_Bool\b.]"
-    "[i:ignorecase?The values are case insensitive.]"
-    "[p?Writes the enums to standard output.  If \atypename\a is omitted then all "
-    "\benum\bs are written.]"
-    "\n"
-    "\n\atypename\a[\b=(\b \avalue\a ... \b)\b]\n"
-    "\n"
-    "[+EXIT STATUS]"
-    "{"
-    "[+0?Successful completion.]"
-    "[+>0?An error occurred.]"
-    "}"
-    "[+SEE ALSO?\bksh\b(1), \btypeset\b(1).]";
-
-static const char enum_type[] =
-    "[-1c?\n@(#)$Id: type (AT&T Labs Research) 2008-01-08 $\n]" USAGE_LICENSE
-    "[+NAME?\f?\f - create an instance of type \b\f?\f\b]"
-    "[+DESCRIPTION?\b\f?\f\b creates a variable for each \aname\a with "
-    "enumeration type \b\f?\f\b where \b\f?\f\b is a type that has been "
-    "created with the \benum\b(1) command.]"
-    "[+?The variable can have one of the following values\fvalues\f.  "
-    "The the values are \fcase\fcase sensitive.]"
-    "[+?If \b=\b\avalue\a is omitted, the default is \fdefault\f.]"
-    "[+?If no \aname\as are specified then the names and values of all "
-    "variables of this type are written to standard output.]"
-    "[+?\b\f?\f\b is built-in to the shell as a declaration command so that "
-    "field splitting and pathname expansion are not performed on "
-    "the arguments.  Tilde expansion occurs on \avalue\a.]"
-    "[r?Enables readonly.  Once enabled, the value cannot be changed or unset.]"
-    "[a?index array.  Each \aname\a will converted to an index "
-    "array of type \b\f?\f\b.  If a variable already exists, the current "
-    "value will become index \b0\b.]"
-    "[A?Associative array.  Each \aname\a will converted to an associate "
-    "array of type \b\f?\f\b.  If a variable already exists, the current "
-    "value will become subscript \b0\b.]"
-    "[h]:[string?Used within a type definition to provide a help string  "
-    "for variable \aname\a.  Otherwise, it is ignored.]"
-    "[S?Used with a type definition to indicate that the variable is shared by "
-    "each instance of the type.  When used inside a function defined "
-    "with the \bfunction\b reserved word, the specified variables "
-    "will have function static scope.  Otherwise, the variable is "
-    "unset prior to processing the assignment list.]"
-    "[p?Causes the output to be in a form of \b\f?\f\b commands that can be "
-    "used as input to the shell to recreate the current type of "
-    "these variables.]"
-    "\n"
-    "\n[name[=value]...]\n"
-    "\n"
-    "[+EXIT STATUS?]{"
-    "[+0?Successful completion.]"
-    "[+>0?An error occurred.]"
-    "}"
-
-    "[+SEE ALSO?\benum\b(1), \btypeset\b(1)]";
 
 struct Enum {
     Namfun_t namfun;
@@ -291,7 +224,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
     } optdisc;
 
     if (cmdinit(argc, argv, context, ERROR_NOTIFY)) return -1;
-    while ((n = optget(argv, enum_usage))) {
+    while ((n = optget(argv, sh_optenum))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'p': {
                 pflag = true;
@@ -369,7 +302,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
         memset(&optdisc, 0, sizeof(optdisc));
         optdisc.opt.infof = enuminfo;
         optdisc.np = tp;
-        nv_addtype(tp, enum_type, &optdisc, sizeof(optdisc));
+        nv_addtype(tp, sh_optenum_type, &optdisc, sizeof(optdisc));
         nv_onattr(np, NV_LTOU | NV_UTOL);
     }
     nv_open(0, shp->var_tree, 0);

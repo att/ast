@@ -215,7 +215,6 @@ if cc.has_argument('-Werror=implicit')
 endif
 
 shared_c_args = [
-    '-DUSAGE_LICENSE=""',
     '-DUSE_SPAWN=' + '@0@'.format(get_option('use-spawn').to_int()),
 ]
 

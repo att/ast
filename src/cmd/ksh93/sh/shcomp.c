@@ -29,6 +29,7 @@
 #include <sys/stat.h>
 
 #include "argnod.h"
+#include "builtins.h"
 #include "defs.h"
 #include "error.h"
 #include "name.h"
@@ -36,36 +37,6 @@
 #include "sfio.h"
 #include "shnodes.h"
 #include "stk.h"
-
-static const char usage[] =
-    "[-?\n@(#)$Id: shcomp (AT&T Research) 2003-03-02 $\n]" USAGE_LICENSE
-    "[+NAME?shcomp - compile a shell script]"
-    "[+DESCRIPTION?Unless \b-D\b is specified, \bshcomp\b takes a shell script, "
-    "\ainfile\a, and creates a binary format file, \aoutfile\a, that "
-    "\bksh\b can read and execute with the same effect as the original "
-    "script.]"
-    "[+?Since aliases are processed as the script is read, alias definitions "
-    "whose value requires variable expansion will not work correctly.]"
-    "[+?If \b-D\b is specified, all double quoted strings that are preceded by "
-    "\b$\b are output.  These are the messages that need to be "
-    "translated to locale specific versions for internationalization.]"
-    "[+?If \aoutfile\a is omitted, then the results will be written to "
-    "standard output.  If \ainfile\a is also omitted, the shell script "
-    "will be read from standard input.]"
-    "[D:dictionary?Generate a list of strings that need to be placed in a message "
-    "catalog for internationalization.]"
-    "[n:noexec?Displays warning messages for obsolete or non-conforming "
-    "constructs.] "
-    "[v:verbose?Displays input from \ainfile\a onto standard error as it "
-    "reads it.]"
-    "\n"
-    "\n[infile [outfile]]\n"
-    "\n"
-    "[+EXIT STATUS?]{"
-    "[+0?Successful completion.]"
-    "[+>0?An error occurred.]"
-    "}"
-    "[+SEE ALSO?\bksh\b(1)]";
 
 #define CNTL(x) ((x)&037)
 #define VERSION 3
@@ -80,8 +51,8 @@ int main(int argc, char *argv[]) {
     int n, nflag = 0, vflag = 0, dflag = 0;
 
     error_info.id = argv[0];
-    shp = sh_init(argc, argv, (Shinit_f)0);
-    while ((n = optget(argv, usage))) {
+    shp = sh_init(argc, argv, NULL);
+    while ((n = optget(argv, sh_optshcomp))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'D': {
                 dflag = 1;

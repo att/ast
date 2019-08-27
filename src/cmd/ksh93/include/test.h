@@ -58,7 +58,6 @@ extern int test_unop(Shell_t *, int, const char *);
 extern int test_inode(const char *, const char *);
 extern int test_binop(Shell_t *, int, const char *, const char *);
 
-extern const char *sh_opttest;
 extern const char *test_opchars;
 extern const char *e_argument;
 extern const char *e_missing;

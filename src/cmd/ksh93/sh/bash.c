@@ -80,7 +80,7 @@ const char sh_bash2[] =
 
 const char sh_optshopt[] =
     "+[-1c?\n@(#)$Id: shopt (AT&T Research) 2003-02-13 $\n]"
-    "[-author?Karsten Fleischer <K.Fleischer@omnium.de>]" USAGE_LICENSE
+    "[-author?Karsten Fleischer <K.Fleischer@omnium.de>]"
     "[+NAME?shopt - set/unset variables controlling optional shell behavior]"
     "[+DESCRIPTION?\bshopt\b sets or unsets variables controlling optional shell "
     "behavior. With no options, or with the \b-p\b option, a list of all "
