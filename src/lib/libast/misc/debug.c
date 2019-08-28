@@ -120,7 +120,6 @@ void run_lsof() {
         // to go to our stderr so it is interleaved with DPRINTF() and other
         // diagnostic output.
         close(0);
-        // cppcheck-suppress leakReturnValNotUsed
         (void)open("/dev/null", O_RDONLY);
         dup2(2, 1);
         // Run the program we hope will give us detailed info about each open file descriptor.
@@ -191,9 +190,7 @@ static_fn void run_addr2lines_prog(int n_frames, char *path, const char **argv) 
         close(0);
         close(2);
         dup2(fds[1], 1);
-        // cppcheck-suppress leakReturnValNotUsed
         (void)open("/dev/null", O_RDONLY);  // stdin
-        // cppcheck-suppress leakReturnValNotUsed
         (void)open("/dev/null", O_WRONLY);  // stderr
 
         // Run the program we hope will give us detailed info about each address.
@@ -374,6 +371,8 @@ void dump_backtrace(int max_frames) {
             dladdr(callstack[i + bias], &info);
             ptrdiff_t offset =
                 _dprintf_debug ? 0 : (char *)callstack[i + bias] - (char *)info.dli_saddr;
+            // On some platforms (e.g., macOS) ptrdiff_t is just an alias for signed long.
+            // cppcheck-suppress invalidPrintfArgType_sint
             (void)snprintf(text, sizeof(text), "%-3d %s + %td\n", i, info.dli_sname, offset);
         }
         write(2, text, strlen(text));

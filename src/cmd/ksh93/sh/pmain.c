@@ -32,8 +32,6 @@ int main(int argc, char *argv[]) {
         if (fcntl(fd, F_GETFD, NULL) == -1 || errno == EBADF) {
             // We don't bother to check the fd returned because there isn't anything we can do if
             // it unexpectedly fails. And that should be a "can't happen" situation.
-            //
-            // cppcheck-suppress leakReturnValNotUsed
             (void)open("/dev/null", O_RDWR);
         }
     }

@@ -61,7 +61,6 @@ struct tm *tmlocaltime(const time_t *t) {
         }
         environ[0] = TZ;
     }
-    // cppcheck-suppress localtimeCalled
     r = localtime(t);
     if (TZ[0]) {
         if (environ != v) {
@@ -79,7 +78,6 @@ struct tm *tmlocaltime(const time_t *t) {
  * isdst will point to non-zero if DST is in effect
  * this routine also kicks in the local initialization
  */
-
 static_fn int tzwest(time_t *clock, int *isdst) {
     struct tm *tp;
     int n;
@@ -90,16 +88,12 @@ static_fn int tzwest(time_t *clock, int *isdst) {
     /*
      * convert to GMT assuming local time
      */
-
-    // cppcheck-suppress gmtimeCalled
     if (!(tp = gmtime(clock))) {
         /*
          * some systems return 0 for negative time_t
          */
-
         epoch = 0;
         clock = &epoch;
-        // cppcheck-suppress gmtimeCalled
         tp = gmtime(clock);
     }
     n = tp->tm_yday;

@@ -216,7 +216,7 @@ S2I_function(const char *a, char **e, int base)
     unsigned char *p;
     unsigned char *cv;
     unsigned char *b;
-    unsigned char *k;
+    unsigned char *k = NULL;
     S2I_unumber v;
 #if S2I_multiplier
     int base;
@@ -235,11 +235,7 @@ S2I_function(const char *a, char **e, int base)
         return 0;
     }
     while (S2I_valid(s) && isspace(*s)) s++;
-    if ((negative = S2I_valid(s) && (*s == '-')) || (S2I_valid(s) && *s == '+')) {
-        k = ++s;
-    } else {
-        k = 0;
-    }
+    if ((negative = S2I_valid(s) && (*s == '-')) || (S2I_valid(s) && *s == '+')) k = ++s;
     p = s;
     if (!base) {
         if (S2I_valid(p) && (c = *p++) >= '0' && c <= '9') {

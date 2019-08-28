@@ -158,7 +158,6 @@ tmain() {
     tchild();
 
     Nproc =
-        // cppcheck-suppress leakReturnValNotUsed
         (unsigned int *)tshared(sizeof(*Nproc) + (N_PROC + 1) * sizeof(pid_t) + sizeof(*Done) +
                                 N_SLOT * sizeof(unsigned char) + N_SLOT * sizeof(unsigned short) +
                                 N_SLOT * sizeof(unsigned int));
