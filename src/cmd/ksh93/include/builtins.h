@@ -20,6 +20,8 @@
 #ifndef _BUILTINS_H
 #define _BUILTINS_H 1
 
+#include "cdt.h"
+#include "name.h"
 #include "option.h"
 #include "shtable.h"
 
@@ -45,12 +47,33 @@
 // #define SYSDECLARE (shgd->bltin_cmds + 17)
 #define SYSLOCAL (shgd->bltin_cmds + 18)
 
-// Entry point for shell special builtins.
+// This structure is used by `typeset`, `export`, `readonly`.
+struct tdata {
+    Shell_t *sh;
+    Namval_t *tp;
+    const char *wctname;
+    Sfio_t *outfile;
+    char *prefix;
+    char *tname;
+    char *help;
+    char aflag;
+    bool pflag;
+    int argnum;
+    nvflag_t scanmask;
+    Dt_t *scanroot;
+    char **argnam;
+    int indent;
+    int noref;
+};
 
+extern int setall(char **, nvflag_t, Dt_t *, struct tdata *);
+
+// Entry points for shell special builtins.
 extern int b_alias(int, char *[], Shbltin_t *);
 extern int b_break(int, char *[], Shbltin_t *);
 extern int b_enum(int, char *[], Shbltin_t *);
 extern int b_exec(int, char *[], Shbltin_t *);
+extern int b_export(int, char *[], Shbltin_t *);
 extern int b_eval(int, char *[], Shbltin_t *);
 extern int b_return(int, char *[], Shbltin_t *);
 extern int B_login(int, char *[], Shbltin_t *);

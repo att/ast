@@ -18,17 +18,12 @@
  *                                                                      *
  ***********************************************************************/
 //
-// export [-p] [arg...]
-// readonly [-p] [arg...]
 // typeset [options]  [arg...]
 // alias [-ptx] [arg...]
 // unalias [arg...]
 // builtin [-sd] [-f file] [name...]
 // set [options] [name...]
 // unset [-fnv] [name...]
-//
-//   David Korn
-//   AT&T Labs
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
@@ -60,89 +55,12 @@
 #include "stk.h"
 #include "variables.h"
 
-struct tdata {
-    Shell_t *sh;
-    Namval_t *tp;
-    const char *wctname;
-    Sfio_t *outfile;
-    char *prefix;
-    char *tname;
-    char *help;
-    char aflag;
-    bool pflag;
-    int argnum;
-    nvflag_t scanmask;
-    Dt_t *scanroot;
-    char **argnam;
-    int indent;
-    int noref;
-};
-
 static_fn int print_namval(Sfio_t *, Namval_t *, bool, struct tdata *);
 static_fn void print_attribute(Namval_t *, void *);
 static_fn void print_all(Sfio_t *, Dt_t *, struct tdata *);
 static_fn void print_scan(Sfio_t *, nvflag_t, Dt_t *, bool, struct tdata *);
 static_fn int unall(int, char **, Dt_t *, Shell_t *);
-static_fn int setall(char **, nvflag_t, Dt_t *, struct tdata *);
 static_fn void pushname(Namval_t *, void *);
-
-//
-// Note the `export` and `readonly` builtins are handled by this function.
-//
-// TODO: Refactor the function so that each builtin has a distinct function. 99% of the shared code
-// is boilerplate for things like parsing the command line. And even that has two explicit tests for
-// which variant is being handled.
-//
-int b_readonly(int argc, char *argv[], Shbltin_t *context) {
-    int flag;
-    char *command = argv[0];
-    struct tdata tdata;
-    UNUSED(argc);
-
-    memset(&tdata, 0, sizeof(tdata));
-    tdata.sh = context->shp;
-    tdata.aflag = '-';
-    // Do not change size.
-    tdata.argnum = -1;
-    while ((flag = optget(argv, *command == 'e' ? sh_optexport : sh_optreadonly))) {
-        switch (flag) {  //!OCLINT(MissingDefaultStatement)
-            case 'n': {
-                if (*command != 'e') {
-                    errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
-                    return 2;
-                }
-                tdata.aflag = '+';
-                break;
-            }
-            case 'p': {
-                tdata.prefix = command;
-                break;
-            }
-            case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
-                return 2;
-            }
-        }
-    }
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
-        __builtin_unreachable();
-    }
-
-    argv += (opt_info.index - 1);
-    nvflag_t nvflags;
-    if (*command == 'r') {
-        nvflags = (NV_ASSIGN | NV_RDONLY | NV_VARNAME);
-    } else {
-        nvflags = (NV_ASSIGN | NV_EXPORT | NV_IDENT);
-        if (!tdata.sh->prefix) tdata.sh->prefix = "";
-    }
-    return setall(argv, nvflags, tdata.sh->var_tree, &tdata);
-}
 
 int b_alias(int argc, char *argv[], Shbltin_t *context) {
     nvflag_t nvflags = NV_NOARRAY | NV_NOSCOPE | NV_ASSIGN;
@@ -578,7 +496,7 @@ static_fn void print_value(Sfio_t *iop, Namval_t *np, struct tdata *tp) {
     }
 }
 
-static_fn int setall(char **argv, nvflag_t flag, Dt_t *troot, struct tdata *tp) {
+int setall(char **argv, nvflag_t flag, Dt_t *troot, struct tdata *tp) {
     char *name;
     char *last = NULL;
     nvflag_t nvflags =

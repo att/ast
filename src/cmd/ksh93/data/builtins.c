@@ -60,7 +60,7 @@ const struct shtable3 shtab_builtins[] = {
     {"test", NV_BLTIN | BLT_ENV, bltin(test)},
     {"[", NV_BLTIN | BLT_ENV, bltin(test)},
     {"let", NV_BLTIN | BLT_ENV, bltin(let)},
-    {"export", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_DCL, bltin(readonly)},
+    {"export", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_DCL, bltin(export)},
     {".", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(source)},
     {"return", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(return )},
     {"enum", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_DCL, bltin(enum)},
