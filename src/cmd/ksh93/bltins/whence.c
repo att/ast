@@ -18,11 +18,7 @@
  *                                                                      *
  ***********************************************************************/
 //
-// command [-pvVx] name [arg...]
 // whence [-afvp] name...
-//
-//   David Korn
-//   AT&T Labs
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
@@ -42,108 +38,41 @@
 #include "shtable.h"
 #include "stk.h"
 
-#define P_FLAG (1 << 0)
-#define V_FLAG (1 << 1)
-#define A_FLAG (1 << 2)
-#define F_FLAG (1 << 3)
-#define X_FLAG (1 << 4)
-#define Q_FLAG (1 << 5)
-#define T_FLAG (1 << 6)
-
-static_fn int whence(Shell_t *, char **, int);
-
 //
-// Command is called with argc==0 when checking for -V or -v option. In this case return 0 when -v
-// or -V or unknown option, otherwise the shift count to the command is returned.
-//
-int b_command(int argc, char *argv[], Shbltin_t *context) {
-    int n, flags = 0;
-    Shell_t *shp = context->shp;
-    Optdisc_t disc;
-
-    memset(&disc, 0, sizeof(disc));
-    disc.version = OPT_VERSION;
-    opt_info.disc = &disc;
-    opt_info.index = opt_info.offset = 0;
-
-    while ((n = optget(argv, sh_optcommand))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case 'p': {
-                if (sh_isoption(shp, SH_RESTRICTED)) {
-                    errormsg(SH_DICT, ERROR_exit(1), e_restricted, "-p");
-                    __builtin_unreachable();
-                }
-                sh_onstate(shp, SH_DEFPATH);
-                break;
-            }
-            case 'v': {
-                flags |= X_FLAG;
-                break;
-            }
-            case 'V': {
-                flags |= V_FLAG;
-                break;
-            }
-            case 'x': {
-                shp->xargexit = 1;
-                break;
-            }
-            case ':': {
-                if (argc == 0) return 0;
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                if (argc == 0) return 0;
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
-            }
-        }
-    }
-    if (argc == 0) return flags ? 0 : opt_info.index;
-    argv += opt_info.index;
-    if (error_info.errors || !*argv) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-    return whence(shp, argv, flags);
-}
-
-//
-// For the whence command.
+// The `whence` command.
 //
 int b_whence(int argc, char *argv[], Shbltin_t *context) {
     int flags = 0, n;
     Shell_t *shp = context->shp;
     UNUSED(argc);
 
-    if (*argv[0] == 't') flags = V_FLAG;
+    if (*argv[0] == 't') flags = WHENCE_V_FLAG;
     while ((n = optget(argv, sh_optwhence))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 't': {
-                flags |= T_FLAG;
+                flags |= WHENCE_T_FLAG;
                 break;
             }
             case 'a': {
-                flags |= A_FLAG;
+                flags |= WHENCE_A_FLAG;
             }
             // FALLTHRU
             case 'v': {
-                flags |= V_FLAG;
+                flags |= WHENCE_V_FLAG;
                 break;
             }
             case 'f': {
-                flags |= F_FLAG;
+                flags |= WHENCE_F_FLAG;
                 break;
             }
             case 'P':
             case 'p': {
-                flags |= P_FLAG;
-                flags &= ~V_FLAG;
+                flags |= WHENCE_P_FLAG;
+                flags &= ~WHENCE_V_FLAG;
                 break;
             }
             case 'q': {
-                flags |= Q_FLAG;
+                flags |= WHENCE_Q_FLAG;
                 break;
             }
             case ':': {
@@ -161,11 +90,11 @@ int b_whence(int argc, char *argv[], Shbltin_t *context) {
         errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
         __builtin_unreachable();
     }
-    if (flags & T_FLAG) flags &= ~V_FLAG;
+    if (flags & WHENCE_T_FLAG) flags &= ~WHENCE_V_FLAG;
     return whence(shp, argv, flags);
 }
 
-static_fn int whence(Shell_t *shp, char **argv, int flags) {
+int whence(Shell_t *shp, char **argv, int flags) {
     const char *name;
     Namval_t *np;
     const char *cp;
@@ -178,22 +107,22 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
     bool notrack = true;
     int rv = 0;
 
-    if (flags & Q_FLAG) flags &= ~A_FLAG;
+    if (flags & WHENCE_Q_FLAG) flags &= ~WHENCE_A_FLAG;
     while ((name = *argv++)) {
         char *sp = NULL;
 
-        aflag = ((flags & A_FLAG) != 0);
+        aflag = ((flags & WHENCE_A_FLAG) != 0);
         cp = NULL;
         np = NULL;
-        if (flags & P_FLAG) goto search;
-        if (flags & Q_FLAG) goto bltins;
+        if (flags & WHENCE_P_FLAG) goto search;
+        if (flags & WHENCE_Q_FLAG) goto bltins;
         // Reserved words first.
         if (sh_lookup(name, shtab_reserved)) {
-            if (flags & T_FLAG) {
+            if (flags & WHENCE_T_FLAG) {
                 sfprintf(sfstdout, "%s\n", "keyword");
             } else {
                 sfprintf(sfstdout, "%s%s\n", name,
-                         (flags & V_FLAG) ? sh_translate(is_reserved) : "");
+                         (flags & WHENCE_V_FLAG) ? sh_translate(is_reserved) : "");
             }
             if (!aflag) continue;
             aflag++;
@@ -201,7 +130,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
         // Non-tracked aliases.
         if ((np = nv_search(name, shp->alias_tree, 0)) && !nv_isnull(np) &&
             !(notrack = nv_isattr(np, NV_TAGGED) == NV_TAGGED) && (cp = nv_getval(np))) {
-            if (flags & V_FLAG) {
+            if (flags & WHENCE_V_FLAG) {
                 if (nv_isattr(np, NV_EXPORT)) {
                     msg = sh_translate(is_xalias);
                 } else {
@@ -209,7 +138,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                 }
                 sfprintf(sfstdout, msg, name);
             }
-            if (flags & T_FLAG) {
+            if (flags & WHENCE_T_FLAG) {
                 sfputr(sfstdout, "alias", '\n');
             } else {
                 sfputr(sfstdout, sh_fmtq(cp), '\n');
@@ -221,12 +150,12 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
 
         // Built-ins and functions next.
     bltins:
-        root = (flags & F_FLAG) ? shp->bltin_tree : shp->fun_tree;
+        root = (flags & WHENCE_F_FLAG) ? shp->bltin_tree : shp->fun_tree;
         np = nv_bfsearch(name, root, &nq, &notused);
         if (np) {
             if (is_abuiltin(np) && nv_isnull(np)) goto search;
             cp = "";
-            if (flags & (V_FLAG | T_FLAG)) {
+            if (flags & (WHENCE_V_FLAG | WHENCE_T_FLAG)) {
                 if (nv_isnull(np)) {
                     cp = is_ufunction;
                 } else if (is_abuiltin(np)) {
@@ -239,8 +168,8 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                     cp = is_function;
                 }
             }
-            if (flags & Q_FLAG) continue;
-            if (flags & T_FLAG) {
+            if (flags & WHENCE_Q_FLAG) continue;
+            if (flags & WHENCE_T_FLAG) {
                 if (cp == is_function || cp == is_ufunction) {
                     cp = "function";
                 } else if (*name == '/') {
@@ -265,7 +194,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
         do {
             if (path_search(shp, name, &pp, 2 + (aflag > 1))) {
                 cp = name;
-                if ((flags & P_FLAG) && *cp != '/') cp = NULL;
+                if ((flags & WHENCE_P_FLAG) && *cp != '/') cp = NULL;
             } else {
                 cp = stkptr(stkstd, PATH_OFFSET);
                 if (*cp == 0) {
@@ -275,11 +204,11 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                     cp = sp;
                 }
             }
-            if (flags & Q_FLAG) {
+            if (flags & WHENCE_Q_FLAG) {
                 pp = NULL;
                 rv = cp == NULL;
             } else if (cp) {
-                if (flags & V_FLAG) {
+                if (flags & WHENCE_V_FLAG) {
                     if (*cp != '/') {
                         if (!np && (np = nv_search(name, shp->track_tree, 0))) {
                             const char *command_path = FETCH_VT(np->nvalue, pathcomp)->name;
@@ -302,7 +231,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                     }
                     sfputr(sfstdout, msg, ' ');
                 }
-                if (flags & T_FLAG) {
+                if (flags & WHENCE_T_FLAG) {
                     sfputr(sfstdout, "file", '\n');
                 } else {
                     sfputr(sfstdout, sh_fmtq(cp), '\n');
@@ -315,7 +244,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                 }
             } else if (aflag <= 1) {
                 rv = 1;
-                if (flags & V_FLAG) errormsg(SH_DICT, ERROR_exit(0), e_found, sh_fmtq(name));
+                if (flags & WHENCE_V_FLAG) errormsg(SH_DICT, ERROR_exit(0), e_found, sh_fmtq(name));
             }
 
             if (sp) {

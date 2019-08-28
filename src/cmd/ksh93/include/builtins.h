@@ -96,6 +96,16 @@ extern int b_times(int, char *[], Shbltin_t *);
 extern int B_echo(int, char *[], Shbltin_t *);
 extern int b_complete(int, char *[], Shbltin_t *);
 
+// Used by `b_whence()` and `b_command()`.
+#define WHENCE_P_FLAG (1 << 0)
+#define WHENCE_V_FLAG (1 << 1)
+#define WHENCE_A_FLAG (1 << 2)
+#define WHENCE_F_FLAG (1 << 3)
+#define WHENCE_X_FLAG (1 << 4)
+#define WHENCE_Q_FLAG (1 << 5)
+#define WHENCE_T_FLAG (1 << 6)
+int whence(Shell_t *, char **, int);
+
 extern const char e_badfun[];
 extern const char e_baddisc[];
 extern const char e_nofork[];
