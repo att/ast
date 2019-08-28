@@ -26,7 +26,6 @@
 #include "defs.h"
 #include "name.h"
 #include "shtable.h"
-#include "version.h"
 
 // Use Bltin() for builtins that do not accept long options; e.g., `--flag`.
 
