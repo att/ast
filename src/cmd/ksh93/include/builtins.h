@@ -67,6 +67,7 @@ struct tdata {
 };
 
 extern int setall(char **, nvflag_t, Dt_t *, struct tdata *);
+extern void print_scan(Sfio_t *file, nvflag_t flag, Dt_t *root, bool omit_attrs, struct tdata *tp);
 
 // Entry points for shell special builtins.
 extern int b_alias(int, char *[], Shbltin_t *);
