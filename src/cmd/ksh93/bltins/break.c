@@ -28,13 +28,13 @@
 #include "shcmd.h"
 
 //
-// Builtins `break` and `continue`.
+// Builtin `break`.
+// See also the continue.c module.
 //
 int b_break(int n, char *argv[], Shbltin_t *context) {
     char *arg;
-    int cont = **argv == 'c';
     Shell_t *shp = context->shp;
-    while ((n = optget(argv, cont ? sh_optcont : sh_optbreak))) {
+    while ((n = optget(argv, sh_optbreak))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
@@ -67,7 +67,6 @@ int b_break(int n, char *argv[], Shbltin_t *context) {
     if (shp->st.loopcnt) {
         shp->st.execbrk = shp->st.breakcnt = n;
         if (shp->st.breakcnt > shp->st.loopcnt) shp->st.breakcnt = shp->st.loopcnt;
-        if (cont) shp->st.breakcnt = -shp->st.breakcnt;
     }
 
     return 0;

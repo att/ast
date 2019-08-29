@@ -72,8 +72,10 @@ extern void print_scan(Sfio_t *file, nvflag_t flag, Dt_t *root, bool omit_attrs,
 // Entry points for shell special builtins.
 extern int b_alias(int, char *[], Shbltin_t *);
 extern int b_break(int, char *[], Shbltin_t *);
+extern int b_continue(int, char *[], Shbltin_t *);
 extern int b_enum(int, char *[], Shbltin_t *);
 extern int b_exec(int, char *[], Shbltin_t *);
+extern int b_exit(int, char *[], Shbltin_t *);
 extern int b_export(int, char *[], Shbltin_t *);
 extern int b_eval(int, char *[], Shbltin_t *);
 extern int b_return(int, char *[], Shbltin_t *);

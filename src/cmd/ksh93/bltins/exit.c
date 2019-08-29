@@ -30,14 +30,13 @@
 #include "shcmd.h"
 
 //
-// Builtins `return` and `exit`.
+// Builtin `exit` command. See also the return.c module which is similar to this module.
 //
-int b_return(int n, char *argv[], Shbltin_t *context) {
+int b_exit(int n, char *argv[], Shbltin_t *context) {
     char *arg;
     Shell_t *shp = context->shp;
     checkpt_t *pp = shp->jmplist;
-    const char *options = (**argv == 'r' ? sh_optreturn : sh_optexit);
-    while ((n = optget(argv, options))) {
+    while ((n = optget(argv, sh_optexit))) {
         switch (n) {
             case ':': {
                 if (!argv[opt_info.index] || !strmatch(argv[opt_info.index], "[+-]+([0-9])")) {
@@ -59,7 +58,7 @@ done:
         __builtin_unreachable();
     }
 
-    pp->mode = (**argv == 'e' ? SH_JMPEXIT : SH_JMPFUN);
+    pp->mode = SH_JMPEXIT;
     argv += opt_info.index;
     n = (((arg = *argv) ? (int)strtol(arg, NULL, 10) : shp->oldexit));
     if (n < 0 || n == 256 || n > SH_EXITMASK + shp->gd->sigmax) {
