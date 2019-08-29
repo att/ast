@@ -83,8 +83,8 @@ const struct shtable3 shtab_builtins[] = {
 #ifdef JOBS
 #ifdef SIGTSTP
     {"bg", NV_BLTIN | BLT_ENV, bltin(bg)},
-    {"fg", NV_BLTIN | BLT_ENV | BLT_EXIT, bltin(bg)},
-    {"disown", NV_BLTIN | BLT_ENV, bltin(bg)},
+    {"fg", NV_BLTIN | BLT_ENV | BLT_EXIT, bltin(fg)},
+    {"disown", NV_BLTIN | BLT_ENV, bltin(disown)},
     {"kill", NV_BLTIN | BLT_ENV, bltin(kill)},
 #else   // SIGTSTP
     {"/bin/kill", NV_BLTIN | BLT_ENV, bltin(kill)},

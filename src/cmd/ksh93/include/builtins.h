@@ -95,6 +95,8 @@ extern int b_jobs(int, char *[], Shbltin_t *);
 extern int b_kill(int, char *[], Shbltin_t *);
 #ifdef SIGTSTP
 extern int b_bg(int, char *[], Shbltin_t *);
+extern int b_fg(int, char *[], Shbltin_t *);
+extern int b_disown(int, char *[], Shbltin_t *);
 #endif  // SIGTSTP
 #endif
 

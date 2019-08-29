@@ -31,19 +31,12 @@
 
 #ifdef JOBS
 //
-// Builtin `bg`, `fg`, and `disown`.
+// Builtin `fg` command.
 //
-int b_bg(int n, char *argv[], Shbltin_t *context) {
-    int flag = **argv;
+int b_fg(int n, char *argv[], Shbltin_t *context) {
     Shell_t *shp = context->shp;
-    const char *optstr = sh_optbg;
-    if (*argv[0] == 'f') {
-        optstr = sh_optfg;
-    } else if (*argv[0] == 'd') {
-        optstr = sh_optdisown;
-    }
 
-    while ((n = optget(argv, optstr))) {
+    while ((n = optget(argv, sh_optfg))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
@@ -68,8 +61,7 @@ int b_bg(int n, char *argv[], Shbltin_t *context) {
         }
         return 1;
     }
-    if (flag == 'd' && *argv == 0) argv = NULL;
-    if (job_walk(shp, sfstdout, job_switch, flag, argv)) {
+    if (job_walk(shp, sfstdout, job_switch, 'f', argv)) {
         errormsg(SH_DICT, ERROR_exit(1), e_no_job);
         __builtin_unreachable();
     }
