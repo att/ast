@@ -29,6 +29,7 @@ ksh93_files += [
     'bltins/typeset.c',
     'bltins/ulimit.c',
     'bltins/umask.c',
+    'bltins/unset.c',
     'bltins/wait.c',
     'bltins/whence.c'
 ]
