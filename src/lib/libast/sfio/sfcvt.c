@@ -117,7 +117,6 @@ __attribute__((annotate("oclint:suppress"))) char *_sfcvt(void *vp, char *buf, s
             if (signbit(f)) *sign = 1;
             return SF_INF(buf, format, size);
         }
-#if _c99_in_the_wild
         if (signbit(f)) {
             f = -f;
             *sign = 1;
@@ -130,12 +129,6 @@ __attribute__((annotate("oclint:suppress"))) char *_sfcvt(void *vp, char *buf, s
             case FP_ZERO:
                 return SF_ZERO(buf, format, size);
         }
-#else
-        if (signbit(f)) {
-            f = -f;
-            *sign = 1;
-        }
-#endif
         if (f < LDBL_MIN) return SF_ZERO(buf, format, size);
         if (f > LDBL_MAX) return SF_INF(buf, format, size);
 
@@ -260,7 +253,6 @@ __attribute__((annotate("oclint:suppress"))) char *_sfcvt(void *vp, char *buf, s
             if (signbit(f)) *sign = 1;
             return SF_INF(buf, format, size);
         }
-#if _c99_in_the_wild
         if (signbit(f)) {
             f = -f;
             *sign = 1;
@@ -273,12 +265,6 @@ __attribute__((annotate("oclint:suppress"))) char *_sfcvt(void *vp, char *buf, s
             case FP_ZERO:
                 return SF_ZERO(buf, format, size);
         }
-#else
-        if (signbit(f)) {
-            f = -f;
-            *sign = 1;
-        }
-#endif
         if (f < DBL_MIN) return SF_ZERO(buf, format, size);
         if (f > DBL_MAX) return SF_INF(buf, format, size);
 
