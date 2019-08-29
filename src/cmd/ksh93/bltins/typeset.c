@@ -20,6 +20,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <float.h>
+#include <limits.h>  // IWYU pragma: keep
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
