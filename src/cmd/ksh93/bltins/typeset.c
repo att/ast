@@ -33,7 +33,6 @@
 #include <string.h>
 #include <wctype.h>
 
-#include "argnod.h"
 #include "ast.h"
 #include "ast_assert.h"
 #include "builtins.h"
@@ -719,33 +718,6 @@ int setall(char **argv, nvflag_t flag, Dt_t *troot, struct tdata *tp) {
         sfsync(sfstdout);
     }
     return r;
-}
-
-int b_set(int argc, char *argv[], Shbltin_t *context) {
-    Shell_t *shp = context->shp;
-    struct tdata tdata;
-    int was_monitor = sh_isoption(shp, SH_MONITOR);
-
-    memset(&tdata, 0, sizeof(tdata));
-    tdata.sh = shp;
-    tdata.prefix = NULL;
-    if (argv[1]) {
-        if (sh_argopts(argc, argv, tdata.sh) < 0) return 2;
-        if (sh_isoption(shp, SH_VERBOSE)) {
-            sh_onstate(shp, SH_VERBOSE);
-        } else {
-            sh_offstate(shp, SH_VERBOSE);
-        }
-        if (sh_isoption(shp, SH_MONITOR) && !was_monitor) {
-            sh_onstate(shp, SH_MONITOR);
-        } else if (!sh_isoption(shp, SH_MONITOR) && was_monitor) {
-            sh_offstate(shp, SH_MONITOR);
-        }
-    } else {
-        // Scan name chain and print.
-        print_scan(sfstdout, 0, tdata.sh->var_tree, false, &tdata);
-    }
-    return 0;
 }
 
 //

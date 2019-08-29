@@ -18,6 +18,7 @@ ksh93_files += [
     'bltins/read.c',
     'bltins/readonly.c',
     'bltins/return_exit.c',
+    'bltins/set.c',
     'bltins/shift.c',
     'bltins/sleep.c',
     'bltins/source.c',
