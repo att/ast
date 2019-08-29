@@ -42,7 +42,6 @@
 static_fn int print_namval(Sfio_t *, Namval_t *, bool, struct tdata *);
 static_fn void print_attribute(Namval_t *, void *);
 static_fn void print_all(Sfio_t *, Dt_t *, struct tdata *);
-static_fn void print_scan(Sfio_t *, nvflag_t, Dt_t *, bool, struct tdata *);
 static_fn void pushname(Namval_t *, void *);
 
 int b_typeset(int argc, char *argv[], Shbltin_t *context) {
@@ -841,7 +840,7 @@ static_fn void print_attribute(Namval_t *np, void *data) {
 // Print the nodes in tree <root> which have attributes <flag> set of <option> is non-zero, no
 // subscript or value is printed.
 //
-static_fn void print_scan(Sfio_t *file, nvflag_t flag, Dt_t *root, bool omit_attrs, struct tdata *tp) {
+void print_scan(Sfio_t *file, nvflag_t flag, Dt_t *root, bool omit_attrs, struct tdata *tp) {
     char **argv;
     Namval_t *np;
     int namec;
