@@ -41,9 +41,6 @@
 // beta release has been removed.
 #define CMDLIST(f) SH_CMDLIB_DIR "/" #f, NV_BLTIN | NV_BLTINOPT | NV_NOFREE, b_##f,
 
-#undef basename
-#undef dirname
-
 // The order of the entries in this table must be kept in sync with the SYS...
 // symbols in src/cmd/ksh93/include/builtins.h
 const struct shtable3 shtab_builtins[] = {
@@ -68,7 +65,6 @@ const struct shtable3 shtab_builtins[] = {
     {"local", NV_BLTIN | BLT_ENV | BLT_DCL, bltin(typeset)},
     {"newgrp", NV_BLTIN | BLT_ENV | BLT_SPC, Bltin(login)},
     {"alias", NV_BLTIN | BLT_SPC | BLT_DCL, bltin(alias)},
-    {"hash", NV_BLTIN | BLT_SPC | BLT_DCL, bltin(alias)},
     {"eval", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_EXIT, bltin(eval)},
     {"exit", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(exit)},
     {"fc", NV_BLTIN | BLT_ENV | BLT_EXIT, bltin(hist)},

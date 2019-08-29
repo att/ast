@@ -36,7 +36,7 @@ done
 # ==========
 # Verify --man works for the builtins.
 for name in $(builtin -l |
-    grep -Ev '(local|declare|echo|test|true|false|login|newgrp|hash|type|source|\[|:)')
+    grep -Ev '(local|declare|echo|test|true|false|login|newgrp|type|source|\[|:)')
 do
     # Extract builtin name from /opt path
     if [[ "$name" =~ "/opt" ]];
@@ -561,7 +561,7 @@ sample >/dev/null || log_error "Sample builtin should exit with 0 status"
 
 # List special builtins.
 # The locale affects the order of listing builtins.
-expect=". : _Bool alias break continue declare enum eval exec exit export hash login newgrp"
+expect=". : _Bool alias break continue declare enum eval exec exit export login newgrp"
 expect="$expect readonly return set shift trap typeset unalias unset "
 actual=$(LC_ALL=C builtin -s | tr '\n' ' ')
 [[ "$actual" == "$expect" ]] ||
