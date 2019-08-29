@@ -19,7 +19,6 @@
  ***********************************************************************/
 //
 // typeset [options]  [arg...]
-// alias [-ptx] [arg...]
 // unalias [arg...]
 // builtin [-sd] [-f file] [name...]
 // set [options] [name...]
@@ -61,78 +60,6 @@ static_fn void print_all(Sfio_t *, Dt_t *, struct tdata *);
 static_fn void print_scan(Sfio_t *, nvflag_t, Dt_t *, bool, struct tdata *);
 static_fn int unall(int, char **, Dt_t *, Shell_t *);
 static_fn void pushname(Namval_t *, void *);
-
-int b_alias(int argc, char *argv[], Shbltin_t *context) {
-    nvflag_t nvflags = NV_NOARRAY | NV_NOSCOPE | NV_ASSIGN;
-    Dt_t *troot;
-    int n;
-    struct tdata tdata;
-    UNUSED(argc);
-
-    memset(&tdata, 0, sizeof(tdata));
-    tdata.sh = context->shp;
-    troot = tdata.sh->alias_tree;
-    if (*argv[0] == 'h') nvflags = NV_TAGGED;
-    if (sh_isoption(tdata.sh, SH_BASH)) tdata.prefix = argv[0];
-    if (!argv[1]) return setall(argv, nvflags, troot, &tdata);
-
-    opt_info.offset = 0;
-    opt_info.index = 1;
-    *opt_info.option = 0;
-    tdata.argnum = 0;
-    tdata.aflag = *argv[1];
-    while ((n = optget(argv, sh_optalias))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case 'p': {
-                tdata.prefix = argv[0];
-                break;
-            }
-            case 't': {
-                nvflags |= NV_TAGGED;
-                break;
-            }
-            case 'x': {
-                nvflags |= NV_EXPORT;
-                break;
-            }
-            case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
-                return 2;
-            }
-        }
-    }
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-
-    argv += (opt_info.index - 1);
-    if (!nv_isflag(nvflags, NV_TAGGED)) return setall(argv, nvflags, troot, &tdata);
-
-    // Hacks to handle hash -r | --.
-    if (argv[1] && argv[1][0] == '-') {
-        if (argv[1][1] == 'r' && argv[1][2] == 0) {
-            Namval_t *np = nv_search_namval(PATHNOD, tdata.sh->var_tree, 0);
-            nv_putval(np, nv_getval(np), NV_RDONLY);
-            argv++;
-            if (!argv[1]) return 0;
-        }
-        if (argv[1][0] == '-') {
-            if (argv[1][1] == '-' && argv[1][2] == 0) {
-                argv++;
-            } else {
-                errormsg(SH_DICT, ERROR_exit(1), e_option, argv[1]);
-                __builtin_unreachable();
-            }
-        }
-    }
-    troot = tdata.sh->track_tree;
-    return setall(argv, nvflags, troot, &tdata);
-}
 
 int b_typeset(int argc, char *argv[], Shbltin_t *context) {
     int n;

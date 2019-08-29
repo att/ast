@@ -1,4 +1,5 @@
 ksh93_files += [
+    'bltins/alias.c',
     'bltins/bg_fg_disown.c',
     'bltins/break_continue.c',
     'bltins/cd_pwd.c',
