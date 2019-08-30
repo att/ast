@@ -109,7 +109,7 @@ static char *nullarg[] = {0, 0};
 // Builtin `echo`.
 //
 // See https://github.com/att/ast/issues/370 for a discussion about the `echo` builtin.
-int B_echo(int argc, char *argv[], Shbltin_t *context) {
+int b_echo(int argc, char *argv[], Shbltin_t *context) {
     static char bsd_univ;
     struct print prdata;
     prdata.options = sh_optecho + 5;

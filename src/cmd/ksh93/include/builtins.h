@@ -79,7 +79,7 @@ extern int b_exit(int, char *[], Shbltin_t *);
 extern int b_export(int, char *[], Shbltin_t *);
 extern int b_eval(int, char *[], Shbltin_t *);
 extern int b_return(int, char *[], Shbltin_t *);
-extern int B_login(int, char *[], Shbltin_t *);
+extern int b_login(int, char *[], Shbltin_t *);
 extern int b_true(int, char *[], Shbltin_t *);
 extern int b_false(int, char *[], Shbltin_t *);
 extern int b_readonly(int, char *[], Shbltin_t *);
@@ -121,7 +121,7 @@ extern int b_pwd(int, char *[], Shbltin_t *);
 extern int b_sleep(int, char *[], Shbltin_t *);
 extern int b_test(int, char *[], Shbltin_t *);
 extern int b_times(int, char *[], Shbltin_t *);
-extern int B_echo(int, char *[], Shbltin_t *);
+extern int b_echo(int, char *[], Shbltin_t *);
 extern int b_complete(int, char *[], Shbltin_t *);
 
 // Used by `b_whence()` and `b_command()`.

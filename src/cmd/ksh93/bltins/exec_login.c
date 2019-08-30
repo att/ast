@@ -80,7 +80,7 @@ int b_exec(int argc, char *argv[], Shbltin_t *context) {
         errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
         __builtin_unreachable();
     }
-    if (*argv) B_login(0, argv, (Shbltin_t *)&logdata);
+    if (*argv) b_login(0, argv, (Shbltin_t *)&logdata);
     return 0;
 }
 
@@ -92,7 +92,7 @@ static_fn void noexport(Namval_t *np, void *data) {
 //
 // Builtin `login`.
 //
-int B_login(int argc, char *argv[], Shbltin_t *context) {
+int b_login(int argc, char *argv[], Shbltin_t *context) {
     checkpt_t *pp;
     struct login *logp = NULL;
     Shell_t *shp;

@@ -27,12 +27,9 @@
 #include "name.h"
 #include "shtable.h"
 
-// Use Bltin() for builtins that do not accept long options; e.g., `--flag`.
-
 #include "builtins.h"
 #include "jobs.h"
 #define bltin(x) (b_##x)
-#define Bltin(x) (B_##x)
 
 // In the last beta release that came out from AT&T, all the builtins for standard commands
 // were enabled by default. It was a backward incompatible change from the last stable
@@ -44,7 +41,7 @@
 // The order of the entries in this table must be kept in sync with the SYS...
 // symbols in src/cmd/ksh93/include/builtins.h
 const struct shtable3 shtab_builtins[] = {
-    {"login", NV_BLTIN | BLT_ENV | BLT_SPC, Bltin(login)},
+    {"login", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(login)},
     {"exec", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(exec)},
     {"set", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(set)},
     {":", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(true)},
@@ -63,7 +60,7 @@ const struct shtable3 shtab_builtins[] = {
     {"enum", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_DCL, bltin(enum)},
     {"declare", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_DCL, bltin(typeset)},
     {"local", NV_BLTIN | BLT_ENV | BLT_DCL, bltin(typeset)},
-    {"newgrp", NV_BLTIN | BLT_ENV | BLT_SPC, Bltin(login)},
+    {"newgrp", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(login)},
     {"alias", NV_BLTIN | BLT_SPC | BLT_DCL, bltin(alias)},
     {"eval", NV_BLTIN | BLT_ENV | BLT_SPC | BLT_EXIT, bltin(eval)},
     {"exit", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(exit)},
@@ -75,7 +72,7 @@ const struct shtable3 shtab_builtins[] = {
     {"unalias", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(unalias)},
     {"unset", NV_BLTIN | BLT_ENV | BLT_SPC, bltin(unset)},
     {"builtin", NV_BLTIN, bltin(builtin)},
-    {"echo", NV_BLTIN | BLT_ENV, Bltin(echo)},
+    {"echo", NV_BLTIN | BLT_ENV, bltin(echo)},
 #ifdef JOBS
 #ifdef SIGTSTP
     {"bg", NV_BLTIN | BLT_ENV, bltin(bg)},
