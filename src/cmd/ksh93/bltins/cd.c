@@ -17,14 +17,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-//
-// cd [-LP@] [-f dirfd] [dirname]
-// cd [-LP] [-f dirfd] [old] [new]
-// pwd [-LP]
-//
-//   David Korn
-//   dgkorn@gmail.com
-//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
@@ -49,10 +41,6 @@
 #include "stk.h"
 #include "variables.h"
 
-#ifndef O_DIRECTORY
-#define O_DIRECTORY 0
-#endif
-
 //
 // Invalidate path name bindings to relative paths.
 //
@@ -64,29 +52,8 @@ static_fn void invalidate(Namval_t *np, void *data) {
 }
 
 //
-// Obtain a file handle to the directory "path" relative to directory "dir".
+//  The `cd` special builtin.
 //
-int sh_diropenat(Shell_t *shp, int dir, const char *path) {
-    UNUSED(shp);
-    int fd, shfd;
-    fd = openat(dir, path, O_DIRECTORY | O_NONBLOCK | O_CLOEXEC);
-    if (fd < 0) {
-#if O_SEARCH
-        if (errno != EACCES ||
-            (fd = openat(dir, path, O_SEARCH | O_DIRECTORY | O_NONBLOCK | O_CLOEXEC)) < 0) {
-#endif
-            return fd;
-#if O_SEARCH
-        }
-#endif
-    }
-
-    // Move fd to a number > 10 and register the fd number with the shell.
-    shfd = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10);
-    close(fd);
-    return shfd;
-}
-
 int b_cd(int argc, char *argv[], Shbltin_t *context) {
     char *dir;
     Pathcomp_t *cdpath = NULL;
@@ -303,69 +270,5 @@ success:
     path_newdir(shp, shp->pathlist);
     path_newdir(shp, shp->cdpathlist);
     if (oldpwd && (oldpwd != e_dot)) free(oldpwd);
-    return 0;
-}
-
-int b_pwd(int argc, char *argv[], Shbltin_t *context) {
-    char *cp;
-    Shell_t *shp = context->shp;
-    bool pflag = false;
-    int n, ffd = -1;
-    UNUSED(argc);
-
-    while ((n = optget(argv, sh_optpwd))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case 'f': {
-                ffd = opt_info.num;
-                break;
-            }
-            case 'L': {
-                pflag = false;
-                break;
-            }
-            case 'P': {
-                pflag = true;
-                break;
-            }
-            case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
-            }
-        }
-    }
-
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-
-    if (ffd != -1) {
-        cp = fgetcwd(ffd, 0, 0);
-        if (!cp) {
-            errormsg(SH_DICT, ERROR_system(1), e_pwd);
-            __builtin_unreachable();
-        }
-        sfputr(sfstdout, cp, '\n');
-        free(cp);
-        return 0;
-    }
-    if (pflag) {
-        cp = path_pwd(shp);
-        cp = strcpy(stkseek(stkstd, strlen(cp) + PATH_MAX), cp);
-        pathcanon(cp, PATH_MAX, PATH_ABSOLUTE | PATH_PHYSICAL);
-    } else {
-        cp = path_pwd(shp);
-    }
-
-    if (*cp != '/') {
-        errormsg(SH_DICT, ERROR_system(1), e_pwd);
-        __builtin_unreachable();
-    }
-
-    sfputr(sfstdout, cp, '\n');
     return 0;
 }

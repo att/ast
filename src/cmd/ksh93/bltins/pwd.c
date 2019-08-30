@@ -34,6 +34,9 @@
 #include "shcmd.h"
 #include "stk.h"
 
+//
+//  The `pwd` special builtin.
+//
 int b_pwd(int argc, char *argv[], Shbltin_t *context) {
     char *cp;
     Shell_t *shp = context->shp;

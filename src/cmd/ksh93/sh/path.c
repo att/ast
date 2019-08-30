@@ -61,6 +61,10 @@
 
 #define LIBCMD "cmd"
 
+#ifndef O_DIRECTORY
+#define O_DIRECTORY 0
+#endif
+
 static_fn int can_execute(Shell_t *, char *, bool);
 static_fn void funload(Shell_t *, int, const char *);
 static_fn void exscript(Shell_t *, char *, char *[], char *const *);
@@ -1653,4 +1657,28 @@ void path_alias(Namval_t *np, Pathcomp_t *pp) {
     } else {
         _nv_unset(np, 0);
     }
+}
+
+//
+// Obtain a file handle to the directory "path" relative to directory "dir".
+//
+int sh_diropenat(Shell_t *shp, int dir, const char *path) {
+    UNUSED(shp);
+    int fd, shfd;
+    fd = openat(dir, path, O_DIRECTORY | O_NONBLOCK | O_CLOEXEC);
+    if (fd < 0) {
+#if O_SEARCH
+        if (errno != EACCES ||
+            (fd = openat(dir, path, O_SEARCH | O_DIRECTORY | O_NONBLOCK | O_CLOEXEC)) < 0) {
+#endif
+            return fd;
+#if O_SEARCH
+        }
+#endif
+    }
+
+    // Move fd to a number > 10 and register the fd number with the shell.
+    shfd = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10);
+    close(fd);
+    return shfd;
 }
