@@ -34,7 +34,9 @@
 //
 // Builtin `jobs`.
 //
-int b_jobs(int n, char *argv[], Shbltin_t *context) {
+int b_jobs(int argc, char *argv[], Shbltin_t *context) {
+    UNUSED(argc);
+    int n;
     int flag = 0;
     Shell_t *shp = context->shp;
     while ((n = optget(argv, sh_optjobs))) {

@@ -33,8 +33,10 @@
 //
 // Builtin `fg` command.
 //
-int b_fg(int n, char *argv[], Shbltin_t *context) {
+int b_fg(int argc, char *argv[], Shbltin_t *context) {
+    UNUSED(argc);
     Shell_t *shp = context->shp;
+    int n;
 
     while ((n = optget(argv, sh_optfg))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)

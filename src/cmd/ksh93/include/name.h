@@ -544,6 +544,7 @@ extern void nv_setvec(Namval_t *, int, int, char *[]);
 extern void nv_setvtree(Namval_t *);
 extern int nv_setsize(Namval_t *, int);
 extern Namfun_t *nv_disc(Namval_t *, Namfun_t *, Nvdisc_op_t);
+extern int nv_unall(char **, bool, nvflag_t, Dt_t *, Shell_t *);
 extern void nv_unset(Namval_t *); /*obsolete */
 extern void _nv_unset(Namval_t *, nvflag_t);
 extern Namval_t *nv_search(const char *, Dt_t *, nvflag_t);

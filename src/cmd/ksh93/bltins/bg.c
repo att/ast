@@ -33,8 +33,10 @@
 //
 // Builtin `bg` command.
 //
-int b_bg(int n, char *argv[], Shbltin_t *context) {
+int b_bg(int argc, char *argv[], Shbltin_t *context) {
+    UNUSED(argc);
     Shell_t *shp = context->shp;
+    int n;
 
     while ((n = optget(argv, sh_optbg))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)

@@ -22,6 +22,7 @@
 #include <ctype.h>
 #include <float.h>
 #include <limits.h>
+#include <setjmp.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -3234,4 +3235,80 @@ int nv_setsize(Namval_t *np, int size) {
 void nv_unset(Namval_t *np) {
     _nv_unset(np, 0);
     return;
+}
+
+//
+// Removing of Shell variable names, aliases, and functions is performed here. Non-existent
+// items being deleted give non-zero exit status. This is used by `unset` and `unalias`.
+//
+int nv_unall(char **names, bool aliases, nvflag_t nvflags, Dt_t *troot, Shell_t *shp) {
+    Namval_t *np;
+    volatile int r = 0;
+    Dt_t *dp;
+    int isfun, jmpval;
+    checkpt_t buff;
+
+    sh_pushcontext(shp, &buff, 1);
+    while (*names) {
+        char *name = *names++;
+        jmpval = sigsetjmp(buff.buff, 0);
+        np = NULL;
+        if (jmpval == 0) {
+            if (shp->namespace && troot != shp->var_tree) {
+                np = sh_fsearch(shp, name, nvflags ? NV_NOSCOPE : 0);
+            }
+            if (!np) np = nv_open(name, troot, NV_NOADD | nvflags);
+        } else {
+            r = 1;
+            continue;
+        }
+        if (np) {
+            if (is_abuiltin(np) || nv_isattr(np, NV_RDONLY)) {
+                if (nv_isattr(np, NV_RDONLY)) {
+                    errormsg(SH_DICT, ERROR_warn(0), e_readonly, nv_name(np));
+                }
+                r = 1;
+                continue;
+            }
+            isfun = is_afunction(np);
+            if (troot == shp->var_tree) {
+                if (nv_isarray(np) && name[strlen(name) - 1] == ']' && !nv_getsub(np)) {
+                    r = 1;
+                    continue;
+                }
+
+                if (shp->subshell) np = sh_assignok(np, 0);
+            }
+            if (!nv_isnull(np) || nv_size(np) || nv_isattr(np, ~(NV_MINIMAL | NV_NOFREE))) {
+                _nv_unset(np, 0);
+            }
+            if (troot == shp->var_tree && shp->st.real_fun && (dp = shp->var_tree->walk) &&
+                dp == shp->st.real_fun->sdict) {
+                nv_delete(np, dp, NV_NOFREE);
+            } else if (isfun) {
+                struct Ufunction *rp = FETCH_VT(np->nvalue, rp);
+                if (!rp || !rp->running) nv_delete(np, troot, 0);
+            } else if (aliases) {
+                // Alias has been unset by call to _nv_unset, remove it from the tree.
+                nv_delete(np, troot, 0);
+            }
+#if 0
+            // Causes unsetting local variable to expose global.
+            else if(shp->var_tree == troot && shp->var_tree != shp->var_base &&
+                    nv_search_namval(np, shp->var_tree, NV_NOSCOPE)) {
+                    nv_delete(np,shp->var_tree,0);
+            }
+#endif
+            else {
+                nv_close(np);
+            }
+
+        } else if (aliases) {
+            // Alias not found
+            sfprintf(sfstderr, sh_translate(e_noalias), name);
+            r = 1;
+        }
+    }
+    sh_popcontext(shp, &buff);
+    return r;
 }

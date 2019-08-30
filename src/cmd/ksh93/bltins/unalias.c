@@ -30,28 +30,20 @@
 #include "option.h"
 #include "shcmd.h"
 
-// The `unset` builtin.
-int b_unset(int argc, char *argv[], Shbltin_t *context) {
+// The `unalias` builtin.
+int b_unalias(int argc, char *argv[], Shbltin_t *context) {
     UNUSED(argc);
     Shell_t *shp = context->shp;
-    Dt_t *troot = shp->var_tree;
-    nvflag_t nvflags = 0;
+    Dt_t *troot = shp->alias_tree;
+    nvflag_t nvflags = NV_NOSCOPE;
+    bool all = false;
     int n;
 
-    while ((n = optget(argv, sh_optunset))) {
+    if (shp->subshell) troot = sh_subaliastree(shp, 0);
+    while ((n = optget(argv, sh_optunalias))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case 'f': {
-                troot = sh_subfuntree(shp, true);
-                nvflags |= NV_NOSCOPE;
-                break;
-            }
-            case 'n': {
-                nvflags |= NV_NOREF;
-                troot = shp->var_tree;
-                break;
-            }
-            case 'v': {
-                troot = shp->var_tree;
+            case 'a': {
+                all = true;
                 break;
             }
             case ':': {
@@ -65,12 +57,15 @@ int b_unset(int argc, char *argv[], Shbltin_t *context) {
         }
     }
     argv += opt_info.index;
-    if (error_info.errors || !*argv) {
+    if (error_info.errors || (!*argv && !all)) {
         errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
         __builtin_unreachable();
     }
 
     if (!troot) return 1;
-    if (troot == shp->var_tree) nvflags |= NV_VARNAME;
-    return nv_unall(argv, false, nvflags, troot, shp);
+    if (all) {
+        dtclear(troot);
+        return 0;
+    }
+    return nv_unall(argv, true, nvflags, troot, shp);
 }
