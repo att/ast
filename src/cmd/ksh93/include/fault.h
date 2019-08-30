@@ -126,6 +126,7 @@ extern sh_sigfun_t sh_signal(int, sh_sigfun_t);
 extern void sh_fault(int, siginfo_t *, void *);
 extern void sh_setsiginfo(siginfo_t *);
 extern void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info);
+extern int sig_number(Shell_t *shp, const char *string);
 #undef signal
 #define signal(a, b) ERROR("use sh_signal() not signal()")
 

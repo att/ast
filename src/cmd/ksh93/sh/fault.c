@@ -776,3 +776,67 @@ sh_sigfun_t sh_signal(int sig, sh_sigfun_t func) {
 void sh_sigcheck(Shell_t *shp) {
     if (shp->trapnote & SH_SIGSET) sh_exit((shp), SH_EXITSIG);
 }
+
+//
+// Given the name or number of a signal return the signal number.
+//
+int sig_number(Shell_t *shp, const char *string) {
+    const Shtable_t *tp;
+    int n, o, sig = 0;
+    char *last, *name;
+
+    if (isdigit(*string)) {
+        n = (int)strtol(string, &last, 10);
+        if (*last) n = -1;
+    } else {
+        int c;
+        o = stktell(shp->stk);
+        do {
+            c = *string++;
+            if (islower(c)) c = toupper(c);
+            sfputc(shp->stk, c);
+        } while (c);
+        stkseek(shp->stk, o);
+        if (strncmp(stkptr(shp->stk, o), "SIG", 3) == 0) {
+            sig = 1;
+            o += 3;
+            if (isdigit(*stkptr(shp->stk, o))) {
+                n = (int)strtol(stkptr(shp->stk, o), &last, 10);
+                if (!*last) return n;
+            }
+        }
+        tp = sh_locate(stkptr(shp->stk, o), (const Shtable_t *)shtab_signals,
+                       sizeof(*shtab_signals));
+        n = tp->sh_number;
+        if (sig == 1 && (n >= (SH_TRAP - 1) && n < (1 << SH_SIGBITS))) {
+            // Sig prefix cannot match internal traps.
+            n = 0;
+            tp = (Shtable_t *)((char *)tp + sizeof(*shtab_signals));
+            if (strcmp(stkptr(shp->stk, o), tp->sh_name) == 0) n = tp->sh_number;
+        }
+        if ((n >> SH_SIGBITS) & SH_SIGRUNTIME) {
+            n = shp->gd->sigruntime[(n & ((1 << SH_SIGBITS) - 1)) - 1];
+        } else {
+            n &= (1 << SH_SIGBITS) - 1;
+            if (n < SH_TRAP) n--;
+        }
+        if (n < 0 && shp->gd->sigruntime[1] && (name = stkptr(shp->stk, o)) && *name++ == 'R' &&
+            *name++ == 'T') {
+            if (name[0] == 'M' && name[1] == 'I' && name[2] == 'N' && name[3] == '+') {
+                if ((sig = (int)strtol(name + 4, &name, 10)) >= 0 && !*name) {
+                    n = shp->gd->sigruntime[SH_SIGRTMIN] + sig;
+                }
+            } else if (name[0] == 'M' && name[1] == 'A' && name[2] == 'X' && name[3] == '-') {
+                if ((sig = (int)strtol(name + 4, &name, 10)) >= 0 && !*name) {
+                    n = shp->gd->sigruntime[SH_SIGRTMAX] - sig;
+                }
+            } else if ((sig = (int)strtol(name, &name, 10)) > 0 && !*name) {
+                n = shp->gd->sigruntime[SH_SIGRTMIN] + sig - 1;
+            }
+            if (n < shp->gd->sigruntime[SH_SIGRTMIN] || n > shp->gd->sigruntime[SH_SIGRTMAX]) {
+                n = -1;
+            }
+        }
+    }
+    return n;
+}
