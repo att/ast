@@ -17,6 +17,7 @@ ksh93_files += [
     'bltins/getopts.c',
     'bltins/hist.c',
     'bltins/jobs.c',
+    'bltins/kill.c',
     'bltins/let.c',
     'bltins/math.c',
     'bltins/print.c',
