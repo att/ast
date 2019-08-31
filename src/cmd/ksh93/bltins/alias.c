@@ -19,32 +19,16 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <dlfcn.h>
-#include <float.h>
-#include <limits.h>
-#include <setjmp.h>
-#include <stdbool.h>
-#include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <wctype.h>
 
 #include "argnod.h"
-#include "ast.h"
-#include "ast_assert.h"
 #include "builtins.h"
 #include "cdt.h"
 #include "defs.h"
-#include "dlldefs.h"
 #include "error.h"
-#include "fault.h"
-#include "history.h"
 #include "name.h"
 #include "option.h"
-#include "path.h"
-#include "sfio.h"
 #include "shcmd.h"
-#include "stk.h"
 #include "variables.h"
 
 int b_alias(int argc, char *argv[], Shbltin_t *context) {

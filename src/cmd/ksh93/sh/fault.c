@@ -25,6 +25,7 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
 #include <errno.h>
 #include <setjmp.h>
 #include <signal.h>
