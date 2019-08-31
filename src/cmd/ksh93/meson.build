@@ -11,6 +11,7 @@ subdir('cmds')
 subdir('data')
 subdir('edit')
 subdir('sh')
+subdir('docs')
 
 # These build time symbols are shared by ksh and shcomp.
 shared_c_args += [
@@ -37,8 +38,6 @@ shcomp_exe = executable('shcomp', ['sh/shcomp.c'], c_args: shared_c_args,
     link_with: [libksh, libast, libcmd, libdll],
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep, libsocket_dep, libnsl_dep],
     install: true)
-
-install_man('docs/ksh.1')
 
 test_dir = join_paths(meson.current_source_dir(), 'tests')
 test_driver = join_paths(test_dir, 'util', 'run_test.sh')

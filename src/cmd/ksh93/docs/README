@@ -1,5 +1,11 @@
-The files in this directory don't follow the usual rules for line length
-as imposed on C source modules and other files such as this readme. Each
-paragraph should be a single line. This helps ensure that line wraps are
-made by the presentation mechanism which is in the best position to adapt
-the output to the display width.
+All reStructuredText (*.rst) files should follow the usual rules for line
+length such as imposted on the C source modules. That is, keep lines to
+100 chars or less. Use the features of reStructuredText to automatically
+concatenate lines.
+
+The *.1 files in this directory don't follow the usual rules for line
+length as imposed on C source modules and other files such as this
+readme. Each paragraph should be a single line. This helps ensure that line
+wraps are made by the presentation mechanism which is in the best position
+to adapt the output to the display width. They will be removed once the
+conversion to Sphinx/reStructuredText based documentation is complete.
