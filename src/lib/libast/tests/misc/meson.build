@@ -10,6 +10,12 @@ tests_to_skip = [
     ['freebsd', 'debug'],
 ]
 
+# Non-debug build types affect the behavior of `backtrace()`. Which means it will almost certainly
+# break the "debug" test. See https://github.com/att/ast/issues/1390.
+if get_option('buildtype') != 'debug'
+    tests_to_skip += [['*', 'debug']]
+endif
+
 foreach test_name: tests
     # If the platform doesn't have an execinfo.h header there is no point in trying to run the
     # debug.c unit test.
@@ -18,7 +24,7 @@ foreach test_name: tests
     endif
     skip_test = false
     foreach skip : tests_to_skip
-        if system == skip[0] and test_name == skip[1]
+        if ('*' == skip[0] or system == skip[0]) and test_name == skip[1]
             warning('skipping ' + test_name + ' on ' + system)
             skip_test = true
             # break  # Not until meson 0.49
