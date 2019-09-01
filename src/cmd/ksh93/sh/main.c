@@ -162,6 +162,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
             sh_onoption(shp, SH_MONITOR);
         }
         job_init(shp, sh_isoption(shp, SH_LOGIN_SHELL));
+        sh_source(shp, iop, INSTALL_PREFIX "/share/ksh/config.sh");
         if (sh_isoption(shp, SH_LOGIN_SHELL)) {
             //  System profile.
             sh_source(shp, iop, e_sysprofile);

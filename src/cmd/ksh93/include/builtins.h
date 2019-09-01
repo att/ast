@@ -68,6 +68,9 @@ struct tdata {
 
 extern int setall(char **, nvflag_t, Dt_t *, struct tdata *);
 extern void print_scan(Sfio_t *file, nvflag_t flag, Dt_t *root, bool omit_attrs, struct tdata *tp);
+extern void builtin_print_help(Shell_t *shp, const char *cmd);
+extern void builtin_unknown_option(Shell_t *shp, const char *cmd, const char *opt);
+extern void builtin_missing_argument(Shell_t *shp, const char *cmd, const char *opt);
 
 // Entry points for shell special builtins.
 extern int b_alias(int, char *[], Shbltin_t *);
@@ -160,7 +163,6 @@ extern const char e_defined[];
 
 // For option parsing.
 extern const char sh_set[];
-extern const char sh_optalias[];
 extern const char sh_optbreak[];
 extern const char sh_optbuiltin[];
 extern const char sh_optcd[];

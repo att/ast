@@ -1,0 +1,43 @@
+#
+# Given a ksh man page emit the text of the SYNOPSIS and FLAGS sections and nothing else. This is
+# primarily meant to be used by builtins (either special or normal commands) to emit a subset of its
+# man page when invoked with `cmd --help` or the argument parsing for the command detects an error.
+# Such as via the `builtin_print_help()` function in the ksh source.
+#
+function _ksh_print_help {
+    local cmd=$1
+    local fname="${.sh.install_prefix}/share/ksh/man/man1/${cmd}.1"
+
+    [[ -f $fname ]] || return 1  # can't find the man page; give up
+
+    # Find the `ul` command to translate x\cHx sequences, etc., into bold chars and such. Pagers
+    # like `less` do this but better to not rely on them. If `ul` is not available just pipe the
+    # nroff output unmodified.
+    local ul=$(whence ul)
+    [[ -z $ul ]] && ul=cat
+
+    # Try to determine an optimal line length for the output.
+    local cols=80
+    if [[ -t 0 && -t 1 ]]
+    then
+        stty size | read _ cols
+    fi
+    cols=$(( cols - 4 ))  # leave a little space on the right side of the screen
+
+    # Convert the nroff source for the command into something that looks good on the terminal.
+    # Specifically, by elimating all the text outside of the SYNOPSIS and FLAGS sections while
+    # attempting to preserve some of the highlighting understood by the terminal.
+    nroff -c -man -rLL=${cols}n "$fname" |
+        sed -n \
+            -e '/^S.*Y.*N.*O.*P.*S.*I.*S$/,/^[^ ]/ {
+                    /^S/p
+                    /^[^ ]/b
+                    p
+                }' \
+            -e '/^F.*L.*A.*G.*S$/,/^[^ ]/ {
+                    /^F/p
+                    /^[^ ]/b
+                    p
+                }' |
+        uniq | "$ul"
+}

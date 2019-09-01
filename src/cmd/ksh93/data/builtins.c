@@ -29,6 +29,8 @@
 
 #include "builtins.h"
 #include "jobs.h"
+#include "sfio.h"
+
 #define bltin(x) (b_##x)
 
 // In the last beta release that came out from AT&T, all the builtins for standard commands
@@ -228,3 +230,28 @@ const char e_nofork[] = "cannot fork";
 const char e_nosignal[] = "%s: unknown signal name";
 const char e_condition[] = "condition(s) required";
 const char e_cneedsarg[] = "-c requires argument";
+
+// Error message for missing flag argument.
+#define BUILTIN_ERR_MISSING "\n%s: Expected argument for flag '%s'\n"
+// Error message for unrecognized flag.
+#define BUILTIN_ERR_UNKNOWN "\n%s: Unknown flag '%s'\n"
+
+// Invoke a helper function or command to print a subset of the man page for the command. Such as
+// from doing "cmd --help".
+void builtin_print_help(Shell_t *shp, const char *cmd) {
+    const char *argv[3] = {"_ksh_print_help", cmd, NULL};
+    sh_eval(shp, sh_sfeval(argv), 0);
+    return;
+}
+
+// Error reporting for encounter with unknown option when parsing command arguments.
+void builtin_unknown_option(Shell_t *shp, const char *cmd, const char *opt) {
+    builtin_print_help(shp, cmd);
+    sfprintf(sfstderr, BUILTIN_ERR_UNKNOWN, cmd, opt);
+}
+
+// Error reporting for encounter with missing argument when parsing command arguments.
+void builtin_missing_argument(Shell_t *shp, const char *cmd, const char *opt) {
+    builtin_print_help(shp, cmd);
+    sfprintf(sfstderr, BUILTIN_ERR_MISSING, cmd, opt);
+}
