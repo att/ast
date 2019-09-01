@@ -6,6 +6,9 @@
 
 ## Notable fixes and improvements
 
+- A ${.sh.install_prefix}/config.ksh file will be sourced if it exists. It is
+  the first config file loaded by every ksh instance. It is loaded regardless
+  of whether the shell is interactive, login, or neither.
 - A .sh.install_prefix var has been introduced to reflect the `meson -prefix=`
   value. This will be used to establish the location of supporting files such
   as man pages and autoloaded functions.

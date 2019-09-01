@@ -19,6 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "argnod.h"
@@ -27,31 +29,38 @@
 #include "defs.h"
 #include "error.h"
 #include "name.h"
-#include "option.h"
 #include "shcmd.h"
 #include "variables.h"
 
+static const char *short_options = ":ptx";
+static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins supports --help
+                                             {NULL, 0, NULL, 0}};
+
 int b_alias(int argc, char *argv[], Shbltin_t *context) {
     UNUSED(argc);
-    nvflag_t nvflags = NV_NOARRAY | NV_NOSCOPE | NV_ASSIGN;
+    int opt;
     Dt_t *troot;
-    int n;
     struct tdata tdata;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
+    nvflag_t nvflags = NV_NOARRAY | NV_NOSCOPE | NV_ASSIGN;
 
     memset(&tdata, 0, sizeof(tdata));
-    tdata.sh = context->shp;
+    tdata.sh = shp;
     troot = tdata.sh->alias_tree;
-    if (*argv[0] == 'h') nvflags = NV_TAGGED;
-    if (sh_isoption(tdata.sh, SH_BASH)) tdata.prefix = argv[0];
+    if (sh_isoption(tdata.sh, SH_BASH)) tdata.prefix = cmd;
     if (!argv[1]) return setall(argv, nvflags, troot, &tdata);
 
-    opt_info.offset = 0;
-    opt_info.index = 1;
-    *opt_info.option = 0;
     tdata.argnum = 0;
     tdata.aflag = *argv[1];
-    while ((n = optget(argv, sh_optalias))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'p': {
                 tdata.prefix = argv[0];
                 break;
@@ -65,21 +74,18 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
 
-    argv += (opt_info.index - 1);
+    argv += (optind - 1);
     if (!nv_isflag(nvflags, NV_TAGGED)) return setall(argv, nvflags, troot, &tdata);
 
     // Hacks to handle hash -r | --.
@@ -99,6 +105,7 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
             }
         }
     }
+
     troot = tdata.sh->track_tree;
     return setall(argv, nvflags, troot, &tdata);
 }

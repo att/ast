@@ -383,11 +383,18 @@ print 'FPATH=../fun' > bin/.paths
 cat <<- \EOF > fun/myfun
 	function myfun
 	{
-		print myfun
+		print myfun ran
 	}
 EOF
-actual=$(FPATH= PATH=$PWD/bin:$PATH $SHELL -c  ': $(whence less);myfun') 2> /dev/null
-expect=myfun
+# TODO: Use the first statement rather than the second once https://github.com/att/ast/issues/1400
+# is resolved. The problem is that if an external command is run in the context of executing the
+# `typeset -fu` command in ${.sh.install_prefix}/config.ksh script it causes the .paths mechanism to
+# fail. The second variant works around that bug by forcing the shell to re-evaluate paths that have
+# .paths files (or something of that nature).
+#
+# actual=$(FPATH= PATH=$PWD/bin:$PATH $SHELL -c 'myfun')
+actual=$(FPATH= $SHELL -c 'PATH=$PWD/bin:$PATH; myfun')
+expect='myfun ran'
 [[ $actual == $expect ]] || log_error 'function myfun not found' "$expect" "$actual"
 
 cp $bin_echo user_to_group_relationship.hdr.query

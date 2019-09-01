@@ -71,6 +71,11 @@ then
     export USER=$(id -un)
 fi
 
+# The use of the "dumb" terminal type is to minimize, and hopefully eliminate completely,
+# terminal control/escape sequences that affect the terminal's behavior. This makes writing
+# robust unit tests, especially Expect based tests, easier.
+export TERM=dumb
+
 # TODO: Enable the `io` test on Travis macOS once we understand why it dies from an abort().
 # I'm not seeing that failure happen on either of my macOS 10.12 or 10.13 systems.
 if [[ $test_name == io && $OS_NAME == darwin && $CI == true ]]
@@ -236,10 +241,6 @@ function run_interactive {
         cp $TEST_ROOT/data/sh_history $HISTFILE
     fi
 
-    # The use of the "dumb" terminal type is to minimize, and hopefully eliminate completely,
-    # terminal control/escape sequences that affect the terminal's behavior. This makes writing
-    # robust Expect scripts easier.
-    export TERM=dumb
     expect -n -c "source $TEST_ROOT/util/interactive.expect.rc" -f $test_path \
         >$test_name.out 2>$test_name.err
     exit_status=$?

@@ -29,28 +29,13 @@ for name in $(builtin -l |
 
     actual=$($name --this-option-does-not-exist 2>&1)
     expect="Usage: $name"
-    [[ "$actual" =~ "$expect" ]] ||
+    [[ "$actual" =~ "$expect" ||
+       "$actual" =~ "SYNOPSIS".*"$name: Unknown flag '--this-option-does-not-exist'" ]] ||
         log_error "$name should show usage info on unrecognized options" "$expect" "$actual"
 done
 
 # ==========
-# Verify --man works for the builtins.
-for name in $(builtin -l |
-    grep -Ev '(local|declare|echo|test|true|false|login|newgrp|type|source|\[|:)')
-do
-    # Extract builtin name from /opt path
-    if [[ "$name" =~ "/opt" ]];
-    then
-        name="${name##*/}"
-    fi
-
-    actual=$($name --man 2>&1 | head -5 | sed $'s,\x1B\[[0-9;]*[a-zA-Z],,g'  | tr -s '\n ' ' ')
-    expect="NAME $name - "
-    [[ "$actual" =~ "^$expect" ]] ||
-        log_error "$name --man should show documentation" "$expect" "$actual"
-done
-
-# test shell builtin commands
+# Test shell builtin commands.
 : ${foo=bar} || log_error ": failed"
 [[ $foo == bar ]] || log_error ": side effects failed"
 

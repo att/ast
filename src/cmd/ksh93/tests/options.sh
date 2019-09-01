@@ -178,7 +178,6 @@ echo "echo '$t'" > $HOME/.profile
 cp $SHELL ./-ksh
 if [[ -o privileged ]]
 then
-    log_warning WTF privileged
     actual=$($SHELL -l </dev/null 2>&1)
     [[ "$actual" == *$t* ]] &&
         log_error 'privileged -l reads .profile' "*$t*" "$actual"
@@ -201,8 +200,6 @@ then
     [[ "$actual" == *$t* ]] &&
         log_error 'privileged ./-ksh -p reads .profile' "*$t*" "$actual"
 else
-    log_warning WTF HOME $HOME
-    log_warning WTF PWD  $PWD
     actual=$($SHELL -l </dev/null 2>&1)
     [[ "$actual" == *$t* ]] ||
         log_error '-l ignores .profile' "*$t*" "$actual"
@@ -572,7 +569,8 @@ done
 # process source files from profiles as profile files
 print '. ./dotfile' > envfile
 print $'alias print=:\nprint foobar' > dotfile
-[[ $(ENV=$PWD/envfile $SHELL -i -c : 2>/dev/null) == foobar ]] && log_error 'files source from profile does not process aliases correctly'
+[[ $(ENV=$PWD/envfile $SHELL -i -c : 2>/dev/null) == foobar ]] &&
+    log_error 'files source from profile does not process aliases correctly'
 
 # tests the set -m puts background jobs in separate process group
 Command=$Command LINENO=$LINENO $SHELL -m  <<- \EOF
@@ -593,6 +591,7 @@ Command=$Command LINENO=$LINENO $SHELL -m  <<- \EOF
 EOF
 ((error_count+=$?))
 
+# ==========
 $SHELL 2> /dev/null <<- \EOF && log_error 'unset variable with set -u on does not terminate script'
 	set -e -u -o pipefail
 	ls | while read file
@@ -602,4 +601,7 @@ $SHELL 2> /dev/null <<- \EOF && log_error 'unset variable with set -u on does no
 	exit
 EOF
 
-[[ $($SHELL -vc : 2>&1) == : ]] || log_error 'incorrect output with ksh -v'
+# ==========
+actual="$($SHELL -vc 'print yes' 2>&1)"
+expect="print yes"
+[[ "$actual" =~ .*"$expect".* ]] || log_error 'incorrect output from ksh -v' "$expect" "$actual"
