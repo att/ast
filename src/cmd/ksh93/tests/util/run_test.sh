@@ -62,6 +62,15 @@ fi
 #
 export OS_NAME=$(uname -s | tr '[A-Z]' '[a-z]')
 
+#
+# Make sure $USER is set. A CI/CB environment might not set it.
+# See https://github.com/att/ast/issues/1391
+#
+if [[ -z $USER ]]
+then
+    export USER=$(id -un)
+fi
+
 # TODO: Enable the `io` test on Travis macOS once we understand why it dies from an abort().
 # I'm not seeing that failure happen on either of my macOS 10.12 or 10.13 systems.
 if [[ $test_name == io && $OS_NAME == darwin && $CI == true ]]
