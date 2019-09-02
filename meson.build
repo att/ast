@@ -6,6 +6,7 @@ cpu = host_machine.cpu()
 system = host_machine.system()
 # So the `config_ast.h` and other dynamically generated headers can be found (see below).
 configuration_incdir = include_directories(['.'])
+install_prefix = get_option('prefix')
 
 if get_option('warnings-are-errors') == true
     add_global_arguments('-Werror', language: 'c')
@@ -228,6 +229,7 @@ wchar_t_size = cc.sizeof('wchar_t', prefix: '#include <wchar.h>')
 
 feature_data = configuration_data()
 feature_data.set('MESON_BUILD', 1)
+feature_data.set_quoted('INSTALL_PREFIX', install_prefix)
 if system == 'darwin'
     feature_data.set('_DARWIN_C_SOURCE', 1)
 endif

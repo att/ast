@@ -1748,7 +1748,7 @@ static_fn Dt_t *inittree(Shell_t *shp, const struct shtable2 *name_vals) {
         nv_setsize(np, nv_isattr(np, NV_INTEGER) ? 10 : 0);
         // The sole reason for using nv_isattr(np, NV_TABLE) here appears to be the special `.sh`
         // compound var. At this point the nv_isattr test is true while nv_istable(np) is false.
-        // Ffter the nv_mount() the reverse is true.
+        // After the nv_mount() the reverse is true.
         if (nv_isattr(np, NV_TABLE)) {
             dict = dtopen(&_Nvdisc, Dtoset);
             nv_mount(np, NULL, dict);

@@ -36,6 +36,7 @@
 // platform feature detection and naming conventions.
 #mesondefine DEBUG_BUILD
 #mesondefine MESON_BUILD
+#mesondefine INSTALL_PREFIX
 #mesondefine OSNAME
 #mesondefine HOSTTYPE
 #mesondefine BASH_MACHTYPE

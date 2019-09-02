@@ -1,4 +1,18 @@
-# ksh 2020.0.0-alpha1 (version TBD, this is a work in progress)
+# ksh git head (version TBD, this is a work in progress)
+
+## Deprecations
+
+## Notable non-backward compatible changes
+
+## Notable fixes and improvements
+
+- A .sh.install_prefix var has been introduced to reflect the `meson -prefix=`
+  value. This will be used to establish the location of supporting files such
+  as man pages and autoloaded functions.
+
+## Other significant changes
+
+# ksh 2020.0.0-beta1 (version TBD, this is a work in progress)
 
 This documents changes since the AST code, which includes the `ksh` program,
 was moved to Github. That is, the ksh93u+ source. The next stable version will

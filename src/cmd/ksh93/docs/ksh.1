@@ -1681,6 +1681,14 @@ The pathname of the file than contains the current command.
 .B .sh.fun
 The name of the current function that is being executed.
 .TP
+.B .sh.install_prefix
+The root directory where ksh was configured to install the ksh binary and supporting files (e.g.,
+man pages). Typical values are
+.BR /usr/local ,
+and
+.BR /usr .
+It is readonly and cannot be modified.
+.TP
 .B .sh.level
 Set to the current function depth.  This can be changed
 inside a DEBUG trap and will set the context to the specified
@@ -2224,7 +2232,7 @@ The value consists of blank separated
 words.  For each
 .I name\^
 that is the name of a known option the variable
-.BI .sh.opt_ name\^
+.BI .sh.op_ name\^
 is assigned
 .IR value .
 Currently the only valid option name is

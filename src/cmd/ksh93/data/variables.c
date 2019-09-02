@@ -100,6 +100,7 @@ const struct shtable2 shtab_variables[] = {
     {".sh.pwdfd", NV_INTEGER, NULL},
     {".sh.sig", 0, NULL},
     {".sh.op_astbin", NV_NOFREE, SH_CMDLIB_DIR},
+    {".sh.install_prefix", NV_RDONLY | NV_NOFREE, INSTALL_PREFIX},
     {"SH_OPTIONS", 0, NULL},
     {"SHLVL", NV_INTEGER | NV_NOFREE | NV_EXPORT, NULL},
     {"COMP_CWORD", NV_INTEGER | NV_SHORT | NV_UNSIGN, NULL},

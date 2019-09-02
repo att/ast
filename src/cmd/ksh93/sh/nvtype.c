@@ -1463,7 +1463,11 @@ static_fn void write_indent(Sfio_t *out, char *str, int n, int indent) {
 int sh_outtype(Shell_t *shp, Sfio_t *out) {
     Namval_t node, *mp, *tp;
     Dt_t *dp;
-    char *cp, *sp, *xp, nvtype[sizeof(NV_CLASS)];
+    char *cp, *sp, *xp;
+    // Warning: It would appear at first glance that the use of a char array isn't necessary.
+    // However, the nv_open() call chain mutates the string. So we have to copy the readonly
+    // string into a mutable buffer.
+    char nvtype[sizeof(NV_CLASS)];
     Sfio_t *iop = NULL;
     int n = 0, indent = 0;
     cp = shp->prefix;
