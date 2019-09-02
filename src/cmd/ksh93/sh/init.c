@@ -622,7 +622,7 @@ static_fn void astbin_update(Shell_t *shp, const char *from, const char *to) {
 
 static_fn void put_astbin(Namval_t *np, const void *vp, nvflag_t flags, Namfun_t *fp) {
     const char *val = vp;
-    if (!val || *val == 0) val = (char *)e_astbin;
+    if (!val || *val == 0) val = SH_CMDLIB_DIR;
     if (strcmp(FETCH_VT(np->nvalue, const_cp), val)) {
         astbin_update(np->nvshell, FETCH_VT(np->nvalue, const_cp), val);
         nv_putv(np, val, flags, fp);

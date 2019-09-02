@@ -737,7 +737,6 @@ extern const char e_typecompat[];
 extern const char e_globalref[];
 extern const char e_tolower[];
 extern const char e_toupper[];
-extern const char e_astbin[];
 extern const char e_wordbreaks[];
 
 #endif  // _NAME_H

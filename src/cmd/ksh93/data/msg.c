@@ -156,7 +156,6 @@ const char e_devfdstd[] = "/dev/@(fd/+([0-9])|std@(in|out|err))";
 const char e_signo[] = "Signal %d";
 
 // String constants.
-const char e_astbin[] = SH_CMDLIB_DIR;
 const char e_wordbreaks[] = "\"'@><=;|&(:";
 const char e_heading[] = "Current option settings";
 const char e_sptbnl[] = " \t\n";
