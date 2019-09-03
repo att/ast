@@ -157,7 +157,7 @@ function test_xmlfragment1
     compound -r -a tests=(
         (
             file='testfile1.xml'
-            expected_output=$'12822 characters to process...\n#input and output OK (12823 characters).'
+            expected_output=$'12824 characters to process...\n#input and output OK (12825 characters).'
         )
         (
             file='testfile2.xml'
@@ -176,9 +176,12 @@ function test_xmlfragment1
 
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset "${testscript}" "${tst.file}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        [[ "${out.stdout}" == "${expected_output}" ]] || log_error "${testname}" "${ printf '%q\n' "${expected_output}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-        [[ "${out.stderr}" == '' ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-        (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
+        [[ "${out.stdout}" == "${expected_output}" ]] ||
+            log_error "${testname}" "${ printf '%q\n' "${expected_output}" ; }" \
+                                    "${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == '' ]] ||
+            log_error "${testname}" "" "${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || log_error "${testname}" "0" "${out.res}"
     done
 
     return 0

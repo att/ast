@@ -102,7 +102,7 @@ int tty_get(int fd, struct termios *tty) {
             if (errno != EINTR) return SYSERR;
             errno = 0;
         }
-        // Save terminal settings if in cannonical state.
+        // Save terminal settings if in canonical state.
         if (ep->e_raw == 0) {
             ep->e_savetty = *tty;
             ep->e_savefd = fd;

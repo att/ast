@@ -73,7 +73,7 @@ struct edit {
     char e_keytrap;   // set when in keytrap
     int e_llimit;     // line length limit
     int e_hline;      // current history line number
-    int e_hloff;      // line number offset for comman
+    int e_hloff;      // line number offset for command
     int e_hismin;     // minimum history line number
     int e_hismax;     // maximum history line number
     int e_cur;        // current line position
@@ -199,17 +199,17 @@ extern const char e_runvi[];
 #define HIST_QUESTION 0x2     // question mark event designator
 #define HIST_HASH 0x4         // hash event designator
 #define HIST_WORDDSGN 0x8     // word designator seen
-#define HIST_QUICKSUBST 0x10  // quick substition designator seen
-#define HIST_SUBSTITUTE 0x20  // for substition loop
+#define HIST_QUICKSUBST 0x10  // quick substitution designator seen
+#define HIST_SUBSTITUTE 0x20  // for substitution loop
 #define HIST_NEWLINE 0x40     // newline in squashed white space
 
 // Modifier flags.
 #define HIST_PRINT 0x100        // print new command
 #define HIST_QUOTE 0x200        // quote resulting history line
 #define HIST_QUOTE_BR 0x400     // quote every word on space break
-#define HIST_GLOBALSUBST 0x800  // apply substition globally
+#define HIST_GLOBALSUBST 0x800  // apply substitution globally
 
-#define HIST_ERROR 0x1000  // an error ocurred
+#define HIST_ERROR 0x1000  // an error occurred
 
 // Flags to be returned.
 #define HIST_FLAG_RETURN_MASK (HIST_EVENT | HIST_PRINT | HIST_ERROR)

@@ -648,7 +648,7 @@ actual=$( $SHELL -c 'while read foo; do echo "$foo"; done' <io_fifo_poll )
 
 # ==========
 # https://github.com/att/ast/issues/1336
-# Use the /proc psuedo filesystem on Linux as a convenient way to force a write I/O error.
+# Use the /proc pseudo filesystem on Linux as a convenient way to force a write I/O error.
 # TODO: Try to find a mechanism for forcing an I/O error on other platforms.
 if [[ $OS_NAME == linux ]]
 then

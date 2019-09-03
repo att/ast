@@ -64,7 +64,7 @@ $SHELL -c 'set -e; ! false | exit 0' ||
 #    command arguments.
 set -k
 cat foo=bar ||
-    log_error "set -k should place all arguments of form name=value in variable assigment list"
+    log_error "set -k should place all arguments of form name=value in variable assignment list"
 set +k
 
 # ==========
@@ -79,7 +79,7 @@ $SHELL -c "set -n; echo foo" | grep -q foo && log_error "set -n should not execu
 #                 invoked with a + the options will be written in a format that
 #                 can be reinput to the shell to restore the settings. Options
 #                 -o name can also be specified with --name and +o name can be
-#                 specifed with --noname except that options names beginning
+#                 specified with --noname except that options names beginning
 #                 with no are turned on by omitting no.This option can be
 #                 repeated to enable/disable multiple options. The value of
 #                 option must be one of the following:
@@ -145,7 +145,7 @@ let result=010+010
 
 # ==========
 # noclobber
-# Equivalent to -C. There is alreay a test for `set -C`
+# Equivalent to -C. There is already a test for `set -C`
 
 # ==========
 # noexec
@@ -191,7 +191,7 @@ false | true | false | true
 # TODO
 # rc Do not run the .kshrc file for interactive shells.
 # echo > "echo Don't run me!" > $HOME/.kshrc
-# ksh -i -c "exit 0" | grep -q "Dont't run me!" && log_error ""
+# ksh -i -c "exit 0" | grep -q "Don't run me!" && log_error ""
 
 # ==========
 # TODO
@@ -285,7 +285,7 @@ echo "bar" > foo || log_error "set +C should not prevent writing on existing fil
 # TODO: It was added with last `ksh93v-`. What shall we do with this ?
 # -K, --keys=keylist
 #    When used with -s and -A and without arg, it specifes the
-#    sorting paramaters. For compound arrays and for arrays of
+#    sorting parameters. For compound arrays and for arrays of
 #    types it consists of a comma separated list of keys. Each key
 #    can be followed by :n for numerical sort and/or :r for
 #    reverse order. The :n and/or :r can be used for arrays of
@@ -334,7 +334,7 @@ $SHELL -c "set --default; diff <(set -o) default-options" || log_error "set --de
 # ==========
 # --state List the current option state in the form of a set command
 #         that can be executed to restore the state.
-# Save old state for comparision
+# Save old state for comparison
 set -o > old-state;
 # Save command to restore state
 set --state > restore-state.sh;

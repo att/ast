@@ -18,7 +18,7 @@
  *                                                                      *
  ***********************************************************************/
 //
-// This is the list of resouce limits controlled by ulimit.
+// This is the list of resource limits controlled by ulimit.
 // This command requires getrlimit(), vlimit(), or ulimit().
 //
 #include "config_ast.h"  // IWYU pragma: keep

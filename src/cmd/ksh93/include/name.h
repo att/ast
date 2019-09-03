@@ -615,7 +615,7 @@ struct argnod;
 #define NV_NOCHANGE (NV_EXPORT | NV_IMPORT | NV_RDONLY | NV_TAGGED | NV_NOFREE | NV_ARRAY)
 #define NV_PARAM NV_NODISC  // expansion use positional params
 
-#define BLT_ENV (NV_RDONLY)      // non-stoppable, can modify enviornment
+#define BLT_ENV (NV_RDONLY)      // non-stoppable, can modify environment
 #define BLT_DISABLE (NV_BINARY)  // bltin disabled
 #define BLT_SPC (NV_TAGGED)      // special built-ins
 #define BLT_EXIT (NV_RJUST)      // exit value can be > 255

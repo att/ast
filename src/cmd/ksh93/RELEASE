@@ -822,7 +822,7 @@
 	  cursor on the b rather than the a has been fixed.
 12-03-20  A bug which caused a core dump when defining a type with a field
 	  as ' integer -a data=([0]=0)' has been fixed.
-12-03-19  Using typeset -a array when array is an associative arry not
+12-03-19  Using typeset -a array when array is an associative array not
 	  generated an error message.
 12-03-19  typeset +a, typeset +A, and typeset +C not displays the variables
 	  with the attributes a, A, and C respectively instead of an error.
@@ -911,7 +911,7 @@
 	  with a backslash.
 11-12-13  When tab is entered for completion after a ' or ", the ' and "
 	  characters are no longer deleted.
-11-12-07  A bug in which a program in the current direcotry with a . in the
+11-12-07  A bug in which a program in the current directory with a . in the
 	  name could fail to execute when both PATH and FPATH end with :. has
 	  been fixed.
 11-12-07  I fixed a bug in which a variable expansion in a large here-document
@@ -1414,7 +1414,7 @@
 	  to make this the current line (n defaults to 1 of omitted) or
 	  <ESC>n<cr> to execute.
 10-05-20  A bug which caused an exception when multiple levels of composite
-	  functions in arithemtic expressions has been fixed.
+	  functions in arithmetic expressions has been fixed.
 10-05-19  <<< with an empty string no longer gives an error.
 10-05-19  A bug in arithmetic evaluation when a name reference to an array
 	  instance was used has been fixed.
@@ -1448,7 +1448,7 @@
 	  a non-zero element was specified and this has been fixed.
 10-04-26  A bug in which types defined in a subshell were not undefined when
 	  the subshell completed has been fixed.
-10-04-23  For file completion in commmand line editing, file names starting
+10-04-23  For file completion in command line editing, file names starting
 	  with # are now escaped so that they are not treated as comments.
 10-04-23  A bug in which ${t.var:=value}, where t is an instance of a type
 	  variable, could assign value to the type variable rather than to
@@ -2065,7 +2065,7 @@
 08-03-27  A bug in which the terminal group was not given back to the parent
 	  shell when the last part of a pipeline was handled by the parent shell
 	  and the other parts of the pipeline complete has been fixed.
-	  The symptom was that the pipeline became uninterruptable.
+	  The symptom was that the pipeline became uninterruptible.
 08-03-25  A bug in restricted mode introduced in ksh93s that caused scripts
 	  that did not use #! to executed in restricted mode has been fixed.
 08-03-25  A bug in which the pipefail option did not work for a pipeline

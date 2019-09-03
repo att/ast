@@ -202,7 +202,7 @@ typedef void (*sighandler_t)(int);
 
 // If running under the oclint tool try to suppress some platform specific warnings.
 // For example, on macOS many commonly used functions are defined in terms of macros
-// that contain expressions which always evalute true or false.
+// that contain expressions which always evaluate true or false.
 #if _OCLINT_
 
 #undef strcat
