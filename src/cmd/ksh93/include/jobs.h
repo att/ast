@@ -55,7 +55,7 @@ struct process {
     struct process *p_nxtjob;   // next job structure
     struct process *p_nxtproc;  // next process in current job
     Shell_t *p_shp;             // shell that posted the job
-    char *p_curdir;             // current direcory at job start
+    char *p_curdir;             // current directory at job start
     int *p_exitval;             // place to store the exitval
     int p_wstat;
     pid_t p_pid;               // process id

@@ -989,7 +989,7 @@ Namval_t *nv_search_namval(const Namval_t *mp, Dt_t *root, nvflag_t mode) {
 //
 // Finds function or builtin for given name and the discipline variable. if var!=0 the variable
 // pointer is returned and the built-in name is put onto the stack at the current offset. Otherwise,
-// a pointer to the builtin (variable or type) is returned and var contains the poiner to the
+// a pointer to the builtin (variable or type) is returned and var contains the pointer to the
 // variable. If last==0 and first component of name is a reference, nv_bfsearch() will return 0.
 //
 Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last) {

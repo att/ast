@@ -624,7 +624,7 @@ The \f5sh_addbuiltin()\fP function can be used to add or delete
 builtin commands.  It takes the name of the built-in, the
 address of the function that implements the built-in, and
 a \f5void*\fP pointer that will be passed to this function
-as the third agument whenever it is invoked.
+as the third argument whenever it is invoked.
 If the function address is \f5NULL\fP, the specified built-in
 will be deleted.  However, special built-in functions cannot
 be deleted or modified.

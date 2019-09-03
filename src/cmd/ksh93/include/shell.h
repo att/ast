@@ -114,9 +114,9 @@ struct Shell_s {
     int inlineno;            // line number of current input file
     int exitval;             // most recent exit value
     unsigned char trapnote;  // set when trap/signal is pending
-    char shcomp;             // set when runing shcomp
+    char shcomp;             // set when running shcomp
     short subshell;          // set for virtual subshell
-    Stk_t *stk;              // stack poiter
+    Stk_t *stk;              // stack pointer
     int pwdfd;               // file descriptor for pwd
     // Everything below this line is private and should not be touched by a plugin.
     struct shared *gd;    // global data
@@ -137,7 +137,7 @@ struct Shell_s {
     Namval_t *prev_table;  // previous table used in nv_open
     Namval_t *oldnp;       // last valid parent node
     Namval_t **nodelist;   // for decl commands
-    Sfio_t *outpool;       // ouput stream pool
+    Sfio_t *outpool;       // output stream pool
     long timeout;          // read timeout
     long curenv;           // current subshell number
     long jobenv;           // subshell number for jobs

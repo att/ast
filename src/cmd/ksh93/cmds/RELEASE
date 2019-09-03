@@ -53,9 +53,9 @@
 11-01-27 date: add { -R, --rfc-2822, -T, --rfc-3339=type }
 11-01-03 chgrp.c: --symlink => --physical
 10-12-10 rm.c: fix not-writable logic
-10-12-01 tee.c: add iterrupt logic for slow open(1) -- needs to be generalized
+10-12-01 tee.c: add interrupt logic for slow open(1) -- needs to be generalized
 10-11-30 chgrp.c: add -N,--numeric to bypass name lookup
-10-10-20 cp: add --timestamps (preserv timestamps and permissions)
+10-10-20 cp: add --timestamps (preserve timestamps and permissions)
 10-10-20 ln: fix 'cannot replace existing file' logic
 10-10-10 cp,mv: add --remove-destination
 10-08-11 cp.c,expr.c: use conformance("standard",0) test
@@ -171,12 +171,12 @@
 06-11-15 cp.c: fix 06-10-31 ln -s enoent bug
 06-11-11 getconf.c: let astconf() handle "undefined" vs. ""
 06-11-11 getconf.c: fix deferred getconf path search
-06-11-11 fmt.c: handle two char { \t \n } in --usage ouput
+06-11-11 fmt.c: handle two char { \t \n } in --usage output
 06-10-31 global edit to eliminate most non-const static data0
 06-10-31 use <cmd.h> for all b_*() implementations; drop <cmdlib.h>
 06-10-31 cmd.h: add CMD_ prefix to { BUILTIN DYNAMIC STANDALONE }
 06-10-31 join.c: tone down /tmp usage vi SFSK_DISCARD
-06-10-31 cp.c,rm.c: update to <fts.h> to accomodate non-static data
+06-10-31 cp.c,rm.c: update to <fts.h> to accommodate non-static data
 06-10-29 date.c: "...%H%..." => "...%H" "%..." to avoid SCCS conflict
 06-10-26 fds.c: handle sctp
 06-10-18 tail.c: fix invalid suffix infinite loop
@@ -304,7 +304,7 @@
 	 cat: fix -n (was ignored, wow)
 00-01-27 getconf: add "-a" and "-v spec" for sol7.* compatibility
 99-09-09 join: fix -j1 vs. -j 1, add --ignorecase
-99-06-22 paste: defualt delim in writable string
+99-06-22 paste: default delim in writable string
 99-06-16 cat: fix --dos-ouput typo
 99-06-11 cp: tighten chown() diagnostics
 99-06-08 expr: nothing for NULL string bug fix
