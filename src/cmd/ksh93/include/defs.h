@@ -91,7 +91,7 @@ struct sh_scoped {
 struct limits {
     long arg_max;   // max arg+env exec() size
     int open_max;   // maximum number of file descriptors
-    int child_max;  // maxumum number of children
+    int child_max;  // maximum number of children
 };
 
 struct shared {

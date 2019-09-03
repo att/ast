@@ -2079,7 +2079,7 @@ static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
         stkseek(stkp, c);
     }
     if (mp->zeros) {
-        // Prevent leading 0's from becomming octal constants.
+        // Prevent leading 0's from becoming octal constants.
         while (size > 1 && *str == '0') {
             if (str[1] == 'x' || str[1] == 'X') break;
             str++, size--;

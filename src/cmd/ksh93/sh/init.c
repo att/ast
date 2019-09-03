@@ -1075,7 +1075,7 @@ int sh_type(const char *path) {
 
 // The need for the function below is unfortunate. It is due to the API split on 2012-07-20 that
 // required many functions to be passed a pointer to the shell interpreter context. And some
-// putative functions outside the ksh code cannnot do so. For example, the libast `errorv()`
+// putative functions outside the ksh code cannot do so. For example, the libast `errorv()`
 // function has no way to pass a shell interpreter pointer to the function assigned to
 // `error_info.exit`.
 //
@@ -1759,7 +1759,7 @@ static_fn Dt_t *inittree(Shell_t *shp, const struct shtable2 *name_vals) {
             dtinsert(treep, np);
         }
     }
-    // The loop above has to run at least one interation otherwise this leaks memory pointed to by
+    // The loop above has to run at least one iteration otherwise this leaks memory pointed to by
     // `np`. Hopefully this assert silences Coverity Scan CID#253829.
     assert(tp != name_vals);
     return treep;

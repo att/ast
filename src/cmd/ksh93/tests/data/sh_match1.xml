@@ -167,7 +167,7 @@
         </variablelist>
     </refsect1>
     <refsect1 id="environment">
-        <title>ENVIONMENT</title>
+        <title>ENVIRONMENT</title>
         <variablelist>
             <varlistentry>
             <term><envar>FOOCONF</envar></term>
@@ -224,7 +224,7 @@
     </refsect1>
     <refsect1 id="see_also">
         <title>SEE ALSO</title>
-        <!-- In alpabetical order. -->
+        <!-- In alphabetical order. -->
         <para><citerefentry>
                 <refentrytitle>bar</refentrytitle>
                 <manvolnum>1</manvolnum>

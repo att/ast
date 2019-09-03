@@ -177,7 +177,7 @@ handles (e.g., indentation, spacing around operators) there are some things it
 won't fix. So please read the following items.
 
 1. The [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html)
-forms the basis of ths projects C style guide. There are two major
+forms the basis of this projects C style guide. There are two major
 deviations for this project. First, a four, rather than two, space
 indent. Second, line lengths up to 100, rather than 80, characters. See
 [issue #125](https://github.com/att/ast/issues/125).
@@ -282,7 +282,7 @@ To run a specific test include its name: `meson test --setup=malloc types`.
 
 The `--setup=malloc` will enable malloc integrity features provided by your
 system's malloc implementation if it supports such things via environment
-variables. That flag can be ommitted but its use is recommended.
+variables. That flag can be omitted but its use is recommended.
 
 ### Testing with ASAN -- AddressSanitizer
 
@@ -377,7 +377,7 @@ To install the hook, put it in *.git/hooks/pre-push* and make it
 executable.
 
 To fix code styling issues before making a commit, add this
-script as a pre-commit hoook; that is in an executable file named
+script as a pre-commit hook; that is in an executable file named
 *.git/hooks/pre-commit*:
 
 ```sh

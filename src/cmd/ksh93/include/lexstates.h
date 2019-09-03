@@ -68,7 +68,7 @@
 #define S_QUOTE 37  // double quote character
 #define S_GRAVE 38  // old comsub character
 #define S_ESC 39    // escape character
-#define S_DOL 40    // $ subsitution character
+#define S_DOL 40    // $ substitution character
 #define S_ESC2 41   // escape character inside '...'
 
 // These are the lexical state table names.

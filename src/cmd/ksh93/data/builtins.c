@@ -151,7 +151,7 @@ const char sh_set[] =
     "invoked with a \b+\b the options will be written in a format "
     "that can be reinput to the shell to restore the settings. "
     "Options \b-o\b \aname\a can also be specified with \b--\b\aname\a "
-    "and \b+o \aname\a can be specifed with \b--no\b\aname\a  except that "
+    "and \b+o \aname\a can be specified with \b--no\b\aname\a  except that "
     "options names beginning with \bno\b are turned on by omitting \bno\b."
     "This option can be repeated to enable/disable multiple options. "
     "The value of \aoption\a must be one of the following:]{"

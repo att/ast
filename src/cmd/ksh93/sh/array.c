@@ -804,7 +804,7 @@ static_fn Namarr_t *nv_changearray(Namval_t *np,
 
 //
 // Set the associative array processing method for node <np> to <fun>.
-// The array pointer is returned if sucessful.
+// The array pointer is returned if successful.
 //
 Namarr_t *nv_setarray(Namval_t *np, void *(*fun)(Namval_t *, const char *, Nvassoc_op_t)) {
     Namarr_t *ap;
