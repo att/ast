@@ -37,12 +37,15 @@ struct shtable2 {
     const char *sh_name;
     const unsigned sh_number;
     const char *sh_value;
+    Namval_t **namvalp;
 };
 
+// This must be the same shape as struct shtable2 due to type aliasing in one call of inittree().
 struct shtable3 {
     const char *sh_name;
     const unsigned sh_number;
     int (*sh_value)(int, char *[], Shbltin_t *);
+    Namval_t **namvalp;
 };
 
 struct shtable4 {
