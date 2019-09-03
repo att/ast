@@ -133,7 +133,7 @@ static int complete_info(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od)
 
 static bool keywords(Sfio_t *out) {
     const Shtable_t *tp;
-    for (tp = shtab_reserved; *tp->sh_name; tp++) {
+    for (tp = shtab_reserved; tp->sh_name; tp++) {
         if (sfputr(out, tp->sh_name, '\n') < 0) return false;
     }
     return true;

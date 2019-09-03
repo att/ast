@@ -1718,7 +1718,7 @@ static_fn Dt_t *inittree(Shell_t *shp, const struct shtable2 *name_vals) {
     Dt_t *base_treep;
     Dt_t *dict = NULL;
 
-    for (tp = name_vals; *tp->sh_name; tp++) n++;
+    for (tp = name_vals; tp->sh_name; tp++) n++;
     np = calloc(n, sizeof(Namval_t));
     if (!shgd->bltin_nodes) {
         shgd->bltin_nodes = np;
@@ -1729,7 +1729,7 @@ static_fn Dt_t *inittree(Shell_t *shp, const struct shtable2 *name_vals) {
     }
     base_treep = treep = dtopen(&_Nvdisc, Dtoset);
     dtuserdata(treep, shp, 1);
-    for (tp = name_vals; *tp->sh_name; tp++, np++) {
+    for (tp = name_vals; tp->sh_name; tp++, np++) {
         if (tp->namvalp) *tp->namvalp = np;
         if ((np->nvname = strrchr(tp->sh_name, '.')) && np->nvname != ((char *)tp->sh_name)) {
             np->nvname++;

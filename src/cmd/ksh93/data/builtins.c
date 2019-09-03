@@ -116,7 +116,7 @@ const struct shtable3 shtab_builtins[] = {
     {CMDLIST(uname)},
     {CMDLIST(wc)},
     {CMDLIST(sync)},
-    {"", 0, NULL, NULL}};
+    {NULL, 0, NULL, NULL}};
 
 // This is used in infof(), in src/cmd/ksh93/sh/args.c, which is only used by sh_argopts(). Why is
 // unclear but it appears to be due to flags shared by the `ksh` command and the `set` builtin. The

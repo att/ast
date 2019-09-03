@@ -250,7 +250,7 @@ const struct shtable2 shtab_signals[] = {
 #ifdef SIGXRES
     {"XRES", VAL(SIGXRES, SH_SIGDONE | SH_SIGINTERACTIVE), S("Exceeded resource control"), NULL},
 #endif  // SIGRES
-    {"", 0, NULL, NULL}};
+    {NULL, 0, NULL, NULL}};
 
 const struct shtable4 shtab_siginfo_codes[] = {{SIGCHLD, CLD_EXITED, "EXITED"},
                                                {SIGCHLD, CLD_DUMPED, "DUMPED"},

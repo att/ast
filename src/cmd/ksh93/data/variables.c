@@ -122,7 +122,7 @@ const struct shtable2 shtab_variables[] = {
     {"TMOUT", NV_NOFREE | NV_INTEGER, NULL, &TMOUTNOD},
     {"VISUAL", 0, NULL, &VISINOD},
     {"_", NV_EXPORT, NULL, &L_ARGNOD},
-    {"", 0, NULL, NULL}};
+    {NULL, 0, NULL, NULL}};
 
 const char *nv_discnames[] = {"get", "set", "append", "unset", "getn", 0};
 

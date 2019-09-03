@@ -252,7 +252,7 @@ void sh_siginit(Shell_t *shp) {
         }
         if (sig >= 0) {
             shp->sigflag[sig] = n;
-            if (*tp->sh_name) shp->gd->sigmsg[sig] = tp->sh_value;
+            if (tp->sh_name) shp->gd->sigmsg[sig] = tp->sh_value;
         }
     }
 
@@ -638,7 +638,7 @@ void sh_siglist(Shell_t *shp, Sfio_t *iop, int flag) {
         for (sig = shp->gd->sigmax - 1; sig >= 0; sig--) names[sig] = 0;
         for (sig = SH_DEBUGTRAP; sig >= 0; sig--) traps[sig] = 0;
     }
-    for (; *tp->sh_name; tp++) {
+    for (; tp->sh_name; tp++) {
         sig = tp->sh_number & ((1 << SH_SIGBITS) - 1);
         if (((tp->sh_number >> SH_SIGBITS) & SH_SIGRUNTIME) &&
             (sig = shp->gd->sigruntime[sig - 1] + 1) == 1) {
