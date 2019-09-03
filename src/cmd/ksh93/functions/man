@@ -1,0 +1,25 @@
+# Format and display manual pages. The primary purpose of this function is to prepend the directory
+# containing the ksh man pages to MANPATH so that they are given priority when searching for a
+# matching man page.
+function man {
+    local manpath
+    if [[ -n $MANPATH ]]
+    then
+        manpath="$MANPATH"
+    else
+        manpath_cmd=$(whence -p manpath)
+        [[ -n $manpath_cmd ]] && manpath="$($manpath_cmd)"
+    fi
+    local -x MANPATH="$manpath"
+    local ksh_manpath="${.sh.install_prefix}/share/ksh/man"
+    if [[ -d "$ksh_manpath" && -n "$MANPATH" ]]
+    then
+        MANPATH="$ksh_manpath:$MANPATH"
+        # Invoke man with this manpath, and we're done.
+        $(whence -p man) "$@"
+        return
+    fi
+
+    # If ksh's man pages could not be found, just invoke man normally.
+    $(whence -p man) "$@"
+}
