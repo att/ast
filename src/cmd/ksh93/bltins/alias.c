@@ -54,7 +54,7 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
     tdata.argnum = 0;
     tdata.aflag = *argv[1];
 
-    optind = 0;
+    optind = 1;
     while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
         switch (opt) {
             case 1: {
@@ -62,7 +62,7 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
                 return 0;
             }
             case 'p': {
-                tdata.prefix = argv[0];
+                tdata.prefix = cmd;
                 break;
             }
             case 't': {
@@ -85,6 +85,12 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
         }
     }
 
+    // This would normally be `argv += optind`. However, the setall() function treats argv[0]
+    // specially due to the behavior of the `typeset` command which also calls setall(). Here we are
+    // passing it a nonsense value that should have argv[0][0] be anything other than a `+` char.
+    //
+    // TODO: Convert this to the standard `argv += optind` when `setall()` is modified to have a
+    // separate flag for the value of the magic `*argv[0]` passed by `typeset` to that function.
     argv += (optind - 1);
     if (!nv_isflag(nvflags, NV_TAGGED)) return setall(argv, nvflags, troot, &tdata);
 

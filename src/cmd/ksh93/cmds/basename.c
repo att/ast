@@ -28,13 +28,20 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "builtins.h"
 #include "error.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
+
+static const char *short_options = ":as:";
+static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins supports --help
+                                             {"all", 0, NULL, 'a'},
+                                             {"suffix", 0, NULL, 's'},
+                                             {NULL, 0, NULL, 0}};
 
 static void namebase(Sfio_t *outfile, char *pathname, char *suffix) {
     char *first, *last;
@@ -42,8 +49,7 @@ static void namebase(Sfio_t *outfile, char *pathname, char *suffix) {
     for (first = last = pathname; *last; last++) {
         ;
     }
-    /* back over trailing '/' */
-    if (last > first) {
+    if (last > first) {  // back over trailing '/'
         while (*--last == '/' && last > first) {
             ;
         }
@@ -70,35 +76,47 @@ static void namebase(Sfio_t *outfile, char *pathname, char *suffix) {
 }
 
 int b_basename(int argc, char **argv, Shbltin_t *context) {
+    int opt;
     char *string;
     char *suffix = NULL;
-    int all = 0;
-    int n;
+    bool all = false;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
-    if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, sh_optbasename))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case 'a':
-                all = 1;
+    optind = 1;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
+            case 'a': {
+                all = true;
                 break;
-            case 's':
-                all = 1;
-                suffix = opt_info.arg;
+            }
+            case 's': {
+                all = true;
+                suffix = optarg;
                 break;
-            case ':':
-                error(2, "%s", opt_info.arg);
-                break;
-            case '?':
-                error(ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+            }
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    argc -= opt_info.index;
-    if (error_info.errors || argc < 1 || (!all && argc > 2)) {
-        error(ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    argv += optind;
+    argc -= optind;
+    if (argc < 1 || (!all && argc > 2)) {
+        builtin_print_help(shp, cmd);
+        return 2;
     }
+
     if (!all) {
         namebase(sfstdout, argv[0], argv[1]);
     } else {
