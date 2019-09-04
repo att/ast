@@ -29,6 +29,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <getopt.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 

@@ -57,7 +57,7 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
     tdata.argnum = 0;
     tdata.aflag = *argv[1];
 
-    optind = 0;  // WTF? This is needed on Linux.
+    optind = 0;
     while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
         switch (opt) {
             case 1: {
