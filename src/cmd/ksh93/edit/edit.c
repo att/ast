@@ -242,7 +242,7 @@ int tty_raw(int fd, int echomode) {
 //
 int ed_window(void) {
     int rows, cols;
-    char *cp = nv_getval(COLUMNS);
+    char *cp = nv_getval(VAR_COLUMNS);
 
     if (cp) {
         cols = (int)strtol(cp, NULL, 10) - 1;
@@ -309,8 +309,8 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
     if (shp->winch) {
         int rows = 0, cols = 0;
         astwinsize(2, &rows, &cols);
-        if (cols) nv_putval(COLUMNS, &cols, NV_INT32 | NV_RDONLY);
-        if (rows) nv_putval(LINES, &rows, NV_INT32 | NV_RDONLY);
+        if (cols) nv_putval(VAR_COLUMNS, &cols, NV_INT32 | NV_RDONLY);
+        if (rows) nv_putval(VAR_LINES, &rows, NV_INT32 | NV_RDONLY);
         shp->winch = 0;
     }
 #endif
@@ -454,12 +454,12 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
             bool r = sh_isoption(shp, SH_RESTRICTED);
             if (r) sh_offoption(shp, SH_RESTRICTED);
             sh_trap(shp, ".sh.subscript=$(tput cuu1 2>/dev/null)", 0);
-            pp = nv_getval(SH_SUBSCRNOD);
+            pp = nv_getval(VAR_sh_subscript);
             if (pp) {
                 // It should be impossible for the cursor up string to be truncated.
                 if (strlcpy(CURSOR_UP, pp, sizeof(CURSOR_UP)) >= sizeof(CURSOR_UP)) abort();
             }
-            nv_unset(SH_SUBSCRNOD);
+            nv_unset(VAR_sh_subscript);
             strcpy(ep->e_termname, term);
         }
 #endif
@@ -1029,15 +1029,15 @@ static_fn int keytrap(Edit_t *ep, char *inbuff, int insize, int bufsize, int mod
     } else {
         *ep->e_vi_insert = 0;
     }
-    nv_putval(ED_CHRNOD, inbuff, NV_NOFREE);
-    nv_putval(ED_COLNOD, &ep->e_col, NV_NOFREE | NV_INTEGER);
-    nv_putval(ED_TXTNOD, cp, NV_NOFREE);
-    nv_putval(ED_MODENOD, ep->e_vi_insert, NV_NOFREE);
+    nv_putval(VAR_sh_edchar, inbuff, NV_NOFREE);
+    nv_putval(VAR_sh_edcol, &ep->e_col, NV_NOFREE | NV_INTEGER);
+    nv_putval(VAR_sh_edtext, cp, NV_NOFREE);
+    nv_putval(VAR_sh_edmode, ep->e_vi_insert, NV_NOFREE);
     savexit = shp->savexit;
     sh_trap(shp, shp->st.trap[SH_KEYTRAP], 0);
     shp->savexit = savexit;
-    if ((cp = nv_getval(ED_CHRNOD)) == inbuff) {
-        nv_unset(ED_CHRNOD);
+    if ((cp = nv_getval(VAR_sh_edchar)) == inbuff) {
+        nv_unset(VAR_sh_edchar);
     } else if (bufsize > 0) {
         // Is it okay if the string is truncated?
         (void)strlcpy(inbuff, cp, bufsize);
@@ -1045,7 +1045,7 @@ static_fn int keytrap(Edit_t *ep, char *inbuff, int insize, int bufsize, int mod
     } else {
         insize = 0;
     }
-    nv_unset(ED_TXTNOD);
+    nv_unset(VAR_sh_edtext);
     return insize;
 }
 
@@ -1095,7 +1095,8 @@ int ed_histgen(Edit_t *ep, const char *pattern) {
     char *cp, **argv = NULL, **av, **ar;
     static int maxmatch;
 
-    if (!(hp = ep->sh->gd->hist_ptr) && (!nv_getval(HISTFILE) || !sh_histinit(ep->sh))) return 0;
+    if (!(hp = ep->sh->gd->hist_ptr) && (!nv_getval(VAR_HISTFILE) || !sh_histinit(ep->sh)))
+        return 0;
     if (ep->e_cur <= 2) {
         maxmatch = 0;
     } else if (maxmatch && ep->e_cur > maxmatch) {

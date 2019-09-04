@@ -227,8 +227,8 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     sfclose(outfile);
     hist_eof(hp);
     arg = edit;
-    if (!arg && !(arg = nv_getval(sh_scoped(shp, HISTEDIT))) &&
-        !(arg = nv_getval(sh_scoped(shp, FCEDNOD)))) {
+    if (!arg && !(arg = nv_getval(sh_scoped(shp, VAR_HISTEDIT))) &&
+        !(arg = nv_getval(sh_scoped(shp, VAR_FCEDIT)))) {
         arg = (char *)e_defedit;
         if (*arg != '/') {
             errormsg(SH_DICT, ERROR_exit(1), "ed not found set FCEDIT");

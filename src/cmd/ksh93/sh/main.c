@@ -126,7 +126,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     command = error_info.id;
     // Set pidname '$$'.
     srand(shp->gd->pid & 0x7fff);
-    if (nv_isnull(PS4NOD)) nv_putval(PS4NOD, e_traceprompt, NV_RDONLY);
+    if (nv_isnull(VAR_PS4)) nv_putval(VAR_PS4, e_traceprompt, NV_RDONLY);
     path_pwd(shp);
     iop = NULL;
     sh_onoption(shp, SH_BRACEEXPAND);
@@ -186,7 +186,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                 } else
 #endif
                 {
-                    name = sh_mactry(shp, nv_getval(ENVNOD));
+                    name = sh_mactry(shp, nv_getval(VAR_ENV));
                     if (name) name = *name ? strdup(name) : NULL;
                     if (!name || !strmatch(name, "?(.)/./*")) sh_source(shp, iop, e_sysrc);
                     if (name) {
@@ -247,7 +247,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                     //
                     if (shp->st.repl_index > 0) av[shp->st.repl_index] = shp->st.repl_arg;
                     if (((type = sh_type(cp = av[0])) & SH_TYPE_SH) &&
-                        (name = nv_getval(L_ARGNOD)) &&
+                        (name = nv_getval(VAR_underscore)) &&
                         (!((type = sh_type(cp = name)) & SH_TYPE_SH))) {
                         av[0] = (type & SH_TYPE_LOGIN) ? cp : path_basename(cp);
                         // Exec to change $0 for ps.
@@ -309,7 +309,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     }
 
     if (sh_isoption(shp, SH_INTERACTIVE)) sh_onstate(shp, SH_INTERACTIVE);
-    nv_putval(IFSNOD, (char *)e_sptbnl, NV_RDONLY);
+    nv_putval(VAR_IFS, (char *)e_sptbnl, NV_RDONLY);
     exfile(shp, iop, fdin);
     sh_done(shp, 0);
     // NOTREACHED
@@ -330,7 +330,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
 
     sh_pushcontext(shp, &buff, SH_JMPERREXIT);
     // Open input stream.
-    nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
+    nv_putval(VAR_sh_file, shp->st.filename, NV_NOFREE);
     if (!iop) {
         if (fno > 0) {
             int r;
@@ -350,8 +350,8 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
     }
     shp->infd = fno;
     if (sh_isstate(shp, SH_INTERACTIVE)) {
-        if (nv_isnull(PS1NOD)) {
-            nv_putval(PS1NOD, (shp->gd->euserid ? e_stdprompt : e_supprompt), NV_RDONLY);
+        if (nv_isnull(VAR_PS1)) {
+            nv_putval(VAR_PS1, (shp->gd->euserid ? e_stdprompt : e_supprompt), NV_RDONLY);
         }
         sh_sigdone(shp);
         if (sh_histinit(shp)) sh_onoption(shp, SH_HISTORY);
@@ -444,7 +444,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
                 job_wait((pid_t)0);
             }
 #endif  // JOBS
-            if ((mail = nv_getval(MAILPNOD)) || (mail = nv_getval(MAILNOD))) {
+            if ((mail = nv_getval(VAR_MAILPATH)) || (mail = nv_getval(VAR_MAIL))) {
                 time(&curtime);
                 if ((curtime - mailtime) >= sh_mailchk) {
                     chkmail(shp, mail);

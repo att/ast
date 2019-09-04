@@ -373,9 +373,9 @@ void sh_chktrap(Shell_t *shp) {
         int32_t v;
         astwinsize(2, &rows, &cols);
         v = cols;
-        if (v) nv_putval(COLUMNS, (char *)&v, NV_INT32 | NV_RDONLY);
+        if (v) nv_putval(VAR_COLUMNS, (char *)&v, NV_INT32 | NV_RDONLY);
         v = rows;
-        if (v) nv_putval(LINES, (char *)&v, NV_INT32 | NV_RDONLY);
+        if (v) nv_putval(VAR_LINES, (char *)&v, NV_INT32 | NV_RDONLY);
         shp->winch = 0;
     }
 

@@ -85,7 +85,7 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
     // Hacks to handle hash -r | --.
     if (argv[1] && argv[1][0] == '-') {
         if (argv[1][1] == 'r' && argv[1][2] == 0) {
-            Namval_t *np = nv_search_namval(PATHNOD, tdata.sh->var_tree, 0);
+            Namval_t *np = nv_search_namval(VAR_PATH, tdata.sh->var_tree, 0);
             nv_putval(np, nv_getval(np), NV_RDONLY);
             argv++;
             if (!argv[1]) return 0;

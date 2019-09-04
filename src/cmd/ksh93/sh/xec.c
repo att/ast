@@ -598,12 +598,12 @@ static_fn struct Level *init_level(Shell_t *shp, int level) {
     struct Level *lp = calloc(1, sizeof(struct Level));
 
     lp->maxlevel = level;
-    _nv_unset(SH_LEVELNOD, 0);
-    nv_onattr(SH_LEVELNOD, NV_INT16 | NV_NOFREE);
-    shp->last_root = nv_dict(DOTSHNOD);
-    nv_putval(SH_LEVELNOD, (char *)&lp->maxlevel, NV_INT16);
+    _nv_unset(VAR_sh_level, 0);
+    nv_onattr(VAR_sh_level, NV_INT16 | NV_NOFREE);
+    shp->last_root = nv_dict(VAR_sh);
+    nv_putval(VAR_sh_level, (char *)&lp->maxlevel, NV_INT16);
     lp->namfun.disc = &level_disc;
-    nv_disc(SH_LEVELNOD, &lp->namfun, DISC_OP_FIRST);
+    nv_disc(VAR_sh_level, &lp->namfun, DISC_OP_FIRST);
     return lp;
 }
 
@@ -614,7 +614,7 @@ int sh_debug(Shell_t *shp, const char *trap, const char *name, const char *subsc
              char *const argv[], int flags) {
     Stk_t *stkp = shp->stk;
     struct sh_scoped savst;
-    Namval_t *np = SH_COMMANDNOD;
+    Namval_t *np = VAR_sh_command;
     char *sav = stkptr(stkp, 0);
     int n = 4, offset = stktell(stkp);
     const char *cp = "+=( ";
@@ -651,12 +651,12 @@ int sh_debug(Shell_t *shp, const char *trap, const char *name, const char *subsc
     // Now setup .sh.level variable.
     shp->st.lineno = error_info.line;
     level = shp->fn_depth + shp->dot_depth;
-    shp->last_root = nv_dict(DOTSHNOD);
-    if (!SH_LEVELNOD->nvfun || !SH_LEVELNOD->nvfun->disc ||
-        nv_isattr(SH_LEVELNOD, NV_INT16 | NV_NOFREE) != (NV_INT16 | NV_NOFREE)) {
+    shp->last_root = nv_dict(VAR_sh);
+    if (!VAR_sh_level->nvfun || !VAR_sh_level->nvfun->disc ||
+        nv_isattr(VAR_sh_level, NV_INT16 | NV_NOFREE) != (NV_INT16 | NV_NOFREE)) {
         init_level(shp, level);
     } else {
-        nv_putval(SH_LEVELNOD, (char *)&level, NV_INT16);
+        nv_putval(VAR_sh_level, (char *)&level, NV_INT16);
     }
     savst = shp->st;
     shp->st.trap[SH_DEBUGTRAP] = 0;
@@ -664,8 +664,8 @@ int sh_debug(Shell_t *shp, const char *trap, const char *name, const char *subsc
     STORE_VT(np->nvalue, const_cp, NULL);
     shp->indebug = 0;
     if (shp->st.cmdname) error_info.id = shp->st.cmdname;
-    nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
-    nv_putval(SH_FUNNAMENOD, shp->st.funname, NV_NOFREE);
+    nv_putval(VAR_sh_file, shp->st.filename, NV_NOFREE);
+    nv_putval(VAR_sh_fun, shp->st.funname, NV_NOFREE);
     shp->st = savst;
     if (sav != stkptr(stkp, 0)) {
         stkset(stkp, sav, 0);
@@ -731,14 +731,14 @@ static_fn nvflag_t set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, stru
     if (shp->var_tree != shp->var_base && !nv_search_namval(nq, nr->root, NV_NOSCOPE)) {
         nr->root = shp->namespace ? nv_dict(shp->namespace) : shp->var_base;
     }
-    nv_putval(SH_NAMENOD, cp, NV_NOFREE);
-    memcpy(node, L_ARGNOD, sizeof(*node));
-    STORE_VT(L_ARGNOD->nvalue, nrp, nr);
-    nv_setattr(L_ARGNOD, NV_REF | NV_NOFREE);
-    L_ARGNOD->nvfun = NULL;
-    L_ARGNOD->nvenv = NULL;
+    nv_putval(VAR_sh_name, cp, NV_NOFREE);
+    memcpy(node, VAR_underscore, sizeof(*node));
+    STORE_VT(VAR_underscore->nvalue, nrp, nr);
+    nv_setattr(VAR_underscore, NV_REF | NV_NOFREE);
+    VAR_underscore->nvfun = NULL;
+    VAR_underscore->nvenv = NULL;
     if (ap && nr->sub) {
-        nv_putval(SH_SUBSCRNOD, nr->sub, NV_NOFREE);
+        nv_putval(VAR_sh_subscript, nr->sub, NV_NOFREE);
         return ap->flags & ARRAY_SCAN;
     }
     return 0;
@@ -747,15 +747,15 @@ static_fn nvflag_t set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, stru
 static_fn void unset_instance(Namval_t *nq, Namval_t *node, struct Namref *nr, nvflag_t mode) {
     UNUSED(nq);
 
-    STORE_VT(L_ARGNOD->nvalue, nrp, FETCH_VT(node->nvalue, nrp));
-    nv_setattr(L_ARGNOD, node->nvflag);
-    L_ARGNOD->nvfun = node->nvfun;
+    STORE_VT(VAR_underscore->nvalue, nrp, FETCH_VT(node->nvalue, nrp));
+    nv_setattr(VAR_underscore, node->nvflag);
+    VAR_underscore->nvfun = node->nvfun;
     if (nr->sub) {
         nv_putsub(nr->np, nr->sub, 0, mode);
         free(nr->sub);
     }
-    _nv_unset(SH_NAMENOD, 0);
-    _nv_unset(SH_SUBSCRNOD, 0);
+    _nv_unset(VAR_sh_name, 0);
+    _nv_unset(VAR_sh_subscript, 0);
 }
 
 static_fn Sfio_t *openstream(Shell_t *shp, struct ionod *iop, int *save) {
@@ -792,8 +792,8 @@ static_fn Namval_t *enter_namespace(Shell_t *shp, Namval_t *nsp) {
     if (onsp) {
         oroot = nv_dict(onsp);
         if (!nsp) {
-            path = nv_search(PATHNOD->nvname, oroot, NV_NOSCOPE);
-            fpath = nv_search(FPATHNOD->nvname, oroot, NV_NOSCOPE);
+            path = nv_search(VAR_PATH->nvname, oroot, NV_NOSCOPE);
+            fpath = nv_search(VAR_FPATH->nvname, oroot, NV_NOSCOPE);
         }
         if (shp->var_tree == oroot) {
             shp->var_tree = shp->var_tree->view;
@@ -811,11 +811,11 @@ static_fn Namval_t *enter_namespace(Shell_t *shp, Namval_t *nsp) {
         }
     }
     shp->namespace = nsp;
-    if (path && (path = nv_search(PATHNOD->nvname, shp->var_tree, NV_NOSCOPE)) &&
+    if (path && (path = nv_search(VAR_PATH->nvname, shp->var_tree, NV_NOSCOPE)) &&
         (val = nv_getval(path))) {
         nv_putval(path, val, NV_RDONLY);
     }
-    if (fpath && (fpath = nv_search(FPATHNOD->nvname, shp->var_tree, NV_NOSCOPE)) &&
+    if (fpath && (fpath = nv_search(VAR_FPATH->nvname, shp->var_tree, NV_NOSCOPE)) &&
         (val = nv_getval(fpath))) {
         nv_putval(fpath, val, NV_RDONLY);
     }
@@ -1061,7 +1061,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     }
                     if (np) nvflags |= NV_UNJUST;
                     if (np == SYSLOCAL) {
-                        if (!nv_getval(SH_FUNNAMENOD)) {
+                        if (!nv_getval(VAR_sh_fun)) {
                             errormsg(SH_DICT, ERROR_exit(1), "%s: can only be used in a function",
                                      com0);
                             __builtin_unreachable();
@@ -1534,14 +1534,14 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 job.parent = parent = 0;
             } else {
                 if (((type & (FAMP | FINT)) == (FAMP | FINT)) &&
-                    (job.maxjob = nv_getnum(JOBMAXNOD)) > 0) {
+                    (job.maxjob = nv_getnum(VAR_JOBMAX)) > 0) {
                     while (job.numbjob >= job.maxjob) {
                         job_lock();
                         job_reap(0);
                         job_unlock();
                     }
                 }
-                nv_getval(RANDNOD);
+                nv_getval(VAR_RANDOM);
                 restorefd = shp->topfd;
 #if USE_SPAWN
                 restorevex = shp->vexp->cur;
@@ -1898,7 +1898,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         shp->exitval = 1;
                         break;
                     }
-                    if (!(val = nv_getval(sh_scoped(shp, REPLYNOD)))) {
+                    if (!(val = nv_getval(sh_scoped(shp, VAR_REPLY)))) {
                         continue;
                     } else {
                         if (*(cp = val) == 0) {
@@ -1942,7 +1942,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 sh_exec(shp, t->for_.fortre, flag);
                 flag &= ~ARG_OPTIMIZE;
                 if (t->tre.tretyp & COMSCAN) {
-                    if ((cp = nv_getval(sh_scoped(shp, REPLYNOD))) && *cp == 0) refresh++;
+                    if ((cp = nv_getval(sh_scoped(shp, VAR_REPLY))) && *cp == 0) refresh++;
                 } else {
                     cp = *++args;
                 }
@@ -2368,7 +2368,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
         if (shp->lastarg != lastarg && shp->lastarg) free(shp->lastarg);
         // Although this node is marked as NV_NOFREE, it should get free'd above when $_ is
         // reset
-        nv_onattr(L_ARGNOD, NV_NOFREE);
+        nv_onattr(VAR_underscore, NV_NOFREE);
         if (strlen(comn) < sizeof(lastarg)) {
             shp->lastarg = strcpy(lastarg, comn);
         } else {
@@ -2402,7 +2402,7 @@ bool sh_trace(Shell_t *shp, char *argv[], int nl) {
     if (sh_isoption(shp, SH_XTRACE)) {
         // Make this trace atomic.
         sfset(sfstderr, SF_SHARE | SF_PUBLIC, 0);
-        if (!(cp = nv_getval(sh_scoped(shp, PS4NOD)))) {
+        if (!(cp = nv_getval(sh_scoped(shp, VAR_PS4)))) {
             cp = "+ ";
         } else {
             shp->intrace = 1;
@@ -2633,33 +2633,33 @@ Sfdouble_t sh_mathfun(Shell_t *shp, void *fp, int nargs, Sfdouble_t *arg) {
     funenv.node = np;
     funenv.nref = nref;
     funenv.env = NULL;
-    memcpy(&node, SH_VALNOD, sizeof(node));
-    SH_VALNOD->nvfun = NULL;
-    SH_VALNOD->nvenv = NULL;
-    nv_setattr(SH_VALNOD, NV_LDOUBLE | NV_NOFREE);
-    STORE_VT(SH_VALNOD->nvalue, sfdoublep, NULL);
+    memcpy(&node, VAR_sh_value, sizeof(node));
+    VAR_sh_value->nvfun = NULL;
+    VAR_sh_value->nvenv = NULL;
+    nv_setattr(VAR_sh_value, NV_LDOUBLE | NV_NOFREE);
+    STORE_VT(VAR_sh_value->nvalue, sfdoublep, NULL);
     for (i = 0; i < nargs; i++) {
         *nr++ = mp = nv_namptr(shp->mathnodes, i);
         STORE_VT(mp->nvalue, sfdoublep, arg++);
     }
     *nr = 0;
-    STORE_VT(SH_VALNOD->nvalue, sfdoublep, &d);
+    STORE_VT(VAR_sh_value->nvalue, sfdoublep, &d);
     argv[0] = np->nvname;
     argv[1] = NULL;
     sh_funscope(shp, 1, argv, 0, &funenv, 0);
     while ((mp = *nr++)) STORE_VT(mp->nvalue, sfdoublep, NULL);
-    SH_VALNOD->nvfun = node.nvfun;
-    nv_setattr(SH_VALNOD, node.nvflag);
-    SH_VALNOD->nvenv = node.nvenv;
-    STORE_VT(SH_VALNOD->nvalue, sfdoublep, FETCH_VT(node.nvalue, sfdoublep));
+    VAR_sh_value->nvfun = node.nvfun;
+    nv_setattr(VAR_sh_value, node.nvflag);
+    VAR_sh_value->nvenv = node.nvenv;
+    STORE_VT(VAR_sh_value->nvalue, sfdoublep, FETCH_VT(node.nvalue, sfdoublep));
     return d;
 }
 
 static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], struct argnod *envlist,
                         int execflg) {
     struct funenv fun;
-    char *fname = nv_getval(SH_FUNNAMENOD);
-    struct Level *lp = (struct Level *)(SH_LEVELNOD->nvfun);
+    char *fname = nv_getval(VAR_sh_fun);
+    struct Level *lp = (struct Level *)(VAR_sh_level->nvfun);
     int level, pipepid = shp->pipepid;
 
     shp->pipepid = 0;
@@ -2667,7 +2667,7 @@ static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], stru
     if (!lp->namfun.disc) lp = init_level(shp, 0);
     if ((struct sh_scoped *)shp->topscope != shp->st.self) sh_setscope(shp, shp->topscope);
     level = lp->maxlevel = shp->dot_depth + shp->fn_depth + 1;
-    STORE_VT(SH_LEVELNOD->nvalue, i16, lp->maxlevel);
+    STORE_VT(VAR_sh_level->nvalue, i16, lp->maxlevel);
     shp->st.lineno = error_info.line;
     FETCH_VT(np->nvalue, rp)->running += 2;
     if (nv_isattr(np, NV_FPOSIX) && !sh_isoption(shp, SH_BASH)) {
@@ -2677,8 +2677,8 @@ static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], stru
         save = argv[-1];
         argv[-1] = 0;
         shp->st.funname = nv_name(np);
-        shp->last_root = nv_dict(DOTSHNOD);
-        nv_putval(SH_FUNNAMENOD, nv_name(np), NV_NOFREE);
+        shp->last_root = nv_dict(VAR_sh);
+        nv_putval(VAR_sh_fun, nv_name(np), NV_NOFREE);
         opt_info.index = opt_info.offset = 0;
         error_info.errors = 0;
         shp->st.loopcnt = 0;
@@ -2691,15 +2691,15 @@ static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], stru
         fun.nref = NULL;
         sh_funscope(shp, argn, argv, 0, &fun, execflg);
     }
-    if (level-- != nv_getnum(SH_LEVELNOD)) {
+    if (level-- != nv_getnum(VAR_sh_level)) {
         Shscope_t *sp = sh_getscope(shp, 0, SEEK_END);
         sh_setscope(shp, sp);
     }
     lp->maxlevel = level;
-    STORE_VT(SH_LEVELNOD->nvalue, i16, lp->maxlevel);
-    shp->last_root = nv_dict(DOTSHNOD);
-    nv_putval(SH_FUNNAMENOD, fname, NV_NOFREE);
-    nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
+    STORE_VT(VAR_sh_level->nvalue, i16, lp->maxlevel);
+    shp->last_root = nv_dict(VAR_sh);
+    nv_putval(VAR_sh_fun, fname, NV_NOFREE);
+    nv_putval(VAR_sh_file, shp->st.filename, NV_NOFREE);
     shp->pipepid = pipepid;
     FETCH_VT(np->nvalue, rp)->running -= 2;
     if (FETCH_VT(np->nvalue, rp) && FETCH_VT(np->nvalue, rp)->running == 1) {
@@ -3053,9 +3053,9 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
     if (!fun) {
         shp->st.filename = FETCH_VT(fp->node->nvalue, rp)->fname;
         shp->st.funname = nv_name(fp->node);
-        shp->last_root = nv_dict(DOTSHNOD);
-        nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
-        nv_putval(SH_FUNNAMENOD, shp->st.funname, NV_NOFREE);
+        shp->last_root = nv_dict(VAR_sh);
+        nv_putval(VAR_sh_file, shp->st.filename, NV_NOFREE);
+        nv_putval(VAR_sh_fun, shp->st.funname, NV_NOFREE);
     }
     if ((execflg & sh_state(SH_NOFORK))) shp->end_fn = 1;
     jmpval = sigsetjmp(buffp->buff, 0);
@@ -3110,7 +3110,7 @@ int sh_funscope(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *
     sh_sigreset(shp, 1);
     shp->st = *prevscope;
     shp->topscope = (Shscope_t *)prevscope;
-    nv_getval(sh_scoped(shp, IFSNOD));
+    nv_getval(sh_scoped(shp, VAR_IFS));
     shp->end_fn = 0;
     if (nsig) {
         for (isig = 0; isig < nsig; ++isig) {

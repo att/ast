@@ -542,26 +542,26 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, nvflag_t flags, Namval_t
                 }
                 shp->last_table = NULL;
                 if (shp->prefix) {
-                    if (*shp->prefix == '_' && shp->prefix[1] == '.' && nv_isref(L_ARGNOD)) {
-                        sfprintf(stkstd, "%s%s", nv_name(FETCH_VT(L_ARGNOD->nvalue, nrp)->np),
+                    if (*shp->prefix == '_' && shp->prefix[1] == '.' && nv_isref(VAR_underscore)) {
+                        sfprintf(stkstd, "%s%s", nv_name(FETCH_VT(VAR_underscore->nvalue, nrp)->np),
                                  shp->prefix + 1);
                         shp->prefix = stkfreeze(stkstd, 1);
                     }
                     memset(&nr, 0, sizeof(nr));
-                    memcpy(&node, L_ARGNOD, sizeof(node));
-                    STORE_VT(L_ARGNOD->nvalue, nrp, &nr);
+                    memcpy(&node, VAR_underscore, sizeof(node));
+                    STORE_VT(VAR_underscore->nvalue, nrp, &nr);
                     nr.np = np;
                     nr.root = shp->last_root;
                     nr.table = shp->last_table;
-                    nv_setattr(L_ARGNOD, NV_REF | NV_NOFREE);
-                    L_ARGNOD->nvfun = NULL;
+                    nv_setattr(VAR_underscore, NV_REF | NV_NOFREE);
+                    VAR_underscore->nvfun = NULL;
                 }
                 sh_exec(shp, tp, sh_isstate(shp, SH_ERREXIT));
                 if (nq && nv_type(nq)) nv_checkrequired(nq);
                 if (shp->prefix) {
-                    STORE_VT(L_ARGNOD->nvalue, nrp, FETCH_VT(node.nvalue, nrp));
-                    nv_setattr(L_ARGNOD, node.nvflag);
-                    L_ARGNOD->nvfun = node.nvfun;
+                    STORE_VT(VAR_underscore->nvalue, nrp, FETCH_VT(node.nvalue, nrp));
+                    nv_setattr(VAR_underscore, node.nvflag);
+                    VAR_underscore->nvfun = node.nvfun;
                 }
                 shp->prefix = prefix;
                 if (nv_isarray(np) && (mp = nv_opensub(np))) np = mp;
@@ -631,9 +631,9 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, nvflag_t flags, Namval_t
             if (shp->namespace) free(shp->prefix);
             shp->prefix = NULL;
             if (nr.np == np) {
-                STORE_VT(L_ARGNOD->nvalue, nrp, FETCH_VT(node.nvalue, nrp));
-                nv_setattr(L_ARGNOD, node.nvflag);
-                L_ARGNOD->nvfun = node.nvfun;
+                STORE_VT(VAR_underscore->nvalue, nrp, FETCH_VT(node.nvalue, nrp));
+                nv_setattr(VAR_underscore, node.nvflag);
+                VAR_underscore->nvfun = node.nvfun;
             }
         }
     }
@@ -820,13 +820,13 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
                             root = shp->last_root;
                         } else if (nq) {
                             if (nv_isnull(np) && c != '.' &&
-                                ((np->nvfun = nv_cover(nq)) || nq == OPTINDNOD)) {
+                                ((np->nvfun = nv_cover(nq)) || nq == VAR_OPTIND)) {
                                 np->nvname = nq->nvname;
                                 if (shp->namespace && nv_dict(shp->namespace) == shp->var_tree &&
                                     nv_isattr(nq, NV_EXPORT)) {
                                     nv_onattr(np, NV_EXPORT);
                                 }
-                                if (nq == OPTINDNOD) {
+                                if (nq == VAR_OPTIND) {
                                     np->nvfun = nq->nvfun;
                                     STORE_VT(np->nvalue, i32p, &shp->st.optindex);
                                     nv_onattr(np, NV_INTEGER | NV_NOFREE);
@@ -1334,7 +1334,7 @@ skip:
         cp++;
         if (sh_isstate(shp, SH_INIT)) {
             nv_putval(np, cp, NV_RDONLY);
-            if (np == PWDNOD) nv_onattr(np, NV_TAGGED);
+            if (np == VAR_PWD) nv_onattr(np, NV_TAGGED);
         } else {
             char *sub = NULL;
             char *prefix = shp->prefix;
@@ -1948,8 +1948,8 @@ char **sh_envgen(Shell_t *shp) {
     data.sh = shp;
     data.tp = NULL;
     data.mapname = 0;
-    // L_ARGNOD gets generated automatically as full path name of command.
-    nv_offattr(L_ARGNOD, NV_EXPORT);
+    // VAR_underscore gets generated automatically as full path name of command.
+    nv_offattr(VAR_underscore, NV_EXPORT);
     data.attsize = 6;
     namec = nv_scan(shp->var_tree, NULL, NULL, NV_EXPORT, NV_EXPORT);
     namec += shp->nenv;
@@ -2073,8 +2073,8 @@ void sh_scope(Shell_t *shp, struct argnod *envlist, int fun) {
 void sh_envnolocal(Namval_t *np, void *data) {
     struct adata *tp = (struct adata *)data;
     char *cp = NULL;
-    if (np == VERSIONNOD && nv_isref(np)) return;
-    if (np == L_ARGNOD) return;
+    if (np == VAR_KSH_VERSION && nv_isref(np)) return;
+    if (np == VAR_underscore) return;
     if (np == tp->sh->namespace) return;
     if (nv_isref(np)) nv_unref(np);
     if (nv_isattr(np, NV_EXPORT) && nv_isarray(np)) {
@@ -2083,7 +2083,7 @@ void sh_envnolocal(Namval_t *np, void *data) {
         if (cp) cp = strdup(cp);
     }
     if (nv_isattr(np, NV_EXPORT | NV_NOFREE)) {
-        if (nv_isref(np) && np != VERSIONNOD) {
+        if (nv_isref(np) && np != VAR_KSH_VERSION) {
             nv_offattr(np, NV_NOFREE | NV_REF);
             free(FETCH_VT(np->nvalue, nrp));
             STORE_VT(np->nvalue, const_cp, NULL);
@@ -2315,7 +2315,7 @@ void nv_optimize(Namval_t *np) {
     struct optimize *op, *xp;
 
     if (shp->argaddr) {
-        if (np == SH_LINENO) {
+        if (np == VAR_sh_lineno) {
             shp->argaddr = NULL;
             return;
         }
@@ -2596,8 +2596,8 @@ void nv_newattr(Namval_t *np, nvflag_t newatts, int size) {
     newatts &= ~NV_NODISC;
     // Check for restrictions.
     if (sh_isoption(shp, SH_RESTRICTED) &&
-        ((sp = nv_name(np)) == nv_name(PATHNOD) || sp == nv_name(SHELLNOD) ||
-         sp == nv_name(ENVNOD) || sp == nv_name(FPATHNOD))) {
+        ((sp = nv_name(np)) == nv_name(VAR_PATH) || sp == nv_name(VAR_SHELL) ||
+         sp == nv_name(VAR_ENV) || sp == nv_name(VAR_FPATH))) {
         errormsg(SH_DICT, ERROR_exit(1), e_restricted, nv_name(np));
         __builtin_unreachable();
     }
@@ -2877,7 +2877,7 @@ bool nv_rename(Namval_t *np, nvflag_t flags) {
             mp = np;
         }
         assert(mp);
-        if (nr == SH_MATCHNOD) {
+        if (nr == VAR_sh_match) {
             Sfio_t *iop;
             Dt_t *save_root = shp->var_tree;
             bool trace = sh_isoption(shp, SH_XTRACE);
@@ -3096,8 +3096,8 @@ Shscope_t *sh_setscope(Shell_t *shp, Shscope_t *scope) {
     *shp->st.self = shp->st;
     shp->st = *((struct sh_scoped *)scope);
     shp->var_tree = scope->var_tree;
-    STORE_VT(SH_PATHNAMENOD->nvalue, const_cp, shp->st.filename);
-    STORE_VT(SH_FUNNAMENOD->nvalue, const_cp, shp->st.funname);
+    STORE_VT(VAR_sh_file->nvalue, const_cp, shp->st.filename);
+    STORE_VT(VAR_sh_fun->nvalue, const_cp, shp->st.funname);
     return old;
 }
 
@@ -3212,8 +3212,8 @@ Namval_t *nv_lastdict(void *context) {
 
 bool nv_isnull(Namval_t *np) {
     if (FETCH_VT(np->nvalue, vp)) return false;
-    // Why is IFSNOD special-cased but not any of the other *NOD objects (e.g., PWDNOD)?
-    if (np == IFSNOD) return true;
+    // Why is VAR_IFS special-cased but not any of the other shell builtin vars?
+    if (np == VAR_IFS) return true;
     if (nv_isattr(np, NV_INT16) == NV_INT16 && !np->nvfun) {
         return nv_isattr(np, NV_NOTSET) == NV_NOTSET;
     }

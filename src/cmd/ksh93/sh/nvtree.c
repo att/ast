@@ -1099,7 +1099,7 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, nvflag_t flags) {
 }
 
 Namfun_t *nv_isvtree(Namval_t *np) {
-    if (np == SH_STATS || np == SH_SIG) return (Namfun_t *)1;
+    if (np == VAR_sh_stats || np == VAR_sh_sig) return (Namfun_t *)1;
     if (np) return nv_hasdisc(np, &treedisc);
     return NULL;
 }

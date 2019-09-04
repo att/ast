@@ -370,7 +370,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                 }
                 *str = 0;
                 if (sh_isoption(shp, SH_NOEXEC)) {
-                    np = L_ARGNOD;
+                    np = VAR_underscore;
                 } else {
                     int offset = stktell(shp->stk);
                     char *saveptr = stkfreeze(shp->stk, 0);

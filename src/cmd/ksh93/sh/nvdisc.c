@@ -257,16 +257,16 @@ static_fn void assign(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *h
             nv_putv(np, val, flags, handle);
             goto done;
         }
-        node = *SH_VALNOD;
-        if (!nv_isnull(SH_VALNOD)) {
-            nv_onattr(SH_VALNOD, NV_NOFREE);
-            _nv_unset(SH_VALNOD, 0);
+        node = *VAR_sh_value;
+        if (!nv_isnull(VAR_sh_value)) {
+            nv_onattr(VAR_sh_value, NV_NOFREE);
+            _nv_unset(VAR_sh_value, 0);
         }
         if (flags & NV_INTEGER) {
-            nv_onattr(SH_VALNOD,
+            nv_onattr(VAR_sh_value,
                       (flags & (NV_LONG | NV_DOUBLE | NV_EXPNOTE | NV_HEXFLOAT | NV_SHORT)));
         }
-        nv_putval(SH_VALNOD, val, (flags & NV_INTEGER) ? flags : NV_NOFREE);
+        nv_putval(VAR_sh_value, val, (flags & NV_INTEGER) ? flags : NV_NOFREE);
     } else {
         nq = vp->disc[type = UNASSIGN];
     }
@@ -283,21 +283,21 @@ static_fn void assign(Namval_t *np, const void *val, nvflag_t flags, Namfun_t *h
     if (val) {
         char *cp;
         Sfdouble_t d;
-        if (nv_isnull(SH_VALNOD)) {
+        if (nv_isnull(VAR_sh_value)) {
             cp = NULL;
         } else if (flags & NV_INTEGER) {
-            d = nv_getnum(SH_VALNOD);
+            d = nv_getnum(VAR_sh_value);
             cp = (char *)(&d);
             flags |= (NV_LONG | NV_DOUBLE);
             flags &= ~NV_SHORT;
         } else {
-            cp = nv_getval(SH_VALNOD);
+            cp = nv_getval(VAR_sh_value);
         }
         if (cp) nv_putv(np, cp, flags | NV_RDONLY, handle);
-        _nv_unset(SH_VALNOD, 0);
+        _nv_unset(VAR_sh_value, 0);
         // Restore everything but the nvlink field.
-        memcpy(&SH_VALNOD->nvname, &node.nvname, sizeof(node) - sizeof(node.nvlink));
-    } else if (sh_isstate(shp, SH_INIT) || np == SH_FUNNAMENOD) {
+        memcpy(&VAR_sh_value->nvname, &node.nvname, sizeof(node) - sizeof(node.nvlink));
+    } else if (sh_isstate(shp, SH_INIT) || np == VAR_sh_fun) {
         // Don't free functions during reinitialization.
         nv_putv(np, val, flags, handle);
     } else if (!nq || !isblocked(bp, type)) {
@@ -342,14 +342,14 @@ static_fn char *lookup(Namval_t *np, int type, Sfdouble_t *dp, Namfun_t *handle)
     struct Value *up = FETCH_VT(np->nvalue, up);
 
     if (nq && !isblocked(bp, type)) {
-        node = *SH_VALNOD;
-        if (!nv_isnull(SH_VALNOD)) {
-            nv_onattr(SH_VALNOD, NV_NOFREE);
-            _nv_unset(SH_VALNOD, 0);
+        node = *VAR_sh_value;
+        if (!nv_isnull(VAR_sh_value)) {
+            nv_onattr(VAR_sh_value, NV_NOFREE);
+            _nv_unset(VAR_sh_value, 0);
         }
         if (type == LOOKUPN) {
-            nv_onattr(SH_VALNOD, NV_DOUBLE | NV_INTEGER);
-            nv_setsize(SH_VALNOD, 10);
+            nv_onattr(VAR_sh_value, NV_DOUBLE | NV_INTEGER);
+            nv_setsize(VAR_sh_value, 10);
         }
         block(bp, type);
         // Make sure nv_setdisc doesn't invalidate `vp` by freeing it.
@@ -360,15 +360,15 @@ static_fn char *lookup(Namval_t *np, int type, Sfdouble_t *dp, Namfun_t *handle)
         unblock(bp, type);
         if (!vp->disc[type]) chktfree(np, vp);
         if (type == LOOKUPN) {
-            cp = (char *)FETCH_VT(SH_VALNOD->nvalue, const_cp);
-            *dp = nv_getnum(SH_VALNOD);
-        } else if ((cp = nv_getval(SH_VALNOD))) {
+            cp = (char *)FETCH_VT(VAR_sh_value->nvalue, const_cp);
+            *dp = nv_getnum(VAR_sh_value);
+        } else if ((cp = nv_getval(VAR_sh_value))) {
             cp = stkcopy(stkstd, cp);
         }
-        _nv_unset(SH_VALNOD, NV_RDONLY);
+        _nv_unset(VAR_sh_value, NV_RDONLY);
         if (!nv_isnull(&node)) {
             // Restore everything but the nvlink field.
-            memcpy(&SH_VALNOD->nvname, &node.nvname, sizeof(node) - sizeof(node.nvlink));
+            memcpy(&VAR_sh_value->nvname, &node.nvname, sizeof(node) - sizeof(node.nvlink));
         }
     }
     if (nv_isarray(np)) STORE_VT(np->nvalue, up, up);

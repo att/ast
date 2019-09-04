@@ -44,213 +44,213 @@
 //
 const struct shtable2 shtab_signals[] = {
 #ifdef SIGABRT
-    {"ABRT", VAL(SIGABRT, SH_SIGDONE), S("Abort"), NULL},
+    {"ABRT", VAL(SIGABRT, SH_SIGDONE), S("Abort")},
 #endif  // SIGABRT
 #ifdef SIGAIO
-    {"AIO", VAL(SIGAIO, SH_SIGIGNORE), S("Asynchronous I/O"), NULL},
+    {"AIO", VAL(SIGAIO, SH_SIGIGNORE), S("Asynchronous I/O")},
 #endif  // SIGAIO
 #ifdef SIGALRM
-    {"ALRM", VAL(SIGALRM, SH_SIGDONE), S("Alarm call"), NULL},
+    {"ALRM", VAL(SIGALRM, SH_SIGDONE), S("Alarm call")},
 #endif  // SIGALRM
 #ifdef SIGALRM1
-    {"ALRM1", VAL(SIGALRM1, SH_SIGDONE), S("Scheduling - reserved"), NULL},
+    {"ALRM1", VAL(SIGALRM1, SH_SIGDONE), S("Scheduling - reserved")},
 #endif  // SIGALRM1
 #ifdef SIGAPOLLO
-    {"APOLLO", VAL(SIGAPOLLO, 0), S("SIGAPOLLO"), NULL},
+    {"APOLLO", VAL(SIGAPOLLO, 0), S("SIGAPOLLO")},
 #endif  // SIGAPOLLO
 #ifdef SIGBUS
-    {"BUS", VAL(SIGBUS, SH_SIGDONE), S("Bus error"), NULL},
+    {"BUS", VAL(SIGBUS, SH_SIGDONE), S("Bus error")},
 #endif  // SIGBUS
 #ifdef SIGCANCEL
-    {"CANCEL", VAL(SIGCANCEL, SH_SIGIGNORE), S("Thread cancellation"), NULL},
+    {"CANCEL", VAL(SIGCANCEL, SH_SIGIGNORE), S("Thread cancellation")},
 #endif  // SIGCANCEL
 #ifdef SIGCHLD
-    {"CHLD", VAL(SIGCHLD, SH_SIGFAULT), S("Death of Child"), NULL},
+    {"CHLD", VAL(SIGCHLD, SH_SIGFAULT), S("Death of Child")},
 #ifdef SIGCLD
 #if SIGCLD != SIGCHLD
-    {"CLD", VAL(SIGCLD, SH_SIGFAULT), S("Death of Child"), NULL},
+    {"CLD", VAL(SIGCLD, SH_SIGFAULT), S("Death of Child")},
 #endif  // SIGCLD != SIGCHLD
 #endif  // SIGCLD
 #else   // SIGCHLD
 #ifdef SIGCLD
-    {"CHLD", VAL(SIGCLD, SH_SIGFAULT), S("Death of Child"), NULL},
+    {"CHLD", VAL(SIGCLD, SH_SIGFAULT), S("Death of Child")},
 #endif  // SIGCLD
 #endif  // SIGCHLD
 #ifdef SIGCONT
-    {"CONT", VAL(SIGCONT, SH_SIGIGNORE), S("Stopped process continued"), NULL},
+    {"CONT", VAL(SIGCONT, SH_SIGIGNORE), S("Stopped process continued")},
 #endif  // SIGCONT
 #ifdef SIGCPUFAIL
-    {"CPUFAIL", VAL(SIGCPUFAIL, 0), S("Predictive processor deconfiguration"), NULL},
+    {"CPUFAIL", VAL(SIGCPUFAIL, 0), S("Predictive processor deconfiguration")},
 #endif  // SIGRETRACT
-    {"DEBUG", VAL(TRAP(SH_DEBUGTRAP), 0), "", NULL},
+    {"DEBUG", VAL(TRAP(SH_DEBUGTRAP), 0), ""},
 #ifdef SIGDANGER
-    {"DANGER", VAL(SIGDANGER, 0), S("System crash soon"), NULL},
+    {"DANGER", VAL(SIGDANGER, 0), S("System crash soon")},
 #endif  // SIGDANGER
 #ifdef SIGDIL
-    {"DIL", VAL(SIGDIL, 0), S("DIL signal"), NULL},
+    {"DIL", VAL(SIGDIL, 0), S("DIL signal")},
 #endif  // SIGDIL
 #ifdef SIGEMT
-    {"EMT", VAL(SIGEMT, SH_SIGDONE), S("EMT trap"), NULL},
+    {"EMT", VAL(SIGEMT, SH_SIGDONE), S("EMT trap")},
 #endif  // SIGEMT
-    {"ERR", VAL(TRAP(SH_ERRTRAP), 0), "", NULL},
+    {"ERR", VAL(TRAP(SH_ERRTRAP), 0), ""},
 #ifdef SIGERR
-    {"ERR", VAL(SIGERR, 0), "", NULL},
+    {"ERR", VAL(SIGERR, 0), ""},
 #endif  // SIGERR
-    {"EXIT", VAL(0, 0), "", NULL},
-    {"FPE", VAL(SIGFPE, SH_SIGDONE), S("Floating exception"), NULL},
+    {"EXIT", VAL(0, 0), ""},
+    {"FPE", VAL(SIGFPE, SH_SIGDONE), S("Floating exception")},
 #ifdef SIGFREEZE
-    {"FREEZE", VAL(SIGFREEZE, SH_SIGIGNORE), S("Special signal used by CPR"), NULL},
+    {"FREEZE", VAL(SIGFREEZE, SH_SIGIGNORE), S("Special signal used by CPR")},
 #endif  // SIGFREEZE
 #ifdef SIGGRANT
-    {"GRANT", VAL(SIGGRANT, 0), S("Grant monitor mode"), NULL},
+    {"GRANT", VAL(SIGGRANT, 0), S("Grant monitor mode")},
 #endif  // SIGGRANT
-    {"HUP", VAL(SIGHUP, SH_SIGDONE), S("Hangup"), NULL},
-    {"ILL", VAL(SIGILL, SH_SIGDONE), S("Illegal instruction"), NULL},
+    {"HUP", VAL(SIGHUP, SH_SIGDONE), S("Hangup")},
+    {"ILL", VAL(SIGILL, SH_SIGDONE), S("Illegal instruction")},
 #ifdef SIGINFO
-    {"INFO", VAL(SIGINFO, SH_SIGIGNORE), S("Information request"), NULL},
+    {"INFO", VAL(SIGINFO, SH_SIGIGNORE), S("Information request")},
 #endif  // SIGINFO
 #ifdef JOBS
-    {"INT", VAL(SIGINT, SH_SIGINTERACTIVE), S("Interrupt"), NULL},
+    {"INT", VAL(SIGINT, SH_SIGINTERACTIVE), S("Interrupt")},
 #else   // JOBS
-    {"INT", VAL(SIGINT, SH_SIGINTERACTIVE), "", NULL},
+    {"INT", VAL(SIGINT, SH_SIGINTERACTIVE), ""},
 #endif  // JOBS
 #ifdef SIGIO
-    {"IO", VAL(SIGIO, SH_SIGDONE), S("IO signal"), NULL},
+    {"IO", VAL(SIGIO, SH_SIGDONE), S("IO signal")},
 #endif  // SIGIO
 #ifdef SIGIOT
-    {"IOT", VAL(SIGIOT, SH_SIGDONE), S("Abort"), NULL},
+    {"IOT", VAL(SIGIOT, SH_SIGDONE), S("Abort")},
 #endif  // SIGIOT
 #ifdef SIGJVM1
-    {"JVM1", VAL(SIGJVM1, SH_SIGIGNORE), S("Special signal used by Java Virtual Machine"), NULL},
+    {"JVM1", VAL(SIGJVM1, SH_SIGIGNORE), S("Special signal used by Java Virtual Machine")},
 #endif  // SIGJVM1
 #ifdef SIGJVM2
-    {"JVM2", VAL(SIGJVM2, SH_SIGIGNORE), S("Special signal used by Java Virtual Machine"), NULL},
+    {"JVM2", VAL(SIGJVM2, SH_SIGIGNORE), S("Special signal used by Java Virtual Machine")},
 #endif  // SIGJVM2
-    {"KEYBD", VAL(TRAP(SH_KEYTRAP), 0), "", NULL},
+    {"KEYBD", VAL(TRAP(SH_KEYTRAP), 0), ""},
 #ifdef SIGKILL
-    {"KILL", VAL(SIGKILL, 0), S("Killed"), NULL},
+    {"KILL", VAL(SIGKILL, 0), S("Killed")},
 #endif  // SIGKILL
 #ifdef SIGLAB
-    {"LAB", VAL(SIGLAB, 0), S("Security label changed"), NULL},
+    {"LAB", VAL(SIGLAB, 0), S("Security label changed")},
 #endif  // SIGLAB
 #ifdef SIGLOST
-    {"LOST", VAL(SIGLOST, SH_SIGDONE), S("Resources lost"), NULL},
+    {"LOST", VAL(SIGLOST, SH_SIGDONE), S("Resources lost")},
 #endif  // SIGLOST
 #ifdef SIGLWP
-    {"LWP", VAL(SIGLWP, SH_SIGIGNORE), S("Special signal used by thread library"), NULL},
+    {"LWP", VAL(SIGLWP, SH_SIGIGNORE), S("Special signal used by thread library")},
 #endif  // SIGLWP
 #ifdef SIGMIGRATE
-    {"MIGRATE", VAL(SIGMIGRATE, 0), S("Migrate process"), NULL},
+    {"MIGRATE", VAL(SIGMIGRATE, 0), S("Migrate process")},
 #endif  // SIGMIGRATE
 #ifdef SIGMSG
-    {"MSG", VAL(SIGMSG, 0), S("Ring buffer input data"), NULL},
+    {"MSG", VAL(SIGMSG, 0), S("Ring buffer input data")},
 #endif  // SIGMSG
 #ifdef SIGPHONE
-    {"PHONE", VAL(SIGPHONE, 0), S("Phone interrupt"), NULL},
+    {"PHONE", VAL(SIGPHONE, 0), S("Phone interrupt")},
 #endif  // SIGPHONE
 #ifdef SIGPIPE
 #ifdef JOBS
-    {"PIPE", VAL(SIGPIPE, SH_SIGDONE), S("Broken Pipe"), NULL},
+    {"PIPE", VAL(SIGPIPE, SH_SIGDONE), S("Broken Pipe")},
 #else   // JOBS
-    {"PIPE", VAL(SIGPIPE, SH_SIGDONE), "", NULL},
+    {"PIPE", VAL(SIGPIPE, SH_SIGDONE), ""},
 #endif  // JOBS
 #endif  // SIGPIPE
 #ifdef SIGPOLL
-    {"POLL", VAL(SIGPOLL, SH_SIGDONE), S("Polling alarm"), NULL},
+    {"POLL", VAL(SIGPOLL, SH_SIGDONE), S("Polling alarm")},
 #endif  // SIGPOLL
 #ifdef SIGPROF
-    {"PROF", VAL(SIGPROF, SH_SIGDONE), S("Profiling time alarm"), NULL},
+    {"PROF", VAL(SIGPROF, SH_SIGDONE), S("Profiling time alarm")},
 #endif  // SIGPROF
 #ifdef SIGPRE
-    {"PRE", VAL(SIGPRE, SH_SIGDONE), S("Programming exception"), NULL},
+    {"PRE", VAL(SIGPRE, SH_SIGDONE), S("Programming exception")},
 #endif  // SIGPRE
 #ifdef SIGPWR
 #if SIGPWR > 0
-    {"PWR", VAL(SIGPWR, SH_SIGIGNORE), S("Power fail"), NULL},
+    {"PWR", VAL(SIGPWR, SH_SIGIGNORE), S("Power fail")},
 #endif
 #endif  // SIGPWR
 #ifdef SIGQUIT
-    {"QUIT", VAL(SIGQUIT, SH_SIGDONE | SH_SIGINTERACTIVE), S("Quit"), NULL},
+    {"QUIT", VAL(SIGQUIT, SH_SIGDONE | SH_SIGINTERACTIVE), S("Quit")},
 #endif  // SIGQUIT
 #ifdef SIGRETRACT
-    {"RETRACT", VAL(SIGRETRACT, 0), S("Relinquish monitor mode"), NULL},
+    {"RETRACT", VAL(SIGRETRACT, 0), S("Relinquish monitor mode")},
 #endif  // SIGRETRACT
 #ifdef SIGRTMIN
-    {"RTMIN", VAL(SH_SIGRTMIN, SH_SIGRUNTIME), S("Lowest priority realtime signal"), NULL},
+    {"RTMIN", VAL(SH_SIGRTMIN, SH_SIGRUNTIME), S("Lowest priority realtime signal")},
 #endif  // SIGRTMIN
 #ifdef SIGRTMAX
-    {"RTMAX", VAL(SH_SIGRTMAX, SH_SIGRUNTIME), S("Highest priority realtime signal"), NULL},
+    {"RTMAX", VAL(SH_SIGRTMAX, SH_SIGRUNTIME), S("Highest priority realtime signal")},
 #endif  // SIGRTMAX
 #ifdef SIGSAK
-    {"SAK", VAL(SIGSAK, 0), S("Secure attention key"), NULL},
+    {"SAK", VAL(SIGSAK, 0), S("Secure attention key")},
 #endif  // SIGSAK
-    {"SEGV", VAL(SIGSEGV, 0), S("Memory fault"), NULL},
+    {"SEGV", VAL(SIGSEGV, 0), S("Memory fault")},
 #ifdef SIGSOUND
-    {"SOUND", VAL(SIGSOUND, 0), S("Sound completed"), NULL},
+    {"SOUND", VAL(SIGSOUND, 0), S("Sound completed")},
 #endif  // SIGSOUND
 #ifdef SIGSTOP
-    {"STOP", VAL(SIGSTOP, 0), S("Stopped (SIGSTOP)"), NULL},
+    {"STOP", VAL(SIGSTOP, 0), S("Stopped (SIGSTOP)")},
 #endif  // SIGSTOP
 #ifdef SIGSYS
-    {"SYS", VAL(SIGSYS, SH_SIGDONE), S("Bad system call"), NULL},
+    {"SYS", VAL(SIGSYS, SH_SIGDONE), S("Bad system call")},
 #endif  // SIGSYS
 #ifdef SIGSTKFLT
-    {"STKFLT", VAL(SIGSTKFLT, SH_SIGDONE), S("Stack Fault"), NULL},
+    {"STKFLT", VAL(SIGSTKFLT, SH_SIGDONE), S("Stack Fault")},
 #endif  // SIGSTKFLT
-    {"TERM", VAL(SIGTERM, SH_SIGDONE | SH_SIGINTERACTIVE), S("Terminated"), NULL},
+    {"TERM", VAL(SIGTERM, SH_SIGDONE | SH_SIGINTERACTIVE), S("Terminated")},
 #ifdef SIGTHAW
-    {"THAW", VAL(SIGTHAW, SH_SIGIGNORE), S("Special signal used by CPR"), NULL},
+    {"THAW", VAL(SIGTHAW, SH_SIGIGNORE), S("Special signal used by CPR")},
 #endif  // SIGTHAW
 #ifdef SIGTINT
 #ifdef JOBS
-    {"TINT", VAL(SIGTINT, 0), S("Interrupt"), NULL},
+    {"TINT", VAL(SIGTINT, 0), S("Interrupt")},
 #else   // JOBS
-    {"TINT", VAL(SIGTINT, 0), "", NULL},
+    {"TINT", VAL(SIGTINT, 0), ""},
 #endif  // JOBS
 #endif  // SIGTINT
 #ifdef SIGTRAP
-    {"TRAP", VAL(SIGTRAP, SH_SIGDONE), S("Trace/BPT trap"), NULL},
+    {"TRAP", VAL(SIGTRAP, SH_SIGDONE), S("Trace/BPT trap")},
 #endif  // SIGTRAP
 #ifdef SIGTSTP
-    {"TSTP", VAL(SIGTSTP, 0), S("Stopped"), NULL},
+    {"TSTP", VAL(SIGTSTP, 0), S("Stopped")},
 #endif  // SIGTSTP
 #ifdef SIGTTIN
-    {"TTIN", VAL(SIGTTIN, 0), S("Stopped (SIGTTIN)"), NULL},
+    {"TTIN", VAL(SIGTTIN, 0), S("Stopped (SIGTTIN)")},
 #endif  // SIGTTIN
 #ifdef SIGTTOU
-    {"TTOU", VAL(SIGTTOU, 0), S("Stopped (SIGTTOU)"), NULL},
+    {"TTOU", VAL(SIGTTOU, 0), S("Stopped (SIGTTOU)")},
 #endif  // SIGTTOU
 #ifdef SIGURG
-    {"URG", VAL(SIGURG, SH_SIGIGNORE), S("Socket interrupt"), NULL},
+    {"URG", VAL(SIGURG, SH_SIGIGNORE), S("Socket interrupt")},
 #endif  // SIGURG
 #ifdef SIGUSR1
-    {"USR1", VAL(SIGUSR1, SH_SIGDONE), S("User signal 1"), NULL},
+    {"USR1", VAL(SIGUSR1, SH_SIGDONE), S("User signal 1")},
 #endif  // SIGUSR1
 #ifdef SIGUSR2
-    {"USR2", VAL(SIGUSR2, SH_SIGDONE), S("User signal 2"), NULL},
+    {"USR2", VAL(SIGUSR2, SH_SIGDONE), S("User signal 2")},
 #endif  // SIGUSR2
 #ifdef SIGVIRT
-    {"VIRT", VAL(SIGVIRT, 0), S("Virtual timer alarm"), NULL},
+    {"VIRT", VAL(SIGVIRT, 0), S("Virtual timer alarm")},
 #endif  // SIGVIRT
 #ifdef SIGVTALRM
-    {"VTALRM", VAL(SIGVTALRM, SH_SIGDONE), S("Virtual time alarm"), NULL},
+    {"VTALRM", VAL(SIGVTALRM, SH_SIGDONE), S("Virtual time alarm")},
 #endif  // SIGVTALRM
 #ifdef SIGWAITING
-    {"WAITING", VAL(SIGWAITING, SH_SIGIGNORE), S("All threads blocked"), NULL},
+    {"WAITING", VAL(SIGWAITING, SH_SIGIGNORE), S("All threads blocked")},
 #endif  // SIGWAITING
 #ifdef SIGWINCH
-    {"WINCH", VAL(SIGWINCH, SH_SIGIGNORE), S("Window size change"), NULL},
+    {"WINCH", VAL(SIGWINCH, SH_SIGIGNORE), S("Window size change")},
 #endif  // SIGWINCH
 #ifdef SIGXCPU
-    {"XCPU", VAL(SIGXCPU, SH_SIGDONE | SH_SIGINTERACTIVE), S("Exceeded CPU time limit"), NULL},
+    {"XCPU", VAL(SIGXCPU, SH_SIGDONE | SH_SIGINTERACTIVE), S("Exceeded CPU time limit")},
 #endif  // SIGXCPU
 #ifdef SIGXFSZ
-    {"XFSZ", VAL(SIGXFSZ, SH_SIGDONE | SH_SIGINTERACTIVE), S("Exceeded file size limit"), NULL},
+    {"XFSZ", VAL(SIGXFSZ, SH_SIGDONE | SH_SIGINTERACTIVE), S("Exceeded file size limit")},
 #endif  // SIGXFSZ
 #ifdef SIGXRES
-    {"XRES", VAL(SIGXRES, SH_SIGDONE | SH_SIGINTERACTIVE), S("Exceeded resource control"), NULL},
+    {"XRES", VAL(SIGXRES, SH_SIGDONE | SH_SIGINTERACTIVE), S("Exceeded resource control")},
 #endif  // SIGRES
-    {NULL, 0, NULL, NULL}};
+    {NULL, 0, NULL}};
 
 const struct shtable4 shtab_siginfo_codes[] = {{SIGCHLD, CLD_EXITED, "EXITED"},
                                                {SIGCHLD, CLD_DUMPED, "DUMPED"},

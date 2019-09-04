@@ -104,7 +104,7 @@ int path_expand(Shell_t *shp, const char *pattern, struct argnod **arghead) {
         // FIGNORE, but colon separated instead of being an augmented shell
         // pattern. Generate shell patterns out of those here.
         if (sh_isstate(shp, SH_FCOMPLETE)) {
-            cp = nv_getval(sh_scoped(shp, FIGNORENOD));
+            cp = nv_getval(sh_scoped(shp, VAR_FIGNORE));
         } else {
             static Namval_t *GLOBIGNORENOD;
             if (!GLOBIGNORENOD) GLOBIGNORENOD = nv_open("GLOBIGNORE", shp->var_tree, 0);
@@ -138,7 +138,7 @@ int path_expand(Shell_t *shp, const char *pattern, struct argnod **arghead) {
         }
     } else
 #endif
-        gp->gl_fignore = nv_getval(sh_scoped(shp, FIGNORENOD));
+        gp->gl_fignore = nv_getval(sh_scoped(shp, VAR_FIGNORE));
     if (suflen) gp->gl_suffix = sufstr;
     gp->gl_intr = &shp->trapnote;
     suflen = 0;

@@ -120,7 +120,7 @@ int b_source(int n, char *argv[], Shbltin_t *context) {
         shp->st.lineno = 1;
     }
     level = shp->fn_depth + shp->dot_depth + 1;
-    nv_putval(SH_LEVELNOD, (char *)&level, NV_INT16);
+    nv_putval(VAR_sh_level, (char *)&level, NV_INT16);
     shp->st.prevst = prevscope;
     shp->st.self = &savst;
     shp->topscope = (Shscope_t *)shp->st.self;
@@ -129,7 +129,7 @@ int b_source(int n, char *argv[], Shbltin_t *context) {
         struct Ufunction *rp = FETCH_VT(np->nvalue, rp);
         shp->st.filename = strdup(rp->fname ? rp->fname : "");
     }
-    nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
+    nv_putval(VAR_sh_file, shp->st.filename, NV_NOFREE);
     shp->posix_fun = NULL;
     if (np || argv[1]) argsave = sh_argnew(shp, argv, &saveargfor);
     sh_pushcontext(shp, &buff, SH_JMPDOT);
@@ -162,7 +162,7 @@ int b_source(int n, char *argv[], Shbltin_t *context) {
     // Only restore the top Shscope_t portion for posix functions.
     memcpy(&shp->st, prevscope, sizeof(Shscope_t));
     shp->topscope = (Shscope_t *)prevscope;
-    nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
+    nv_putval(VAR_sh_file, shp->st.filename, NV_NOFREE);
     if (jmpval && jmpval != SH_JMPFUN) siglongjmp(shp->jmplist->buff, jmpval);
     return shp->exitval;
 }

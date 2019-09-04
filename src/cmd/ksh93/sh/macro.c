@@ -174,7 +174,7 @@ char *sh_mactrim(Shell_t *shp, char *str, int mode) {
     if (mode < 0) mp->assign = -mode;
     mp->quoted = mp->lit = mp->split = mp->quote = 0;
     mp->sp = NULL;
-    mp->ifsp = nv_getval(sh_scoped(shp, IFSNOD));
+    mp->ifsp = nv_getval(sh_scoped(shp, VAR_IFS));
     if (mp->ifsp) {
         mp->ifs = *mp->ifsp;
     } else {
@@ -212,7 +212,7 @@ int sh_macexpand(Shell_t *shp, struct argnod *argp, struct argnod **arghead, int
 
     savemac = *mp;
     mp->sp = NULL;
-    mp->ifsp = nv_getval(sh_scoped(shp, IFSNOD));
+    mp->ifsp = nv_getval(sh_scoped(shp, VAR_IFS));
     if (mp->ifsp) {
         mp->ifs = *mp->ifsp;
     } else {
@@ -280,7 +280,7 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
     mp->sp = outfile;
     mp->split = mp->assign = mp->pattern = mp->patfound = mp->lit = mp->arith = mp->let = 0;
     mp->quote = 1;
-    mp->ifsp = nv_getval(sh_scoped(shp, IFSNOD));
+    mp->ifsp = nv_getval(sh_scoped(shp, VAR_IFS));
     mp->ifs = ' ';
     fcsave(&save);
     if (infile) {
@@ -1233,7 +1233,7 @@ retry1:
             }
             if (mp->shp->cur_line && *id == 'R' && strcmp(id, "REPLY") == 0) {
                 mp->shp->argaddr = NULL;
-                np = REPLYNOD;
+                np = VAR_REPLY;
             } else {
                 if (mp->shp->argaddr) nvflags &= ~NV_NOADD;
                 np = nv_open(id, mp->shp->var_tree, nvflags | NV_NOFAIL);
@@ -1282,7 +1282,7 @@ retry1:
             if (np && nv_isflag(nvflags, NV_NOADD) && nv_isnull(np)) {
                 if (nv_isattr(np, NV_NOFREE)) {
                     nv_offattr(np, NV_NOFREE);
-                } else if (np != REPLYNOD || !mp->shp->cur_line) {
+                } else if (np != VAR_REPLY || !mp->shp->cur_line) {
                     np = NULL;
                 }
             }
@@ -1362,7 +1362,7 @@ retry1:
                         nv_attribute(np, mp->shp->strbuf, "typeset", 1);
                     }
                     v = sfstruse(mp->shp->strbuf);
-                } else if (mp->shp->cur_line && np == REPLYNOD) {
+                } else if (mp->shp->cur_line && np == VAR_REPLY) {
                     v = mp->shp->cur_line;
                 } else if (type == M_TREE) {
                     v = nv_getvtree(np, NULL);
@@ -2006,7 +2006,7 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
     if (was_history) sh_onstate(mp->shp, SH_HISTORY);
     if (was_verbose) sh_onstate(mp->shp, SH_VERBOSE);
     *mp = savemac;
-    np = sh_scoped(mp->shp, IFSNOD);
+    np = sh_scoped(mp->shp, VAR_IFS);
     nv_putval(np, mp->ifsp, NV_RDONLY);
     mp->ifsp = nv_getval(np);
     stkset(stkp, savptr, savtop);
@@ -2417,14 +2417,14 @@ static_fn char *sh_tilde(Shell_t *shp, const char *string) {
 
     if (*string++ != '~') return NULL;
     if ((c = *string) == 0) {
-        if (!(cp = nv_getval(sh_scoped(shp, HOME)))) cp = getlogin();
+        if (!(cp = nv_getval(sh_scoped(shp, VAR_HOME)))) cp = getlogin();
         return cp;
     }
     if ((c == '-' || c == '+') && string[1] == 0) {
         if (c == '+') {
-            cp = nv_getval(sh_scoped(shp, PWDNOD));
+            cp = nv_getval(sh_scoped(shp, VAR_PWD));
         } else {
-            cp = nv_getval(sh_scoped(shp, OLDPWDNOD));
+            cp = nv_getval(sh_scoped(shp, VAR_OLDPWD));
         }
         return cp;
     }
@@ -2532,8 +2532,8 @@ static_fn char *special(Shell_t *shp, int c) {
             break;
         }
         case '$': {
-            if (nv_isnull(SH_DOLLARNOD)) return fmtbase(shp->gd->pid, 0, 0);
-            return nv_getval(SH_DOLLARNOD);
+            if (nv_isnull(VAR_sh_dollar)) return fmtbase(shp->gd->pid, 0, 0);
+            return nv_getval(VAR_sh_dollar);
         }
         case '-': {
             return sh_argdolminus(shp);

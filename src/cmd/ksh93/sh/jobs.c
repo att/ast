@@ -795,7 +795,7 @@ int job_list(struct process *pw, int flag) {
     const char *msg;
     int msize;
     char *dir = NULL;
-    char *home = nv_getval(HOME);
+    char *home = nv_getval(VAR_HOME);
     size_t len = home ? strlen(home) : 0;
 
     if (!pw || pw->p_job <= 0) return 1;
@@ -852,7 +852,7 @@ int job_list(struct process *pw, int flag) {
         }
         if (!px) {
             char *pwd;
-            if (dir && (pwd = nv_getval(PWDNOD)) && !strcmp(dir, pwd)) dir = 0;
+            if (dir && (pwd = nv_getval(VAR_PWD)) && !strcmp(dir, pwd)) dir = 0;
             hist_list(shgd->hist_ptr, outfile, pw->p_name, dir ? '\n' : 0, ";");
             if (dir) {
                 char *tilde = "";

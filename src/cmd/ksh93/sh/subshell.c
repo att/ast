@@ -207,7 +207,7 @@ void sh_subfork(void) {
             shp->savesig = -1;
         }
         shp->comsub = 0;
-        STORE_VT(SH_SUBSHELLNOD->nvalue, i16, 0);
+        STORE_VT(VAR_sh_subshell->nvalue, i16, 0);
         sp->subpid = 0;
         shp->st.trapcom[0] = trap;
     }
@@ -251,8 +251,8 @@ Namval_t *sh_assignok(Namval_t *np, int add) {
     int save;
 
     // Don't bother with this.
-    if (!sp || !sp->shpwd || np == SH_LEVELNOD || np == L_ARGNOD || np == SH_SUBSCRNOD ||
-        np == SH_NAMENOD) {
+    if (!sp || !sp->shpwd || np == VAR_sh_level || np == VAR_underscore || np == VAR_sh_subscript ||
+        np == VAR_sh_name) {
         return np;
     }
     shp = sp->shp;
@@ -473,7 +473,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     savst = shp->st;
     sh_pushcontext(shp, &buff, SH_JMPSUB);
     shp->subshell++;
-    STORE_VT(SH_SUBSHELLNOD->nvalue, i16, shp->subshell);
+    STORE_VT(VAR_sh_subshell->nvalue, i16, shp->subshell);
     sp->prev = active_subshell_data;
     sp->shp = shp;
     sp->sig = 0;
@@ -694,8 +694,8 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         }
         shp->options = sp->options;
         if (!shp->pwd || strcmp(sp->pwd, shp->pwd)) {
-            // Restore PWDNOD.
-            Namval_t *pwdnod = sh_scoped(shp, PWDNOD);
+            // Restore VAR_PWD.
+            Namval_t *pwdnod = sh_scoped(shp, VAR_PWD);
             if (shp->pwd) {
                 shp->pwd = sp->pwd;
 #if !O_SEARCH
@@ -706,8 +706,8 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
             if (nv_isattr(pwdnod, NV_NOFREE)) STORE_VT(pwdnod->nvalue, const_cp, sp->pwd);
         } else if (sp->shpwd != shp->pwd) {
             shp->pwd = sp->pwd;
-            if (FETCH_VT(PWDNOD->nvalue, const_cp) == sp->shpwd) {
-                STORE_VT(PWDNOD->nvalue, const_cp, sp->pwd);
+            if (FETCH_VT(VAR_PWD->nvalue, const_cp) == sp->shpwd) {
+                STORE_VT(VAR_PWD->nvalue, const_cp, sp->pwd);
             }
         } else {
             free(sp->pwd);
@@ -732,7 +732,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     }
     shp->subshare = sp->subshare;
     shp->subdup = sp->subdup;
-    if (shp->subshell) STORE_VT(SH_SUBSHELLNOD->nvalue, i16, --shp->subshell);
+    if (shp->subshell) STORE_VT(VAR_sh_subshell->nvalue, i16, --shp->subshell);
     active_subshell_data = sp->prev;
     if (!argsav || argsav->dolrefcnt == argcnt) sh_argfree(shp, argsav);
     if (shp->topfd != buff.topfd) sh_iorestore(shp, buff.topfd | IOSUBSHELL, jmpval);

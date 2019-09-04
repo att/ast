@@ -2160,7 +2160,7 @@ static_fn int io_prompt(Shell_t *shp, Sfio_t *iop, int flag) {
                 ioctl(sffileno(sfstderr), TIOCLBIC, &mode);
             }
 #endif /* TIOCLBIC */
-            cp = sh_mactry(shp, nv_getval(sh_scoped(shp, PS1NOD)));
+            cp = sh_mactry(shp, nv_getval(sh_scoped(shp, VAR_PS1)));
             shp->exitval = 0;
             for (int escape_index = 0; (c = *cp); cp++) {
                 if ((escape_index == 0 && c == ESC) ||
@@ -2182,11 +2182,11 @@ static_fn int io_prompt(Shell_t *shp, Sfio_t *iop, int flag) {
             goto done;
         }
         case 2: {
-            cp = nv_getval(sh_scoped(shp, PS2NOD));
+            cp = nv_getval(sh_scoped(shp, VAR_PS2));
             break;
         }
         case 3: {
-            cp = nv_getval(sh_scoped(shp, PS3NOD));
+            cp = nv_getval(sh_scoped(shp, VAR_PS3));
             break;
         }
         default: { goto done; }
@@ -2426,7 +2426,7 @@ void sh_menu(Shell_t *shp, Sfio_t *outfile, int argn, char *argv[]) {
     char **arg;
     int nrow, ncol = 1, ndigits = 1;
     int fldsize, wsize = ed_window();
-    char *cp = nv_getval(sh_scoped(shp, LINES));
+    char *cp = nv_getval(sh_scoped(shp, VAR_LINES));
     nrow = (cp ? 1 + 2 * ((int)strtol(cp, NULL, 10) / 3) : NROW);
     for (i = argn; i >= 10; i /= 10) ndigits++;
     if (argn < nrow) {

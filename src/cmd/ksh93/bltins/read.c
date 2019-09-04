@@ -492,9 +492,9 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
     } else {
         name = 0;
         if (dtvnext(shp->var_tree) || shp->namespace) {
-            np = nv_open(nv_name(REPLYNOD), shp->var_tree, 0);
+            np = nv_open(nv_name(VAR_REPLY), shp->var_tree, 0);
         } else {
-            np = REPLYNOD;
+            np = VAR_REPLY;
         }
     }
     keytrap = ep ? ep->e_keytrap : 0;
@@ -511,7 +511,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
     if (!binary && !(flags & (N_FLAG | NN_FLAG))) {
         Namval_t *mp;
         // Set up state table based on IFS.
-        ifs = nv_getval(mp = sh_scoped(shp, IFSNOD));
+        ifs = nv_getval(mp = sh_scoped(shp, VAR_IFS));
         if ((flags & R_FLAG) && shp->ifstable['\\'] == S_ESC) {
             shp->ifstable['\\'] = 0;
         } else if (!(flags & R_FLAG) && shp->ifstable['\\'] == 0) {

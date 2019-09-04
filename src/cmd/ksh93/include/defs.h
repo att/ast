@@ -94,6 +94,91 @@ struct limits {
     int child_max;  // maximum number of children
 };
 
+// This structure must be kept in sync with the shtab_variables[] array in data/variables.c.
+// All structure member names have a leading underscore to avoid conflicts with #define symbols;
+// e.g., LC_ALL.
+struct bltin_vars {
+    Namval_t *_sh;                 // ${.sh}
+    Namval_t *_sh_command;         // ${.sh.command}
+    Namval_t *_sh_dollar;          // ${.sh.dollar}
+    Namval_t *_sh_edchar;          // ${.sh.dollar}
+    Namval_t *_sh_edcol;           // ${.sh.dollar}
+    Namval_t *_sh_edmode;          // ${.sh.dollar}
+    Namval_t *_sh_edtext;          // ${.sh.dollar}
+    Namval_t *_sh_file;            // ${.sh.dollar}
+    Namval_t *_sh_fun;             // ${.sh.dollar}
+    Namval_t *_sh_install_prefix;  // ${.sh.dollar}
+    Namval_t *_sh_level;           // ${.sh.dollar}
+    Namval_t *_sh_lineno;          // ${.sh.dollar}
+    Namval_t *_sh_match;           // ${.sh.dollar}
+    Namval_t *_sh_math;            // ${.sh.dollar}
+    Namval_t *_sh_name;            // ${.sh.dollar}
+    Namval_t *_sh_op_astbin;       // ${.sh.dollar}
+    Namval_t *_sh_pgrp;            // ${.sh.dollar}
+    Namval_t *_sh_pool;            // ${.sh.dollar}
+    Namval_t *_sh_pwdfd;           // ${.sh.dollar}
+    Namval_t *_sh_sig;             // ${.sh.dollar}
+    Namval_t *_sh_stats;           // ${.sh.dollar}
+    Namval_t *_sh_subscript;       // ${.sh.dollar}
+    Namval_t *_sh_subshell;        // ${.sh.dollar}
+    Namval_t *_sh_value;           // ${.sh.dollar}
+    Namval_t *_sh_version;         // ${.sh.dollar}
+    Namval_t *_CDPATH;
+    Namval_t *_COLUMNS;
+    Namval_t *_COMPREPLY;
+    Namval_t *_COMP_CWORD;
+    Namval_t *_COMP_KEY;
+    Namval_t *_COMP_LINE;
+    Namval_t *_COMP_POINT;
+    Namval_t *_COMP_TYPE;
+    Namval_t *_COMP_WORDBREAKS;
+    Namval_t *_COMP_WORDS;
+    Namval_t *_EDITOR;
+    Namval_t *_ENV;
+    Namval_t *_FCEDIT;
+    Namval_t *_FIGNORE;
+    Namval_t *_FPATH;
+    Namval_t *_HISTCMD;
+    Namval_t *_HISTEDIT;
+    Namval_t *_HISTFILE;
+    Namval_t *_HISTSIZE;
+    Namval_t *_HOME;
+    Namval_t *_IFS;
+    Namval_t *_JOBMAX;
+    Namval_t *_KSH_VERSION;
+    Namval_t *_LANG;
+    Namval_t *_LC_ALL;
+    Namval_t *_LC_COLLATE;
+    Namval_t *_LC_CTYPE;
+    Namval_t *_LC_MESSAGES;
+    Namval_t *_LC_NUMERIC;
+    Namval_t *_LC_TIME;
+    Namval_t *_LINENO;
+    Namval_t *_LINES;
+    Namval_t *_MAIL;
+    Namval_t *_MAILCHECK;
+    Namval_t *_MAILPATH;
+    Namval_t *_OLDPWD;
+    Namval_t *_OPTARG;
+    Namval_t *_OPTIND;
+    Namval_t *_PATH;
+    Namval_t *_PPID;
+    Namval_t *_PS1;
+    Namval_t *_PS2;
+    Namval_t *_PS3;
+    Namval_t *_PS4;
+    Namval_t *_PWD;
+    Namval_t *_RANDOM;
+    Namval_t *_REPLY;
+    Namval_t *_SECONDS;
+    Namval_t *_SHELL;
+    Namval_t *_SHLVL;
+    Namval_t *_SH_OPTIONS;
+    Namval_t *_TMOUT;
+    Namval_t *_VISUAL;
+    Namval_t *_underscore;  // $_
+};
+
 struct shared {
     struct limits lim;
     uid_t userid;
@@ -103,7 +188,7 @@ struct shared {
     pid_t pid;
     pid_t ppid;
     unsigned char sigruntime[2];
-    Namval_t *bltin_nodes;
+    struct bltin_vars vars;
     Namval_t *bltin_cmds;
     History_t *hist_ptr;
     char *shpath;
@@ -115,7 +200,6 @@ struct shared {
     void *init_context;
     void *job_context;
     int *stats;
-    int bltin_nnodes; /* number of bltins nodes */
     int sigmax;
     int nforks;
     int shtype;

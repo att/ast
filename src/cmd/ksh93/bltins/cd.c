@@ -108,14 +108,14 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     }
     shp->pwd = path_pwd(shp);
     oldpwd = (char *)shp->pwd;
-    opwdnod = (shp->subshell ? sh_assignok(OLDPWDNOD, 1) : OLDPWDNOD);
-    pwdnod = (shp->subshell ? sh_assignok(PWDNOD, 1) : PWDNOD);
+    opwdnod = (shp->subshell ? sh_assignok(VAR_OLDPWD, 1) : VAR_OLDPWD);
+    pwdnod = (shp->subshell ? sh_assignok(VAR_PWD, 1) : VAR_PWD);
     if (dirfd != shp->pwdfd && dir == 0) dir = (char *)e_dot;
     if (argc == 2) {
         dir = sh_substitute(shp, oldpwd, dir, argv[1]);
     } else if (!dir) {
         struct passwd *pw;
-        dir = nv_getval(HOME);
+        dir = nv_getval(VAR_HOME);
         if (!dir && (pw = getpwuid(geteuid()))) dir = pw->pw_dir;
     } else if (*dir == '-' && dir[1] == 0) {
         dir = FETCH_VT(sh_scoped(shp, opwdnod)->nvalue, cp);
@@ -133,7 +133,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     {
         cdpath = shp->cdpathlist;
         if (!cdpath) {
-            dp = FETCH_VT(sh_scoped(shp, CDPNOD)->nvalue, const_cp);
+            dp = FETCH_VT(sh_scoped(shp, VAR_CDPATH)->nvalue, const_cp);
             if (dp) {
                 cdpath = path_addpath(shp, NULL, dp, PATH_CDPATH);
                 if (cdpath) {

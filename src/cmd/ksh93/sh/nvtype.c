@@ -1480,9 +1480,9 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
     }
     strcpy(nvtype, NV_CLASS);
     if (!(mp = nv_open(nvtype, shp->var_base, NV_NOADD | NV_VARNAME))) return 0;
-    memcpy(&node, L_ARGNOD, sizeof(node));
-    L_ARGNOD->nvfun = NULL;
-    STORE_VT(L_ARGNOD->nvalue, const_cp, NULL);
+    memcpy(&node, VAR_underscore, sizeof(node));
+    VAR_underscore->nvfun = NULL;
+    STORE_VT(VAR_underscore->nvalue, const_cp, NULL);
     dp = nv_dict(mp);
     if (indent == 0) {
         for (tp = dtfirst(dp); tp; tp = dtnext(dp, tp)) {
@@ -1498,17 +1498,17 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
                        strchr(tp->nvname + n, '.'))) {
             continue;
         }
-        nv_settype(L_ARGNOD, tp, 0);
+        nv_settype(VAR_underscore, tp, 0);
         if (indent) sfnputc(out, '\t', indent);
         sfprintf(out, "typeset -T %s=", tp->nvname + n);
         shp->last_table = NULL;
-        cp = nv_getval(L_ARGNOD);
+        cp = nv_getval(VAR_underscore);
         if (indent) {
             write_indent(out, cp, strlen(cp) - 1, indent);
         } else {
             sfprintf(out, "%.*s", strlen(cp) - 1, cp);
         }
-        _nv_unset(L_ARGNOD, NV_RDONLY);
+        _nv_unset(VAR_underscore, NV_RDONLY);
         for (sp = NULL; (sp = nv_setdisc(tp, NULL, (Namval_t *)sp, (Namfun_t *)tp));) {
             mp = (Namval_t *)nv_setdisc(tp, sp, tp, (Namfun_t *)tp);
             if (!mp || mp == tp) continue;
@@ -1560,9 +1560,9 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
         if (indent) sfnputc(out, '\t', indent);
         sfwrite(out, ")\n", 2);
     }
-    dtdelete(shp->var_base, L_ARGNOD);
-    memcpy(L_ARGNOD, &node, sizeof(node));
-    dtinsert(shp->var_base, L_ARGNOD);
+    dtdelete(shp->var_base, VAR_underscore);
+    memcpy(VAR_underscore, &node, sizeof(node));
+    dtinsert(shp->var_base, VAR_underscore);
     return 0;
 }
 

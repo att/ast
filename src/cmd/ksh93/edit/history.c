@@ -121,9 +121,9 @@ int sh_histinit(void *sh_context) {
 
     shgd->hist_ptr = hist_ptr;
     if (shgd->hist_ptr) return 1;
-    if (!(histname = nv_getval(HISTFILE))) {
+    if (!(histname = nv_getval(VAR_HISTFILE))) {
         int offset = stktell(shp->stk);
-        cp = nv_getval(HOME);
+        cp = nv_getval(VAR_HOME);
         if (cp) sfputr(shp->stk, cp, -1);
         sfputr(shp->stk, hist_fname, 0);
         stkseek(shp->stk, offset);
@@ -160,7 +160,7 @@ retry:
     if (fd < 0) return 0;
     // Set the file to close-on-exec.
     (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
-    cp = nv_getval(HISTSIZE);
+    cp = nv_getval(VAR_HISTSIZE);
     if (cp) {
         maxlines = (unsigned)strtol(cp, NULL, 10);
     } else {
@@ -224,7 +224,7 @@ retry:
         hp = hist_trim(hp, (int)hp->histind - maxlines);
     }
     sfdisc(hp->histfp, &hp->histdisc);
-    STORE_VT((HISTCUR)->nvalue, i32p, &hp->histind);
+    STORE_VT((VAR_HISTCMD)->nvalue, i32p, &hp->histind);
 #if HIST_RECENT > 30
     sh_timeradd(1000L * (HIST_RECENT - 30), 1, hist_touch, hp->histname);
 #else

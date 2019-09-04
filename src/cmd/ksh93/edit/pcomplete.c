@@ -141,7 +141,7 @@ static bool keywords(Sfio_t *out) {
 
 // Write wordlist to stack splitting on IFS, one word per line.
 static void gen_wordlist(Sfio_t *iop, const char *word) {
-    const char *ifs = nv_getval(IFSNOD);
+    const char *ifs = nv_getval(VAR_IFS);
     char c, n = 0;
 
     while ((c = *word) && strchr(ifs, c)) word++;
@@ -221,9 +221,9 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
         int csave;
         if (strcmp(comp->name, " E") == 0) complete = 1;
         if (complete) {
-            _nv_unset(COMPREPLY, 0);
-            STORE_VT(COMP_POINT->nvalue, i16, index + 1);
-            STORE_VT(COMP_LINE->nvalue, const_cp, line);
+            _nv_unset(VAR_COMPREPLY, 0);
+            STORE_VT(VAR_COMP_POINT->nvalue, i16, index + 1);
+            STORE_VT(VAR_COMP_LINE->nvalue, const_cp, line);
             cp = (char *)&line[index] - strlen(prefix);
             csave = *(cpsave = cp);
             while (--cp >= line) {
@@ -233,10 +233,10 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
         }
         if (comp->fun) {
             Namarr_t *ap;
-            Namval_t *np = COMPREPLY;
+            Namval_t *np = VAR_COMPREPLY;
             int n, spaces = 0;
             if (!complete) errormsg(SH_DICT, ERROR_warn(0), "-F option may not work as you expect");
-            _nv_unset(COMP_WORDS, NV_RDONLY);
+            _nv_unset(VAR_COMP_WORDS, NV_RDONLY);
             cp = (char *)line;
             if (strchr(" \t", *cp)) cp++;
             n = 1;
@@ -248,7 +248,7 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
                     spaces = 0;
                 }
             }
-            STORE_VT(COMP_CWORD->nvalue, i16, n - 1);
+            STORE_VT(VAR_COMP_CWORD->nvalue, i16, n - 1);
             stkseek(shp->stk, 0);
             len = (n + 1) * sizeof(char *) + strlen(line) + 1;
             stkseek(shp->stk, len);
@@ -274,7 +274,7 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
             }
             *av = 0;
             av = (char **)stkptr(shp->stk, 0);
-            nv_setvec(COMP_WORDS, 0, n, av);
+            nv_setvec(VAR_COMP_WORDS, 0, n, av);
             stkseek(shp->stk, 0);
             *cpsave = 0;
             sfprintf(shp->stk, "%s \"%s\" \"%s\" \"%s\"\n\0", nv_name(comp->fun), comp->name,

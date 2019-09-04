@@ -262,11 +262,11 @@ char *path_pwd(Shell_t *shp) {
         // Try from lowest to highest.
         switch (count++) {
             case 0: {
-                cp = nv_getval(PWDNOD);
+                cp = nv_getval(VAR_PWD);
                 break;
             }
             case 1: {
-                cp = nv_getval(HOME);
+                cp = nv_getval(VAR_HOME);
                 break;
             }
             case 2: {
@@ -279,9 +279,9 @@ char *path_pwd(Shell_t *shp) {
                     // FWIW: This creates a memory leak since the dynamically allocated buffer is
                     // never freed. Hopefully this is only executed in rare circumstances where the
                     // leak doesn't matter. This is also never true on SVr4 systems like Solaris.
-                    nv_offattr(PWDNOD, NV_NOFREE);
-                    _nv_unset(PWDNOD, 0);
-                    STORE_VT(PWDNOD->nvalue, const_cp, cp);
+                    nv_offattr(VAR_PWD, NV_NOFREE);
+                    _nv_unset(VAR_PWD, 0);
+                    STORE_VT(VAR_PWD->nvalue, const_cp, cp);
                     goto skip;
                 }
                 break;
@@ -292,12 +292,12 @@ char *path_pwd(Shell_t *shp) {
     }
 
     if (count > 1) {
-        nv_offattr(PWDNOD, NV_NOFREE);
-        nv_putval(PWDNOD, cp, NV_RDONLY);
+        nv_offattr(VAR_PWD, NV_NOFREE);
+        nv_putval(VAR_PWD, cp, NV_RDONLY);
     }
 skip:
-    nv_onattr(PWDNOD, NV_NOFREE | NV_EXPORT);
-    shp->pwd = FETCH_VT(PWDNOD->nvalue, const_cp);
+    nv_onattr(VAR_PWD, NV_NOFREE | NV_EXPORT);
+    shp->pwd = FETCH_VT(VAR_PWD->nvalue, const_cp);
     return cp;
 }
 
@@ -443,7 +443,7 @@ static_fn Pathcomp_t *defpath_init(Shell_t *shp) {
 }
 
 static_fn void path_init(Shell_t *shp) {
-    const char *val = FETCH_VT(sh_scoped(shp, PATHNOD)->nvalue, const_cp);
+    const char *val = FETCH_VT(sh_scoped(shp, VAR_PATH)->nvalue, const_cp);
     if (val) {
         shp->pathlist = path_addpath(shp, shp->pathlist, val, PATH_PATH);
     } else {
@@ -451,7 +451,7 @@ static_fn void path_init(Shell_t *shp) {
         if (!pp) pp = defpath_init(shp);
         shp->pathlist = path_dup(pp);
     }
-    val = FETCH_VT(sh_scoped(shp, FPATHNOD)->nvalue, const_cp);
+    val = FETCH_VT(sh_scoped(shp, VAR_FPATH)->nvalue, const_cp);
     if (val) (void)path_addpath(shp, shp->pathlist, val, PATH_FPATH);
 }
 
@@ -466,7 +466,7 @@ Pathcomp_t *path_get(Shell_t *shp, const char *name) {
         if (!shp->pathlist) path_init(shp);
         pp = shp->pathlist;
     }
-    if ((!pp && !(FETCH_VT(sh_scoped(shp, PATHNOD)->nvalue, const_cp))) ||
+    if ((!pp && !(FETCH_VT(sh_scoped(shp, VAR_PATH)->nvalue, const_cp))) ||
         sh_isstate(shp, SH_DEFPATH)) {
         pp = shp->defpathlist;
         if (!pp) pp = defpath_init(shp);
@@ -669,8 +669,8 @@ bool path_search(Shell_t *shp, const char *name, Pathcomp_t **oldpp, int flag) {
 }
 
 static_fn bool pwdinfpath(void) {
-    const char *pwd = nv_getval(PWDNOD);
-    const char *fpath = nv_getval(FPATHNOD);
+    const char *pwd = nv_getval(VAR_PWD);
+    const char *fpath = nv_getval(VAR_FPATH);
     int n;
 
     if (!pwd || !fpath) return false;
@@ -1295,10 +1295,10 @@ openok:
     // Save name of calling command.
     shp->readscript = error_info.id;
     // Close history file if name has changed.
-    if (shp->gd->hist_ptr && (path = nv_getval(HISTFILE)) &&
+    if (shp->gd->hist_ptr && (path = nv_getval(VAR_HISTFILE)) &&
         strcmp(path, shp->gd->hist_ptr->histname)) {
         hist_close(shp->gd->hist_ptr);
-        STORE_VT((HISTCUR)->nvalue, i32p, NULL);
+        STORE_VT((VAR_HISTCMD)->nvalue, i32p, NULL);
     }
     sh_offstate(shp, SH_FORKED);
     if (shp->sigflag[SIGCHLD] == SH_SIGOFF) shp->sigflag[SIGCHLD] = SH_SIGFAULT;
@@ -1483,7 +1483,7 @@ Pathcomp_t *path_addpath(Shell_t *shp, Pathcomp_t *first, const char *path, int 
             if (!pp) pp = defpath_init(shp);
             first = path_dup(pp);
         }
-        cp = FETCH_VT(sh_scoped(shp, FPATHNOD)->nvalue, const_cp);
+        cp = FETCH_VT(sh_scoped(shp, VAR_FPATH)->nvalue, const_cp);
         if (cp) {
             first = path_addpath(shp, first, cp, PATH_FPATH);
         }
