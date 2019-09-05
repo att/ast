@@ -2411,14 +2411,19 @@ static_fn void tilde_expand2(Shell_t *shp, int offset) {
 static_fn char *sh_tilde(Shell_t *shp, const char *string) {
     char *cp;
     int c;
-    struct passwd *pw;
+    struct passwd *pw = NULL;
     Namval_t *np = NULL;
     static Dt_t *logins_tree;
+    static char *username;
 
     if (*string++ != '~') return NULL;
     if ((c = *string) == 0) {
-        if (!(cp = nv_getval(sh_scoped(shp, VAR_HOME)))) cp = getlogin();
-        return cp;
+        if ((cp = nv_getval(sh_scoped(shp, VAR_HOME)))) return cp;
+        if (!username) {
+            if (!(pw = getpwuid(getuid()))) return NULL;
+            if (!(username = strdup(pw->pw_name))) return NULL;
+        }
+        string = username;
     }
     if ((c == '-' || c == '+') && string[1] == 0) {
         if (c == '+') {
@@ -2490,7 +2495,7 @@ static_fn char *sh_tilde(Shell_t *shp, const char *string) {
     }
 #endif  // __CYGWIN__
     if (logins_tree && (np = nv_search(string, logins_tree, 0))) return nv_getval(np);
-    if (!(pw = getpwnam(string))) return NULL;
+    if (!pw && !(pw = getpwnam(string))) return NULL;
 #if __CYGWIN__
 skip:
 #endif  // __CYGWIN__
