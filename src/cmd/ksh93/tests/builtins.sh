@@ -506,6 +506,14 @@ then
     rmdir "$pwd/f1"
 fi
 
+# =======
+# Verify `~` expansion works if `$HOME` is not set.
+# Regression test for https://github.com/att/ast/issues/1391
+expect="$(print ~$(id -un))"
+actual=$(unset HOME; $SHELL -c 'cd /; cd ~; pwd')
+[[ $actual == $expect ]] || log_error "bare ~ expansion with unset HOME" "$expect" "$actual"
+
+# =======
 TESTDIRSYMLINK="$TEST_DIR/testdirsymlink"
 ln -s "$TEST_DIR" "$TEST_DIR/testdirsymlink"
 
