@@ -29,13 +29,13 @@ then
     log_error RANDOM variable not working
 fi
 
-# SECONDS
-sleep 3
-if (( SECONDS < 2 ))
-then
-    log_error SECONDS variable not working
-fi
+# ==========
+# SECONDS tracks time correctly.
+SECONDS=0
+sleep 0.1
+(( SECONDS > 0.05 && SECONDS < 0.2 )) || log_error "SECONDS variable not working" "0.100" "$SECONDS"
 
+# ==========
 # _
 set abc def
 if [[ $_ != def ]]

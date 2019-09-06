@@ -46,7 +46,7 @@ expect_prompt
 # ==========
 # Timing a CPU bound statement produces non-zero times.
 log_test_entry
-send "time { SECONDS=0; while (( SECONDS < 1.5 )); do true; done; }\r"
+send "time { SECONDS=0; for ((i=0; ; i++)); do (( i % ITERS_PER_10MS == 0 && SECONDS >= 1.2 )) && break; done; }\r"
 expect -re "\r\nreal\[\t \]*$one_sec_re\r\ncpu$one_sec_re\r\n" {
     puts "time CPU bound pipeline produces expected output"
 }
@@ -60,7 +60,9 @@ expect_prompt
 # machine that may not be true. But even there we would normally expect at least 90%.
 log_test_entry
 send "$ksh -c 'TIMEFORMAT=\"pct %3P%\"; "
-send "SECONDS=0; time while (( SECONDS < 0.5 )); do true; done;'\r"
+send "time { "
+send "for ((i=0; ; i++)); do (( i % ITERS_PER_10MS == 0 && SECONDS >= 0.5 )) && break; done; "
+send "}'\r"
 expect -re "pct (100|9\[0-9\]).\[0-9\]\[0-9\]\[0-9\]%\r\n" {
     puts "time %3P produces correct output"
 }
