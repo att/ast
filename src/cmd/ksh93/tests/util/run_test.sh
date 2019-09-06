@@ -148,6 +148,20 @@ mkfifo fifo9
 mkfifo fifo8
 
 #
+# Figure out how many times to execute an empty loop to consume 100ms. This is used in a few places
+# to create a CPU bound loop that can be executed for a specific duration with a minimum number of
+# gettimeofday() syscalls (due to sampling $SECONDS).
+#
+integer iters_per_100ms
+SECONDS=0
+for ((iters_per_100ms = 0; ; iters_per_100ms++))
+do
+    (( iters_per_100ms % 20000 == 0 && SECONDS >= 0.1 )) && break
+done
+export ITERS_PER_10MS=$((iters_per_100ms / 10))
+log_info ITERS_PER_10MS=$ITERS_PER_10MS
+
+#
 # We don't want the tests to modify the command history and the like of the user running the tests.
 #
 mkdir $TEST_DIR/home

@@ -31,7 +31,7 @@ expect_prompt
 # ==========
 # A CPU bound statement produces non-zero times.
 log_test_entry
-send "{ SECONDS=0; while (( SECONDS < 1.5 )); do true; done; }\r"
+send "for ((i=0; ; i++)); do (( i % ITERS_PER_10MS == 0 && SECONDS >= 1.2 )) && break; done\r"
 expect_prompt
 
 send "times\r"
@@ -47,7 +47,7 @@ expect_prompt
 # expect system mode times to be less than one but user mode time for the shell and child processes
 # should be between one and two.
 log_test_entry
-send "$ksh -c 'SECONDS=0; while (( SECONDS < 1.5 )); do true; done'\r"
+send "$ksh -c 'for ((i=0; ; i++)); do (( i % ITERS_PER_10MS == 0 && SECONDS >= 1.2 )) && break; done'\r"
 expect_prompt
 
 send "times\r"
