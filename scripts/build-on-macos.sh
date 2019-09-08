@@ -9,7 +9,7 @@ mkdir build
 cd build
 
 echo ==== Configuring the build
-if ! meson -Dwarnings-are-errors=true
+if ! meson -Dwarnings-are-errors=true --prefix=$(mktemp -dt ksh.XXXXXX)
 then
     cat meson-logs/meson-log.txt
     exit 1
@@ -33,6 +33,7 @@ echo "/tmp/ksh_auditfile;$(id -u)" | sudo tee /etc/ksh_audit
 # newer. macOS 10.12 doesn't honor the MallocLogFile=/dev/null env var which
 # results in lots of malloc debug messages being written to stderr which
 # breaks the unit tests.
+ninja install
 if ! meson test
 then
     # cat meson-logs/testlog-malloc.txt

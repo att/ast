@@ -29,8 +29,10 @@ for name in $(builtin -l |
 
     actual=$($name --this-option-does-not-exist 2>&1)
     expect="Usage: $name"
+    # The first pattern supports the legacy optget() --help output. The second supports the new
+    # output from the _ksh_print_help function.
     [[ "$actual" =~ "$expect" ||
-       "$actual" =~ "SYNOPSIS".*"$name: Unknown flag '--this-option-does-not-exist'" ]] ||
+       "$actual" =~ ^SYNOPSIS.*$name..Unknown.flag ]] ||
         log_error "$name should show usage info on unrecognized options" "$expect" "$actual"
 done
 

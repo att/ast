@@ -18,7 +18,7 @@ mkdir build
 cd build
 
 echo ==== Configuring the build
-if ! meson -Dwarnings-are-errors=true
+if ! meson -Dwarnings-are-errors=true --prefix=$(mktemp -dt ksh.XXXXXX)
 then
     cat meson-logs/meson-log.txt
     exit 1
@@ -34,6 +34,7 @@ CORE_COUNT=$(nproc)
 export MESON_TESTTHREADS=$(( 4 * ${CORE_COUNT:-1} ))
 echo MESON_TESTTHREADS=$MESON_TESTTHREADS
 
+ninja install
 if ! meson test --setup=malloc
 then
     cat meson-logs/testlog-malloc.txt

@@ -160,8 +160,10 @@ foreach testspec : all_tests
 
         # Run the test without compiling the script (which is how most people use ksh).
         lang_var = 'LANG=en_US.UTF-8'
+        # Note the use of `-p` to keep the shell from sourcing dot scripts. Without this the
+        # platform's ksh config files could cause problems.
         test(test_name, ksh93_exe, timeout: timeout, is_parallel: parallel,
-            args: [test_driver, test_name],
+            args: ['-p', test_driver, test_name],
             env: [shell_var, lang_var, src_root, test_root, ld_library_path, libsample_path])
 
         # The shcomp variants are only applicable to the non-interactive tests.
@@ -177,7 +179,7 @@ foreach testspec : all_tests
             if not skip_test
                 # Run the test after compiling the script with `shcomp`.
                 test(test_name + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
-                    args: [ test_driver, 'shcomp', test_name],
+                    args: ['-p', test_driver, 'shcomp', test_name],
                     env: [shell_var, lang_var, src_root, test_root, shcomp_var, ld_library_path,
                           libsample_path])
             endif

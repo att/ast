@@ -180,12 +180,12 @@ typeset -a failure_lines
 
 # Run a ksh API test. Modeled loosely on the older run_interactive function.
 function run_api {
-    $test_path >$test_name.out 2>$test_name.err
+    $test_path > $test_name.out 2> $test_name.err
     exit_status=$?
 
     if [[ -e $TEST_ROOT/$test_name.out ]]
     then
-        if ! diff -q $TEST_ROOT/$test_name.out $test_name.out >/dev/null
+        if ! diff -q $TEST_ROOT/$test_name.out $test_name.out > /dev/null
         then
             log_error "Stdout for $test_name had unexpected differences:"
             diff -U3 $TEST_ROOT/$test_name.out $test_name.out >&2
@@ -200,7 +200,7 @@ function run_api {
 
     if [[ -e $TEST_ROOT/$test_name.err ]]
     then
-        if ! diff -q $TEST_ROOT/$test_name.err $test_name.err >/dev/null
+        if ! diff -q $TEST_ROOT/$test_name.err $test_name.err > /dev/null
         then
             log_error "Stderr for $test_name had unexpected differences:"
             diff -U3 $TEST_ROOT/$test_name.err $test_name.err >&2
@@ -242,12 +242,12 @@ function run_interactive {
     fi
 
     expect -n -c "source $TEST_ROOT/util/interactive.expect.rc" -f $test_path \
-        >$test_name.out 2>$test_name.err
+        > $test_name.out 2> $test_name.err
     exit_status=$?
 
     if [[ -e $TEST_ROOT/$test_name.out ]]
     then
-        if ! diff -q $TEST_ROOT/$test_name.out $test_name.out >/dev/null
+        if ! diff -q $TEST_ROOT/$test_name.out $test_name.out > /dev/null
         then
             log_error "Stdout for $test_name had unexpected differences:"
             diff -U3 $TEST_ROOT/$test_name.out $test_name.out >&2
@@ -262,7 +262,7 @@ function run_interactive {
 
     if [[ -e $TEST_ROOT/$test_name.err ]]
     then
-        if ! diff -q $TEST_ROOT/$test_name.err $test_name.err >/dev/null
+        if ! diff -q $TEST_ROOT/$test_name.err $test_name.err > /dev/null
         then
             log_error "Stderr for $test_name had unexpected differences:"
             diff -U3 $TEST_ROOT/$test_name.err $test_name.err >&2
@@ -338,7 +338,7 @@ fi
 if [[ $test_name == *.exp ]]
 then
     # Interactive test.
-    if ! command -v expect >/dev/null
+    if ! command -v expect > /dev/null
     then
         log_info "Skipping $test_name because no expect command could be found"
         exit 0
@@ -401,12 +401,12 @@ else
     chmod 755 $test_script
     if [[ $shcomp == false ]]
     then
-        $TEST_DIR/$test_script $test_name < /dev/null
+        $SHELL -p $TEST_DIR/$test_script $test_name < /dev/null
         exit_status=$?
     elif [[ $shcomp != skip ]]
     then
         $SHCOMP $test_script > $test_script.comp || exit
-        $SHELL $TEST_DIR/$test_script.comp $test_name < /dev/null
+        $SHELL -p $TEST_DIR/$test_script.comp $test_name < /dev/null
         exit_status=$?
     else
         exit_status=0

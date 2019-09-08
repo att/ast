@@ -95,20 +95,20 @@ then
     [[ $(alias -t | grep rm= ) ]] && log_error 'tracked alias not cleared'
 fi
 
-if hash -r 2>/dev/null && [[ ! $(hash) ]]
+if hash -r && [[ ! $(hash) ]]
 then
     PATH=$TEST_DIR:/bin:/usr/bin
     for i in foo -foo --
     do
         print ':' > $TEST_DIR/$i
         chmod +x $TEST_DIR/$i
-        hash -r -- $i 2>/dev/null || log_error "hash -r -- $i failed"
+        hash -r -- $i || log_error "hash -r -- $i failed with wrong status" 0 $?
         expect="$i=$TEST_DIR/$i"
         actual="$(hash)"
         [[ $actual == $expect ]] || log_error "hash -r -- $i failed" "$expect" "$actual"
     done
 else
-    log_error 'hash -r failed'
+    log_error 'hash -r failed' '' "$(hash)"
 fi
 
 ( alias :pr=print) 2> /dev/null || log_error 'alias beginning with : fails'

@@ -6,9 +6,14 @@
 #
 function _ksh_print_help {
     local cmd=$1
-    local fname="${.sh.install_prefix}/share/ksh/man/man1/${cmd}.1"
+    local man_dir="${.sh.install_prefix}/share/ksh/man"
+    local fname="$man_dir/man1/${cmd}.1"
 
-    [[ -f $fname ]] || return 1  # can't find the man page; give up
+    if [[ ! -f $fname ]]
+    then
+        print -u2 Unable to find man page for $cmd command
+        return 1  # can't find the man page; give up
+    fi
 
     # Find the `ul` command to translate x\cHx sequences, etc., into bold chars and such. Pagers
     # like `less` do this but better to not rely on them. If `ul` is not available just pipe the
@@ -27,7 +32,13 @@ function _ksh_print_help {
     # Convert the nroff source for the command into something that looks good on the terminal.
     # Specifically, by elimating all the text outside of the SYNOPSIS and FLAGS sections while
     # attempting to preserve some of the highlighting understood by the terminal.
-    nroff -c -man -rLL=${cols}n "$fname" |
+    local nroff_cmd=$(whence -p nroff)
+    if [[ -n $nroff_cmd ]]
+    then
+        nroff -c -man -rLL=${cols}n "$fname"
+    else
+        MANPATH="$man_dir" man "$cmd" 2> /dev/null
+    fi |
         sed -n \
             -e '/^S.*Y.*N.*O.*P.*S.*I.*S$/,/^[^ ]/ {
                     /^S/p
