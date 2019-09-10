@@ -94,6 +94,8 @@ struct limits {
     int child_max;  // maximum number of children
 };
 
+#undef _FPATH  // Cygwin defines _FPATH in /usr/include/sys/_default_fcntl.h
+
 // This structure must be kept in sync with the shtab_variables[] array in data/variables.c.
 // All structure member names have a leading underscore to avoid conflicts with #define symbols;
 // e.g., LC_ALL.
