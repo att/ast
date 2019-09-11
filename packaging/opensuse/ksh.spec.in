@@ -73,6 +73,9 @@ done
 %{_bindir}/ksh
 %{_bindir}/rksh
 %{_bindir}/shcomp
-%{_mandir}/man1/ksh.1*
+%{_mandir}/man1/*
+%{_datadir}/ksh/man/man1
+%{_datadir}/ksh/config.ksh
+%{_datadir}/ksh/functions/*
 
 %changelog

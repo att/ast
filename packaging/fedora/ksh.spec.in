@@ -62,7 +62,7 @@ install -p -D -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/skel/.kshrc
 ln -s %{_bindir}/ksh %{buildroot}%{_bindir}/rksh
 
 %post
-for s in /bin/ksh /bin/rksh /usr/bin/ksh /usr/bin/rksh 
+for s in /bin/ksh /bin/rksh /usr/bin/ksh /usr/bin/rksh
 do
   if [ ! -f /etc/shells ]; then
         echo "$s" > /etc/shells
@@ -95,7 +95,7 @@ if [ $1 -eq 0 ]; then
 fi
 
 %postun
-for s in /bin/ksh /bin/rksh /usr/bin/ksh /usr/bin/rksh 
+for s in /bin/ksh /bin/rksh /usr/bin/ksh /usr/bin/rksh
 do
   if [ ! -f $s ]; then
 	sed -i '\|^'"$s"'$|d' /etc/shells
@@ -113,7 +113,11 @@ done
 %{_bindir}/ksh93
 %{_bindir}/rksh
 %{_bindir}/shcomp
-%{_mandir}/man1/ksh93.1*
+%{_mandir}/man1/*
+%{_datadir}/ksh/man/man1
+%{_datadir}/ksh/config.ksh
+%{_datadir}/ksh/functions/*
+
 %config(noreplace) %{_sysconfdir}/skel/.kshrc
 %config(noreplace) %{_sysconfdir}/kshrc
 %config(noreplace) %{_sysconfdir}/binfmt.d/kshcomp.conf
