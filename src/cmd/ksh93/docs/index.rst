@@ -22,6 +22,7 @@ Welcome to the Korn Shell
    :caption: Command Builtins:
 
    basename
+   cat
 
 Indices and tables
 ==================

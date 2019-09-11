@@ -71,4 +71,6 @@ man_pages = [
     # External commands available as builtins.
     ('basename', 'basename', 'strip directory and suffix from filenames',
      'David J. Korn, et. al.', '1'),
+    ('cat', 'cat', 'concatenate files',
+     'David J. Korn, et. al.', '1'),
 ]

@@ -28,6 +28,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <getopt.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,7 +36,6 @@
 #include "ast.h"
 #include "builtins.h"
 #include "error.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 
@@ -302,83 +302,115 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, int flags) {
     }
 }
 
+static const char *short_options = ":bdenstuvABDEST";
+static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins support --help
+                                             {"number-nonblank", 0, NULL, 'b'},
+                                             {"dos-input", 0, NULL, 'd'},
+                                             {"number", 0, NULL, 'n'},
+                                             {"unbuffer", 0, NULL, 'u'},
+                                             {"show-nonprinting", 0, NULL, 'v'},
+                                             {"print-chars", 0, NULL, 'v'},
+                                             {"show-all", 0, NULL, 'A'},
+                                             {"squeeze-blank", 0, NULL, 'B'},
+                                             {"dos-output", 0, NULL, 'D'},
+                                             {"show-ends", 0, NULL, 'E'},
+                                             {"silent", 0, NULL, 'S'},
+                                             {"show-blank", 0, NULL, 'T'},
+                                             {NULL, 0, NULL, 0}};
+
+//
+// Builtin `cat` command.
+//
 int b_cat(int argc, char **argv, Shbltin_t *context) {
-    int n, flag;
+    int n, opt;
     int flags = 0;
     char *cp;
     Sfio_t *fp;
     char *mode;
     int att;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     int dovcat = 0;
     char states[UCHAR_MAX + 1];
 
     if (cmdinit(argc, argv, context, 0)) return -1;
     att = !path_is_bsd_universe();
     mode = "r";
-    while ((flag = optget(argv, sh_optcat))) {
-        n = 0;
-        switch (flag) {  //!OCLINT(MissingDefaultStatement)
-            case 'A':
-                n = T_FLAG | E_FLAG | V_FLAG;
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
+            case 'A': {
+                flags |= T_FLAG | E_FLAG | V_FLAG;
                 break;
-            case 'B':
-                n = S_FLAG;
+            }
+            case 'B': {
+                flags |= S_FLAG;
                 break;
-            case 'b':
-                n = B_FLAG;
+            }
+            case 'b': {
+                flags |= B_FLAG;
                 break;
-            case 'd':
-                mode = opt_info.num ? "rt" : "r";
-                continue;
-            case 'D':
-                n = d_FLAG;
+            }
+            case 'd': {
+                mode = "rt";
                 break;
-            case 'E':
-                n = E_FLAG;
+            }
+            case 'D': {
+                flags |= d_FLAG;
                 break;
-            case 'e':
-                n = E_FLAG | V_FLAG;
+            }
+            case 'E': {
+                flags |= E_FLAG;
                 break;
-            case 'n':
-                n = N_FLAG;
+            }
+            case 'e': {
+                flags |= E_FLAG | V_FLAG;
                 break;
-            case 's':
-                n = att ? F_FLAG : S_FLAG;
+            }
+            case 'n': {
+                flags |= N_FLAG;
                 break;
-            case 'S':
-                n = F_FLAG;
+            }
+            case 's': {
+                flags |= att ? F_FLAG : S_FLAG;
                 break;
-            case 'T':
-                n = T_FLAG;
+            }
+            case 'S': {
+                flags |= F_FLAG;
                 break;
-            case 't':
-                n = T_FLAG | V_FLAG;
+            }
+            case 'T': {
+                flags |= T_FLAG;
                 break;
-            case 'u':
-                n = U_FLAG;
+            }
+            case 't': {
+                flags |= T_FLAG | V_FLAG;
                 break;
-            case 'v':
-                n = V_FLAG;
+            }
+            case 'u': {
+                flags |= U_FLAG;
                 break;
-            case ':':
-                error(2, "%s", opt_info.arg);
+            }
+            case 'v': {
+                flags |= V_FLAG;
                 break;
-            case '?':
-                error(ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
-        }
-        if (!n) break;
-        if (opt_info.num) {
-            flags |= n;
-        } else {
-            flags &= ~n;
+            }
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    if (error_info.errors) {
-        error(ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
+    argv += optind;
 
     memset(states, 0, sizeof(states));
     if (flags & V_FLAG) {
