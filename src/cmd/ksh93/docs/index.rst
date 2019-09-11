@@ -12,6 +12,7 @@ Welcome to the Korn Shell
    :caption: Special Builtins:
 
    alias
+   bg
 
 .. toctree::
    :maxdepth: 1

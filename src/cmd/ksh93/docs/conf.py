@@ -57,8 +57,12 @@ html_static_path = ['_static']
 
 # Control which documents get converted to man pages by `make man`.
 man_pages = [
+    # Builtin commands.
     ('alias', 'alias', 'define or display aliases',
      'David J. Korn, et. al.', '1'),
+    ('bg', 'bg', 'resume jobs in the background',
+     'David J. Korn, et. al.', '1'),
+    # External commands available as builtins.
     ('basename', 'basename', 'strip directory and suffix from filenames',
      'David J. Korn, et. al.', '1'),
 ]

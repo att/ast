@@ -36,6 +36,9 @@ static const char *short_options = ":ptx";
 static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins supports --help
                                              {NULL, 0, NULL, 0}};
 
+//
+// Builtin `alias` command.
+//
 int b_alias(int argc, char *argv[], Shbltin_t *context) {
     UNUSED(argc);
     int opt;
