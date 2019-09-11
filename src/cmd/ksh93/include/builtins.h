@@ -66,6 +66,14 @@ struct tdata {
     int noref;
 };
 
+// This structure is used by `echo`, `print`, `printf`.
+struct print {
+    Shell_t *sh;
+    const char *options;
+    char raw;
+    char echon;
+};
+
 extern int setall(char **, nvflag_t, Dt_t *, struct tdata *);
 extern void print_scan(Sfio_t *file, nvflag_t flag, Dt_t *root, bool omit_attrs, struct tdata *tp);
 extern void builtin_print_help(Shell_t *shp, const char *cmd);

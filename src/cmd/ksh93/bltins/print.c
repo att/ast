@@ -18,7 +18,6 @@
  *                                                                      *
  ***********************************************************************/
 //
-// echo [arg...]
 // print [-nrps] [-f format] [-u filenum] [arg...]
 // printf  format [arg...]
 //
@@ -29,7 +28,6 @@
 
 #include <ctype.h>
 #include <errno.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -96,51 +94,7 @@ static_fn char *genformat(Shell_t *, char *);
 static_fn int fmtvecho(Shell_t *, const char *, struct printf *);
 static_fn ssize_t fmtbase64(Shell_t *, Sfio_t *, char *, const char *, int);
 
-struct print {
-    Shell_t *sh;
-    const char *options;
-    char raw;
-    char echon;
-};
-
 static char *nullarg[] = {0, 0};
-
-//
-// Builtin `echo`.
-//
-// See https://github.com/att/ast/issues/370 for a discussion about the `echo` builtin.
-int b_echo(int argc, char *argv[], Shbltin_t *context) {
-    static char bsd_univ;
-    struct print prdata;
-    prdata.options = sh_optecho + 5;
-    prdata.raw = prdata.echon = 0;
-    prdata.sh = context->shp;
-    UNUSED(argc);
-
-    // The external `echo` command is different on BSD and ATT platforms. So
-    // base our behavior on the contents of $PATH.
-    if (!prdata.sh->echo_universe_valid) {
-        bsd_univ = path_is_bsd_universe();
-        prdata.sh->echo_universe_valid = true;
-    }
-    if (!bsd_univ) return b_print(0, argv, (Shbltin_t *)&prdata);
-    prdata.options = sh_optecho;
-    prdata.raw = 1;
-    while (argv[1] && *argv[1] == '-') {
-        if (strcmp(argv[1], "-n") == 0) {
-            prdata.echon = 1;
-        } else if (strcmp(argv[1], "-e") == 0) {
-            prdata.raw = 0;
-        } else if (strcmp(argv[1], "-ne") == 0 || strcmp(argv[1], "-en") == 0) {
-            prdata.raw = 0;
-            prdata.echon = 1;
-        } else {
-            break;
-        }
-        argv++;
-    }
-    return b_print(0, argv, (Shbltin_t *)&prdata);
-}
 
 //
 // Builtin `printf`.

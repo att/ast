@@ -8,6 +8,7 @@ ksh93_files += [
     'bltins/continue.c',
     'bltins/disown.c',
     'bltins/enum.c',
+    'bltins/echo.c',
     'bltins/exec_login.c',
     'bltins/exit.c',
     'bltins/export.c',
