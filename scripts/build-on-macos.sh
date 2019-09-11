@@ -9,7 +9,7 @@ mkdir build
 cd build
 
 echo ==== Configuring the build
-if ! meson -Dwarnings-are-errors=true --prefix=$(mktemp -dt ksh.XXXXXX)
+if ! meson -Dwarnings-are-errors=true --prefix="$(mktemp -dt ksh.XXXXXX)"
 then
     cat meson-logs/meson-log.txt
     exit 1

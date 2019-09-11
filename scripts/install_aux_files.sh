@@ -9,7 +9,10 @@ ksh_man_src="$MESON_SOURCE_ROOT/src/cmd/ksh93/docs"
 umask 022
 
 set -x
-cd "$ksh_man_src"
+mkdir -m 755 "$ksh_aux_dir"
+mkdir -m 755 "$ksh_man_dir"
+mkdir -m 755 "$ksh_man_dir/man1"
+cd "$ksh_man_src" || exit 99
 
 # At some point we'll want to uncomment this statement. Probably after we've
 # converted all the documentation to Sphinx format. At that point we'll want
@@ -22,8 +25,6 @@ cd "$ksh_man_src"
 # to be installed in that directory.
 #
 # make man
-
-mkdir -p -m 755 "$ksh_man_dir/man1"
 cp _build/man/*.1 "$ksh_man_dir/man1"
 
 # Old versions of Meson (e.g., 0.44) don't recognize the `install_mode` option
