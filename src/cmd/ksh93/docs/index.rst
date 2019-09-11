@@ -13,6 +13,7 @@ Welcome to the Korn Shell
 
    alias
    bg
+   fg
 
 .. toctree::
    :maxdepth: 1

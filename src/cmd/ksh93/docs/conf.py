@@ -62,6 +62,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('bg', 'bg', 'resume jobs in the background',
      'David J. Korn, et. al.', '1'),
+    ('fg', 'fg', 'move jobs to the foreground',
+     'David J. Korn, et. al.', '1'),
     # External commands available as builtins.
     ('basename', 'basename', 'strip directory and suffix from filenames',
      'David J. Korn, et. al.', '1'),
