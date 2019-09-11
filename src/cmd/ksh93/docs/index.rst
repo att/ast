@@ -14,6 +14,7 @@ Welcome to the Korn Shell
    alias
    bg
    break
+   builtin
    fg
 
 .. toctree::

@@ -64,6 +64,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('break', 'break', 'break out of loop',
      'David J. Korn, et. al.', '1'),
+    ('builtin', 'builtin', 'add, delete, or display shell built-ins',
+     'David J. Korn, et. al.', '1'),
     ('fg', 'fg', 'move jobs to the foreground',
      'David J. Korn, et. al.', '1'),
     # External commands available as builtins.

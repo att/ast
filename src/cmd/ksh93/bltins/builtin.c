@@ -20,6 +20,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <dlfcn.h>
+#include <getopt.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -31,7 +32,6 @@
 #include "dlldefs.h"
 #include "error.h"
 #include "name.h"
-#include "option.h"
 #include "path.h"
 #include "sfio.h"
 #include "shcmd.h"
@@ -53,6 +53,9 @@ typedef void (*Libinit_f)(int, void *);
 #define GROWLIB 4
 
 static int maxlib;
+static const char *short_options = ":df:lnps";
+static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins supports --help
+                                             {NULL, 0, NULL, 0}};
 
 //
 // Add library to loaded list. Call (*lib_init)() on first load if defined. Always move to head of
@@ -111,8 +114,12 @@ Shbltin_f sh_getlib(Shell_t *shp, char *sym, Pathcomp_t *pp) {
 // interface.
 //
 int b_builtin(int argc, char *argv[], Shbltin_t *context) {
+    UNUSED(argc);
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     char *arg = NULL, *name;
-    int n, r = 0;
+    int n, opt;
+    int r = 0;
     nvflag_t flag = 0;
     Namval_t *np = NULL;
     void *disable = NULL;
@@ -122,16 +129,21 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     char *errmsg;
     void *library = NULL;
     unsigned long ver;
-    int list = 0;
+    bool list = false;
     char path[PATH_MAX];
-    UNUSED(argc);
 
     memset(&tdata, 0, sizeof(tdata));
     tdata.sh = context->shp;
     stkp = tdata.sh->stk;
     if (!tdata.sh->pathlist) path_absolute(tdata.sh, argv[0], NULL);
-    while ((n = optget(argv, sh_optbuiltin))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 's': {
                 flag = BLT_SPC;
                 break;
@@ -146,11 +158,11 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'f': {
-                arg = opt_info.arg;
+                arg = optarg;
                 break;
             }
             case 'l': {
-                list = 1;
+                list = true;
                 break;
             }
             case 'p': {
@@ -158,24 +170,21 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
 
+    argv += optind;
     if (arg || *argv) {
         if (sh_isoption(tdata.sh, SH_RESTRICTED)) {
-            errormsg(SH_DICT, ERROR_exit(1), e_restricted, argv[-opt_info.index]);
+            errormsg(SH_DICT, ERROR_exit(1), e_restricted, argv[-optind]);
             __builtin_unreachable();
         }
         if (tdata.sh->subshell && !tdata.sh->subshare) sh_subfork();
