@@ -13,6 +13,7 @@ Welcome to the Korn Shell
 
    alias
    bg
+   break
    fg
 
 .. toctree::

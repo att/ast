@@ -19,45 +19,52 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdlib.h>
 
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
-#include "option.h"
 #include "shcmd.h"
 
+static const char *short_options = ":";
+static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins supports --help
+                                             {NULL, 0, NULL, 0}};
+
 //
-// Builtin `break`.
-// See also the continue.c module.
+// Builtin `break` command. See also the continue.c module.
 //
-int b_break(int n, char *argv[], Shbltin_t *context) {
-    char *arg;
+int b_break(int argc, char *argv[], Shbltin_t *context) {
+    UNUSED(argc);
+    int opt;
     Shell_t *shp = context->shp;
-    while ((n = optget(argv, sh_optbreak))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+    char *cmd = argv[0];
+
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
             }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
 
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
+    argv += optind;
 
-    argv += opt_info.index;
-    n = 1;
-    arg = *argv;
-
+    long n = 1;
+    char *arg = *argv;
     if (arg) {
-        n = (int)strtol(arg, &arg, 10);
+        n = strtol(arg, &arg, 10);
         if (n <= 0 || *arg) {
             errormsg(SH_DICT, ERROR_exit(1), e_nolabels, *argv);
             __builtin_unreachable();
