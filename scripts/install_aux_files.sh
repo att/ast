@@ -3,7 +3,7 @@
 # Do installation steps that are hard to do via the standard Meson function
 # (e.g., `install_subdir()`).
 #
-ksh_aux_dir="$MESON_INSTALL_PREFIX/share/ksh"
+ksh_aux_dir="${MESON_INSTALL_DESTDIR_PREFIX}/share/ksh"
 ksh_man_dir="$ksh_aux_dir/man"
 ksh_man_src="$MESON_SOURCE_ROOT/src/cmd/ksh93/docs"
 umask 022
