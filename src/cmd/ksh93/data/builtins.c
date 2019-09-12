@@ -232,9 +232,9 @@ const char e_condition[] = "condition(s) required";
 const char e_cneedsarg[] = "-c requires argument";
 
 // Error message for missing flag argument.
-#define BUILTIN_ERR_MISSING "\n%s: Expected argument for flag '%s'\n"
+#define BUILTIN_ERR_MISSING "%s: Expected argument for flag '%s'"
 // Error message for unrecognized flag.
-#define BUILTIN_ERR_UNKNOWN "\n%s: Unknown flag '%s'\n"
+#define BUILTIN_ERR_UNKNOWN "%s: Unknown flag '%s'"
 
 // Invoke a helper function or command to print a subset of the man page for the command. Such as
 // from doing "cmd --help".
@@ -247,11 +247,27 @@ void builtin_print_help(Shell_t *shp, const char *cmd) {
 // Error reporting for encounter with unknown option when parsing command arguments.
 void builtin_unknown_option(Shell_t *shp, const char *cmd, const char *opt) {
     builtin_print_help(shp, cmd);
+    sfputc(sfstderr, '\n');
     sfprintf(sfstderr, BUILTIN_ERR_UNKNOWN, cmd, opt);
+    sfputc(sfstderr, '\n');
 }
 
 // Error reporting for encounter with missing argument when parsing command arguments.
 void builtin_missing_argument(Shell_t *shp, const char *cmd, const char *opt) {
     builtin_print_help(shp, cmd);
+    sfputc(sfstderr, '\n');
     sfprintf(sfstderr, BUILTIN_ERR_MISSING, cmd, opt);
+    sfputc(sfstderr, '\n');
+}
+
+// Error reporting for general errors when parsing command arguments.
+void builtin_usage_error(Shell_t *shp, const char *cmd, const char *fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    builtin_print_help(shp, cmd);
+    sfputc(sfstderr, '\n');
+    sfprintf(sfstderr, "%s: ", cmd);
+    sfvprintf(sfstderr, fmt, ap);
+    sfputc(sfstderr, '\n');
+    va_end(ap);
 }
