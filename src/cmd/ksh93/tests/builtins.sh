@@ -19,8 +19,11 @@
 ########################################################################
 
 # ==========
+# Test that each builtin correctly handles an unrecognized flag. The grep is to eliminate builtins
+# that don't accept any flags; i.e., don't do use the usual getopt_long() loop.
 for name in $(builtin -l |
-    grep -Ev '(local|declare|echo|test|true|false|login|newgrp|uname|getconf|\[|:)'); do
+    grep -Ev '(local|declare|echo|test|true|false|login|newgrp|uname|getconf|\[|:)')
+do
     # Extract builtin name from /opt path
     if [[ "$name" =~ "/opt" ]];
     then
@@ -32,7 +35,7 @@ for name in $(builtin -l |
     # The first pattern supports the legacy optget() --help output. The second supports the new
     # output from the _ksh_print_help function.
     [[ "$actual" =~ "$expect" ||
-       "$actual" =~ ^SYNOPSIS.*$name..Unknown.flag ]] ||
+       "$actual" =~ $name:.--this-option-does-not-exist:.unknown ]] ||
         log_error "$name should show usage info on unrecognized options" "$expect" "$actual"
 done
 

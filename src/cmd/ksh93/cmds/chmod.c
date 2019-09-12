@@ -28,7 +28,9 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <getopt.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
@@ -37,8 +39,8 @@
 #include "ast.h"
 #include "ast_assert.h"
 #include "builtins.h"
+#include "defs.h"
 #include "error.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 
@@ -54,10 +56,31 @@
 #define ENOSYS EINVAL
 #endif
 
+static const char *short_options = ":cfhilnvF:HLPR";
+static const struct option long_options[] = {
+    {"help", 0, NULL, 1},            // all builtins support --help
+    {"metaphysical", 0, NULL, 'H'},  // don't let clang-format rewrap this list
+    {"logical", 0, NULL, 'L'},
+    {"follow", 0, NULL, 'L'},
+    {"physical", 0, NULL, 'P'},
+    {"nofollow", 0, NULL, 'P'},
+    {"recursive", 0, NULL, 'R'},
+    {"changes", 0, NULL, 'c'},
+    {"quiet", 0, NULL, 'f'},
+    {"silent", 0, NULL, 'f'},
+    {"ignore-umask", 0, NULL, 'i'},
+    {"symlink", 0, NULL, 'h'},
+    {"show", 0, NULL, 'n'},
+    {"reference", required_argument, NULL, 'F'},
+    {NULL, 0, NULL, 0}};
+
+//
+// Builtin `chmod` command.
+//
 int b_chmod(int argc, char **argv, Shbltin_t *context) {
     int (*chmodf)(const char *, mode_t);
     int mode;
-    int flag;
+    int opt;
     char *amode = NULL;
     struct stat st;
     char *last;
@@ -70,6 +93,8 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
     bool flag_L = false;
     bool flag_H = false;
     bool flag_P = false;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
     if (cmdinit(argc, argv, context, ERROR_NOTIFY)) return -1;
 
@@ -77,61 +102,89 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
     // NOTE: we diverge from the normal optget boilerplate to allow `chmod -x path`, and similar
     // invocations, to terminate the loop even though they look like unrecognized short flags.
     //
-    bool optget_done = false;
-    while (!optget_done && (flag = optget(argv, sh_optchmod))) {
-        switch (flag) {
-            case 'c':
+    bool getopt_done = false;
+    optind = 0;
+    while (!getopt_done &&
+           (opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
+            case 'c': {
                 notify = 1;
                 break;
-            case 'f':
+            }
+            case 'f': {
                 quiet = true;
                 break;
+            }
             case 'h':
+            case 'l': {
                 chlink = true;
                 break;
-            case 'i':
+            }
+            case 'i': {
                 ignore = 1;
                 break;
-            case 'n':
+            }
+            case 'n': {
                 show = 1;
                 break;
-            case 'v':
+            }
+            case 'v': {
                 notify = 2;
                 break;
-            case 'F':
-                if (stat(opt_info.arg, &st)) {
-                    error(ERROR_exit(1), "%s: cannot stat", opt_info.arg);
-                    __builtin_unreachable();
+            }
+            case 'F': {
+                if (stat(optarg, &st)) {
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: cannot stat", optarg);
+                    return 2;
                 }
                 mode = st.st_mode;
                 amode = "";
                 break;
-            case 'H':
+            }
+            case 'H': {
                 flag_H = true;
                 break;
-            case 'L':
+            }
+            case 'L': {
                 flag_L = true;
                 break;
-            case 'P':
+            }
+            case 'P': {
                 flag_P = true;
                 break;
-            case 'R':
+            }
+            case 'R': {
                 recursive = true;
                 break;
-            case ':':
-                optget_done = true;  // probably a negative permission like `-x` or similar
+            }
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            case '?': {
+                // This command is unusual in that we need to, for backward compatibility, support
+                // symbolic modes like `-rw` that aren't valid flags.
+                if (optopt == 'r' || optopt == 'w' || optopt == 'x') {
+                    getopt_done = true;  // The flag may be a negative permission like `-rw`
+                    optind = opterr;
+                } else {
+                    builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                    return 2;
+                }
                 break;
-            case '?':
-                error(ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
-            default: { break; }
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
+    argv += optind;
 
-    if (error_info.errors || !*argv || (!amode && !*(argv + 1))) {
-        error(ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    if (!*argv || (!amode && !*(argv + 1))) {
+        builtin_usage_error(shp, cmd, "Missing mode and/or file names");
+        return 2;
     }
 
     int fts_opts = FTS_PHYSICAL;

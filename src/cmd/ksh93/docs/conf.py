@@ -75,4 +75,6 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('cat', 'cat', 'concatenate files',
      'David J. Korn, et. al.', '1'),
+    ('chmod', 'chmod', 'change the access permissions of files',
+     'David J. Korn, et. al.', '1'),
 ]

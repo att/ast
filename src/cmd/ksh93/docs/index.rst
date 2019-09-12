@@ -24,6 +24,7 @@ Welcome to the Korn Shell
 
    basename
    cat
+   chmod
 
 Indices and tables
 ==================
