@@ -15,6 +15,7 @@ Welcome to the Korn Shell
    bg
    break
    builtin
+   cd
    fg
 
 .. toctree::

@@ -21,9 +21,11 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <getopt.h>
 #include <limits.h>
 #include <pwd.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -34,12 +36,15 @@
 #include "defs.h"
 #include "error.h"
 #include "name.h"
-#include "option.h"
 #include "path.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
 #include "variables.h"
+
+static const char *short_options = ":f:LP@";
+static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins support --help
+                                             {NULL, 0, NULL, 0}};
 
 //
 // Invalidate path name bindings to relative paths.
@@ -55,11 +60,13 @@ static_fn void invalidate(Namval_t *np, void *data) {
 //  The `cd` special builtin.
 //
 int b_cd(int argc, char *argv[], Shbltin_t *context) {
+    int opt;
     char *dir;
     Pathcomp_t *cdpath = NULL;
     const char *dp;
     const char *scoped_dir;
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     int saverrno = 0;
     int rval, i, j;
     bool fflag = false, pflag = false;
@@ -73,11 +80,22 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         __builtin_unreachable();
     }
 
-    while ((rval = optget(argv, sh_optcd))) {
-        switch (rval) {  //!OCLINT(MissingDefaultStatement)
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'f': {
-                dirfd = opt_info.num;
+                char *cp;
                 fflag = true;
+                int64_t n = strton64(optarg, &cp, NULL, 0);
+                if (*cp || n < 0 || n > INT_MAX) {
+                    errormsg(SH_DICT, ERROR_exit(0), "Invalid dirfd value: %s", optarg);
+                    return 2;
+                }
+                dirfd = n;
                 break;
             }
             case 'L': {
@@ -89,22 +107,23 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
+            default: { abort(); }
         }
     }
 
-    argv += opt_info.index;
-    argc -= opt_info.index;
+    argv += optind;
+    argc -= optind;
     dir = argv[0];
-    if (error_info.errors > 0 || argc > 2) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    if (argc > 2) {
+        builtin_usage_error(shp, cmd, "Too many arguments (expected at most two args)");
+        return 2;
     }
     shp->pwd = path_pwd(shp);
     oldpwd = (char *)shp->pwd;
