@@ -1,0 +1,200 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "CHMOD" "1" "Sep 13, 2019" "" "Korn Shell"
+.SH NAME
+chmod \- change the access permissions of files
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH SYNOPSIS
+.nf
+chmod [flags] mode file ...
+.fi
+.sp
+.SH DESCRIPTION
+.sp
+\fBchmod\fP changes the permission of each file according to mode, which can
+be either a symbolic representation of changes to make, or an octal number
+representing the bit pattern for the new permissions.
+.sp
+Symbolic mode strings consist of one or more comma separated list of
+operations that can be performed on the mode. Each operation is of the form
+\fIuser\fP \fIop\fP \fIperm\fP where \fIuser\fP is zero or more of the following letters:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.TP
+.B u
+User permission bits.
+.TP
+.B g
+Group permission bits.
+.TP
+.B o
+Other permission bits.
+.TP
+.B a
+All permission bits. This is the default if none are specified.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+The \fIperm\fP portion consists of zero or more of the following letters:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.TP
+.B r
+Read permission.
+.TP
+.B s
+Setuid when \fBu\fP is selected for \fIwho\fP and setgid when \fBg\fP is selected for \fIwho\fP\&.
+.TP
+.B w
+Write permission.
+.TP
+.B x
+Execute permission for files, search permission for directories.
+.TP
+.B X
+Same as \fBx\fP except that it is ignored for files that do not already
+have at least one \fBx\fP bit set.
+.TP
+.B l
+Exclusive lock bit on systems that support it. Group execute must be off.
+.TP
+.B t
+Sticky bit on systems that support it.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+The \fIop\fP portion consists of one or more of the following characters:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.TP
+.B +
+Cause the permission selected to be added to the existing
+permissions. \fB|\fP is equivalent to \fB+\fP\&.
+.TP
+.B \-
+Cause the permission selected to be removed to the existing permissions.
+.TP
+.B =
+Cause the permission to be set to the given permissions.
+.TP
+.B &
+Cause the permission selected to be \fIand\fPed with the existing permissions.
+.TP
+.B ^
+Cause the permission selected to be propagated to more restrictive groups.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+Symbolic modes with the \fIuser\fP portion omitted are subject to \fBumask\fP(2)
+settings unless the \fB=\fP \fIop\fP or the \fB\-\-ignore\-umask\fP option is specified.
+.sp
+A numeric mode is from one to four octal digits (0\-7), derived by adding
+up the bits with values 4, 2, and 1. Any omitted digits are assumed
+to be leading zeros. The first digit selects the set user ID (4) and
+set group ID (2) and save text image (1) attributes. The second digit
+selects permissions for the user who owns the file: read (4), write (2),
+and execute (1); the third selects permissions for other users in the
+file\(aqs group, with the same values; and the fourth for other users not
+in the file\(aqs group, with the same values.
+.sp
+For symbolic links, by default, \fBchmod\fP changes the mode on the file
+referenced by the symbolic link, not on the symbolic link itself. The \fB\-h\fP
+options can be specified to change the mode of the link. When traversing
+directories with \fB\-R\fP, \fBchmod\fP either follows symbolic links or does not
+follow symbolic links, based on the options \fB\-H\fP, \fB\-L\fP, and \fB\-P\fP\&.
+.sp
+When the \fB\-c\fP or \fB\-v\fP options are specified, change notifications are
+written to standard output using the format, \fB%s: mode changed to %0.4o
+(%s)\fP, with arguments of the pathname, the numeric mode, and the resulting
+permission bits as would be displayed by the \fBls\fP command.
+.sp
+For backwards compatibility, if an invalid option is given that is a valid
+symbolic mode specification, \fBchmod\fP treats this as a mode specification
+rather than as an option specification.
+.sp
+\fBThis command is not enabled by default.\fP To enable it run \fBbuiltin chmod\fP\&.
+.SH FLAGS
+.INDENT 0.0
+.TP
+.B \-H, \-\-metaphysical
+Follow symbolic links for command arguments; otherwise
+don\(aqt follow symbolic links when traversing directories.
+.TP
+.B \-L, \-\-logical, \-\-follow
+Follow symbolic links when traversing directories.
+.TP
+.B \-P, \-\-physical, \-\-nofollow
+Don\(aqt follow symbolic links when traversing directories.
+.TP
+.B \-R, \-\-recursive
+Change the mode for files in subdirectories recursively.
+.TP
+.B \-c, \-\-changes
+Describe only files whose permission actually change.
+.TP
+.B \-f, \-\-quiet, \-\-silent
+Do not report files whose permissioins fail to change.
+.TP
+.B \-h, \-l, \-\-symlink
+Change the mode of symbolic links on systems that
+support \fBlchmod\fP(2). Implies \fB\-\-physical\fP\&.
+.TP
+.B \-i, \-\-ignore\-umask
+Ignore the \fBumask\fP(2) value in symbolic mode
+expressions. This is probably how you expect \fBchmod\fP to work.
+.TP
+.B \-n, \-\-show
+Show actions but do not change any file modes.
+.TP
+.B \-F \fIfile\fP, \-\-reference=\fIfile\fP
+Omit the \fImode\fP operand and use the mode of \fIfile\fP instead.
+.TP
+.B \-v, \-\-verbose
+Describe changed permissions of all files.
+.UNINDENT
+.SH EXIT STATUS
+.sp
+0 All files changed successfully.
+.sp
+>0 Unable to change mode of one or more files.
+.SH SEE ALSO
+.sp
+\fBchgrp\fP(1), \fBchown\fP(1), \fBlchmod\fP(1), \fBtw\fP(1), \fBgetconf\fP(1), \fBls\fP(1), \fBumask\fP(2)
+.SH AUTHOR
+David J. Korn, et. al.
+.SH COPYRIGHT
+2019, David J. Korn, et.al.
+.\" Generated by docutils manpage writer.
+.
