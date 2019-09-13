@@ -16,6 +16,7 @@ Welcome to the Korn Shell
    break
    builtin
    cd
+   command
    fg
 
 .. toctree::
