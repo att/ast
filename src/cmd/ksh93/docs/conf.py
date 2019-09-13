@@ -77,4 +77,6 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('chmod', 'chmod', 'change the access permissions of files',
      'David J. Korn, et. al.', '1'),
+    ('cmp', 'cmp', 'compare two files',
+     'David J. Korn, et. al.', '1'),
 ]

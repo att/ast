@@ -25,6 +25,7 @@ Welcome to the Korn Shell
    basename
    cat
    chmod
+   cmp
 
 Indices and tables
 ==================

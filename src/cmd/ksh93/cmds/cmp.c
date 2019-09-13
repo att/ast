@@ -32,14 +32,16 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include "ast.h"
 #include "builtins.h"
+#include "defs.h"
 #include "error.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 
@@ -47,6 +49,20 @@
 #define CMP_SILENT 0x02
 #define CMP_CHARS 0x04
 #define CMP_BYTES 0x08
+
+static const char *short_options = ":bcd:i:ln:s";
+static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins support --help
+                                             {"print-bytes", 0, NULL, 'b'},
+                                             {"print-chars", 0, NULL, 'c'},
+                                             {"differences", required_argument, NULL, 'd'},
+                                             {"ignore-initial", required_argument, NULL, 'i'},
+                                             {"skip", required_argument, NULL, 'i'},
+                                             {"verbose", 0, NULL, 'l'},
+                                             {"bytes", required_argument, NULL, 'n'},
+                                             {"count", required_argument, NULL, 'n'},
+                                             {"quiet", 0, NULL, 's'},
+                                             {"silent", 0, NULL, 's'},
+                                             {NULL, 0, NULL, 0}};
 
 static void pretty(Sfio_t *out, int o, int delim, int flags) {
     int m;
@@ -172,14 +188,20 @@ static int cmp(const char *file1, Sfio_t *f1, const char *file2, Sfio_t *f2, int
     }
 }
 
+//
+//  The `cmp` builtin command.
+//
 int b_cmp(int argc, char **argv, Shbltin_t *context) {
     char *s;
     char *e;
     char *file1;
     char *file2;
+    int opt;
     int n;
     struct stat s1;
     struct stat s2;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
     Sfio_t *f1 = NULL;
     Sfio_t *f2 = NULL;
@@ -190,52 +212,76 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
     int flags = 0;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, sh_optcmp))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case 'b':
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
+            case 'b': {
                 flags |= CMP_BYTES;
                 break;
-            case 'c':
+            }
+            case 'c': {
                 flags |= CMP_CHARS;
                 break;
-            case 'd':
+            }
+            case 'd': {
                 flags |= CMP_VERBOSE;
-                differences = opt_info.number;
+                char *cp;
+                differences = strton64(optarg, &cp, NULL, 0);
+                if (*cp || differences < 0) {
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid -d value", optarg);
+                    return 2;
+                }
                 break;
-            case 'i':
-                o1 = strtoll(opt_info.arg, &e, 0);
+            }
+            case 'i': {
+                o1 = strtoll(optarg, &e, 0);
                 if (*e == ':') {
                     o2 = strtoll(e + 1, &e, 0);
                 } else {
                     o2 = o1;
                 }
                 if (*e) {
-                    error(2, "%s: skip1:skip2 expected", opt_info.arg);
-                    error(ERROR_usage(2), "%s", optusage(NULL));
-                    __builtin_unreachable();
+                    builtin_usage_error(shp, cmd, "%s: skip1:skip2 expected", optarg);
+                    return 2;
                 }
                 break;
-            case 'l':
+            }
+            case 'l': {
                 flags |= CMP_VERBOSE;
                 break;
-            case 'n':
-                count = opt_info.number;
+            }
+            case 'n': {
+                char *cp;
+                count = strton64(optarg, &cp, NULL, 0);
+                if (*cp || count < 0) {
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid -n value", optarg);
+                    return 2;
+                }
                 break;
-            case 's':
+            }
+            case 's': {
                 flags |= CMP_SILENT;
                 break;
-            case ':':
-                error(2, "%s", opt_info.arg);
-                break;
-            case '?':
-                error(ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+            }
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    if (error_info.errors || !(file1 = *argv++) || !(file2 = *argv++)) {
-        error(ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    argv += optind;
+    if (!(file1 = *argv++) || !(file2 = *argv++)) {
+        builtin_usage_error(shp, cmd, "expected two file name arguments");
+        return 2;
     }
     n = 2;
 
@@ -268,7 +314,7 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
             }
         }
         if (*argv) {
-            error(ERROR_usage(0), "%s", optusage(NULL));
+            builtin_usage_error(shp, cmd, "too many arguments");
             goto done;
         }
     }
