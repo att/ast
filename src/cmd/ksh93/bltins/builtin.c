@@ -53,7 +53,7 @@ typedef void (*Libinit_f)(int, void *);
 #define GROWLIB 4
 
 static int maxlib;
-static const char *short_options = ":df:lnps";
+static const char *short_options = "+:df:lnps";
 static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins supports --help
                                              {NULL, 0, NULL, 0}};
 

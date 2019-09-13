@@ -42,7 +42,7 @@
 #include "stk.h"
 #include "variables.h"
 
-static const char *short_options = ":f:LP@";
+static const char *short_options = "+:f:LP@";
 static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins support --help
                                              {NULL, 0, NULL, 0}};
 

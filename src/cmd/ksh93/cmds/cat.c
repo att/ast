@@ -302,7 +302,7 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, int flags) {
     }
 }
 
-static const char *short_options = ":bdenstuvABDEST";
+static const char *short_options = "+:bdenstuvABDEST";
 static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins support --help
                                              {"number-nonblank", 0, NULL, 'b'},
                                              {"dos-input", 0, NULL, 'd'},

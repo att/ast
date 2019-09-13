@@ -38,7 +38,7 @@
 #include "sfio.h"
 #include "shcmd.h"
 
-static const char *short_options = ":as:";
+static const char *short_options = "+:as:";
 static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins supports --help
                                              {"all", 0, NULL, 'a'},
                                              {"suffix", 0, NULL, 's'},

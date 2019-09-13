@@ -50,7 +50,7 @@
 #define CMP_CHARS 0x04
 #define CMP_BYTES 0x08
 
-static const char *short_options = ":bcd:i:ln:s";
+static const char *short_options = "+:bcd:i:ln:s";
 static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins support --help
                                              {"print-bytes", 0, NULL, 'b'},
                                              {"print-chars", 0, NULL, 'c'},

@@ -31,7 +31,7 @@
 
 #ifdef JOBS
 
-static const char *short_options = ":";
+static const char *short_options = "+:";
 static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins supports --help
                                              {NULL, 0, NULL, 0}};
 

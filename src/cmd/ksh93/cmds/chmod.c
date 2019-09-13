@@ -56,7 +56,7 @@
 #define ENOSYS EINVAL
 #endif
 
-static const char *short_options = ":cfhilnvF:HLPR";
+static const char *short_options = "+:cfhilnvF:HLPR";
 static const struct option long_options[] = {
     {"help", 0, NULL, 1},            // all builtins support --help
     {"metaphysical", 0, NULL, 'H'},  // don't let clang-format rewrap this list
