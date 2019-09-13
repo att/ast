@@ -28,7 +28,6 @@
 
 #include <signal.h>
 
-#include "defs.h"
 #include "jobs.h"
 
 // Error messages.

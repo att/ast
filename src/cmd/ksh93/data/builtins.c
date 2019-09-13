@@ -20,6 +20,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <signal.h>
+#include <stdarg.h>
 #include <stddef.h>
 
 #include "cmdext.h"
