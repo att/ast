@@ -28,6 +28,7 @@ Welcome to the Korn Shell
    cat
    chmod
    cmp
+   cut
 
 Indices and tables
 ==================

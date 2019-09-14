@@ -83,4 +83,6 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('cmp', 'cmp', 'compare two files',
      'David J. Korn, et. al.', '1'),
+    ('cut', 'cut', 'cut out selected columns or fields of each line of a file',
+     'David J. Korn, et. al.', '1'),
 ]

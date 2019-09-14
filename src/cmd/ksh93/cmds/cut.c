@@ -27,6 +27,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <getopt.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -35,8 +36,8 @@
 
 #include "ast.h"
 #include "builtins.h"
+#include "defs.h"
 #include "error.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
@@ -63,16 +64,35 @@ typedef struct Cut_s {
 
 #define HUGE INT_MAX
 #define BLOCK 8 * 1024
-#define C_BYTES 1
-#define C_CHARS 2
-#define C_FIELDS 4
-#define C_SUPRESS 8
-#define C_NOSPLIT 16
-#define C_NONEWLINE 32
+#define C_BYTES (1 << 0)
+#define C_CHARS (1 << 1)
+#define C_FIELDS (1 << 2)
+#define C_SUPRESS (1 << 3)
+#define C_NOSPLIT (1 << 4)
+#define C_NONEWLINE (1 << 5)
 
 #define SP_LINE 1
 #define SP_WORD 2
 #define SP_WIDE 3
+
+static const char *short_options = "+:b:c:d:f:nr:sD:NR:";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {"newline", no_argument, NULL, 2},
+    {"split", no_argument, NULL, 3},
+    {"nonewline", no_argument, NULL, 'N'},
+    {"nosplit", no_argument, NULL, 'n'},
+    {"bytes", required_argument, NULL, 'b'},
+    {"characters", required_argument, NULL, 'c'},
+    {"delimeter", required_argument, NULL, 'd'},
+    {"fields", required_argument, NULL, 'f'},
+    {"reclen", required_argument, NULL, 'r'},
+    {"only-delimeted", no_argument, NULL, 's'},
+    {"suppress", no_argument, NULL, 's'},
+    {"output-delimiter", required_argument, NULL, 'D'},
+    {"line-delimiter", required_argument, NULL, 'D'},
+    {"line-delimeter", required_argument, NULL, 'D'},
+    {NULL, 0, NULL, 0}};
 
 /*
  * compare the first of an array of integers
@@ -477,104 +497,128 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
     char *cp = NULL;
     Sfio_t *fp;
     char *s;
-    int n;
+    int n, opt;
     Cut_t *cut;
     int mode = 0;
     Delim_t wdelim = {NULL, 0, 0};
     Delim_t ldelim = {NULL, 0, 0};
     size_t reclen = 0;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
     if (cmdinit(argc, argv, context, 0)) return -1;
     wdelim.chr = '\t';
     ldelim.chr = '\n';
     wdelim.len = ldelim.len = 1;
-    while ((n = optget(argv, sh_optcut))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
+            case 2: {
+                mode &= ~C_NONEWLINE;
+                break;
+            }
+            case 3: {
+                mode &= ~C_NOSPLIT;
+                break;
+            }
             case 'b':
-            case 'c':
+            case 'c': {
                 if (mode & C_FIELDS) {
                     error(2, "f option already specified");
                     break;
                 }
-                cp = opt_info.arg;
-                if (opt_info.option[1] == 'b') {
-                    mode |= C_BYTES;
-                } else {
-                    mode |= C_CHARS;
-                }
+                cp = optarg;
+                mode |= opt == 'b' ? C_BYTES : C_CHARS;
                 break;
-            case 'D':
-                ldelim.str = opt_info.arg;
+            }
+            case 'D': {
+                ldelim.str = optarg;
                 if (mbwide()) {
-                    s = opt_info.arg;
+                    s = optarg;
                     ldelim.chr = mb1char(&s);
-                    if ((n = s - opt_info.arg) > 1) {
+                    if ((n = s - optarg) > 1) {
                         ldelim.len = n;
                         break;
                     }
                 }
-                ldelim.chr = *(unsigned char *)opt_info.arg;
+                ldelim.chr = *(unsigned char *)optarg;
                 ldelim.len = 1;
                 break;
-            case 'd':
-                wdelim.str = opt_info.arg;
+            }
+            case 'd': {
+                wdelim.str = optarg;
                 if (mbwide()) {
-                    s = opt_info.arg;
+                    s = optarg;
                     wdelim.chr = mb1char(&s);
-                    n = s - opt_info.arg;
+                    n = s - optarg;
                     if (n > 1) {
                         wdelim.len = n;
                         break;
                     }
                 }
-                wdelim.chr = *(unsigned char *)opt_info.arg;
+                wdelim.chr = *(unsigned char *)optarg;
                 wdelim.len = 1;
                 break;
-            case 'f':
+            }
+            case 'f': {
                 if (mode & (C_CHARS | C_BYTES)) {
                     error(2, "c option already specified");
                     break;
                 }
-                cp = opt_info.arg;
+                cp = optarg;
                 mode |= C_FIELDS;
                 break;
-            case 'n':
+            }
+            case 'n': {
                 mode |= C_NOSPLIT;
                 break;
-            case 'N':
+            }
+            case 'N': {
                 mode |= C_NONEWLINE;
                 break;
+            }
             case 'R':
-            case 'r':
-                if (opt_info.num > 0) reclen = opt_info.num;
+            case 'r': {
+                char *cp;
+                reclen = strton64(optarg, &cp, NULL, 0);
+                if (*cp || reclen <= 0) {
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid -r value", optarg);
+                    return 2;
+                }
                 break;
-            case 's':
+            }
+            case 's': {
                 mode |= C_SUPRESS;
                 break;
-            case ':':
-                error(2, "%s", opt_info.arg);
-                break;
-            case '?':
-                error(ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+            }
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[opterr]);
+                return 2;
+            }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[opterr]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    if (error_info.errors) {
-        error(ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
+    argv += optind;
+
     if (!cp) {
-        error(2, "b, c or f option must be specified");
-        error(ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+        builtin_usage_error(shp, cmd, "b, c or f option must be specified");
+        return 2;
     }
     if (!*cp) error(3, "non-empty b, c or f option must be specified");
     if ((mode & (C_FIELDS | C_SUPRESS)) == C_SUPRESS) error(3, "s option requires f option");
     if (ldelim.chr < 0) {
-        // This is probably impossible but be paranoid and make linters like Coverity happy.
-        error(ERROR_usage(2), "-D option value is invalid");
-        __builtin_unreachable();
+        // This is impossible but be paranoid and make linters like Coverity Scan happy.
+        builtin_usage_error(shp, cmd, "-D option value is invalid");
+        return 2;
     }
     if (wdelim.chr < 0) {
         // This is probably impossible but be paranoid and make linters like Coverity happy.
