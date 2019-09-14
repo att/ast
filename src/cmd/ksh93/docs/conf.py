@@ -85,4 +85,6 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('cut', 'cut', 'cut out selected columns or fields of each line of a file',
      'David J. Korn, et. al.', '1'),
+    ('dirname', 'dirname', 'return directory portion of file name',
+     'David J. Korn, et. al.', '1'),
 ]

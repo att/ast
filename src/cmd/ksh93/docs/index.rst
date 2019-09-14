@@ -29,6 +29,7 @@ Welcome to the Korn Shell
    chmod
    cmp
    cut
+   dirname
 
 Indices and tables
 ==================

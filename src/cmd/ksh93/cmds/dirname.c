@@ -28,15 +28,23 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <limits.h>
 #include <stdlib.h>
 
 #include "ast.h"
 #include "builtins.h"
 #include "error.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
+
+static const char *short_options = "+:frx";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {"file", no_argument, NULL, 'f'},
+    {"relative", no_argument, NULL, 'r'},
+    {"executable", no_argument, NULL, 'x'},
+    {NULL, 0, NULL, 0}};
 
 static void l_dirname(Sfio_t *outfile, const char *pathname) {
     const char *last;
@@ -74,34 +82,48 @@ static void l_dirname(Sfio_t *outfile, const char *pathname) {
 
 int b_dirname(int argc, char **argv, Shbltin_t *context) {
     int mode = 0;
-    int n;
+    int opt;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, sh_optdirname))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case 'f':
+
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
+            case 'f': {
                 mode |= PATH_REGULAR;
                 break;
-            case 'r':
+            }
+            case 'r': {
                 mode &= ~PATH_REGULAR;
                 mode |= PATH_READ;
                 break;
-            case 'x':
+            }
+            case 'x': {
                 mode |= PATH_EXECUTE;
                 break;
-            case ':':
-                error(2, "%s", opt_info.arg);
-                break;
-            case '?':
-                error(ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+            }
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[opterr]);
+                return 2;
+            }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[opterr]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    argc -= opt_info.index;
-    if (error_info.errors || argc != 1) {
-        error(ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    argv += optind;
+    argc -= optind;
+    if (argc != 1) {
+        builtin_usage_error(shp, cmd, "expected exactly one argument, got %d", argc);
+        return 2;
     }
 
     if (!mode) {
