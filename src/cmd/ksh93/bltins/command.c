@@ -81,11 +81,11 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
             }
             case ':': {
                 if (argc == 0) return 0;
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[opterr]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[opterr]);
                 return 2;
             }
             default: { abort(); }

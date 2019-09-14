@@ -52,11 +52,11 @@ int b_fg(int argc, char *argv[], Shbltin_t *context) {
                 return 0;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[opterr]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[opterr]);
                 return 2;
             }
             default: { abort(); }

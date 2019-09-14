@@ -162,7 +162,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[opterr]);
                 return 2;
             }
             case '?': {
@@ -172,7 +172,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                     getopt_done = true;  // The flag may be a negative permission like `-rw`
                     optind = opterr;
                 } else {
-                    builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                    builtin_unknown_option(shp, cmd, argv[opterr]);
                     return 2;
                 }
                 break;
