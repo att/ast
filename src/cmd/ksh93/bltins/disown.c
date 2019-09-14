@@ -19,41 +19,50 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdlib.h>
 
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
 #include "jobs.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 
 #ifdef JOBS
+static const char *short_options = "+:";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
 //
 // Builtin `disown` command.
 //
-int b_disown(int n, char *argv[], Shbltin_t *context) {
+int b_disown(int argc, char *argv[], Shbltin_t *context) {
+    int opt;
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
-    while ((n = optget(argv, sh_optdisown))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[opterr]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[opterr]);
+                return 2;
             }
+            default: { abort(); }
         }
     }
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
 
-    argv += opt_info.index;
+    argv += optind;
     if (!sh_isoption(shp, SH_MONITOR) || !job.jobcontrol) {
         if (sh_isstate(shp, SH_INTERACTIVE)) {
             errormsg(SH_DICT, ERROR_exit(1), e_no_jctl);

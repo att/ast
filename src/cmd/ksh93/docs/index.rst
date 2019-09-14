@@ -18,6 +18,7 @@ Welcome to the Korn Shell
    cd
    command
    continue
+   disown
    fg
 
 .. toctree::
