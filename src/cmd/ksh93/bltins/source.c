@@ -19,6 +19,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <setjmp.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,7 +30,6 @@
 #include "fault.h"
 #include "io.h"
 #include "name.h"
-#include "option.h"
 #include "path.h"
 #include "sfio.h"
 #include "shcmd.h"
@@ -39,11 +39,21 @@
 
 #define DOTMAX MAXDEPTH  // maximum level of . nesting -- same as path recursion max
 
-int b_source(int n, char *argv[], Shbltin_t *context) {
+static const char *short_options = "+:";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
+//
+// Builtin `source` command. AKA `.` (dot) command.
+//
+int b_source(int argc, char *argv[], Shbltin_t *context) {
+    int opt;
     char *script;
     Namval_t *np;
     int jmpval;
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     struct sh_scoped savst, *prevscope = shp->st.self;
     int fd;
     char *filename = NULL;
@@ -53,30 +63,31 @@ int b_source(int n, char *argv[], Shbltin_t *context) {
     checkpt_t buff;
     Sfio_t *iop = NULL;
     short level;
-    Optdisc_t disc;
 
-    memset(&disc, 0, sizeof(disc));
-    disc.version = OPT_VERSION;
-    opt_info.disc = &disc;
-
-    while ((n = optget(argv, sh_optdot))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
             }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[opterr]);
                 return 2;
             }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[opterr]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
 
-    argv += opt_info.index;
+    argv += optind;
     script = *argv;
-    if (error_info.errors || !script) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    if (!script) {
+        builtin_usage_error(shp, cmd, "you must provide the name of the script to be sourced");
+        return 2;
     }
     if (shp->dot_depth + 1 > DOTMAX) {
         errormsg(SH_DICT, ERROR_exit(1), e_toodeep, script);

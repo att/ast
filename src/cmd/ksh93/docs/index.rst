@@ -20,6 +20,7 @@ Welcome to the Korn Shell
    continue
    disown
    fg
+   source
 
 .. toctree::
    :maxdepth: 1
