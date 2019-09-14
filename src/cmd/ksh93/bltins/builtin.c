@@ -54,8 +54,9 @@ typedef void (*Libinit_f)(int, void *);
 
 static int maxlib;
 static const char *short_options = "+:df:lnps";
-static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins supports --help
-                                             {NULL, 0, NULL, 0}};
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins supports --help
+    {NULL, 0, NULL, 0}};
 
 //
 // Add library to loaded list. Call (*lib_init)() on first load if defined. Always move to head of

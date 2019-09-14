@@ -58,19 +58,19 @@
 
 static const char *short_options = "+:cfhilnvF:HLPR";
 static const struct option long_options[] = {
-    {"help", 0, NULL, 1},            // all builtins support --help
-    {"metaphysical", 0, NULL, 'H'},  // don't let clang-format rewrap this list
-    {"logical", 0, NULL, 'L'},
-    {"follow", 0, NULL, 'L'},
-    {"physical", 0, NULL, 'P'},
-    {"nofollow", 0, NULL, 'P'},
-    {"recursive", 0, NULL, 'R'},
-    {"changes", 0, NULL, 'c'},
-    {"quiet", 0, NULL, 'f'},
-    {"silent", 0, NULL, 'f'},
-    {"ignore-umask", 0, NULL, 'i'},
-    {"symlink", 0, NULL, 'h'},
-    {"show", 0, NULL, 'n'},
+    {"help", no_argument, NULL, 1},            // all builtins support --help
+    {"metaphysical", no_argument, NULL, 'H'},  // don't let clang-format rewrap this list
+    {"logical", no_argument, NULL, 'L'},
+    {"follow", no_argument, NULL, 'L'},
+    {"physical", no_argument, NULL, 'P'},
+    {"nofollow", no_argument, NULL, 'P'},
+    {"recursive", no_argument, NULL, 'R'},
+    {"changes", no_argument, NULL, 'c'},
+    {"quiet", no_argument, NULL, 'f'},
+    {"silent", no_argument, NULL, 'f'},
+    {"ignore-umask", no_argument, NULL, 'i'},
+    {"symlink", no_argument, NULL, 'h'},
+    {"show", no_argument, NULL, 'n'},
     {"reference", required_argument, NULL, 'F'},
     {NULL, 0, NULL, 0}};
 

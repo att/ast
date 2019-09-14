@@ -28,8 +28,9 @@
 #include "shcmd.h"
 
 static const char *short_options = "+:";
-static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins supports --help
-                                             {NULL, 0, NULL, 0}};
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins supports --help
+    {NULL, 0, NULL, 0}};
 
 //
 // Builtin `break` command. See also the continue.c module.

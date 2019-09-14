@@ -43,8 +43,9 @@
 #include "variables.h"
 
 static const char *short_options = "+:f:LP@";
-static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins support --help
-                                             {NULL, 0, NULL, 0}};
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
 
 //
 // Invalidate path name bindings to relative paths.

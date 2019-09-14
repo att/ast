@@ -51,18 +51,19 @@
 #define CMP_BYTES 0x08
 
 static const char *short_options = "+:bcd:i:ln:s";
-static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins support --help
-                                             {"print-bytes", 0, NULL, 'b'},
-                                             {"print-chars", 0, NULL, 'c'},
-                                             {"differences", required_argument, NULL, 'd'},
-                                             {"ignore-initial", required_argument, NULL, 'i'},
-                                             {"skip", required_argument, NULL, 'i'},
-                                             {"verbose", 0, NULL, 'l'},
-                                             {"bytes", required_argument, NULL, 'n'},
-                                             {"count", required_argument, NULL, 'n'},
-                                             {"quiet", 0, NULL, 's'},
-                                             {"silent", 0, NULL, 's'},
-                                             {NULL, 0, NULL, 0}};
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {"print-bytes", no_argument, NULL, 'b'},
+    {"print-chars", no_argument, NULL, 'c'},
+    {"differences", required_argument, NULL, 'd'},
+    {"ignore-initial", required_argument, NULL, 'i'},
+    {"skip", required_argument, NULL, 'i'},
+    {"verbose", no_argument, NULL, 'l'},
+    {"bytes", required_argument, NULL, 'n'},
+    {"count", required_argument, NULL, 'n'},
+    {"quiet", no_argument, NULL, 's'},
+    {"silent", no_argument, NULL, 's'},
+    {NULL, 0, NULL, 0}};
 
 static void pretty(Sfio_t *out, int o, int delim, int flags) {
     int m;

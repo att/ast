@@ -303,20 +303,21 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, int flags) {
 }
 
 static const char *short_options = "+:bdenstuvABDEST";
-static const struct option long_options[] = {{"help", 0, NULL, 1},  // all builtins support --help
-                                             {"number-nonblank", 0, NULL, 'b'},
-                                             {"dos-input", 0, NULL, 'd'},
-                                             {"number", 0, NULL, 'n'},
-                                             {"unbuffer", 0, NULL, 'u'},
-                                             {"show-nonprinting", 0, NULL, 'v'},
-                                             {"print-chars", 0, NULL, 'v'},
-                                             {"show-all", 0, NULL, 'A'},
-                                             {"squeeze-blank", 0, NULL, 'B'},
-                                             {"dos-output", 0, NULL, 'D'},
-                                             {"show-ends", 0, NULL, 'E'},
-                                             {"silent", 0, NULL, 'S'},
-                                             {"show-blank", 0, NULL, 'T'},
-                                             {NULL, 0, NULL, 0}};
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {"number-nonblank", no_argument, NULL, 'b'},
+    {"dos-input", no_argument, NULL, 'd'},
+    {"number", no_argument, NULL, 'n'},
+    {"unbuffer", no_argument, NULL, 'u'},
+    {"show-nonprinting", no_argument, NULL, 'v'},
+    {"print-chars", no_argument, NULL, 'v'},
+    {"show-all", no_argument, NULL, 'A'},
+    {"squeeze-blank", no_argument, NULL, 'B'},
+    {"dos-output", no_argument, NULL, 'D'},
+    {"show-ends", no_argument, NULL, 'E'},
+    {"silent", no_argument, NULL, 'S'},
+    {"show-blank", no_argument, NULL, 'T'},
+    {NULL, 0, NULL, 0}};
 
 //
 // Builtin `cat` command.
