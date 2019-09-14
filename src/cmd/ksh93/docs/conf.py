@@ -70,6 +70,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('command', 'command', 'execute a simple command',
      'David J. Korn, et. al.', '1'),
+    ('continue', 'continue', 'continue execution at top of the loop',
+     'David J. Korn, et. al.', '1'),
     ('fg', 'fg', 'move jobs to the foreground',
      'David J. Korn, et. al.', '1'),
     # External commands available as builtins.

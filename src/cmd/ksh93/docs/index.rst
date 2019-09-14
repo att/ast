@@ -17,6 +17,7 @@ Welcome to the Korn Shell
    builtin
    cd
    command
+   continue
    fg
 
 .. toctree::
