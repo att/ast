@@ -64,6 +64,9 @@ matrix:
         - os: osx
           compiler: clang
           before_install:
+              # Note that scripts/build-on-macos.sh will install the
+              # prerequisites such as Meson and Sphinx using HomeBrew. This is
+              # obviously different compared to the Linux platforms.
               - brew update
           env:
               # This variable is not required by macOS builds, but setting it for Travis dashboard.

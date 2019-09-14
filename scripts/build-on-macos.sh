@@ -2,6 +2,7 @@
 set -e
 
 brew install meson
+brew install sphinx
 
 . scripts/travis_common.sh
 

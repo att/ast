@@ -36,3 +36,4 @@ Desktop.ini
 
 # Artifacts of the build and test process that should not be committed.
 build/
+src/cmd/ksh93/docs/_build/
