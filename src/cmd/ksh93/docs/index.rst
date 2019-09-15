@@ -21,6 +21,7 @@ Welcome to the Korn Shell
    disown
    echo
    enum
+   eval
    fg
    source
 
