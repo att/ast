@@ -57,7 +57,7 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
     while ((opt = getopt_long(true_argc, argv, short_options, long_options, NULL)) != -1) {
         switch (opt) {
             case 1: {
-                builtin_print_help(shp, cmd);
+                if (argc != 0) builtin_print_help(shp, cmd);
                 return 0;
             }
             case 'p': {
@@ -86,6 +86,7 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
                 return 2;
             }
             case '?': {
+                if (argc == 0) return 0;
                 builtin_unknown_option(shp, cmd, argv[opterr]);
                 return 2;
             }

@@ -16,6 +16,7 @@ all_tests = [
     ['b_dirname'],
     ['b_echo.exp'],
     ['b_enum'],
+    ['b_exit'],
     ['b_grep'],
     ['b_head'],
     ['b_hist.exp'],

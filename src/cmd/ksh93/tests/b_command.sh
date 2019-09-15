@@ -82,3 +82,12 @@ actual=$(
 )
 [[ $actual == "$expect" ]] ||
    log_error 'assignments to "command special_built-in" leaving side effects' "$expect" "$actual"
+
+# ========
+# Regression test for https://github.com/att/ast/issues/1402.
+#
+# We throw away stderr because we only want the value of `$t` not the error text from running
+# `command` with an invalid flag.
+expect='good'
+actual=$($SHELL -c 't=good; t=bad command -@; print $t' 2>/dev/null)
+[[ $expect == $actual ]] || log_error 'temp var assignment with `command`' "$expect" "$actual"

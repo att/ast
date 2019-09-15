@@ -380,11 +380,6 @@ mkdir foo .bar
 cd foo
 cd ../.bar 2> /dev/null || log_error 'cd ../.bar when ../.bar exists should not fail'
 
-$SHELL +E -i <<- \! && log_error 'interactive shell should not exit 0 after false'
-    false
-    exit
-!
-
 unset ENV
 
 : ~root

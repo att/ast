@@ -50,5 +50,5 @@ function _ksh_print_help {
                     /^[^ ]/b
                     p
                 }' |
-        uniq | "$ul"
+        uniq | "$ul" >&2
 }
