@@ -74,6 +74,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('disown', 'disown', 'disassociate a job from the current shell',
      'David J. Korn, et. al.', '1'),
+    ('echo', 'echo', 'output a line of text',
+     'David J. Korn, et. al.', '1'),
     ('fg', 'fg', 'move jobs to the foreground',
      'David J. Korn, et. al.', '1'),
     ('source', 'source', 'execute commands in the current environment',

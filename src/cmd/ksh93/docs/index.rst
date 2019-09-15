@@ -19,6 +19,7 @@ Welcome to the Korn Shell
    command
    continue
    disown
+   echo
    fg
    source
 

@@ -34,7 +34,7 @@
 int b_echo(int argc, char *argv[], Shbltin_t *context) {
     static char bsd_univ;
     struct print prdata;
-    prdata.options = sh_optecho + 5;
+    prdata.options = "";
     prdata.raw = prdata.echon = 0;
     prdata.sh = context->shp;
     UNUSED(argc);
@@ -46,7 +46,7 @@ int b_echo(int argc, char *argv[], Shbltin_t *context) {
         prdata.sh->echo_universe_valid = true;
     }
     if (!bsd_univ) return b_print(0, argv, (Shbltin_t *)&prdata);
-    prdata.options = sh_optecho;
+    prdata.options = "";
     prdata.raw = 1;
     while (argv[1] && *argv[1] == '-') {
         if (strcmp(argv[1], "-n") == 0) {
