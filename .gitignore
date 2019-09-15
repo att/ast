@@ -1,6 +1,6 @@
 # There are some patterns below we include reluctantly. They should be in an
 # individual's ~/.config/git/ignore file. For example, ".DS_Store" for people
-# working on MacOS. We include them to help ensure they don't added to the
+# working on MacOS. We include them to help ensure they arent't added to the
 # project.
 
 # Files and file extensions that should never be checked in regardless of
@@ -34,6 +34,5 @@
 ._*
 Desktop.ini
 
-# Artifacts of the build and test process that should not be committed.
+# Artifacts of the build, install, and test process that should not be committed.
 build/
-src/cmd/ksh93/docs/_build/

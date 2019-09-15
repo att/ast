@@ -20,6 +20,7 @@ Welcome to the Korn Shell
    continue
    disown
    echo
+   enum
    fg
    source
 

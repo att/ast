@@ -76,6 +76,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('echo', 'echo', 'output a line of text',
      'David J. Korn, et. al.', '1'),
+    ('enum', 'enum', 'create an enumeration type',
+     'David J. Korn, et. al.', '1'),
     ('fg', 'fg', 'move jobs to the foreground',
      'David J. Korn, et. al.', '1'),
     ('source', 'source', 'execute commands in the current environment',

@@ -19,6 +19,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,10 +31,15 @@
 #include "defs.h"
 #include "error.h"
 #include "name.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
+
+static const char *short_options = "+:ip";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {"ignorecase", no_argument, NULL, 'i'},
+    {NULL, 0, NULL, 0}};
 
 struct Enum {
     Namfun_t namfun;
@@ -210,7 +216,7 @@ static_fn int sh_outenum(Shell_t *shp, Sfio_t *iop, Namval_t *tp) {
 
 int b_enum(int argc, char **argv, Shbltin_t *context) {
     bool pflag = false, iflag = false;
-    int i, n;
+    int i, n, opt;
     ssize_t sz = -1;
     Namval_t *np, *tp, *mp;
     Namarr_t *ap;
@@ -218,14 +224,22 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
     const char *sp;
     struct Enum *ep;
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
+
     struct {
         Optdisc_t opt;
         Namval_t *np;
     } optdisc;
 
     if (cmdinit(argc, argv, context, ERROR_NOTIFY)) return -1;
-    while ((n = optget(argv, sh_optenum))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'p': {
                 pflag = true;
                 break;
@@ -235,20 +249,21 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[opterr]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[opterr]);
+                return 2;
             }
+            default: { abort(); }
         }
     }
 
-    argv += opt_info.index;
-    argc -= opt_info.index;
-    if (error_info.errors || argc != 1) {
-        error(ERROR_USAGE | 2, "%s", optusage(NULL));
+    argv += optind;
+    argc -= optind;
+    if (argc != 1) {
+        builtin_usage_error(shp, cmd, "expected one argument, got %d", argc);
         return 1;
     }
 

@@ -19,7 +19,10 @@
 ########################################################################
 
 # =======
-enum 2>&1 | grep -q Usage || log_error "Running enum without any arguments should show usage info"
+# Test what happens when enum is invoked with no arguments.
+expect="enum: expected one argument, got 0"
+actual=$(enum 2>&1)
+[[ $actual =~ "$expect" ]] || log_error "enum with no arguments" "$expect" "$actual"
 
 # TODO: Moving this line after the `for` loop that below changes output. That's a bug. Fix it.
 # =======
