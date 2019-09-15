@@ -29,7 +29,7 @@ Flags
 :-i, --ignorecase: The values are case insensitive.
 
 :-p: Writes the enums to standard output. If *typename* is omitted
-    then all `enum`s are written.
+    then all `enum`\s are written.
 
 Exit Status
 -----------

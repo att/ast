@@ -10,7 +10,7 @@ Synopsis
 Description
 -----------
 `disown` prevents the current shell from sending a `HUP` signal to
-each of the given *job*s when the current shell terminates a login session.
+each of the given *job*\s when the current shell terminates a login session.
 
 If *job* is omitted, the most recently started or stopped background job
 is used.
@@ -35,7 +35,7 @@ Exit Status
 -----------
 0 If all jobs are successfully disowned.
 
->0 If one more *job*s does not exist.
+>0 If one more *job*\s does not exist.
 
 See Also
 --------

@@ -28,7 +28,7 @@ When *name* refers to a file, the `PATH` variable is searched for
 the file containing commands.  In this case execute permission is not
 required for *name*.
 
-If any *arg*s are specified, these become the positional parameters for
+If any *arg*\s are specified, these become the positional parameters for
 the duration of the function or script and are restored upon completion.
 
 Exit Status
