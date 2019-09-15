@@ -22,6 +22,7 @@ Welcome to the Korn Shell
    echo
    enum
    eval
+   exec
    fg
    source
 

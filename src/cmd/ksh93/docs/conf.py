@@ -80,6 +80,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('eval', 'eval', 'create a shell command and process it',
      'David J. Korn, et. al.', '1'),
+    ('exec', 'exec', 'execute command, open/close/duplicate file descriptors',
+     'David J. Korn, et. al.', '1'),
     ('fg', 'fg', 'move jobs to the foreground',
      'David J. Korn, et. al.', '1'),
     ('source', 'source', 'execute commands in the current environment',

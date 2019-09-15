@@ -22,6 +22,7 @@
 // login [arg...]
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <string.h>
 
 #include "argnod.h"
@@ -32,7 +33,6 @@
 #include "fault.h"
 #include "jobs.h"
 #include "name.h"
-#include "option.h"
 #include "path.h"
 #include "shcmd.h"
 #include "shnodes.h"
@@ -43,21 +43,33 @@ struct login {
     char *arg0;
 };
 
+static const char *short_options = "+:a:c";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
 //
-// Builtin `exec`.
+// Builtin `exec` command.
 //
 int b_exec(int argc, char *argv[], Shbltin_t *context) {
-    UNUSED(argc);
     struct login logdata;
-    int n;
+    int opt;
     logdata.clear = 0;
     logdata.arg0 = NULL;
     logdata.sh = context->shp;
     logdata.sh->st.ioset = 0;
-    while ((n = optget(argv, sh_optexec))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
+
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'a': {
-                logdata.arg0 = opt_info.arg;
+                logdata.arg0 = optarg;
                 break;
             }
             case 'c': {
@@ -65,21 +77,18 @@ int b_exec(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
+                builtin_missing_argument(shp, cmd, argv[opterr]);
                 return 2;
             }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[opterr]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
 
-    argv += opt_info.index;
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
+    argv += optind;
     if (*argv) b_login(0, argv, (Shbltin_t *)&logdata);
     return 0;
 }
