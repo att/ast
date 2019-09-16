@@ -1,8 +1,8 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "BREAK" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "EVAL" "1" "Sep 15, 2019" "" "Korn Shell"
 .SH NAME
-break \- break out of loop
+eval \- create a shell command and process it
 .
 .nr rst2man-indent-level 0
 .
@@ -32,20 +32,26 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 ..
 .SH SYNOPSIS
 .nf
-break [n]
+eval [arg ...]
 .fi
 .sp
 .SH DESCRIPTION
 .sp
-\fBfg\fP is a shell special built\-in that exits the smallest enclosing for, select, while, or until loop, or the n\-th enclosing loop if n is specified. Execution continues at the command following the loop(s).
+\fBeval\fP is a shell special built\-in command that constructs a command
+by concatenating the \fIarg*s together, separating each with a space.
+The resulting string is then taken as input to the shell and evaluated
+in the current environment.  Note that command words are expanded twice;
+once to construct *arg\fP, and again when the shell executes the constructed
+command.
 .sp
-If \fBn\fP is given it must be a positive integer >= 1. If n is larger than the number of enclosing loops the last enclosing loop will be exited.
+It is not an error if \fIarg\fP is not given.
 .SH EXIT STATUS
 .sp
-0
+If \fIarg\fP is not specified, the exit status is \fB0\fP\&.  Otherwise, it is the
+exit status of the command defined by the \fIarg\fP operands.
 .SH SEE ALSO
 .sp
-\fBcontinue\fP(1), \fBreturn\fP(1)
+\fBexec\fP(1), \fBtrap\fP(1), \fB\&.\fP(1)
 .SH AUTHOR
 David J. Korn, et. al.
 .SH COPYRIGHT
