@@ -27,68 +27,119 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <getopt.h>
+#include <limits.h>
+#include <stdint.h>
 #include <string.h>
 #include <unistd.h>
 
+#include "ast.h"
 #include "builtins.h"
+#include "defs.h"
 #include "error.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
+#include "stdlib.h"
 
+static const char *short_options = "+:n:c:qs:v";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {"lines", required_argument, NULL, 'n'},
+    {"bytes", required_argument, NULL, 'c'},
+    {"skip", required_argument, NULL, 's'},
+    {"quiet", no_argument, NULL, 'q'},
+    {"silent", no_argument, NULL, 'q'},
+    {"verbose", no_argument, NULL, 'v'},
+    {NULL, 0, NULL, 0}};
+
+//
+// Builtin `head` command.
+//
 int b_head(int argc, char **argv, Shbltin_t *context) {
     static const char header_fmt[] = "\n==> %s <==\n";
 
     Sfio_t *fp;
+    int opt;
     char *cp;
     off_t keep = 10;
     off_t skip = 0;
-    int delim = '\n';
     off_t moved;
+    int delim = '\n';
     int header = 1;
     char *format = (char *)header_fmt + 1;
-    int n;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, sh_opthead))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case 'c':
+
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
+            case 'c': {
+                char *cp;
+                int64_t n = strton64(optarg, &cp, NULL, 0);
+                if (*cp || n < 0 || n > OFF_MAX) {
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -c", optarg);
+                    return 2;
+                }
+                keep = n;
                 delim = -1;
-                /*FALLTHROUGH*/
-            case 'n':
-                if (opt_info.offset && argv[opt_info.index][opt_info.offset] == 'c') {
-                    delim = -1;
-                    opt_info.offset++;
-                }
-                keep = opt_info.number;
-                if (keep <= 0) {
-                    error(2, "%s: %I*d: positive numeric option argument expected", opt_info.name,
-                          sizeof(keep), keep);
-                }
                 break;
-            case 'q':
+            }
+            case 'n': {
+                char *cp;
+                int64_t n = strton64(optarg, &cp, NULL, 0);
+                if (*cp || n < 0 || n > OFF_MAX) {
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -n", optarg);
+                    return 2;
+                }
+                keep = n;
+                delim = '\n';
+                break;
+            }
+            case 'q': {
                 header = argc;
                 break;
-            case 'v':
+            }
+            case 'v': {
                 header = 0;
                 break;
-            case 's':
-                skip = opt_info.number;
+            }
+            case 's': {
+                char *cp;
+                int64_t n = strton64(optarg, &cp, NULL, 0);
+                if (*cp || n < 0 || n > OFF_MAX) {
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -s", optarg);
+                    return 2;
+                }
+                skip = n;
                 break;
-            case ':':
-                error(2, "%s", opt_info.arg);
-                break;
-            case '?':
-                error(ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+            }
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[opterr]);
+                return 2;
+            }
+            case '?': {
+                char *cp;
+                int64_t n = strton64(argv[opterr] + 1, &cp, NULL, 0);
+                if (!*cp && n >= 0 && n <= OFF_MAX) {
+                    keep = n;
+                    delim = '\n';
+                    break;
+                }
+                builtin_unknown_option(shp, cmd, argv[opterr]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    argc -= opt_info.index;
-    if (error_info.errors) {
-        error(ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
+    argv += optind;
+    argc -= optind;
+
     cp = *argv;
     if (cp) argv++;
     do {

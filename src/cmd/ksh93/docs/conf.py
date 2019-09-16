@@ -103,4 +103,6 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('dirname', 'dirname', 'return directory portion of file name',
      'David J. Korn, et. al.', '1'),
+    ('head', 'head', 'output beginning portion of one or more files',
+     'David J. Korn, et. al.', '1'),
 ]

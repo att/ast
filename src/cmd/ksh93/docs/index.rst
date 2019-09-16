@@ -38,6 +38,7 @@ Welcome to the Korn Shell
    cmp
    cut
    dirname
+   head
 
 Indices and tables
 ==================

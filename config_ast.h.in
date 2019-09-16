@@ -23,6 +23,7 @@
 #define _CONFIG_AST_H 1
 
 #include <inttypes.h>
+#include <limits.h>
 #include <stdbool.h>
 #include <sys/types.h>
 
@@ -175,6 +176,13 @@
 #define _ast_intmax_t _ast_int8_t
 #mesondefine _ast_intmax_long
 #define _ast_fltmax_t long double
+
+// BSD systems provide this symbol but GNU/Linux does not. We could do this as
+// a config time feature test that maps to a #mesondefine but that doesn't
+// seem necessary; at least given where it is used in this code.
+#ifndef OFF_MAX
+#define OFF_MAX LONG_MAX
+#endif
 
 #mesondefine _has_sighandler_t
 #if !_has_sighandler_t
