@@ -21,7 +21,10 @@
 
 #include <ctype.h>
 #include <fcntl.h>
+#include <getopt.h>
+#include <limits.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -36,7 +39,6 @@
 #include "history.h"
 #include "io.h"
 #include "name.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
@@ -46,15 +48,20 @@
 
 static_fn void hist_subst(Shell_t *shp, const char *, int fd, const char *);
 
+static const char *short_options = "+:e:lnprsN:";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
 //
-// Builtin `hist`.
+// Builtin `hist` command.
 //
 int b_hist(int argc, char *argv[], Shbltin_t *context) {
-    UNUSED(argc);
     History_t *hp;
     const char *arg;
     int flag, fdo;
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     Sfio_t *outfile;
     char *fname;
     int range[2], incr, index2, indx = -1;
@@ -65,17 +72,23 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     int rflag = 0;
     int pflag = 0;
     Histloc_t location;
-    int n;
+    int opt;
 
     if (!sh_histinit(shp)) {
         errormsg(SH_DICT, ERROR_system(1), e_histopen);
         __builtin_unreachable();
     }
     hp = shp->gd->hist_ptr;
-    while ((n = optget(argv, sh_opthist))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'e': {
-                edit = opt_info.arg;
+                edit = optarg;
                 break;
             }
             case 'n': {
@@ -99,30 +112,36 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'N': {
-                if (indx <= 0) {
-                    if ((flag = hist_max(hp) - opt_info.num - 1) < 0) flag = 1;
-                    range[++indx] = flag;
-                    break;
+                char *cp;
+                int64_t n = strton64(optarg, &cp, NULL, 0);
+                if (*cp || n < 0 || n > OFF_MAX) {
+                    builtin_usage_error(shp, cmd, "%s: invalid -N value", optarg);
+                    return 2;
                 }
-            }
-            // FALLTHRU
-            case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
+
+                if (indx != -1) {
+                    builtin_usage_error(shp, cmd, "you can only use -N once");
+                    return 2;
+                }
+
+                flag = hist_max(hp) - n - 1;
+                if (flag < 0) flag = 1;
+                range[++indx] = flag;
                 break;
             }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[opterr]);
+                return 2;
             }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[opterr]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
 
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-
-    argv += (opt_info.index - 1);
+    argv += (optind - 1);
     // TODO: What is the usefulness of this flag ? Shall this be removed in future ?
     if (pflag) {
         hist_cancel(hp);
