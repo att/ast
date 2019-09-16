@@ -23,6 +23,7 @@ Welcome to the Korn Shell
    enum
    eval
    exec
+   exit
    fg
    source
 

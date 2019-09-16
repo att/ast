@@ -19,33 +19,47 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdlib.h>
 
 #include "ast.h"
 #include "builtins.h"
 #include "defs.h"
-#include "error.h"
 #include "fault.h"
-#include "option.h"
 #include "shcmd.h"
+
+static const char *short_options = "+:";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
 
 //
 // Builtin `exit` command. See also the return.c module which is similar to this module.
 //
-int b_exit(int n, char *argv[], Shbltin_t *context) {
+int b_exit(int argc, char *argv[], Shbltin_t *context) {
+    int n, opt;
     char *arg;
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     checkpt_t *pp = shp->jmplist;
-    while ((n = optget(argv, sh_optexit))) {
-        switch (n) {
+
+    optind = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case ':': {
-                if (!argv[opt_info.index] || !strmatch(argv[opt_info.index], "[+-]+([0-9])")) {
-                    errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                }
-                goto done;
+                builtin_missing_argument(shp, cmd, argv[opterr]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
+                if (strmatch(argv[opterr], "[+-]+([0-9])")) {
+                    optind = opterr;
+                    goto done;
+                }
+                builtin_unknown_option(shp, cmd, argv[opterr]);
                 return 2;
             }
             default: { break; }
@@ -53,13 +67,8 @@ int b_exit(int n, char *argv[], Shbltin_t *context) {
     }
 
 done:
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-
     pp->mode = SH_JMPEXIT;
-    argv += opt_info.index;
+    argv += optind;
     n = (((arg = *argv) ? (int)strtol(arg, NULL, 10) : shp->oldexit));
     if (n < 0 || n == 256 || n > SH_EXITMASK + shp->gd->sigmax) {
         n &= ((unsigned int)n) & SH_EXITMASK;
