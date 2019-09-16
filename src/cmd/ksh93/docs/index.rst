@@ -24,6 +24,7 @@ Welcome to the Korn Shell
    eval
    exec
    exit
+   export
    fg
    source
 

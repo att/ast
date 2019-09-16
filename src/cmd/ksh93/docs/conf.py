@@ -84,6 +84,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('exit', 'exit', 'exit the current shell',
      'David J. Korn, et. al.', '1'),
+    ('export', 'export', 'set export attribute on variables',
+     'David J. Korn, et. al.', '1'),
     ('fg', 'fg', 'move jobs to the foreground',
      'David J. Korn, et. al.', '1'),
     ('source', 'source', 'execute commands in the current environment',
