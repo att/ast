@@ -6,6 +6,6 @@ empty_fifos
 if (( $error_count != 0 ))
 then
     'log_warning' $((start_of_test_lineno - 1)) "error_count = $error_count"
-    exit $(( error_count < 125 ? error_count : 125 ))
+    exit $(( error_count < 50 ? error_count : 50 ))
 fi
 exit 0
