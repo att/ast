@@ -1,0 +1,30 @@
+[-1cn?
+@(#)$Id: hist (AT&T Research) 2000-04-02 $
+]
+[+NAME?\f?\f - process command history list]
+[+DESCRIPTION?\b\f?\f\b lists, edits, or re-executes, commands previously entered into the current shell environment.]
+[+?The command history list references commands by number. The first number in the list is selected arbitrarily.  The relationship of a number to its command does not change during a login session.  When the number reaches 32767 the number wraps around to 1 but maintains the ordering.]
+[+?When commands are edited (when the \b-l\b option is not specified), the resulting lines will be entered at the end of the history list and then reexecuted by the current shell.  The \b\f?\f\b command that caused the editing will not be entered into the history list.  If the editor returns a non-zero exit status, this will suppress the entry into the history list and the command reexecution.  Command line variable assignments and redirections affect both the \f?\f command and the commands that are reexecuted.]
+[+?\afirst\a and \alast\a define the range of commands. \afirst\a and \alast\a can be one of the following:]{
+[+\anumber\a?A positive number representing a command number.  A \b+\b sign can precede \anumber\a.]
+[+-\anumber\a?A negative number representing a command that was executed \anumber\a commands previously. For example, \b-1\b is the previous command.]
+[+\astring\a?\astring\a indicates the most recently entered command that begins with \astring\a. \astring\a should not contain an \b=\b.]
+}
+[+?If \afirst\a is omitted, the previous command is used, unless \b-l\b is specified, in which case it will default to \b-16\b and \alast\a will default to \b-1\b.]
+[+?If \afirst\a is specified and \alast\a is omitted, then \alast\a will default to \afirst\a unless \b-l\b is specified in which case it will default to \b-1\b.]
+[+?If no editor is specified, then the editor specified by the \bHISTEDIT\b variable will be used if set, or the \bFCEDIT\b variable will be used if set, otherwise, \bed\b will be used.]
+[e]:[editor?\aeditor\a specifies the editor to use to edit the history command.   A value of \b-\b for \aeditor\a is equivalent to specifying the \b-s\b option.]
+[l?List the commands rather than editing and reexecuting them.]
+[N]#[num?Start at \anum\a commands back.]
+[n?Suppress the command numbers when the commands are listed.]
+[p?Writes the result of history expansion for each operand to standard output.  All other options are ignored.]
+[r?Reverse the order of the commands.]
+[s?Reexecute the command without invoking an editor.  In this case an operand of the form \aold\a\b=\b\anew\a can be specified to change the first occurrence of the string \aold\a in the command to \anew\a before reexecuting the command.]
+
+[first [last] ]
+
+[+EXIT STATUS?If a command is reexecuted, the exit status is that of the command that gets reexecuted.  Otherwise, it is one of the following:]{
+[+0?Successfully completion of the listing.]
+[+>0?An error occurred.]
+}
+[+SEE ALSO?\bksh\b(1), \bsh\b(1), \bed\b(1)]
