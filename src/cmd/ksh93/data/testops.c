@@ -22,17 +22,35 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+
 #include "shtable.h"
 #include "test.h"
 
 //
-// This is the list of binary test and [[...]] operators.
+// This is the list of binary test and [[...]] operators. It must be sorted by op name.
 //
 const Shtable_t shtab_testops[] = {
-    {"!=", TEST_SNE}, {"-a", TEST_AND}, {"-ef", TEST_EF}, {"-eq", TEST_EQ}, {"-ge", TEST_GE},
-    {"-gt", TEST_GT}, {"-le", TEST_LE}, {"-lt", TEST_LT}, {"-ne", TEST_NE}, {"-nt", TEST_NT},
-    {"-o", TEST_OR},  {"-ot", TEST_OT}, {"=", TEST_SEQ},  {"==", TEST_SEQ}, {"=~", TEST_REP},
-    {"<", TEST_SLT},  {">", TEST_SGT},  {"]]", TEST_END}, {"", 0}};
+    {"!=", TEST_SNE},  // just to keep clang_format from compacting the table
+    {"-a", TEST_AND},  //
+    {"-ef", TEST_EF},  //
+    {"-eq", TEST_EQ},  //
+    {"-ge", TEST_GE},  //
+    {"-gt", TEST_GT},  //
+    {"-le", TEST_LE},  //
+    {"-lt", TEST_LT},  //
+    {"-ne", TEST_NE},  //
+    {"-nt", TEST_NT},  //
+    {"-o", TEST_OR},   //
+    {"-ot", TEST_OT},  //
+    {"<", TEST_SLT},   //
+    {"=", TEST_SEQ},   //
+    {"==", TEST_SEQ},  //
+    {"=~", TEST_REP},  //
+    {">", TEST_SGT},   //
+    {"]]", TEST_END},  //
+    {NULL, 0},         //
+};
 
 const char *test_opchars = "HLNRSVOGCaeohrwxdcbfugkvpsnzt";
 const char *e_argument = "argument expected";

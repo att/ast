@@ -19,23 +19,38 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+
 #include "shlex.h"
 #include "shtable.h"
 
 //
 // Table of reserved words in shell language. This list must be in in ascii sorted order.
 //
-const Shtable_t shtab_reserved[] = {{"!", NOTSYM},          {"[[", BTESTSYM},
-                                    {"case", CASESYM},      {"do", DOSYM},
-                                    {"done", DONESYM},      {"elif", ELIFSYM},
-                                    {"else", ELSESYM},      {"esac", ESACSYM},
-                                    {"fi", FISYM},          {"for", FORSYM},
-                                    {"function", FUNCTSYM}, {"if", IFSYM},
-                                    {"in", INSYM},          {"namespace", NSPACESYM},
-                                    {"select", SELECTSYM},  {"then", THENSYM},
-                                    {"time", TIMESYM},      {"until", UNTILSYM},
-                                    {"while", WHILESYM},    {"{", LBRACE},
-                                    {"}", RBRACE},          {"", 0}};
+const Shtable_t shtab_reserved[] = {
+    {"!", NOTSYM},  // just to keep clang_format from compacting the table
+    {"[[", BTESTSYM},
+    {"case", CASESYM},
+    {"do", DOSYM},
+    {"done", DONESYM},
+    {"elif", ELIFSYM},
+    {"else", ELSESYM},
+    {"esac", ESACSYM},
+    {"fi", FISYM},
+    {"for", FORSYM},
+    {"function", FUNCTSYM},
+    {"if", IFSYM},
+    {"in", INSYM},
+    {"namespace", NSPACESYM},
+    {"select", SELECTSYM},
+    {"then", THENSYM},
+    {"time", TIMESYM},
+    {"until", UNTILSYM},
+    {"while", WHILESYM},
+    {"{", LBRACE},
+    {"}", RBRACE},
+    {NULL, 0},
+};
 
 const char e_unexpected[] = "unexpected";
 const char e_unmatched[] = "unmatched";

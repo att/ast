@@ -806,8 +806,8 @@ int sig_number(Shell_t *shp, const char *string) {
                 if (!*last) return n;
             }
         }
-        tp = sh_locate(stkptr(shp->stk, o), (const Shtable_t *)shtab_signals,
-                       sizeof(*shtab_signals));
+        char *signame = stkptr(shp->stk, o);
+        tp = sh_locate(signame, (const Shtable_t *)shtab_signals, sizeof(*shtab_signals));
         n = tp->sh_number;
         if (sig == 1 && (n >= (SH_TRAP - 1) && n < (1 << SH_SIGBITS))) {
             // Sig prefix cannot match internal traps.

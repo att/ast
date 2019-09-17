@@ -339,9 +339,9 @@ int sh_argopts(int argc, char *argv[], void *context) {
 #endif
             case -6: {  // --default
                 const Shtable_t *tp;
-                for (tp = shtab_options; (o = tp->sh_number); tp++) {
-                    if (!(o & SH_COMMANDLINE) && is_option(&newflags, o & 0xff)) {
-                        off_option(&newflags, o & 0xff);
+                for (tp = shtab_options; tp->sh_name; tp++) {
+                    if (!(tp->sh_number & SH_COMMANDLINE) && is_option(&newflags, o & 0xff)) {
+                        off_option(&newflags, tp->sh_number & 0xff);
                     }
                 }
                 continue;
@@ -773,8 +773,8 @@ void sh_printopts(Shell_t *shp, Shopt_t oflags, int mode, Shopt_t *mask) {
         int i;
 
         c = 0;
-        for (tp = shtab_options; (value = tp->sh_number); tp++) {
-            if (mask && !is_option(mask, value & 0xff)) continue;
+        for (tp = shtab_options; tp->sh_name; tp++) {
+            if (mask && !is_option(mask, tp->sh_number & 0xff)) continue;
             name = tp->sh_name;
             if (name[0] == 'n' && name[1] == 'o' && name[2] != 't') name += 2;
             if (c < (w = strlen(name))) c = w;
@@ -784,9 +784,9 @@ void sh_printopts(Shell_t *shp, Shopt_t oflags, int mode, Shopt_t *mask) {
         if (w < 2 * c) w = 2 * c;
         r = w / c;
         i = 0;
-        for (tp = shtab_options; (value = tp->sh_number); tp++) {
-            if (mask && !is_option(mask, value & 0xff)) continue;
-            on = is_option(&oflags, value);
+        for (tp = shtab_options; tp->sh_name; tp++) {
+            if (mask && !is_option(mask, tp->sh_number & 0xff)) continue;
+            on = is_option(&oflags, tp->sh_number);
             name = tp->sh_name;
             if (name[0] == 'n' && name[1] == 'o' && name[2] != 't') {
                 name += 2;
@@ -810,7 +810,8 @@ void sh_printopts(Shell_t *shp, Shopt_t oflags, int mode, Shopt_t *mask) {
             sfwrite(sfstdout, "set --default", 13);
         }
     }
-    for (tp = shtab_options; (value = tp->sh_number); tp++) {
+    for (tp = shtab_options; tp->sh_name; tp++) {
+        value = tp->sh_number;
         if (mask && !is_option(mask, value & 0xff)) continue;
         if (sh_isoption(shp, SH_BASH)) {
             if (!(mode & PRINT_SHOPT) != !(value & SH_BASHOPT)) continue;

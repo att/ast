@@ -42,17 +42,17 @@
 
 //
 // Table lookup routine. The <table> is searched for string <sp> and corresponding value is
-// returned. This is only used for small tables and is used to save non-sharable memory.
+// returned. This is only used for small tables which is why we do a simple linear search; e.g.,
+// less than 50 entries. The names in the table must be sorted.
 //
-const Shtable_t *sh_locate(const char *sp, const Shtable_t *table, int size) {
+const Shtable_t *sh_locate(const char *sp, const Shtable_t *tp, int size) {
     int first;
-    const Shtable_t *tp;
-    int c;
     static const Shtable_t empty = {0, 0};
 
-    if (sp == 0 || (first = *sp) == 0) return &empty;
-    tp = table;
-    while ((c = *tp->sh_name) && c <= first) {
+    if (!sp || !(first = *sp)) return &empty;  // no string was provided
+    while (tp->sh_name) {
+        int c = *tp->sh_name;
+        if (c > first) break;
         if (first == c && strcmp(sp, tp->sh_name) == 0) return tp;
         tp = (Shtable_t *)((char *)tp + size);
     }
@@ -78,10 +78,11 @@ int sh_lookopt(const char *sp, int *invert) {
         if (sep(*sp)) sp++;
         *invert = !*invert;
     }
-    if ((first = *sp) == 0) return 0;
-    tp = shtab_options;
+    first = *sp;
+    if (first == 0) return 0;
     amb = hit = 0;
-    for (;;) {
+    tp = shtab_options;
+    while (tp->sh_name) {
         t = tp->sh_name;
         no = *t == 'n' && *(t + 1) == 'o' && *(t + 2) != 't';
         if (no) t += 2;
