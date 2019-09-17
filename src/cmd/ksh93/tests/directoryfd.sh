@@ -41,7 +41,7 @@ then
     log_warning "Skipping this test since the system does not have a /proc directory"
     cd /tmp
     rm -rf $TEST_DIR
-    exit 0
+    exit $MESON_SKIPPED_TEST
 fi
 
 #
