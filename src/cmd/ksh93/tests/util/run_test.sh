@@ -76,12 +76,15 @@ fi
 # robust unit tests, especially Expect based tests, easier.
 export TERM=dumb
 
+# Special exit status for meson.
+export MESON_SKIPPED_TEST=77
+
 # TODO: Enable the `io` test on Travis macOS once we understand why it dies from an abort().
 # I'm not seeing that failure happen on either of my macOS 10.12 or 10.13 systems.
 if [[ $test_name == io && $OS_NAME == darwin && $CI == true ]]
 then
     log_info 'Skipping io test on macOS on Travis'
-    exit 0
+    exit $MESON_SKIPPED_TEST
 fi
 
 
@@ -341,7 +344,7 @@ then
     if ! command -v expect > /dev/null
     then
         log_info "Skipping $test_name because no expect command could be found"
-        exit 0
+        exit $MESON_SKIPPED_TEST
     fi
 
     if [[ $shcomp == true ]]
@@ -356,7 +359,7 @@ then
         # These tests always fail on the first `expect_prompt` use. Which suggests a bug in how
         # `expect` implements timeouts on FreeBSD 11 (at least when run as a VM).
         log_info "Skipping test on $OS_NAME"
-        exit 0
+        exit $MESON_SKIPPED_TEST
     fi
 
     # Interactive tests are flakey on CI test environments like Travis. So make several attempts
