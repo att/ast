@@ -1145,6 +1145,11 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     // Initialize signal handling.
     sh_siginit(shp);
     stkinstall(NULL, nospace);
+    // Initialize the jobs table. This needs to be done very early because, at least at this time,
+    // importing vars from the environment can result in performing command substitution.  Which
+    // means external commands (jobs) might be run. Even if that dubious, undocumented, behavior is
+    // ever changed we should still init the jobs table as early as possible.
+    job_clear(shp);
     // Set up memory for name-value pairs.
     shp->init_context = nv_init(shp);
     // Read the environment.
@@ -1188,8 +1193,6 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 #endif
     nv_putval(VAR_IFS, (char *)e_sptbnl, NV_RDONLY);
     shp->st.tmout = READ_TIMEOUT;
-    // Initialize jobs table.
-    job_clear(shp);
     sh_onoption(shp, SH_MULTILINE);
     if (argc > 0) {
         int dolv_index = -1;
