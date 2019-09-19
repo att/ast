@@ -26,6 +26,7 @@ Welcome to the Korn Shell
    exit
    export
    fg
+   hist
    source
 
 .. toctree::

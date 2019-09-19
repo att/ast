@@ -233,7 +233,7 @@ const char e_condition[] = "condition(s) required";
 const char e_cneedsarg[] = "-c requires argument";
 
 // Error message for missing flag argument.
-#define BUILTIN_ERR_MISSING "%s: %s: expected argument for flag '%s'"
+#define BUILTIN_ERR_MISSING "%s: %s: expected argument for flag"
 // Error message for unrecognized flag.
 #define BUILTIN_ERR_UNKNOWN "%s: %s: unknown flag"
 
