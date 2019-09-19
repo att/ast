@@ -34,7 +34,6 @@
 #include <string.h>
 
 #include "builtins.h"
-#include "error.h"
 #include "sfio.h"
 #include "shcmd.h"
 
@@ -85,7 +84,7 @@ int b_basename(int argc, char **argv, Shbltin_t *context) {
     Shell_t *shp = context->shp;
     char *cmd = argv[0];
 
-    optind = 1;
+    optind = opterr = 0;
     while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
         switch (opt) {
             case 1: {
@@ -102,11 +101,11 @@ int b_basename(int argc, char **argv, Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[opterr]);
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[opterr]);
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
                 return 2;
             }
             default: { abort(); }

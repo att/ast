@@ -20,6 +20,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <getopt.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "ast.h"
@@ -28,7 +29,7 @@
 #include "fault.h"
 #include "shcmd.h"
 
-static const char *short_options = "+:";
+static const char *short_options = "+:X";
 static const struct option long_options[] = {
     {"help", no_argument, NULL, 1},  // all builtins support --help
     {NULL, 0, NULL, 0}};
@@ -43,33 +44,37 @@ int b_exit(int argc, char *argv[], Shbltin_t *context) {
     char *cmd = argv[0];
     checkpt_t *pp = shp->jmplist;
 
-    optind = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    // We use `getopt_long_only()` rather than `getopt_long()` to facilitate handling negative
+    // integers that might otherwise look like a flag.
+    optind = opterr = 0;
+    bool done = false;
+    while (!done && (opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
                 return 0;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[opterr]);
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
             case '?': {
-                if (strmatch(argv[opterr], "[+-]+([0-9])")) {
-                    optind = opterr;
-                    goto done;
+                if (!strmatch(argv[optind - 1], "[+-]+([0-9])")) {
+                    builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                    return 2;
                 }
-                builtin_unknown_option(shp, cmd, argv[opterr]);
-                return 2;
+                optind--;
+                done = true;
+                break;
             }
-            default: { break; }
+            default: { abort(); }
         }
     }
 
-done:
     pp->mode = SH_JMPEXIT;
     argv += optind;
-    n = (((arg = *argv) ? (int)strtol(arg, NULL, 10) : shp->oldexit));
+    arg = *argv;
+    n = arg ? (int)strtol(arg, NULL, 10) : shp->oldexit;
     if (n < 0 || n == 256 || n > SH_EXITMASK + shp->gd->sigmax) {
         n &= ((unsigned int)n) & SH_EXITMASK;
     }

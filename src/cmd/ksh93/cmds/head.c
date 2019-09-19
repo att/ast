@@ -72,7 +72,7 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
 
     if (cmdinit(argc, argv, context, 0)) return -1;
 
-    optind = 0;
+    optind = opterr = 0;
     while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
         switch (opt) {
             case 1: {
@@ -120,18 +120,18 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[opterr]);
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
             case '?': {
                 char *cp;
-                int64_t n = strton64(argv[opterr] + 1, &cp, NULL, 0);
+                int64_t n = strton64(argv[optind - 1] + 1, &cp, NULL, 0);
                 if (!*cp && n >= 0 && n <= OFF_MAX) {
                     keep = n;
                     delim = '\n';
                     break;
                 }
-                builtin_unknown_option(shp, cmd, argv[opterr]);
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
                 return 2;
             }
             default: { abort(); }

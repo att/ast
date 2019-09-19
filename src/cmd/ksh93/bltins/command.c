@@ -23,6 +23,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <getopt.h>
+#include "stdlib.h"
 #include <string.h>
 
 #include "builtins.h"
@@ -53,7 +54,7 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
         for (char **cp = argv; *cp; cp++) true_argc++;
     }
 
-    optind = 0;
+    optind = opterr = 0;
     while ((opt = getopt_long(true_argc, argv, short_options, long_options, NULL)) != -1) {
         switch (opt) {
             case 1: {
@@ -82,12 +83,12 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
             }
             case ':': {
                 if (argc == 0) return 0;
-                builtin_missing_argument(shp, cmd, argv[opterr]);
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
             case '?': {
                 if (argc == 0) return 0;
-                builtin_unknown_option(shp, cmd, argv[opterr]);
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
                 return 2;
             }
             default: { abort(); }

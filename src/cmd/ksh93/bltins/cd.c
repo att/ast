@@ -81,7 +81,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         __builtin_unreachable();
     }
 
-    optind = 0;
+    optind = opterr = 0;
     while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
         switch (opt) {
             case 1: {
@@ -108,11 +108,11 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[opterr]);
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[opterr]);
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
                 return 2;
             }
             default: { abort(); }

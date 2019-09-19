@@ -56,7 +56,7 @@
 #define ENOSYS EINVAL
 #endif
 
-static const char *short_options = "+:cfhilnvF:HLPR";
+static const char *short_options = "+:cfhilnr::w::x::vF:HLPR";
 static const struct option long_options[] = {
     {"help", no_argument, NULL, 1},            // all builtins support --help
     {"metaphysical", no_argument, NULL, 'H'},  // don't let clang-format rewrap this list
@@ -99,13 +99,13 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
     if (cmdinit(argc, argv, context, ERROR_NOTIFY)) return -1;
 
     //
-    // NOTE: we diverge from the normal optget boilerplate to allow `chmod -x path`, and similar
-    // invocations, to terminate the loop even though they look like unrecognized short flags.
+    // NOTE: we diverge from the normal optget boilerplate to allow `chmod -x path`, `chmod -rwx`
+    // and similar invocations to terminate the loop even though they would otherwise look like
+    // unrecognized short flags.
     //
-    bool getopt_done = false;
-    optind = 0;
-    while (!getopt_done &&
-           (opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    bool done = false;
+    optind = opterr = 0;
+    while (!done && (opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -161,21 +161,21 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 recursive = true;
                 break;
             }
+            // These three cases are atypical and allow the command to support file modes like -rwx.
+            case 'r':
+            case 'w':
+            case 'x': {
+                optind--;
+                done = true;
+                break;
+            }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[opterr]);
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
             case '?': {
-                // This command is unusual in that we need to, for backward compatibility, support
-                // symbolic modes like `-rw` that aren't valid flags.
-                if (optopt == 'r' || optopt == 'w' || optopt == 'x') {
-                    getopt_done = true;  // The flag may be a negative permission like `-rw`
-                    optind = opterr;
-                } else {
-                    builtin_unknown_option(shp, cmd, argv[opterr]);
-                    return 2;
-                }
-                break;
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             default: { abort(); }
         }

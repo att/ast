@@ -80,9 +80,11 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     }
     hp = shp->gd->hist_ptr;
 
+    // We use `getopt_long_only()` rather than `getopt_long()` to facilitate handling negative
+    // integers that might otherwise look like a flag.
     optind = opterr = 0;
     bool done = false;
-    while (!done && (opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    while (!done && (opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
