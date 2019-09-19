@@ -20,6 +20,7 @@ expect_prompt
 # ==========
 # -v Verbose. The shell displays its input onto standard error as
 #    it reads it.
+log_test_entry
 send "set -v\r"
 expect_prompt
 send "echo hello\r"
@@ -28,6 +29,7 @@ expect_prompt
 
 # ==========
 # -H Enable !-style history expansion similar to csh.
+log_test_entry
 send "set -H\r"
 expect_prompt
 send "echo hello\r"
@@ -47,21 +49,27 @@ expect_prompt
 
 # ==========
 # -f Pathname expansion is disabled.
+log_test_entry
 send "set +f\r"
 expect_prompt
 send "fals"
 send "\t"
 redraw_prompt
-expect -re ".*false "
+expect -re ".*false(.exe)? "
+sleep 0.1
 send [ctrl C]
 expect_prompt
 
+# ==========
+# -f Pathname expansion is enabled.
+log_test_entry
 send "set -f\r"
 expect_prompt
 send "fals"
 send "\t"
 redraw_prompt
 expect -re ".*fals    "
+sleep 0.1
 send [ctrl C]
 expect_prompt
 
@@ -72,9 +80,11 @@ expect_prompt
 #    is enabled by default for interactive shells on systems that
 #    support job control.
 
+# ==========
 # set -o ignoreeof
 # Prevents an interactive shell from exiting on reading
 # an end-of-file.
+log_test_entry
 send "set -o ignoreeof\r"
 expect_prompt
 send [ctrl D]
