@@ -19,28 +19,42 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdlib.h>
 #include <sys/types.h>
 
 #include "builtins.h"
 #include "defs.h"
-#include "error.h"
 #include "jobs.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 
 #ifdef JOBS
+
+static const char *short_options = "+:lnp";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
 //
 // Builtin `jobs`.
 //
 int b_jobs(int argc, char *argv[], Shbltin_t *context) {
-    UNUSED(argc);
-    int n;
+    int opt;
     int flag = 0;
     Shell_t *shp = context->shp;
-    while ((n = optget(argv, sh_optjobs))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+    char *cmd = argv[0];
+
+    // We use `getopt_long_only()` rather than `getopt_long()` to facilitate handling negative
+    // integers that might otherwise look like a flag.
+    optind = opterr = 0;
+    bool done = false;
+    while (!done && (opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'l': {
                 flag = JOB_LFLAG;
                 break;
@@ -54,23 +68,24 @@ int b_jobs(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                if (!strmatch(argv[optind - 1], "[+-]+([0-9])")) {
+                    builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                    return 2;
+                }
+                optind--;
+                done = true;
+                break;
             }
+            default: { abort(); }
         }
     }
 
-    argv += opt_info.index;
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-
-    if (*argv == 0) argv = NULL;
+    argv += optind;
+    if (!*argv) argv = NULL;
     if (job_walk(shp, sfstdout, job_list, flag, argv)) {
         errormsg(SH_DICT, ERROR_exit(1), e_no_job);
         __builtin_unreachable();

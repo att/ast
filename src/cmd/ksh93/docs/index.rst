@@ -27,6 +27,7 @@ Welcome to the Korn Shell
    export
    fg
    hist
+   jobs
    source
 
 .. toctree::
