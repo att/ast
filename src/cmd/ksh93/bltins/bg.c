@@ -40,11 +40,12 @@ static const struct option long_options[] = {
 // Builtin `bg` command.
 //
 int b_bg(int argc, char *argv[], Shbltin_t *context) {
-    UNUSED(argc);
     int opt;
     Shell_t *shp = context->shp;
     char *cmd = argv[0];
 
+    // We use `getopt_long_only()` rather than `getopt_long()` to facilitate handling negative
+    // integers that might otherwise look like a flag.
     optind = opterr = 0;
     while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
         switch (opt) {
@@ -63,8 +64,8 @@ int b_bg(int argc, char *argv[], Shbltin_t *context) {
             default: { abort(); }
         }
     }
-
     argv += optind;
+
     if (!sh_isoption(shp, SH_MONITOR) || !job.jobcontrol) {
         if (sh_isstate(shp, SH_INTERACTIVE)) {
             errormsg(SH_DICT, ERROR_exit(1), e_no_jctl);

@@ -63,8 +63,8 @@ int b_fg(int argc, char *argv[], Shbltin_t *context) {
             default: { abort(); }
         }
     }
-
     argv += optind;
+
     if (!sh_isoption(shp, SH_MONITOR) || !job.jobcontrol) {
         if (sh_isstate(shp, SH_INTERACTIVE)) {
             errormsg(SH_DICT, ERROR_exit(1), e_no_jctl);

@@ -14,11 +14,11 @@ Description
 Each *job* can be specified in one of the following ways:
 
    :*int*: refers to a process id (pid).
-   :`-`\ *int*: refers to a process group id.
    :`%`\ *int*: refers to a job number.
    :`%`\ *str*: refers to a job whose name begins with *str*.
    :`%?`\ *str*: refers to a job whose name contains *str*.
-   :`%+` or `%%`: refers to the current job.
+   :`%%`: refers to the current job.
+   :`%+`: refers to the current job.
    :`%-`: refers to the previous job.
 
 Exit Status
