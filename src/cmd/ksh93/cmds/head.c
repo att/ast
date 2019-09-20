@@ -73,7 +73,7 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
     if (cmdinit(argc, argv, context, 0)) return -1;
 
     optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    while ((opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);

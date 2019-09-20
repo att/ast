@@ -6,6 +6,13 @@ This is line 2 in file1
 This is line 3 in file1
 This is line 4 in file1
 This is line 5 in file1
+This is line 6 in file1
+This is line 7 in file1
+This is line 8 in file1
+This is line 9 in file1
+This is line 10 in file1
+This is line 11 in file1
+This is line 12 in file1
 EOF
 
 cat > "$TEST_DIR/file2" <<EOF2
@@ -15,6 +22,15 @@ This is line 3 in file2
 This is line 4 in file2
 This is line 5 in file2
 EOF2
+
+# ==========
+# -*n*; i.e., an integer presented as a flag.
+#
+# The `awk` invocation is to strip whitespace around the output of `wc` since it might pad the
+# value.
+expect=11
+actual=$(head -11 < "$TEST_DIR/file1" | wc -l | awk '{ print $1 }')
+[[ "$actual" = "$expect" ]] || log_error "'head -n' failed" "$expect" "$actual"
 
 # ==========
 #   -n, --lines=lines
