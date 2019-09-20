@@ -25,37 +25,46 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdlib.h>
 
 #include "builtins.h"
 #include "defs.h"
-#include "error.h"
-#include "option.h"
 #include "shcmd.h"
 
+static const char *short_options = "+:";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
 int b_let(int argc, char *argv[], Shbltin_t *context) {
-    UNUSED(argc);
-
     Shell_t *shp = context->shp;
-    int n;
+    char *cmd = argv[0];
+    int opt;
 
-    while ((n = optget(argv, sh_optlet))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+    optind = opterr = 0;
+    while ((opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
+            default: { abort(); }
         }
     }
+    argv += optind;
 
-    argv += opt_info.index;
-    if (error_info.errors || !*argv) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    if (!*argv) {
+        builtin_usage_error(shp, cmd, "you must provide at least one expression");
+        return 2;
     }
 
     int rv = 0;

@@ -29,6 +29,7 @@ Welcome to the Korn Shell
    hist
    jobs
    kill
+   let
    source
 
 .. toctree::

@@ -94,6 +94,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('kill', 'kill', 'terminate or signal process',
      'David J. Korn, et. al.', '1'),
+    ('let', 'let', 'evaluate arithmetic expressions',
+     'David J. Korn, et. al.', '1'),
     ('source', 'source', 'execute commands in the current environment',
      'David J. Korn, et. al.', '1'),
     # External commands available as builtins.
