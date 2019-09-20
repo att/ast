@@ -28,6 +28,7 @@ Welcome to the Korn Shell
    fg
    hist
    jobs
+   kill
    source
 
 .. toctree::

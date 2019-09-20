@@ -20,6 +20,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <getopt.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,7 +30,6 @@
 #include "error.h"
 #include "fault.h"
 #include "jobs.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 
@@ -37,65 +37,99 @@
 #define S_FLAG 2
 #define Q_FLAG JOB_QFLAG
 
+static const char *short_options = "+:ln:q:s:L";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
 //
 //  The `kill` special builtin.
 //
 int b_kill(int argc, char *argv[], Shbltin_t *context) {
-    UNUSED(argc);
+    int opt;
     char *signame = NULL;
     int sig = SIGTERM;
     int flag = 0;
-    int n;
-    Shell_t *shp = context->shp;
     int usemenu = 0;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
-    while ((n = optget(argv, sh_optkill))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+    // We use `getopt_long_only()` rather than `getopt_long()` to facilitate handling integers that
+    // might otherwise look like a flag. Or signal names which we want to recognize with a single
+    // leading hyphen.
+    optind = opterr = 0;
+    bool done = false;
+    while (!done && (opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'n': {
-                sig = (int)opt_info.num;
-                goto endopts;
+                char *cp;
+                int64_t n = strton64(optarg, &cp, NULL, 0);
+                if (*cp || n < 0 || n > INT_MAX) {
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -n", optarg);
+                    return 2;
+                }
+                sig = n;
+                done = true;
+                break;
             }
             case 's': {
                 flag |= S_FLAG;
-                signame = opt_info.arg;
-                goto endopts;
+                signame = optarg;
+                done = true;
+                break;
             }
             case 'L': {
                 usemenu = -1;
+                flag |= L_FLAG;
+                break;
             }
-            // FALLTHRU
             case 'l': {
                 flag |= L_FLAG;
                 break;
             }
             case 'q': {
-                flag |= Q_FLAG;
-                shp->sigval = opt_info.num;
-                if ((int)shp->sigval != shp->sigval) {
-                    errormsg(SH_DICT, ERROR_exit(1), "%lld - too large for sizeof(integer)",
-                             shp->sigval);
-                    __builtin_unreachable();
+                char *cp;
+                int64_t n = strton64(optarg, &cp, NULL, 0);
+                if (*cp || n < 0 || n > INT_MAX) {
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -q", optarg);
+                    return 2;
                 }
+                flag |= Q_FLAG;
+                shp->sigval = n;
                 break;
             }
             case ':': {
-                if ((signame = argv[opt_info.index++]) &&
-                    (sig = sig_number(shp, signame + 1)) >= 0) {
-                    goto endopts;
-                }
-                opt_info.index--;
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                shp->sigval = 0;
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                // See if the flag is an integer that should be treated as a signal number.
+                char *cp;
+                int64_t n = strton64(argv[optind - 1] + 1, &cp, NULL, 0);
+                if (!*cp && n >= 0 && n <= MAX_SIGNUM) {
+                    sig = n;
+                    done = true;
+                    break;
+                }
+                // See if the flag is a signal name.
+                sig = sig_number(shp, argv[optind - 1] + 1);
+                if (sig >= 0) {
+                    done = true;
+                    break;
+                }
+                // Nope. It looks like an invalid flag.
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
+            default: { abort(); }
         }
     }
-endopts:
-    argv += opt_info.index;
+    argv += optind;
+
     if (*argv && strcmp(*argv, "--") == 0 && strcmp(*(argv - 1), "--") != 0) argv++;
     if (error_info.errors || flag == (L_FLAG | S_FLAG) || (!(*argv) && !(flag & L_FLAG))) {
         shp->sigval = 0;
