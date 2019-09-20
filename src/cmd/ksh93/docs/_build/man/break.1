@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "BREAK" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "BREAK" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 break \- break out of loop
 .
@@ -37,9 +37,12 @@ break [n]
 .sp
 .SH DESCRIPTION
 .sp
-\fBfg\fP is a shell special built\-in that exits the smallest enclosing for, select, while, or until loop, or the n\-th enclosing loop if n is specified. Execution continues at the command following the loop(s).
+\fBfg\fP is a shell special built\-in that exits the smallest enclosing
+for, select, while, or until loop, or the n\-th enclosing loop if n is
+specified. Execution continues at the command following the loop(s).
 .sp
-If \fBn\fP is given it must be a positive integer >= 1. If n is larger than the number of enclosing loops the last enclosing loop will be exited.
+If \fBn\fP is given it must be a positive integer >= 1. If n is larger than
+the number of enclosing loops the last enclosing loop will be exited.
 .SH EXIT STATUS
 .sp
 0

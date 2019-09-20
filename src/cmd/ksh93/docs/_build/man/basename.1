@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "BASENAME" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "BASENAME" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 basename \- strip directory and suffix from filenames
 .
@@ -54,20 +54,24 @@ the standard output.
 .SH FLAGS
 .INDENT 0.0
 .TP
-.B \fB\-a\fP, \fB\-\-all\fP
+.B \-a, \-\-all
 All operands are treated as \fIstring\fP and each modified pathname
 is printed on a separate line on the standard output.
 .TP
-.B \fB\-s\fP, \fB\-\-suffix\fP
+.B \-s, \-\-suffix
 All operands are treated as \fIstring\fP and each modified
 pathname, with \fIsuffix\fP removed if it exists, is printed on a separate
 line on the standard output.
 .UNINDENT
 .SH EXIT STATUS
-.sp
-0 Successful completion.
-.sp
->0 An error occurred.
+.INDENT 0.0
+.TP
+.B 0
+Successful completion.
+.TP
+.B >0
+An error occurred.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBdirname\fP(1), \fBbasename\fP(3)

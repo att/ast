@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "EXPORT" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "EXPORT" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 export \- set export attribute on variables
 .
@@ -59,10 +59,14 @@ Causes the output to be in the form of \fBexport\fP commands that can
 be used as input to the shell to recreate the current exports.
 .UNINDENT
 .SH EXIT STATUS
-.sp
-+0 Successful completion.
-.sp
->0 An error occurred.
+.INDENT 0.0
+.TP
+.B 0
+Successful completion.
+.TP
+.B >0
+An error occurred.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBsh\fP(1), \fBdeclare\fP(1), \fBtypeset\fP(1)

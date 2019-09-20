@@ -29,9 +29,9 @@ Flags
 
 Exit Status
 -----------
-0 Successful completion.
+:0: Successful completion.
 
->0 An error such as an invalid flag occurred.
+:>0: An error such as an invalid flag occurred.
 
 See Also
 --------

@@ -28,7 +28,7 @@ current list of built-ins, or just the special built-ins if `-s` is
 specified, on standard output. The full pathname for built-ins that are
 bound to pathnames are displayed.
 
-.. index:: `lib_init`\()
+.. index:: lib_init()
 
 Libraries containing built-ins can be specified with the `-f` option. If
 the library contains a function named `lib_init`\(), this function will
@@ -36,7 +36,7 @@ be invoked with argument `0` when the library is loaded. The `lib_init`\()
 function can load built-ins by invoking an appropriate C level function. In
 this case there is no restriction on the C level function name.
 
-?The C level function will be invoked with three arguments. The first
+The C level function will be invoked with three arguments. The first
 two are the same as `main`\() and the third one is a pointer.
 
 .. index:: restricted shell
@@ -70,9 +70,9 @@ Flags
 
 Exit Status
 -----------
-0 All *pathname* operands and `-f` options processed successfully.
+:0: All *pathname* operands and `-f` options processed successfully.
 
->0 An error occurred
+:>0: An error occurred
 
 See Also
 --------

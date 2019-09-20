@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "CMP" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "CMP" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 cmp \- compare two files
 .
@@ -91,12 +91,17 @@ Write nothing for differing files; return non\-zero
 exit status only.
 .UNINDENT
 .SH EXIT STATUS
-.sp
-0 The files or portions compared are identical.
-.sp
-1 The files are different.
-.sp
->1 An error occurred.
+.INDENT 0.0
+.TP
+.B 0
+The files or portions compared are identical.
+.TP
+.B 1
+The files are different.
+.TP
+.B >1
+An error occurred.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBcomm\fP(1), \fBdiff\fP(1), \fBcat\fP(1)

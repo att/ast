@@ -9,7 +9,7 @@ Synopsis
 
 Description
 -----------
-`jobs` displays information about specified *job*s that were started
+`jobs` displays information about specified *job*\s that were started
 by the current shell environment on standard output.  The information
 contains the job number enclosed in [...], the status, and the command
 line that started the job.
@@ -23,13 +23,13 @@ the jobs from the list of known jobs in the current shell environment.
 
 Each *job* can be specified as one of the following:
 
-    :*number*: *number* refers to a process id.
-    :-*number*: *number* refers to a process group id.
-    :%*number*: *number* refer to a job number.
-    :%*string*: Refers to a job whose name begins with *string*.
-    :%?*string*: Refers to a job whose name contains *string*.
-    :+ `or` %%: Refers to the current job.
-    :%-: Refers to the previous job.
+   :*int*: Refers to a process id (pid).
+   :`%`\ *int*: Refers to a job number.
+   :`%`\ *str*: Refers to a job whose name begins with *str*.
+   :`%?`\ *str*: Refers to a job whose name contains *str*.
+   :`%%`: Refers to the current job.
+   :`%+`: Refers to the current job.
+   :`%-`: Refers to the previous job.
 
 Flags
 -----
@@ -42,9 +42,9 @@ Flags
 
 Exit Status
 -----------
-0 The information for each job is written to standard output.
+:0: The information for each job is written to standard output.
 
->0 One or more jobs does not exist.
+:>0: One or more jobs does not exist.
 
 See Also
 --------

@@ -64,9 +64,9 @@ Flags
 
 Exit Status
 -----------
-0 All files processed successfully.
+:0: All files processed successfully.
 
->0 One or more files failed to open or could not be read.
+:>0: One or more files failed to open or could not be read.
 
 See Also
 --------

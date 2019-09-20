@@ -43,9 +43,9 @@ Exit Status
 If *command* is specified, `exec` does not return.  Otherwise, the exit
 status is one of the following:
 
-0 All I/O redirections were successful.
+:0: All I/O redirections were successful.
 
->0 An error occurred.
+:>0: An error occurred.
 
 See Also
 --------

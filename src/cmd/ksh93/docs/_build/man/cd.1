@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "CD" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "CD" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 cd \- change working directory
 .
@@ -89,10 +89,14 @@ also be a file. \fBCDPATH\fP is ignored. Hidden attribute directories are
 file system and operating system specific.
 .UNINDENT
 .SH EXIT STATUS
-.sp
-0 Directory successfully changed.
-.sp
->0 An error occurred.
+.INDENT 0.0
+.TP
+.B 0
+Directory successfully changed.
+.TP
+.B >0
+An error occurred.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBpwd\fP(1)

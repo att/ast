@@ -78,9 +78,9 @@ Exit Status
 If a command is re-executed, the exit status is that of the command that
 gets re-executed.  Otherwise, it is one of the following:
 
-0 Successfully completion of the listing.
+:0: Successfully completion of the listing.
 
->0 An error occurred.
+:>0: An error occurred.
 
 See Also
 --------

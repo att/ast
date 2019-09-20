@@ -9,9 +9,12 @@ Synopsis
 
 Description
 -----------
-`fg` is a shell special built-in that exits the smallest enclosing for, select, while, or until loop, or the n-th enclosing loop if n is specified. Execution continues at the command following the loop(s).
+`fg` is a shell special built-in that exits the smallest enclosing
+for, select, while, or until loop, or the n-th enclosing loop if n is
+specified. Execution continues at the command following the loop(s).
 
-If `n` is given it must be a positive integer >= 1. If n is larger than the number of enclosing loops the last enclosing loop will be exited.
+If `n` is given it must be a positive integer >= 1. If n is larger than
+the number of enclosing loops the last enclosing loop will be exited.
 
 Exit Status
 -----------

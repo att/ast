@@ -28,19 +28,19 @@ the standard output.
 
 Flags
 -----
-:`-a`, `--all`: All operands are treated as *string* and each modified pathname
+:-a, --all: All operands are treated as *string* and each modified pathname
    is printed on a separate line on the standard output.
 
-:`-s`, `--suffix`: All operands are treated as *string* and each modified
+:-s, --suffix: All operands are treated as *string* and each modified
    pathname, with *suffix* removed if it exists, is printed on a separate
    line on the standard output.
 
 
 Exit Status
 -----------
-0 Successful completion.
+:0: Successful completion.
 
->0 An error occurred.
+:>0: An error occurred.
 
 See Also
 --------

@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "DIRNAME" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "DIRNAME" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 dirname \- return directory portion of file name
 .
@@ -63,10 +63,14 @@ Print the \fB$PATH\fP relative readable file path for \fIstring\fP\&.
 Print the \fB$PATH\fP relative executable file path for \fIstring\fP\&.
 .UNINDENT
 .SH EXIT STATUS
-.sp
-0 Successful Completion.
-.sp
->0 An error occurred.
+.INDENT 0.0
+.TP
+.B 0
+Successful Completion.
+.TP
+.B >0
+An error occurred.
+.UNINDENT
 .SH SEE ALSO
 .sp
 basename\(ga(1), \fBgetconf\fP(1), \fBdirname\fP(3), \fBpathname\fP(3)

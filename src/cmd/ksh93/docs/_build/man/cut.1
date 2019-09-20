@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "CUT" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "CUT" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 cut \- cut out selected columns or fields of each line of a file
 .
@@ -101,10 +101,14 @@ Output new\-lines at end of each record when used with the
 \fB\-b\fP or \fB\-c\fP option. On by default.
 .UNINDENT
 .SH EXIT STATUS
-.sp
-0 All files processed successfully.
-.sp
->0 One or more files failed to open or could not be read.
+.INDENT 0.0
+.TP
+.B 0
+All files processed successfully.
+.TP
+.B >0
+One or more files failed to open or could not be read.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBpaste\fP(1), \fBgrep\fP(1)

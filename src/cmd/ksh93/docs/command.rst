@@ -39,13 +39,13 @@ Exit Status
 If *command* is invoked, the exit status of `command` will be that of
 *command*.  Otherwise, it will be one of the following:
 
-0 `command` completed successfully.
+:0: `command` completed successfully.
 
->0 `-v` or `-V` has been specified and an error occurred.
+:>0: `-v` or `-V` has been specified and an error occurred.
 
-126 *command* was found but could not be invoked.
+:126: *command* was found but could not be invoked.
 
-127 *command* could not be found.
+:127: *command* could not be found.
 
 See Also
 --------

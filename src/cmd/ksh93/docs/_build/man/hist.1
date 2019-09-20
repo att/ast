@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "HIST" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "HIST" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 hist \- move jobs to the foreground
 .
@@ -67,7 +67,7 @@ sign can precede \fInumber\fP\&.
 .B \-\fInumber\fP
 A negative number representing a command that was
 executed \fInumber\fP commands previously. For example, \fB\-1\fP is the
-previous command.
+previous command. This is equivalent to \fB\-N\fP\fInumber\fP\&.
 .TP
 .B \fIstring\fP
 \fIstring\fP indicates the most recently entered command
@@ -121,10 +121,14 @@ Start at \fInum\fP commands back.
 .sp
 If a command is re\-executed, the exit status is that of the command that
 gets re\-executed.  Otherwise, it is one of the following:
-.sp
-0 Successfully completion of the listing.
-.sp
->0 An error occurred.
+.INDENT 0.0
+.TP
+.B 0
+Successfully completion of the listing.
+.TP
+.B >0
+An error occurred.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBksh\fP(1), \fBsh\fP(1), \fBed\fP(1)

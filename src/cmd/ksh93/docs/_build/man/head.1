@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "HEAD" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "HEAD" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 head \- output beginning portion of one or more files
 .
@@ -85,10 +85,14 @@ Skip \fIn\fP characters or lines from each file before copying.
 Always output filename headers.
 .UNINDENT
 .SH EXIT STATUS
-.sp
-0 All files copied successfully.
-.sp
->0 One or more files did not copy.
+.INDENT 0.0
+.TP
+.B 0
+All files copied successfully.
+.TP
+.B >0
+One or more files did not copy.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBcat\fP(1), \fBtail\fP(1)

@@ -42,9 +42,9 @@ For backwards compatibility, `-`\ *number* is equivalent to `-n` *number*.
 
 Exit Status
 -----------
-0 All files copied successfully.
+:0: All files copied successfully.
 
->0 One or more files did not copy.
+:>0: One or more files did not copy.
 
 See Also
 --------

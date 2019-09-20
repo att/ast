@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "ECHO" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "ECHO" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 echo \- output a line of text
 .
@@ -58,10 +58,14 @@ Only available in the \fIbsd\fP universe.
 In the \fIatt\fP universe this flag is printed verbatim.
 .UNINDENT
 .SH EXIT STATUS
-.sp
-0 Successful completion.
-.sp
->0 An error such as an invalid flag occurred.
+.INDENT 0.0
+.TP
+.B 0
+Successful completion.
+.TP
+.B >0
+An error such as an invalid flag occurred.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBprint\fP(1), \fBprintf\fP(1)

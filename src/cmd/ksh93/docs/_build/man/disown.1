@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "DISOWN" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "DISOWN" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 disown \- disassociate a job from the current shell
 .
@@ -72,10 +72,14 @@ Refers to the previous job.
 .UNINDENT
 .UNINDENT
 .SH EXIT STATUS
-.sp
-0 If all jobs are successfully disowned.
-.sp
->0 If one more \fIjob\fPs does not exist.
+.INDENT 0.0
+.TP
+.B 0
+If all jobs are successfully disowned.
+.TP
+.B >0
+If one more \fIjob\fPs does not exist.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBwait\fP(1), \fBbg\fP(1), \fBjobs\fP(1)

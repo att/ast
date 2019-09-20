@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "BG" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "BG" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 bg \- resume jobs in the background
 .
@@ -37,7 +37,10 @@ bg [job ...]
 .sp
 .SH DESCRIPTION
 .sp
-\fBbg\fP places the given \fIjob\fPs into the background and sends them a \fBCONT\fP signal to start them running. If \fIjob\fP is omitted, the most recently started or stopped background job is resumed or continued in the background.
+\fBbg\fP places the given \fIjob\fPs into the background and sends them a
+\fBCONT\fP signal to start them running. If \fIjob\fP is omitted, the most
+recently started or stopped background job is resumed or continued in
+the background.
 .sp
 Each \fIjob\fP can be specified in one of the following ways:
 .INDENT 0.0
@@ -45,33 +48,37 @@ Each \fIjob\fP can be specified in one of the following ways:
 .INDENT 0.0
 .TP
 .B \fIint\fP
-refers to a process id (pid).
-.TP
-.B \fB\-\fP\fIint\fP
-refers to a process group id.
+Refers to a process id (pid).
 .TP
 .B \fB%\fP\fIint\fP
-refers to a job number.
+Refers to a job number.
 .TP
 .B \fB%\fP\fIstr\fP
-refers to a job whose name begins with \fIstr\fP\&.
+Refers to a job whose name begins with \fIstr\fP\&.
 .TP
 .B \fB%?\fP\fIstr\fP
-refers to a job whose name contains \fIstr\fP\&.
+Refers to a job whose name contains \fIstr\fP\&.
 .TP
-.B \fB%+\fP or \fB%%\fP
-refers to the current job.
+.B \fB%%\fP
+Refers to the current job.
+.TP
+.B \fB%+\fP
+Refers to the current job.
 .TP
 .B \fB%\-\fP
-refers to the previous job.
+Refers to the previous job.
 .UNINDENT
 .UNINDENT
 .UNINDENT
 .SH EXIT STATUS
-.sp
-0 If all background jobs are started.
-.sp
->0 If one more jobs does not exist or there are no background jobs.
+.INDENT 0.0
+.TP
+.B 0
+If all background jobs are started.
+.TP
+.B >0
+If one more jobs does not exist or there are no background jobs.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBwait\fP(1), \fBfg\fP(1), \fBdisown\fP(1), \fBjobs\fP(1)

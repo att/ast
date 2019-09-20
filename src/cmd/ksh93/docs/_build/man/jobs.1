@@ -1,8 +1,8 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "FG" "1" "Sep 20, 2019" "" "Korn Shell"
+.TH "JOBS" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
-fg \- move jobs to the foreground
+jobs \- display status of jobs
 .
 .nr rst2man-indent-level 0
 .
@@ -32,16 +32,24 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 ..
 .SH SYNOPSIS
 .nf
-fg [job ...]
+jobs [flags] [job ...]
 .fi
 .sp
 .SH DESCRIPTION
 .sp
-\fBfg\fP places the given \fIjob\fPs into the foreground and sends them a \fBCONT\fP
-signal to start them running. If \fIjob\fP is omitted, the most recently
-started or stopped background job is moved to the foreground.
+\fBjobs\fP displays information about specified \fIjob\fPs that were started
+by the current shell environment on standard output.  The information
+contains the job number enclosed in [...], the status, and the command
+line that started the job.
 .sp
-Each \fIjob\fP can be specified in one of the following ways:
+If \fIjob\fP is omitted, \fBjobs\fP displays the status of all stopped jobs,
+background jobs, and all jobs whose status has changed since last reported
+by the shell.
+.sp
+When \fBjobs\fP reports the termination status of a job, the shell removes
+the jobs from the list of known jobs in the current shell environment.
+.sp
+Each \fIjob\fP can be specified as one of the following:
 .INDENT 0.0
 .INDENT 3.5
 .INDENT 0.0
@@ -69,14 +77,31 @@ Refers to the previous job.
 .UNINDENT
 .UNINDENT
 .UNINDENT
+.SH FLAGS
+.INDENT 0.0
+.TP
+.B \-l
+\fBjobs\fP displays process id\(aqs after the job number in addition to
+the usual information.
+.TP
+.B \-n
+Only the jobs whose status has changed since the last prompt is displayed.
+.TP
+.B \-p
+The process group leader id\(aqs for the specified jobs are displayed.
+.UNINDENT
 .SH EXIT STATUS
-.sp
-If \fBfg\fP brings one or more jobs into the foreground, the exit status of
-\fBfg\fP will be that of the last job. If one or more jobs does not exist or
-has completed, \fBfg\fP will return a non\-zero exit status.
+.INDENT 0.0
+.TP
+.B 0
+The information for each job is written to standard output.
+.TP
+.B >0
+One or more jobs does not exist.
+.UNINDENT
 .SH SEE ALSO
 .sp
-\fBwait\fP(1), \fBbg\fP(1), \fBdisown\fP(1), \fBjobs\fP(1)
+\fBwait\fP(1), \fBps\fP(1), \fBfg\fP(1), \fBbg\fP(1)
 .SH AUTHOR
 David J. Korn, et. al.
 .SH COPYRIGHT

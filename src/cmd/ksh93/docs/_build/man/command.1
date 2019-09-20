@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "COMMAND" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "COMMAND" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 command \- execute a simple command
 .
@@ -70,14 +70,20 @@ Equivalent to \fBwhence \(ga\-v\fP \fIcommand\fP [\fIarg\fP ...]].
 .sp
 If \fIcommand\fP is invoked, the exit status of \fBcommand\fP will be that of
 \fIcommand\fP\&.  Otherwise, it will be one of the following:
-.sp
-0 \fBcommand\fP completed successfully.
-.sp
->0 \fB\-v\fP or \fB\-V\fP has been specified and an error occurred.
-.sp
-126 \fIcommand\fP was found but could not be invoked.
-.sp
-127 \fIcommand\fP could not be found.
+.INDENT 0.0
+.TP
+.B 0
+\fBcommand\fP completed successfully.
+.TP
+.B >0
+\fB\-v\fP or \fB\-V\fP has been specified and an error occurred.
+.TP
+.B 126
+\fIcommand\fP was found but could not be invoked.
+.TP
+.B 127
+\fIcommand\fP could not be found.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBwhence\fP(1), \fBgetconf\fP(1)

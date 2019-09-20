@@ -59,9 +59,9 @@ Flags
 
 Exit Status
 -----------
-0 Directory successfully changed.
+:0: Directory successfully changed.
 
->0 An error occurred.
+:>0: An error occurred.
 
 See Also
 --------

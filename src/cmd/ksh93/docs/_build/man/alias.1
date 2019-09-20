@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "ALIAS" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "ALIAS" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 alias \- define or display aliases
 .
@@ -73,11 +73,15 @@ a command name to the pathname of the command and are reset when the
 Ignored, this option is obsolete.
 .UNINDENT
 .SH EXIT STATUS
-.sp
-0 Successful completion.
-.sp
->0 One or more \fIname\fP operands did not have an alias definition, or an
+.INDENT 0.0
+.TP
+.B 0
+Successful completion.
+.TP
+.B >0
+One or more \fIname\fP operands did not have an alias definition, or an
 error occurred.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBsh\fP(1), \fBunalias\fP(1)

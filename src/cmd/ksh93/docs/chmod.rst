@@ -102,9 +102,9 @@ Flags
 
 Exit Status
 -----------
-0 All files changed successfully.
+:0: All files changed successfully.
 
->0 Unable to change mode of one or more files.
+:>0: Unable to change mode of one or more files.
 
 See Also
 --------

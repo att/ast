@@ -44,10 +44,10 @@ Flags
 
 Exit Status
 -----------
-0 Successful completion.
+:0: Successful completion.
 
->0 One or more *name* operands did not have an alias definition, or an
-error occurred.
+:>0: One or more *name* operands did not have an alias definition, or an
+   error occurred.
 
 See Also
 --------

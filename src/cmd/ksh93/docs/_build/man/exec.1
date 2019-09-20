@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "EXEC" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "EXEC" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 exec \- execute command, open/close/duplicate file descriptors
 .
@@ -72,10 +72,14 @@ assignments that are part of the current \fBexec\fP command.
 .sp
 If \fIcommand\fP is specified, \fBexec\fP does not return.  Otherwise, the exit
 status is one of the following:
-.sp
-0 All I/O redirections were successful.
-.sp
->0 An error occurred.
+.INDENT 0.0
+.TP
+.B 0
+All I/O redirections were successful.
+.TP
+.B >0
+An error occurred.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBcommand\fP(1), \fBeval\fP(1)

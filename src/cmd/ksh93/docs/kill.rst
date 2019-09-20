@@ -19,13 +19,14 @@ terminates the processes unless the signal is being caught or ignored.
 
 Each *job* can be specified as one of the following:
 
-    :*number*: *number* refers to a process id.
-    :-*number*: *number* refers to a process group id.
-    :%*number*: *number* refer to a job number.
-    :%*string*: Refers to a job whose name begins with *string*.
-    :%?*string*: Refers to a job whose name contains *string*.
-    :+ `or` %%: Refers to the current job.
-    :%-: Refers to the previous job.
+   :*int*: Refers to a process id (pid).
+   :-*int*: Refers to a process group id (pgrp).
+   :`%`\ *int*: Refers to a job number.
+   :`%`\ *str*: Refers to a job whose name begins with *str*.
+   :`%?`\ *str*: Refers to a job whose name contains *str*.
+   :`%%`: Refers to the current job.
+   :`%+`: Refers to the current job.
+   :`%-`: Refers to the previous job.
 
 If the signal is not specified with either the `-n` or the `-s` option,
 the `SIGTERM` signal is used.
@@ -55,14 +56,16 @@ Flags
 :-n *signum*: Specify a signal number to send.  Signal numbers are not
    portable across platforms, except for the following:
 
-   :0: No signal
-   :1: `HUP`
-   :2: `INT`
-   :3: `QUIT`
-   :6: `ABRT`
-   :9: `KILL`
-   :14: `ALRM`
-   :15: `TERM`
+   .. parsed-literal::
+
+      0  No signal
+      1  `HUP`
+      2  `INT`
+      3  `QUIT`
+      6  `ABRT`
+      9  `KILL`
+      14 `ALRM`
+      15 `TERM`
 
 :-s *signame*: Specify a signal name to send.  The signal names are
    derived from their names in C header `<signal.h>` without the `SIG`
@@ -71,11 +74,11 @@ Flags
 
 Exit Status
 -----------
-0 At least one matching process was found for each *job* operand, and the
-specified signal was successfully sent to at least one matching process.
+:0: At least one matching process was found for each *job* operand, and the
+   specified signal was successfully sent to at least one matching process.
 
->0 An error occurred.  A value of `2` is returned when `-q` is used and
-it fails with the error EAGAIN.
+:>0: An error occurred.  A value of `2` is returned when `-q` is used and
+   it fails with the error EAGAIN.
 
 See Also
 --------

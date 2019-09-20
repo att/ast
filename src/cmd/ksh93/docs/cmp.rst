@@ -60,11 +60,11 @@ Flags
 
 Exit Status
 -----------
-0 The files or portions compared are identical.
+:0: The files or portions compared are identical.
 
-1 The files are different.
+:1: The files are different.
 
->1 An error occurred.
+:>1: An error occurred.
 
 See Also
 --------

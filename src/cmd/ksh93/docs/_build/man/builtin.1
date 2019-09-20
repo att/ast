@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "BUILTIN" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "BUILTIN" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 builtin \- add, delete, or display shell built-ins
 .
@@ -62,7 +62,7 @@ be invoked with argument \fB0\fP when the library is loaded. The \fBlib_init\fP(
 function can load built\-ins by invoking an appropriate C level function. In
 this case there is no restriction on the C level function name.
 .sp
-?The C level function will be invoked with three arguments. The first
+The C level function will be invoked with three arguments. The first
 two are the same as \fBmain\fP() and the third one is a pointer.
 .sp
 \fBbuiltin\fP cannot be invoked from a restricted shell.
@@ -99,10 +99,14 @@ used as input to the shell to recreate the current set of builtins.
 Display only the special built\-ins.
 .UNINDENT
 .SH EXIT STATUS
-.sp
-0 All \fIpathname\fP operands and \fB\-f\fP options processed successfully.
-.sp
->0 An error occurred
+.INDENT 0.0
+.TP
+.B 0
+All \fIpathname\fP operands and \fB\-f\fP options processed successfully.
+.TP
+.B >0
+An error occurred
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBwhence\fP(1)

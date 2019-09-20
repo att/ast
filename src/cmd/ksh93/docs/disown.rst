@@ -33,9 +33,9 @@ Each *job* can be specified as one of the following:
 
 Exit Status
 -----------
-0 If all jobs are successfully disowned.
+:0: If all jobs are successfully disowned.
 
->0 If one more *job*\s does not exist.
+:>0: If one more *job*\s does not exist.
 
 See Also
 --------

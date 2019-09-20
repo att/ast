@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "CHMOD" "1" "Sep 15, 2019" "" "Korn Shell"
+.TH "CHMOD" "1" "Sep 20, 2019" "" "Korn Shell"
 .SH NAME
 chmod \- change the access permissions of files
 .
@@ -185,10 +185,14 @@ Omit the \fImode\fP operand and use the mode of \fIfile\fP instead.
 Describe changed permissions of all files.
 .UNINDENT
 .SH EXIT STATUS
-.sp
-0 All files changed successfully.
-.sp
->0 Unable to change mode of one or more files.
+.INDENT 0.0
+.TP
+.B 0
+All files changed successfully.
+.TP
+.B >0
+Unable to change mode of one or more files.
+.UNINDENT
 .SH SEE ALSO
 .sp
 \fBchgrp\fP(1), \fBchown\fP(1), \fBlchmod\fP(1), \fBtw\fP(1), \fBgetconf\fP(1), \fBls\fP(1), \fBumask\fP(2)
