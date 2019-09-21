@@ -18,15 +18,10 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * David Korn
- * AT&T Bell Laboratories
- *
- * mkdir
- */
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -35,14 +30,20 @@
 #include "ast.h"
 #include "builtins.h"
 #include "error.h"
-#include "option.h"
 #include "shcmd.h"
 
 #define DIRMODE (S_IRWXU | S_IRWXG | S_IRWXO)
 
+static const char *short_options = "+:m:pv";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {"mode", required_argument, NULL, 'm'},
+    {"verbose", no_argument, NULL, 'v'},
+    {NULL, 0, NULL, 0}};
+
 int b_mkdir(int argc, char **argv, Shbltin_t *context) {
     char *path;
-    int n;
+    int n, opt;
     mode_t mode = DIRMODE;
     mode_t mask = 0;
     int mflag = 0;
@@ -52,14 +53,21 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
     char *part;
     mode_t dmode;
     struct stat st;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, sh_optmkdir))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+    optind = opterr = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'm':
                 mflag = 1;
-                mode = strperm(opt_info.arg, &part, mode);
-                if (*part) error(ERROR_exit(0), "%s: invalid mode", opt_info.arg);
+                mode = strperm(optarg, &part, mode);
+                if (*part) error(ERROR_exit(0), "%s: invalid mode", optarg);
                 break;
             case 'p':
                 pflag = 1;
@@ -67,18 +75,22 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
             case 'v':
                 vflag = 1;
                 break;
-            case ':':
-                error(2, "%s", opt_info.arg);
-                break;
-            case '?':
-                error(ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    if (error_info.errors || !*argv) {
-        error(ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    argv += optind;
+
+    if (!*argv) {
+        builtin_usage_error(shp, cmd, "you must provide at least one directory");
+        return 2;
     }
 
     mask = umask(0);

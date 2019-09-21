@@ -115,4 +115,6 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('logname', 'logname', 'return the user\'s login name',
      'David J. Korn, et. al.', '1'),
+    ('mkdir', 'mkdir', 'make directories',
+     'David J. Korn, et. al.', '1'),
 ]

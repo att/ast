@@ -44,6 +44,7 @@ Welcome to the Korn Shell
    dirname
    head
    logname
+   mkdir
 
 Indices and tables
 ==================
