@@ -32,15 +32,15 @@
 #define VAR_sh_edtext shgd->vars._sh_edtext
 #define VAR_sh_file shgd->vars._sh_file
 #define VAR_sh_fun shgd->vars._sh_fun
-#define VAR_sh_install_prefix shgd->vars._sh_install_prefix
+// #define VAR_sh_install_prefix shgd->vars._sh_install_prefix
 #define VAR_sh_level shgd->vars._sh_level
 #define VAR_sh_lineno shgd->vars._sh_lineno
 #define VAR_sh_match shgd->vars._sh_match
 #define VAR_sh_math shgd->vars._sh_math
 #define VAR_sh_name shgd->vars._sh_name
 #define VAR_sh_op_astbin shgd->vars._sh_op_astbin
-#define VAR_sh_pgrp shgd->vars._sh_pgrp
-#define VAR_sh_pool shgd->vars._sh_pool
+// #define VAR_sh_pgrp shgd->vars._sh_pgrp
+// #define VAR_sh_pool shgd->vars._sh_pool
 #define VAR_sh_pwdfd shgd->vars._sh_pwdfd
 #define VAR_sh_sig shgd->vars._sh_sig
 #define VAR_sh_stats shgd->vars._sh_stats
@@ -52,11 +52,11 @@
 #define VAR_COLUMNS shgd->vars._COLUMNS
 #define VAR_COMPREPLY shgd->vars._COMPREPLY
 #define VAR_COMP_CWORD shgd->vars._COMP_CWORD
-#define VAR_COMP_KEY shgd->vars._COMP_KEY
+// #define VAR_COMP_KEY shgd->vars._COMP_KEY
 #define VAR_COMP_LINE shgd->vars._COMP_LINE
 #define VAR_COMP_POINT shgd->vars._COMP_POINT
-#define VAR_COMP_TYPE shgd->vars._COMP_TYPE
-#define VAR_COMP_WORDBREAKS shgd->vars._COMP_WORDBREAKS
+// #define VAR_COMP_TYPE shgd->vars._COMP_TYPE
+// #define VAR_COMP_WORDBREAKS shgd->vars._COMP_WORDBREAKS
 #define VAR_COMP_WORDS shgd->vars._COMP_WORDS
 #define VAR_EDITOR shgd->vars._EDITOR
 #define VAR_ENV shgd->vars._ENV

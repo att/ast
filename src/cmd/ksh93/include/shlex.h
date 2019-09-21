@@ -150,7 +150,6 @@ struct _shlex_ {
 #define IORDWRSYM (SYMGT | '<')
 #define IORDWRSYMT (SYMSEMI | '<')
 #define IOCLOBSYM (SYMPIPE | '>')
-#define PIPESYM2 (SYMPIPE | '&')
 #define IPROCSYM (SYMLPAR | '<')
 #define OPROCSYM (SYMLPAR | '>')
 #define EOFSYM 04000  // end-of-file
