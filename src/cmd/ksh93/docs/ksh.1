@@ -386,7 +386,6 @@ is set to
 The contents of the line read from standard input is
 saved in
 the variable
-.SM
 .BR REPLY .
 The
 .I list\^
@@ -839,7 +838,6 @@ A
 by itself, or in front of a
 .BR / ,
 is replaced by
-.SM
 .BR $HOME .
 A
 .B \(ap
@@ -1234,7 +1232,6 @@ is substituted,
 separated by
 the first character of
 the value of
-.SM
 .BR IFS .
 .TP
 \f3${#\fP\f2parameter\^\fP\f3}\fP
@@ -1549,7 +1546,7 @@ will be re-evaluated for each element.
 \f3${\fP\f2parameter\^\fP\f3,,\fP\f2pattern\^\fP\f3}\fP
 .PD
 Case  modification.   This expansion modifies the case of alphabetic
-characters in parameter.  The \f2pattern\fP is expanded to  produce a  pattern 
+characters in parameter.  The \f2pattern\fP is expanded to  produce a  pattern
 just as in pathname expansion.  The \f3^\fP operator converts lowercase
 characters matching \f2pattern\fP to uppercase.  The  \f3,\fP operator
 converts matching uppercase characters to lowercase.  The \f3^^\fP and
@@ -1834,7 +1831,6 @@ Each time this variable is referenced, a random integer,
 uniformly distributed between 0 and 32767, is generated.
 The sequence of random numbers can be initialized by assigning
 a numeric value to
-.SM
 .BR RANDOM .
 .TP
 .B
@@ -1960,7 +1956,6 @@ If an executable file with the name of that command is found,
 then it is read and executed
 in the current environment.
 Unlike
-.SM
 .BR PATH ,
 the current directory must be represented
 explicitly by
@@ -2042,11 +2037,9 @@ that belong to the \f2isspace\^\fP character class,
 delimit a field.
 In addition, if the same \f2isspace\^\fP character appears
 consecutively inside
-.SM
 .BR IFS ,
 this character is treated as if it were not in the \f2isspace\^\fP
 class, so that if
-.SM
 .BR IFS
 consists of two
 .B tab
@@ -2069,7 +2062,6 @@ starting with
 .B
 .SM LC_
 or
-.SM
 .BR LANG .
 .TP
 .B
@@ -2364,11 +2356,8 @@ The shell gives default values to
 \f3\s-1PS3\s+1\fP, \f3\s-1PS4\s+1\fP, \f3\s-1MAILCHECK\s+1\fP, \f3\s-1FCEDIT\s+1\fP,
 \f3\s-1TMOUT\s+1\fP and \f3\s-1IFS\s+1\fP,
 while
-.SM
 .BR HOME ,
-.SM
 .BR SHELL ,
-.SM
 .BR ENV ,
 and
 .SM
@@ -3062,7 +3051,7 @@ If the calling argument corresponding to
 .I ident\^
 is the name of an array variable, then
 .I ident\^
-is a name reference to this array.  Otherwise, 
+is a name reference to this array.  Otherwise,
 .I ident\^
 is a reference to long double precision floating point variable containing
 the value from the caller.
@@ -3132,7 +3121,7 @@ all integer and floating point variables can be following by
 .BR .MIN ,
 .BR .MAX ,
 or
-.BR .DIG 
+.BR .DIG
 to give the maximum value, mininum value, or number of significant
 digits for variables of that type.
 .PP
@@ -3200,7 +3189,6 @@ log(2.0)
 log2(E)
 .PD
 .RE
-.PP
 .SS Array Sorting.
 The \fB\-s\fP option of the \fBset\fP built-in command can be used to sort
 its arguments or to sort indexed arrays, indexed arrays of compound
@@ -3213,7 +3201,6 @@ sort on.  Each field can be followed by a \fB:\fP and the letter \fBn\fP
 for numerical sorting and/or \fBr\fP for reverse sorting.
 For an plain indexed array the \fB\-K\fP option can be followed by
 \fB:n\fP and  \fB:r\fP for numerical or reverse sorting.
-.PP
 .SS Prompting.
 When used interactively,
 the shell prompts with the value of
@@ -3918,7 +3905,6 @@ for early versions of the shell and its use in new scripts
 is strongly discouraged.
 It is likely to disappear someday.
 .SS Functions.
-.PP
 For historical reasons, there are two
 ways to define functions,
 the
@@ -4212,7 +4198,6 @@ command with the
 and no option argument or operands will write all the type definitions to
 standard output in a form that can be read in to create all the types.
 .SS Jobs.
-.PP
 If the
 .B monitor
 option of the
@@ -4527,7 +4512,6 @@ A shell can access the commands of
 all
 .I interactive
 shells which use the same named
-.SM
 .BR HISTFILE .
 The built-in command
 .B hist\^
@@ -4786,11 +4770,9 @@ entered after edit commands except when noted.
 .TP 10
 .BI ^F
 Move cursor forward (right) one character.
-.PP
 .TP 10
 .BI M-[C
 Move cursor forward (right) one character.
-.PP
 .TP 10
 .BI M-f
 Move cursor forward one word.
@@ -4798,51 +4780,40 @@ Move cursor forward one word.
 .B emacs
 editor's idea of a word is a string of characters
 consisting of only letters, digits and underscores.)
-.PP
 .TP 10
 .BI ^B
 Move cursor backward (left) one character.
-.PP
 .TP 10
 .BI M-[D
 Move cursor backward (left) one character.
-.PP
 .TP 10
 .BI M-b
 Move cursor backward one word.
-.PP
 .TP 10
 .BI ^A
 Move cursor to start of line.
-.PP
 .TP 10
 .BI M-[H
 Move cursor to start of line.
-.PP
 .TP 10
 .BI ^E
 Move cursor to end of line.
-.PP
 .TP 10
 .BI M-[Y
 Move cursor to end of line.
-.PP
 .TP 10
 .BI ^] char
 Move cursor forward to character
 .I char
 on current line.
-.PP
 .TP 10
 .BI M-^] char
 Move cursor backward to character
 .I char
 on current line.
-.PP
 .TP 10
 .BI ^X^X
 Interchange the cursor and mark.
-.PP
 .TP 10
 .I erase
 (User defined erase character as defined
@@ -4853,7 +4824,6 @@ command, usually
 or
 .BR # .)
 Delete previous character.
-.PP
 .TP 10
 .I lnext
 (User defined literal next character as defined
@@ -4865,29 +4835,23 @@ or
 if not defined.)
 Removes the next character's
 editing features (if any).
-.PP
 .TP 10
 .BI ^D
 Delete current character.
-.PP
 .TP 10
 .BI M-d
 Delete current word.
-.PP
 .TP 10
 .BI M-^H
 (Meta-backspace) Delete previous word.
-.PP
 .TP 10
 .BI M-h
 Delete previous word.
-.PP
 .TP 10
 .BI M-^?
 (Meta-DEL) Delete previous word (if your interrupt character is
 .B ^?
 (DEL, the default) then this command will not work).
-.PP
 .TP 10
 .BI ^T
 Transpose current character with previous character
@@ -4898,19 +4862,15 @@ mode.
 Transpose two previous characters in
 .I gmacs
 mode.
-.PP
 .TP 10
 .BI ^C
 Capitalize current character.
-.PP
 .TP 10
 .BI M-c
 Capitalize current word.
-.PP
 .TP 10
 .BI M-l
 Change the current word to lower case.
-.PP
 .TP 10
 .BI ^K
 Delete from the cursor to the end of the line.
@@ -4920,15 +4880,12 @@ up to the cursor.
 If preceded by a numerical parameter whose value is greater than the
 current cursor position, then delete from cursor up to
 given cursor position.
-.PP
 .TP 10
 .BI ^W
 Kill from the cursor to the mark.
-.PP
 .TP 10
 .BI M-p
 Push the region from the cursor to the mark on the stack.
-.PP
 .TP 10
 .I kill
 (User defined kill character as defined
@@ -4942,35 +4899,27 @@ If two
 characters are entered in succession, all
 kill characters from then on cause a line feed
 (useful when using paper terminals).
-.PP
 .TP 10
 .BI ^Y
 Restore last item removed from line. (Yank item back to the line.)
-.PP
 .TP 10
 .BI ^L
 Line feed and print current line.
-.PP
 .TP 10
 .BI M-^L
 Clear the screen.
-.PP
 .TP 10
 .BI ^@
 (Null character) Set mark.
-.PP
 .TP 10
 .BI M- space
 (Meta space) Set mark.
-.PP
 .TP 10
 .BI ^J
 (New\ line) Execute the current line.
-.PP
 .TP 10
 .BI ^M
 (Return) Execute the current line.
-.PP
 .TP 10
 .I eof
 End-of-file character,
@@ -4978,7 +4927,6 @@ normally
 .BR ^D ,
 is processed as an End-of-file only
 if the current line is null.
-.PP
 .TP 10
 .BI ^P
 Fetch previous command.
@@ -4987,7 +4935,6 @@ Each time
 is entered
 the previous command back in time is accessed.
 Moves back one line when not on the first line of a multi-line command.
-.PP
 .TP 10
 .BI M-[A
 If the cursor is at the end of the line, it is equivalent to
@@ -4998,15 +4945,12 @@ set to the contents of the current line.
 Otherwise, it is
 equivalent to
 .BR ^P.
-.PP
 .TP 10
 .BI M-<
 Fetch the least recent (oldest) history line.
-.PP
 .TP 10
 .BI M->
 Fetch the most recent (youngest) history line.
-.PP
 .TP 10
 .BI ^N
 Fetch next command line.
@@ -5014,12 +4958,10 @@ Each time
 .B ^N
 is entered
 the next command line forward in time is accessed.
-.PP
 .TP 10
 .BI M-[B
 Equivalent to
 .BR ^N.
-.PP
 .TP 10
 .BI ^R string
 Reverse search history for a previous command line containing
@@ -5039,13 +4981,11 @@ then the next command line containing the most recent
 is accessed.
 In this case a parameter of zero
 reverses the direction of the search.
-.PP
 .TP 10
 .B ^O
 Operate \- Execute the current line and fetch
 the next line relative to current line from the
 history file.
-.PP
 .TP 10
 .BI M- digits
 (Escape) Define numeric parameter, the digits
@@ -5073,7 +5013,6 @@ The commands that accept a parameter are
 .B M-l
 and
 .BR M-^H .
-.PP
 .TP 10
 .BI M- letter
 Soft-key \- Your alias list is searched for an
@@ -5084,7 +5023,6 @@ value will be inserted on the input queue.
 The
 .I letter
 must not be one of the above meta-functions.
-.PP
 .TP 10
 .BI M-[ letter
 Soft-key \- Your alias list is searched for an
@@ -5093,7 +5031,6 @@ alias by the name
 and if an alias of this name is defined, its
 value will be inserted on the input queue.
 This can be used to program function keys on many terminals.
-.PP
 .TP 10
 .B M-.
 The last word of the previous command is inserted
@@ -5101,23 +5038,19 @@ on the line.
 If preceded by a numeric parameter, the value
 of this parameter determines which word to insert rather than
 the last word.
-.PP
 .TP 10
 .B M-_
 Same as
 .BR M-. .
-.PP
 .TP 10
 .B M-*
 Attempt file name generation on the current word.
 An asterisk is appended if the word doesn't match any file
 or contain any special
 pattern characters.
-.PP
 .TP 10
 .B M-ESC
 Command or file name completion as described above.
-.PP
 .TP 10
 .BI ^I " tab"
 Attempts command or file name completion as described above.
@@ -5130,7 +5063,6 @@ If no match is found or entered after
 a
 .I tab\^
 is inserted.
-.PP
 .TP 10
 .B M-=
 If not preceded by a numeric parameter,
@@ -5140,11 +5072,9 @@ Otherwise, the word under the cursor is replaced by
 the item corresponding to the value of the numeric parameter
 from the most recently generated command or file list.
 If the cursor is not on a word, it is inserted instead.
-.PP
 .TP 10
 .BI ^U
 Multiply parameter of next command by 4.
-.PP
 .TP 10
 .BI \e
 Escape next character.
@@ -5159,11 +5089,9 @@ The
 .B \e
 removes the next character's
 editing features (if any).
-.PP
 .TP 10
 .B M-^V
 Display version of the shell.
-.PP
 .TP 10
 .B M-#
 If the line does not begin with a
@@ -5218,7 +5146,6 @@ This mode is implicit for systems that do not support two
 alternate end of line delimiters,
 and may be helpful for certain terminals.
 .SS "\ \ \ \ \ Input Edit Commands"
-.PP
 .RS
 By default the editor is in input mode.
 .PD 0
@@ -5957,7 +5884,6 @@ substitutes the string
 for the string
 .I old
 in the current directory name,
-.SM
 .BR PWD ,
 and tries to change to this new directory.
 .sp .5
@@ -6000,7 +5926,6 @@ The
 option causes
 a default path to be searched
 rather than the one defined by the value of
-.SM
 .BR PATH .
 Functions will not be searched for when finding
 .IR name .
@@ -6018,7 +5943,6 @@ With the
 option,
 if command execution would result in a failure because
 there are too many arguments, errno
-.SM
 .BR E2BIG ,
 the shell will invoke command
 .I name\^
@@ -6264,12 +6188,10 @@ begins with a
 The index of the next
 .I arg
 is stored in
-.SM
 .BR OPTIND .
 The option argument,
 if any,
 gets stored in
-.SM
 .BR OPTARG .
 .sp .5
 A leading
@@ -6280,7 +6202,6 @@ causes
 .B getopts
 to store the letter of an invalid
 option in
-.SM
 .BR OPTARG ,
 and to set
 .I vname
@@ -6794,10 +6715,9 @@ formats, separates groups of digits with the grouping delimiter
 .RB  ( ,
 on groups of 3 in the C locale.)
 .PD
-.PP
 .RE
 .TP
-\f3pwd\fP \*(OK \f3\-LP\fP \*(CK \*(OK \f3\-f\fP \f2fd\^\fP \*(CK 
+\f3pwd\fP \*(OK \f3\-LP\fP \*(CK \*(OK \f3\-f\fP \f2fd\^\fP \*(CK
 Outputs the value of the current working
 directory.
 The
@@ -7056,7 +6976,7 @@ When no arguments are specified, it is used along with
 to specify the sort fields and sort options for sorting an array.
 (See "Array Sorting" above for the description of the
 .I keylist\^
-option.) 
+option.)
 .TP 8
 .B \-a
 All subsequent variables that are defined are automatically exported.
@@ -7456,7 +7376,6 @@ on exit from the shell.
 If
 .I sig\^
 is
-.SM
 .BR KEYBD ,
 then
 .I action\^
@@ -8042,19 +7961,12 @@ that it references.
 The default is equivalent to
 .BR \-v .
 Unsetting
-.SM
 .BR LINENO ,
-.SM
 .BR MAILCHECK ,
-.SM
 .BR OPTARG ,
-.SM
 .BR OPTIND ,
-.SM
 .BR RANDOM ,
-.SM
 .BR SECONDS ,
-.SM
 .BR TMOUT ,
 and
 .SM
@@ -8278,14 +8190,10 @@ changing directory (see
 .IR cd (1)),
 .br
 setting or unsetting the value or attributes of
-.SM
 .BR SHELL ,
-.SM
 .BR ENV ,
-.SM
 .BR FPATH ,
 or
-.SM
 .BR PATH\*S,
 .br
 specifying path or
@@ -8438,7 +8346,6 @@ Prentice Hall, 1995.
 .I "POSIX \- Part 2: Shell and Utilities,"
 IEEE Std 1003.2-1992, ISO/IEC 9945-2, IEEE, 1993.
 .SH CAVEATS
-.PP
 If a command
 is executed, and then a command with the same name is
 installed in a directory in the search path before the directory where the
