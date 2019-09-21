@@ -18,43 +18,55 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * David Korn
- * AT&T Research
- *
- * logname
- */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include "builtins.h"
-#include "error.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
+
+static const char *short_options = "+:";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
 
 int b_logname(int argc, char **argv, Shbltin_t *context) {
     char *logname;
     char buf[12];
-    int n;
+    int opt;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, sh_optlogname))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case ':':
-                error(2, "%s", opt_info.arg);
-                break;
-            case '?':
-                error(ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+    optind = opterr = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    if (error_info.errors) {
-        error(ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    argv += optind;
+
+    if (*argv) {
+        builtin_usage_error(shp, cmd, "this command doesn't take any arguments");
+        return 2;
     }
+
     logname = getlogin();
     if (!logname) {
         (void)snprintf(buf, sizeof(buf), "%u", getuid());

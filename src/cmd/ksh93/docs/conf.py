@@ -113,4 +113,6 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('head', 'head', 'output beginning portion of one or more files',
      'David J. Korn, et. al.', '1'),
+    ('logname', 'logname', 'return the user\'s login name',
+     'David J. Korn, et. al.', '1'),
 ]

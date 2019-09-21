@@ -43,6 +43,7 @@ Welcome to the Korn Shell
    cut
    dirname
    head
+   logname
 
 Indices and tables
 ==================
