@@ -17,17 +17,11 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-//
-// print [-nrps] [-f format] [-u filenum] [arg...]
-// printf  format [arg...]
-//
-//   David Korn
-//   AT&T Labs
-//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -90,87 +84,38 @@ static const struct printmap Pmap[] = {
 static const char preformat[] = "";
 
 static_fn int extend(Sfio_t *, void *, Sffmt_t *);
-static_fn char *genformat(Shell_t *, char *);
+static_fn char *genformat(Shell_t *, const char *);
 static_fn int fmtvecho(Shell_t *, const char *, struct printf *);
 static_fn ssize_t fmtbase64(Shell_t *, Sfio_t *, char *, const char *, int);
 
 static char *nullarg[] = {0, 0};
 
 //
-// Builtin `printf`.
-//
-int b_printf(int argc, char *argv[], Shbltin_t *context) {
-    struct print prdata;
-    UNUSED(argc);
-
-    memset(&prdata, 0, sizeof(prdata));
-    prdata.sh = context->shp;
-    prdata.options = sh_optprintf;
-    return b_print(-1, argv, (Shbltin_t *)&prdata);
-}
-
-static_fn int print_infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
-    UNUSED(op);
-    UNUSED(s);
-    UNUSED(dp);
-    const struct printmap *pm;
-    char c = '%';
-
-    for (pm = Pmap; pm->size > 0; pm++) {
-        sfprintf(sp, "[+%c(%s)q?Equivalent to %%%s.]", c, pm->name, pm->map);
-    }
-    return 1;
-}
-
-//
-// Builtin `print`.
-//
-// argc==0 when called from echo
-// argc==-1 when called from printf
+// Builtin `print` command.
 //
 int b_print(int argc, char *argv[], Shbltin_t *context) {
-    Sfio_t *outfile;
-    int exitval = 0, n, fd = 1;
+    int n;
+    bool R_flag = false;
     Shell_t *shp = context->shp;
-    const char *options, *msg = e_file + 4;
-    char *format = NULL;
-    char *fmttype = NULL;
-    int sflag = 0, nflag = 0, rflag = 0, vflag = 0;
-    Namval_t *vname = NULL;
-    Optdisc_t disc;
+    struct print prdata;
 
-    memset(&disc, 0, sizeof(disc));
-    disc.version = OPT_VERSION;
-    disc.infof = print_infof;
-    opt_info.disc = &disc;
-    if (argc > 0) {
-        options = sh_optprint;
-        nflag = rflag = 0;
-        format = 0;
-    } else {
-        struct print *pp = (struct print *)context;
-        shp = pp->sh;
-        options = pp->options;
-        if (argc == 0) {
-            nflag = pp->echon;
-            rflag = pp->raw;
-            argv++;
-            goto skip;
-        }
-    }
-    while ((n = optget(argv, options))) {
+    memset(&prdata, 0, sizeof(prdata));
+    prdata.fd = 1;
+
+    bool done = false;
+    while (!done && (n = optget(argv, sh_optprint))) {
         switch (n) {  //!OCLINT(MissingDefaultStatement)
             case 'n': {
-                nflag++;
+                prdata.no_newline = true;
                 break;
             }
             case 'p': {
-                fd = shp->coutpipe;
-                msg = e_query;
+                prdata.fd = shp->coutpipe;
+                prdata.msg = e_query;
                 break;
             }
             case 'f': {
-                format = opt_info.arg;
+                prdata.format = opt_info.arg;
                 break;
             }
             case 's': {
@@ -179,76 +124,75 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                     errormsg(SH_DICT, ERROR_system(1), e_history);
                     __builtin_unreachable();
                 }
-                outfile = shp->gd->hist_ptr->histfp;
-                fd = sffileno(outfile);
+                prdata.outfile = shp->gd->hist_ptr->histfp;
+                prdata.fd = sffileno(prdata.outfile);
                 sh_onstate(shp, SH_HISTORY);
-                sflag++;
+                prdata.write_to_hist = true;
                 break;
             }
             case 'e': {
-                rflag = 0;
+                prdata.raw = false;
                 break;
             }
             case 'r': {
-                rflag = 1;
+                prdata.raw = true;
                 break;
             }
             case 'u': {
                 if (opt_info.arg[0] == 'p' && opt_info.arg[1] == 0) {
-                    fd = shp->coutpipe;
-                    msg = e_query;
+                    prdata.fd = shp->coutpipe;
+                    prdata.msg = e_query;
                     break;
                 }
-                fd = (int)strtol(opt_info.arg, &opt_info.arg, 10);
+                prdata.fd = (int)strtol(opt_info.arg, &opt_info.arg, 10);
                 if (*opt_info.arg) {
-                    fd = -1;
-                } else if (!sh_iovalidfd(shp, fd)) {
-                    fd = -1;
-                } else if (!(shp->inuse_bits & (1 << fd)) &&
-                           (sh_inuse(shp, fd) ||
-                            (shp->gd->hist_ptr && fd == sffileno(shp->gd->hist_ptr->histfp)))) {
-                    fd = -1;
+                    prdata.fd = -1;
+                } else if (!sh_iovalidfd(shp, prdata.fd)) {
+                    prdata.fd = -1;
+                } else if (!(shp->inuse_bits & (1 << prdata.fd)) &&
+                           (sh_inuse(shp, prdata.fd) ||
+                            (shp->gd->hist_ptr &&
+                             prdata.fd == sffileno(shp->gd->hist_ptr->histfp)))) {
+                    prdata.fd = -1;
                 }
                 break;
             }
 #if SUPPORT_JSON
             case 'j': {
-                fmttype = "json";
-                // TODO: Should this FALL THRU?
+                prdata.fmt_type = "json";
+                // TODO: Should this FALL THRU? Is enabling JSON output
+                // supposed to also set verbose mode?
+                // FALLTHRU
             }
-            // FALLTHRU
 #endif
             case 'v': {
-                if (argc < 0) {
-                    vname = nv_open(opt_info.arg, shp->var_tree, NV_VARNAME | NV_NOARRAY);
-                    if (!vname) {
-                        errormsg(SH_DICT, 2, "Cannot create variable %s", opt_info.arg);
-                    }
-                } else {
-                    vflag = 'v';
-                }
+                prdata.verbose = true;
                 break;
             }
             case 'C': {
-                vflag = 'C';
+                prdata.vals_are_vars = true;
                 break;
             }
             case ':': {
-                if (strcmp(opt_info.name, "-R") == 0) {
-                    rflag = 1;
-                    if (error_info.errors == 0) {
-                        argv += opt_info.index + 1;
-                        // special case test for -Rn
-                        if (strchr(argv[-1], 'n')) nflag++;
-                        if (*argv && strcmp(*argv, "-n") == 0) {
-                            nflag++;
-                            argv++;
-                        }
-                        goto skip2;
-                    }
-                } else {
-                    errormsg(SH_DICT, 2, "%s", opt_info.arg);
+                if (strcmp(opt_info.name, "-R") != 0) {
+                    errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
+                    __builtin_unreachable();
                 }
+
+                R_flag = true;
+                prdata.raw = true;
+                // Special case test for -Rn
+                if (strchr(argv[opt_info.index], 'n')) prdata.no_newline = true;
+                argv += opt_info.index + 1;
+
+                // Special case for test for -R -n
+                if (*argv && strcmp(*argv, "-n") == 0) {
+                    prdata.no_newline = true;
+                    argv++;
+                }
+
+                opt_info.index = 0;
+                done = true;
                 break;
             }
             case '?': {
@@ -259,54 +203,60 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
     }
 
     argv += opt_info.index;
-    if (error_info.errors || (argc < 0 && !(format = *argv++))) {
+    if (error_info.errors || (argc < 0 && !(prdata.format = *argv++))) {
         errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
         __builtin_unreachable();
     }
-    if (vflag && format) {
-        errormsg(SH_DICT, ERROR_usage(2), "-%c and -f are mutually exclusive", vflag);
+    if ((prdata.verbose || prdata.vals_are_vars) && prdata.format) {
+        errormsg(SH_DICT, ERROR_usage(2), "-%c and -f are mutually exclusive",
+                 prdata.verbose ? 'v' : 'C');
         __builtin_unreachable();
     }
 
-skip:
-    if (format) format = genformat(shp, format);
-    // Handle special case of '-' operand for print.
-    if (argc > 0 && *argv && strcmp(*argv, "-") == 0 && strcmp(argv[-1], "--")) argv++;
-    if (vname) {
+    // Handle special case of '-' operand for print. But only if -R wasn't used.
+    if (!R_flag && argc > 0 && *argv && strcmp(*argv, "-") == 0 && strcmp(argv[-1], "--")) argv++;
+    return sh_print(argv, shp, &prdata);
+}
+
+int sh_print(char **argv, Shell_t *shp, struct print *pp) {
+    int exitval = 0, n;
+
+    if (!pp->msg) pp->msg = e_file + 4;
+    if (pp->format) pp->format = genformat(shp, pp->format);
+    if (pp->var_name) {
         if (!shp->strbuf2) shp->strbuf2 = sfstropen();
-        outfile = shp->strbuf2;
+        pp->outfile = shp->strbuf2;
         goto printv;
     }
 
-skip2:
-    if (fd < 0) {
+    if (pp->fd < 0) {
         errno = EBADF;
         n = 0;
-    } else if (sflag) {
+    } else if (pp->write_to_hist) {
         n = IOREAD | IOWRITE | IOSEEK;
-    } else if (!(n = shp->fdstatus[fd])) {
-        n = sh_iocheckfd(shp, fd, fd);
+    } else if (!(n = shp->fdstatus[pp->fd])) {
+        n = sh_iocheckfd(shp, pp->fd, pp->fd);
     }
 
     if (!(n & IOWRITE)) {
-        // Don't print error message for stdout for compatibility.
-        if (fd == 1) return 1;
-        errormsg(SH_DICT, ERROR_system(1), msg);
+        // Don't print error message to stdout for compatibility.
+        if (pp->fd == 1) return 1;
+        errormsg(SH_DICT, ERROR_system(1), pp->msg);
         __builtin_unreachable();
     }
 
-    if (!sflag && !(outfile = shp->sftable[fd])) {
+    if (!pp->write_to_hist && !(pp->outfile = shp->sftable[pp->fd])) {
         sh_onstate(shp, SH_NOTRACK);
         n = SF_WRITE | ((n & IOREAD) ? SF_READ : 0);
-        shp->sftable[fd] = outfile = sfnew(NULL, shp->outbuff, IOBSIZE, fd, n);
+        shp->sftable[pp->fd] = pp->outfile = sfnew(NULL, shp->outbuff, IOBSIZE, pp->fd, n);
         sh_offstate(shp, SH_NOTRACK);
-        sfpool(outfile, shp->outpool, SF_WRITE);
+        sfpool(pp->outfile, shp->outpool, SF_WRITE);
     }
     // Turn off share to guarantee atomic writes for printf.
-    n = sfset(outfile, SF_SHARE | SF_PUBLIC, 0);
+    n = sfset(pp->outfile, SF_SHARE | SF_PUBLIC, 0);
 
 printv:
-    if (format) {
+    if (pp->format) {
         // Printf style print.
         Sfio_t *pool;
         struct printf pdata;
@@ -319,42 +269,42 @@ printv:
         pool = sfpool(sfstderr, NULL, SF_WRITE);
         do {
             if (shp->trapnote & SH_SIGSET) break;
-            pdata.sffmt.form = format;
-            sfprintf(outfile, "%!", &pdata);
+            pdata.sffmt.form = pp->format;
+            sfprintf(pp->outfile, "%!", &pdata);
         } while (*pdata.nextarg && pdata.nextarg != argv);
         if (pdata.nextarg == nullarg && pdata.argsize > 0) {
-            sfwrite(outfile, stkptr(shp->stk, stktell(shp->stk)), pdata.argsize);
+            sfwrite(pp->outfile, stkptr(shp->stk, stktell(shp->stk)), pdata.argsize);
         }
         // -f flag skips adding newline at the end of output. This causes issues
         // with syncing history if -s and -f are used together. History is synced
         // later with histflush() function.
         // https://github.com/att/ast/issues/425
-        if (!sflag && sffileno(outfile) != sffileno(sfstderr))
-            if (sfsync(outfile) < 0) exitval = 1;
+        if (!pp->write_to_hist && sffileno(pp->outfile) != sffileno(sfstderr))
+            if (sfsync(pp->outfile) < 0) exitval = 1;
         sfpool(sfstderr, pool, SF_WRITE);
         if (pdata.err) exitval = 1;
-    } else if (vflag) {
+    } else if (pp->verbose || pp->vals_are_vars) {
         while (*argv) {
-            fmtbase64(shp, outfile, *argv++, fmttype, vflag == 'C');
-            if (!nflag) sfputc(outfile, '\n');
+            fmtbase64(shp, pp->outfile, *argv++, pp->fmt_type, pp->vals_are_vars);
+            if (!pp->no_newline) sfputc(pp->outfile, '\n');
         }
     } else {
         // Echo style print.
-        if (nflag && !argv[0]) {
+        if (pp->no_newline && !argv[0]) {
             if (sfsync(NULL) < 0) exitval = 1;
-        } else if (sh_echolist(shp, outfile, rflag, argv) && !nflag) {
-            sfputc(outfile, '\n');
+        } else if (sh_echolist(shp, pp->outfile, pp->raw, argv) && !pp->no_newline) {
+            sfputc(pp->outfile, '\n');
         }
     }
 
-    if (vname) {
-        nv_putval(vname, sfstruse(outfile), 0);
-    } else if (sflag) {
+    if (pp->var_name) {
+        nv_putval(pp->var_name, sfstruse(pp->outfile), 0);
+    } else if (pp->write_to_hist) {
         hist_flush(shp->gd->hist_ptr);
         sh_offstate(shp, SH_HISTORY);
     } else if (n & SF_SHARE) {
-        sfset(outfile, SF_SHARE | SF_PUBLIC, 1);
-        if (sfsync(outfile) < 0) exitval = 1;
+        sfset(pp->outfile, SF_SHARE | SF_PUBLIC, 1);
+        if (sfsync(pp->outfile) < 0) exitval = 1;
     }
     if (exitval) errormsg(SH_DICT, 2, e_io);
     return exitval;
@@ -429,7 +379,7 @@ static_fn char strformat(char *s) {
     }
 }
 
-static_fn char *genformat(Shell_t *shp, char *format) {
+static_fn char *genformat(Shell_t *shp, const char *format) {
     char *fp;
     stkseek(shp->stk, 0);
     sfputr(shp->stk, preformat, -1);

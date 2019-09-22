@@ -20,6 +20,8 @@
 #ifndef _BUILTINS_H
 #define _BUILTINS_H 1
 
+#include <stdbool.h>
+
 #include "cdt.h"
 #include "name.h"
 #include "option.h"
@@ -68,12 +70,20 @@ struct tdata {
 
 // This structure is used by `echo`, `print`, `printf`.
 struct print {
-    Shell_t *sh;
-    const char *options;
-    char raw;
-    char echon;
+    int fd;
+    bool raw;
+    bool verbose;
+    bool vals_are_vars;
+    bool write_to_hist;
+    bool no_newline;
+    const char *format;
+    const char *fmt_type;
+    const char *msg;
+    Namval_t *var_name;
+    Sfio_t *outfile;
 };
 
+extern int sh_print(char **argv, Shell_t *shp, struct print *pp);
 extern int setall(char **, nvflag_t, Dt_t *, struct tdata *);
 extern void print_scan(Sfio_t *file, nvflag_t flag, Dt_t *root, bool omit_attrs, struct tdata *tp);
 extern void builtin_print_help(Shell_t *shp, const char *cmd);

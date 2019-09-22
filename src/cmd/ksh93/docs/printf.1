@@ -25,7 +25,13 @@
 [+%Z?Output a byte whose value is \b0\b.]
 [+%Q?Convert number of seconds to readable time.]
 [+%p?Convert number to hexadecimal.]
-\fextra\f
+[+%%(csv)q?Equivalent to %%#q.]
+[+%%(ere)q?Equivalent to %%R.]
+[+%%(html)q?Equivalent to %%H.]
+[+%%(nounicodeliterals)q?Equivalent to %%0q.]
+[+%%(pattern)q?Equivalent to %%P.]
+[+%%(unicodeliterals)q?Equivalent to %%+q.]
+[+%%(url)q?Equivalent to %%#H.]
 }
 [+?The format modifier flag \bL\b can precede the width and/or precision specifiers for the \bc\b and \bs\b to cause the width and/or precision to be measured in character width rather than byte count.]
 [+?When performing conversions of \astring\a to satisfy a numeric format specifier, if the first character of \astring\a is \b\"\b or \b'\b, then the value will be the numeric value in the underlying code set of the character following the \b\"\b or \b'\b.  Otherwise, \astring\a is treated like a shell arithmetic expression and evaluated.]

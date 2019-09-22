@@ -271,7 +271,7 @@ again:
                                         case 'x':
                                         case 'X': {
                                             format = endc;
-                                            endc = fmt.form;
+                                            endc = (char *)fmt.form;  // discard const qualifier
                                             break;
                                         }
                                         default: { break; }

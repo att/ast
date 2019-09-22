@@ -94,8 +94,8 @@ struct _sffmt_s {
     Sffmtext_f extf;     /* function to process arguments       */
     Sffmtevent_f eventf; /* process events                      */
 
-    char *form;   /* format string to stack             */
-    va_list args; /* corresponding arg list             */
+    const char *form; /* format string to stack             */
+    va_list args;     /* corresponding arg list             */
 
     int fmt;      /* format character                   */
     ssize_t size; /* object size                                */

@@ -19,49 +19,53 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <stdbool.h>
 #include <string.h>
 
-#include "ast.h"
 #include "builtins.h"
 #include "defs.h"
+#include "error.h"
+#include "name.h"
+#include "option.h"
 #include "shcmd.h"
 
 //
-// Builtin `echo`.
+// Builtin `printf` command.
 //
-// See https://github.com/att/ast/issues/370 for a discussion about the `echo` builtin.
-int b_echo(int argc, char *argv[], Shbltin_t *context) {
+int b_printf(int argc, char *argv[], Shbltin_t *context) {
     UNUSED(argc);
-    static char bsd_univ;
+    int n;
     Shell_t *shp = context->shp;
     struct print prdata;
 
     memset(&prdata, 0, sizeof(prdata));
     prdata.fd = 1;
 
-    // The external `echo` command is different on BSD and ATT platforms. So
-    // base our behavior on the contents of $PATH.
-    if (!shp->echo_universe_valid) {
-        bsd_univ = path_is_bsd_universe();
-        shp->echo_universe_valid = true;
-    }
-
-    if (!bsd_univ) return sh_print(argv + 1, shp, &prdata);
-
-    prdata.raw = true;
-    while (argv[1] && *argv[1] == '-') {
-        if (strcmp(argv[1], "-n") == 0) {
-            prdata.no_newline = true;
-        } else if (strcmp(argv[1], "-e") == 0) {
-            prdata.raw = false;
-        } else if (strcmp(argv[1], "-ne") == 0 || strcmp(argv[1], "-en") == 0) {
-            prdata.raw = false;
-            prdata.no_newline = true;
-        } else {
-            break;
+    while ((n = optget(argv, sh_optprintf))) {
+        switch (n) {  //!OCLINT(MissingDefaultStatement)
+            case 'v': {
+                prdata.var_name = nv_open(opt_info.arg, shp->var_tree, NV_VARNAME | NV_NOARRAY);
+                if (!prdata.var_name) {
+                    errormsg(SH_DICT, 2, "Cannot create variable %s", opt_info.arg);
+                    return 2;
+                }
+                break;
+            }
+            case ':': {
+                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
+                __builtin_unreachable();
+            }
+            case '?': {
+                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
+                __builtin_unreachable();
+            }
         }
-        argv++;
     }
-    return sh_print(argv + 1, shp, &prdata);
+
+    argv += opt_info.index;
+    if (!*argv) {
+        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
+        __builtin_unreachable();
+    }
+    prdata.format = *argv++;
+    return sh_print(argv, shp, &prdata);
 }

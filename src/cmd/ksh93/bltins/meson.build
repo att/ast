@@ -22,6 +22,7 @@ ksh93_files += [
     'bltins/let.c',
     'bltins/math.c',
     'bltins/print.c',
+    'bltins/printf.c',
     'bltins/pwd.c',
     'bltins/read.c',
     'bltins/readonly.c',
