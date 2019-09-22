@@ -1,10 +1,42 @@
 # Tests for print builtin
 
 # ======
-if [[ $(print -R -) != - ]]
-then
-    log_error "print -R not working correctly"
-fi
+# The `print -R` flag has some very unusual semantics. Make sure we verify most of them.
+expect="-"
+actual=$(print -R -)
+[[ $actual == $expect ]] || log_error "print -R not working correctly" "$expect" "$actual"
+
+expect="-x"
+actual=$(print -R -x)
+[[ $actual == $expect ]] || log_error "print -R not working correctly" "$expect" "$actual"
+
+expect="-- x"
+actual=$(print -R -- x)
+[[ $actual == $expect ]] || log_error "print -R not working correctly" "$expect" "$actual"
+
+expect="-- xabc"
+actual=$(print -Rn -- x; print abc)
+[[ $actual == $expect ]] || log_error "print -R not working correctly" "$expect" "$actual"
+
+expect="-- xabc"
+actual=$(print -nR -- x; print abc)
+[[ $actual == $expect ]] || log_error "print -R not working correctly" "$expect" "$actual"
+
+expect="-z xabc"
+actual=$(print -R -n -z x; print abc)
+[[ $actual == $expect ]] || log_error "print -R not working correctly" "$expect" "$actual"
+
+expect="-u2 xabc"
+actual=$(print -RZ -n -u2 x; print abc)
+[[ $actual == $expect ]] || log_error "print -R not working correctly" "$expect" "$actual"
+
+expect="-z xabc"
+actual=$(print -Rn -n -z x; print abc)
+[[ $actual == $expect ]] || log_error "print -R not working correctly" "$expect" "$actual"
+
+expect="-n -z xabc"
+actual=$(print -Rn -n -n -z x; print abc)
+[[ $actual == $expect ]] || log_error "print -R not working correctly" "$expect" "$actual"
 
 # ======
 if [[ $(print - -) != - ]]
