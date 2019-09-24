@@ -29,25 +29,24 @@
 
 // These definitions must be kept in sync with `shtab_builtins[]` in
 // src/cmd/ksh93/data/builtins.c
-#define SYSLOGIN (shgd->bltin_cmds + 0)
-#define SYSEXEC (shgd->bltin_cmds + 1)
-#define SYSSET (shgd->bltin_cmds + 2)
-// #define SYSCOLON (shgd->bltin_cmds + 3)
-#define SYSTRUE (shgd->bltin_cmds + 4)
-#define SYSCOMMAND (shgd->bltin_cmds + 5)
-// #define SYSCD (shgd->bltin_cmds + 6)
-#define SYSBREAK (shgd->bltin_cmds + 7)
-#define SYSCONT (shgd->bltin_cmds + 8)
-#define SYSTYPESET (shgd->bltin_cmds + 9)
-#define SYSTEST (shgd->bltin_cmds + 10)
-// #define SYSBRACKET (shgd->bltin_cmds + 11)
-#define SYSLET (shgd->bltin_cmds + 12)
-#define SYSEXPORT (shgd->bltin_cmds + 13)
-#define SYSDOT (shgd->bltin_cmds + 14)
-#define SYSRETURN (shgd->bltin_cmds + 15)
-#define SYSENUM (shgd->bltin_cmds + 16)
-// #define SYSDECLARE (shgd->bltin_cmds + 17)
-#define SYSLOCAL (shgd->bltin_cmds + 18)
+#define SYSEXEC (shgd->bltin_cmds + 0)
+#define SYSSET (shgd->bltin_cmds + 1)
+// #define SYSCOLON (shgd->bltin_cmds + 2)
+#define SYSTRUE (shgd->bltin_cmds + 3)
+#define SYSCOMMAND (shgd->bltin_cmds + 4)
+// #define SYSCD (shgd->bltin_cmds + 5)
+#define SYSBREAK (shgd->bltin_cmds + 6)
+#define SYSCONT (shgd->bltin_cmds + 7)
+#define SYSTYPESET (shgd->bltin_cmds + 8)
+#define SYSTEST (shgd->bltin_cmds + 9)
+// #define SYSBRACKET (shgd->bltin_cmds + 10)
+#define SYSLET (shgd->bltin_cmds + 11)
+#define SYSEXPORT (shgd->bltin_cmds + 12)
+#define SYSDOT (shgd->bltin_cmds + 13)
+#define SYSRETURN (shgd->bltin_cmds + 14)
+#define SYSENUM (shgd->bltin_cmds + 15)
+// #define SYSDECLARE (shgd->bltin_cmds + 16)
+#define SYSLOCAL (shgd->bltin_cmds + 17)
 
 // This structure is used by `typeset`, `export`, `readonly`.
 struct tdata {
@@ -101,7 +100,6 @@ extern int b_exit(int, char *[], Shbltin_t *);
 extern int b_export(int, char *[], Shbltin_t *);
 extern int b_eval(int, char *[], Shbltin_t *);
 extern int b_return(int, char *[], Shbltin_t *);
-extern int b_login(int, char *[], Shbltin_t *);
 extern int b_true(int, char *[], Shbltin_t *);
 extern int b_false(int, char *[], Shbltin_t *);
 extern int b_readonly(int, char *[], Shbltin_t *);

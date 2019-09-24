@@ -1228,9 +1228,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         errorpush(&buffp->err, 0);
                         if (io) {
                             struct openlist *item;
-                            if (np == SYSLOGIN) {
-                                type = 1;
-                            } else if (np == SYSEXEC) {
+                            if (np == SYSEXEC) {
                                 type = 1 + !com[1];
                             } else {
                                 type = (execflg && !shp->subshell && !shp->st.trapcom[0]);

@@ -22,7 +22,7 @@
 # Test that each builtin correctly handles an unrecognized flag. The grep is to eliminate builtins
 # that don't accept any flags; i.e., don't do use the usual getopt_long() loop.
 for name in $(builtin -l |
-    grep -Ev '(local|declare|echo|test|true|false|login|newgrp|uname|getconf|\[|:)')
+    grep -Ev '(local|declare|echo|test|true|false|uname|getconf|\[|:)')
 do
     # Extract builtin name from /opt path
     if [[ "$name" =~ "/opt" ]];
@@ -554,7 +554,7 @@ sample >/dev/null || log_error "Sample builtin should exit with 0 status"
 
 # List special builtins.
 # The locale affects the order of listing builtins.
-expect=". : _Bool alias break continue declare enum eval exec exit export login newgrp"
+expect=". : _Bool alias break continue declare enum eval exec exit export"
 expect="$expect readonly return set shift trap typeset unalias unset "
 actual=$(LC_ALL=C builtin -s | tr '\n' ' ')
 [[ "$actual" == "$expect" ]] ||

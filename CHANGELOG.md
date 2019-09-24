@@ -4,6 +4,9 @@
 
 ## Notable non-backward compatible changes
 
+- The `login` and `newgrp` special builtins have been removed. Use
+  `exec login` and `exec newgrp` instead (#1348).
+
 ## Notable fixes and improvements
 
 - A ${.sh.install_prefix}/config.ksh file will be sourced if it exists. It is

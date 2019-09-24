@@ -5593,10 +5593,8 @@ Except for
 .BR : ,
 .BR true ,
 .BR false ,
-.BR echo ,
-.BR newgrp ,
 and
-.BR login ,
+.BR echo ,
 all built-in commands accept
 .B \-\-
 to indicate end of options.
@@ -6419,11 +6417,6 @@ above, for a description of arithmetic expression evaluation.
 The exit status is
 0 if the value of the last expression
 is non-zero, and 1 otherwise.
-.TP
-\(dg \f3newgrp\fP \*(OK \f2arg\^\fP .\|.\|. \*(CK
-Equivalent to
-.BI "exec /bin/newgrp" " arg\^"
-\&.\|.\|.\^.
 .TP
 \f3print\fP \*(OK \f3\-CRenprsv\^\fP \*(CK \*(OK \f3\-u\fP \f2unit\^\fP\*(CK \*(OK \f3\-f\fP \f2format\^\fP \*(CK \*(OK \f2arg\^\fP .\|.\|. \*(CK
 With no options or with option

@@ -9,7 +9,7 @@ ksh93_files += [
     'bltins/disown.c',
     'bltins/enum.c',
     'bltins/echo.c',
-    'bltins/exec_login.c',
+    'bltins/exec.c',
     'bltins/exit.c',
     'bltins/export.c',
     'bltins/eval.c',

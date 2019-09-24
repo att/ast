@@ -17,9 +17,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-//
-// exec [arg...]
-// login [arg...]
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <getopt.h>
@@ -43,6 +40,52 @@ struct login {
     int clear;
     char *arg0;
 };
+
+static_fn void noexport(Namval_t *np, void *data) {
+    UNUSED(data);
+    nv_offattr(np, NV_EXPORT);
+}
+
+static int exec_args(char *argv[], struct login *logp) {
+    Shell_t *shp = logp->sh;
+
+    if (sh_isoption(shp, SH_RESTRICTED)) {
+        errormsg(SH_DICT, ERROR_exit(1), e_restricted, argv[0]);
+        __builtin_unreachable();
+    }
+
+    checkpt_t *pp = shp->jmplist;
+    struct argnod *arg = shp->envlist;
+    Namval_t *np;
+    char *cp;
+    const char *pname;
+
+    if (shp->subshell && !shp->subshare) sh_subfork();
+    if (logp && logp->clear) {
+        nv_scan(shp->var_tree, noexport, 0, NV_EXPORT, NV_EXPORT);
+    }
+    while (arg) {
+        cp = strchr(arg->argval, '=');
+        if (cp && (*cp = 0, np = nv_search(arg->argval, shp->var_tree, 0))) {
+            nv_onattr(np, NV_EXPORT);
+            sh_envput(shp, np);
+        }
+        if (cp) *cp = '=';
+        arg = arg->argnxt.ap;
+    }
+    pname = argv[0];
+    if (logp && logp->arg0) argv[0] = logp->arg0;
+#ifdef JOBS
+    if (job_close(shp) < 0) return 1;
+#endif  // JOBS
+    // Force bad exec to terminate shell.
+    pp->mode = SH_JMPEXIT;
+    sh_sigreset(shp, 2);
+    sh_freeup(shp);
+    path_exec(shp, pname, argv, NULL);
+    sh_done(shp, 0);
+    abort();
+}
 
 static const char *short_options = "+:a:c";
 static const struct option long_options[] = {
@@ -90,62 +133,6 @@ int b_exec(int argc, char *argv[], Shbltin_t *context) {
     }
 
     argv += optind;
-    if (*argv) b_login(0, argv, (Shbltin_t *)&logdata);
+    if (*argv) return exec_args(argv, &logdata);
     return 0;
-}
-
-static_fn void noexport(Namval_t *np, void *data) {
-    UNUSED(data);
-    nv_offattr(np, NV_EXPORT);
-}
-
-//
-// Builtin `login`.
-//
-int b_login(int argc, char *argv[], Shbltin_t *context) {
-    checkpt_t *pp;
-    struct login *logp = NULL;
-    Shell_t *shp;
-    const char *pname;
-    if (argc) {
-        shp = context->shp;
-    } else {
-        logp = (struct login *)context;
-        shp = logp->sh;
-    }
-
-    pp = shp->jmplist;
-    if (sh_isoption(shp, SH_RESTRICTED)) {
-        errormsg(SH_DICT, ERROR_exit(1), e_restricted, argv[0]);
-        __builtin_unreachable();
-    } else {
-        struct argnod *arg = shp->envlist;
-        Namval_t *np;
-        char *cp;
-        if (shp->subshell && !shp->subshare) sh_subfork();
-        if (logp && logp->clear) {
-            nv_scan(shp->var_tree, noexport, 0, NV_EXPORT, NV_EXPORT);
-        }
-        while (arg) {
-            cp = strchr(arg->argval, '=');
-            if (cp && (*cp = 0, np = nv_search(arg->argval, shp->var_tree, 0))) {
-                nv_onattr(np, NV_EXPORT);
-                sh_envput(shp, np);
-            }
-            if (cp) *cp = '=';
-            arg = arg->argnxt.ap;
-        }
-        pname = argv[0];
-        if (logp && logp->arg0) argv[0] = logp->arg0;
-#ifdef JOBS
-        if (job_close(shp) < 0) return 1;
-#endif  // JOBS
-        // Force bad exec to terminate shell.
-        pp->mode = SH_JMPEXIT;
-        sh_sigreset(shp, 2);
-        sh_freeup(shp);
-        path_exec(shp, pname, argv, NULL);
-        sh_done(shp, 0);
-    }
-    return 1;
 }
