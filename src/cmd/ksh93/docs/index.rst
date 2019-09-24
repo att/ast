@@ -30,6 +30,7 @@ Welcome to the Korn Shell
    jobs
    kill
    let
+   print
    source
 
 .. toctree::

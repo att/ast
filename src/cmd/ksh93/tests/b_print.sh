@@ -93,10 +93,11 @@ print -u5 "bar baz"
 [[ $(cat foo) = "bar baz" ]] || log_error "print -u should print to file descriptor"
 
 # ======
-# print -u without any arguments should show an error
+# print -u without a value should show an error
 actual=$(print -u 2>&1)
-expected="fd argument expected"
-[[ "$actual" =~ "$expected" ]] || log_error "print -u without arguments should show an error" "$expected" "$actual"
+expected="print: -u: expected argument for flag"
+[[ "$actual" =~ "$expected" ]] ||
+    log_error "print -u without arguments should show an error" "$expected" "$actual"
 
 # ======
 # -v Treat each string as a variable name and write the value in %B format. Cannot be used with -f.

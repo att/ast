@@ -21,6 +21,7 @@
 
 #include <ctype.h>
 #include <errno.h>
+#include <getopt.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,7 +37,6 @@
 #include "history.h"
 #include "io.h"
 #include "name.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
@@ -90,21 +90,33 @@ static_fn ssize_t fmtbase64(Shell_t *, Sfio_t *, char *, const char *, int);
 
 static char *nullarg[] = {0, 0};
 
+// The short options deliberately does not include 'R'. Even though it is a valid flag.
+static const char *short_options = "+:enf:prsu:vCR";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
 //
 // Builtin `print` command.
 //
 int b_print(int argc, char *argv[], Shbltin_t *context) {
-    int n;
+    int opt;
     bool R_flag = false;
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     struct print prdata;
 
     memset(&prdata, 0, sizeof(prdata));
     prdata.fd = 1;
 
     bool done = false;
-    while (!done && (n = optget(argv, sh_optprint))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+    optind = opterr = 0;
+    while (!done && (opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'n': {
                 prdata.no_newline = true;
                 break;
@@ -115,7 +127,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'f': {
-                prdata.format = opt_info.arg;
+                prdata.format = optarg;
                 break;
             }
             case 's': {
@@ -139,13 +151,13 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'u': {
-                if (opt_info.arg[0] == 'p' && opt_info.arg[1] == 0) {
+                if (optarg[0] == 'p' && optarg[1] == 0) {
                     prdata.fd = shp->coutpipe;
                     prdata.msg = e_query;
                     break;
                 }
-                prdata.fd = (int)strtol(opt_info.arg, &opt_info.arg, 10);
-                if (*opt_info.arg) {
+                prdata.fd = (int)strtol(optarg, &optarg, 10);
+                if (*optarg) {
                     prdata.fd = -1;
                 } else if (!sh_iovalidfd(shp, prdata.fd)) {
                     prdata.fd = -1;
@@ -173,37 +185,47 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 prdata.vals_are_vars = true;
                 break;
             }
-            case ':': {
-                if (strcmp(opt_info.name, "-R") != 0) {
-                    errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                    __builtin_unreachable();
+            case 'R': {
+                // The semantics of the `-R` flag is odd. There is no other builtin command which
+                // has anything remotely like this flag. If it is seen we recognize `-Rn` but ignore
+                // the `z` in `-Rz` or `-Rnz` or `-Rzn`. We also stop processing flags and treat the
+                // `-z` literally when `-R -z` is seen. We also recognize the next `-n` argument
+                // regardless of whether `-R` or `-Rn` was seen. But any subsequent args are treated
+                // as if `--` was seen. Meaning a second `-n` is treated as a literal `-n` to be
+                // printed.
+                argv += optind;
+                int n = strlen(argv[-1]);
+                if (!(argv[-1][0] == '-' && argv[-1][n - 1] == 'R')) {
+                    // The current flag must be of the form -*R?.
+                    char *R_opt = strchr(*argv, 'R');
+                    if (*(R_opt + 1) == 'n') prdata.no_newline = true;
+                    argv++;
                 }
-
-                R_flag = true;
-                prdata.raw = true;
-                // Special case test for -Rn
-                if (strchr(argv[opt_info.index], 'n')) prdata.no_newline = true;
-                argv += opt_info.index + 1;
-
-                // Special case for test for -R -n
-                if (*argv && strcmp(*argv, "-n") == 0) {
+                // Check if the arg after the -R arg is -n. Eat it if it is.
+                if (*argv && !strcmp(*argv, "-n")) {
                     prdata.no_newline = true;
                     argv++;
                 }
-
-                opt_info.index = 0;
+                R_flag = true;
+                prdata.raw = true;
+                optind = 0;
                 done = true;
                 break;
             }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
 
-    argv += opt_info.index;
-    if (error_info.errors || (argc < 0 && !(prdata.format = *argv++))) {
+    argv += optind;
+    if (argc < 0 && !(prdata.format = *argv++)) {
         errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
         __builtin_unreachable();
     }

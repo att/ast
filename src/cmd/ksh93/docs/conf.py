@@ -96,8 +96,11 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('let', 'let', 'evaluate arithmetic expressions',
      'David J. Korn, et. al.', '1'),
+    ('print', 'print', 'write arguments to standard output',
+     'David J. Korn, et. al.', '1'),
     ('source', 'source', 'execute commands in the current environment',
      'David J. Korn, et. al.', '1'),
+
     # External commands available as builtins.
     ('basename', 'basename', 'strip directory and suffix from filenames',
      'David J. Korn, et. al.', '1'),
