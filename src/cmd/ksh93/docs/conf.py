@@ -106,6 +106,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('readonly', 'readonly', 'set readonly attribute on variables',
      'David J. Korn, et. al.', '1'),
+    ('return', 'return', 'return from a function or dot script',
+     'David J. Korn, et. al.', '1'),
     ('source', 'source', 'execute commands in the current environment',
      'David J. Korn, et. al.', '1'),
 

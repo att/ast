@@ -35,6 +35,7 @@ Welcome to the Korn Shell
    pwd
    read
    readonly
+   return
    source
 
 .. toctree::

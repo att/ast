@@ -19,48 +19,61 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdlib.h>
 
-#include "ast.h"
 #include "builtins.h"
 #include "defs.h"
-#include "error.h"
 #include "fault.h"
-#include "option.h"
 #include "shcmd.h"
+
+static const char *short_options = "+:";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
 
 //
 // Builtin `return` command. See also the exit.c module which is similar to this module.
 //
-int b_return(int n, char *argv[], Shbltin_t *context) {
-    char *arg;
+int b_return(int argc, char *argv[], Shbltin_t *context) {
+    int opt;
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     checkpt_t *pp = shp->jmplist;
-    while ((n = optget(argv, sh_optreturn))) {
-        switch (n) {
-            case ':': {
-                if (!argv[opt_info.index] || !strmatch(argv[opt_info.index], "[+-]+([0-9])")) {
-                    errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                }
-                goto done;
+
+    // We use `getopt_long_only()` rather than `getopt_long()` to facilitate handling negative
+    // integers that might otherwise look like a flag.
+    optind = opterr = 0;
+    bool done = false;
+    while (!done && (opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
             }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
-            default: { break; }
+            case '?': {
+                char *cp;
+                (void)strton64(argv[optind - 1] + 1, &cp, NULL, 0);
+                if (*cp) {
+                    // It's not an integer so it's an invalid flag.
+                    builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                    return 2;
+                }
+                optind--;
+                done = true;
+                break;
+            }
+            default: { abort(); }
         }
     }
-
-done:
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
+    argv += optind;
 
     pp->mode = SH_JMPFUN;
-    argv += opt_info.index;
-    n = (((arg = *argv) ? (int)strtol(arg, NULL, 10) : shp->oldexit));
+    int n = *argv ? (int)strtol(*argv, NULL, 10) : shp->oldexit;
     if (n < 0 || n == 256 || n > SH_EXITMASK + shp->gd->sigmax) {
         n &= ((unsigned int)n) & SH_EXITMASK;
     }
