@@ -19,6 +19,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -28,11 +29,15 @@
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
-#include "option.h"
 #include "path.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
+
+static const char *short_options = "+:f:LP";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
 
 //
 //  The `pwd` special builtin.
@@ -40,14 +45,25 @@
 int b_pwd(int argc, char *argv[], Shbltin_t *context) {
     char *cp;
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     bool pflag = false;
-    int n, ffd = -1;
-    UNUSED(argc);
+    int opt, fd = -1;
 
-    while ((n = optget(argv, sh_optpwd))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+    optind = opterr = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'f': {
-                ffd = opt_info.num;
+                char *cp;
+                int64_t n = strton64(optarg, &cp, NULL, 0);
+                if (*cp || n < 0 || n > INT_MAX) {
+                    builtin_usage_error(shp, cmd, "%s: invalid -f value", optarg);
+                    return 2;
+                }
+                fd = n;
                 break;
             }
             case 'L': {
@@ -59,23 +75,19 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
+            default: { abort(); }
         }
     }
 
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-
-    if (ffd != -1) {
-        cp = fgetcwd(ffd, 0, 0);
+    if (fd != -1) {
+        cp = fgetcwd(fd, 0, 0);
         if (!cp) {
             errormsg(SH_DICT, ERROR_system(1), e_pwd);
             __builtin_unreachable();

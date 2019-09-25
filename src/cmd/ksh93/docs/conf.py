@@ -100,6 +100,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('printf', 'printf', 'write formatted output',
      'David J. Korn, et. al.', '1'),
+    ('pwd', 'pwd', 'write working directory name',
+     'David J. Korn, et. al.', '1'),
     ('source', 'source', 'execute commands in the current environment',
      'David J. Korn, et. al.', '1'),
 
