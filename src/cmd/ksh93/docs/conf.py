@@ -104,6 +104,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('read', 'read', 'read a line from standard input',
      'David J. Korn, et. al.', '1'),
+    ('readonly', 'readonly', 'set readonly attribute on variables',
+     'David J. Korn, et. al.', '1'),
     ('source', 'source', 'execute commands in the current environment',
      'David J. Korn, et. al.', '1'),
 

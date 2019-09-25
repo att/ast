@@ -34,6 +34,7 @@ Welcome to the Korn Shell
    printf
    pwd
    read
+   readonly
    source
 
 .. toctree::
