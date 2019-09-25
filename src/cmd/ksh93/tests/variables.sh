@@ -531,7 +531,7 @@ TIMEFORMAT='this is a test'
 : ${.sh.version}
 [[ $(whence rm) == *.sh.* ]] && log_error '.sh. prefixed to tracked alias name'
 : ${.sh.version}
-[[ $(cd /bin;env | grep PWD=) == *.sh.* ]] && log_error '.sh. prefixed to PWD'
+[[ $(cd /bin;env | grep '^PWD=') == *.sh.* ]] && log_error '.sh. prefixed to PWD'
 # unset discipline bug fix
 dave=dave
 function dave.unset
@@ -758,8 +758,10 @@ level=$($SHELL -c $'$SHELL -c \'print -r "$SHLVL"\'')
 
 [[ $($SHELL -c '{ x=1; : ${x.};print ok;}') == ok ]] || log_error '${x.} where x is a simple variable causes shell to abort'
 
-$SHELL -c 'unset .sh'
+expect=': .sh: is read only'
+actual=$($SHELL -c 'unset .sh' 2>&1)
 [[ $? == 1 ]] || log_error 'unset .sh should return 1'
+[[ $actual == *$expect ]] || log_error 'unset .sh should report it is readonly'
 
 x=$($SHELL -c 'foo=bar foobar=fbar; print -r -- ${!foo*}')
 [[ $x == 'foo '* ]] || log_error 'foo not included in ${!foo*}'

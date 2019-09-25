@@ -103,7 +103,7 @@ then
     # the parent dir of this script.
     TEST_ROOT=$TEST_ROOT/api
 else
-    readonly test_path=$TEST_ROOT/$test_name.sh
+    readonly test_path=$TEST_ROOT/$test_name
 fi
 
 if [[ ! -f $test_path ]]
@@ -396,7 +396,7 @@ else
     #
     # Create the actual unit test script by concatenating the stock preamble and postscript to the
     # unit test. Then run the composed script.
-    readonly test_script=$test_name.sh
+    readonly test_script=$test_name
     echo "#!$SHELL"                    > $test_script
     cat $TEST_ROOT/util/preamble.sh   >> $test_script
     cat $test_path                    >> $test_script
@@ -408,14 +408,14 @@ else
         exit_status=$?
     elif [[ $shcomp != skip ]]
     then
-        $SHCOMP $test_script > $test_script.comp || exit
-        $SHELL -p $TEST_DIR/$test_script.comp $test_name < /dev/null
+        $SHCOMP $test_script > $test_script.shcomp || exit
+        $SHELL -p $TEST_DIR/$test_script.shcomp $test_name < /dev/null
         exit_status=$?
     else
-        exit_status=0
+        exit_status=MESON_SKIPPED_TEST
     fi
 
-    if (( $exit_status == 0 ))
+    if (( $exit_status == 0 || $exit_status == $MESON_SKIPPED_TEST ))
     then
         cd /tmp
         rm -rf $TEST_DIR
