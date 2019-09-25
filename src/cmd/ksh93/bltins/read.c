@@ -17,16 +17,12 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-//
-// read [-ACprs] [-q format] [-d delim] [-u filenum] [-t timeout] [-n n] [-N n] [name...]
-//
-//   David Korn
-//   AT&T Labs
-//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
 #include <errno.h>
+#include <getopt.h>
+#include <limits.h>
 #include <setjmp.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -46,7 +42,6 @@
 #include "io.h"
 #include "lexstates.h"
 #include "name.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
@@ -208,11 +203,20 @@ static struct Method methods[] = {
     {"ksh", NULL},
     {NULL, NULL}};
 
+static const char *short_options = "+:ad:n:p:rsu:t:vACN:S";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
+//
+// Builtin `read` command.
+//
 int b_read(int argc, char *argv[], Shbltin_t *context) {
     Sfdouble_t sec;
     char *name = NULL;
-    int r, flags = 0, fd = 0;
+    int opt, r, flags = 0, fd = 0;
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     ssize_t len = 0;
     long timeout = 1000 * shp->st.tmout;
     int save_prompt, fixargs = context->invariant;
@@ -237,8 +241,14 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
         r = rp->plen;
         goto bypass;
     }
-    while ((r = optget(argv, sh_optread))) {
-        switch (r) {  //!OCLINT(MissingDefaultStatement)
+
+    optind = opterr = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'a': {
                 // `read -a` is an alias for `read -A`
                 flags |= A_FLAG;
@@ -254,23 +264,19 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 't': {
-                sec = sh_strnum(shp, opt_info.arg, NULL, 1);
+                sec = sh_strnum(shp, optarg, NULL, 1);
                 timeout = sec ? 1000 * sec : 1;
                 break;
             }
             case 'd': {
-                if (opt_info.arg && *opt_info.arg != '\n') {
-                    char *cp = opt_info.arg;
-                    flags &= ((1 << (D_FLAG + 1)) - 1);
-                    flags |= (mb1char(&cp) << (D_FLAG + 1)) | (1 << D_FLAG);
-                }
+                flags &= ((1 << (D_FLAG + 1)) - 1);
+                flags |= (mb1char(&optarg) << (D_FLAG + 1)) | (1 << D_FLAG);
                 break;
             }
             case 'p': {
                 if (shp->cpipe[0] <= 0 ||
-                    (*opt_info.arg != '-' &&
-                     (!strmatch(opt_info.arg, "+(\\w)") || isdigit(*opt_info.arg)))) {
-                    name = opt_info.arg;
+                    (*optarg != '-' && (!strmatch(optarg, "+(\\w)") || isdigit(*optarg)))) {
+                    name = optarg;
                 } else {
                     // For backward compatibility.
                     fd = shp->cpipe[0];
@@ -281,16 +287,22 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
             }
 #if SUPPORT_JSON
             case 'm': {
-                method = opt_info.arg;
+                method = optarg;
                 flags |= C_FLAG;
                 break;
             }
 #endif
             case 'n':
             case 'N': {
+                char *cp;
+                int64_t n = strton64(optarg, &cp, NULL, 0);
+                if (*cp || n < 0 || n > INT_MAX) {
+                    builtin_usage_error(shp, cmd, "%s: invalid -%c value", optarg, optopt);
+                    return 2;
+                }
+                len = n;
                 flags &= ((1 << D_FLAG) - 1);
-                flags |= (r == 'n' ? N_FLAG : NN_FLAG);
-                len = opt_info.num;
+                flags |= (opt == 'n' ? N_FLAG : NN_FLAG);
                 break;
             }
             case 'r': {
@@ -307,23 +319,22 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'u': {
-                if (opt_info.arg[0] == 'p' && opt_info.arg[1] == 0) {
-                    if ((fd = shp->cpipe[0]) <= 0) {
+                if (optarg[0] == 'p' && optarg[1] == 0) {
+                    fd = shp->cpipe[0];
+                    if (fd <= 0) {
                         errormsg(SH_DICT, ERROR_exit(1), e_query);
                         __builtin_unreachable();
                     }
                     break;
                 }
-                fd = (int)strtol(opt_info.arg, &opt_info.arg, 10);
-                if (*opt_info.arg) {
-                    fd = -1;
-                } else if (!sh_iovalidfd(shp, fd)) {
-                    fd = -1;
-                } else if (!(shp->inuse_bits & (1 << fd)) &&
-                           (sh_inuse(shp, fd) ||
-                            (shp->gd->hist_ptr && fd == sffileno(shp->gd->hist_ptr->histfp)))) {
-                    break;
+
+                char *cp;
+                int64_t n = strton64(optarg, &cp, NULL, 0);
+                if (*cp || n < 0 || n > INT_MAX || !sh_iovalidfd(shp, n)) {
+                    builtin_usage_error(shp, cmd, "%s: invalid -u value", optarg);
+                    return 2;
                 }
+                fd = n;
                 break;
             }
             case 'v': {
@@ -331,25 +342,21 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                if (shp->cpipe[0] > 0 &&
-                    strcmp(opt_info.arg, "-p: prompt argument expected") == 0) {
+                if (optopt == 'p' && shp->cpipe[0] > 0) {
                     fd = shp->cpipe[0];
                     break;
                 }
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
+    argv += optind;
 
     if (method) {
         for (mindex = 0; methods[mindex].name; mindex++) {

@@ -33,6 +33,7 @@ Welcome to the Korn Shell
    print
    printf
    pwd
+   read
    source
 
 .. toctree::
