@@ -31,6 +31,7 @@ Welcome to the Korn Shell
    kill
    let
    print
+   printf
    source
 
 .. toctree::

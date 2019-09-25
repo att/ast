@@ -98,6 +98,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('print', 'print', 'write arguments to standard output',
      'David J. Korn, et. al.', '1'),
+    ('printf', 'printf', 'write formatted output',
+     'David J. Korn, et. al.', '1'),
     ('source', 'source', 'execute commands in the current environment',
      'David J. Korn, et. al.', '1'),
 
