@@ -109,6 +109,14 @@ fi
 [[ G =~ [[:xdigit:]] ]] && log_error 'pattern [[:xdigit:]] broken'
 [[ g =~ [[:xdigit:]] ]] && log_error 'pattern [[:xdigit:]] broken'
 
+# ========
+# Verify an invalid char class name is handled without a SIGSEGV or similar failure.
+# Regression for https://github.com/att/ast/issues/1409.
+actual=$(case x in [x[:bogus:]]) echo x ;; esac)
+expect=''
+[[ $actual == $expect ]] || log_error 'invalid char class name' "$expect" "$actual"
+
+# ========
 [[ 3 =~ \w ]] || log_error 'pattern \w broken'
 [[ y =~ \w ]] || log_error 'pattern \w broken'
 [[ / =~ \w ]] && log_error 'pattern \w broken'

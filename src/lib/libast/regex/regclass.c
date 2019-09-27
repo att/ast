@@ -99,7 +99,7 @@ regclass_t regclass(const char *s, char **e) {
     for (cp = ctype; cp < &ctype[elementsof(ctype)]; cp++) {
         if (n == cp->size && !strncmp(s, cp->name, n) && (!cp->next || cp->next == lc)) break;
     }
-
+    if (cp == &ctype[elementsof(ctype)]) return NULL;  // didn't find the char class
     if (e) *e = (char *)t + 2;
     return cp->ctype;
 }
