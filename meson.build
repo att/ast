@@ -1,4 +1,8 @@
-project('ksh93', 'c', default_options: ['b_lundef=false', 'default_library=static'])
+project('ksh93', 'c', default_options: [
+    'b_lundef=false',
+    'default_library=static',
+    'c_std=c99', # we require the C99 (aka ISO9899:1999) language standard
+])
 
 source_dir = meson.current_source_dir()
 cc = meson.get_compiler('c')
@@ -8,13 +12,21 @@ system = host_machine.system()
 configuration_incdir = include_directories(['.'])
 install_prefix = get_option('prefix')
 
+# Uncomment this to enable warnings about implicit type coercions.
+# This is gcc only; clang doesn't recognize it.
+# add_global_arguments('-Wcoercion', language: 'c')
+
+# Uncomment this to enable warnings about implicit 64 to 32 bit narrowing casts.
+# This is clang only; gcc doesn't recognize it.
+# add_global_arguments('-Wshorten-64-to-32', language: 'c')
+
 if get_option('warnings-are-errors') == true
     add_global_arguments('-Werror', language: 'c')
 endif
 
 # Global compiler flags aren't used by the feature tests. So instead put them
 # in an array that will be used by the feature tests.
-feature_test_args = ['-std=gnu99', '-D_GNU_SOURCE']
+feature_test_args = ['-D_GNU_SOURCE']
 
 if system == 'openbsd'
     # This is needed because OpenBSD installs a lot of stuff in
@@ -27,11 +39,6 @@ if system == 'openbsd'
     add_global_arguments('-I/usr/local/include', language: 'c')
     feature_test_args += '-I/usr/local/include'
 endif
-
-# We require the C99 (aka ISO9899:1999) standard. Note we use `gnu99` rather
-# than `c99` because the former enables language features we need. The latter
-# does that but also limits which APIs are available.
-add_global_arguments('-std=gnu99', language: 'c')
 
 # Without this flag some symbols aren't visible.
 #
@@ -68,20 +75,12 @@ add_global_arguments('-fno-strict-aliasing', language: 'c')
 # -Wall.
 add_global_arguments('-Wextra', language: 'c')
 
-# Uncomment this to enable warnings about implicit type coercions.
-# This is gcc only; clang doesn't recognize it.
-# add_global_arguments('-Wcoercion', language: 'c')
-
-# Uncomment this to enable warnings about implicit 64 to 32 bit narrowing casts.
-# This is clang only; gcc doesn't recognize it.
-# add_global_arguments('-Wshorten-64-to-32', language: 'c')
-
 # GCC 8 enables -Wcast-function-type when -Wextra is used. Sadly it causes far
 # too many false positives in the ksh code. Such as in the
 # src/cmd/ksh93/bltins/math.c module. So disable it.
 #
-# TODO: Refactor the code so that the incompatible explicit function casts are
-# not needed.
+# TODO: Refactor the code so that incompatible explicit function casts are not
+# needed.
 if cc.get_id() == 'gcc' and cc.has_argument('-Wno-cast-function-type')
     add_global_arguments('-Wno-cast-function-type', language: 'c')
 endif
