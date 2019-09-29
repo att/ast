@@ -2210,5 +2210,4 @@ static_fn void stack_grow(Lex_t *lp) {
     } else {
         lp->lexd.lex_match = malloc(sizeof(int) * STACK_ARRAY);
     }
-    assert(lp->lexd.lex_match);
 }

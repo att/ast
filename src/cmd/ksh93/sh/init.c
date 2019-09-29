@@ -1589,7 +1589,6 @@ static_fn Init_t *nv_init(Shell_t *shp) {
     double d = 0;
 
     ip = calloc(1, sizeof(Init_t));
-    if (!ip) return NULL;
     shp->nvfun.last = (char *)shp;
     shp->nvfun.nofree = 1;
     shp->var_base = shp->var_tree = inittree(shp, shtab_variables);

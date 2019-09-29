@@ -185,7 +185,7 @@ static_fn Wc_t *wc_init(int mode) {
     int n;
     int w;
     Wc_t *wp = stkalloc(stkstd, sizeof(Wc_t));
-    if (!wp) return NULL;
+
     if (!mbwide()) {
         wp->mb = 0;
     } else if (!(mode & WC_NOUTF8) && ast.locale.is_utf8) {

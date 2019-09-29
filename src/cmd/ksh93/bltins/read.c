@@ -578,7 +578,6 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
         // Reserved buffer.
         if ((c = size) >= sizeof(buf)) {
             var = malloc(c + 1);
-            if (!var) sh_exit(shp, 1);
             end = var + c;
         } else {
             end = var + sizeof(buf) - 1;

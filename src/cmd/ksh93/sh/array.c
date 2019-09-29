@@ -1198,7 +1198,6 @@ static_fn void *nv_assoc_op_init(Namval_t *np, const char *sp) {
 
     assert(!ap);
     ap = calloc(1, sizeof(struct assoc_array));
-    assert(ap);
     ap->namarr.table = dtopen(&_Nvdisc, Dtoset);
     dtuserdata(ap->namarr.table, shp, 1);
     ap->cur = NULL;

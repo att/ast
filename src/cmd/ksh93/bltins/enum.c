@@ -290,10 +290,6 @@ int b_enum(int argc, char **argv, Shbltin_t *context) {
             sz += strlen(nv_getval(np));
         } while (nv_nextsub(np));
         ep = calloc(1, sizeof(struct Enum));
-        if (!ep) {
-            error(ERROR_system(1), "out of space");
-            __builtin_unreachable();
-        }
         ep->nelem = n;
         mp = nv_namptr(ep->node, 0);
         mp->nvshell = shp;

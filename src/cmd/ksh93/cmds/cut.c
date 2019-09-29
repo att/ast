@@ -111,7 +111,7 @@ static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, siz
     int range = 0;
     char *cp = str;
     Cut_t *cut = stkalloc(stkstd, sizeof(Cut_t) + strlen(cp) * sizeof(int));
-    if (!cut) error(ERROR_exit(1), "out of space");
+
     cut->mb = mbwide();
     if (cut->mb) {
         memset(cut->space, 0, sizeof(cut->space) / 2);

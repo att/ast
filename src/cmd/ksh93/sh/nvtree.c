@@ -162,10 +162,8 @@ struct nvdir *nv_diropen(Namval_t *np, const char *name, void *context) {
     Namval_t *nq = NULL, fake;
     Namfun_t *nfp = NULL;
 
-    dp = calloc(1, sizeof(struct nvdir) + len + 1);
-    if (!dp) return NULL;
-
     memset(&fake, 0, sizeof(fake));
+    dp = calloc(1, sizeof(struct nvdir) + len + 1);
     dp->data = (char *)(dp + 1);
     if (name[len - 1] == '*' || name[len - 1] == '@') len -= 1;
     name = memcpy(dp->data, name, len);
@@ -231,7 +229,6 @@ struct nvdir *nv_diropen(Namval_t *np, const char *name, void *context) {
         if (np == dp->hp && !next) dp->hp = dtnext(dp->root, dp->hp);
         if (np && ((nfp = nextdisc(np)) || nv_istable(np))) {
             save = calloc(1, sizeof(struct nvdir));
-            if (!save) return NULL;
             *save = *dp;
             dp->prev = save;
             if (nv_istable(np)) {
@@ -334,7 +331,6 @@ char *nv_dirnext(void *dir) {
             if (save) return cp;
             len = strlen(cp);
             save = calloc(1, sizeof(struct nvdir) + len + 1);
-            if (!save) return 0;
             *save = *dp;
             dp->prev = save;
             dp->root = root;

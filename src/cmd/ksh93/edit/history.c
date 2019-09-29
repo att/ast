@@ -171,11 +171,6 @@ retry:
     }
     histmask -= 1;
     hp = calloc(1, sizeof(History_t) + histmask * sizeof(off_t));
-    if (!hp) {
-        sh_close(fd);
-        return 0;
-    }
-
     shgd->hist_ptr = hist_ptr = hp;
     hp->histshell = shp;
     hp->histsize = maxlines;

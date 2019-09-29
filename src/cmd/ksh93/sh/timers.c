@@ -171,8 +171,8 @@ Timer_t *sh_timeradd(unsigned long msec, int flags, void (*action)(void *), void
     tp = tpfree;
     if (tp) {
         tpfree = tp->next;
-    } else if (!(tp = malloc(sizeof(Timer_t)))) {
-        return NULL;
+    } else {
+        tp = malloc(sizeof(Timer_t));
     }
     tp->wakeup = getnow() + t;
     tp->incr = (flags ? t : 0);
@@ -186,10 +186,8 @@ Timer_t *sh_timeradd(unsigned long msec, int flags, void (*action)(void *), void
         fn = sh_signal(SIGALRM, sigalrm);
         if ((t = setalarm(t)) > 0 && fn && fn != sigalrm) {
             sh_sigfun_t *hp = malloc(sizeof(sh_sigfun_t));
-            if (hp) {
-                *hp = fn;
-                sh_timeradd((long)(1000 * t), 0, oldalrm, hp);
-            }
+            *hp = fn;
+            sh_timeradd((long)(1000 * t), 0, oldalrm, hp);
         }
         tp = tptop;
     } else if (tpmin && !tpmin->action) {

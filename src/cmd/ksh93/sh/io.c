@@ -1648,10 +1648,6 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
         long moved;
         filemapsize += 8;
         filemap = realloc(filemap, filemapsize * sizeof(struct fdsave));
-        if (!filemap) {
-            errormsg(SH_DICT, ERROR_exit(4), e_nospace);
-            __builtin_unreachable();
-        }
         moved = (char *)filemap - oldptr;
         if (moved) {
             for (savefd = shp->gd->lim.open_max; --savefd >= 0;) {
@@ -2311,7 +2307,6 @@ Sfio_t *sh_sfeval(const char *argv[]) {
     if (argv[1]) {
         struct eval *ep;
         ep = calloc(1, sizeof(struct eval));
-        if (!ep) return NULL;
         ep->disc = eval_disc;
         ep->argv = argv;
         ep->slen = -1;
