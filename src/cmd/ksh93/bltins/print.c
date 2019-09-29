@@ -198,6 +198,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 if (!(argv[-1][0] == '-' && argv[-1][n - 1] == 'R')) {
                     // The current flag must be of the form -*R?.
                     char *R_opt = strchr(*argv, 'R');
+                    assert(R_opt);  // it should be impossible to not find the `R` flag in the arg
                     if (*(R_opt + 1) == 'n') prdata.no_newline = true;
                     argv++;
                 }

@@ -61,7 +61,7 @@ static int exec_args(char *argv[], struct login *logp) {
     const char *pname;
 
     if (shp->subshell && !shp->subshare) sh_subfork();
-    if (logp && logp->clear) {
+    if (logp->clear) {
         nv_scan(shp->var_tree, noexport, 0, NV_EXPORT, NV_EXPORT);
     }
     while (arg) {
