@@ -6,6 +6,7 @@ Welcome to the Korn Shell
    :caption: Overviews:
 
    ksh_intro
+   shcomp
 
 .. toctree::
    :maxdepth: 1

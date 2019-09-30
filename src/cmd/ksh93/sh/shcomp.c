@@ -25,6 +25,9 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
@@ -33,7 +36,6 @@
 #include "defs.h"
 #include "error.h"
 #include "name.h"
-#include "option.h"
 #include "sfio.h"
 #include "shnodes.h"
 #include "stk.h"
@@ -42,46 +44,64 @@
 #define VERSION 3
 static const char header[6] = {CNTL('k'), CNTL('s'), CNTL('h'), 0, VERSION, 0};
 
+static const char *short_options = "+:nvD";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {"dictionary", no_argument, NULL, 'D'},
+    {"noexec", no_argument, NULL, 'n'},
+    {"verbose", no_argument, NULL, 'v'},
+    {NULL, 0, NULL, 0}};
+
 int main(int argc, char *argv[]) {
     Sfio_t *in, *out;
     Shell_t *shp;
     Namval_t *np;
     Shnode_t *t;
     char *cp;
-    int n, nflag = 0, vflag = 0, dflag = 0;
+    int opt;
+    bool nflag = false, vflag = false, dflag = false;
+    char *cmd = argv[0];
 
     error_info.id = argv[0];
     shp = sh_init(argc, argv, NULL);
-    while ((n = optget(argv, sh_optshcomp))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+
+    optind = opterr = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'D': {
-                dflag = 1;
+                dflag = true;
                 break;
             }
             case 'v': {
-                vflag = 1;
+                vflag = true;
                 break;
             }
             case 'n': {
-                nflag = 1;
+                nflag = true;
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
+            default: { abort(); }
         }
     }
+    argv += optind;
+    argc -= optind;
+
     shp->shcomp = 1;
-    argv += opt_info.index;
-    argc -= opt_info.index;
-    if (error_info.errors || argc > 2) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    if (argc > 2) {
+        builtin_usage_error(shp, cmd, "expected at most two args, got %d", argc);
+        return 2;
     }
 
     cp = *argv;

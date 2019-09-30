@@ -57,6 +57,10 @@ html_static_path = ['_static']
 
 # Control which documents get converted to man pages by `make man`.
 man_pages = [
+    # External commands.
+    ('shcomp', 'shcomp', 'compile a shell script',
+     'David J. Korn, et. al.', '1'),
+
     # Builtin commands.
     ('alias', 'alias', 'define or display aliases',
      'David J. Korn, et. al.', '1'),
