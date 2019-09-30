@@ -114,6 +114,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('shift', 'shift', 'shift positional parameters',
      'David J. Korn, et. al.', '1'),
+    ('sleep', 'sleep', 'suspend execution for an interval',
+     'David J. Korn, et. al.', '1'),
     ('source', 'source', 'execute commands in the current environment',
      'David J. Korn, et. al.', '1'),
 

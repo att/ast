@@ -17,17 +17,13 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-//
-// sleep delay
-//
-//   David Korn
-//   AT&T Labs
-//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <getopt.h>
 #include <math.h>
 #include <signal.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -37,47 +33,56 @@
 #include "defs.h"
 #include "error.h"
 #include "fault.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "tmx.h"
 #include "tv.h"
 
+static const char *short_options = "+:s";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
+//
+// Builtin `sleep` command.
+//
 int b_sleep(int argc, char *argv[], Shbltin_t *context) {
-    UNUSED(argc);
-    char *cp;
     long double d = 0.0;
     Shell_t *shp = context->shp;
-    int sflag = 0;
+    char *cmd = argv[0];
+    bool sflag = false;
     time_t tloc = 0;
     char *last;
-    int n;
+    int opt;
 
     if (shp->subshell) sh_subfork();
     if (!(shp->sigflag[SIGALRM] & (SH_SIGFAULT | SH_SIGOFF))) sh_sigtrap(shp, SIGALRM);
-    while ((n = optget(argv, sh_optsleep))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+
+    optind = opterr = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 's': {
-                sflag = 1;
+                sflag = true;
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
+            default: { abort(); }
         }
     }
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
+    argv += optind;
 
-    argv += opt_info.index;
-    cp = *argv;
+    char *cp = *argv;
     if (cp) {
         d = strtold(cp, &last);
         if (*last) {

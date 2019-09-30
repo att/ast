@@ -38,6 +38,7 @@ Welcome to the Korn Shell
    readonly
    return
    shift
+   sleep
    source
 
 .. toctree::
