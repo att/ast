@@ -19,46 +19,55 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdlib.h>
 
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
-#include "option.h"
 #include "shcmd.h"
+
+static const char *short_options = "+:";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
 
 //
 // Builtin `shift`.
 //
-int b_shift(int n, char *argv[], Shbltin_t *context) {
-    char *arg;
+int b_shift(int argc, char *argv[], Shbltin_t *context) {
+    int opt;
     Shell_t *shp = context->shp;
-    while ((n = optget(argv, sh_optshift))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+    char *cmd = argv[0];
+
+    optind = opterr = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
             }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
+    argv += optind;
 
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-
-    argv += opt_info.index;
-    n = ((arg = *argv) ? (int)sh_arith(shp, arg) : 1);
+    char *arg = *argv;
+    int n = arg ? (int)sh_arith(shp, arg) : 1;
     if (n < 0 || shp->st.dolc < n) {
         errormsg(SH_DICT, ERROR_exit(1), e_number, arg);
         __builtin_unreachable();
-    } else {
-        shp->st.dolv += n;
-        shp->st.dolc -= n;
     }
+
+    shp->st.dolv += n;
+    shp->st.dolc -= n;
     return 0;
 }

@@ -37,6 +37,7 @@ Welcome to the Korn Shell
    read
    readonly
    return
+   shift
    source
 
 .. toctree::
