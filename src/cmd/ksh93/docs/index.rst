@@ -40,6 +40,7 @@ Welcome to the Korn Shell
    shift
    sleep
    source
+   test
 
 .. toctree::
    :maxdepth: 1
