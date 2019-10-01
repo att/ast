@@ -54,6 +54,7 @@ Welcome to the Korn Shell
    head
    logname
    mkdir
+   sync
 
 Indices and tables
 ==================

@@ -138,4 +138,6 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('mkdir', 'mkdir', 'make directories',
      'David J. Korn, et. al.', '1'),
+    ('sync', 'sync', 'schedule file/file system updates',
+     'David J. Korn, et. al.', '1'),
 ]
