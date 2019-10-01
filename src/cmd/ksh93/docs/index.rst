@@ -41,6 +41,7 @@ Welcome to the Korn Shell
    sleep
    source
    test
+   times
 
 .. toctree::
    :maxdepth: 1

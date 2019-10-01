@@ -23,7 +23,7 @@ expect_prompt
 # The times command with args produces a syntax error.
 log_test_entry
 send "times sleep 1\r"
-expect "times: unexpected arguments\r\nUsage: times" {
+expect "times: unexpected arguments\r\n" {
     puts "times sleep 1 produces syntax error"
 }
 expect_prompt

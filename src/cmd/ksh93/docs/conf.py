@@ -120,6 +120,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('test', 'test', 'evaluate expression',
      'David J. Korn, et. al.', '1'),
+    ('times', 'times', 'display CPU usage by the shell and child processes',
+     'David J. Korn, et. al.', '1'),
 
     # External commands available as builtins.
     ('basename', 'basename', 'strip directory and suffix from filenames',
