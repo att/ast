@@ -17,63 +17,70 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-//
-// ulimit [-HSacdfmnstuv] [limit]
-//
-//   David Korn
-//   AT&T Labs
-//
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/resource.h>
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "b_ulimit.h"
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
 #include "name.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 
 #define HARD 2
 #define SOFT 4
 
-static_fn int ulimit_infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
-    UNUSED(op);
-    UNUSED(s);
-    UNUSED(dp);
-    const Limit_t *tp;
+static const char *short_options = "+:abcdefilmnpqrstuvwxHMST";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {"as", 0, NULL, 'M'},
+    {"core", 0, NULL, 'c'},
+    {"cpu", 0, NULL, 't'},
+    {"data", 0, NULL, 'd'},
+    {"fsize", 0, NULL, 'f'},
+    {"locks", 0, NULL, 'x'},
+    {"memlock", 0, NULL, 'l'},
+    {"msgqueue", 0, NULL, 'q'},
+    {"nice", 0, NULL, 'e'},
+    {"nofile", 0, NULL, 'n'},
+    {"nproc", 0, NULL, 'u'},
+    {"pipe", 0, NULL, 'p'},
+    {"rss", 0, NULL, 'm'},
+    {"rtprio", 0, NULL, 'r'},
+    {"sbsize", 0, NULL, 'b'},
+    {"sigpend", 0, NULL, 'i'},
+    {"stack", 0, NULL, 's'},
+    {"swap", 0, NULL, 'w'},
+    {"threads", 0, NULL, 'T'},
+    {"vmem", 0, NULL, 'v'},
+    {NULL, 0, NULL, 0}};  // keep clang-format from compacting this table
 
-    for (tp = shtab_limits; tp->name; tp++) {
-        sfprintf(sp, "[%c=%d:%s?The %s", tp->option, tp - shtab_limits + 1, tp->name,
-                 tp->description);
-        if (tp->type != LIM_COUNT) sfprintf(sp, " in %ss", e_units[tp->type]);
-        sfprintf(sp, ".]");
-    }
-    return 1;
-}
-
+//
+// Builtin `ulimit` command.
+//
 int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
-    char *limit;
-    int mode = 0, n;
+    int mode = 0, n = 0, opt;
     unsigned long hit = 0;
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     struct rlimit rlp;
-    const Limit_t *tp;
     int label, unit, nosupport;
     rlim_t i;
-    Optdisc_t disc;
 
-    memset(&disc, 0, sizeof(disc));
-    disc.version = OPT_VERSION;
-    disc.infof = ulimit_infof;
-    opt_info.disc = &disc;
-    while ((n = optget(argv, sh_optulimit))) {
-        switch (n) {
+    optind = opterr = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'H': {
                 mode |= HARD;
                 continue;
@@ -87,44 +94,53 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             default: {
-                if (n < 0) {
-                    hit |= (1L << (-(n + 1)));
-                } else {
-                    errormsg(SH_DICT, 2, e_notimp, opt_info.name);
+                // Find the short option in the limits table and set the corresponding bit in the
+                // mask of options we've seen.
+                const Limit_t *tp;
+                for (tp = shtab_limits; tp->option; tp++) {
+                    if (tp->option == opt) {
+                        hit |= 1L << (tp - shtab_limits);
+                        break;
+                    }
                 }
-                break;
+                assert(tp->option);  // we should always find the short flag in the table
             }
         }
     }
-    opt_info.disc = NULL;
+
+    char *limit = argv[optind];
     // Default to -f.
-    limit = argv[opt_info.index];
     if (hit == 0) {
-        for (n = 0; shtab_limits[n].option; n++) {
+        for (int n = 0; shtab_limits[n].option; n++) {
             if (shtab_limits[n].index == RLIMIT_FSIZE) {
-                hit |= (1L << n);
+                hit = (1L << n);
                 break;
             }
         }
     }
     // Only one option at a time for setting.
+    if (argc > optind + 1) {
+        builtin_usage_error(shp, cmd, "too many arguments");
+        return 2;
+    }
     label = (hit & (hit - 1));
-    if (error_info.errors || (limit && label) || argc > opt_info.index + 1) {
-        errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
-        __builtin_unreachable();
+    if (limit && label) {
+        builtin_usage_error(shp, cmd, "you can only set one option at a time");
+        return 2;
     }
     if (mode == 0) mode = (HARD | SOFT);
-    for (tp = shtab_limits; tp->name && hit; tp++, hit >>= 1) {
+    for (const Limit_t *tp = shtab_limits; tp->name && hit; tp++, hit >>= 1) {
         if (!(hit & 1)) continue;
-        nosupport = (n = tp->index) == RLIMIT_UNKNOWN;
+        n = tp->index;
+        nosupport = n == RLIMIT_UNKNOWN;
         unit = shtab_units[tp->type];
         if (limit) {
             if (shp->subshell && !shp->subshare) sh_subfork();

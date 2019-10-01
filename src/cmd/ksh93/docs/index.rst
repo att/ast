@@ -43,6 +43,7 @@ Welcome to the Korn Shell
    test
    times
    trap
+   ulimit
 
 .. toctree::
    :maxdepth: 1
