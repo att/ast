@@ -20,6 +20,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <getopt.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -29,23 +30,32 @@
 #include "defs.h"
 #include "error.h"
 #include "fault.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
+
+static const char *short_options = "+:alp";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
 
 //
 //  The `trap` special builtin.
 //
 int b_trap(int argc, char *argv[], Shbltin_t *context) {
     char *arg = NULL;
-    int sig, clear;
+    int opt, clear;
     bool pflag = false, dflag = false, aflag = false, lflag = false;
     Shell_t *shp = context->shp;
-    UNUSED(argc);
+    char *cmd = argv[0];
 
-    while ((sig = optget(argv, sh_opttrap))) {
-        switch (sig) {  //!OCLINT(MissingDefaultStatement)
+    optind = opterr = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'a': {
                 aflag = true;
                 break;
@@ -59,20 +69,18 @@ int b_trap(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
+    argv += optind;
+
     if (pflag && aflag) {
         errormsg(SH_DICT, ERROR_usage(2), "-a and -p are mutually exclusive");
         __builtin_unreachable();
@@ -107,7 +115,7 @@ int b_trap(int argc, char *argv[], Shbltin_t *context) {
             }
         }
         while ((arg = *argv++)) {
-            sig = sig_number(shp, arg);
+            int sig = sig_number(shp, arg);
             if (sig < 0) {
                 errormsg(SH_DICT, 2, e_trap, arg);
                 return 1;

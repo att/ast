@@ -42,6 +42,7 @@ Welcome to the Korn Shell
    source
    test
    times
+   trap
 
 .. toctree::
    :maxdepth: 1
