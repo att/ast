@@ -44,6 +44,7 @@ Welcome to the Korn Shell
    times
    trap
    ulimit
+   umask
 
 .. toctree::
    :maxdepth: 1

@@ -17,35 +17,41 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-//
-// umask [-pS] [mask]
-//
-//   David Korn
-//   dgkorn@gmail.com
-//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <getopt.h>
 #include <stdbool.h>
 #include <stddef.h>
 
 #include "ast.h"
 #include "defs.h"
 #include "error.h"
-#include "option.h"
 #include "sfio.h"
 
 // This has to be included after "shell.h".
 #include "builtins.h"
 
+static const char *short_options = "+:pS";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
+
 int b_umask(int argc, char *argv[], Shbltin_t *context) {
-    char *mask;
     int flag = 0;
     bool sflag = false, pflag = false;
-    UNUSED(context);
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
+    int opt;
 
-    while ((argc = optget(argv, sh_optumask))) {
-        switch (argc) {
+    optind = opterr = 0;
+    while ((opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'p': {
                 pflag = true;
                 break;
@@ -55,47 +61,20 @@ int b_umask(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
-            default: { break; }
+            default: { abort(); }
         }
     }
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
+    argv += optind;
 
-    argv += opt_info.index;
-    mask = *argv;
-    if (mask) {
-        int c;
-        if (isdigit(*mask)) {
-            while ((c = *mask++)) {
-                if (c >= '0' && c <= '7') {
-                    flag = (flag << 3) + (c - '0');
-                } else {
-                    errormsg(SH_DICT, ERROR_exit(1), e_number, *argv);
-                    __builtin_unreachable();
-                }
-            }
-        } else {
-            char *cp = mask;
-            flag = sh_umask(0);
-            c = strperm(cp, &cp, ~flag & 0777);
-            if (*cp) {
-                sh_umask(flag);
-                errormsg(SH_DICT, ERROR_exit(1), e_format, mask);
-                __builtin_unreachable();
-            }
-            flag = (~c & 0777);
-        }
-        sh_umask(flag);
-    } else {
+    char *mask = *argv;
+    if (!mask) {  // display the current umask
         char *prefix = pflag ? "umask " : "";
         flag = sh_umask(0);
         sh_umask(flag);
@@ -104,6 +83,31 @@ int b_umask(int argc, char *argv[], Shbltin_t *context) {
         } else {
             sfprintf(sfstdout, "%s%0#4o\n", prefix, flag);
         }
+        return 0;
     }
+
+    // Set a new umask.
+    int c;
+    if (isdigit(*mask)) {
+        while ((c = *mask++)) {
+            if (c >= '0' && c <= '7') {
+                flag = (flag << 3) + (c - '0');
+            } else {
+                errormsg(SH_DICT, ERROR_exit(1), e_number, *argv);
+                __builtin_unreachable();
+            }
+        }
+    } else {
+        char *cp = mask;
+        flag = sh_umask(0);
+        c = strperm(cp, &cp, ~flag & 0777);
+        if (*cp) {
+            sh_umask(flag);
+            errormsg(SH_DICT, ERROR_exit(1), e_format, mask);
+            __builtin_unreachable();
+        }
+        flag = (~c & 0777);
+    }
+    sh_umask(flag);
     return 0;
 }
