@@ -43,7 +43,7 @@ static const struct option long_options[] = {
     {"syncfs", required_argument, NULL, 'S'},
     {"sync", no_argument, NULL, 'X'},
     {"all", no_argument, NULL, 'X'},
-    {NULL, 0, NULL, 0}};
+    {NULL, 0, NULL, 0}};  // keep clang-format from compacting this table
 
 #if !_lib_syncfs
 int syncfs(int fd) {

@@ -20,8 +20,8 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <getopt.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "builtins.h"
 #include "defs.h"

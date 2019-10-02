@@ -37,7 +37,6 @@ static const struct option long_options[] = {
     {"help", no_argument, NULL, 1},  // all builtins support --help
     {NULL, 0, NULL, 0}};
 
-
 int b_umask(int argc, char *argv[], Shbltin_t *context) {
     int flag = 0;
     bool sflag = false, pflag = false;
