@@ -152,4 +152,6 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('sync', 'sync', 'schedule file/file system updates',
      'David J. Korn, et. al.', '1'),
+    ('uname', 'uname', 'identify the current system',
+     'David J. Korn, et. al.', '1'),
 ]

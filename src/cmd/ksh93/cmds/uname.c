@@ -18,24 +18,18 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * David Korn
- * Glenn Fowler
- * AT&T Research
- *
- * uname
- */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/utsname.h>
 #include <unistd.h>
 
 #include "builtins.h"
 #include "error.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 
@@ -54,6 +48,29 @@ static const char *hosttype = HOSTTYPE;
 
 #define OPT_ALL 8
 #define OPT_all (1L << 29)
+
+static const char *short_options = "+:adhimnoprsv";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {"all", 0, NULL, 'a'},
+    {"system", 0, NULL, 's'},
+    {"sysname", 0, NULL, 's'},
+    {"kernel-name", 0, NULL, 's'},
+    {"nodename", 0, NULL, 'n'},
+    {"release", 0, NULL, 'r'},
+    {"kernel-release", 0, NULL, 'r'},
+    {"version", 0, NULL, 'v'},
+    {"kernel-version", 0, NULL, 'v'},
+    {"machine", 0, NULL, 'm'},
+    {"processor", 0, NULL, 'p'},
+    {"implementation", 0, NULL, 'i'},
+    {"platform", 0, NULL, 'i'},
+    {"hardware-platform", 0, NULL, 'i'},
+    {"operating-system", 0, NULL, 'o'},
+    {"id", 0, NULL, 'h'},
+    {"host-id", 0, NULL, 'h'},
+    {"domain", 0, NULL, 'd'},
+    {NULL, 0, NULL, 0}};
 
 static bool output(bool sep, uint32_t flags, uint32_t flag, const char *value, const char *name) {
     if (!(flags & flag)) return sep;
@@ -74,17 +91,27 @@ static bool output(bool sep, uint32_t flags, uint32_t flag, const char *value, c
     return sep;
 }
 
+//
+// The "uname" builtin.
+//
 int b_uname(int argc, char **argv, Shbltin_t *context) {
     uint32_t flags = 0;
     bool sep = false;
-    int n;
+    int opt;
     char *t;
     struct utsname ut;
     char buf[257];
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, sh_optuname))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+    optind = opterr = 0;
+    while ((opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'a':
                 flags |= OPT_all | ((1L << OPT_ALL) - 1);
                 break;
@@ -118,18 +145,22 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             case 'v':
                 flags |= OPT_version;
                 break;
-            case ':':
-                error(2, "%s", opt_info.arg);
-                break;
-            case '?':
-                error(ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    if (error_info.errors || *argv) {
-        error(ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    argv += optind;
+
+    if (*argv) {
+        builtin_usage_error(shp, cmd, "unexpected args");
+        return 2;
     }
 
     if (!flags) flags = OPT_system;

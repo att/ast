@@ -61,6 +61,7 @@ Welcome to the Korn Shell
    logname
    mkdir
    sync
+   uname
 
 Indices and tables
 ==================
