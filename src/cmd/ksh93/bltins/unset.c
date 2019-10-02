@@ -19,27 +19,38 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdbool.h>
-#include <string.h>
+#include <stdlib.h>
 
 #include "builtins.h"
 #include "cdt.h"
 #include "defs.h"
-#include "error.h"
 #include "name.h"
-#include "option.h"
 #include "shcmd.h"
 
+static const char *short_options = "+:fnv";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
+//
 // The `unset` builtin.
+//
 int b_unset(int argc, char *argv[], Shbltin_t *context) {
-    UNUSED(argc);
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     Dt_t *troot = shp->var_tree;
     nvflag_t nvflags = 0;
-    int n;
+    int opt;
 
-    while ((n = optget(argv, sh_optunset))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+    optind = opterr = 0;
+    while ((opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'f': {
                 troot = sh_subfuntree(shp, true);
                 nvflags |= NV_NOSCOPE;
@@ -55,19 +66,21 @@ int b_unset(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    if (error_info.errors || !*argv) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    argv += optind;
+
+    if (!*argv) {
+        builtin_usage_error(shp, cmd, "expected at least one variable or function name");
+        return 2;
     }
 
     if (!troot) return 1;

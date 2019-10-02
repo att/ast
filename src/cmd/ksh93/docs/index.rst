@@ -46,6 +46,7 @@ Welcome to the Korn Shell
    ulimit
    umask
    unalias
+   unset
 
 .. toctree::
    :maxdepth: 1

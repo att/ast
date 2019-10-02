@@ -130,6 +130,9 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('unalias', 'unalias', 'remove alias definitions',
      'David J. Korn, et. al.', '1'),
+    ('unset', 'unset',
+     'unset values and attributes of variables and functions',
+     'David J. Korn, et. al.', '1'),
 
     # External commands available as builtins.
     ('basename', 'basename', 'strip directory and suffix from filenames',
