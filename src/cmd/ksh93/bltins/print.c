@@ -224,16 +224,16 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
             default: { abort(); }
         }
     }
-
     argv += optind;
+
     if (argc < 0 && !(prdata.format = *argv++)) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+        builtin_usage_error(shp, cmd, "too few arguments");
+        return 2;
     }
     if ((prdata.verbose || prdata.vals_are_vars) && prdata.format) {
-        errormsg(SH_DICT, ERROR_usage(2), "-%c and -f are mutually exclusive",
-                 prdata.verbose ? 'v' : 'C');
-        __builtin_unreachable();
+        builtin_usage_error(shp, cmd, "-%c and -f are mutually exclusive",
+                            prdata.verbose ? 'v' : 'C');
+        return 2;
     }
 
     // Handle special case of '-' operand for print. But only if -R wasn't used.
