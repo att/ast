@@ -45,6 +45,7 @@ Welcome to the Korn Shell
    trap
    ulimit
    umask
+   unalias
 
 .. toctree::
    :maxdepth: 1

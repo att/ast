@@ -19,47 +19,62 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "builtins.h"
 #include "cdt.h"
 #include "defs.h"
-#include "error.h"
 #include "name.h"
-#include "option.h"
 #include "shcmd.h"
 
+static const char *short_options = "+:a";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
+//
 // The `unalias` builtin.
+//
 int b_unalias(int argc, char *argv[], Shbltin_t *context) {
-    UNUSED(argc);
     Shell_t *shp = context->shp;
+    char *cmd = argv[0];
     Dt_t *troot = shp->alias_tree;
     nvflag_t nvflags = NV_NOSCOPE;
     bool all = false;
-    int n;
+    int opt;
 
     if (shp->subshell) troot = sh_subaliastree(shp, 0);
-    while ((n = optget(argv, sh_optunalias))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+
+    optind = opterr = 0;
+    while ((opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'a': {
                 all = true;
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
-            }
-            case '?': {
-                errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
                 return 2;
             }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    if (error_info.errors || (!*argv && !all)) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+    argv += optind;
+
+    if (!*argv && !all) {
+        builtin_usage_error(shp, cmd, "unexpected argument");
+        return 2;
     }
 
     if (!troot) return 1;

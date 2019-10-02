@@ -128,6 +128,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('umask', 'umask', 'get or set the file creation mask',
      'David J. Korn, et. al.', '1'),
+    ('unalias', 'unalias', 'remove alias definitions',
+     'David J. Korn, et. al.', '1'),
 
     # External commands available as builtins.
     ('basename', 'basename', 'strip directory and suffix from filenames',
