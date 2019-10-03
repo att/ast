@@ -47,6 +47,7 @@ Welcome to the Korn Shell
    umask
    unalias
    unset
+   wait
 
 .. toctree::
    :maxdepth: 1
