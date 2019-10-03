@@ -729,11 +729,8 @@ void nv_addtype(Namval_t *np, const char *optstr, void *op, size_t optsz) {
     Namval_t *mp, *bp;
     char *name;
 
-    if (optstr) {
-        cp->optstring = optstr;
-    } else {
-        cp->optstring = sh_opttype;
-    }
+    assert(optstr);
+    cp->optstring = optstr;
     memcpy(dp, op, optsz);
     cp->optinfof = dp;
     cp->tp = np;
