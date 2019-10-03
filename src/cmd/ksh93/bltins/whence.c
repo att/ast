@@ -17,11 +17,9 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-//
-// whence [-afvp] name...
-//
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <getopt.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,32 +29,43 @@
 #include "defs.h"
 #include "error.h"
 #include "name.h"
-#include "option.h"
 #include "path.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "shtable.h"
 #include "stk.h"
 
+static const char *short_options = "+:afpqtvP";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
 //
-// The `whence` command.
+// The `type` and `whence` commands.
 //
 int b_whence(int argc, char *argv[], Shbltin_t *context) {
-    int flags = 0, n;
+    int flags = 0, opt;
     Shell_t *shp = context->shp;
-    UNUSED(argc);
+    char *cmd = argv[0];
 
     if (*argv[0] == 't') flags = WHENCE_V_FLAG;
-    while ((n = optget(argv, sh_optwhence))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+
+    optind = opterr = 0;
+    while ((opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 't': {
                 flags |= WHENCE_T_FLAG;
                 break;
             }
             case 'a': {
                 flags |= WHENCE_A_FLAG;
+                flags |= WHENCE_V_FLAG;
+                break;
             }
-            // FALLTHRU
             case 'v': {
                 flags |= WHENCE_V_FLAG;
                 break;
@@ -76,19 +85,21 @@ int b_whence(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    if (error_info.errors || !*argv) {
-        errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
-        __builtin_unreachable();
+    argv += optind;
+
+    if (!*argv) {
+        builtin_usage_error(shp, cmd, "expected at least one arg");
+        return 2;
     }
     if (flags & WHENCE_T_FLAG) flags &= ~WHENCE_V_FLAG;
     return whence(shp, argv, flags);

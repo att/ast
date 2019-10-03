@@ -135,6 +135,8 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('wait', 'wait', 'wait for process or job completion',
      'David J. Korn, et. al.', '1'),
+    ('whence', 'whence', 'locate a command and describe its type',
+     'David J. Korn, et. al.', '1'),
 
     # External commands available as builtins.
     ('basename', 'basename', 'strip directory and suffix from filenames',

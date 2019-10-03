@@ -48,6 +48,7 @@ Welcome to the Korn Shell
    unalias
    unset
    wait
+   whence
 
 .. toctree::
    :maxdepth: 1
