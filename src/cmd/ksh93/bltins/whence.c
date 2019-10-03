@@ -41,14 +41,12 @@ static const struct option long_options[] = {
     {NULL, 0, NULL, 0}};
 
 //
-// The `type` and `whence` commands.
+// The `whence` command.
 //
 int b_whence(int argc, char *argv[], Shbltin_t *context) {
     int flags = 0, opt;
     Shell_t *shp = context->shp;
     char *cmd = argv[0];
-
-    if (*argv[0] == 't') flags = WHENCE_V_FLAG;
 
     optind = opterr = 0;
     while ((opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {

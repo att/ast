@@ -97,7 +97,6 @@ const struct shtable3 shtab_builtins[] = {
     {"ulimit", NV_BLTIN | BLT_ENV, bltin(ulimit)},
     {"umask", NV_BLTIN | BLT_ENV, bltin(umask)},
     {"wait", NV_BLTIN | BLT_ENV | BLT_EXIT, bltin(wait)},
-    {"type", NV_BLTIN | BLT_ENV, bltin(whence)},
     {"whence", NV_BLTIN | BLT_ENV, bltin(whence)},
     {"source", NV_BLTIN | BLT_ENV, bltin(source)},
     {"times", NV_BLTIN | BLT_ENV, bltin(times)},
