@@ -64,6 +64,7 @@ Welcome to the Korn Shell
    mkdir
    sync
    uname
+   wc
 
 Indices and tables
 ==================

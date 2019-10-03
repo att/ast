@@ -159,4 +159,6 @@ man_pages = [
      'David J. Korn, et. al.', '1'),
     ('uname', 'uname', 'identify the current system',
      'David J. Korn, et. al.', '1'),
+    ('wc', 'wc', 'print the number of bytes, words, and lines in files',
+     'David J. Korn, et. al.', '1'),
 ]

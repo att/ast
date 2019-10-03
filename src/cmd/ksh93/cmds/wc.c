@@ -18,15 +18,10 @@
  *                  David Korn <dgk@research.att.com>                   *
  *                                                                      *
  ***********************************************************************/
-//
-// David Korn
-// AT&T Bell Laboratories
-//
-// Count the number of bytes, words, and lines in a file.
-//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <getopt.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,7 +34,6 @@
 #include "ast.h"
 #include "builtins.h"
 #include "error.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
@@ -54,6 +48,21 @@
 #define WC_LONGEST 0x20
 #define WC_QUIET 0x40
 #define WC_NOUTF8 0x80
+
+static const char *short_options = "+:clmqwCLN";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {"lines", 0, NULL, 'l'},
+    {"words", 0, NULL, 'w'},
+    {"bytes", 0, NULL, 'c'},
+    {"chars", 0, NULL, 'c'},
+    {"multibyte-chars", 0, NULL, 'm'},
+    {"quiet", 0, NULL, 'q'},
+    {"longest-line", 0, NULL, 'L'},
+    {"max-line-length", 0, NULL, 'L'},
+    {"utf8", 0, NULL, 2},
+    {"noutf8", 0, NULL, 'N'},
+    {NULL, 0, NULL, 0}};
 
 typedef struct {
     char type[1 << CHAR_BIT];
@@ -71,53 +80,74 @@ static_fn Wc_t *wc_init(int mode);
 static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file);
 static_fn void wc_printout(Wc_t *wp, char *name, int mode);
 
+//
+// Builtin 'wc' command.
+//
 int b_wc(int argc, char **argv, Shbltin_t *context) {
     char *cp;
     int mode = 0;
-    int n;
+    int opt;
     Wc_t *wp;
     Sfio_t *fp;
     Sfoff_t tlines = 0, twords = 0, tchars = 0;
     struct stat statb;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    while ((n = optget(argv, sh_optwc))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
-            case 'c':
+
+    optind = opterr = 0;
+    while ((opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
+            case 'c': {
                 mode |= WC_CHARS;
                 break;
-            case 'l':
+            }
+            case 'l': {
                 mode |= WC_LINES;
                 break;
-            case 'L':
+            }
+            case 'L': {
                 mode |= WC_LONGEST;
                 break;
-            case 'N':
-                if (!opt_info.num) mode |= WC_NOUTF8;
+            }
+            case 'N': {
+                mode |= WC_NOUTF8;
                 break;
+            }
+            case 2: {
+                mode &= ~WC_NOUTF8;
+                break;
+            }
             case 'm':
-            case 'C':
+            case 'C': {
                 mode |= WC_MBYTE;
                 break;
-            case 'q':
+            }
+            case 'q': {
                 mode |= WC_QUIET;
                 break;
-            case 'w':
+            }
+            case 'w': {
                 mode |= WC_WORDS;
                 break;
-            case ':':
-                error(2, "%s", opt_info.arg);
-                break;
-            case '?':
-                error(ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+            }
+            case ':': {
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            case '?': {
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
+            }
+            default: { abort(); }
         }
     }
-    argv += opt_info.index;
-    if (error_info.errors) {
-        error(ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
+    argv += optind;
 
     if (mode & WC_MBYTE) {
         if (mode & WC_CHARS) error(2, "-c and -C are mutually exclusive");
@@ -131,7 +161,7 @@ int b_wc(int argc, char **argv, Shbltin_t *context) {
     if (!wp) error(3, "internal error");
     cp = *argv;
     if (cp) argv++;
-    n = 0;
+    int n = 0;
     do {
         if (!cp || !strcmp(cp, "-")) {
             fp = sfstdin;
