@@ -60,7 +60,7 @@ expect_prompt
 # This test also checks for negative indexes.
 log_test_entry
 send "hist -N 1\r"
-sleep 0.5
+sleep 0.2
 send "Q\r"
 expect -re "bye world\r\n" {
     puts "hist -N starts N commands back"
@@ -72,7 +72,7 @@ expect_prompt
 # This test also checks for negative indexes.
 log_test_entry
 send "hist -1\r"
-sleep 0.5
+sleep 0.2
 send "Q\r"
 expect -re "bye world\r\n" {
     puts "hist command triggers ed editor"
@@ -92,9 +92,9 @@ expect_prompt
 # hist -e vi triggers vi editor
 log_test_entry
 send "hist -e vi 13\r"
-sleep 0.5
+sleep 0.2
 send ":q!\r"
-expect -re "hello world\r\n" {
+expect -re "\r\nhello world\r\n" {
     puts "hist -e vi triggers vi editor"
 }
 expect_prompt
@@ -103,9 +103,9 @@ expect_prompt
 # HISTEDIT=vi triggers vi editor
 log_test_entry
 send "HISTEDIT=vi hist 13\r"
-sleep 0.5
+sleep 0.2
 send ":q!\r"
-expect -re "hello world\r\n" {
+expect -re "\r\nhello world\r\n" {
     puts "HISTEDIT=vi triggers vi editor"
 }
 expect_prompt
@@ -114,9 +114,9 @@ expect_prompt
 # When both HISTEDIT and FCEDIT are set, HISTEDIT should take priority
 log_test_entry
 send "HISTEDIT=vi FCEDIT=ed hist 13\r"
-sleep 0.5
+sleep 0.2
 send ":q!\r"
-expect -re "hello world\r\n" {
+expect -re "\r\nhello world\r\n" {
     puts "When both HISTEDIT and FCEDIT are set, HISTEDIT takes priority"
 }
 expect_prompt

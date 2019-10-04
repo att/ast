@@ -74,7 +74,7 @@ fi
 # The use of the "dumb" terminal type is to minimize, and hopefully eliminate completely,
 # terminal control/escape sequences that affect the terminal's behavior. This makes writing
 # robust unit tests, especially Expect based tests, easier.
-export TERM=dumb
+export TERM=xterm
 
 # Special exit status for meson.
 export MESON_SKIPPED_TEST=77
@@ -323,8 +323,8 @@ unset VIEWER
 unset VISUAL
 
 #
-# A couple of tests involve deep recursion that migh require a stack up to 16MB, double that if
-# run with ASAN enabled. Similarly, some tests need a larege number of file descriptors.
+# A couple of tests involve deep recursion that might require a stack up to 16MB, double that if
+# run with ASAN enabled. Similarly, some tests need a large number of file descriptors.
 #
 ulimit=$(ulimit -s)
 if [[ $ulimit == +([[:digit:]]) ]] && (( ulimit < 32764 ))
@@ -353,17 +353,8 @@ then
         exit 1
     fi
 
-    if [[ $OS_NAME == freebsd ]]
-    then
-        # TODO: Explore why this was blacklisted or if it can now be enabled on that platform.
-        # These tests always fail on the first `expect_prompt` use. Which suggests a bug in how
-        # `expect` implements timeouts on FreeBSD 11 (at least when run as a VM).
-        log_info "Skipping test on $OS_NAME"
-        exit $MESON_SKIPPED_TEST
-    fi
-
-    # Interactive tests are flakey on CI test environments like Travis. So make several attempts
-    # before giving up and reporting failure.
+    # Interactive tests are flakey. Especially on CI test environments like Travis. So make several
+    # attempts before giving up and reporting failure.
     status=0
     for i in 1 2 3
     do

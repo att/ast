@@ -857,7 +857,7 @@ control_mode
 send "v"
 sleep 0.1
 send ":q\r"
-expect ":q" { }
+expect "q" { }
 expect -ex "\r\nhello\r\n" {
     puts "v opens editor and exiting runs the command"
 }
