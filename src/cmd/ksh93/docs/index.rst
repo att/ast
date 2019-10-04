@@ -18,6 +18,8 @@ Welcome to the Korn Shell
    builtin
    cd
    command
+   compgen
+   complete
    continue
    disown
    echo

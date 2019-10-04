@@ -20,6 +20,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <getopt.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -32,7 +33,6 @@
 #include "edit.h"
 #include "error.h"
 #include "name.h"
-#include "option.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "shtable.h"
@@ -83,50 +83,11 @@ static const char *Action_eval[] = {
     "xtypeset + | grep -v '^[ {}]' | grep -v namespace",
     NULL};
 
-static const char compgen_desc[] =
-    "Complete possible matches for \aword\a according to the \aoptions\a, "
-    "which may be an option accepted by \bcomplete\b with the exception of "
-    "\b-p\b and \b-r\b, and write the matches to standard output.  When "
-    "using the \b-F\b or \b-C\b options, the shell variables "
-    "set by the programmable completion facilities, while available, will "
-    "not have useful values.]";
-static const char complete_desc[] =
-    "Specify how arguments to each \aname\a should be completed.  If "
-    "the \b-p\b option is supplied, or if no options are supplied, "
-    "existing completion specifications are printed to standard output in "
-    "a way that allows them to be reused as input.  The \b-r\b option "
-    "removes a completion specification for each \aname\a, or if no "
-    "\aname\as are supplied, all completion specifications.]";
-static const char complete_opts[] =
-    "[p?Existing options for \aword\a are written to standard output in a format "
-    "that can be used for reinput.]"
-    "[r?Removes the completion specification for each \aword\a.]";
-
 static char action(const char *list[], const char *str) {
     const char *cp;
     int n = 0;
     for (cp = list[0]; cp; cp = list[++n]) {
         if (strcmp(cp + 1, str) == 0) return *cp;
-    }
-    return 0;
-}
-
-static int compgen_info(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
-    UNUSED(op);
-    UNUSED(od);
-
-    if (strcmp(str, "description") == 0) sfputr(out, complete_desc, -1);
-    return 0;
-}
-
-static int complete_info(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
-    UNUSED(op);
-    UNUSED(od);
-
-    if (strcmp(str, "description") == 0) {
-        sfputr(out, compgen_desc, -1);
-    } else {
-        sfputr(out, complete_opts, -1);
     }
     return 0;
 }
@@ -491,29 +452,39 @@ static void print_out(struct Complete *cp, Sfio_t *out) {
     }
 }
 
+static const char *short_options = "+:abcdefgjkprsuvo:A:C:DEF:G:P:S:W:X:";
+static const struct option long_options[] = {
+    {"help", no_argument, NULL, 1},  // all builtins support --help
+    {NULL, 0, NULL, 0}};
+
+//
+// Builtin `compgen` and `complete` commands.
+//
 int b_complete(int argc, char *argv[], Shbltin_t *context) {
-    int n, r = 0;
+    int n, opt, r = 0;
     bool complete = true, delete = false, print = (argc == 1);
     bool empty = false;
     char *av[2];
-    Optdisc_t disc;
     struct Complete comp;
+    Shell_t *shp = context->shp;
+    char *cmd = argv[0];
 
     if (strcmp(argv[0], "compgen") == 0) {
         complete = false;
-        optinit(&disc, compgen_info);
-    } else {
-        optinit(&disc, complete_info);
     }
     memset(&comp, 0, sizeof(comp));
-    comp.sh = context->shp;
+    comp.sh = shp;
 
-    while ((n = optget(argv, sh_optcomplete))) {
-        switch (n) {  //!OCLINT(MissingDefaultStatement)
+    optind = opterr = 0;
+    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+        switch (opt) {
+            case 1: {
+                builtin_print_help(shp, cmd);
+                return 0;
+            }
             case 'A': {
-                if ((n = action(Action_names, opt_info.arg)) == 0) {
-                    errormsg(SH_DICT, ERROR_exit(1), "invalid -%c option name %s", 'A',
-                             opt_info.arg);
+                if ((n = action(Action_names, optarg)) == 0) {
+                    errormsg(SH_DICT, ERROR_exit(1), "invalid -%c option name %s", 'A', optarg);
                     __builtin_unreachable();
                 }
             }
@@ -546,9 +517,8 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'o': {
-                if ((n = action(Option_names, opt_info.arg)) == 0) {
-                    errormsg(SH_DICT, ERROR_exit(1), "invalid -%c option name %s", 'o',
-                             opt_info.arg);
+                if ((n = action(Option_names, optarg)) == 0) {
+                    errormsg(SH_DICT, ERROR_exit(1), "invalid -%c option name %s", 'o', optarg);
                     __builtin_unreachable();
                 }
                 n = (strchr(Options, n) - Options);
@@ -556,39 +526,47 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'G': {
-                comp.globpat = opt_info.arg;
+                comp.globpat = optarg;
                 break;
             }
             case 'W': {
-                comp.wordlist = opt_info.arg;
+                comp.wordlist = optarg;
                 break;
             }
             case 'C': {
-                comp.command = opt_info.arg;
+                comp.command = optarg;
                 break;
             }
             case 'F': {
-                comp.fname = opt_info.arg;
+                comp.fname = optarg;
                 break;
             }
             case 'S': {
-                comp.suffix = opt_info.arg;
+                comp.suffix = optarg;
                 break;
             }
             case 'P': {
-                comp.prefix = opt_info.arg;
+                comp.prefix = optarg;
                 break;
             }
             case 'X': {
-                comp.filter = opt_info.arg;
+                comp.filter = optarg;
                 if (strchr(comp.filter, '&')) comp.options |= FILTER_AMP;
                 break;
             }
             case 'r': {
+                if (!complete) {  // compgen doesn' support this option
+                    builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                    return 2;
+                }
                 delete = true;
                 break;
             }
             case 'p': {
+                if (!complete) {  // compgen doesn' support this option
+                    builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                    return 2;
+                }
                 print = true;
                 break;
             }
@@ -600,22 +578,19 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                errormsg(SH_DICT, 2, "%s", opt_info.arg);
-                break;
+                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                return 2;
             }
             case '?': {
-                errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                __builtin_unreachable();
+                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                return 2;
             }
+            default: { abort(); }
         }
     }
+    argv += optind;
+    argc -= optind;
 
-    if (error_info.errors) {
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
-    }
-
-    argv += opt_info.index;
     if (complete) {
         char *name;
         struct Complete *cp;
