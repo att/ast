@@ -32,7 +32,7 @@ Flags
 Exit Status
 -----------
 :0: All directories created successfully, or the `-p` option was
-specified and all the specified directories now exist.
+   specified and all the specified directories now exist.
 
 :>0: An error occurred.
 

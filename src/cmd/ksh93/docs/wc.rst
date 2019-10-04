@@ -9,13 +9,22 @@ Synopsis
 
 Description
 -----------
-`wc` reads one or more input files and, by default, for each file writes a line containing the number of newlines, *word*\s, and bytes contained in each file followed by the file name to standard output in that order.  A *word* is defined to be a non-zero length string delimited by `isspace`(3) characters.
+`wc` reads one or more input files and, by default, for each file
+writes a line containing the number of newlines, *word*\s, and bytes
+contained in each file followed by the file name to standard output in
+that order.  A *word* is defined to be a non-zero length string delimited
+by `isspace`\(3) characters.
 
-If more than one file is specified, `wc` writes a total count for all of the named files with `total` written instead of the file name.
+If more than one file is specified, `wc` writes a total count for all of
+the named files with `total` written instead of the file name.
 
-By default, `wc` writes all three counts.  Options can specified so that only certain counts are written.  The options `-c` and `-m` are mutually exclusive.
+By default, `wc` writes all three counts.  Options can specified so that
+only certain counts are written.  The options `-c` and `-m` are mutually
+exclusive.
 
-If no *file* is given, or if the *file* is `-`, `wc` reads from standard input and no filename is written to standard output.  The start of the file is defined as the current offset.
+If no *file* is given, or if the *file* is `-`, `wc` reads from standard
+input and no filename is written to standard output.  The start of the
+file is defined as the current offset.
 
 Flags
 -----
@@ -37,8 +46,6 @@ Flags
 
 :--utf8: For UTF-8 locales `--utf8` enables UTF-8 optimzations
    and relies on the native `mbtowc`\(3). This is the default.
-
-
 
 Exit Status
 -----------

@@ -55,8 +55,8 @@ Flags
 :-S: Treat the input as if it was saved from a spreadsheet in csv format.
 
 :-u *fd*: Read from file descriptor number *fd* instead of standard
-input. If *fd* is `p`, the co-process input file descriptor is
-used. Defaults to zero.
+   input. If *fd* is `p`, the co-process input file descriptor is
+   used. Defaults to zero.
 
 :-t *timeout*: Specify a timeout *timeout* in seconds when reading from
    a terminal or pipe. The minimum timeout is one. Timeouts less than

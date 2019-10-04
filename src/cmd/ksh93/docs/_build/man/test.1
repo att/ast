@@ -1,0 +1,216 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "TEST" "1" "Oct 03, 2019" "" "Korn Shell"
+.SH NAME
+test \- evaluate expression
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH SYNOPSIS
+.nf
+test [expression]
+.fi
+.sp
+.SH DESCRIPTION
+.sp
+\fBtest\fP evaluates expressions and indicates its results based on the exit
+status.  Option parsing is not performed so that all arguments, including
+\fB\-\-\fP are processed as operands.  The evaluation of the expression depends
+on the number of operands as follows:
+.INDENT 0.0
+.IP 0. 4
+Evaluates to false.
+.IP 1. 4
+True if argument is not an empty string.
+.IP 2. 4
+If first operand is \fB!\fP, the result is True if the second operand an
+empty string.  Otherwise, it is evaluated as one of the unary expressions
+defined below.  If the unary operator is invalid and the second argument is
+\fB\-\-\fP,
+.UNINDENT
+.sp
+then the first argument is processed as an option argument.
+.INDENT 0.0
+.IP 3. 3
+If first operand is \fB!\fP, the result is True if the second and third
+operand evaluated as a unary expression is False.  Otherwise, the three
+operands are evaluaged as one of the binary expressions listed below.
+.IP 4. 3
+If first operand is \fB!\fP, the result is True if the next three operands
+are a valid binary expression that is False.
+.UNINDENT
+.sp
+If any \fIfile\fP is of the form \fB/dev/fd/\fP\fIn\fP, then file descriptor \fIn\fP
+is checked.
+.sp
+Unary expressions can be one of the following:
+.INDENT 0.0
+.TP
+.B \-a \fIfile\fP
+True if \fIfile\fP exists, obsolete.
+.TP
+.B \-b \fIfile\fP
+True if \fIfile\fP exists and is a block special file.
+.TP
+.B \-c \fIfile\fP
+True if \fIfile\fP exists and is a character special file.
+.TP
+.B \-d \fIfile\fP
+True if \fIfile\fP exists and is a directory.
+.TP
+.B \-e \fIfile\fP
+True if \fIfile\fP exists.
+.TP
+.B \-f \fIfile\fP
+True if \fIfile\fP exists and is a regular file.
+.TP
+.B \-g \fIfile\fP
+True if \fIfile\fP exists and has its set\-group\-id bit set.
+.TP
+.B \-h \fIfile\fP
+True if \fIfile\fP exists and is a symbolic link.
+.TP
+.B \-k \fIfile\fP
+True if \fIfile\fP exists and has its sticky bit on.
+.TP
+.B \-n \fIstring\fP
+True if length of \fIstring\fP is non\-zero.
+.TP
+.B \-o \fIoption\fP
+True if the shell option \fIoption\fP is enabled.
+.TP
+.B \-p \fIfile\fP
+True if \fIfile\fP exists and is a pipe or fifo.
+.TP
+.B \-r \fIfile\fP
+True if \fIfile\fP exists and is readable.
+.TP
+.B \-s \fIfile\fP
+True if \fIfile\fP exists and has size > 0.
+.TP
+.B \-t \fIfildes\fP
+True if file descriptor number \fIfildes\fP is open and is
+associated with a terminal device.
+.TP
+.B \-u \fIfile\fP
+True if \fIfile\fP exists and has its set\-user\-id bit set.
+.TP
+.B \-v \fIvarname\fP
+True if \fIvarname\fP is a valid variable name that is set.
+.TP
+.B \-w \fIfile\fP
+True if \fIfile\fP exists and is writable.
+.TP
+.B \-x \fIfile\fP
+True if \fIfile\fP exists and is executable.  For a directory it
+means that it can be searched.
+.TP
+.B \-z \fIstring\fP
+True if \fIstring\fP is a zero length string.
+.TP
+.B \-G \fIfile\fP
+True if \fIfile\fP exists and group is the effective group id of
+the current process.
+.TP
+.B \-L \fIfile\fP
+True if \fIfile\fP exists and is a symbolic link.
+.TP
+.B \-N \fIfile\fP
+True if \fIfile\fP exists and has been modified since it was last read.
+.TP
+.B \-O \fIfile\fP
+True if \fIfile\fP exists and owner is the effective user id of
+the current process.
+.TP
+.B \-R \fIvarname\fP
+True if \fIvarname\fP is a name reference.
+.TP
+.B \-S \fIfile\fP
+True if \fIfile\fP exists and is a socket.
+.UNINDENT
+.sp
+Binary expressions can be one of the following:
+.INDENT 0.0
+.TP
+.B \fIstring1\fP = \fIstring2\fP
+True if \fIstring1\fP is equal to \fIstring2\fP\&.
+.TP
+.B \fIstring1\fP == \fIstring2\fP
+True if \fIstring1\fP is equal to \fIstring2\fP\&.
+.TP
+.B \fIstring1\fP != \fIstring2\fP
+True if \fIstring1\fP is not equal to \fIstring2\fP\&.
+.TP
+.B \fInum1\fP \-eq \fInum2\fP
+True if numerical value of \fInum1\fP is equal to \fInum2\fP\&.
+.TP
+.B \fInum1\fP \-ne \fInum2\fP
+True if numerical value of \fInum1\fP is not equal to \fInum2\fP\&.
+.TP
+.B \fInum1\fP \-lt \fInum2\fP
+True if numerical value of \fInum1\fP is less than \fInum2\fP\&.
+.TP
+.B \fInum1\fP \-le \fInum2\fP
+True if numerical value of \fInum1\fP is less than or equal to \fInum2\fP\&.
+.TP
+.B \fInum1\fP \-gt \fInum2\fP
+True if numerical value of \fInum1\fP is greater than \fInum2\fP\&.
+.TP
+.B \fInum1\fP \-ge \fInum2\fP
+True if numerical value of \fInum1\fP is greater than or equal to \fInum2\fP\&.
+.TP
+.B \fIfile1\fP \-nt \fIfile2\fP
+True if \fIfile1\fP is newer than \fIfile2\fP or \fIfile2\fP does not exist.
+.TP
+.B \fIfile1\fP \-ot \fIfile2\fP
+True if \fIfile1\fP is older than \fIfile2\fP or \fIfile2\fP does not exist.
+.TP
+.B \fIfile1\fP \-ef \fIfile2\fP
+True if \fIfile1\fP is another name for \fIfile2\fP\&.
+This will be true if \fIfile1\fP is a hard link or a symbolic link to \fIfile2\fP\&.
+.UNINDENT
+.SH EXIT STATUS
+.INDENT 0.0
+.TP
+.B 0
+Indicates that the specified expression is True.
+.TP
+.B 1
+Indicates that the specified expression is False.
+.TP
+.B >1
+An error occurred.
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBlet\fP(1), \fBexpr\fP(1)
+.SH AUTHOR
+David J. Korn, et. al.
+.SH COPYRIGHT
+2019, David J. Korn, et.al.
+.\" Generated by docutils manpage writer.
+.

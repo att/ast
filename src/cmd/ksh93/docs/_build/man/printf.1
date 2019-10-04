@@ -1,0 +1,226 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "PRINTF" "1" "Oct 03, 2019" "" "Korn Shell"
+.SH NAME
+printf \- write formatted output
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH SYNOPSIS
+.nf
+printf [flags] format [string ...]
+.fi
+.sp
+.SH DESCRIPTION
+.sp
+\fBprintf\fP writes each \fIstring\fP operand to standard output using \fIformat\fP
+to control the output format.
+.sp
+The \fIformat\fP operands supports the full range of ANSI C formatting
+specifiers plus the following additional specifiers:
+.INDENT 0.0
+.TP
+.B %b
+Each character in the \fIstring\fP operand is processed specially as follows:
+.UNINDENT
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\fB\e\ea\fP  Alert character.
+\fB\e\eb\fP  Backspace character.
+\fB\e\ec\fP  Terminate output without appending newline.
+     The remaining \fIstring\fP operands are ignored.
+\fB\e\ef\fP  Formfeed character.
+\fB\e\en\fP  Newline character.
+\fB\e\et\fP  Tab character.
+\fB\e\ev\fP  Vertical tab character.
+\fB\e\e\e\e\fP  Backslash character.
+\fB\e\eE\fP  Escape character (ASCII octal 033).
+\fB\e\e0*d*\fP  The 8\-bit character whose ASCII code is the
+        1, 2, or 3\-digit octal number \fId\fP\&.
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B %q
+Output \fIstring\fP quoted in a manner that it can be read in by the
+shell to get back the same string.  However, empty strings resulting
+from missing \fIstring\fP operands will not be quoted. When \fBq\fP is preceded
+by the alternative format specifier, \fB#\fP, the string is quoted in manner
+suitable as a field in a \fB\&.csv\fP format file.
+.TP
+.B %B
+Treat the argument as a variable name and output the value without
+converting it to a string.  This is most useful for variables of type \fB\-b\fP\&.
+.TP
+.B %H
+Output \fIstring\fP with characters \fB<\fP, \fB&\fP, \fB>\fP, \fB\e"\fP, and non\-printable
+characters properly escaped for use in HTML and XML documents.
+The alternate flag \fB#\fP formats the output for use as a URI.
+.TP
+.B %P
+Treat \fIstring\fP as an extended regular expression and convert it to
+a shell pattern.
+.TP
+.B %R
+Treat \fIstring\fP as an shell pattern expression and convert it to an
+extended regular expression.
+.TP
+.B %T
+Treat \fIstring\fP as a date/time string and format it.  The \fBT\fP can be
+preceded by \fB(\fP\fIdformat\fP\fB)\fP, where \fIdformat\fP is a date format as defined
+by the \fBdate\fP command.  Values given as digits are interpreted the same
+way they are by the \fBtouch\fP command.
+.TP
+.B %Z
+Output a byte whose value is \fB0\fP\&.
+.TP
+.B %Q
+Convert number of seconds to readable time.
+.TP
+.B %p
+Convert number to hexadecimal.
+.TP
+.B %(csv)q
+Equivalent to \fB%#q\fP\&.
+.TP
+.B %(ere)q
+Equivalent to \fB%R\fP\&.
+.TP
+.B %(html)q
+Equivalent to \fB%H\fP\&.
+.TP
+.B %(nounicodeliterals)q
+Equivalent to \fB%0q\fP\&.
+.TP
+.B %(pattern)q
+Equivalent to \fB%P\fP\&.
+.TP
+.B %(unicodeliterals)q
+Equivalent to \fB%+q\fP\&.
+.TP
+.B %(url)q
+Equivalent to \fB%#H\fP\&.
+.UNINDENT
+.sp
+The format modifier flag \fBL\fP can precede the width and/or precision
+specifiers for the \fBc\fP and \fBs\fP to cause the width and/or precision to be
+measured in character width rather than byte count.
+.sp
+When performing conversions of \fIstring\fP to satisfy a numeric format
+specifier, if the first character of \fIstring\fP is \fB\e"\fP or \fB\(aq\fP, then the
+value will be the numeric value in the underlying code set of the character
+following the \fB\e"\fP or \fB\(aq\fP\&.  Otherwise, \fIstring\fP is treated like a shell
+arithmetic expression and evaluated.
+.sp
+If a \fIstring\fP operand cannot be completely converted into a value
+appropriate for that format specifier, an error will occur, but remaining
+\fIstring\fP operands will continue to be processed.
+.sp
+In addition to the format specifier extensions, the following extensions
+of ANSI\-C are permitted in format specifiers:
+.INDENT 0.0
+.IP \(bu 2
+The escape sequences \fB\e\eE\fP and \fB\e\ee\fP expand to the escape character
+which is octal \fB033\fP in ASCII.
+.IP \(bu 2
+The escape sequence \fB\e\ec\fP\fIx\fP expands to Control\-\fIx\fP\&.
+.IP \(bu 2
+The escape sequence \fB\e\eC[.\fP\fIname\fP\fB\&.]\fP expands to the collating
+element \fIname\fP\&.
+.IP \(bu 2
+The escape sequence \fB\e\ex{\fP\fIhex\fP\fB}\fP expands to the character
+corresponding to the hexadecimal value \fIhex\fP\&.
+.IP \(bu 2
+The escape sequence \fB\e\eu[\fP\fIhex\fP\fB]\fP or \fB\e\eu{\fP\fIhex\fP\fB}\fP expands to
+the UTF\-32 character corresponding to the unicode code point defined by the
+hexadecimal value \fIhex\fP\&. If the code point is not available in the current
+locale the escape sequence is treated as a literal sequence of characters.
+.IP \(bu 2
+The escape sequence \fB\e\ew[\fP\fIhex\fP\fB]\fP or \fB\e\ew{\e \(ga*hex*\e \fP}\(ga expands
+to the character corresponding to the (wchar_t) code point defined by
+the hexadecimal value \fIhex\fP in the current locale.
+.IP \(bu 2
+The format modifier flag \fB=\fP can be used to center a field to a
+specified width.
+.IP \(bu 2
+The format modifier flag \fBL\fP can be used with the \fBc\fP and \fBs\fP formats
+to treat precision as character width instead of byte count.
+.IP \(bu 2
+The format modifier flag \fB,\fP can be used with \fBd\fP and \fBf\fP formats to
+cause group of digits.
+.IP \(bu 2
+Each of the integral format specifiers can have a third modifier after
+width and precision that specifies the base of the conversion from 2 to 64.
+In this case the \fB#\fP modifier will cause \fIbase\fP\fB#\fP to be prepended to
+the value.
+.IP \(bu 2
+The \fB#\fP modifier can be used with the \fBd\fP specifier when no base is
+specified cause the output to be written in units of \fB1000\fP with a
+suffix of one of \fBk M G T P E\fP\&.
+.IP \(bu 2
+The \fB#\fP modifier can be used with the \fBi\fP specifier to cause the output to be written in units of \fB1024\fP with a suffix of one of \fBKi Mi Gi Ti Pi Ei\fP\&.]
+.UNINDENT
+.sp
+If there are more \fIstring\fP operands than format specifiers, the \fIformat\fP
+string is reprocessed from the beginning.  If there are fewer \fIstring\fP
+operands than format specifiers, then string specifiers will be treated
+as if empty strings were supplied, numeric conversions will be treated
+as if 0 were supplied, and time conversions will be treated as if \fBnow\fP
+were supplied.
+.sp
+\fBprintf\fP is equivalent to \fBprint \-f\fP which allows additional options to
+be specified.
+.SH FLAGS
+.INDENT 0.0
+.TP
+.B \-v \fIname\fP
+Put the output in the variable \fIname\fP instead of writing to
+standard output.
+.UNINDENT
+.SH EXIT STATUS
+.INDENT 0.0
+.TP
+.B 0
+Successful completion.
+.TP
+.B >0
+An error occurred.
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBdate\fP(1), \fBprint\fP(1), \fBread\fP(1), \fBtouch\fP(1)
+.SH AUTHOR
+David J. Korn, et. al.
+.SH COPYRIGHT
+2019, David J. Korn, et.al.
+.\" Generated by docutils manpage writer.
+.

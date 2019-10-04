@@ -33,28 +33,28 @@ specifiers plus the following additional specifiers:
             1, 2, or 3-digit octal number *d*.
 
 :%q: Output *string* quoted in a manner that it can be read in by the
-shell to get back the same string.  However, empty strings resulting
-from missing *string* operands will not be quoted. When `q` is preceded
-by the alternative format specifier, `#`, the string is quoted in manner
-suitable as a field in a `.csv` format file.
+  shell to get back the same string.  However, empty strings resulting
+  from missing *string* operands will not be quoted. When `q` is preceded
+  by the alternative format specifier, `#`, the string is quoted in manner
+  suitable as a field in a `.csv` format file.
 
 :%B: Treat the argument as a variable name and output the value without
-converting it to a string.  This is most useful for variables of type `-b`.
+  converting it to a string.  This is most useful for variables of type `-b`.
 
 :%H: Output *string* with characters `<`, `&`, `>`, `\"`, and non-printable
-characters properly escaped for use in HTML and XML documents.
-The alternate flag `#` formats the output for use as a URI.
+  characters properly escaped for use in HTML and XML documents.
+  The alternate flag `#` formats the output for use as a URI.
 
 :%P: Treat *string* as an extended regular expression and convert it to
-a shell pattern.
+  a shell pattern.
 
 :%R: Treat *string* as an shell pattern expression and convert it to an
-extended regular expression.
+  extended regular expression.
 
 :%T: Treat *string* as a date/time string and format it.  The `T` can be
-preceded by `(`\ *dformat*\ `)`, where *dformat* is a date format as defined
-by the `date` command.  Values given as digits are interpreted the same
-way they are by the `touch` command.
+  preceded by `(`\ *dformat*\ `)`, where *dformat* is a date format as defined
+  by the `date` command.  Values given as digits are interpreted the same
+  way they are by the `touch` command.
 
 :%Z: Output a byte whose value is `0`.
 
