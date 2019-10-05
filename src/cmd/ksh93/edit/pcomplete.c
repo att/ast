@@ -504,7 +504,7 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
             case 'I':
             case 'J':
             case 'Z': {
-                n = (strchr(Actions, n) - Actions);
+                n = (strchr(Actions, opt) - Actions);
                 comp.action |= 1L << n;
                 if (Actions[n] == 'c') {
                     // c contains keywords, builtins and funcs.
@@ -521,7 +521,7 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
                     errormsg(SH_DICT, ERROR_exit(1), "invalid -%c option name %s", 'o', optarg);
                     __builtin_unreachable();
                 }
-                n = (strchr(Options, n) - Options);
+                n = (strchr(Options, opt) - Options);
                 comp.options |= 1 << n;
                 break;
             }
@@ -573,7 +573,7 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
             case 'D':
             case 'E': {
                 av[1] = 0;
-                av[0] = n == 'D' ? " D" : " E";
+                av[0] = opt == 'D' ? " D" : " E";
                 empty = true;
                 break;
             }
