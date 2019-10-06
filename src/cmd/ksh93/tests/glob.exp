@@ -17,6 +17,7 @@ expect -re "\r\nbaz\r\n" {
 }
 expect_prompt
 
+# ==========
 # Exit shell with ctrl-d
 log_test_entry
 send [ctrl D]

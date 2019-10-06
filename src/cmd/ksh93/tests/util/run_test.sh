@@ -78,6 +78,9 @@ export TERM=xterm
 
 # Special exit status for meson.
 export MESON_SKIPPED_TEST=77
+# This isn't special to meson but we use it below if we've detected an `expect` based test has
+# timed out.
+export MESON_TEST_TIMEOUT=99
 
 # TODO: Enable the `io` test on Travis macOS once we understand why it dies from an abort().
 # I'm not seeing that failure happen on either of my macOS 10.12 or 10.13 systems.
@@ -227,7 +230,7 @@ function run_api {
     return $exit_status
 }
 
-# Run an interactive ksh test that utilizes `expect`.
+# Run an interactive ksh test via `expect`.
 function run_interactive {
     final_iteration=$1
     # This is a no-op on the first invocation. It is needed so retries have a clean slate.
@@ -244,9 +247,24 @@ function run_interactive {
         cp $TEST_ROOT/data/sh_history $HISTFILE
     fi
 
+    exec 9<>fifo9
+    rm -f interactive.tmp.log
     expect -n -c "source $TEST_ROOT/util/interactive.expect.rc" -f $test_path \
-        > $test_name.out 2> $test_name.err
+        > $test_name.out 2> $test_name.err &
+    expect_pid=$!
+    # Spawn a background task to kill the `expect` if it gets too close to the meson timeout.
+    (
+        read -t $(( TIMEOUT - SECONDS - 1 )) -u9 _x
+        [[ $_x == done ]] && exit 0
+        kill -USR1 $expect_pid
+        sleep 0.1
+        kill -0 $expect_pid && kill -KILL $expect_pid
+    ) &
+    wait $expect_pid
     exit_status=$?
+    print -u9 done
+    (( exit_status == 265 )) && exit_status=$MESON_TEST_TIMEOUT
+    (( exit_status == MESON_TEST_TIMEOUT )) && final_iteration=1
 
     if [[ -e $TEST_ROOT/$test_name.out ]]
     then
@@ -254,13 +272,13 @@ function run_interactive {
         then
             log_error "Stdout for $test_name had unexpected differences:"
             diff -U3 $TEST_ROOT/$test_name.out $test_name.out >&2
-            exit_status=1
+            (( exit_status == 0 )) && exit_status=1
         fi
     elif [[ -s $test_name.out ]]
     then
             log_error "Stdout for $test_name should have been empty:"
             cat $test_name.out >&2
-            exit_status=1
+            (( exit_status == 0 )) && exit_status=1
     fi
 
     if [[ -e $TEST_ROOT/$test_name.err ]]
@@ -269,13 +287,13 @@ function run_interactive {
         then
             log_error "Stderr for $test_name had unexpected differences:"
             diff -U3 $TEST_ROOT/$test_name.err $test_name.err >&2
-            exit_status=1
+            (( exit_status == 0 )) && exit_status=1
         fi
     elif [[ -s $test_name.err ]]
     then
             log_error "Stderr for $test_name should have been empty:"
             cat $test_name.err >&2
-            exit_status=1
+            (( exit_status == 0 )) && exit_status=1
     fi
 
     if [[ $exit_status -eq 0 ]]
@@ -360,7 +378,7 @@ then
     do
         run_interactive $(( i == 3 ))
         status=$?
-        [[ $status -eq 0 ]] && break
+        [[ $status -eq 0 || $status -eq $MESON_TEST_TIMEOUT ]] && break
         log_info "Iteration $i of interactive test '$test_name' failed on line ${failure_lines[-1]}"
     done
     if [[ $status -eq 0 ]]
@@ -371,9 +389,12 @@ then
         cat interactive.tmp.log >&2
         if (( failure_lines[0] != failure_lines[1] || failure_lines[1] != failure_lines[2] ))
         then
-            log_info 'Ignoring test failures since it looks like the system is overloaded'
-            log_info 'See issue #812'
-            status=0
+            if (( status != MESON_TEST_TIMEOUT ))
+            then
+                log_info 'Ignoring test failures since it looks like the system is overloaded'
+                log_info 'See issue #812'
+                status=0
+            fi
         fi
     fi
     exit $status

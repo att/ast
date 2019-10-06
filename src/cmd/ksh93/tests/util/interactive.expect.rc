@@ -9,6 +9,19 @@ set ksh $env(SHELL)
 set timeout 2
 set send_human {.05 .1 5 .02 .2}
 
+# If we receive SIGUSR1 exit. Hopefully providing more information about the state of the test via
+# whatever is in our "expect" buffer, and preceding actions, when the signal is received.
+#
+# This signal is sent by the test framework when we're within one second of a meson test timeout.
+proc handle_sigusr1 {} {
+    log_debug "========== SIGUSR1 (TIMEOUT SIGNAL) AT LINE [lineno] =========="
+    log_debug "expect -timeout 0..."
+    expect -timeout 0 "*" { }
+    log_debug "exit 99..."
+    exit 99
+}
+trap handle_sigusr1 {SIGUSR1}
+
 proc abort {{msg "aborting"}} {
     error $msg
     exit 1

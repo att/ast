@@ -133,6 +133,8 @@ tests_to_skip = [
     ['shcomp', 'treemove.sh'],
 ]
 
+lang_var = 'LANG=en_US.UTF-8'
+#
 # The test cases are executed in parallel by default
 foreach testspec : all_tests
     test_name = testspec[0]
@@ -143,6 +145,7 @@ foreach testspec : all_tests
     else
         parallel = true
     endif
+    timeout_var = 'TIMEOUT=' + timeout.to_string()
 
     skip_test = false
     foreach skip : tests_to_skip
@@ -160,12 +163,12 @@ foreach testspec : all_tests
         endif
 
         # Run the test without compiling the script (which is how most people use ksh).
-        lang_var = 'LANG=en_US.UTF-8'
         # Note the use of `-p` to keep the shell from sourcing dot scripts. Without this the
         # platform's ksh config files could cause problems.
         test(test_name, ksh93_exe, timeout: timeout, is_parallel: parallel,
             args: ['-p', test_driver, test_name],
-            env: [shell_var, lang_var, src_root, test_root, ld_library_path, libsample_path])
+            env: [shell_var, lang_var, src_root, test_root, ld_library_path, libsample_path,
+                  timeout_var])
 
         # The shcomp variants are only applicable to the non-interactive tests.
         if not test_name.endswith('.exp')
@@ -182,7 +185,7 @@ foreach testspec : all_tests
                 test(test_name + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
                     args: ['-p', test_driver, 'shcomp', test_name],
                     env: [shell_var, lang_var, src_root, test_root, shcomp_var, ld_library_path,
-                          libsample_path])
+                          libsample_path, timeout_var])
             endif
         endif
     endif
