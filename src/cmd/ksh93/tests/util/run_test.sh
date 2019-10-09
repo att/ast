@@ -33,7 +33,7 @@ then
     # test run time. Not to mention that the shcomp variants should be, and always are as I write
     # this, redundant. That is, they always pass or fail for the same reasons as the non-shcomp
     # variant.
-    if [[ -z "$NO_SHCOMP" ]]
+    if [[ -z "$NO_SHCOMP" || "$NO_SHCOMP" == 0 ]]
     then
         shcomp=true
     else
@@ -81,6 +81,14 @@ export MESON_SKIPPED_TEST=77
 # This isn't special to meson but we use it below if we've detected an `expect` based test has
 # timed out.
 export MESON_TEST_TIMEOUT=99
+
+# Scale the meson test timeout if a multiplier value is in the environment. Note that this requires
+# the user explicitly export a MULTIPLIER var that matches the `meson test -t` value. I have opened
+# issue https://github.com/mesonbuild/meson/issues/6009 asking that the timeout be exposed by Meson.
+if [[ -n "$MULTIPLIER" ]]
+then
+    TIMEOUT=$(( TIMEOUT * MULTIPLIER ))
+fi
 
 # TODO: Enable the `io` test on Travis macOS once we understand why it dies from an abort().
 # I'm not seeing that failure happen on either of my macOS 10.12 or 10.13 systems.
@@ -368,7 +376,7 @@ then
     if [[ $shcomp == true ]]
     then
         log_error "Interactive tests cannot be run via shcomp"
-        exit 1
+        exit $MESON_SKIPPED_TEST
     fi
 
     # Interactive tests are flakey. Especially on CI test environments like Travis. So make several
@@ -418,13 +426,13 @@ else
     then
         $SHELL -p $TEST_DIR/$test_script $test_name < /dev/null
         exit_status=$?
-    elif [[ $shcomp != skip ]]
+    elif [[ $shcomp == true ]]
     then
         $SHCOMP $test_script > $test_script.shcomp || exit
         $SHELL -p $TEST_DIR/$test_script.shcomp $test_name < /dev/null
         exit_status=$?
     else
-        exit_status=MESON_SKIPPED_TEST
+        exit_status=$MESON_SKIPPED_TEST
     fi
 
     if (( $exit_status == 0 || $exit_status == $MESON_SKIPPED_TEST ))

@@ -2,6 +2,7 @@
 # element is the test name. The second is an optional timeout if the default
 # timeout of 30 seconds is too short. Try to keep the list sorted.
 default_timeout = 30
+lang_var = 'LANG=en_US.UTF-8'
 
 # TODO: Fix and add `leaks` to this list (see issue #403).
 all_tests = [
@@ -133,12 +134,12 @@ tests_to_skip = [
     ['shcomp', 'treemove.sh'],
 ]
 
-lang_var = 'LANG=en_US.UTF-8'
-#
-# The test cases are executed in parallel by default
+# Define each test.
 foreach testspec : all_tests
     test_name = testspec[0]
     timeout = (testspec.length() == 2) ? testspec[1] : default_timeout
+    # Test cases are executed in parallel by default. Check if a specific test should be run in
+    # isolation based on whether the timeout is negative.
     if timeout <= 0
         parallel = false
         timeout = timeout == 0 ? default_timeout : -timeout
