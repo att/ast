@@ -18,7 +18,7 @@
 
 ## Other significant changes
 
-# ksh 2020.0.0-beta1 (version TBD, this is a work in progress)
+# ksh 2020.0.0
 
 This documents changes since the AST code, which includes the `ksh` program,
 was moved to Github. That is, the ksh93u+ source. The next stable version will
