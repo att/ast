@@ -1,6 +1,57 @@
+# This is invoked by Meson to run each ksh unit test; including the `expect` based interactive
+# tests. This script is responsible for setting up the test environment and managing the execution
+# of each test. Including skipping tests that aren't compatible with the platform. It is expected to
+# be run by the ksh binary built by the build process but it should work with any POSIX shell.
+
+# Some tests fail for inexplicable reasons on some platforms. In some cases, such as Cygwin, things
+# simply don't work as expected and probably never will due to quirks of the platform. Another
+# example is SunOs/Solaris which has /proc but doesn't support manipulating directory fd's.
 #
-# Make sure when called via `meson test` we've got the expected args.
+# The table is a sequence of system/test_name pairs. The system name is the exported value of the
+# meson.build `system` var. Which is the output of Meson's `host_machine.system()` or possibly a
+# variant; e.g., to distinguish WSL (Windows Subsystem for Linux) from other Linux platforms. It's a
+# shame we can't leverage nested data structures and still use a borg standard POSIX shell to run
+# this script.
 #
+# TODO: Eliminate as many of these exceptions as possible. Some of them, especially the Cygwin
+# exceptions, will probably never be removed because they involve obscure features that will never
+# be made to work on a particular platform. But others should be fixed so they tests do pass and
+# the exclusion entry in the table below removed.
+tests_to_skip=(
+    'cygwin b_jobs.exp'
+    'cygwin b_time.exp'
+    'cygwin b_times.exp'
+    'cygwin b_ulimit.sh'
+    'cygwin b_uname.sh'  # too many trivial diffs in uname output
+    'cygwin coprocess.sh'
+    'cygwin signal.sh'
+    'cygwin sh_match.sh'  # too slow, times out
+    'openbsd b_times.exp'
+    'sunos vi.exp'
+    'sunos directoryfd.sh'
+    'wsl b_time.exp'
+    'wsl b_times.exp'
+    'wsl sh_match.sh'  # too slow, times out
+    # Tests to be skipped because they are known to be broken when compiled by `shcomp`.
+    # TODO: Fix these tests or the shcomp code.
+    'shcomp io.sh'
+    'shcomp b_set.sh'
+    'shcomp treemove.sh'
+)
+
+# The use of the "dumb" terminal type is to minimize, and hopefully eliminate completely,
+# terminal control/escape sequences that affect the terminal's behavior. This makes writing
+# robust unit tests, especially Expect based tests, easier.
+export TERM=xterm
+export BUILD_DIR=$PWD
+
+# Special exit status for Meson that it recognizes as indicating the test wasn't run. This is
+# preferable to returning zero and pretending the test succeeded.
+export MESON_SKIPPED_TEST=77
+# This isn't special to meson but we use it below if we've detected an `expect` based test has
+# timed out.
+export MESON_TEST_TIMEOUT=99
+
 function log_info {
     typeset lineno=$1
     print -r "<I> run_test[$lineno]: ${@:2}"
@@ -18,8 +69,6 @@ function log_error {
     print -u2 -r "<E> run_test[$lineno]: ${@:2}"
 }
 alias log_error='log_error $LINENO'
-
-export BUILD_DIR=$PWD
 
 api_test=false
 api_binary=false
@@ -57,6 +106,27 @@ then
     exit 99
 fi
 
+# If the test should be skipped do so.
+readonly test_name=$1
+[[ $shcomp == skip && test_name == *.exp ]] && exit $MESON_SKIPPED_TEST
+for test in "${tests_to_skip[@]}"
+do
+    system=${test% *}
+    test_to_skip=${test#* }
+    [[ $shcomp == true && $system == shcomp && $test_to_skip == $test_name ]] && \
+        exit $MESON_SKIPPED_TEST
+    [[ $system == $MESON_SYSTEM && $test_to_skip == $test_name ]] && \
+        exit $MESON_SKIPPED_TEST
+done
+
+# TODO: Disable the `io` test on Travis macOS until we understand why it dies from an abort().
+# I'm not seeing that failure happen on either of my macOS 10.12 or 10.13 systems.
+if [[ $test_name == io && $OS_NAME == darwin && $CI == true ]]
+then
+    log_info 'Skipping io test on macOS on Travis'
+    exit $MESON_SKIPPED_TEST
+fi
+
 #
 # A test may need to alter its behavior based on the OS we're running on.
 #
@@ -71,17 +141,6 @@ then
     export USER=$(id -un)
 fi
 
-# The use of the "dumb" terminal type is to minimize, and hopefully eliminate completely,
-# terminal control/escape sequences that affect the terminal's behavior. This makes writing
-# robust unit tests, especially Expect based tests, easier.
-export TERM=xterm
-
-# Special exit status for meson.
-export MESON_SKIPPED_TEST=77
-# This isn't special to meson but we use it below if we've detected an `expect` based test has
-# timed out.
-export MESON_TEST_TIMEOUT=99
-
 # Scale the meson test timeout if a multiplier value is in the environment. Note that this requires
 # the user explicitly export a MULTIPLIER var that matches the `meson test -t` value. I have opened
 # issue https://github.com/mesonbuild/meson/issues/6009 asking that the timeout be exposed by Meson.
@@ -90,19 +149,9 @@ then
     TIMEOUT=$(( TIMEOUT * MULTIPLIER ))
 fi
 
-# TODO: Enable the `io` test on Travis macOS once we understand why it dies from an abort().
-# I'm not seeing that failure happen on either of my macOS 10.12 or 10.13 systems.
-if [[ $test_name == io && $OS_NAME == darwin && $CI == true ]]
-then
-    log_info 'Skipping io test on macOS on Travis'
-    exit $MESON_SKIPPED_TEST
-fi
-
-
 #
 # Setup the environment for the unit test.
 #
-readonly test_name=$1
 if [[ $test_name == *.exp ]]
 then
     readonly test_path=$TEST_ROOT/$test_name
@@ -426,13 +475,10 @@ else
     then
         $SHELL -p $TEST_DIR/$test_script $test_name < /dev/null
         exit_status=$?
-    elif [[ $shcomp == true ]]
-    then
+    else
         $SHCOMP $test_script > $test_script.shcomp || exit
         $SHELL -p $TEST_DIR/$test_script.shcomp $test_name < /dev/null
         exit_status=$?
-    else
-        exit_status=$MESON_SKIPPED_TEST
     fi
 
     if (( $exit_status == 0 || $exit_status == $MESON_SKIPPED_TEST ))

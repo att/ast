@@ -3,6 +3,7 @@
 # timeout of 30 seconds is too short. Try to keep the list sorted.
 default_timeout = 30
 lang_var = 'LANG=en_US.UTF-8'
+system_var = 'MESON_SYSTEM=' + system
 
 # TODO: Fix and add `leaks` to this list (see issue #403).
 all_tests = [
@@ -108,32 +109,6 @@ all_tests = [
     ['special-dev-paths.sh', 0],
 ]
 
-# Some tests fail for inexplicable reasons on some platforms. In some cases, such as Cygwin, things
-# simply don't work as expected and probably never will due to quirks of the platform. Another
-# example is sunos/solaris has /proc but doesn't support manipulating directory fd's. Also, some
-# tests are simply too slow on particular platforms when hosted on a VM.
-tests_to_skip = [
-    ['cygwin', 'b_jobs.exp'],
-    ['cygwin', 'b_time.exp'],
-    ['cygwin', 'b_times.exp'],
-    ['cygwin', 'b_ulimit.sh'],
-    ['cygwin', 'b_uname.sh'],  # too many trivial diffs in uname output
-    ['cygwin', 'coprocess.sh'],
-    ['cygwin', 'signal.sh'],
-    ['cygwin', 'sh_match.sh'],  # too slow, times out
-    ['openbsd', 'b_times.exp'],
-    ['sunos', 'vi.exp'],
-    ['sunos', 'directoryfd.sh'],
-    ['wsl', 'b_time.exp'],
-    ['wsl', 'b_times.exp'],
-    ['wsl', 'sh_match.sh'],  # too slow, times out
-    # Tests to be skipped because they are known to be broken when compiled by `shcomp`.
-    # TODO: Fix these tests or the shcomp code.
-    ['shcomp', 'io.sh'],
-    ['shcomp', 'b_set.sh'],
-    ['shcomp', 'treemove.sh'],
-]
-
 # Define each test.
 foreach testspec : all_tests
     test_name = testspec[0]
@@ -148,46 +123,26 @@ foreach testspec : all_tests
     endif
     timeout_var = 'TIMEOUT=' + timeout.to_string()
 
-    skip_test = false
-    foreach skip : tests_to_skip
-        if system == skip[0] and test_name == skip[1]
-            warning('skipping ' + test_name + ' on ' + system)
-            skip_test = true
-            # break  # Not until meson 0.49
-        endif
-    endforeach
-    if not skip_test
-        if test_name.endswith('.exp')
-            # The interactive `expect` based tests are highly sensitive to timing variations.
-            # Never run them in parallel with any other test.
-            parallel = false
-        endif
+    if test_name.endswith('.exp')
+        # The interactive `expect` based tests are highly sensitive to timing variations.
+        # Never run them in parallel with any other test.
+        parallel = false
+    endif
 
-        # Run the test without compiling the script (which is how most people use ksh).
-        # Note the use of `-p` to keep the shell from sourcing dot scripts. Without this the
-        # platform's ksh config files could cause problems.
-        test(test_name, ksh93_exe, timeout: timeout, is_parallel: parallel,
-            args: ['-p', test_driver, test_name],
-            env: [shell_var, lang_var, src_root, test_root, ld_library_path, libsample_path,
-                  timeout_var])
+    # Run the test without compiling the script (which is how most people use ksh).
+    # Note the use of `-p` to keep the shell from sourcing dot scripts. Without this the
+    # platform's ksh config files could cause problems.
+    test(test_name, ksh93_exe, timeout: timeout, is_parallel: parallel,
+        args: ['-p', test_driver, test_name],
+        env: [shell_var, lang_var, src_root, test_root, ld_library_path, libsample_path,
+              system_var, timeout_var])
 
-        # The shcomp variants are only applicable to the non-interactive tests.
-        if not test_name.endswith('.exp')
-            skip_test = false
-            foreach skip : tests_to_skip
-                if 'shcomp' == skip[0] and test_name == skip[1]
-                    warning('skipping ' + test_name + '/shcomp on ' + system)
-                    skip_test = true
-                    # break  # Not until meson 0.49
-                endif
-            endforeach
-            if not skip_test
-                # Run the test after compiling the script with `shcomp`.
-                test(test_name + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
-                    args: ['-p', test_driver, 'shcomp', test_name],
-                    env: [shell_var, lang_var, src_root, test_root, shcomp_var, ld_library_path,
-                          libsample_path, timeout_var])
-            endif
-        endif
+    # The shcomp variants are only applicable to the non-interactive tests.
+    if not test_name.endswith('.exp')
+        # Run the test after compiling the script with `shcomp`.
+        test(test_name + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
+            args: ['-p', test_driver, 'shcomp', test_name],
+            env: [shell_var, lang_var, src_root, test_root, shcomp_var, ld_library_path,
+                  libsample_path, system_var, timeout_var])
     endif
 endforeach
