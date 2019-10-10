@@ -8,10 +8,15 @@
 #define PATH_MAX 1024
 #endif
 
-static char fname_hlink[PATH_MAX];
-static char fname_slink[PATH_MAX];
+static char fname_hlink[PATH_MAX] = "";
+static char fname_slink[PATH_MAX] = "";
 
 #define EXPECTED_SYMLINK_MODE 0751
+
+static void cleanup() {
+    if (*fname_hlink) unlink(fname_hlink);
+    if (*fname_slink) unlink(fname_slink);
+}
 
 int main() {
     struct stat statbuf;
@@ -66,10 +71,10 @@ int main() {
         goto err_exit;
     }
 
+    cleanup();
     return 0;
 
 err_exit:
-    if (*fname_hlink) unlink(fname_hlink);
-    if (*fname_slink) unlink(fname_slink);
+    cleanup();
     return 1;
 }
