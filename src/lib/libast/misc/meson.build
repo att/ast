@@ -9,6 +9,7 @@ libast_files += [
     'misc/fgetcwd.c',
     'misc/glob.c',
     'misc/optget.c',
+    'misc/optget_long.c',
     'misc/procclose.c',
     'misc/procfree.c',
     'misc/procopen.c',
