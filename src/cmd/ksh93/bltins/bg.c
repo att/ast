@@ -44,8 +44,6 @@ int b_bg(int argc, char *argv[], Shbltin_t *context) {
     Shell_t *shp = context->shp;
     char *cmd = argv[0];
 
-    // We use `getopt_long_only()` rather than `optget_long()` to facilitate handling negative
-    // integers that might otherwise look like a flag.
     optget_ind = 0;
     while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {

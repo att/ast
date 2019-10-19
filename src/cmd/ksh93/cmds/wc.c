@@ -21,7 +21,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <getopt.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,6 +33,7 @@
 #include "ast.h"
 #include "builtins.h"
 #include "error.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
@@ -50,8 +50,8 @@
 #define WC_NOUTF8 0x80
 
 static const char *short_options = "+:clmqwCLN";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
     {"lines", 0, NULL, 'l'},
     {"words", 0, NULL, 'w'},
     {"bytes", 0, NULL, 'c'},
@@ -96,8 +96,8 @@ int b_wc(int argc, char **argv, Shbltin_t *context) {
 
     if (cmdinit(argc, argv, context, 0)) return -1;
 
-    optind = opterr = 0;
-    while ((opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -137,17 +137,17 @@ int b_wc(int argc, char **argv, Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
+    argv += optget_ind;
 
     if (mode & WC_MBYTE) {
         if (mode & WC_CHARS) error(2, "-c and -C are mutually exclusive");

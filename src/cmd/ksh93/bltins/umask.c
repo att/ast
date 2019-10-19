@@ -20,21 +20,22 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <getopt.h>
 #include <stdbool.h>
-#include <stddef.h>
+#include <stdlib.h>
 
 #include "ast.h"
 #include "defs.h"
 #include "error.h"
+#include "optget_long.h"
 #include "sfio.h"
+#include "shcmd.h"
 
 // This has to be included after "shell.h".
 #include "builtins.h"
 
 static const char *short_options = "+:pS";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
     {NULL, 0, NULL, 0}};
 
 int b_umask(int argc, char *argv[], Shbltin_t *context) {
@@ -44,8 +45,8 @@ int b_umask(int argc, char *argv[], Shbltin_t *context) {
     char *cmd = argv[0];
     int opt;
 
-    optind = opterr = 0;
-    while ((opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -60,17 +61,17 @@ int b_umask(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
+    argv += optget_ind;
 
     char *mask = *argv;
     if (!mask) {  // display the current umask
