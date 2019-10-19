@@ -21,7 +21,6 @@
 
 #include <ctype.h>
 #include <errno.h>
-#include <getopt.h>
 #include <limits.h>
 #include <setjmp.h>
 #include <stdbool.h>
@@ -42,6 +41,7 @@
 #include "io.h"
 #include "lexstates.h"
 #include "name.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
@@ -203,9 +203,9 @@ static struct Method methods[] = {
     {"ksh", NULL},
     {NULL, NULL}};
 
-static const char *short_options = "+:ad:n:p:rsu:t:vACN:S";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
+static const char *short_options = "ad:n:p:rsu:t:vACN:S";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
     {NULL, 0, NULL, 0}};
 
 //
@@ -242,8 +242,8 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
         goto bypass;
     }
 
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -264,19 +264,19 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 't': {
-                sec = sh_strnum(shp, optarg, NULL, 1);
+                sec = sh_strnum(shp, optget_arg, NULL, 1);
                 timeout = sec ? 1000 * sec : 1;
                 break;
             }
             case 'd': {
                 flags &= ((1 << (D_FLAG + 1)) - 1);
-                flags |= (mb1char(&optarg) << (D_FLAG + 1)) | (1 << D_FLAG);
+                flags |= (mb1char(&optget_arg) << (D_FLAG + 1)) | (1 << D_FLAG);
                 break;
             }
             case 'p': {
-                if (shp->cpipe[0] <= 0 ||
-                    (*optarg != '-' && (!strmatch(optarg, "+(\\w)") || isdigit(*optarg)))) {
-                    name = optarg;
+                if (shp->cpipe[0] <= 0 || (*optget_arg != '-' && (!strmatch(optget_arg, "+(\\w)") ||
+                                                                  isdigit(*optget_arg)))) {
+                    name = optget_arg;
                 } else {
                     // For backward compatibility.
                     fd = shp->cpipe[0];
@@ -287,7 +287,7 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
             }
 #if SUPPORT_JSON
             case 'm': {
-                method = optarg;
+                method = optget_arg;
                 flags |= C_FLAG;
                 break;
             }
@@ -295,9 +295,9 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
             case 'n':
             case 'N': {
                 char *cp;
-                int64_t n = strton64(optarg, &cp, NULL, 0);
+                int64_t n = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || n < 0 || n > INT_MAX) {
-                    builtin_usage_error(shp, cmd, "%s: invalid -%c value", optarg, optopt);
+                    builtin_usage_error(shp, cmd, "%s: invalid -%c value", optget_arg, optget_opt);
                     return 2;
                 }
                 len = n;
@@ -319,7 +319,7 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'u': {
-                if (optarg[0] == 'p' && optarg[1] == 0) {
+                if (optget_arg[0] == 'p' && optget_arg[1] == 0) {
                     fd = shp->cpipe[0];
                     if (fd <= 0) {
                         errormsg(SH_DICT, ERROR_exit(1), e_query);
@@ -329,9 +329,9 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                 }
 
                 char *cp;
-                int64_t n = strton64(optarg, &cp, NULL, 0);
+                int64_t n = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || n < 0 || n > INT_MAX || !sh_iovalidfd(shp, n)) {
-                    builtin_usage_error(shp, cmd, "%s: invalid -u value", optarg);
+                    builtin_usage_error(shp, cmd, "%s: invalid -u value", optget_arg);
                     return 2;
                 }
                 fd = n;
@@ -342,21 +342,21 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                if (optopt == 'p' && shp->cpipe[0] > 0) {
+                if (optget_opt == 'p' && shp->cpipe[0] > 0) {
                     fd = shp->cpipe[0];
                     break;
                 }
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
+    argv += optget_ind;
 
     if (method) {
         for (mindex = 0; methods[mindex].name; mindex++) {

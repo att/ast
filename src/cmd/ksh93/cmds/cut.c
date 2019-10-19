@@ -27,7 +27,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <getopt.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -38,6 +37,7 @@
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
@@ -75,23 +75,23 @@ typedef struct Cut_s {
 #define SP_WORD 2
 #define SP_WIDE 3
 
-static const char *short_options = "+:b:c:d:f:nr:sD:NR:";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
-    {"newline", no_argument, NULL, 2},
-    {"split", no_argument, NULL, 3},
-    {"nonewline", no_argument, NULL, 'N'},
-    {"nosplit", no_argument, NULL, 'n'},
-    {"bytes", required_argument, NULL, 'b'},
-    {"characters", required_argument, NULL, 'c'},
-    {"delimeter", required_argument, NULL, 'd'},
-    {"fields", required_argument, NULL, 'f'},
-    {"reclen", required_argument, NULL, 'r'},
-    {"only-delimeted", no_argument, NULL, 's'},
-    {"suppress", no_argument, NULL, 's'},
-    {"output-delimiter", required_argument, NULL, 'D'},
-    {"line-delimiter", required_argument, NULL, 'D'},
-    {"line-delimeter", required_argument, NULL, 'D'},
+static const char *short_options = "b:c:d:f:nr:sD:NR:";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
+    {"newline", optget_no_arg, NULL, 2},
+    {"split", optget_no_arg, NULL, 3},
+    {"nonewline", optget_no_arg, NULL, 'N'},
+    {"nosplit", optget_no_arg, NULL, 'n'},
+    {"bytes", optget_required_arg, NULL, 'b'},
+    {"characters", optget_required_arg, NULL, 'c'},
+    {"delimeter", optget_required_arg, NULL, 'd'},
+    {"fields", optget_required_arg, NULL, 'f'},
+    {"reclen", optget_required_arg, NULL, 'r'},
+    {"only-delimeted", optget_no_arg, NULL, 's'},
+    {"suppress", optget_no_arg, NULL, 's'},
+    {"output-delimiter", optget_required_arg, NULL, 'D'},
+    {"line-delimiter", optget_required_arg, NULL, 'D'},
+    {"line-delimeter", optget_required_arg, NULL, 'D'},
     {NULL, 0, NULL, 0}};
 
 /*
@@ -511,8 +511,8 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
     ldelim.chr = '\n';
     wdelim.len = ldelim.len = 1;
 
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -532,36 +532,36 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
                     error(2, "f option already specified");
                     break;
                 }
-                cp = optarg;
+                cp = optget_arg;
                 mode |= opt == 'b' ? C_BYTES : C_CHARS;
                 break;
             }
             case 'D': {
-                ldelim.str = optarg;
+                ldelim.str = optget_arg;
                 if (mbwide()) {
-                    s = optarg;
+                    s = optget_arg;
                     ldelim.chr = mb1char(&s);
-                    if ((n = s - optarg) > 1) {
+                    if ((n = s - optget_arg) > 1) {
                         ldelim.len = n;
                         break;
                     }
                 }
-                ldelim.chr = *(unsigned char *)optarg;
+                ldelim.chr = *(unsigned char *)optget_arg;
                 ldelim.len = 1;
                 break;
             }
             case 'd': {
-                wdelim.str = optarg;
+                wdelim.str = optget_arg;
                 if (mbwide()) {
-                    s = optarg;
+                    s = optget_arg;
                     wdelim.chr = mb1char(&s);
-                    n = s - optarg;
+                    n = s - optget_arg;
                     if (n > 1) {
                         wdelim.len = n;
                         break;
                     }
                 }
-                wdelim.chr = *(unsigned char *)optarg;
+                wdelim.chr = *(unsigned char *)optget_arg;
                 wdelim.len = 1;
                 break;
             }
@@ -570,7 +570,7 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
                     error(2, "c option already specified");
                     break;
                 }
-                cp = optarg;
+                cp = optget_arg;
                 mode |= C_FIELDS;
                 break;
             }
@@ -585,9 +585,9 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
             case 'R':
             case 'r': {
                 char *cp;
-                reclen = strton64(optarg, &cp, NULL, 0);
+                reclen = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || reclen <= 0) {
-                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid -r value", optarg);
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid -r value", optget_arg);
                     return 2;
                 }
                 break;
@@ -597,17 +597,17 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
+    argv += optget_ind;
 
     if (!cp) {
         builtin_usage_error(shp, cmd, "b, c or f option must be specified");

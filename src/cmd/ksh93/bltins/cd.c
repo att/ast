@@ -21,7 +21,6 @@
 
 #include <errno.h>
 #include <fcntl.h>
-#include <getopt.h>
 #include <limits.h>
 #include <pwd.h>
 #include <stdbool.h>
@@ -36,15 +35,16 @@
 #include "defs.h"
 #include "error.h"
 #include "name.h"
+#include "optget_long.h"
 #include "path.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
 #include "variables.h"
 
-static const char *short_options = "+:f:LP@";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
+static const char *short_options = "f:LP@";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
     {NULL, 0, NULL, 0}};
 
 //
@@ -81,8 +81,8 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         __builtin_unreachable();
     }
 
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -91,9 +91,9 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
             case 'f': {
                 char *cp;
                 fflag = true;
-                int64_t n = strton64(optarg, &cp, NULL, 0);
+                int64_t n = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || n < 0 || n > INT_MAX) {
-                    errormsg(SH_DICT, ERROR_exit(0), "Invalid dirfd value: %s", optarg);
+                    errormsg(SH_DICT, ERROR_exit(0), "Invalid dirfd value: %s", optget_arg);
                     return 2;
                 }
                 dirfd = n;
@@ -108,19 +108,19 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
 
-    argv += optind;
-    argc -= optind;
+    argv += optget_ind;
+    argc -= optget_ind;
     dir = argv[0];
     if (argc > 2) {
         builtin_usage_error(shp, cmd, "Too many arguments (expected at most two args)");

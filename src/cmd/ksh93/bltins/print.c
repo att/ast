@@ -21,7 +21,6 @@
 
 #include <ctype.h>
 #include <errno.h>
-#include <getopt.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,6 +36,7 @@
 #include "history.h"
 #include "io.h"
 #include "name.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
@@ -91,9 +91,9 @@ static_fn ssize_t fmtbase64(Shell_t *, Sfio_t *, char *, const char *, int);
 static char *nullarg[] = {0, 0};
 
 // The short options deliberately does not include 'R'. Even though it is a valid flag.
-static const char *short_options = "+:enf:prsu:vCR";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
+static const char *short_options = "enf:prsu:vCR";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
     {NULL, 0, NULL, 0}};
 
 //
@@ -110,8 +110,8 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
     prdata.fd = 1;
 
     bool done = false;
-    optind = opterr = 0;
-    while (!done && (opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while (!done && (opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -127,7 +127,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'f': {
-                prdata.format = optarg;
+                prdata.format = optget_arg;
                 break;
             }
             case 's': {
@@ -151,13 +151,13 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'u': {
-                if (optarg[0] == 'p' && optarg[1] == 0) {
+                if (optget_arg[0] == 'p' && optget_arg[1] == 0) {
                     prdata.fd = shp->coutpipe;
                     prdata.msg = e_query;
                     break;
                 }
-                prdata.fd = (int)strtol(optarg, &optarg, 10);
-                if (*optarg) {
+                prdata.fd = (int)strtol(optget_arg, &optget_arg, 10);
+                if (*optget_arg) {
                     prdata.fd = -1;
                 } else if (!sh_iovalidfd(shp, prdata.fd)) {
                     prdata.fd = -1;
@@ -193,7 +193,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 // regardless of whether `-R` or `-Rn` was seen. But any subsequent args are treated
                 // as if `--` was seen. Meaning a second `-n` is treated as a literal `-n` to be
                 // printed.
-                argv += optind;
+                argv += optget_ind;
                 int n = strlen(argv[-1]);
                 if (!(argv[-1][0] == '-' && argv[-1][n - 1] == 'R')) {
                     // The current flag must be of the form -*R?.
@@ -209,22 +209,22 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 }
                 R_flag = true;
                 prdata.raw = true;
-                optind = 0;
+                optget_ind = 0;
                 done = true;
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
+    argv += optget_ind;
 
     if (argc < 0 && !(prdata.format = *argv++)) {
         builtin_usage_error(shp, cmd, "too few arguments");

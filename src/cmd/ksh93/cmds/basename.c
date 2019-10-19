@@ -28,20 +28,20 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <getopt.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "builtins.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 
-static const char *short_options = "+:as:";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins supports --help
-    {"all", no_argument, NULL, 'a'},
-    {"suffix", no_argument, NULL, 's'},
+static const char *short_options = "as:";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins supports --help
+    {"all", optget_no_arg, NULL, 'a'},
+    {"suffix", optget_no_arg, NULL, 's'},
     {NULL, 0, NULL, 0}};
 
 static void namebase(Sfio_t *outfile, char *pathname, char *suffix) {
@@ -84,8 +84,8 @@ int b_basename(int argc, char **argv, Shbltin_t *context) {
     Shell_t *shp = context->shp;
     char *cmd = argv[0];
 
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -97,22 +97,22 @@ int b_basename(int argc, char **argv, Shbltin_t *context) {
             }
             case 's': {
                 all = true;
-                suffix = optarg;
+                suffix = optget_arg;
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
-    argc -= optind;
+    argv += optget_ind;
+    argc -= optget_ind;
     if (argc < 1 || (!all && argc > 2)) {
         builtin_print_help(shp, cmd);
         return 2;

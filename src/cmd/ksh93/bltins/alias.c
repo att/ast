@@ -19,7 +19,6 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -29,12 +28,13 @@
 #include "defs.h"
 #include "error.h"
 #include "name.h"
+#include "optget_long.h"
 #include "shcmd.h"
 #include "variables.h"
 
-static const char *short_options = "+:ptx";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
+static const char *short_options = "ptx";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
     {NULL, 0, NULL, 0}};
 
 //
@@ -58,8 +58,8 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
     tdata.argnum = 0;
     tdata.aflag = *argv[1];
 
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -78,24 +78,24 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
 
-    // This would normally be `argv += optind`. However, the setall() function treats argv[0]
+    // This would normally be `argv += optget_ind`. However, the setall() function treats argv[0]
     // specially due to the behavior of the `typeset` command which also calls setall(). Here we are
     // passing it a nonsense value that should have argv[0][0] be anything other than a `+` char.
     //
-    // TODO: Convert this to the standard `argv += optind` when `setall()` is modified to have a
+    // TODO: Convert this to the standard `argv += optget_ind` when `setall()` is modified to have a
     // separate flag for the value of the magic `*argv[0]` passed by `typeset` to that function.
-    argv += (optind - 1);
+    argv += (optget_ind - 1);
     if (!nv_isflag(nvflags, NV_TAGGED)) return setall(argv, nvflags, troot, &tdata);
 
     // Hacks to handle hash -r | --.

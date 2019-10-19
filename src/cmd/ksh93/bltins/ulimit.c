@@ -19,7 +19,6 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/resource.h>
@@ -31,15 +30,16 @@
 #include "defs.h"
 #include "error.h"
 #include "name.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 
 #define HARD 2
 #define SOFT 4
 
-static const char *short_options = "+:abcdefilmnpqrstuvwxHMST";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
+static const char *short_options = "abcdefilmnpqrstuvwxHMST";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
     {"as", 0, NULL, 'M'},
     {"core", 0, NULL, 'c'},
     {"cpu", 0, NULL, 't'},
@@ -74,8 +74,8 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
     int label, unit, nosupport;
     rlim_t i;
 
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -94,11 +94,11 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: {
@@ -116,7 +116,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
         }
     }
 
-    char *limit = argv[optind];
+    char *limit = argv[optget_ind];
     // Default to -f.
     if (hit == 0) {
         for (int n = 0; shtab_limits[n].option; n++) {
@@ -127,7 +127,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
         }
     }
     // Only one option at a time for setting.
-    if (argc > optind + 1) {
+    if (argc > optget_ind + 1) {
         builtin_usage_error(shp, cmd, "too many arguments");
         return 2;
     }

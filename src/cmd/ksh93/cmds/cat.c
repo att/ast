@@ -28,7 +28,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
-#include <getopt.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,6 +35,7 @@
 #include "ast.h"
 #include "builtins.h"
 #include "error.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 
@@ -302,21 +302,21 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, int flags) {
     }
 }
 
-static const char *short_options = "+:bdenstuvABDEST";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
-    {"number-nonblank", no_argument, NULL, 'b'},
-    {"dos-input", no_argument, NULL, 'd'},
-    {"number", no_argument, NULL, 'n'},
-    {"unbuffer", no_argument, NULL, 'u'},
-    {"show-nonprinting", no_argument, NULL, 'v'},
-    {"print-chars", no_argument, NULL, 'v'},
-    {"show-all", no_argument, NULL, 'A'},
-    {"squeeze-blank", no_argument, NULL, 'B'},
-    {"dos-output", no_argument, NULL, 'D'},
-    {"show-ends", no_argument, NULL, 'E'},
-    {"silent", no_argument, NULL, 'S'},
-    {"show-blank", no_argument, NULL, 'T'},
+static const char *short_options = "bdenstuvABDEST";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
+    {"number-nonblank", optget_no_arg, NULL, 'b'},
+    {"dos-input", optget_no_arg, NULL, 'd'},
+    {"number", optget_no_arg, NULL, 'n'},
+    {"unbuffer", optget_no_arg, NULL, 'u'},
+    {"show-nonprinting", optget_no_arg, NULL, 'v'},
+    {"print-chars", optget_no_arg, NULL, 'v'},
+    {"show-all", optget_no_arg, NULL, 'A'},
+    {"squeeze-blank", optget_no_arg, NULL, 'B'},
+    {"dos-output", optget_no_arg, NULL, 'D'},
+    {"show-ends", optget_no_arg, NULL, 'E'},
+    {"silent", optget_no_arg, NULL, 'S'},
+    {"show-blank", optget_no_arg, NULL, 'T'},
     {NULL, 0, NULL, 0}};
 
 //
@@ -337,8 +337,8 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
     if (cmdinit(argc, argv, context, 0)) return -1;
     att = !path_is_bsd_universe();
     mode = "r";
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -401,17 +401,17 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
+    argv += optget_ind;
 
     memset(states, 0, sizeof(states));
     if (flags & V_FLAG) {

@@ -21,7 +21,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
-#include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -30,15 +29,16 @@
 #include "ast.h"
 #include "builtins.h"
 #include "error.h"
+#include "optget_long.h"
 #include "shcmd.h"
 
 #define DIRMODE (S_IRWXU | S_IRWXG | S_IRWXO)
 
-static const char *short_options = "+:m:pv";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
-    {"mode", required_argument, NULL, 'm'},
-    {"verbose", no_argument, NULL, 'v'},
+static const char *short_options = "m:pv";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
+    {"mode", optget_required_arg, NULL, 'm'},
+    {"verbose", optget_no_arg, NULL, 'v'},
     {NULL, 0, NULL, 0}};
 
 int b_mkdir(int argc, char **argv, Shbltin_t *context) {
@@ -57,8 +57,8 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
     char *cmd = argv[0];
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -66,8 +66,8 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
             }
             case 'm':
                 mflag = 1;
-                mode = strperm(optarg, &part, mode);
-                if (*part) error(ERROR_exit(0), "%s: invalid mode", optarg);
+                mode = strperm(optget_arg, &part, mode);
+                if (*part) error(ERROR_exit(0), "%s: invalid mode", optget_arg);
                 break;
             case 'p':
                 pflag = 1;
@@ -76,17 +76,17 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
                 vflag = 1;
                 break;
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
+    argv += optget_ind;
 
     if (!*argv) {
         builtin_usage_error(shp, cmd, "you must provide at least one directory");

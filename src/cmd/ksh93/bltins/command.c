@@ -22,18 +22,18 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <getopt.h>
 #include <string.h>
 #include "stdlib.h"
 
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
+#include "optget_long.h"
 #include "shcmd.h"
 
-static const char *short_options = "+:pvxV";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
+static const char *short_options = "pvxV";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
     {NULL, 0, NULL, 0}};
 
 //
@@ -48,14 +48,14 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
     char *cmd = argv[0];
 
     // We need to calculate argc because we might have been invoked with it set to zero. And that
-    // doesn't confuse the AST optget() function but does break getopt_long().
+    // doesn't confuse the AST optget() function but does break optget_long().
     int true_argc = argc;
     if (true_argc == 0) {
         for (char **cp = argv; *cp; cp++) true_argc++;
     }
 
-    optind = opterr = 0;
-    while ((opt = getopt_long(true_argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(true_argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 if (argc != 0) builtin_print_help(shp, cmd);
@@ -83,19 +83,19 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
             }
             case ':': {
                 if (argc == 0) return 0;
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
                 if (argc == 0) return 0;
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    if (argc == 0) return flags ? 0 : optind;
-    argv += optind;
+    if (argc == 0) return flags ? 0 : optget_ind;
+    argv += optget_ind;
     if (!*argv) {
         builtin_usage_error(shp, cmd, "missing command argument");
         return 2;

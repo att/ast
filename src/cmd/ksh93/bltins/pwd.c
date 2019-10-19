@@ -19,7 +19,6 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <getopt.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -30,14 +29,15 @@
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
+#include "optget_long.h"
 #include "path.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
 
-static const char *short_options = "+:f:LP";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
+static const char *short_options = "f:LP";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
     {NULL, 0, NULL, 0}};
 
 //
@@ -50,8 +50,8 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
     bool pflag = false;
     int opt, fd = -1;
 
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -59,9 +59,9 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
             }
             case 'f': {
                 char *cp;
-                int64_t n = strton64(optarg, &cp, NULL, 0);
+                int64_t n = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || n < 0 || n > INT_MAX) {
-                    builtin_usage_error(shp, cmd, "%s: invalid -f value", optarg);
+                    builtin_usage_error(shp, cmd, "%s: invalid -f value", optget_arg);
                     return 2;
                 }
                 fd = n;
@@ -76,11 +76,11 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }

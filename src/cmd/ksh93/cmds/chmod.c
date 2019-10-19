@@ -28,7 +28,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
-#include <getopt.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,6 +40,7 @@
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 
@@ -56,22 +56,22 @@
 #define ENOSYS EINVAL
 #endif
 
-static const char *short_options = "+:cfhilnr::w::x::vF:HLPR";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},            // all builtins support --help
-    {"metaphysical", no_argument, NULL, 'H'},  // don't let clang-format rewrap this list
-    {"logical", no_argument, NULL, 'L'},
-    {"follow", no_argument, NULL, 'L'},
-    {"physical", no_argument, NULL, 'P'},
-    {"nofollow", no_argument, NULL, 'P'},
-    {"recursive", no_argument, NULL, 'R'},
-    {"changes", no_argument, NULL, 'c'},
-    {"quiet", no_argument, NULL, 'f'},
-    {"silent", no_argument, NULL, 'f'},
-    {"ignore-umask", no_argument, NULL, 'i'},
-    {"symlink", no_argument, NULL, 'h'},
-    {"show", no_argument, NULL, 'n'},
-    {"reference", required_argument, NULL, 'F'},
+static const char *short_options = "cfhilnr::w::x::vF:HLPR";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},            // all builtins support --help
+    {"metaphysical", optget_no_arg, NULL, 'H'},  // don't let clang-format rewrap this list
+    {"logical", optget_no_arg, NULL, 'L'},
+    {"follow", optget_no_arg, NULL, 'L'},
+    {"physical", optget_no_arg, NULL, 'P'},
+    {"nofollow", optget_no_arg, NULL, 'P'},
+    {"recursive", optget_no_arg, NULL, 'R'},
+    {"changes", optget_no_arg, NULL, 'c'},
+    {"quiet", optget_no_arg, NULL, 'f'},
+    {"silent", optget_no_arg, NULL, 'f'},
+    {"ignore-umask", optget_no_arg, NULL, 'i'},
+    {"symlink", optget_no_arg, NULL, 'h'},
+    {"show", optget_no_arg, NULL, 'n'},
+    {"reference", optget_required_arg, NULL, 'F'},
     {NULL, 0, NULL, 0}};
 
 //
@@ -104,8 +104,8 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
     // unrecognized short flags.
     //
     bool done = false;
-    optind = opterr = 0;
-    while (!done && (opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while (!done && (opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -137,8 +137,8 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 break;
             }
             case 'F': {
-                if (stat(optarg, &st)) {
-                    errormsg(SH_DICT, ERROR_exit(0), "%s: cannot stat", optarg);
+                if (stat(optget_arg, &st)) {
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: cannot stat", optget_arg);
                     return 2;
                 }
                 mode = st.st_mode;
@@ -165,22 +165,22 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
             case 'r':
             case 'w':
             case 'x': {
-                optind--;
+                optget_ind--;
                 done = true;
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
+    argv += optget_ind;
 
     if (!*argv || (!amode && !*(argv + 1))) {
         builtin_usage_error(shp, cmd, "Missing mode and/or file names");

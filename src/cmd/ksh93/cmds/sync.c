@@ -22,7 +22,6 @@
 
 #include <errno.h>
 #include <fcntl.h>
-#include <getopt.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -32,17 +31,18 @@
 #include "ast.h"
 #include "builtins.h"
 #include "error.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 
-static const char *short_options = "+:fs:S:X";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
-    {"sfsync", no_argument, NULL, 'f'},
-    {"fsync", required_argument, NULL, 's'},
-    {"syncfs", required_argument, NULL, 'S'},
-    {"sync", no_argument, NULL, 'X'},
-    {"all", no_argument, NULL, 'X'},
+static const char *short_options = "fs:S:X";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
+    {"sfsync", optget_no_arg, NULL, 'f'},
+    {"fsync", optget_required_arg, NULL, 's'},
+    {"syncfs", optget_required_arg, NULL, 'S'},
+    {"sync", optget_no_arg, NULL, 'X'},
+    {"all", optget_no_arg, NULL, 'X'},
     {NULL, 0, NULL, 0}};  // keep clang-format from compacting this table
 
 #if !_lib_syncfs
@@ -63,8 +63,8 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
 
     if (cmdinit(argc, argv, context, 0)) return -1;
 
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -76,9 +76,9 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
             }
             case 's': {
                 char *cp;
-                int64_t n = strton64(optarg, &cp, NULL, 0);
+                int64_t n = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || n < 0 || n > INT_MAX) {
-                    builtin_usage_error(shp, cmd, "%s: invalid -N value", optarg);
+                    builtin_usage_error(shp, cmd, "%s: invalid -N value", optget_arg);
                     return 2;
                 }
                 fsync_fd = n;
@@ -86,9 +86,9 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
             }
             case 'S': {
                 char *cp;
-                int64_t n = strton64(optarg, &cp, NULL, 0);
+                int64_t n = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || n < 0 || n > INT_MAX) {
-                    builtin_usage_error(shp, cmd, "%s: invalid -N value", optarg);
+                    builtin_usage_error(shp, cmd, "%s: invalid -N value", optget_arg);
                     return 2;
                 }
                 syncfs_fd = n;
@@ -100,17 +100,17 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
+    argv += optget_ind;
 
     if (*argv) {
         builtin_usage_error(shp, cmd, "unexpected arguments");

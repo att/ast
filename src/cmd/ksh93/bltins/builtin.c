@@ -20,7 +20,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <dlfcn.h>
-#include <getopt.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -32,6 +31,7 @@
 #include "dlldefs.h"
 #include "error.h"
 #include "name.h"
+#include "optget_long.h"
 #include "path.h"
 #include "sfio.h"
 #include "shcmd.h"
@@ -53,9 +53,9 @@ typedef void (*Libinit_f)(int, void *);
 #define GROWLIB 4
 
 static int maxlib;
-static const char *short_options = "+:df:lnps";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins supports --help
+static const char *short_options = "df:lnps";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins supports --help
     {NULL, 0, NULL, 0}};
 
 //
@@ -138,8 +138,8 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     stkp = tdata.sh->stk;
     if (!tdata.sh->pathlist) path_absolute(tdata.sh, argv[0], NULL);
 
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -159,7 +159,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'f': {
-                arg = optarg;
+                arg = optget_arg;
                 break;
             }
             case 'l': {
@@ -171,21 +171,21 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
 
-    argv += optind;
+    argv += optget_ind;
     if (arg || *argv) {
         if (sh_isoption(tdata.sh, SH_RESTRICTED)) {
-            errormsg(SH_DICT, ERROR_exit(1), e_restricted, argv[-optind]);
+            errormsg(SH_DICT, ERROR_exit(1), e_restricted, argv[-optget_ind]);
             __builtin_unreachable();
         }
         if (tdata.sh->subshell && !tdata.sh->subshare) sh_subfork();

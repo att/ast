@@ -32,7 +32,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -42,6 +41,7 @@
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 
@@ -50,19 +50,19 @@
 #define CMP_CHARS 0x04
 #define CMP_BYTES 0x08
 
-static const char *short_options = "+:bcd:i:ln:s";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
-    {"print-bytes", no_argument, NULL, 'b'},
-    {"print-chars", no_argument, NULL, 'c'},
-    {"differences", required_argument, NULL, 'd'},
-    {"ignore-initial", required_argument, NULL, 'i'},
-    {"skip", required_argument, NULL, 'i'},
-    {"verbose", no_argument, NULL, 'l'},
-    {"bytes", required_argument, NULL, 'n'},
-    {"count", required_argument, NULL, 'n'},
-    {"quiet", no_argument, NULL, 's'},
-    {"silent", no_argument, NULL, 's'},
+static const char *short_options = "bcd:i:ln:s";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
+    {"print-bytes", optget_no_arg, NULL, 'b'},
+    {"print-chars", optget_no_arg, NULL, 'c'},
+    {"differences", optget_required_arg, NULL, 'd'},
+    {"ignore-initial", optget_required_arg, NULL, 'i'},
+    {"skip", optget_required_arg, NULL, 'i'},
+    {"verbose", optget_no_arg, NULL, 'l'},
+    {"bytes", optget_required_arg, NULL, 'n'},
+    {"count", optget_required_arg, NULL, 'n'},
+    {"quiet", optget_no_arg, NULL, 's'},
+    {"silent", optget_no_arg, NULL, 's'},
     {NULL, 0, NULL, 0}};
 
 static void pretty(Sfio_t *out, int o, int delim, int flags) {
@@ -213,8 +213,8 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
     int flags = 0;
 
     if (cmdinit(argc, argv, context, 0)) return -1;
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -231,22 +231,22 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
             case 'd': {
                 flags |= CMP_VERBOSE;
                 char *cp;
-                differences = strton64(optarg, &cp, NULL, 0);
+                differences = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || differences < 0) {
-                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid -d value", optarg);
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid -d value", optget_arg);
                     return 2;
                 }
                 break;
             }
             case 'i': {
-                o1 = strtoll(optarg, &e, 0);
+                o1 = strtoll(optget_arg, &e, 0);
                 if (*e == ':') {
                     o2 = strtoll(e + 1, &e, 0);
                 } else {
                     o2 = o1;
                 }
                 if (*e) {
-                    builtin_usage_error(shp, cmd, "%s: skip1:skip2 expected", optarg);
+                    builtin_usage_error(shp, cmd, "%s: skip1:skip2 expected", optget_arg);
                     return 2;
                 }
                 break;
@@ -257,9 +257,9 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
             }
             case 'n': {
                 char *cp;
-                count = strton64(optarg, &cp, NULL, 0);
+                count = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || count < 0) {
-                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid -n value", optarg);
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid -n value", optget_arg);
                     return 2;
                 }
                 break;
@@ -269,17 +269,17 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
+    argv += optget_ind;
     if (!(file1 = *argv++) || !(file2 = *argv++)) {
         builtin_usage_error(shp, cmd, "expected two file name arguments");
         return 2;

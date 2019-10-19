@@ -25,7 +25,6 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <getopt.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,6 +35,7 @@
 #include "defs.h"
 #include "error.h"
 #include "name.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shnodes.h"
 #include "stk.h"
@@ -44,12 +44,12 @@
 #define VERSION 3
 static const char header[6] = {CNTL('k'), CNTL('s'), CNTL('h'), 0, VERSION, 0};
 
-static const char *short_options = "+:nvD";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
-    {"dictionary", no_argument, NULL, 'D'},
-    {"noexec", no_argument, NULL, 'n'},
-    {"verbose", no_argument, NULL, 'v'},
+static const char *short_options = "nvD";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
+    {"dictionary", optget_no_arg, NULL, 'D'},
+    {"noexec", optget_no_arg, NULL, 'n'},
+    {"verbose", optget_no_arg, NULL, 'v'},
     {NULL, 0, NULL, 0}};
 
 int main(int argc, char *argv[]) {
@@ -65,8 +65,8 @@ int main(int argc, char *argv[]) {
     error_info.id = argv[0];
     shp = sh_init(argc, argv, NULL);
 
-    optind = opterr = 0;
-    while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -85,18 +85,18 @@ int main(int argc, char *argv[]) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
-    argc -= optind;
+    argv += optget_ind;
+    argc -= optget_ind;
 
     shp->shcomp = 1;
     if (argc > 2) {
