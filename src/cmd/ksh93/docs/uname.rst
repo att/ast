@@ -12,7 +12,7 @@ Description
 By default `uname` writes the operating system name to standard
 output. When options are specified, one or more system characteristics
 are written to standard output, space separated, on a single line. When
-more than one option is specified the output is in the order specfied
+more than one option is specified the output is in the order specified
 by the `-A` option below.  Unsupported option values are listed as
 *[option]]*. If any unknown options are specified then the local
 `/usr/bin/uname` is called.
