@@ -779,7 +779,7 @@ void sh_sigcheck(Shell_t *shp) {
 }
 
 //
-// Given the name or number of a signal return the signal number.
+// Given the name or number of a signal (as a string) return the numeric signal number.
 //
 int sig_number(Shell_t *shp, const char *string) {
     const Shtable_t *tp;

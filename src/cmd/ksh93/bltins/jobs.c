@@ -19,24 +19,23 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <getopt.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <sys/types.h>
 
-#include "ast.h"
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
 #include "jobs.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 
 #ifdef JOBS
 
-static const char *short_options = "+:lnp";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
+static const char *short_options = "lnp";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
     {NULL, 0, NULL, 0}};
 
 //
@@ -48,11 +47,9 @@ int b_jobs(int argc, char *argv[], Shbltin_t *context) {
     Shell_t *shp = context->shp;
     char *cmd = argv[0];
 
-    // We use `getopt_long_only()` rather than `getopt_long()` to facilitate handling negative
-    // integers that might otherwise look like a flag.
-    optind = opterr = 0;
+    optget_ind = 0;
     bool done = false;
-    while (!done && (opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+    while (!done && (opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -71,23 +68,18 @@ int b_jobs(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                if (!strmatch(argv[optind - 1], "[+-]+([0-9])")) {
-                    builtin_unknown_option(shp, cmd, argv[optind - 1]);
-                    return 2;
-                }
-                optind--;
-                done = true;
-                break;
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
+                return 2;
             }
             default: { abort(); }
         }
     }
 
-    argv += optind;
+    argv += optget_ind;
     if (!*argv) argv = NULL;
     if (job_walk(shp, sfstdout, job_list, flag, argv)) {
         errormsg(SH_DICT, ERROR_exit(1), e_no_job);

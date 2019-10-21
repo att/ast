@@ -20,16 +20,21 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <getopt.h>
+#include <limits.h>
 #include <signal.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "ast.h"
+#include "ast_assert.h"
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
 #include "fault.h"
 #include "jobs.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 
@@ -37,9 +42,12 @@
 #define S_FLAG 2
 #define Q_FLAG JOB_QFLAG
 
-static const char *short_options = "+:ln:q:s:L";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
+// We don't use the magic "#" short option prefix to enable recognition of numeric flags like "-9".
+// That's because we use `optget_long_only()` to handle flags like `-HUP` and that also takes care
+// of the "-9" case.
+static const char *short_options = "ln:q:s:L";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
     {NULL, 0, NULL, 0}};
 
 //
@@ -54,12 +62,9 @@ int b_kill(int argc, char *argv[], Shbltin_t *context) {
     Shell_t *shp = context->shp;
     char *cmd = argv[0];
 
-    // We use `getopt_long_only()` rather than `getopt_long()` to facilitate handling integers that
-    // might otherwise look like a flag. Or signal names which we want to recognize with a single
-    // leading hyphen.
-    optind = opterr = 0;
+    optget_ind = 0;
     bool done = false;
-    while (!done && (opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+    while (!done && (opt = optget_long_only(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case 1: {
                 builtin_print_help(shp, cmd);
@@ -67,9 +72,9 @@ int b_kill(int argc, char *argv[], Shbltin_t *context) {
             }
             case 'n': {
                 char *cp;
-                int64_t n = strton64(optarg, &cp, NULL, 0);
-                if (*cp || n < 0 || n > INT_MAX) {
-                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -n", optarg);
+                int64_t n = strton64(optget_arg, &cp, NULL, 0);
+                if (*cp || n < 0 || n > MAX_SIGNUM) {
+                    builtin_usage_error(shp, cmd, "%s: invalid signum", optget_arg);
                     return 2;
                 }
                 sig = n;
@@ -78,7 +83,7 @@ int b_kill(int argc, char *argv[], Shbltin_t *context) {
             }
             case 's': {
                 flag |= S_FLAG;
-                signame = optarg;
+                signame = optget_arg;
                 done = true;
                 break;
             }
@@ -93,9 +98,9 @@ int b_kill(int argc, char *argv[], Shbltin_t *context) {
             }
             case 'q': {
                 char *cp;
-                int64_t n = strton64(optarg, &cp, NULL, 0);
+                int64_t n = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || n < 0 || n > INT_MAX) {
-                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -q", optarg);
+                    builtin_usage_error(shp, cmd, "%s: invalid value for -q", optget_arg);
                     return 2;
                 }
                 flag |= Q_FLAG;
@@ -103,38 +108,32 @@ int b_kill(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                // See if the flag is an integer that should be treated as a signal number.
-                char *cp;
-                int64_t n = strton64(argv[optind - 1] + 1, &cp, NULL, 0);
-                if (!*cp && n >= 0 && n <= MAX_SIGNUM) {
-                    sig = n;
-                    done = true;
-                    break;
+                // It should be impossible for this to be set to a non-zero value since we're using
+                // `optget_long_only()`. Which means that any unrecognized short flag is treated as
+                // a long flag.
+                assert(!optget_opt);
+                sig = sig_number(shp, argv[optget_ind - 1] + 1);
+                if (sig < 0) {  // not a recognized signal name or number
+                    builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
+                    return 2;
                 }
-                // See if the flag is a signal name.
-                sig = sig_number(shp, argv[optind - 1] + 1);
-                if (sig >= 0) {
-                    done = true;
-                    break;
-                }
-                // Nope. It looks like an invalid flag.
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
-                return 2;
+                done = true;
+                break;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
+    argv += optget_ind;
 
     if (*argv && strcmp(*argv, "--") == 0 && strcmp(*(argv - 1), "--") != 0) argv++;
-    if (error_info.errors || flag == (L_FLAG | S_FLAG) || (!(*argv) && !(flag & L_FLAG))) {
+    if (flag == (L_FLAG | S_FLAG) || (!(*argv) && !(flag & L_FLAG))) {
         shp->sigval = 0;
-        errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
-        __builtin_unreachable();
+        builtin_usage_error(shp, cmd, "illegal combination of options and arguments");
+        return 2;
     }
     // Just in case we send a kill -9 $$.
     sfsync(sfstderr);

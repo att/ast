@@ -27,7 +27,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
-#include <getopt.h>
 #include <limits.h>
 #include <stdint.h>
 #include <string.h>
@@ -37,19 +36,20 @@
 #include "builtins.h"
 #include "defs.h"
 #include "error.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stdlib.h"
 
-static const char *short_options = "+:n:c:qs:v";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
-    {"lines", required_argument, NULL, 'n'},
-    {"bytes", required_argument, NULL, 'c'},
-    {"skip", required_argument, NULL, 's'},
-    {"quiet", no_argument, NULL, 'q'},
-    {"silent", no_argument, NULL, 'q'},
-    {"verbose", no_argument, NULL, 'v'},
+static const char *short_options = "#n:c:qs:v";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
+    {"lines", optget_required_arg, NULL, 'n'},
+    {"bytes", optget_required_arg, NULL, 'c'},
+    {"skip", optget_required_arg, NULL, 's'},
+    {"quiet", optget_no_arg, NULL, 'q'},
+    {"silent", optget_no_arg, NULL, 'q'},
+    {"verbose", optget_no_arg, NULL, 'v'},
     {NULL, 0, NULL, 0}};
 
 //
@@ -72,18 +72,27 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
 
     if (cmdinit(argc, argv, context, 0)) return -1;
 
-    optind = opterr = 0;
-    while ((opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+    optget_ind = 0;
+    while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
+            case -2: {
+                if (optget_num < 0 || optget_num > OFF_MAX) {
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -n", optget_arg);
+                    return 2;
+                }
+                keep = optget_num;
+                delim = '\n';
+                break;
+            }
             case 1: {
                 builtin_print_help(shp, cmd);
                 return 0;
             }
             case 'c': {
                 char *cp;
-                int64_t n = strton64(optarg, &cp, NULL, 0);
+                int64_t n = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || n < 0 || n > OFF_MAX) {
-                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -c", optarg);
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -c", optget_arg);
                     return 2;
                 }
                 keep = n;
@@ -92,9 +101,9 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
             }
             case 'n': {
                 char *cp;
-                int64_t n = strton64(optarg, &cp, NULL, 0);
+                int64_t n = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || n < 0 || n > OFF_MAX) {
-                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -n", optarg);
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -n", optget_arg);
                     return 2;
                 }
                 keep = n;
@@ -111,34 +120,27 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
             }
             case 's': {
                 char *cp;
-                int64_t n = strton64(optarg, &cp, NULL, 0);
+                int64_t n = strton64(optget_arg, &cp, NULL, 0);
                 if (*cp || n < 0 || n > OFF_MAX) {
-                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -s", optarg);
+                    errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -s", optget_arg);
                     return 2;
                 }
                 skip = n;
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                char *cp;
-                int64_t n = strton64(argv[optind - 1] + 1, &cp, NULL, 0);
-                if (!*cp && n >= 0 && n <= OFF_MAX) {
-                    keep = n;
-                    delim = '\n';
-                    break;
-                }
-                builtin_unknown_option(shp, cmd, argv[optind - 1]);
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
-    argc -= optind;
+    argv += optget_ind;
+    argc -= optget_ind;
 
     cp = *argv;
     if (cp) argv++;

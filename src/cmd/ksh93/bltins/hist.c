@@ -21,7 +21,6 @@
 
 #include <ctype.h>
 #include <fcntl.h>
-#include <getopt.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -39,6 +38,7 @@
 #include "history.h"
 #include "io.h"
 #include "name.h"
+#include "optget_long.h"
 #include "sfio.h"
 #include "shcmd.h"
 #include "stk.h"
@@ -48,9 +48,9 @@
 
 static_fn void hist_subst(Shell_t *shp, const char *, int fd, const char *);
 
-static const char *short_options = "+:e:lnprsN:";
-static const struct option long_options[] = {
-    {"help", no_argument, NULL, 1},  // all builtins support --help
+static const char *short_options = "#e:lnprsN:";
+static const struct optget_option long_options[] = {
+    {"help", optget_no_arg, NULL, 1},  // all builtins support --help
     {NULL, 0, NULL, 0}};
 
 //
@@ -80,18 +80,29 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     }
     hp = shp->gd->hist_ptr;
 
-    // We use `getopt_long_only()` rather than `getopt_long()` to facilitate handling negative
-    // integers that might otherwise look like a flag.
-    optind = opterr = 0;
+    optget_ind = 0;
     bool done = false;
-    while (!done && (opt = getopt_long_only(argc, argv, short_options, long_options, NULL)) != -1) {
+    while (!done && (opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
+            case -2: {
+                if (indx == -1) {
+                    if (optget_num > INT_MAX) {
+                        builtin_usage_error(shp, cmd, "%s: invalid -N value", argv[optget_ind - 1]);
+                        return 2;
+                    }
+                    flag = hist_max(hp) - optget_num - 1;
+                    if (flag < 0) flag = 1;
+                    range[++indx] = flag;
+                }
+                done = true;
+                break;
+            }
             case 1: {
                 builtin_print_help(shp, cmd);
                 return 0;
             }
             case 'e': {
-                edit = optarg;
+                edit = optget_arg;
                 break;
             }
             case 'n': {
@@ -115,14 +126,13 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'N': {
-                if (indx <= 0) {
+                if (indx == -1) {
                     char *cp;
-                    int64_t n = strton64(optarg, &cp, NULL, 0);
+                    int64_t n = strton64(optget_arg, &cp, NULL, 0);
                     if (*cp || n < 0 || n > INT_MAX) {
-                        builtin_usage_error(shp, cmd, "%s: invalid -N value", optarg);
+                        builtin_usage_error(shp, cmd, "%s: invalid -N value", optget_arg);
                         return 2;
                     }
-
                     flag = hist_max(hp) - n - 1;
                     if (flag < 0) flag = 1;
                     range[++indx] = flag;
@@ -130,38 +140,19 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case ':': {
-                builtin_missing_argument(shp, cmd, argv[optind - 1]);
+                builtin_missing_argument(shp, cmd, argv[optget_ind - 1]);
                 return 2;
             }
             case '?': {
-                char *cp;
-                int64_t n = strton64(argv[optind - 1] + 1, &cp, NULL, 0);
-                if (*cp) {
-                    // It's not an integer so it's an invalid flag.
-                    builtin_unknown_option(shp, cmd, argv[optind - 1]);
-                    return 2;
-                }
-                // Looks like a negative integer which means it's equivalent to -N followed by its
-                // absolute value.
-                if (indx <= 0) {
-                    if (*cp || n < 0 || n > INT_MAX) {
-                        builtin_usage_error(shp, cmd, "%s: invalid -N value", optarg);
-                        return 2;
-                    }
-
-                    flag = hist_max(hp) - n - 1;
-                    if (flag < 0) flag = 1;
-                    range[++indx] = flag;
-                }
-                done = true;
-                break;
+                builtin_unknown_option(shp, cmd, argv[optget_ind - 1]);
+                return 2;
             }
             default: { abort(); }
         }
     }
-    argv += optind;
+    argv += optget_ind;
 
-    // TODO: What is the usefulness of this flag ? Shall this be removed in future ?
+    // TODO: What is the usefulness of this flag? Shall this be removed in future?
     if (pflag) {
         hist_cancel(hp);
         pflag = 0;
