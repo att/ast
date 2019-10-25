@@ -273,13 +273,13 @@ static int _optget_long(int argc, char *const *argv, const char *short_opts,
         char *cp;
         optget_num = strton64(_next_char - 1, &cp, NULL, 0);
         if (!*cp) {             // looks like a number so return it
-            _next_char = NULL;  // force advancing to the next argv element on the next call
             ++optget_ind;
-            return -2;  // tell the caller a number masquerading as a flag was found
+            _next_char = NULL;  // force advancing to the next argv element on the next call
+            return -2;          // tell the caller a number masquerading as a short option was seen
         }
     }
 
-    // Increment `optget_ind` when we start to process its last character.
+    // Increment `optget_ind` when we process the last character of the current arg.
     if (*_next_char == '\0') ++optget_ind;
 
     if (!temp || c == ':' || c == ';') {

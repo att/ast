@@ -430,6 +430,39 @@ static void test_long_only() {
     test_optget_long_only(__LINE__, argc, argv, "#v", long_opts, results);
 }
 
+// Basic tests that options which require, or have optional, values are handled correctly.
+static void test_options_with_values() {
+    const char *short_opts = "a:bx:y::";
+    struct optget_option long_opts[] = {
+        {"all", optget_required_arg, NULL, 'a'},
+        {"yes", optget_optional_arg, NULL, -3},
+        {NULL, optget_no_arg, NULL, 0},
+    };
+    char *const argv[] = {"cmd",       "-a",    "aaa",       "-b",  "-aabc", "-b",   "-xxxx",
+                          "-x",        "def",   "--all",     "ALL", "--yes", "-y",   "-b",
+                          "--yes=YES", "-bxNO", "--yes=why", "-y",  "--",    "arg1", NULL};
+    int argc = argv_len(argv);
+    struct optget_test *results;
+
+    results = (struct optget_test[]){{.rv = 'a', .ind = 3, .arg = "aaa"},  //
+                                     {.rv = 'b', .ind = 4},
+                                     {.rv = 'a', .ind = 5, .arg = "abc"},
+                                     {.rv = 'b', .ind = 6},
+                                     {.rv = 'x', .ind = 7, .arg = "xxx"},
+                                     {.rv = 'x', .ind = 9, .arg = "def"},
+                                     {.rv = 'a', .ind = 11, .arg = "ALL"},
+                                     {.rv = -3, .ind = 12},
+                                     {.rv = 'y', .ind = 13},
+                                     {.rv = 'b', .ind = 14},
+                                     {.rv = -3, .ind = 15, .arg = "YES"},
+                                     {.rv = 'b', .ind = 15},
+                                     {.rv = 'x', .ind = 16, .arg = "NO"},
+                                     {.rv = -3, .ind = 17, .arg = "why"},
+                                     {.rv = 'y', .ind = 18},
+                                     {.rv = -1, .ind = 19}};
+    test_optget_long(__LINE__, argc, argv, short_opts, long_opts, results);
+}
+
 // Old GNU `getopt_long_only()` implementations, such as found in Fedora 28, have a bug which makes
 // them unsuitable for verifying the correctness of our tests.
 void check_for_getopt_long_only_bug() {
@@ -460,6 +493,7 @@ tmain() {
 
     // Test capabilities of `optget_long()` where we should be compatible with `getopt_long()`.
     test_no_options();
+    test_options_with_values();
     test_complex_options();
 
     // Test capabilities of `optget_long()` not supported by `getopt_long()`. Note that some of the
