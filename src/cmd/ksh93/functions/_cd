@@ -1,0 +1,87 @@
+# Change directory and push the directory on the dir stack. This also recognizes some extensions su
+# has `cd -2` to cd to the second most recently visited directory.
+function _cd {
+    typeset dir=''
+    integer n=0
+    integer type=4
+
+    case $1 in
+    -|-1|2) # \cd -
+        n=_push_top
+        type=1
+        ;;
+    -[1-9]*([0-9])) # \cd -n
+        n=_push_top+${1#-}-1
+        type=2
+        ;;
+    1)  # keep present directory
+        print -r - "$PWD"
+        return
+        ;;
+    [1-9]*([0-9])) # \cd n
+        n=_push_top+${1}-2
+        type=2
+        ;;
+    *)
+        if (( _push_top <= 0 ))
+        then
+            n=_push_max
+            type=3
+        fi
+        ;;
+    esac
+
+    if (( type < 3 ))
+    then
+        if (( n >= _push_max + 1 ))
+        then
+            print -u2 cd: Directory stack not that deep.
+            return 1
+        else
+            dir="${_push_stack[n]}"
+        fi
+    fi
+
+    case $dir in
+    \~*) dir=$HOME${dir#\~}
+    esac
+
+    (( $# == 0 )) && set -- ~/
+    \cd "${dir:-$@}" || return 1
+
+    dir="${OLDPWD#$HOME/}"
+
+    # TODO: Generalize this so it works on every terminal that supports setting its title string.
+    case $TERM in
+    630)
+        print "\033[?${#PWD};2v$PWD\c"
+        ;;
+    esac
+
+    case "$dir" in
+    $HOME)
+        dir="~"
+        ;;
+    /*) ;;
+    *)  dir="~/$dir"
+        ;;
+    esac
+
+    case "$type" in
+    1)  # swap first two elements
+        _push_stack[_push_top]="$dir"
+        ;;
+    2|3)  # put $dir on top and shift down by one until top
+        integer i=_push_top
+        for dir in "$dir" "${_push_stack[@]}"
+        do (( i > n )) && break
+            _push_stack[i]="$dir"
+            (( i = i + 1 ))
+        done
+        ;;
+    4)  # push name
+        _push_stack[_push_top=_push_top - 1]="$dir"
+        ;;
+    esac
+    print -r - "$PWD"
+}

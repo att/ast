@@ -511,14 +511,21 @@ expected='typeset -a x=(a\=3 b\=4)'
 typeset -a x=( a=3 b=4)
 [[ $(typeset -p x) == "$expected" ]] || log_error 'assignment elements in typeset -a assignment not working'
 
-unset z
-z='typeset -a q=(a b c)'
-$SHELL -c "$z; [[ \$(typeset -pa) == '$z' ]]" || log_error 'typeset -pa does not list only index arrays'
-z='typeset -C z=(foo=bar)'
-$SHELL -c "$z; [[ \$(typeset -pC) == '$z' ]]" || log_error 'typeset -pC does not list only compound variables'
-unset y
-z='typeset -A y=([a]=foo)'
-$SHELL -c "$z; [[ \$(typeset -pA) == '$z' ]]" || log_error 'typeset -pA does not list only associative arrays'
+# We need to unset `push_stack` because it is defined automatically in each shell instance.
+expect='typeset -a q=(a b c)'
+actual=$($SHELL -c "$expect; unset _push_stack; typeset -pa")
+[[ "$expect" == "$actual" ]] || 
+    log_error 'typeset -pa does not list only index arrays' "$expect" "$actual"
+
+expect='typeset -C z=(foo=bar)'
+actual=$($SHELL -c "$expect; typeset -pC")
+[[ "$expect" == "$actual" ]] ||
+    log_error 'typeset -pC does not list only compound variables' "$expect" "$actual"
+
+expect='typeset -A y=([a]=foo)'
+actual=$($SHELL -c "$expect; typeset -pA");
+[[ "$expect" == "$actual" ]] ||
+    log_error 'typeset -pA does not list only associative arrays' "$expect" "$actual"
 
 $SHELL -c 'typeset -C arr=( aa bb cc dd )' &&
     log_error 'invalid compound variable assignment not reported'
