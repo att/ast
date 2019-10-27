@@ -57,11 +57,11 @@ expect -re "\r\n$one_sec_re $zero_sec_re\r\n$one_sec_re $zero_sec_re\r\n" {
 expect_prompt
 
 # ==========
-# Exit shell with ctrl-d
+# Exit the shell.
 log_test_entry
+send "\r"
+expect_prompt
 send [ctrl D]
 catch {expect default exp_continue} output
 log_debug "EOF output: $output"
-
-catch {wait}
-exit 0
+wait

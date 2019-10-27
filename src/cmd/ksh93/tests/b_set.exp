@@ -81,6 +81,12 @@ expect_prompt
 #    support job control.
 
 # ==========
+# TODO
+# markdirs
+# A trailing / is appended to directories resulting
+# from pathname expansion.
+
+# ==========
 # set -o ignoreeof
 # Prevents an interactive shell from exiting on reading
 # an end-of-file.
@@ -92,14 +98,11 @@ expect -re "Use 'exit' to terminate this shell"
 expect_prompt
 
 # ==========
-# TODO
-# markdirs
-# A trailing / is appended to directories resulting
-# from pathname expansion.
-
-# ==========
-# Verify that asking the shell to exit works.
+# Exit the shell.
 log_test_entry
+send "set +o ignoreeof\r"
+expect_prompt
 send "exit\r"
 catch {expect default exp_continue} output
-catch {wait}
+log_debug "EOF output: $output"
+wait

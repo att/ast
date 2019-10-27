@@ -214,12 +214,12 @@ expect_prompt
 #send [ctrl C]
 #expect_prompt
 
-# ======
-# This should exit the shell but we don't actually verify this happens other than via the test
-# not timing out.
+# ==========
+# Exit the shell.
 log_test_entry
+send "\r"
+expect_prompt
 send [ctrl D]
 catch {expect default exp_continue} output
 log_debug "EOF output: $output"
-catch {wait}
-exit 0
+wait
