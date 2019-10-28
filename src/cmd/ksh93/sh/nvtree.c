@@ -278,13 +278,13 @@ char *nv_dirnext(void *dir) {
     Namval_t *nq;
     Namarr_t *ap = dp->table ? nv_arrayptr(dp->table) : 0;
     int dot = -1, xdot;
-    nvflag_t flags;
+    nvflag_t flags = 0;
 
     if (ap && !ap->fun && nv_type(dp->table) && (ap->flags & ARRAY_SCAN)) {
         dot = nv_aindex(dp->table);
         flags = ap->flags;
     }
-    while (1) {
+    while (true) {
         if (!shp && dp->hp) shp = sh_ptr(dp->hp);
         while ((np = dp->hp)) {
             ap = nv_arrayptr(np);
