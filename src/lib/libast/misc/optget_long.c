@@ -272,7 +272,7 @@ static int _optget_long(int argc, char *const *argv, const char *short_opts,
     if (!temp && _numeric_flag_allowed) {
         char *cp;
         optget_num = strton64(_next_char - 1, &cp, NULL, 0);
-        if (!*cp) {             // looks like a number so return it
+        if (!*cp) {  // looks like a number so return it
             ++optget_ind;
             _next_char = NULL;  // force advancing to the next argv element on the next call
             return -2;          // tell the caller a number masquerading as a short option was seen
