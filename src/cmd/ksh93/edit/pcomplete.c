@@ -589,7 +589,6 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
         }
     }
     argv += optget_ind;
-    argc -= optget_ind;
 
     if (complete) {
         char *name;
