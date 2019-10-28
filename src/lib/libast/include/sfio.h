@@ -328,7 +328,7 @@ extern Sfoff_t sfsize(Sfio_t *);
 #define sfputm(f, v, m) (__sf_putm((f), (v), (m)))
 
 static inline int sfputc(Sfio_t *f, int c) {
-    assert(f);  // if this is called with `f == NULL` that is a huge problem; silence lint
+    if (!f) abort();  // if this is called with `f == NULL` that is a huge problem; silence lint
     if (f->next >= f->endw) return _sfflsbuf(f, (unsigned char)c);
     *f->next = (unsigned char)c;
     f->next += 1;
