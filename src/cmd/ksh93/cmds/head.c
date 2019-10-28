@@ -76,7 +76,11 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
     while ((opt = optget_long(argc, argv, short_options, long_options)) != -1) {
         switch (opt) {
             case -2: {
-                if (optget_num < 0 || optget_num > OFF_MAX) {
+                // Test against `OFF_MAX - 1` rather than `OFF_MAX` to avoid lint about a constant
+                // expression never being false if `off_t` is the same as `int64_t`. In practice we
+                // don't care that the user can't specify the max offset since that will never
+                // occur. We do want the test in case `off_t` is only 32 bits.
+                if (optget_num < 0 || optget_num > OFF_MAX - 1) {
                     errormsg(SH_DICT, ERROR_exit(0), "%s: invalid value for -n", optget_arg);
                     return 2;
                 }
