@@ -46,7 +46,7 @@ static_fn void noexport(Namval_t *np, void *data) {
     nv_offattr(np, NV_EXPORT);
 }
 
-static int exec_args(char *argv[], struct login *logp) {
+static_fn int exec_args(char *argv[], struct login *logp) {
     Shell_t *shp = logp->sh;
 
     if (sh_isoption(shp, SH_RESTRICTED)) {
@@ -74,7 +74,7 @@ static int exec_args(char *argv[], struct login *logp) {
         arg = arg->argnxt.ap;
     }
     pname = argv[0];
-    if (logp && logp->arg0) argv[0] = logp->arg0;
+    if (logp->arg0) argv[0] = logp->arg0;
 #ifdef JOBS
     if (job_close(shp) < 0) return 1;
 #endif  // JOBS
