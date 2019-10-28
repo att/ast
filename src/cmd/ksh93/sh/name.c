@@ -280,6 +280,13 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, nvflag_t flags, Namval_t
 
     if (maketype) {
         shtp.previous = shp->mktype;
+        // This is incredibly dangerous. Lint tools like cppcheck warn about the assignment of the
+        // address of a local auto var (i.e., stack var) to a another var. This should be okay
+        // because the code explicitly unwinds this assigment and this is needed to support nested
+        // (i.e., recursive) expressions without explicitly performing heap allocations. Whether or
+        // not the code actually does so is unclear.
+        //
+        // cppcheck-suppress autoVariables
         shp->mktype = &shtp;
         shtp.numnodes = 0;
         shtp.maxnodes = 20;
@@ -724,8 +731,9 @@ Namval_t *nv_create(const char *name, Dt_t *root, nvflag_t flags, Namfun_t *dp) 
     }
     if (!dp->disc) copy = dp->nofree & 1;
     if (*cp == '.') cp++;
-    while (1) {
+    while (true) {
         if (zerosub) {
+            assert(np || sp);
             if (!np) memcpy(sp, cp - 1, strlen(cp - 1) + 1);
             zerosub = 0;
         }
