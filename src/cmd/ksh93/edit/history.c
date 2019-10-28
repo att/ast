@@ -511,13 +511,14 @@ again:
 // This routine will cause the previous command to be cancelled.
 //
 void hist_cancel(History_t *hp) {
-    int c;
     if (!hp) return;
+
     sfputc(hp->histfp, HIST_UNDO);
     sfputc(hp->histfp, 0);
     sfsync(hp->histfp);
     hp->histcnt += 2;
-    c = hist_ind(hp, --hp->histind);
+    int c = hist_ind(hp, --hp->histind);
+    // cppcheck-suppress nullPointerRedundantCheck
     hp->histcmds[c] = hp->histcnt;
 }
 
