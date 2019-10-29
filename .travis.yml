@@ -14,7 +14,7 @@ matrix:
           compiler: gcc
           env:
             - DISTRO_TYPE=fedora
-              INSTALL_REQUIREMENTS="dnf repolist; dnf --allowerasing install -y gcc python3 meson sudo langpacks-zh_CN ed ncurses vi findutils which nmap-ncat expect git glibc-all-langpacks procps"
+              INSTALL_REQUIREMENTS="dnf repolist; dnf --allowerasing install -y gcc python3 meson sudo langpacks-zh_CN ed ncurses vi findutils which nmap-ncat expect git glibc-all-langpacks procps diffutils"
           before_install:
               - docker pull ${DISTRO_TYPE}
 
