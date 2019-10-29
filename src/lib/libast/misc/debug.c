@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
+#include <setjmp.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -43,6 +44,26 @@ int _dprintf_buf_sz = 1024;  // must match size of buf2[] below
 int _dprint_fixed_line = 0;
 char *_debug_lsof = "lsof";
 int (*_debug_getpid)() = getpid;
+
+// These are used by `_dprintf()` to ensure that if a `DPRINTF()` invocation causes a SIGSEGV it
+// doesn't kill the process and we still get a debug message.
+static struct sigaction dprintf_oact;
+static sigjmp_buf jbuf;
+
+static_fn void dprintf_segv_handler(int signo) {
+    UNUSED(signo);
+    siglongjmp(jbuf, 1);
+}
+
+static_fn void dprintf_trap_sigsegv() {
+    struct sigaction act;
+    act.sa_flags = 0;
+    sigemptyset(&act.sa_mask);
+    act.sa_handler = dprintf_segv_handler;
+    sigaction(SIGSEGV, &act, &dprintf_oact);
+}
+
+static_fn void dprintf_untrap_sigsegv() { sigaction(SIGSEGV, &dprintf_oact, NULL); }
 
 // This value is used by the dump_backtrace() code.
 static const char *ksh_pathname = NULL;
@@ -86,7 +107,13 @@ void _dprintf(const char *fname, int lineno, const char *funcname, const char *f
     int n = snprintf(buf2, sizeof(buf2), "### %ld %3" PRIu64 ".%03" PRIu64 " %-18s %15s() ", pid,
                      ds, dms, buf1, funcname);
     va_start(ap, fmt);
-    n += vsnprintf(buf2 + n, sizeof(buf2) - n, fmt, ap);
+    dprintf_trap_sigsegv();
+    if (sigsetjmp(jbuf, 1) == 0) {
+        n += vsnprintf(buf2 + n, sizeof(buf2) - n, fmt, ap);
+    } else {
+        n += snprintf(buf2 + n, sizeof(buf2) - n, ">>>SIGSEGV received while formatting<<<");
+    }
+    dprintf_untrap_sigsegv();
     va_end(ap);
     if (n >= _dprintf_buf_sz) {
         // The message was too large for the buffer so try to make that clear to the reader.
