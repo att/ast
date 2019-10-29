@@ -78,8 +78,8 @@
 #define gencpy(a, b) ed_gencpy(a, b)
 #define genncpy(a, b, n) ed_genncpy(a, b, n)
 #define genlen(str) ed_genlen(str)
-static int print(int);
-static int _isword(int);
+static_fn int print(int);
+static_fn int _isword(int);
 #define isword(c) _isword(out[c])
 #define digit(c) ((c & ~STRIP) == 0 && isdigit(c))
 
@@ -145,13 +145,13 @@ typedef enum {
     FINAL     // update screen even if pending look ahead
 } Draw_t;
 
-static void draw(Emacs_t *, Draw_t);
-static int escape(Emacs_t *, wchar_t *, int);
-static void putstring(Emacs_t *, char *);
-static void search(Emacs_t *, wchar_t *, int);
-static void setcursor(Emacs_t *, int, int);
-static void show_info(Emacs_t *, const char *);
-static void xcommands(Emacs_t *, int);
+static_fn void emacs_draw(Emacs_t *, Draw_t);
+static_fn int emacs_escape(Emacs_t *, wchar_t *, int);
+static_fn void emacs_putstring(Emacs_t *, char *);
+static_fn void emacs_search(Emacs_t *, wchar_t *, int);
+static_fn void emacs_setcursor(Emacs_t *, int, int);
+static_fn void emacs_show_info(Emacs_t *, const char *);
+static_fn void emacs_xcommands(Emacs_t *, int);
 
 int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
     Edit_t *ed = context;
@@ -204,7 +204,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
     if (i != 0) {
         if (ep->ed->e_multiline) {
             cur = eol;
-            draw(ep, FINAL);
+            emacs_draw(ep, FINAL);
             ed_flush(ep->ed);
         }
         tty_cooked(STDERR_FILENO);
@@ -215,7 +215,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
     if (scend + plen > (MAXLINE - 2)) scend = (MAXLINE - 2) - plen;
     ep->mark = 0;
     cur = eol;
-    draw(ep, reedit ? REFRESH : FIRST);
+    emacs_draw(ep, reedit ? REFRESH : FIRST);
     adjust = -1;
     backslash = 0;
     if (ep->CntrlO) ed_ungetchar(ep->ed, cntl('N'));
@@ -228,7 +228,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 cur--;
                 out[cur++] = c;
                 out[eol] = '\0';
-                draw(ep, APPEND);
+                emacs_draw(ep, APPEND);
                 continue;
             }
         }
@@ -253,7 +253,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 goto do_default_processing;
             }
             case cntl('V'): {
-                show_info(ep, fmtident(e_version));
+                emacs_show_info(ep, fmtident(e_version));
                 continue;
             }
             case '\0': {
@@ -261,7 +261,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 continue;
             }
             case cntl('X'): {
-                xcommands(ep, count);
+                emacs_xcommands(ep, count);
                 continue;
             }
             case EOFCHAR: {
@@ -274,11 +274,11 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     if (ep->ed->e_tabcount == 0) {
                         ep->ed->e_tabcount = 1;
                         ed_ungetchar(ep->ed, ESC);
-                        adjust = escape(ep, out, oadjust);
+                        adjust = emacs_escape(ep, out, oadjust);
                         continue;
                     } else if (ep->ed->e_tabcount == 1) {
                         ed_ungetchar(ep->ed, '=');
-                        adjust = escape(ep, out, oadjust);
+                        adjust = emacs_escape(ep, out, oadjust);
                         continue;
                     }
                     ep->ed->e_tabcount = 0;
@@ -297,7 +297,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 for (i = eol; i >= cur; i--) out[c + i] = out[i];
                 kptr = kstack;
                 while ((i = *kptr++)) out[cur++] = i;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 eol = genlen(out);
                 continue;
             }
@@ -327,7 +327,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 gencpy(out + i, out + cur);
                 ep->mark = i;
                 cur = i;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 continue;
             }
             case cntl('W'): {
@@ -362,7 +362,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 }
                 *kptr = '\0';
                 cur = i;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 continue;
             }
             case cntl('C'):
@@ -379,7 +379,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     i++;
                 }
                 cur = i;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 continue;
             }
             case cntl(']'): {
@@ -395,7 +395,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 }
                 if (i < eol) {
                     cur = i;
-                    draw(ep, UPDATE);
+                    emacs_draw(ep, UPDATE);
                     continue;
                 }
                 i = 0;
@@ -404,14 +404,14 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     i++;
                 };
                 cur = i;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 continue;
             }
             case cntl('B'): {
                 if (count > i) count = i;
                 i -= count;
                 cur = i;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 continue;
             }
             case cntl('T'): {
@@ -426,19 +426,19 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     continue;
                 }
                 cur = i;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 continue;
             }
             case cntl('A'): {
                 i = 0;
                 cur = i;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 continue;
             }
             case cntl('E'): {
                 i = eol;
                 cur = i;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 continue;
             }
             case cntl('U'): {
@@ -467,11 +467,11 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 }
                 killing = 2;  // set killing signal
                 out[i] = 0;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 if (c != KILLCHAR) continue;
                 if (ep->terminal == PAPER) {
                     putchar(ep->ed, '\n');
-                    putstring(ep, Prompt);
+                    emacs_putstring(ep, Prompt);
                 }
                 c = ed_getchar(ep->ed, 0);
                 if (c != usrkill) {
@@ -483,25 +483,25 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 } else {
                     ep->terminal = PAPER;
                     putchar(ep->ed, '\n');
-                    putstring(ep, Prompt);
+                    emacs_putstring(ep, Prompt);
                 }
                 continue;
             }
             case cntl('L'): {
                 if (!ep->ed->e_nocrnl) ed_crlf(ep->ed);
-                draw(ep, REFRESH);
+                emacs_draw(ep, REFRESH);
                 ep->ed->e_nocrnl = 0;
                 continue;
             }
             case cntl('['): {
-                adjust = escape(ep, out, oadjust);
+                adjust = emacs_escape(ep, out, oadjust);
                 continue;
             }
             case cntl('R'): {
-                search(ep, out, count);
+                emacs_search(ep, out, count);
                 eol = genlen(out);
                 cur = eol;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 continue;
             }
             case cntl('P'): {
@@ -512,7 +512,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     }
                     ep->ed->hoff--;
                     ed_histlist(ep->ed, *ep->ed->hlist != 0);
-                    draw(ep, REFRESH);
+                    emacs_draw(ep, REFRESH);
                     continue;
                 }
                 if (count <= hloff) {
@@ -529,12 +529,12 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 location.hist_command = hline;  // save current position
                 location.hist_line = hloff;
                 cur = 0;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 hist_copy((char *)out, MAXLINE, hline, hloff);
                 ed_internal((char *)(out), out);
                 eol = genlen(out);
                 cur = eol;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 continue;
             }
             case cntl('O'): {
@@ -552,7 +552,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                     }
                     ep->ed->hoff++;
                     ed_histlist(ep->ed, *ep->ed->hlist != 0);
-                    draw(ep, REFRESH);
+                    emacs_draw(ep, REFRESH);
                     continue;
                 }
                 hline = location.hist_command;  // start at saved position
@@ -569,12 +569,12 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 location.hist_command = hline;  // save current position
                 location.hist_line = hloff;
                 cur = 0;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 hist_copy((char *)out, MAXLINE, hline, hloff);
                 ed_internal((char *)(out), out);
                 eol = genlen(out);
                 cur = eol;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 continue;
             }
             default: {
@@ -587,7 +587,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 for (i = ++eol; i > cur; i--) out[i] = out[i - 1];
                 backslash = (c == '\\');
                 out[cur++] = c;
-                draw(ep, APPEND);
+                emacs_draw(ep, APPEND);
                 continue;
             }
         }
@@ -599,7 +599,7 @@ process:
         beep();
         *out = '\0';
     }
-    draw(ep, FINAL);
+    emacs_draw(ep, FINAL);
     tty_cooked(STDERR_FILENO);
     if (ed->e_nlist) {
         ed->e_nlist = 0;
@@ -616,7 +616,7 @@ process:
     return -1;
 }
 
-static void show_info(Emacs_t *ep, const char *str) {
+static_fn void emacs_show_info(Emacs_t *ep, const char *str) {
     wchar_t *out = drawbuff;
     int c;
     wchar_t string[LBUF];
@@ -627,22 +627,22 @@ static void show_info(Emacs_t *ep, const char *str) {
     *out = 0;
     cur = 0;
     ed_internal(str, out);
-    draw(ep, UPDATE);
+    emacs_draw(ep, UPDATE);
     c = ed_getchar(ep->ed, 0);
     if (c != ' ') ed_ungetchar(ep->ed, c);
     // Restore line.
     cur = sav_cur;
     genncpy(out, string, sizeof(string) / sizeof(*string));
-    draw(ep, UPDATE);
+    emacs_draw(ep, UPDATE);
 }
 
-static void putstring(Emacs_t *ep, char *sp) {
+static_fn void emacs_putstring(Emacs_t *ep, char *sp) {
     int c;
 
     while ((c = *sp++)) putchar(ep->ed, c);
 }
 
-static int escape(Emacs_t *ep, wchar_t *out, int count) {
+static_fn int emacs_escape(Emacs_t *ep, wchar_t *out, int count) {
     int i, value;
     int digit, ch;
 
@@ -662,7 +662,7 @@ static int escape(Emacs_t *ep, wchar_t *out, int count) {
     if (value < 0) value = 1;
     switch (ch = i) {
         case cntl('V'): {
-            show_info(ep, fmtident(e_version));
+            emacs_show_info(ep, fmtident(e_version));
             return -1;
         }
         case ' ': {
@@ -698,13 +698,13 @@ static int escape(Emacs_t *ep, wchar_t *out, int count) {
                     }
                     cur++;
                 }
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 return -1;
             }
 
             else if (ch == 'f') {
                 cur = i;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 return -1;
             } else if (ch == 'c') {
                 ed_ungetchar(ep->ed, cntl('C'));
@@ -730,7 +730,7 @@ static int escape(Emacs_t *ep, wchar_t *out, int count) {
             }
             if (ch == 'b') {
                 cur = i;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 return -1;
             }
             ed_ungetchar(ep->ed, usrerase);
@@ -781,7 +781,7 @@ static int escape(Emacs_t *ep, wchar_t *out, int count) {
                 eol++;
             }
             gencpy(&out[cur], name);
-            draw(ep, UPDATE);
+            emacs_draw(ep, UPDATE);
             return -1;
         }
         case '\n':
@@ -821,7 +821,7 @@ static int escape(Emacs_t *ep, wchar_t *out, int count) {
                 }
                 beep();
             } else if (i == '=' || (i == '\\' && out[cur - 1] == '/')) {
-                draw(ep, REFRESH);
+                emacs_draw(ep, REFRESH);
                 if (count > 0 || i == '\\') {
                     ep->ed->e_tabcount = 0;
                 } else {
@@ -833,7 +833,7 @@ static int escape(Emacs_t *ep, wchar_t *out, int count) {
                 if (i == '\\' && cur > ep->mark && (out[cur - 1] == '/' || out[cur - 1] == ' ')) {
                     ep->ed->e_tabcount = 0;
                 }
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
             }
             return -1;
         }
@@ -852,7 +852,7 @@ static int escape(Emacs_t *ep, wchar_t *out, int count) {
             }
             if (i >= 0) {
                 cur = i;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
                 return -1;
             }
             i = eol;
@@ -861,13 +861,13 @@ static int escape(Emacs_t *ep, wchar_t *out, int count) {
                 i--;
             };
             cur = i;
-            draw(ep, UPDATE);
+            emacs_draw(ep, UPDATE);
             return -1;
         }
 #ifdef _cmd_tput
         case cntl('L'): {  // clear screen
             sh_trap(ep->ed->sh, "tput clear", 0);
-            draw(ep, REFRESH);
+            emacs_draw(ep, REFRESH);
             return -1;
         }
 #endif               // _cmd_tput
@@ -931,7 +931,7 @@ static int escape(Emacs_t *ep, wchar_t *out, int count) {
 //
 // This routine process all commands starting with ^X.
 //
-static void xcommands(Emacs_t *ep, int count) {
+static_fn void emacs_xcommands(Emacs_t *ep, int count) {
     int i = ed_getchar(ep->ed, 0);
     UNUSED(count);
 
@@ -941,7 +941,7 @@ static void xcommands(Emacs_t *ep, int count) {
             i = ep->mark;
             ep->mark = cur;
             cur = i;
-            draw(ep, UPDATE);
+            emacs_draw(ep, UPDATE);
             return;
         }
         case cntl('E'): {  // invoke emacs on current command
@@ -972,7 +972,7 @@ static void xcommands(Emacs_t *ep, int count) {
                     strlcat(hbuf, ")", sizeof(hbuf));
                 }
             }
-            show_info(ep, hbuf);
+            emacs_show_info(ep, hbuf);
             return;
         }
 #if 0   /* debugging, modify as required */
@@ -992,7 +992,7 @@ static void xcommands(Emacs_t *ep, int count) {
                 strcat(debugbuf, " w_size=");
                 strcat(debugbuf, fmtbase(w_size, 0, 0));
 
-                show_info(ep,debugbuf);
+                emacs_show_info(ep,debugbuf);
                 return;
         }
 #endif  // debugging code
@@ -1003,7 +1003,7 @@ static void xcommands(Emacs_t *ep, int count) {
     }
 }
 
-static void search(Emacs_t *ep, wchar_t *out, int direction) {
+static_fn void emacs_search(Emacs_t *ep, wchar_t *out, int direction) {
     int i, sl;
     wchar_t str_buff[LBUF];
     wchar_t *string = drawbuff;
@@ -1015,13 +1015,13 @@ static void search(Emacs_t *ep, wchar_t *out, int direction) {
     string[2] = '\0';
     sl = 2;
     cur = sl;
-    draw(ep, UPDATE);
+    emacs_draw(ep, UPDATE);
     while ((i = ed_getchar(ep->ed, 1)) && (i != '\r') && (i != '\n')) {
         if (i == usrerase || i == DELETE || i == '\b' || i == ERASECHAR) {
             if (sl > 2) {
                 string[--sl] = '\0';
                 cur = sl;
-                draw(ep, UPDATE);
+                emacs_draw(ep, UPDATE);
             } else {
                 goto restore;
             }
@@ -1036,14 +1036,14 @@ static void search(Emacs_t *ep, wchar_t *out, int direction) {
             string[sl++] = '\\';
             string[sl] = '\0';
             cur = sl;
-            draw(ep, APPEND);
+            emacs_draw(ep, APPEND);
             i = ed_getchar(ep->ed, 1);
             string[--sl] = '\0';
         }
         string[sl++] = i;
         string[sl] = '\0';
         cur = sl;
-        draw(ep, APPEND);
+        emacs_draw(ep, APPEND);
     }
     i = genlen(string);
 
@@ -1086,7 +1086,7 @@ restore:
 // Adjust screen to agree with inputs: logical line and cursor. If 'first' assume screen is blank.
 // Prompt is always kept on the screen.
 //
-static void draw(Emacs_t *ep, Draw_t option) {
+static_fn void emacs_draw(Emacs_t *ep, Draw_t option) {
 #define NORMAL ' '
 #define LOWER '<'
 #define BOTH '*'
@@ -1117,7 +1117,7 @@ static void draw(Emacs_t *ep, Draw_t option) {
             return;
         }
         *ep->cursor = '\0';
-        putstring(ep, Prompt);  // start with prompt
+        emacs_putstring(ep, Prompt);  // start with prompt
     }
 
     // Do not update screen if pending characters.
@@ -1141,7 +1141,7 @@ static void draw(Emacs_t *ep, Draw_t option) {
         ed_internal((char *)drawbuff, drawbuff);
         if (ep->ed->hlist) {
             ed_histlist(ep->ed, n);
-            putstring(ep, Prompt);
+            emacs_putstring(ep, Prompt);
             ed_setcursor(ep->ed, ep->screen, 0, ep->cursor - ep->screen, 0);
         } else {
             ed_ringbell();
@@ -1193,7 +1193,7 @@ static void draw(Emacs_t *ep, Draw_t option) {
             sptr++;
             continue;
         }
-        setcursor(ep, sptr - ep->screen, *nptr);
+        emacs_setcursor(ep, sptr - ep->screen, *nptr);
         *sptr++ = *nptr++;
         while (*nptr == MARKER) {
             if (*sptr == '\0') *(sptr + 1) = '\0';
@@ -1219,12 +1219,12 @@ static void draw(Emacs_t *ep, Draw_t option) {
 
     // Update screen overflow indicator if need be.
     if (longline != ep->overflow) {
-        setcursor(ep, w_size, longline);
+        emacs_setcursor(ep, w_size, longline);
         ep->overflow = longline;
     }
     i = (ncursor - nscreen) - ep->offset;
-    setcursor(ep, i, 0);
-    if (option == FINAL && ep->ed->e_multiline) setcursor(ep, nscend + 1 - nscreen, 0);
+    emacs_setcursor(ep, i, 0);
+    if (option == FINAL && ep->ed->e_multiline) emacs_setcursor(ep, nscend + 1 - nscreen, 0);
     ep->scvalid = 1;
     return;
 }
@@ -1233,7 +1233,7 @@ static void draw(Emacs_t *ep, Draw_t option) {
 // Put the cursor to the <newp> position within screen buffer. If <c> is non-zero then output this
 // character. Cursor is set to reflect the change.
 //
-static void setcursor(Emacs_t *ep, int newp, int c) {
+static_fn void emacs_setcursor(Emacs_t *ep, int newp, int c) {
     int oldp = ep->cursor - ep->screen;
 
     newp = ed_setcursor(ep->ed, ep->screen, oldp, newp, 0);
@@ -1245,6 +1245,6 @@ static void setcursor(Emacs_t *ep, int newp, int c) {
     return;
 }
 
-static int print(int c) { return (c & ~STRIP) == 0 && isprint(c); }
+static_fn int print(int c) { return (c & ~STRIP) == 0 && isprint(c); }
 
-static int _isword(int c) { return (c & ~STRIP) || isalnum(c) || c == '_'; }
+static_fn int _isword(int c) { return (c & ~STRIP) || isalnum(c) || c == '_'; }

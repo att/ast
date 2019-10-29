@@ -18,111 +18,111 @@ typedef Sfdouble_t (*Math_f)(Sfdouble_t, ...);
 
 // This used to use `finite()` but that function is deprecated and generates compiler warnings
 // on some platforms.
-static int local_finite(Sfdouble_t a1) {
+static_fn int local_finite(Sfdouble_t a1) {
     if (isinf(a1)) return 0;  //!OCLINT(constant conditional operator)
     if (isnan(a1)) return 0;  //!OCLINT(constant conditional operator)
     return 1;
 }
 
-static Sfdouble_t local_float(Sfdouble_t a1) { return a1; }
+static_fn Sfdouble_t local_float(Sfdouble_t a1) { return a1; }
 
-static Sfdouble_t local_int(Sfdouble_t a1) {
+static_fn Sfdouble_t local_int(Sfdouble_t a1) {
     if (a1 < LLONG_MIN || a1 > ULLONG_MAX) return 0.0;
     if (a1 < 0) return (Sfdouble_t)((Sflong_t)a1);
     return (Sfdouble_t)((Sfulong_t)a1);
 }
 
-static int local_isfinite(Sfdouble_t a1) {
+static_fn int local_isfinite(Sfdouble_t a1) {
     return isfinite(a1);  //!OCLINT(constant conditional operator)
 }
 
-static int local_isgreater(Sfdouble_t a1, Sfdouble_t a2) { return isgreater(a1, a2); }
+static_fn int local_isgreater(Sfdouble_t a1, Sfdouble_t a2) { return isgreater(a1, a2); }
 
-static int local_isgreaterequal(Sfdouble_t a1, Sfdouble_t a2) { return isgreaterequal(a1, a2); }
+static_fn int local_isgreaterequal(Sfdouble_t a1, Sfdouble_t a2) { return isgreaterequal(a1, a2); }
 
-static int local_isinf(Sfdouble_t a1) {
+static_fn int local_isinf(Sfdouble_t a1) {
     // Some platforms return -1 for -inf and +1 for +inf while others only return +1. Normalize our
     // return value to be zero (not inf) or one (inf).
     return isinf(a1) != 0;  //!OCLINT(constant conditional operator)
 }
 
-static int local_isless(Sfdouble_t a1, Sfdouble_t a2) { return isless(a1, a2); }
+static_fn int local_isless(Sfdouble_t a1, Sfdouble_t a2) { return isless(a1, a2); }
 
-static int local_islessequal(Sfdouble_t a1, Sfdouble_t a2) { return islessequal(a1, a2); }
+static_fn int local_islessequal(Sfdouble_t a1, Sfdouble_t a2) { return islessequal(a1, a2); }
 
-static int local_islessgreater(Sfdouble_t a1, Sfdouble_t a2) { return islessgreater(a1, a2); }
+static_fn int local_islessgreater(Sfdouble_t a1, Sfdouble_t a2) { return islessgreater(a1, a2); }
 
-static int local_isnan(Sfdouble_t a1) {
+static_fn int local_isnan(Sfdouble_t a1) {
     // Some platforms return -1 for -nan and +1 for +nan while others only return +1. Normalize our
     // return value to be zero (not -nan) or one (nan).
     return isnan(a1) != 0;  //!OCLINT(constant conditional operator)
 }
 
-static int local_isnormal(Sfdouble_t a1) {
+static_fn int local_isnormal(Sfdouble_t a1) {
     return isnormal(a1);  //!OCLINT(constant conditional operator)
 }
 
-static int local_issubnormal(Sfdouble_t a1) {
+static_fn int local_issubnormal(Sfdouble_t a1) {
     int q = fpclassify(a1);  //!OCLINT(constant conditional operator)
     return q == FP_SUBNORMAL;
 }
 
-static int local_isunordered(Sfdouble_t a1, Sfdouble_t a2) { return isunordered(a1, a2); }
+static_fn int local_isunordered(Sfdouble_t a1, Sfdouble_t a2) { return isunordered(a1, a2); }
 
-static int local_iszero(Sfdouble_t a1) {
+static_fn int local_iszero(Sfdouble_t a1) {
     int q = fpclassify(a1);  //!OCLINT(constant conditional operator)
     return q == FP_ZERO;
 }
 
-static Sfdouble_t local_j0(Sfdouble_t a1) { return j0(a1); }
+static_fn Sfdouble_t local_j0(Sfdouble_t a1) { return j0(a1); }
 
-static Sfdouble_t local_j1(Sfdouble_t a1) { return j1(a1); }
+static_fn Sfdouble_t local_j1(Sfdouble_t a1) { return j1(a1); }
 
-static Sfdouble_t local_jn(Sfdouble_t a1, Sfdouble_t a2) { return jn(a1, a2); }
+static_fn Sfdouble_t local_jn(Sfdouble_t a1, Sfdouble_t a2) { return jn(a1, a2); }
 
-static int local_signbit(Sfdouble_t a1) {
+static_fn int local_signbit(Sfdouble_t a1) {
     return signbit(a1) != 0;  //!OCLINT(constant conditional operator)
 }
 
-static Sfdouble_t local_y0(Sfdouble_t a1) { return y0(a1); }
+static_fn Sfdouble_t local_y0(Sfdouble_t a1) { return y0(a1); }
 
-static Sfdouble_t local_y1(Sfdouble_t a1) { return y1(a1); }
+static_fn Sfdouble_t local_y1(Sfdouble_t a1) { return y1(a1); }
 
-static Sfdouble_t local_yn(Sfdouble_t a1, Sfdouble_t a2) { return yn(a1, a2); }
+static_fn Sfdouble_t local_yn(Sfdouble_t a1, Sfdouble_t a2) { return yn(a1, a2); }
 
 #if !_lib_expm1l
-static Sfdouble_t local_expm1(Sfdouble_t a1) { return expm1(a1); }
+static_fn Sfdouble_t local_expm1(Sfdouble_t a1) { return expm1(a1); }
 #define expm1l local_expm1
 #endif
 
 #if !_lib_lgammal
-static Sfdouble_t local_lgamma(Sfdouble_t a1) { return lgamma(a1); }
+static_fn Sfdouble_t local_lgamma(Sfdouble_t a1) { return lgamma(a1); }
 #define lgammal local_lgamma
 #endif
 
 #if !_lib_log1pl
-static Sfdouble_t local_log1p(Sfdouble_t a1) { return log1p(a1); }
+static_fn Sfdouble_t local_log1p(Sfdouble_t a1) { return log1p(a1); }
 #define log1pl local_log1p
 #endif
 
 #if !_lib_log2l
-static Sfdouble_t local_log2(Sfdouble_t a1) { return log2(a1); }
+static_fn Sfdouble_t local_log2(Sfdouble_t a1) { return log2(a1); }
 #define log2l local_log2
 #endif
 
 #if !_lib_remainderl
-static Sfdouble_t local_remainder(Sfdouble_t a1, Sfdouble_t a2) { return remainder(a1, a2); }
+static_fn Sfdouble_t local_remainder(Sfdouble_t a1, Sfdouble_t a2) { return remainder(a1, a2); }
 #define remainderl local_remainder
 #endif
 
 #if !_lib_tgammal
-static Sfdouble_t local_tgamma(Sfdouble_t a1) { return tgamma(a1); }
+static_fn Sfdouble_t local_tgamma(Sfdouble_t a1) { return tgamma(a1); }
 #define tgammal local_tgamma
 #endif
 
 #if __CYGWIN__
 // The sqrtl() function on Cygwin incorrectly returns its input if negative rather than NaN.
-static Sfdouble_t local_sqrtl(Sfdouble_t a1) {
+static_fn Sfdouble_t local_sqrtl(Sfdouble_t a1) {
     if (a1 < 0.0) return NAN;
     return sqrtl(a1);
 }

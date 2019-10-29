@@ -484,7 +484,7 @@ int sh_close(int fd) {
 //
 typedef int (*Inetintr_f)(struct addrinfo *, void *);
 
-static int inetopen(const char *path, int flags, Inetintr_f onintr, void *handle) {
+static_fn int inetopen(const char *path, int flags, Inetintr_f onintr, void *handle) {
     char *s;
     int fd;
     int oerrno;

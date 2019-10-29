@@ -41,7 +41,7 @@
 #include "sfio.h"
 #include "stk.h"
 
-static char *fmtx(Shell_t *shp, const char *string) {
+static_fn char *fmtx(Shell_t *shp, const char *string) {
     const char *cp = string;
     int n, c;
     const unsigned char *norm_state = (const unsigned char *)sh_lexstates[ST_NORM];
@@ -66,7 +66,7 @@ static char *fmtx(Shell_t *shp, const char *string) {
     return stkptr(shp->stk, offset);
 }
 
-static int charcmp(int a, int b, int nocase) {
+static_fn int charcmp(int a, int b, int nocase) {
     if (nocase) {
         if (isupper(a)) a = tolower(a);
         if (isupper(b)) b = tolower(b);
@@ -78,7 +78,7 @@ static int charcmp(int a, int b, int nocase) {
 //  Overwrites <str> to common prefix of <str> and <newstr>. If <str> is equal to <newstr> returns
 //  <str>+strlen(<str>)+1 otherwise returns <str>+strlen(<str>).
 //
-static char *overlaid(char *str, const char *newstr, int nocase) {
+static_fn char *overlaid(char *str, const char *newstr, int nocase) {
     int c, d;
     while ((c = *(unsigned char *)str) &&
            ((d = *(unsigned char *)newstr++), charcmp(c, d, nocase))) {
@@ -95,7 +95,7 @@ static char *overlaid(char *str, const char *newstr, int nocase) {
 //
 // Returns pointer to beginning of expansion and sets type of expansion.
 //
-static char *find_begin(char outbuff[], char *last, int endchar, int *type) {
+static_fn char *find_begin(char outbuff[], char *last, int endchar, int *type) {
     char *cp = outbuff, *bp, *xp;
     int c, inquote = 0, inassign = 0;
     int mode = *type;
@@ -186,7 +186,7 @@ static char *find_begin(char outbuff[], char *last, int endchar, int *type) {
     return bp;
 }
 
-static char **prog_complete(Dt_t *dict, char *line, char *word, int cur) {
+static_fn char **prog_complete(Dt_t *dict, char *line, char *word, int cur) {
     char *cp = line, *cmd, c, **com = NULL;
     struct Complete *pcp;
     while (isspace(*cp) || *cp == '#') cp++;

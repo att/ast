@@ -83,7 +83,7 @@ static const char *Action_eval[] = {
     "xtypeset + | grep -v '^[ {}]' | grep -v namespace",
     NULL};
 
-static char action(const char *list[], const char *str) {
+static_fn char action(const char *list[], const char *str) {
     const char *cp;
     int n = 0;
     for (cp = list[0]; cp; cp = list[++n]) {
@@ -92,7 +92,7 @@ static char action(const char *list[], const char *str) {
     return 0;
 }
 
-static bool keywords(Sfio_t *out) {
+static_fn bool keywords(Sfio_t *out) {
     const Shtable_t *tp;
     for (tp = shtab_reserved; tp->sh_name; tp++) {
         if (sfputr(out, tp->sh_name, '\n') < 0) return false;
@@ -101,7 +101,7 @@ static bool keywords(Sfio_t *out) {
 }
 
 // Write wordlist to stack splitting on IFS, one word per line.
-static void gen_wordlist(Sfio_t *iop, const char *word) {
+static_fn void gen_wordlist(Sfio_t *iop, const char *word) {
     const char *ifs = nv_getval(VAR_IFS);
     char c, n = 0;
 
@@ -350,7 +350,7 @@ again:
     return NULL;
 }
 
-static bool delete_and_add(const char *name, struct Complete *comp) {
+static_fn bool delete_and_add(const char *name, struct Complete *comp) {
     struct Complete *old = NULL;
     Dt_t *compdict = shgd->ed_context->compdict;
 
@@ -398,7 +398,7 @@ static bool delete_and_add(const char *name, struct Complete *comp) {
     return true;
 }
 
-static const char *lquote(struct Complete *cp, const char *str) {
+static_fn const char *lquote(struct Complete *cp, const char *str) {
     int c;
     char *sp;
     Sfio_t *stakp;
@@ -416,7 +416,7 @@ static const char *lquote(struct Complete *cp, const char *str) {
     return stkptr(stakp, 0);
 }
 
-static void print_out(struct Complete *cp, Sfio_t *out) {
+static_fn void print_out(struct Complete *cp, Sfio_t *out) {
     int c, i = 0, a;
     char *sp;
 

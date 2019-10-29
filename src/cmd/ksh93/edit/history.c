@@ -57,24 +57,24 @@
 #endif  // O_BINARY
 
 int _Hist = 0;
-static void hist_marker(char *, long);
-static History_t *hist_trim(History_t *, int);
-static int hist_nearend(History_t *, Sfio_t *, off_t);
-static int hist_check(int);
-static int hist_clean(int);
+static_fn void hist_marker(char *, long);
+static_fn History_t *hist_trim(History_t *, int);
+static_fn int hist_nearend(History_t *, Sfio_t *, off_t);
+static_fn int hist_check(int);
+static_fn int hist_clean(int);
 #ifdef SF_BUFCONST
-static ssize_t hist_write(Sfio_t *, const void *, size_t, Sfdisc_t *);
-static int hist_exceptf(Sfio_t *, int, void *, Sfdisc_t *);
+static_fn ssize_t hist_write(Sfio_t *, const void *, size_t, Sfdisc_t *);
+static_fn int hist_exceptf(Sfio_t *, int, void *, Sfdisc_t *);
 #else   // SF_BUFCONST
-static int hist_write(Sfio_t *, const void *, int, Sfdisc_t *);
-static int hist_exceptf(Sfio_t *, int, Sfdisc_t *);
+static_fn int hist_write(Sfio_t *, const void *, int, Sfdisc_t *);
+static_fn int hist_exceptf(Sfio_t *, int, Sfdisc_t *);
 #endif  // SF_BUFCONST
 
 static int histinit;
 static mode_t histmode;
 static History_t *hist_ptr;
 
-static int sh_checkaudit(History_t *hp, const char *name, char *logbuf, size_t len) {
+static_fn int sh_checkaudit(History_t *hp, const char *name, char *logbuf, size_t len) {
     UNUSED(hp);
     char *cp, *last;
     int id1, id2, r = 0, n, fd;
@@ -101,7 +101,7 @@ done:
 static const unsigned char hist_stamp[2] = {HIST_UNDO, HIST_VERSION};
 static const Sfdisc_t hist_disc = {NULL, hist_write, NULL, hist_exceptf, NULL};
 
-static void hist_touch(void *handle) { tvtouch(handle, NULL, NULL, NULL, 0); }
+static_fn void hist_touch(void *handle) { tvtouch(handle, NULL, NULL, NULL, 0); }
 
 //
 // Open the history file. If HISTNAME is not given and userid==0 then no history file. If login_sh
@@ -267,7 +267,7 @@ void hist_close(History_t *hp) {
 //
 // Check history file format to see if it begins with special byte.
 //
-static int hist_check(int fd) {
+static_fn int hist_check(int fd) {
     unsigned char magic[2];
     lseek(fd, (off_t)0, SEEK_SET);
     if ((read(fd, (char *)magic, 2) != 2) || (magic[0] != HIST_UNDO)) return 1;
@@ -277,7 +277,7 @@ static int hist_check(int fd) {
 //
 // Clean out history file OK if not modified in HIST_RECENT seconds.
 //
-static int hist_clean(int fd) {
+static_fn int hist_clean(int fd) {
     struct stat statb;
     return fstat(fd, &statb) >= 0 && (time(NULL) - statb.st_mtime) >= HIST_RECENT;
 }
@@ -285,7 +285,7 @@ static int hist_clean(int fd) {
 //
 // Copy the last <n> commands to a new file and make this the history file.
 //
-static History_t *hist_trim(History_t *hp, int n) {
+static_fn History_t *hist_trim(History_t *hp, int n) {
     char *cp;
     int incmd = 1, c = 0;
     History_t *hist_new, *hist_old = hp;
@@ -349,7 +349,7 @@ static History_t *hist_trim(History_t *hp, int n) {
 //
 // Position history file at size and find next command number.
 //
-static int hist_nearend(History_t *hp, Sfio_t *iop, off_t size) {
+static_fn int hist_nearend(History_t *hp, Sfio_t *iop, off_t size) {
     unsigned char *cp, *endbuff, *buff, marker[4];
     int n;
     int incmd = 1;
@@ -550,9 +550,9 @@ void hist_flush(History_t *hp) {
 // newlines are deleted and a zero byte.  Line sequencing is added as required.
 //
 #ifdef SF_BUFCONST
-static ssize_t hist_write(Sfio_t *iop, const void *buff, size_t insize, Sfdisc_t *handle)
+static_fn ssize_t hist_write(Sfio_t *iop, const void *buff, size_t insize, Sfdisc_t *handle)
 #else
-static int hist_write(Sfio_t *iop, const void *buff, int insize, Sfdisc_t *handle)
+static_fn int hist_write(Sfio_t *iop, const void *buff, int insize, Sfdisc_t *handle)
 #endif
 {
     History_t *hp = (History_t *)handle;
@@ -619,7 +619,7 @@ static int hist_write(Sfio_t *iop, const void *buff, int insize, Sfdisc_t *handl
 // HIST_MARKSZ chars.
 //
 
-static void hist_marker(char *buff, long cmdno) {
+static_fn void hist_marker(char *buff, long cmdno) {
     *buff++ = HIST_CMDNO;
     *buff++ = 0;
     *buff++ = (cmdno >> 16);
@@ -856,9 +856,9 @@ done:
 // Handle history file exceptions.
 //
 #ifdef SF_BUFCONST
-static int hist_exceptf(Sfio_t *fp, int type, void *data, Sfdisc_t *handle)
+static_fn int hist_exceptf(Sfio_t *fp, int type, void *data, Sfdisc_t *handle)
 #else
-static int hist_exceptf(Sfio_t *fp, int type, Sfdisc_t *handle)
+static_fn int hist_exceptf(Sfio_t *fp, int type, Sfdisc_t *handle)
 #endif
 {
     UNUSED(data);

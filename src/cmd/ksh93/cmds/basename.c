@@ -44,7 +44,7 @@ static const struct optget_option long_options[] = {
     {"suffix", optget_no_arg, NULL, 's'},
     {NULL, 0, NULL, 0}};
 
-static void namebase(Sfio_t *outfile, char *pathname, char *suffix) {
+static_fn void namebase(Sfio_t *outfile, char *pathname, char *suffix) {
     char *first, *last;
     int n = 0;
     for (first = last = pathname; *last; last++) {

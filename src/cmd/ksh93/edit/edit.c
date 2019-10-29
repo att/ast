@@ -68,7 +68,7 @@ static char *savelex;
 #define ECHOMODE 3
 #define SYSERR -1
 
-static int keytrap(Edit_t *, char *, int, int, int);
+static_fn int keytrap(Edit_t *, char *, int, int, int);
 
 #ifndef _POSIX_DISABLE
 #define _POSIX_DISABLE 0
@@ -478,12 +478,12 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
     }
 }
 
-static void ed_putstring(Edit_t *ep, const char *str) {
+static_fn void ed_putstring(Edit_t *ep, const char *str) {
     int c;
     while ((c = *str++)) ed_putchar(ep, c);
 }
 
-static void ed_nputchar(Edit_t *ep, int n, int c) {
+static_fn void ed_nputchar(Edit_t *ep, int n, int c) {
     while (n-- > 0) ed_putchar(ep, c);
 }
 
@@ -592,7 +592,7 @@ done:
 // character is put onto the stack so that it can be checked for KEYTRAP. Putstack() returns 1
 // except when in the middle of a multi-byte char.
 //
-static int putstack(Edit_t *ep, char string[], int nbyte, int type) {
+static_fn int putstack(Edit_t *ep, char string[], int nbyte, int type) {
     int c;
     char *endp, *p = string;
     int size, offset = ep->e_lookahead + nbyte;
@@ -1049,19 +1049,19 @@ static_fn int keytrap(Edit_t *ep, char *inbuff, int insize, int bufsize, int mod
     return insize;
 }
 
-static int ed_sortdata(const char *s1, const char *s2) {
+static_fn int ed_sortdata(const char *s1, const char *s2) {
     Histmatch_t *m1 = (Histmatch_t *)s1;
     Histmatch_t *m2 = (Histmatch_t *)s2;
     return strcmp(m1->data, m2->data);
 }
 
-static int ed_sortindex(const char *s1, const char *s2) {
+static_fn int ed_sortindex(const char *s1, const char *s2) {
     Histmatch_t *m1 = (Histmatch_t *)s1;
     Histmatch_t *m2 = (Histmatch_t *)s2;
     return m2->index - m1->index;
 }
 
-static int ed_histlencopy(const char *cp, char *dp) {
+static_fn int ed_histlencopy(const char *cp, char *dp) {
     int c, n = 1, col = 1;
     const char *oldcp = cp;
 

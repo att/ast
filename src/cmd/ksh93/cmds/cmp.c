@@ -65,7 +65,7 @@ static const struct optget_option long_options[] = {
     {"silent", optget_no_arg, NULL, 's'},
     {NULL, 0, NULL, 0}};
 
-static void pretty(Sfio_t *out, int o, int delim, int flags) {
+static_fn void pretty(Sfio_t *out, int o, int delim, int flags) {
     int m;
     char *s;
     char buf[10];
@@ -107,8 +107,8 @@ static void pretty(Sfio_t *out, int o, int delim, int flags) {
  * compare two files
  */
 
-static int cmp(const char *file1, Sfio_t *f1, const char *file2, Sfio_t *f2, int flags,
-               Sfoff_t count, Sfoff_t differences) {
+static_fn int cmp(const char *file1, Sfio_t *f1, const char *file2, Sfio_t *f2, int flags,
+                  Sfoff_t count, Sfoff_t differences) {
     int c1;
     int c2;
     unsigned char *p1 = NULL;

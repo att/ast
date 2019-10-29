@@ -139,21 +139,21 @@ typedef struct _vi_ {
 
 static const char paren_chars[] = "([{)]}";  // for % command
 
-static void cursor(Vi_t *, int);
-static void del_line(Vi_t *, int);
-static int getcount(Vi_t *, int);
-static void vigetline(Vi_t *, int);
-static int getrchar(Vi_t *);
-static int mvcursor(Vi_t *, int);
-static void pr_string(Vi_t *, const char *);
-static void refresh(Vi_t *, int);
-static void replace(Vi_t *, int, int);
-static void restore_v(Vi_t *);
-static void save_last(Vi_t *);
-static void save_v(Vi_t *);
-static int search(Vi_t *, int);
-static void sync_cursor(Vi_t *);
-static int textmod(Vi_t *, int, int);
+static_fn void vi_cursor(Vi_t *, int);
+static_fn void vi_del_line(Vi_t *, int);
+static_fn int vi_getcount(Vi_t *, int);
+static_fn void vi_getline(Vi_t *, int);
+static_fn int vi_getrchar(Vi_t *);
+static_fn int vi_mvcursor(Vi_t *, int);
+static_fn void vi_pr_string(Vi_t *, const char *);
+static_fn void vi_refresh(Vi_t *, int);
+static_fn void vi_replace(Vi_t *, int, int);
+static_fn void vi_restore_v(Vi_t *);
+static_fn void vi_save_last(Vi_t *);
+static_fn void vi_save_v(Vi_t *);
+static_fn int vi_search(Vi_t *, int);
+static_fn void vi_sync_cursor(Vi_t *);
+static_fn int vi_textmod(Vi_t *, int, int);
 
 //
 // This routine implements a one line version of vi and is called by _filbuf.c.
@@ -234,7 +234,7 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
     if (i != 0) {
         if (vp->ed->e_multiline) {
             cur_virt = last_virt;
-            sync_cursor(vp);
+            vi_sync_cursor(vp);
         }
         virtual[0] = '\0';
         tty_cooked(STDERR_FILENO);
@@ -249,10 +249,10 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
     if (reedit) {
         cur_phys = vp->first_wind;
         vp->ofirst_wind = INVALID;
-        refresh(vp, INPUT);
+        vi_refresh(vp, INPUT);
     }
-    vigetline(vp, APPEND);
-    if (vp->ed->e_multiline) cursor(vp, last_phys);
+    vi_getline(vp, APPEND);
+    if (vp->ed->e_multiline) vi_cursor(vp, last_phys);
     // Add a new line if user typed unescaped \n to cause the shell to process the line.
     tty_cooked(STDERR_FILENO);
     if (ed->e_nlist) {
@@ -347,7 +347,7 @@ static_fn int cntlmode(Vi_t *vp) {
         vp->U_saved = 1;
     }
 
-    save_last(vp);
+    vi_save_last(vp);
 
     real_u_space = vp->u_space;
     curhline = histmax;
@@ -355,7 +355,7 @@ static_fn int cntlmode(Vi_t *vp) {
     vp->repeat = 1;
     if (cur_virt > INVALID) {
         // Make sure cursor is at the last char.
-        sync_cursor(vp);
+        vi_sync_cursor(vp);
     } else if (last_virt > INVALID) {
         cur_virt++;
     }
@@ -367,18 +367,18 @@ static_fn int cntlmode(Vi_t *vp) {
         if (c == '0') {
             // Move to leftmost column.
             cur_virt = 0;
-            sync_cursor(vp);
+            vi_sync_cursor(vp);
             continue;
         }
 
         if (digit(c)) {
-            c = getcount(vp, c);
+            c = vi_getcount(vp, c);
             if (c == '.') vp->lastrepeat = vp->repeat;
         }
 
         // See if it's a move cursor command.
-        if (mvcursor(vp, c)) {
-            sync_cursor(vp);
+        if (vi_mvcursor(vp, c)) {
+            vi_sync_cursor(vp);
             vp->repeat = 1;
             continue;
         }
@@ -387,9 +387,9 @@ static_fn int cntlmode(Vi_t *vp) {
         if (c == '.') {
             c = vp->last_cmd;
             vp->repeat = vp->lastrepeat;
-            i = textmod(vp, c, c);
+            i = vi_textmod(vp, c, c);
         } else {
-            i = textmod(vp, c, 0);
+            i = vi_textmod(vp, c, 0);
         }
 
         // See if it's a text modification command.
@@ -414,7 +414,7 @@ static_fn int cntlmode(Vi_t *vp) {
                 // Redraw line. Print the prompt and force a total refresh.
                 if (vp->nonewline == 0 && !vp->ed->e_nocrnl) putchar('\n');
                 vp->nonewline = 0;
-                pr_string(vp, Prompt);
+                vi_pr_string(vp, Prompt);
                 window[0] = '\0';
                 cur_phys = vp->first_wind;
                 vp->ofirst_wind = INVALID;
@@ -423,12 +423,12 @@ static_fn int cntlmode(Vi_t *vp) {
             }
             case cntl('V'): {
                 const char *p = fmtident(e_version);
-                save_v(vp);
-                del_line(vp, BAD);
+                vi_save_v(vp);
+                vi_del_line(vp, BAD);
                 while ((c = *p++)) append(vp, c, APPEND);
-                refresh(vp, CONTROL);
+                vi_refresh(vp, CONTROL);
                 ed_getchar(vp->ed, -1);
-                restore_v(vp);
+                vi_restore_v(vp);
                 ed_ungetchar(vp->ed, 'a');
                 break;
             }
@@ -436,8 +436,8 @@ static_fn int cntlmode(Vi_t *vp) {
             case '?':
             case 'N':
             case 'n': {
-                save_v(vp);
-                switch (search(vp, c)) {
+                vi_save_v(vp);
+                switch (vi_search(vp, c)) {
                     case GOOD: {  // force a total refresh
                         window[0] = '\0';
                         goto newhist;
@@ -448,9 +448,9 @@ static_fn int cntlmode(Vi_t *vp) {
                     // FALLTHRU
                     default: {
                         if (vp->u_column == INVALID) {
-                            del_line(vp, BAD);
+                            vi_del_line(vp, BAD);
                         } else {
-                            restore_v(vp);
+                            vi_restore_v(vp);
                         }
                         break;
                     }
@@ -480,11 +480,11 @@ static_fn int cntlmode(Vi_t *vp) {
                 } else if (curhline == histmax && tmp_u_column != INVALID) {
                     vp->u_space = tmp_u_space;
                     vp->u_column = tmp_u_column;
-                    restore_v(vp);
+                    vi_restore_v(vp);
                     vp->u_space = real_u_space;
                     break;
                 }
-                save_v(vp);
+                vi_save_v(vp);
                 cur_virt = INVALID;
                 goto newhist;
             }
@@ -505,7 +505,7 @@ static_fn int cntlmode(Vi_t *vp) {
                 if (curhline == histmax) {
                     vp->u_space = tmp_u_space;
                     i = vp->u_column;
-                    save_v(vp);
+                    vi_save_v(vp);
                     vp->u_space = real_u_space;
                     tmp_u_column = vp->u_column;
                     vp->u_column = i;
@@ -518,7 +518,7 @@ static_fn int cntlmode(Vi_t *vp) {
                     vp->repeat = 1;
                     continue;
                 }
-                save_v(vp);
+                vi_save_v(vp);
                 cur_virt = INVALID;
             newhist:
                 if (curhline != histmax || cur_virt == INVALID) {
@@ -539,11 +539,11 @@ static_fn int cntlmode(Vi_t *vp) {
                 break;
             }
             case 'u': {  // undo the last thing done
-                restore_v(vp);
+                vi_restore_v(vp);
                 break;
             }
             case 'U': {  // undo everything
-                save_v(vp);
+                vi_save_v(vp);
                 if (virtual[0] == '\0') {
                     ed_ringbell();
                     vp->repeat = 1;
@@ -565,7 +565,7 @@ static_fn int cntlmode(Vi_t *vp) {
                         continue;
                     }
                     curhline = vp->repeat;
-                    save_v(vp);
+                    vi_save_v(vp);
                     if (c == 'G') {
                         cur_virt = INVALID;
                         goto newhist;
@@ -602,7 +602,7 @@ static_fn int cntlmode(Vi_t *vp) {
                         cur_virt = 0;
                         break;
                     }
-                    refresh(vp, INPUT);
+                    vi_refresh(vp, INPUT);
                 }
             }
             // FALLTHRU
@@ -647,7 +647,7 @@ static_fn int cntlmode(Vi_t *vp) {
             }
         }
 
-        refresh(vp, CONTROL);
+        vi_refresh(vp, CONTROL);
         vp->repeat = 1;
     }
     // NOTREACHED
@@ -657,7 +657,7 @@ static_fn int cntlmode(Vi_t *vp) {
 //
 // This routine will position the virtual cursor at physical column x in the window.
 //
-static_fn void cursor(Vi_t *vp, int x) {
+static_fn void vi_cursor(Vi_t *vp, int x) {
     while (physical[x] == MARKER) x++;
     cur_phys = ed_setcursor(vp->ed, physical, cur_phys, x, vp->first_wind);
 }
@@ -704,16 +704,16 @@ static_fn void cdelete(Vi_t *vp, int nchars, int mode) {
 }
 
 //
-// This routine will delete the line. If mode = GOOD, do a save_v().
+// This routine will delete the line. If mode = GOOD, do a vi_save_v().
 //
-static_fn void del_line(Vi_t *vp, int mode) {
+static_fn void vi_del_line(Vi_t *vp, int mode) {
     if (last_virt == INVALID) return;
-    if (mode == GOOD) save_v(vp);
+    if (mode == GOOD) vi_save_v(vp);
 
     cur_virt = 0;
     first_virt = 0;
     cdelete(vp, last_virt + 1, BAD);
-    refresh(vp, CONTROL);
+    vi_refresh(vp, CONTROL);
 
     cur_virt = INVALID;
     cur_phys = 0;
@@ -744,12 +744,12 @@ static_fn int delmotion(Vi_t *vp, int motion, int mode) {
     int begin, end, delta;
 
     if (cur_virt == INVALID) return 0;
-    if (mode != 'y') save_v(vp);
+    if (mode != 'y') vi_save_v(vp);
     begin = cur_virt;
 
     // Fake out the motion routines by appending a blank.
     virtual[++last_virt] = ' ';
-    end = mvcursor(vp, motion);
+    end = vi_mvcursor(vp, motion);
     virtual[last_virt--] = 0;
     if (!end) return 0;
 
@@ -825,7 +825,7 @@ static_fn void forward(Vi_t *vp, int nwords, int cmd) {
 //
 // Set repeat to the user typed number and return the terminating character.
 //
-static_fn int getcount(Vi_t *vp, int c) {
+static_fn int vi_getcount(Vi_t *vp, int c) {
     int i;
 
     // Get any repeat count.
@@ -855,7 +855,7 @@ static_fn int getcount(Vi_t *vp, int c) {
 // This routine returns when cr, nl, or (eof in column 0) is received (column 0 is the first char
 // position).
 //
-static_fn void vigetline(Vi_t *vp, int mode) {
+static_fn void vi_getline(Vi_t *vp, int mode) {
     int c;
     int tmp;
     int max_virt = 0, last_save = 0;
@@ -886,7 +886,7 @@ static_fn void vigetline(Vi_t *vp, int mode) {
             // Implement ^V to escape next char.
             c = ed_getchar(vp->ed, 2);
             append(vp, c, mode);
-            refresh(vp, INPUT);
+            vi_refresh(vp, INPUT);
             continue;
         }
         if (c != '\t') vp->ed->e_tabcount = 0;
@@ -907,7 +907,7 @@ static_fn void vigetline(Vi_t *vp, int mode) {
                         if (c > 0 && last_save >= cur_virt) {
                             genncpy((&virtual[cur_virt]), &saveline[cur_virt], c);
                             if (last_virt >= last_save) last_virt = last_save - 1;
-                            refresh(vp, INPUT);
+                            vi_refresh(vp, INPUT);
                         }
                         --cur_virt;
                     }
@@ -953,7 +953,7 @@ static_fn void vigetline(Vi_t *vp, int mode) {
                             --cur_virt;
                         }
                         mode = REPLACE;
-                        sync_cursor(vp);
+                        vi_sync_cursor(vp);
                         continue;
                     } else {
                         cdelete(vp, 1, BAD);
@@ -985,7 +985,7 @@ static_fn void vigetline(Vi_t *vp, int mode) {
                         cur_virt = first_virt;
                         cdelete(vp, tmp - cur_virt + 1, BAD);
                     } else {
-                        del_line(vp, GOOD);
+                        vi_del_line(vp, GOOD);
                     }
                 }
                 break;
@@ -996,8 +996,8 @@ static_fn void vigetline(Vi_t *vp, int mode) {
             }
             // FALLTHRU
             case '\n': {  // newline or return
-                if (mode != SEARCH) save_last(vp);
-                refresh(vp, INPUT);
+                if (mode != SEARCH) vi_save_last(vp);
+                vi_refresh(vp, INPUT);
                 physical[++last_phys] = 0;
                 return;
             }
@@ -1026,7 +1026,7 @@ static_fn void vigetline(Vi_t *vp, int mode) {
             default: {
                 if (mode == REPLACE) {
                     if (cur_virt < last_virt) {
-                        replace(vp, c, 1);
+                        vi_replace(vp, c, 1);
                         if (cur_virt > max_virt) max_virt = cur_virt;
                         continue;
                     }
@@ -1038,7 +1038,7 @@ static_fn void vigetline(Vi_t *vp, int mode) {
                 break;
             }
         }
-        refresh(vp, INPUT);
+        vi_refresh(vp, INPUT);
     }
 }
 
@@ -1047,7 +1047,7 @@ static_fn void vigetline(Vi_t *vp, int mode) {
 //
 // It returns GOOD if successful; else BAD.
 //
-static_fn int mvcursor(Vi_t *vp, int motion) {
+static_fn int vi_mvcursor(Vi_t *vp, int motion) {
     int count;
     int tcur_virt;
     int incr = -1;
@@ -1076,7 +1076,7 @@ static_fn int mvcursor(Vi_t *vp, int motion) {
         }
         case 'O':
         case '[': {
-            switch (motion = getcount(vp, ed_getchar(vp->ed, -1))) {
+            switch (motion = vi_getcount(vp, ed_getchar(vp->ed, -1))) {
                 case 'A': {
                     if (!vp->ed->hlist && cur_virt >= 0 && cur_virt < (SEARCHSIZE - 2) &&
                         cur_virt == last_virt) {
@@ -1194,7 +1194,7 @@ static_fn int mvcursor(Vi_t *vp, int motion) {
         case 'T':    // find up to new char backward
         case 'F': {  // find new char backward
             vp->last_find = motion;
-            if ((vp->findchar = getrchar(vp)) == ESC) return 1;
+            if ((vp->findchar = vi_getrchar(vp)) == ESC) return 1;
         find_b:
             tcur_virt = cur_virt;
             count = vp->repeat;
@@ -1252,7 +1252,7 @@ static_fn int mvcursor(Vi_t *vp, int motion) {
 //
 // Print a string.
 //
-static_fn void pr_string(Vi_t *vp, const char *sp) {
+static_fn void vi_pr_string(Vi_t *vp, const char *sp) {
     // Copy string sp.
     char *ptr = editb.e_outptr;
     while (*sp) *ptr++ = *sp++;
@@ -1285,7 +1285,7 @@ static_fn void pr_string(Vi_t *vp, const char *sp) {
 //                    +-----------------------+
 //                    cur_window = cur_phys - first_wind
 //
-static_fn void refresh(Vi_t *vp, int mode) {
+static_fn void vi_refresh(Vi_t *vp, int mode) {
     int p;
     int v;
     int first_w = vp->first_wind;
@@ -1312,7 +1312,7 @@ static_fn void refresh(Vi_t *vp, int mode) {
         ed_internal((char *)virtual, virtual);
         if (vp->ed->hlist) {
             ed_histlist(vp->ed, n);
-            pr_string(vp, Prompt);
+            vi_pr_string(vp, Prompt);
             vp->ocur_virt = INVALID;
             ed_setcursor(vp->ed, physical, 0, cur_phys, 0);
         } else {
@@ -1351,7 +1351,7 @@ static_fn void refresh(Vi_t *vp, int mode) {
     // Adjust left margin if necessary.
 
     if (ncur_phys < first_w || ncur_phys >= (first_w + w_size)) {
-        cursor(vp, first_w);
+        vi_cursor(vp, first_w);
         first_w = ncur_phys - (w_size >> 1);
         if (first_w < 0) first_w = 0;
         vp->first_wind = cur_phys = first_w;
@@ -1390,7 +1390,7 @@ static_fn void refresh(Vi_t *vp, int mode) {
     p = p_differ;
 
     // Move cursor to start of difference.
-    cursor(vp, p);
+    vi_cursor(vp, p);
 
     // And output difference.
     w = p - first_w;
@@ -1432,19 +1432,19 @@ static_fn void refresh(Vi_t *vp, int mode) {
 
     if (mode == INPUT && cur_virt > INVALID) ++ncur_phys;
 
-    cursor(vp, ncur_phys);
+    vi_cursor(vp, ncur_phys);
     ed_flush(vp->ed);
     return;
 }
 
 //
-// Replace the cur_virt character with char.  This routine attempts to avoid using refresh().
+// Replace the cur_virt character with char.  This routine attempts to avoid using vi_refresh().
 //
 // If increment =
 //   0, leave cur_virt where it is.
 //   1, increment cur_virt after replacement.
 //
-static_fn void replace(Vi_t *vp, int c, int increment) {
+static_fn void vi_replace(Vi_t *vp, int c, int increment) {
     int cur_window;
 
     if (cur_virt == INVALID) {
@@ -1461,7 +1461,7 @@ static_fn void replace(Vi_t *vp, int c, int increment) {
         cdelete(vp, 1, BAD);
         append(vp, c, APPEND);
         if (increment && cur_virt < last_virt) ++cur_virt;
-        refresh(vp, CONTROL);
+        vi_refresh(vp, CONTROL);
     } else {
         virtual[cur_virt] = c;
         physical[cur_phys] = c;
@@ -1482,7 +1482,7 @@ static_fn void replace(Vi_t *vp, int c, int increment) {
 //
 // Restore the contents of virtual space from u_space.
 //
-static_fn void restore_v(Vi_t *vp) {
+static_fn void vi_restore_v(Vi_t *vp) {
     int tmpcol;
     wchar_t tmpspace[MAXLINE];
 
@@ -1493,7 +1493,7 @@ static_fn void restore_v(Vi_t *vp) {
     }
     gencpy(tmpspace, vp->u_space);
     tmpcol = vp->u_column;
-    save_v(vp);
+    vi_save_v(vp);
     gencpy(virtual, tmpspace);
     cur_virt = tmpcol;
     last_virt = genlen(tmpspace) - 1;
@@ -1504,7 +1504,7 @@ static_fn void restore_v(Vi_t *vp) {
 //
 // If the user has typed something, save it in last line.
 //
-static_fn void save_last(Vi_t *vp) {
+static_fn void vi_save_last(Vi_t *vp) {
     int i;
 
     if ((i = cur_virt - first_virt + 1) > 0) {
@@ -1519,7 +1519,7 @@ static_fn void save_last(Vi_t *vp) {
 //
 // This routine will save the contents of virtual in u_space.
 //
-static_fn void save_v(Vi_t *vp) {
+static_fn void vi_save_v(Vi_t *vp) {
     if (!inmacro) {
         virtual[last_virt + 1] = '\0';
         gencpy(vp->u_space, virtual);
@@ -1551,7 +1551,7 @@ static_fn int curline_search(Vi_t *vp, const char *string) {
     return -1;
 }
 
-static_fn int search(Vi_t *vp, int mode) {
+static_fn int vi_search(Vi_t *vp, int mode) {
     int new_direction;
     int oldcurhline;
     int i;
@@ -1560,11 +1560,11 @@ static_fn int search(Vi_t *vp, int mode) {
     if (vp->direction == -2 && mode != 'n') vp->direction = -1;
     if (mode == '/' || mode == '?') {
         // New search expression.
-        del_line(vp, BAD);
+        vi_del_line(vp, BAD);
         append(vp, mode, APPEND);
-        refresh(vp, INPUT);
+        vi_refresh(vp, INPUT);
         first_virt = 1;
-        vigetline(vp, SEARCH);
+        vi_getline(vp, SEARCH);
         first_virt = 0;
         virtual[last_virt + 1] = '\0';  // make null terminated
         vp->direction = mode == '/' ? -1 : 1;
@@ -1575,7 +1575,7 @@ static_fn int search(Vi_t *vp, int mode) {
     }
 
     if (cur_virt == 0 || fold(mode) == 'N') {  // user wants repeat of last search
-        del_line(vp, BAD);
+        vi_del_line(vp, BAD);
         strcpy(((char *)virtual) + 1, lsearch);
         *((char *)virtual) = '/';
         ed_internal((char *)virtual, virtual);
@@ -1614,7 +1614,7 @@ static_fn int search(Vi_t *vp, int mode) {
 //
 // This routine will move the physical cursor to the same column as the virtual cursor.
 //
-static_fn void sync_cursor(Vi_t *vp) {
+static_fn void vi_sync_cursor(Vi_t *vp) {
     int p, v, c, new_phys;
 
     if (cur_virt == INVALID) return;
@@ -1652,11 +1652,11 @@ static_fn void sync_cursor(Vi_t *vp) {
     if (new_phys < vp->first_wind || new_phys >= vp->first_wind + w_size) {
         // Asked to move outside of window.
         window[0] = '\0';
-        refresh(vp, CONTROL);
+        vi_refresh(vp, CONTROL);
         return;
     }
 
-    cursor(vp, new_phys);
+    vi_cursor(vp, new_phys);
     ed_flush(vp->ed);
     vp->ocur_phys = cur_phys;
     vp->ocur_virt = cur_virt;
@@ -1670,7 +1670,7 @@ static_fn void sync_cursor(Vi_t *vp) {
 //
 // If mode != 0, repeat previous operation.
 //
-static_fn int textmod(Vi_t *vp, int c, int mode) {
+static_fn int vi_textmod(Vi_t *vp, int c, int mode) {
     int i;
     wchar_t *p = vp->lastline;
     int trepeat = vp->repeat;
@@ -1697,7 +1697,7 @@ addin:
         }
         // FALLTHRU
         case '=': {  // list file name expansions
-            save_v(vp);
+            vi_save_v(vp);
             i = last_virt;
             ++last_virt;
             mode = cur_virt - 1;
@@ -1732,12 +1732,12 @@ addin:
         case '@': {  // macro expansion
             if (mode) {
                 c = vp->lastmacro;
-            } else if ((c = getrchar(vp)) == ESC) {
+            } else if ((c = vi_getrchar(vp)) == ESC) {
                 return GOOD;
             }
             if (!inmacro) vp->lastmacro = c;
             if (ed_macro(vp->ed, c)) {
-                save_v(vp);
+                vi_save_v(vp);
                 inmacro++;
                 return GOOD;
             }
@@ -1745,7 +1745,7 @@ addin:
             return BAD;
         }
         case '_': {  // append last argument of prev command
-            save_v(vp);
+            vi_save_v(vp);
             {
                 wchar_t tmpbuf[MAXLINE];
                 if (vp->repeat_set == 0) vp->repeat = -1;
@@ -1765,7 +1765,7 @@ addin:
         }
         case 'A': {  // append to end of line
             cur_virt = last_virt;
-            sync_cursor(vp);
+            vi_sync_cursor(vp);
         }
         // FALLTHRU
         case 'a': {  // append
@@ -1773,17 +1773,17 @@ addin:
                 c = 'p';
                 goto addin;
             }
-            save_v(vp);
+            vi_save_v(vp);
             if (cur_virt != INVALID) {
                 first_virt = cur_virt + 1;
-                cursor(vp, cur_phys + 1);
+                vi_cursor(vp, cur_phys + 1);
                 ed_flush(vp->ed);
             }
             return APPEND;
         }
         case 'I': {  // insert at beginning of line
             cur_virt = first_virt;
-            sync_cursor(vp);
+            vi_sync_cursor(vp);
         }
         // FALLTHRU
         case 'i': {  // insert
@@ -1791,7 +1791,7 @@ addin:
                 c = 'P';
                 goto addin;
             }
-            save_v(vp);
+            vi_save_v(vp);
             if (cur_virt != INVALID) {
                 vp->o_v_char = virtual[cur_virt];
                 first_virt = cur_virt--;
@@ -1809,13 +1809,13 @@ addin:
                 if (mode) {
                     c = vp->lastmotion;
                 } else {
-                    c = getcount(vp, ed_getchar(vp->ed, -1));
+                    c = vi_getcount(vp, ed_getchar(vp->ed, -1));
                 }
             }
 
             vp->lastmotion = c;
             if (c == 'c') {
-                del_line(vp, GOOD);
+                vi_del_line(vp, GOOD);
                 return APPEND;
             }
 
@@ -1838,7 +1838,7 @@ addin:
                 if (mode) {
                     c = vp->lastmotion;
                 } else {
-                    c = getcount(vp, ed_getchar(vp->ed, -1));
+                    c = vi_getcount(vp, ed_getchar(vp->ed, -1));
                 }
             } else if (c == 'X') {
                 c = 'h';
@@ -1848,7 +1848,7 @@ addin:
 
             vp->lastmotion = c;
             if (c == 'd') {
-                del_line(vp, GOOD);
+                vi_del_line(vp, GOOD);
                 break;
             }
             if (!delmotion(vp, c, 'd')) return BAD;
@@ -1868,7 +1868,7 @@ addin:
             if (p[0] == '\0') return BAD;
 
             if (mode != 's' && mode != 'c') {
-                save_v(vp);
+                vi_save_v(vp);
                 if (c == 'P') {  // fix stored cur_virt
                     ++vp->u_column;
                 }
@@ -1890,23 +1890,23 @@ addin:
                 c = 'P';
                 goto addin;
             }
-            save_v(vp);
+            vi_save_v(vp);
             if (cur_virt != INVALID) first_virt = cur_virt;
             return REPLACE;
         }
         case 'r': {  // replace
             if (mode) {
                 c = *p;
-            } else if ((c = getrchar(vp)) == ESC) {
+            } else if ((c = vi_getrchar(vp)) == ESC) {
                 return GOOD;
             }
             *p = c;
-            save_v(vp);
-            while (trepeat--) replace(vp, c, trepeat != 0);
+            vi_save_v(vp);
+            while (trepeat--) vi_replace(vp, c, trepeat != 0);
             return GOOD;
         }
         case 's': {  // substitute
-            save_v(vp);
+            vi_save_v(vp);
             cdelete(vp, vp->repeat, BAD);
             if (mode) {
                 c = 'p';
@@ -1924,7 +1924,7 @@ addin:
                 if (mode) {
                     c = vp->lastmotion;
                 } else {
-                    c = getcount(vp, ed_getchar(vp->ed, -1));
+                    c = vi_getcount(vp, ed_getchar(vp->ed, -1));
                 }
             }
 
@@ -1939,7 +1939,7 @@ addin:
         case '~': {  // invert case and advance
             if (cur_virt == INVALID) return BAD;
 
-            save_v(vp);
+            vi_save_v(vp);
             i = INVALID;
             while (trepeat-- > 0 && i != cur_virt) {
                 i = cur_virt;
@@ -1951,13 +1951,13 @@ addin:
                         c = toupper(c);
                     }
                 }
-                replace(vp, c, 1);
+                vi_replace(vp, c, 1);
             }
             return GOOD;
         }
         default: { return BAD; }
     }
-    refresh(vp, CONTROL);
+    vi_refresh(vp, CONTROL);
     return GOOD;
 }
 
@@ -1968,7 +1968,7 @@ static_fn inline int _vi_isblank(int v) { return (v & ~STRIP) == 0 && isspace(v)
 //
 // Get a character, after ^V processing.
 //
-static_fn int getrchar(Vi_t *vp) {
+static_fn int vi_getrchar(Vi_t *vp) {
     int c;
     if ((c = ed_getchar(vp->ed, 1)) == usrlnext) c = ed_getchar(vp->ed, 2);
     return c;

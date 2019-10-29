@@ -72,7 +72,8 @@ static const struct optget_option long_options[] = {
     {"domain", 0, NULL, 'd'},
     {NULL, 0, NULL, 0}};
 
-static bool output(bool sep, uint32_t flags, uint32_t flag, const char *value, const char *name) {
+static_fn bool output(bool sep, uint32_t flags, uint32_t flag, const char *value,
+                      const char *name) {
     if (!(flags & flag)) return sep;
 
     if (*value || flags & OPT_all) {

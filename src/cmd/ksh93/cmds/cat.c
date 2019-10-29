@@ -70,7 +70,7 @@ static char *stdin_argv[] = {"-", NULL};
  * called for any special output processing
  */
 
-static int vcat(char *states, Sfio_t *ip, Sfio_t *op, int flags) {
+static_fn int vcat(char *states, Sfio_t *ip, Sfio_t *op, int flags) {
     unsigned char *cp;
     unsigned char *pp;
     unsigned char *cur;

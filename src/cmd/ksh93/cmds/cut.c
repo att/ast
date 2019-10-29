@@ -98,13 +98,13 @@ static const struct optget_option long_options[] = {
  * compare the first of an array of integers
  */
 
-static int mycomp(const void *a, const void *b) {
+static_fn int mycomp(const void *a, const void *b) {
     if (*((int *)a) < *((int *)b)) return -1;
     if (*((int *)a) > *((int *)b)) return 1;
     return 0;
 }
 
-static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, size_t reclen) {
+static_fn Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, size_t reclen) {
     int *lp;
     int c;
     int n = 0;
@@ -210,7 +210,7 @@ static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, siz
  * cut each line of file <fdin> and put results to <fdout> using list <list>
  */
 
-static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
+static_fn void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
     int c;
     int len;
     int ncol = 0;
@@ -314,7 +314,7 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
  * stream <fdin> must be line buffered
  */
 
-static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
+static_fn void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
     unsigned char *sp = cut->space;
     unsigned char *cp;
     unsigned char *wp;

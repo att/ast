@@ -841,8 +841,7 @@ static_fn char *get_version(Namval_t *np, Namfun_t *fp) { return nv_getv(np, fp)
 
 // This is invoked when var `.sh.version` is used in a numeric context such as
 // `$(( .sh.version ))`.
-//
-static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
+static_fn Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
     UNUSED(np);
 
     // We should not need to convert version number string every time this function is called

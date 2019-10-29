@@ -46,7 +46,7 @@ static const struct optget_option long_options[] = {
     {"executable", optget_no_arg, NULL, 'x'},
     {NULL, 0, NULL, 0}};
 
-static void l_dirname(Sfio_t *outfile, const char *pathname) {
+static_fn void l_dirname(Sfio_t *outfile, const char *pathname) {
     const char *last;
     /* go to end of path */
     for (last = pathname; *last; last++) {
