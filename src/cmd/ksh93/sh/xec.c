@@ -2669,20 +2669,28 @@ static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], stru
     shp->st.lineno = error_info.line;
     FETCH_VT(np->nvalue, rp)->running += 2;
     if (nv_isattr(np, NV_FPOSIX) && !sh_isoption(shp, SH_BASH)) {
-        char *save;
         int loopcnt = shp->st.loopcnt;
         shp->posix_fun = np;
-        save = argv[-1];
-        argv[-1] = 0;
         shp->st.funname = nv_name(np);
         shp->last_root = nv_dict(VAR_sh);
         nv_putval(VAR_sh_fun, nv_name(np), NV_NOFREE);
         opt_info.index = opt_info.offset = 0;
         error_info.errors = 0;
         shp->st.loopcnt = 0;
-        b_source(argn + 1, argv - 1, &shp->bltindata);
+        if (argn == 1) {
+            // The vast majority of the time this is called with argn == 1 so optimize that case.
+            // The first arg is ignored and could be anything.
+            char *source_argv[3] = {"sh_funct", argv[0], NULL};
+            b_source(2, source_argv, &shp->bltindata);
+        } else {
+            char **source_argv = malloc((argn + 2) * sizeof(char *));
+            source_argv[0] = "sh_funct";
+            source_argv[argn + 1] = NULL;
+            memcpy(source_argv + 1, argv, argn * sizeof(char *));
+            b_source(argn + 1, source_argv, &shp->bltindata);
+            free(source_argv);
+        }
         shp->st.loopcnt = loopcnt;
-        argv[-1] = save;
     } else {
         fun.env = envlist;
         fun.node = np;
