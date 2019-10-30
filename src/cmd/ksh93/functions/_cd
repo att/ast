@@ -33,6 +33,7 @@ function _cd {
 
     if (( type < 3 ))
     then
+        # shellcheck disable=SC2154
         if (( n >= _push_max + 1 ))
         then
             print -u2 cd: Directory stack not that deep.
@@ -63,7 +64,8 @@ function _cd {
         dir="~"
         ;;
     /*) ;;
-    *)  dir="~/$dir"
+    *)  # shellcheck disable=SC2088
+        dir="~/$dir"
         ;;
     esac
 

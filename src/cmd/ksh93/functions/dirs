@@ -12,8 +12,8 @@ function dirs {
         ;;
     esac
 
-    PS3=''
-    select i in "$dir" "${_push_stack[@]}"
+    # shellcheck disable=SC2154
+    select _ in "$dir" "${_push_stack[@]}"
     do
         :
     done < /dev/null

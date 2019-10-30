@@ -1,4 +1,7 @@
 #!/bin/sh -x
 # Run shellcheck on scripts under bin and scripts directories
 # shellcheck disable=SC2046,SC2038
-shellcheck $(find .copr/ scripts/ bin/ src/lib/libast/tests | xargs file | grep "shell script" | cut -d':' -f1)
+shellcheck -s ksh $(find .copr bin scripts src/cmd/ksh93/functions src/lib/libast/tests -type f |
+                    xargs file |
+                    grep "shell script" |
+                    cut -d':' -f1)

@@ -10,11 +10,9 @@ function mcd {
     esac
 
     PS3='Select by number or enter a name: '
+    # shellcheck disable=SC2154
     select dir in "$dir" "${_push_stack[@]}"
     do
-        if _cd $REPLY
-        then
-            return
-        fi
+        _cd "$REPLY" && return
     done
 }

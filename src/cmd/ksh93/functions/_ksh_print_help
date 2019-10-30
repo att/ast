@@ -1,3 +1,4 @@
+#!/usr/bin/env ksh
 #
 # Given a ksh man page emit the text of the SYNOPSIS and FLAGS sections and nothing else. This is
 # primarily meant to be used by builtins (either special or normal commands) to emit a subset of its
