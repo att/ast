@@ -549,7 +549,9 @@ int sh_argopts(int argc, char *argv[], void *context) {
             if (unsetnp) nv_unset(np);
             nv_setvec(np, 0, argc, argv);
             nv_close(np);
-        } else if (argc > 0 || ((sp = argv[-1]) && strcmp(sp, "--") == 0)) {
+        } else if (argc > 0 || (*(argv - 1) && !strcmp(*(argv - 1), "--"))) {
+            // The equivalent of argv[-1] above is safe due to how the caller of this function
+            // constructs the argv address. It is always either NULL or points to a string.
             sh_argset(ap, argv - 1);
         }
     } else if (is_option(&newflags, SH_CFLAG)) {
