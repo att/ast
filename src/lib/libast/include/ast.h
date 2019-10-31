@@ -19,10 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * Advanced Software Technology Library
- * AT&T Research
- */
 #ifndef _AST_H
 #define _AST_H 1
 
@@ -40,80 +36,66 @@
 #define PATH_MAX 1024
 #endif
 
-/*
- * exit() support -- this matches shell exit codes
- */
-
-#define EXIT_BITS 8 /* # exit status bits       */
-
-// #define EXIT_USAGE 2      /* usage exit code */
-#define EXIT_QUIT 255     /* parent should quit */
-#define EXIT_NOTFOUND 127 /* command not found  */
-#define EXIT_NOEXEC 126   /* other exec error   */
+// exit() support -- this matches shell exit codes.
+#define EXIT_BITS 8        // number of exit status bits
+#define EXIT_QUIT 255      // parent should quit
+#define EXIT_NOTFOUND 127  // command not found
+#define EXIT_NOEXEC 126    // other exec error
+// #define EXIT_USAGE 2    // usage exit code
 
 #define EXIT_CODE(x) ((x) & ((1 << EXIT_BITS) - 1))
 #define EXIT_TERM(x) (EXIT_CODE(x) | (1 << EXIT_BITS))
 
-/*
- * pathcanon() flags and info
- */
-
+// pathcanon() flags and info.
 #define PATH_PHYSICAL 0x001
 #define PATH_DOTDOT 0x002
 #define PATH_EXISTS 0x004
-#define PATH_ABSOLUTE 0x010 /* NOTE: shared with pathaccess() below */
+#define PATH_ABSOLUTE 0x010  // NOTE: shared with pathaccess() below
 
-/*
- * pathaccess() flags
- */
-
+// pathaccess() flags.
 #define PATH_READ 0x04
 #define PATH_WRITE 0x02
 #define PATH_EXECUTE 0x01
 #define PATH_REGULAR 0x08
-/* NOTE: PATH_ABSOLUTE shared with pathcanon() above */
+// NOTE: PATH_ABSOLUTE shared with pathcanon() above.
 
-/*
- * strgrpmatch() flags
- */
+// strgrpmatch() flags.
+#define STR_MAXIMAL 0x01  // maximal match
+#define STR_LEFT 0x02     // implicit left anchor
+#define STR_RIGHT 0x04    // implicit right anchor
+#define STR_ICASE 0x08    // ignore case
+#define STR_GROUP 0x10    // (|&) inside [@|&](...) only
+#define STR_INT 0x20      // deprecated int* match array
 
-#define STR_MAXIMAL 0x01 /* maximal match               */
-#define STR_LEFT 0x02    /* implicit left anchor                */
-#define STR_RIGHT 0x04   /* implicit right anchor       */
-#define STR_ICASE 0x08   /* ignore case                 */
-#define STR_GROUP 0x10   /* (|&) inside [@|&](...) only */
-#define STR_INT 0x20     /* deprecated int* match array */
+// fmtquote() flags.
+#define FMT_ALWAYS 0x01   // always quote
+#define FMT_ESCAPED 0x02  // already escaped
+#define FMT_SHELL 0x04    // escape $ ` too
+#define FMT_WIDE 0x08     // don't escape 8 bit chars
+#define FMT_PARAM 0x10    // disable FMT_SHELL ${$( quote
 
-/*
- * fmtquote() flags
- */
+// chrexp() flags.
+#define FMT_EXP_CHAR 0x020  // expand single byte chars
+#define FMT_EXP_LINE 0x040  // expand \n and \r
+#define FMT_EXP_WIDE 0x080  // expand \u \U \x wide chars
+#define FMT_EXP_NOCR 0x100  // skip \r
+#define FMT_EXP_NONL 0x200  // skip \n
 
-#define FMT_ALWAYS 0x01  /* always quote                        */
-#define FMT_ESCAPED 0x02 /* already escaped             */
-#define FMT_SHELL 0x04   /* escape $ ` too              */
-#define FMT_WIDE 0x08    /* don't escape 8 bit chars    */
-#define FMT_PARAM 0x10   /* disable FMT_SHELL ${$( quote        */
-
-/*
- * chrexp() flags
- */
-
-#define FMT_EXP_CHAR 0x020 /* expand single byte chars  */
-#define FMT_EXP_LINE 0x040 /* expand \n and \r          */
-#define FMT_EXP_WIDE 0x080 /* expand \u \U \x wide chars        */
-#define FMT_EXP_NOCR 0x100 /* skip \r                   */
-#define FMT_EXP_NONL 0x200 /* skip \n                   */
-
-/*
- * multibyte macros
- */
+// Multibyte macros.
 #define mbwide() (MB_CUR_MAX > 1)
 #define mbxfrm(t, f, n) strxfrm((char *)(t), (char *)(f), n)
 
-/* the converse does not always hold! */
+// The converse does not always hold!
+//
+// TODO: Figure out how to correctly work on MS Windows, or other platforms, where
+// sizeof(wchar_t) == 2 rather than 4.
+#if _ast_sizeof_wchar_t == 2
+#define utf32invalid(u) ((u) >= 0xD800 && (u) <= 0xDFFF)
+#else  // _ast_sizeof_wchar_t == 2
 #define utf32invalid(u)                                              \
     ((u) > 0x0010FFFF || ((u) >= 0x0000D800 && (u) <= 0x0000DFFF) || \
      ((u) >= 0xFFFE && (u) <= 0xFFFF))
+#endif  // _ast_sizeof_wchar_t == 2
 
 #define UTF8_LEN_MAX 6  // UTF-8 only uses 5
 
@@ -216,9 +198,7 @@ extern ssize_t wcstoutf32s(uint32_t *, wchar_t *, size_t);
 extern size_t ast_mbrchar(wchar_t *, const char *, size_t, Mbstate_t *);
 extern char *translate(const char *, const char *, const char *, const char *);
 
-/*
- * C library global data symbols not prototyped by <unistd.h>
- */
+// C library global data symbols not prototyped by <unistd.h>.
 extern char **environ;
 
 #define AST_MESSAGE_SET 3  // see <mc.h> mcindex()
@@ -263,8 +243,7 @@ static inline wchar_t mb1char(char **s) {
     return n;
 }
 
-/* generic plugin version support */
-
+// Generic plugin version support.
 extern unsigned long plugin_version(void);
 
 #define CC_bel 0007  // BEL character

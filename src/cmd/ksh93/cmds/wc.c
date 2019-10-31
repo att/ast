@@ -315,7 +315,7 @@ static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
     ssize_t n;
     ssize_t o;
     unsigned char *buff;
-    wchar_t x;
+    wchar_t wc;
     unsigned char side[32];
 
     sfset(fd, SF_WRITE, 1);
@@ -324,7 +324,7 @@ static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
     if (wp->mb < 0 && (wp->mode & (WC_MBYTE | WC_WORDS))) {
         cp = buff = endbuff = 0;
         for (;;) {
-            if (cp >= endbuff || (n = mbtowc(&x, (char *)cp, endbuff - cp)) < 0) {
+            if (cp >= endbuff || (n = mbtowc(&wc, (char *)cp, endbuff - cp)) < 0) {
                 o = endbuff - cp;
                 if (o < sizeof(side)) {
                     if (buff) {
@@ -344,7 +344,7 @@ static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                     if (c) memcpy(cp, buff, c);
                     endbuff = buff + n;
                     cp = side;
-                    x = mb1char((char **)&cp);
+                    wc = mb1char((char **)&cp);
                     if ((cp - side) < o) {
                         cp = buff;
                         nchars += (cp - side) - 1;
@@ -353,20 +353,20 @@ static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                     }
                 } else {
                     cp++;
-                    x = -1;
+                    wc = 0;
                 }
-                if (x == -1 && eline != nlines && !(wp->mode & WC_QUIET)) {
+                if (wc == 0 && eline != nlines && !(wp->mode & WC_QUIET)) {
                     eline = wc_invalid(file, nlines);
                 }
             } else {
                 cp += n ? n : 1;
             }
-            if (x == '\n') {
+            if (wc == '\n') {
                 if ((nchars - longest) > wp->longest) wp->longest = nchars - longest;
                 longest = nchars + 1;
                 nlines++;
                 lasttype = 1;
-            } else if (iswspace(x)) {
+            } else if (iswspace(wc)) {
                 lasttype = 1;
             } else if (lasttype) {
                 lasttype = 0;
@@ -397,7 +397,7 @@ static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
             while ((cp = buff = (unsigned char *)sfreserve(fd, SF_UNBOUND, 0)) &&
                    (c = sfvalue(fd)) > 0) {
                 nchars += c;
-                /* check to see whether first character terminates word */
+                // Check to see whether first character terminates word.
                 if (c == 1) {
                     if (eol(lasttype)) nlines++;
                     if ((c = type[*cp]) && !lasttype) nwords++;
@@ -408,13 +408,13 @@ static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                 lastchar = cp[--c];
                 *(endbuff = cp + c) = '\n';
                 c = lasttype;
-                /* process each buffer */
+                // Process each buffer.
                 for (;;) {
-                    /* process spaces and new-lines */
+                    // Process spaces and new-lines.
                     do {
                         if (eol(c)) {
                             for (;;) {
-                                /* check for end of buffer */
+                                // Check for end of buffer.
                                 if (cp > endbuff) goto beob;
                                 nlines++;
                                 if (*cp != '\n') break;
@@ -423,7 +423,7 @@ static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                         }
                         c = type[*cp++];
                     } while (c);
-                    /* skip over word characters */
+                    // Skip over word characters.
                     while (!(c = type[*cp++])) {
                         ;
                     }
@@ -436,7 +436,7 @@ static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                     c = lasttype;
                 }
                 lasttype = type[lastchar];
-                /* see if was in word */
+                // See if was in word.
                 if (!c && !lasttype) nwords--;
             }
             if (eol(lasttype)) {
@@ -463,7 +463,7 @@ static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
             nbytes += c;
             nchars += c;
             start = cp - lineoff;
-            /* check to see whether first character terminates word */
+            // Check to see whether first character terminates word.
             if (c == 1) {
                 if (eol(lasttype)) nlines++;
                 if ((c = type[*cp]) && !lasttype) nwords++;
@@ -480,13 +480,13 @@ static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
             }
             if (!lasttype && spc(type[*cp])) nwords++;
             c = lasttype;
-            /* process each buffer */
+            // Process each buffer.
             for (;;) {
-            /* process spaces and new-lines */
+            // Process spaces and new-lines.
             spaces:
                 do {
                     if (eol(c)) {
-                        /* check for end of buffer */
+                        // Check for end of buffer.
                         if (cp > endbuff) goto eob;
                         if (wp->mode & WC_LONGEST) {
                             if ((cp - start) - adjust > longest) {
@@ -556,7 +556,7 @@ static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                         continue;
                     }
                 }
-                /* skip over word characters */
+                // Skip over word characters.
                 while (!(c = type[*cp++])) {
                     ;
                 }
@@ -571,7 +571,7 @@ static_fn int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                 c = lasttype;
             }
             lasttype = type[lastchar];
-            /* see if was in word */
+            // See if was in word.
             if (!c && !lasttype) nwords--;
         }
         if ((wp->mode & WC_LONGEST) &&
