@@ -118,7 +118,15 @@ then
     log_error 'environment variables require re-export'
 fi
 
-(typeset + ) || log_error 'typeset + not working'
+# This corresponds to the parenthetical statement below in the ksh documentation:
+#
+#   If no vname arguments are given, a list of vnames (and optionally the values) of the variables
+#   is printed. (Using + rather than - keeps the values from being printed.)
+#
+# That is, `typeset +` is expected to emit a list of var names without their values.
+(typeset + | grep '^SHELL$' >typeset_plus.out) || log_error 'typeset + not working'
+[[ -s typeset_plus.out ]] || log_error 'typeset + not working' 'SHELL' "$(< typeset_plus.out)"
+
 (typeset -L-5 buf="A")
 if [[ $? == 0 ]]
 then
@@ -247,7 +255,7 @@ hello worldhello worldhello world
 !
 [[ $v1 == "$b1" ]] || log_error "v1=$v1 should be $b1"
 [[ $v2 == "$x" ]] || log_error "v1=$v2 should be $x"
-if env '!=1'
+if env '!=1' >/dev/null
 then
     [[ $(env '!=1' $SHELL -c 'echo ok') == ok ]] ||
         log_error 'malformed environment terminates shell'
