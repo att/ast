@@ -59,7 +59,7 @@ fi
 # ==========
 # chmod -Z
 # Is an invalid option handled reasonably?
-expect="chmod: -Z: unknown flag"
+expect="chmod: -Z: unknown option"
 actual=$(chmod -Z foo 2>&1)
 [[ "$actual" =~ .*"$expect" ]] || log_error "chmod -Z" "$expect" "$actual"
 

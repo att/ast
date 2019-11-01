@@ -229,23 +229,25 @@ const char e_nosignal[] = "%s: unknown signal name";
 const char e_condition[] = "condition(s) required";
 const char e_cneedsarg[] = "-c requires argument";
 
-// Error message for missing flag argument.
-#define BUILTIN_ERR_MISSING "%s: %s: expected argument for flag"
-// Error message for unrecognized flag.
-#define BUILTIN_ERR_UNKNOWN "%s: %s: unknown flag"
+// Error message for missing option argument.
+#define BUILTIN_ERR_MISSING "%s: %s: expected argument for option"
+// Error message for unrecognized option.
+#define BUILTIN_ERR_UNKNOWN "%s: %s: unknown option"
 
 // Invoke a helper function or command to print a subset of the man page for the command. Such as
-// from doing "cmd --help".
+// from doing "cmd --help". This only produces output if the shell is interactive.
 void builtin_print_help(Shell_t *shp, const char *cmd) {
+    if (!sh_isoption(shp, SH_INTERACTIVE)) return;
+
     const char *argv[3] = {"_ksh_print_help", cmd, NULL};
     sh_eval(shp, sh_sfeval(argv), 0);
+    sfputc(sfstderr, '\n');
     return;
 }
 
 // Error reporting for encounter with unknown option when parsing command arguments.
 void builtin_unknown_option(Shell_t *shp, const char *cmd, const char *opt) {
     builtin_print_help(shp, cmd);
-    sfputc(sfstderr, '\n');
     sfprintf(sfstderr, BUILTIN_ERR_UNKNOWN, cmd, opt);
     sfputc(sfstderr, '\n');
 }
@@ -253,17 +255,15 @@ void builtin_unknown_option(Shell_t *shp, const char *cmd, const char *opt) {
 // Error reporting for encounter with missing argument when parsing command arguments.
 void builtin_missing_argument(Shell_t *shp, const char *cmd, const char *opt) {
     builtin_print_help(shp, cmd);
-    sfputc(sfstderr, '\n');
     sfprintf(sfstderr, BUILTIN_ERR_MISSING, cmd, opt);
     sfputc(sfstderr, '\n');
 }
 
 // Error reporting for general errors when parsing command arguments.
 void builtin_usage_error(Shell_t *shp, const char *cmd, const char *fmt, ...) {
+    builtin_print_help(shp, cmd);
     va_list ap;
     va_start(ap, fmt);
-    builtin_print_help(shp, cmd);
-    sfputc(sfstderr, '\n');
     sfprintf(sfstderr, "%s: ", cmd);
     sfvprintf(sfstderr, fmt, ap);
     sfputc(sfstderr, '\n');

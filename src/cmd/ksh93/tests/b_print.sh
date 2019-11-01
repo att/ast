@@ -95,7 +95,7 @@ print -u5 "bar baz"
 # ======
 # print -u without a value should show an error
 actual=$(print -u 2>&1)
-expected="print: -u: expected argument for flag"
+expected="print: -u: expected argument for option"
 [[ "$actual" =~ "$expected" ]] ||
     log_error "print -u without arguments should show an error" "$expected" "$actual"
 

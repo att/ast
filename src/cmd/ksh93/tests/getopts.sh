@@ -1,5 +1,3 @@
-builtin getconf
-
 # =======
 getopts 2>&1 | grep -q "Usage: getopts" || log_error "Running getopts without any parameter should show usage info"
 

@@ -38,5 +38,5 @@ expect=""
 # ==========
 # sync -x
 actual=$(sync -x 2>&1)
-expect="sync: -x: unknown flag"
+expect="sync: -x: unknown option"
 [[ "$actual" =~ "$expect".* ]] || log_error "sync -x" "$expect" "$actual"

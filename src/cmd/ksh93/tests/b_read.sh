@@ -65,7 +65,7 @@ exec 7<&-
 
 # -u without arguments should show an error
 actual=$(read -u 2>&1)
-expected="read: -u: expected argument for flag"
+expected="read: -u: expected argument for option"
 [[ "$actual" =~ "$expected" ]] || log_error "read -u without any arguments should show an error" "$expected" "$actual"
 
 #-t timeout Specify a timeout timeout in seconds when reading from a terminal or pipe.
