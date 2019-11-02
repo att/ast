@@ -16,11 +16,15 @@ expect=""
 [[ "$actual" == "$expect" ]] || log_error "sync -s1" "$expect" "$actual"
 
 # ==========
-# sync -s3
+# sync -s 999
 # An invalid file descriptor should fail. We don't verify the errno portion of the message because
-# it can vary across systems.
-actual=$(sync -s3 2>&1)
-expect="sync: fsync(3) failed"
+# it can vary across systems -- even though it should be EBADF which should be the same numeric
+# value on every system that cares at all about being UNIX compatible.
+#
+# We don't use fd 3 because it might be opened by a debug malloc subsystem. We expect fd 999 to be
+# unused if not invalid.
+actual=$(sync -s 999 2>&1)
+expect="sync: fsync(999) failed"
 [[ "$actual" =~ "$expect".* ]] || log_error "sync -s3" "$expect" "$actual"
 
 # ==========
