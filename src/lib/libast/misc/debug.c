@@ -322,19 +322,14 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
 
 #else  // _pth_addr2line
 
-// We don't seem to have a usable command for converting addresses to symbol
-// info. This code is solely for the benefit of the unit tests which might run
-// on a system where this fallback is needed.
+// We don't seem to have a usable command for converting addresses to symbol info. It need do
+// nothing more than return no details for any of the addresses.
 static_fn char **addrs2info(int n_frames, void *addrs[]) {
     UNUSED(n_frames);
     UNUSED(addrs);
 
-    (void)snprintf(info, sizeof(info), "-p %d", _debug_getpid());
-    for (int i = 0; i < n_frames; ++i) {
-        char *addr = argv_addrs + i * 20;
-        (void)snprintf(addr, 20, " 0x%" PRIXPTR "", _debug_addr(i, addrs));
-        strlcat(info, addr, sizeof(info));
-    }
+    memset(info, 0, sizeof(info));
+    run_addr2lines_prog(0, "/bin/true", NULL);  // for the benefit of the debug API unit test
     return info;
 }
 
