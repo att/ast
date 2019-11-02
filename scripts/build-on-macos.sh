@@ -17,7 +17,7 @@ then
 fi
 
 echo ==== Building the code
-echo CC="$CC"
+echo "<I> CC=$CC"
 ninja || exit
 
 echo ==== Running unit tests
@@ -27,17 +27,12 @@ CORE_COUNT=$(sysctl -n hw.ncpu)
 export MESON_TESTTHREADS=$(( 2 * ${CORE_COUNT:-1} ))
 echo "<I> CORE_COUNT=$CORE_COUNT MESON_TESTTHREADS=$MESON_TESTTHREADS"
 
-# Enable auditing
+# Enable command auditing.
 echo "/tmp/ksh_auditfile;$(id -u)" | sudo tee /etc/ksh_audit
 
-# TODO: Run with --setup=malloc when Travis macOS is updated to 10.13 or
-# newer. macOS 10.12 doesn't honor the MallocLogFile=/dev/null env var which
-# results in lots of malloc debug messages being written to stderr which
-# breaks the unit tests.
 ninja install
-if ! meson test
+if ! meson test -t2 --setup=malloc
 then
-    # cat meson-logs/testlog-malloc.txt
-    cat meson-logs/testlog.txt
+    cat meson-logs/testlog-malloc.txt
     exit 1
 fi
