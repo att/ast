@@ -329,6 +329,9 @@ static_fn char **addrs2info(int n_frames, void *addrs[]) {
     UNUSED(n_frames);
     UNUSED(addrs);
 
+    // Sixteen hex digits is enough for 64 bit addrs. The extra three chars are for the `0x` prefix
+    // from the "%p" format specifier and the terminating null byte.
+    char argv_addrs[20 * MAX_FRAMES];  // 20 digits per addr max which is enough for 64 bit addrs
     (void)snprintf(info, sizeof(info), "-p %d", _debug_getpid());
     for (int i = 0; i < n_frames; ++i) {
         char *addr = argv_addrs + i * 20;
