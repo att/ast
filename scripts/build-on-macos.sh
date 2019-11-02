@@ -24,8 +24,8 @@ echo ==== Running unit tests
 # shellcheck disable=SC2039
 ulimit -n 1024
 CORE_COUNT=$(sysctl -n hw.ncpu)
-export MESON_TESTTHREADS=$(( 4 * ${CORE_COUNT:-1} ))
-echo MESON_TESTTHREADS=$MESON_TESTTHREADS
+export MESON_TESTTHREADS=$(( 2 * ${CORE_COUNT:-1} ))
+echo "<I> CORE_COUNT=$CORE_COUNT MESON_TESTTHREADS=$MESON_TESTTHREADS"
 
 # Enable auditing
 echo "/tmp/ksh_auditfile;$(id -u)" | sudo tee /etc/ksh_audit
