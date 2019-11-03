@@ -23,7 +23,7 @@ expect=""
 #
 # We don't use fd 3 because it might be opened by a debug malloc subsystem. We expect fd 999 to be
 # unused if not invalid.
-actual=$(sync -s999 2>&1)
+actual=$(sync -s 999 2>&1)
 expect="sync: fsync(999) failed"
 [[ "$actual" =~ "$expect".* ]] || log_error "sync -s999" "$expect" "$actual"
 
