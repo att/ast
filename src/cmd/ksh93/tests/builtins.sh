@@ -476,15 +476,14 @@ $SHELL <<- \EOF
     cd
     [[ $(pwd) == "$home" ]]
 EOF
-if [[ $? != 0 ]]
+ret=$?
+if [[ ! -d ~$USER ]]
 then
-    if [[ ! -d $home ]]
-    then
-        log_warning "home directory does not exist"
-    else
-        log_error 'cd with no arguments fails if HOME is unset'
-    fi
+    log_warning "skipping test of cd with no arguments if home directory does not exist"
+else
+    [[ $ret == 0 ]] || log_error 'cd with no arguments fails if HOME is unset'
 fi
+unset ret
 
 cd "$TEST_DIR"
 if mkdir -p f1
@@ -504,10 +503,10 @@ fi
 # Regression test for https://github.com/att/ast/issues/1391
 expect="$(print ~$(id -un))"
 actual=$(unset HOME; $SHELL -c 'cd /; cd ~; pwd')
-# If the home directory for the user doesn't exist, then print a warning
+# If the home directory for the user doesn't exist, then skip test
 if [[ ! -d $expect ]]
 then
-    log_warning "home directory does not exist: $expect"
+    log_warning "skipping test of bare ~ expansion when home directory does not exist: $expect"
 else
     [[ $actual == $expect ]] || log_error "bare ~ expansion with unset HOME" "$expect" "$actual"
 fi
