@@ -25,7 +25,7 @@ expect=""
 # unused if not invalid.
 actual=$(sync -s 999 2>&1)
 expect="sync: fsync(999) failed"
-[[ "$actual" =~ "$expect".* ]] || log_error "sync -s3" "$expect" "$actual"
+[[ "$actual" =~ "$expect".* ]] || log_error "sync -s 999" "$expect" "$actual"
 
 # ==========
 # sync -f
