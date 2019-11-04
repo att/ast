@@ -476,14 +476,15 @@ $SHELL <<- \EOF
     cd
     [[ $(pwd) == "$home" ]]
 EOF
-ret=$?
-if [[ ! -d ~$USER ]]
+if [[ $? != 0 ]]
 then
-    log_warning "skipping test of cd with no arguments if home directory does not exist"
-else
-    [[ $ret == 0 ]] || log_error 'cd with no arguments fails if HOME is unset'
+    if [[ -d ~$USER ]]
+    then
+        log_error 'cd with no arguments fails if HOME is unset'
+    else
+        log_warning "ignoring test of cd with no arguments if home directory does not exist"
+    fi
 fi
-unset ret
 
 cd "$TEST_DIR"
 if mkdir -p f1
