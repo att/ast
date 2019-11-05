@@ -431,12 +431,11 @@ static_fn char *fmthtml(Shell_t *shp, const char *string, int flags) {
                 sfputr(shp->stk, "&amp", ';');
             } else if (c == '"') {
                 sfputr(shp->stk, "&quot", ';');
+            /* Add this back when an XML-oriented output flag is added. */
+            /*
             } else if (c == '\'') {
                 sfputr(shp->stk, "&apos", ';');
-            } else if (c == ' ') {
-                sfputr(shp->stk, "&nbsp", ';');
-            } else if (!isprint(c) && c != '\n' && c != '\r') {
-                sfprintf(shp->stk, "&#%X;", c);
+            */
             } else {
                 sfputc(shp->stk, c);
             }
