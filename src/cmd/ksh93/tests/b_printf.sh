@@ -42,7 +42,7 @@ unset foo
 # %H     A %H format can be used instead of %s to cause characters in arg that are special in HTML
 #        and XML to be output as their entity name.  The alternate flag # formats the output for
 #        use as a URI.
-if [[ $(printf '%H\n' $'<>"& \'\tabc') != '&lt;&gt;&quot;&amp;&nbsp;&apos;&#9;abc' ]]
+if [[ $(printf '%H\n' '<>"&abc') != '&lt;&gt;&quot;&amp;abc' ]]
 then
     log_error 'printf %H not working'
 fi
@@ -136,7 +136,7 @@ printf "%Z" | od | head -n1 | grep -q "000000 *$" || log_error "printf %Z does n
 
 #     %(html)q
 #           Equivalent to %H.
-if [[ $(printf '%(html)q\n' $'<>"& \'\tabc') != '&lt;&gt;&quot;&amp;&nbsp;&apos;&#9;abc' ]]
+if [[ $(printf '%(html)q\n' '<>"&abc') != '&lt;&gt;&quot;&amp;abc' ]]
 then
     log_error 'printf %(html)q not working'
 fi
