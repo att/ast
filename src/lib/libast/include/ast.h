@@ -152,7 +152,6 @@ extern char *fgetcwd(int, char *, size_t);
 extern char *fmtbase(int64_t, int, int);
 extern char *fmtbuf(size_t);  // to be used only by the "string" subsystem
 extern char *fmtelapsed(unsigned long, int);
-extern char *fmtident(const char *);
 extern char *fmtfmt(const char *);
 extern char *fmtint(int64_t, int);
 extern char *fmtmatch(const char *);
