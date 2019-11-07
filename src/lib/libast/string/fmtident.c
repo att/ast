@@ -1,7 +1,7 @@
 /***********************************************************************
  *                                                                      *
  *               This software is part of the ast package               *
- *          Copyright (c) 1985-2013 AT&T Intellectual Property          *
+ *          Copyright (c) 1985-2011 AT&T Intellectual Property          *
  *                      and is licensed under the                       *
  *                 Eclipse Public License, Version 1.0                  *
  *                    by AT&T Intellectual Property                     *
@@ -19,40 +19,54 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-//
-// Ksh builtin command API header.
-//
-#ifndef _SHCMD_H
-#define _SHCMD_H 1
+#include "config_ast.h"  // IWYU pragma: keep
 
-#define SH_PLUGIN_VERSION 20111111L
+#include <ctype.h>
+#include <string.h>
 
-// #define SHLIB(m)
-//     unsigned long plugin_version(void) { return SH_PLUGIN_VERSION; }
+#include "ast.h"
 
-struct Shbltin_s {
-    Shell_t *shp;
-    void *ptr;
-    int version;
-    int (*shrun)(Shell_t *, int, char **);
-    void (*shexit)(Shell_t *, int);
-    unsigned char notify;
-    unsigned char sigset;
-    unsigned char nosfio;
-    Namval_t *bnode;
-    Namval_t *vnode;
-    void *data;
-    int flags;
-    int invariant;
-    int pwdfd;
-};
+#define IDENT 01
+#define USAGE 02
 
-// The following symbols used to have a `sh_` prefix and were meant to mask the functions of the
-// same name when used in a builtin (e.g., code in src/lib/libcmd). That has been changed because
-// that sort of redirection obfuscates what is actually happening and makes reasoning about the
-// code harder.
-#define bltin_checksig(c) (c && c->sigset)
+/*
+ * format what(1) and/or ident(1) string a
+ */
 
-extern int cmdinit(int, char **, Shbltin_t *, int);
+char *fmtident(const char *a) {
+    char *s = (char *)a;
+    char *t;
+    char *buf;
+    int i;
 
-#endif  // _SHCMD_H
+    i = 0;
+    for (;;) {
+        while (isspace(*s)) s++;
+        if (s[0] == '[') {
+            while (*++s && *s != '\n') {
+                ;
+            }
+            i |= USAGE;
+        } else if (s[0] == '@' && s[1] == '(' && s[2] == '#' && s[3] == ')') {
+            s += 4;
+        } else if (s[0] == '$' && s[1] == 'I' && s[2] == 'd' && s[3] == ':' && isspace(s[4])) {
+            s += 5;
+            i |= IDENT;
+        } else {
+            break;
+        }
+    }
+    if (i) {
+        i &= IDENT;
+        for (t = s; isprint(*t) && *t != '\n'; t++) {
+            if (i && t[0] == ' ' && t[1] == '$') break;
+        }
+        while (t > s && isspace(t[-1])) t--;
+        i = t - s;
+        buf = fmtbuf(i + 1);
+        memcpy(buf, s, i);
+        s = buf;
+        s[i] = 0;
+    }
+    return s;
+}

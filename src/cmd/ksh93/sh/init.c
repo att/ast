@@ -61,10 +61,24 @@
 #include "shtable.h"
 #include "stk.h"
 #include "variables.h"
+#include "version.h"
 
 #if USE_SPAWN
 #include "spawnvex.h"
 #endif
+
+char e_version[] =
+    "\n@(#)$Id: Version "
+#define ATTRS 1
+    "A"
+#if SHOPT_BASH
+#define ATTRS 1
+    "B"
+#endif
+#if ATTRS
+    " "
+#endif
+    SH_RELEASE " $\0\n";
 
 #if SHOPT_BASH
 extern void bash_init(Shell_t *, int);
@@ -823,38 +837,44 @@ static_fn char *name_match(const Namval_t *np, Namfun_t *fp) {
 static const Namdisc_t SH_MATCH_disc = {
     .dsize = sizeof(struct match), .getval = get_match, .namef = name_match};
 
-static_fn char *get_version(Namval_t *np, Namfun_t *fp) {
-    UNUSED(np);
-    UNUSED(fp);
-
-    return (char *)ksh_version;  // discard const qualifier -- we expect the caller to not mutate
-}
+static_fn char *get_version(Namval_t *np, Namfun_t *fp) { return nv_getv(np, fp); }
 
 // This is invoked when var `.sh.version` is used in a numeric context such as
 // `$(( .sh.version ))`.
-Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
+static_fn Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
     UNUSED(np);
-    UNUSED(fp);
 
     // We should not need to convert version number string every time this function is called
     static Sflong_t version_number = -1;
     if (version_number != -1) return (Sfdouble_t)version_number;
 
+    char *cp = strdup(SH_RELEASE);
+    char *dash;
     char *dot;
-    const char *major_str, *minor_str, *patch_str;
+    char *major_str, *minor_str, *patch_str;
     int major, minor, patch;
+    UNUSED(fp);
+
+    // Version string in development version could be set like 2017.0.0-devel-1509-g95d59865
+    // If a '-' exists in version string, set it as end of string i.e. version string becomes
+    // 2017.0.0
+    dash = strchr(cp, '-');
+    if (dash) *dash = 0;
 
     // Major version number starts at beginning of string
-    major_str = ksh_version;
+    major_str = cp;
 
     // Find the first '.' and set it to NULL, so major version string is set to 2017
-    dot = strchr(ksh_version, '.');
+    dot = strchr(cp, '.');
     if (!dot) {
         // If there is no . in version string, it means version string is either empty, invalid
         // or it's using old versioning scheme.
+        free(cp);
         version_number = 0;
         return version_number;
     }
+
+    *dot = 0;
 
     // Minor version string starts after first '.'
     minor_str = dot + 1;
@@ -862,6 +882,7 @@ Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
     // Find the second '.' and set it to NULL, so minor version string is set to 0
     dot = strchr(minor_str, '.');
     assert(dot);
+    *dot = 0;
 
     // Patch number starts after second '.'
     patch_str = dot + 1;
@@ -872,9 +893,10 @@ Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
 
     assert(minor < 100);
     assert(patch < 100);
-    // This will break if minor or patch number goes above 99. Hence the preceding assert()'s.
+    // This will break if minor or patch number goes above 99
     version_number = major * 10000 + minor * 100 + patch;
 
+    free(cp);
     return (Sfdouble_t)version_number;
 }
 
@@ -1070,6 +1092,8 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     int type;
     static char *login_files[2];
 
+    n = strlen(e_version);
+    if (e_version[n - 1] == '$' && e_version[n - 2] == ' ') e_version[n - 2] = 0;
     if (!beenhere) {
         beenhere = 1;
         shp = sh_getinterp();
@@ -1249,7 +1273,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     sh_offstate(shp, SH_INIT);
     login_files[0] = (char *)e_profile;
     shp->gd->login_files = login_files;
-    shp->bltindata.version = nget_version(NULL, NULL);
+    shp->bltindata.version = SH_VERSION;
     shp->bltindata.shp = shp;
     shp->bltindata.shrun = sh_run;
     shp->bltindata.shexit = sh_exit;

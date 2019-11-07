@@ -225,7 +225,6 @@ typedef void (*sighandler_t)(int);
 
 // Types that are needed in many places but which are difficult to define in the header containing
 // the structure definition due to circular includes that would otherwise result.
-typedef struct Namfun Namfun_t;      // from name.h
 typedef struct Namval Namval_t;      // from name.h
 typedef struct Shell_s Shell_t;      // from shell.h
 typedef struct Shbltin_s Shbltin_t;  // from shcmd.h

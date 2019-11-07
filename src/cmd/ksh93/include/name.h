@@ -201,6 +201,7 @@ struct Value {
 #define IS_VT(value_obj, which) is_vt(value_obj, which)
 #define IS_VTP(value_objp, which) is_vtp(value_objp, which)
 
+typedef struct Namfun Namfun_t;
 typedef struct Namdisc Namdisc_t;
 typedef struct Nambfun Nambfun_t;
 typedef struct Namarray Namarr_t;

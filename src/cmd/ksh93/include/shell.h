@@ -87,8 +87,7 @@ extern const char e_format[];
 extern const char e_number[];
 extern const char e_restricted[];
 extern const char e_recursive[];
-extern const char *e_version;
-extern const char *ksh_version;
+extern char e_version[];
 
 typedef struct sh_scope {
     struct sh_scope *par_scope;
