@@ -365,7 +365,7 @@ static int hist_nearend(History_t *hp, Sfio_t *iop, off_t size) {
     // Skip to marker command and return the number. Numbering commands occur after a null and begin
     // with HIST_CMDNO.
     while (true) {
-        cp = buff = (unsigned char *)sfreserve(iop, SF_UNBOUND, SF_LOCKR | SF_WRITE);
+        cp = buff = (unsigned char *)sfreserve(iop, SF_UNBOUND, SF_LOCKR | SF_RDWR);
         if (!cp) break;
 
         n = sfvalue(iop);

@@ -1,3 +1,10 @@
+# ksh 2020.0.1
+
+## Notable fixes and improvements
+
+- Fix `history` command behavior when the *~/.sh_history* file has
+  specific content (issue #1432).
+
 # ksh 2020.0.0
 
 This documents changes since the AST code, which includes the `ksh` program,
