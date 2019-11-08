@@ -746,19 +746,19 @@ int hist_match(History_t *hp, off_t offset, char *string, int *coffset) {
 }
 
 //
-// Copy command <command> from history file to s1. At most <size> characters copied. If s1==0 the
+// Copy command <command> from history file to s1. At most <size> characters copied. If s1==NULL the
 // number of lines for the command is returned. Set line=linenumber for emacs copy and only this
 // line of command will be copied. Set line < 0 for full command copy.
 //
 // Return -1 if there is no history file.
 //
 int hist_copy(char *s1, int size, int command, int line) {
-    int c;
     History_t *hp = shgd->hist_ptr;
-    int count = 0;
-    char *s1max = s1 + size;
-
     if (!hp) return -1;
+
+    int c;
+    int count = 0;
+
     hist_seek(hp, command);
     while ((c = sfgetc(hp->histfp)) && c != EOF) {
         if (c == '\n') {
@@ -769,7 +769,7 @@ int hist_copy(char *s1, int size, int command, int line) {
             }
         }
         if (s1 && (line < 0 || line == count)) {
-            if (s1 >= s1max) {
+            if (s1 >= s1 + size) {
                 *--s1 = 0;
                 break;
             }
@@ -777,7 +777,7 @@ int hist_copy(char *s1, int size, int command, int line) {
         }
     }
     sfseek(hp->histfp, (off_t)0, SEEK_END);
-    if (s1 == 0) return count;
+    if (!s1) return count;
     if (count && (c = *(s1 - 1)) == '\n') s1--;
     *s1 = '\0';
     return count;
@@ -787,13 +787,14 @@ int hist_copy(char *s1, int size, int command, int line) {
 // Return word number <word> from command number <command>.
 //
 char *hist_word(char *string, int size, int word) {
+    History_t *hp = hist_ptr;
+    if (!hp) return NULL;
+
     int c;
     char *s1 = string;
     unsigned char *cp = (unsigned char *)s1;
     int flag = 0;
-    History_t *hp = hist_ptr;
 
-    if (!hp) return NULL;
     hist_copy(string, size, hp->histind - 1, -1);
     for (; (c = *cp); cp++) {
         c = isspace(c);
@@ -808,9 +809,9 @@ char *hist_word(char *string, int size, int word) {
     }
     *cp = 0;
 
-    // These strings can overlap if the text preceding the word we want to
-    // return has a length less than or equal to the length of the word to be
-    // returned. Therefore memmove() must be used. See https://github.com/att/ast/issues/1370.
+    // These strings can overlap if the text preceding the word we want to return has a length less
+    // than or equal to the length of the word to be returned. Therefore memmove() must be used. See
+    // https://github.com/att/ast/issues/1370.
     if (s1 != string) memmove(string, s1, strlen(s1) + 1);
 
     return string;
