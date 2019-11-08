@@ -23,7 +23,6 @@ fi
 cd "$MESON_BUILD_ROOT"
 
 # Generate header files whose content depends on the current platform.
-"$MESON_SOURCE_ROOT/scripts/siglist.sh" > features/siglist.h
 # shellcheck disable=SC2086
 $CC -D_BLD_DLL $INC_DIRS -std=gnu99 -o "sfinit" "$MESON_SOURCE_ROOT/etc/sfinit.c"
 ./sfinit > features/sfinit.h
