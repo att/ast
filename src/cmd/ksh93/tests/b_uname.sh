@@ -2,7 +2,7 @@
 
 # ==========
 # uname -x
-# Verify an unknown flag is handled as a usage error.
+# Verify an unknown option is handled as a usage error.
 actual=$(uname -x 2>&1)
 expect="uname: -x: unknown option"
 [[ "$actual" =~ "$expect".* ]] || log_error "uname -x" "$expect" "$actual"

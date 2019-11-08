@@ -36,7 +36,7 @@ function grep
             -b*)    print 'b option not supported';;
             -e*)    shift;expr="$1";;
             -f*)    shift;expr=$(< $1);;
-            -*)    print $0: 'unknown flag';return 2;;
+            -*)     print "$0: unknown option"; return 2;;
             *)
                 if test "$expr" = ''
                 then
