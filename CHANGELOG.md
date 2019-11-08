@@ -1,4 +1,4 @@
-# ksh git head (version TBD, this is a work in progress)
+# ksh 2020.1.0 (this is a work in progress)
 
 ## Deprecations
 
@@ -9,6 +9,8 @@
 
 ## Notable fixes and improvements
 
+- Fix `history` command behavior when the *~/.sh_history* file has
+  specific content (issue #1432).
 - A ${.sh.install_prefix}/config.ksh file will be sourced if it exists. It is
   the first config file loaded by every ksh instance. It is loaded regardless
   of whether the shell is interactive, login, or neither.
