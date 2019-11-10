@@ -252,16 +252,19 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
     comptr = stkalloc(shp->stk, sizeof(struct comnod));
     ap = stkseek(shp->stk, ARGVAL);
 
-    {
-        // Adjust cur.
-        int c;
-        wchar_t *cp;
-        cp = (wchar_t *)outbuff + *cur;
-        c = *cp;
+    // This can be called with *cur == -1 if we're expanding commands at the start of the command
+    // line. It's not clear if this can ever be called with *cur == 0 but that presumably also means
+    // there are no chars to convert. See https://github.com/att/ast/issues/1429.
+    if (*cur > 0) {
+        wchar_t *cp = (wchar_t *)outbuff + *cur;
+        int c = *cp;
         *cp = 0;
-        *cur = ed_external((wchar_t *)outbuff, (char *)stkptr(shp->stk, 0));
+        *cur = ed_external((wchar_t *)outbuff, stkptr(shp->stk, 0));
         *cp = c;
         *eol = ed_external((wchar_t *)outbuff, outbuff);
+    } else {
+        *cur = *eol = 0;
+        *outbuff = *(char *)stkptr(shp->stk, 0) = 0;
     }
 
     out = outbuff + *cur + (sh_isoption(shp, SH_VI) != 0);
