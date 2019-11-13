@@ -716,7 +716,6 @@ int setall(char **argv, nvflag_t flag, Dt_t *troot, struct tdata *tp) {
 static_fn int print_namval(Sfio_t *file, Namval_t *np, bool omit_attrs, struct tdata *tp) {
     char *cp;
     int indent = tp->indent, outname = 0, isfun;
-    struct Ufunction *rp;
 
     sh_sigcheck(tp->sh);
     if (tp->noref && nv_isref(np)) return 0;
@@ -749,11 +748,13 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, bool omit_attrs, struct t
         }
     }
     if (isfun) {
+        struct Ufunction *rp = FETCH_VT(np->nvalue, rp);
         Sfio_t *iop = NULL;
         char *fname = NULL;
+
         if (nv_isattr(np, NV_NOFREE)) return 0;
         if (!omit_attrs) {
-            if (!FETCH_VT(np->nvalue, ip)) {
+            if (!rp) {
                 sfputr(file, "typeset -fu", ' ');
             } else if (!nv_isattr(np, NV_FPOSIX)) {
                 sfputr(file, "function", ' ');
@@ -763,14 +764,16 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, bool omit_attrs, struct t
         if (tp->wctname) cp += strlen(tp->wctname) + 1;
         sfputr(file, cp, -1);
         if (nv_isattr(np, NV_FPOSIX)) sfwrite(file, "()", 2);
-        rp = FETCH_VT(np->nvalue, rp);
+
+        // Has the function been defined in which case we know where it came from? Or just marked
+        // to be autoloaded in which case we know we can't print the definition of the function?
         if (rp && rp->hoffset >= 0) {
             fname = rp->fname;
         } else {
-            omit_attrs = false;
+            omit_attrs = true;
         }
+
         if (omit_attrs) {
-            rp = FETCH_VT(np->nvalue, rp);
             if (tp->pflag && rp && rp->hoffset >= 0) {
                 sfprintf(file, " #line %d %s\n", rp->lineno, fname ? sh_fmtq(fname) : "");
             } else {
@@ -778,7 +781,7 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, bool omit_attrs, struct t
             }
         } else {
             if (nv_isattr(np, NV_FTMP)) {
-                fname = 0;
+                fname = NULL;
                 iop = tp->sh->heredocs;
             } else if (fname) {
                 iop = sfopen(iop, fname, "r");
