@@ -455,21 +455,20 @@ int sh_iorenumber(Shell_t *shp, int f1, int f2) {
 //
 int sh_close(int fd) {
     Shell_t *shp = sh_getinterp();
-    Sfio_t *sp;
-    int r = 0;
 
     if (!sh_iovalidfd(shp, fd)) {
         errno = EBADF;
         return -1;
     }
 
-    if (!(sp = shp->sftable[fd]) || (sffileno(sp) != fd) || (sfclose(sp) < 0)) {
+    Sfio_t *sp = shp->sftable[fd];
+    if (!sp || sffileno(sp) != fd || sfclose(sp) < 0) {
         if (fdnotify) (*fdnotify)(fd, SH_FDCLOSE);
         close(fd);
     }
 
-    if (fd > 2) shp->sftable[fd] = 0;
-    r = (shp->fdstatus[fd] >> 8);
+    if (fd > STDERR_FILENO) shp->sftable[fd] = 0;
+    int r = (shp->fdstatus[fd] >> 8);
     if (r) close(r);
     shp->fdstatus[fd] = IOCLOSE;
     if (shp->fdptrs[fd]) *shp->fdptrs[fd] = -1;
