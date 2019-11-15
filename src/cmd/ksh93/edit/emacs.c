@@ -253,7 +253,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 goto do_default_processing;
             }
             case cntl('V'): {
-                emacs_show_info(ep, fmtident(e_version));
+                emacs_show_info(ep, e_version);
                 continue;
             }
             case '\0': {
@@ -662,7 +662,7 @@ static_fn int emacs_escape(Emacs_t *ep, wchar_t *out, int count) {
     if (value < 0) value = 1;
     switch (ch = i) {
         case cntl('V'): {
-            emacs_show_info(ep, fmtident(e_version));
+            emacs_show_info(ep, e_version);
             return -1;
         }
         case ' ': {

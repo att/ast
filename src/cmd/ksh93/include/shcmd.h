@@ -25,6 +25,8 @@
 #ifndef _SHCMD_H
 #define _SHCMD_H 1
 
+#include "sfio.h"
+
 #define SH_PLUGIN_VERSION 20111111L
 
 // #define SHLIB(m)
@@ -54,5 +56,6 @@ struct Shbltin_s {
 #define bltin_checksig(c) (c && c->sigset)
 
 extern int cmdinit(int, char **, Shbltin_t *, int);
+extern Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp);
 
 #endif  // _SHCMD_H

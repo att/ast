@@ -6,7 +6,6 @@ libast_files += [
     'string/fmtelapsed.c',
     'string/fmtesc.c',
     'string/fmtfmt.c',
-    'string/fmtident.c',
     'string/fmtint.c',
     'string/fmtmatch.c',
     'string/fmtmode.c',

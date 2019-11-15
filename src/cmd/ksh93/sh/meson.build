@@ -1,4 +1,9 @@
+vcs_version = vcs_tag(command: ['git', 'describe', '--always', '--dirty', '--tags'],
+                      input: 'version.c.in', output: 'version.c',
+                      fallback: get_option('fallback-version-number'))
+
 ksh93_files += [
+    vcs_version,
     'sh/args.c',
     'sh/arith.c',
     'sh/array.c',

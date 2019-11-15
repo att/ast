@@ -5,7 +5,6 @@ ksh93_incdir = include_directories('include',
                                    '../../lib/libast/include/',
                                    '../../lib/libdll/')
 
-subdir('include')
 subdir('bltins')
 subdir('cmds')
 subdir('data')

@@ -422,10 +422,12 @@ static_fn int cntlmode(Vi_t *vp) {
                 break;
             }
             case cntl('V'): {
-                const char *p = fmtident(e_version);
                 vi_save_v(vp);
                 vi_del_line(vp, BAD);
+
+                const char *p = e_version;
                 while ((c = *p++)) append(vp, c, APPEND);
+
                 vi_refresh(vp, CONTROL);
                 ed_getchar(vp->ed, -1);
                 vi_restore_v(vp);

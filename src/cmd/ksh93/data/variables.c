@@ -26,7 +26,6 @@
 #include "defs.h"
 #include "name.h"
 #include "shtable.h"
-#include "variables.h"  // IWYU pragma: keep
 
 //
 // This is the list of built-in shell variables and default values and default attributes.
@@ -58,7 +57,7 @@ const struct shtable2 shtab_variables[] = {
     {".sh.subscript", 0, NULL},
     {".sh.subshell", NV_INTEGER | NV_SHORT | NV_NOFREE, NULL},
     {".sh.value", 0, NULL},
-    {".sh.version", NV_NOFREE, (char *)(&e_version[10])},
+    {".sh.version", NV_NOFREE, NULL},
     {"CDPATH", 0, NULL},
     {"COLUMNS", 0, NULL},
     {"COMPREPLY", 0, NULL},
