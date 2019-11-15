@@ -1,0 +1,28 @@
+# vim: set filetype=expect:
+#
+# Tests of `typeset` keyword/builtin.
+set pid [spawn $ksh]
+expect_prompt
+# Terminal rows and columns may default to zero so ensure sane values.
+send "stty rows 24 cols 80\r"
+expect_prompt
+
+# ==========
+# Ensure enumerating functions works if any of them are marked autoloaded but not actually loaded.
+# Regression: https://github.com/att/ast/issues/1436
+log_test_entry
+send "functions\r"
+expect -re "\r\ntypeset -fu _cd\r\n.*\r\ntypeset -fu pushd\r\n" {
+    puts "typeset -f produces expected output"
+}
+expect_prompt
+
+# ==========
+# Exit the shell.
+log_test_entry
+send "\r"
+expect_prompt
+send [ctrl D]
+catch {expect default exp_continue} output
+log_debug "EOF output: $output"
+wait

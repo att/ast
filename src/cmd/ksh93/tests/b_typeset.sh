@@ -1,22 +1,4 @@
-########################################################################
-#                                                                      #
-#               This software is part of the ast package               #
-#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
-#                      and is licensed under the                       #
-#                 Eclipse Public License, Version 1.0                  #
-#                    by AT&T Intellectual Property                     #
-#                                                                      #
-#                A copy of the License is available at                 #
-#          http://www.eclipse.org/org/documents/epl-v10.html           #
-#         (with md5 checksum b35adb5213ca9657e911e9befb180842)         #
-#                                                                      #
-#              Information and Software Systems Research               #
-#                            AT&T Research                             #
-#                           Florham Park NJ                            #
-#                                                                      #
-#                    David Korn <dgkorn@gmail.com>                     #
-#                                                                      #
-########################################################################
+# Tests for `typeset` builtin.
 
 integer n=2
 
@@ -952,6 +934,7 @@ $SHELL 2> /dev/null -c 'typeset -T a_t=(x=3 y=4); a_t b=(x=1)' || log_error 'Can
 
 $SHELL 2> /dev/null -c 'typeset -T X=(typeset x; function x.get { :; }); X -a xs=((x=yo) (x=jo)); [[ $(typeset -p xs) == "X -a xs=((x=yo) (x=jo))" ]]' || log_error 'X -a xs=((v1) (v2)) where X is a type, not working'
 
+# ==========
 # Verify -u converts string to uppercase regardless of whether or not it is
 # also exported or tagged.
 typeset -u test_u=uppercase
@@ -960,3 +943,57 @@ typeset -txu test_txu=uppercase
 [[ $test_u != "UPPERCASE" ]] && log_error "typeset -u failed"
 [[ $test_xu != "UPPERCASE" ]] && log_error "typeset -xu failed"
 [[ $test_txu != "UPPERCASE" ]] && log_error "typeset -txu failed"
+
+# ==========
+# Ensure "typeset" for "declare and assign" and "assign after declare" behaves the same.
+# Regression: https://github.com/att/ast/issues/1312
+typeset KEY='k1'
+
+unset A_ASSO
+typeset -A A_ASSO
+actual=$(typeset -p A_ASSO)
+expect='typeset -A A_ASSO=()'
+[[ "$actual" == "$expect" ]] ||
+    log_error 'typeset -p output incorrect' "$expect" "$actual"
+
+typeset -A A_ASSO[${KEY}].COMPOUND_SUBNAME="declare_and_assign_noindex_fail"
+actual=$(typeset -p A_ASSO)
+expect='typeset -A A_ASSO=([k1]=(typeset -A COMPOUND_SUBNAME=([0]=declare_and_assign_noindex_fail);))'
+[[ "$actual" == "$expect" ]] ||
+    log_error 'typeset -p output incorrect' "$expect" "$actual"
+
+unset B_ASSO
+typeset -A B_ASSO
+typeset -A B_ASSO[${KEY}].COMPOUND_SUBNAME[0]="declare_and_assign_index_succ"
+actual=$(typeset -p B_ASSO)
+expect='typeset -A B_ASSO=([k1]=(typeset -a COMPOUND_SUBNAME=(declare_and_assign_index_succ);))'
+[[ "$actual" == "$expect" ]] ||
+    log_error 'typeset -p output incorrect' "$expect" "$actual"
+
+unset C_ASSO
+typeset -A C_ASSO
+typeset -A C_ASSO[${KEY}].COMPOUND_SUBNAME
+C_ASSO[${KEY}].COMPOUND_SUBNAME="assign_after_declare_noindex_succ"
+actual=$(typeset -p C_ASSO)
+expect='typeset -A C_ASSO=([k1]=(typeset -A COMPOUND_SUBNAME=([0]=assign_after_declare_noindex_succ);))'
+[[ "$actual" == "$expect" ]] ||
+    log_error 'typeset -p output incorrect' "$expect" "$actual"
+
+unset D_ASSO
+typeset -A D_ASSO
+typeset -A D_ASSO[${KEY}].COMPOUND_SUBNAME
+D_ASSO[${KEY}].COMPOUND_SUBNAME[0]="assign_after_declare_index_succ"
+actual=$(typeset -p D_ASSO)
+expect='typeset -A D_ASSO=([k1]=(typeset -A COMPOUND_SUBNAME=([0]=assign_after_declare_index_succ);))'
+[[ "$actual" == "$expect" ]] ||
+    log_error 'typeset -p output incorrect' "$expect" "$actual"
+
+# ==========
+# Ensure enumerating functions works if any of them are marked autoloaded but not actually loaded.
+# Regression: https://github.com/att/ast/issues/1436
+#
+# Use a subshell so we don't have to worry about anything done by prior tests vis-a-vis functions.
+actual=$($SHELL -c 'typeset -f')
+expect='typeset -fu _cd*typeset -fu pushd'
+[[ "$actual" == $expect ]] ||
+    log_error 'typeset -f output incorrect' "$expect" "$actual"
