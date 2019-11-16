@@ -52,7 +52,17 @@ that ship packages for current development version.
 TBD
 
 ### macOS
-TBD
+Using [MacPorts](https://www.macports.org), the latest stable version can be installed using:
+
+```
+sudo port install ksh
+```
+
+Alternately, a development version can be installed using:
+
+```
+sudo port install ksh-devel
+```
 
 
 ## Contributing changes to the source code
