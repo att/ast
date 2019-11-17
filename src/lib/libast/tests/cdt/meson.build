@@ -4,8 +4,10 @@ test_dir = meson.current_source_dir()
 # timeout or fail on most platforms:
 #   ['tsafehash.c', 120], ['tsafetree.c', 120],
 tests = ['tannounce', 'tbags', 'tdeque', 'tdict', 'tdtstack', 'tevent', 'tinstall', 'tlist',
-         'tobag', 'tqueue', 'trhbags', 'tsearch', 'tstringset', 'tuser', 'tvthread', 'twalk',
-         'tview', 'trehash']
+         'tobag', 'tqueue', 'trhbags', 'tsearch', 'tstringset', 'tuser',
+         # See https://github.com/att/ast/issues/1428 for why this test is disabled.
+         # 'tvthread',
+         'twalk', 'tview', 'trehash']
 
 incdir = include_directories('..', '../../include/')
 
