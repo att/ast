@@ -64,6 +64,23 @@ Alternately, a development version can be installed using:
 sudo port install ksh-devel
 ```
 
+## Versioning
+
+We have switched from the legacy versioning scheme to
+[semantic versioning](https://github.com/att/ast/issues/335). The first
+release after the last stable, ksh93u+, release is version 2020.0.0 which has
+numeric version number 20200000. This means you can still evaluate
+`$KSH_VERSION` or `${.sh.version}` in numeric context to determine if the
+current shell is older or newer than a specific release (e.g., 20120801 for
+the ksh93u+ release).
+
+If the shell is built without Git metadata a hardcoded value is used. That
+value will be one of two things. If building from a stable release branch
+it will be whatever value was assigned to that branch; e.g., 2020.0.1.
+If building from the master, experimental, branch it will be the most
+recent major release number and 99 for the minor and patch levels; e.g.,
+2020.99.99. This should serve as a warning that you don't really know
+what commit was used when building ksh.
 
 ## Contributing changes to the source code
 
@@ -128,13 +145,13 @@ the current development version of ksh93. It only contains source code
 for ksh93 and the libraries required to build it.
 
 The [2012-08-01-master branch](https://github.com/att/ast/commits/2012-08-01-master)
-contains the last stable release of
-full AST source code. It contains one cherry-picked
+contains the last stable release, ksh93u+,
+of full AST source code. It contains one cherry-picked
 [change](https://github.com/att/ast/commit/e79c29295092fe2b2282d134e2b7cce32ec9dcac)
 to allow building on Linux.
 
 The [2016-01-10-beta branch](https://github.com/att/ast/commits/2016-01-10-beta) contains
-the last beta release of full AST source code plus a number of patches
+the last beta release, ksh93v-, of full AST source code plus a number of patches
 that were later added on top of it. Changes for the legacy AST project are
 normally merged to this branch.
 

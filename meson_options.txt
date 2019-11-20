@@ -35,7 +35,7 @@ option('build-api-tests-only', type : 'boolean', value : false)
 
 # This number is used when git is not available
 #   meson -Dfallback-version-number='x.y.z'
-option('fallback-version-number', type : 'string', value : '2020.0.0-beta1')
+option('fallback-version-number', type : 'string', value : '2020.99.99')
 
 # To build with support for ASAN (AddressSanitizer:
 #   meson -DASAN=true

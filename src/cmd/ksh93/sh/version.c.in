@@ -5,6 +5,11 @@
 const char *ksh_version = "@VCS_TAG@";
 const char *e_version =
     "Version "
+    // Do not remove this string. See https://github.com/att/ast/issues/1443. There may be people or
+    // scripts depending on "Version A" being present to distinguish this code from ksh clones even
+    // though there is no guarantee legacy ksh builds include this string. So even if we ultimately
+    // remove the insecure command audit facility this string needs to be retained. See also
+    // https://github.com/att/ast/issues/240.
     "A"
 #if SHOPT_BASH
     "B"
