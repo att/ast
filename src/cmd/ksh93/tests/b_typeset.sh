@@ -992,8 +992,12 @@ expect='typeset -A D_ASSO=([k1]=(typeset -A COMPOUND_SUBNAME=([0]=assign_after_d
 # Ensure enumerating functions works if any of them are marked autoloaded but not actually loaded.
 # Regression: https://github.com/att/ast/issues/1436
 #
-# Use a subshell so we don't have to worry about anything done by prior tests vis-a-vis functions.
-actual=$($SHELL -c 'typeset -f')
-expect='typeset -fu _cd*typeset -fu pushd'
+# Use a new shell so we don't have to worry about anything done by prior tests vis-a-vis functions.
+# Also, the `LANG=C` is because on some platforms the sort order, even for en_US.UTF-8, can differ
+# with respect to underscore characters. But the C locale guarantees an ordering we can depend on.
+# This deals with the fact some function names have leading underscores to indicate they are private
+# to the ksh implementation.
+actual=$(LANG=C $SHELL -c 'typeset -f')
+expect='typeset -fu _ksh_print_help*typeset -fu pushd'
 [[ "$actual" == $expect ]] ||
     log_error 'typeset -f output incorrect' "$expect" "$actual"

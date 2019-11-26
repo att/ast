@@ -249,7 +249,7 @@ function foobar
 }
 !
 chmod +x $TEST_DIR/foobar
-FPATH="$TEST_DIR:$FPATH"
+FPATH="$TEST_DIR:$BASE_FPATH"
 print 'function zzz { return 7; }' > zzz
 PATH="$SAFE_PATH"
 zzz
@@ -496,7 +496,7 @@ then
 fi
 cd $TEST_DIR
 
-FPATH="$TEST_DIR:$FPATH"
+FPATH="$TEST_DIR:$BASE_FPATH"
 print ': This does nothing' > foobar
 chmod +x foobar
 unset -f foobar
@@ -1147,8 +1147,8 @@ log_info 'TODO: Enable shcomp tests'
 #    rm -f "$TEST_DIR/functions"
 #    chmod +x $TEST_DIR/foobar
 #    rm $TEST_DIR/!(dir|foobar)
-#    FPATH="$TEST_DIR:$FPATH"
-#    PATH=$TEST_DIR:$PATH
+#    FPATH="$TEST_DIR:$BASE_FPATH"
+#    PATH=$FPATH:$PATH
 #    foobar
 #++++
 #) == foo ]] > /dev/null  || log_error 'functions compiled with shcomp not working'
@@ -1160,8 +1160,8 @@ log_info 'TODO: Enable shcomp tests'
 ## test for functions in shell having side effects.
 unset -f foo foobar bar
 cd "$TEST_DIR"
-FPATH="$PWD:$FPATH"
-PATH="$PWD:$PATH"
+FPATH="$PWD:$BASE_FPATH"
+PATH=$FPATH:$PATH
 cat > foo <<- \EOF
 	function bar
 	{

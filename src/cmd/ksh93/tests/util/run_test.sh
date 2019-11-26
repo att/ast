@@ -186,8 +186,8 @@ fi
 #
 TEST_DIR=$(mktemp -dt "ksh.${test_name}.XXXXXX") || { log_error "mktemp -dt failed"; exit 1; }
 export TEST_DIR
-cd "$TEST_DIR" || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 1; }
 log_info "TEST_DIR=$TEST_DIR"
+cd "$TEST_DIR" || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 1; }
 
 #
 # Make sure we search for external commands in the temporary test dir, then the test source dir,
@@ -207,6 +207,8 @@ export OLD_PATH=$PATH
 export SAFE_PATH="$TEST_DIR:$TEST_DIR/space dir:$TEST_ROOT:$BUILD_DIR/src/cmd/builtin"
 export FULL_PATH=$SAFE_PATH:/xxx/bsd:/usr/gnu/bin:/usr/xpg4/bin:$OLD_PATH
 export PATH=$FULL_PATH
+# shellcheck disable=SC2153
+export BASE_FPATH=$FPATH
 
 #
 # Create a couple of named pipes (fifos) for the unit test to use as barriers rather than using

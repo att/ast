@@ -438,12 +438,14 @@ OLDPWD=$TEST_DIR/oldpwd
 cd - > $TEST_DIR/cd.out
 actual=$(< $TEST_DIR/cd.out)
 expect="$TEST_DIR/oldpwd"
-[[ $actual == $expect ]] || log_error "cd - does not recognize overridden OLDPWD variable"
-[[ $PWD == $expect ]] || log_error "cd - does not recognize overridden OLDPWD variable"
+[[ $actual == $expect ]] ||
+    log_error "cd - does not recognize overridden OLDPWD variable" "$expect" "$actual"
+[[ $PWD == $expect ]] ||
+    log_error "cd - does not recognize overridden OLDPWD variable" "$expect" "$actual"
 
 cd $TEST_DIR
 [[ $(OLDPWD="$TEST_DIR/oldpwd" cd -) == "$TEST_DIR/oldpwd" ]] ||
-    log_error "cd - does not recognize overridden OLDPWD variable if it is overridden in new scope"
+    log_error "cd - does not recognize overridden OLDPWD variable if overridden in new scope" "$expect" "$actual"
 
 [[ $(pwd -f $fd) == /dev ]] || log_error "pwd -f $fd should be /dev"
 

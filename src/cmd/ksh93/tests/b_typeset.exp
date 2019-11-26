@@ -12,7 +12,7 @@ expect_prompt
 # Regression: https://github.com/att/ast/issues/1436
 log_test_entry
 send "functions\r"
-expect -re "\r\ntypeset -fu _cd\r\n.*\r\ntypeset -fu pushd\r\n" {
+expect -re "\r\ntypeset -fu _ksh_print_help\r\n.*\r\ntypeset -fu pushd\r\n" {
     puts "typeset -f produces expected output"
 }
 expect_prompt

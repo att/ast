@@ -42,18 +42,10 @@ do
     typeset -fu "${f##*/}"  # this is `basename` but faster
 done
 
-# Global vars for the `_cd`, `mcd`, `pushd`, `popd`, `dirs` functions.
+# Global vars for the `cd`, `dirs`, `mcd`, `pushd`, `popd`, `prevd`, `nextd` functions.
 integer _push_max="${CDSTACK:-32}"
 integer _push_top="${CDSTACK:-32}"
 # shellcheck disable=SC2034  # this var is used by autoloaded functions
 typeset -a _push_stack
-
-# Prefer the `cd` function to the `cd` builtin as the function is needed for functions like
-# `dirs` and `popd` to work. Only do this for interactive shells.
-if [[ $- == *i* && -f "$__fpath/_cd" ]]
-then
-    unalias cd 2>/dev/null  # the alias probably doesn't exist so don't complain in that case
-    alias cd=_cd
-fi
 
 unset __fpath

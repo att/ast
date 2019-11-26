@@ -45,6 +45,7 @@ readonly NO_BUILTINS_PATH
 readonly FULL_PATH
 readonly OLD_PATH
 readonly SAFE_PATH
+readonly BASE_FPATH
 readonly SRC_ROOT
 readonly TEST_DIR
 readonly TEST_ROOT
