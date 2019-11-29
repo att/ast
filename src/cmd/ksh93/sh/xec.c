@@ -168,20 +168,6 @@ static_fn void get_cpu_times(struct timeval *tv_usr, struct timeval *tv_sys) {
 
 #endif  // _lib_getrusage
 
-static_fn struct timeval clock_t_delta(int clk_tck, clock_t after, clock_t before) {
-    struct timeval tv_after, tv_before, tv;
-
-    double dtime = (double)after / clk_tck;
-    tv_after.tv_sec = floor(dtime);
-    tv_after.tv_usec = 1000000 * (dtime - tv_after.tv_sec);
-    dtime = (double)before / clk_tck;
-    tv_before.tv_sec = floor(dtime);
-    tv_before.tv_usec = 1000000 * (dtime - tv_before.tv_sec);
-
-    timersub(&tv_after, &tv_before, &tv);
-    return tv;
-}
-
 static inline double timeval_to_double(struct timeval tv) {
     return (double)tv.tv_sec + ((double)tv.tv_usec / 1000000.0);
 }
