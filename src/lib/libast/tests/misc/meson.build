@@ -25,7 +25,7 @@ foreach test_name: tests
     skip_test = false
     foreach skip : tests_to_skip
         if ('*' == skip[0] or system == skip[0]) and test_name == skip[1]
-            warning('skipping ' + test_name + ' on ' + system)
+            warning('skipping test "' + test_name + '" on ' + system)
             skip_test = true
             # break  # Not until meson 0.49
         endif
