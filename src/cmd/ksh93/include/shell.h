@@ -40,6 +40,10 @@
 #include "shcmd.h"
 #include "stk.h"
 
+#if USE_SPAWN
+#include "spawnvex.h"
+#endif  // USE_SPAWN
+
 typedef void (*Shinit_f)(Shell_t *, int);
 
 #define SH_CFLAG 0
