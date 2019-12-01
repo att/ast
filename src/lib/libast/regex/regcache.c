@@ -26,6 +26,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <locale.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -35,7 +36,10 @@
 #define CACHE 8  /* default # cached re's       */
 #define ROUND 64 /* pattern buffer size round   */
 
-typedef unsigned long Key_t;
+typedef union {
+    char chr[4];
+    uint32_t uint;
+} Key_t;
 
 typedef struct Cache_s {
     char *pattern;
@@ -119,12 +123,9 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
         regex_flushcache();
     }
 
-    /*
-     * check if the pattern is in the cache
-     */
-
-    for (i = 0; i < sizeof(key) && pattern[i]; i++) ((char *)&key)[i] = pattern[i];
-    for (; i < sizeof(key); i++) ((char *)&key)[i] = 0;
+    // Check if the pattern is in the cache.
+    key.uint = 0;
+    for (i = 0; i < sizeof(key) && pattern[i]; i++) key.chr[i] = pattern[i];
     empty = unused = -1;
     old = 0;
     for (i = matchstate.size; i--;) {
@@ -132,7 +133,7 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
             empty = i;
         } else if (!matchstate.cache[i]->keep) {
             unused = i;
-        } else if (*(Key_t *)matchstate.cache[i]->pattern == key &&
+        } else if (((Key_t *)matchstate.cache[i]->pattern)->uint == key.uint &&
                    !strcmp(matchstate.cache[i]->pattern, pattern) &&
                    matchstate.cache[i]->reflags == reflags) {
             break;
