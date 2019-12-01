@@ -61,7 +61,7 @@ struct _glob_ {
 
     const char *gl_fignore;
     const char *gl_suffix;
-    unsigned char *gl_intr;
+    const unsigned char *gl_intr;
 
     int gl_delim;
 

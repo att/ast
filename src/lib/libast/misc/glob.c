@@ -483,7 +483,7 @@ int ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), gl
     int optlen = 0;
     int suflen = 0;
     int extra = 1;
-    unsigned char intr = 0;
+    static unsigned char intr = 0;
 
     gp->gl_rescan = 0;
     gp->gl_error = 0;
