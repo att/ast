@@ -339,6 +339,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
             }
             case A_PUSHN: {
                 cp = roundptr(ep, cp, Sfdouble_t);
+                // cppcheck-suppress invalidPointerCast
                 num = *((Sfdouble_t *)cp);
                 cp += sizeof(Sfdouble_t);
                 *++sp = num;
@@ -932,6 +933,7 @@ again:
                 if (op == A_DIG || op == A_LIT || lvalue.isfloat == TYPE_LD) {
                     sfputc(shp->stk, A_PUSHN);
                     if (vp->staksize++ >= vp->stakmaxsize) vp->stakmaxsize = vp->staksize;
+                    // cppcheck-suppress invalidPointerCast
                     stkpush(shp->stk, vp, d, Sfdouble_t);
                     sfputc(shp->stk, lvalue.isfloat);
                 }
