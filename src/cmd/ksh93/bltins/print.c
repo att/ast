@@ -194,7 +194,9 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 // as if `--` was seen. Meaning a second `-n` is treated as a literal `-n` to be
                 // printed.
                 argv += optget_ind;
+                // cppcheck-suppress negativeIndex
                 int n = strlen(argv[-1]);
+                // cppcheck-suppress negativeIndex
                 if (!(argv[-1][0] == '-' && argv[-1][n - 1] == 'R')) {
                     // The current flag must be of the form -*R?.
                     char *R_opt = strchr(*argv, 'R');
@@ -237,6 +239,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
     }
 
     // Handle special case of '-' operand for print. But only if -R wasn't used.
+    // cppcheck-suppress negativeIndex
     if (!R_flag && argc > 0 && *argv && strcmp(*argv, "-") == 0 && strcmp(argv[-1], "--")) argv++;
     return sh_print(argv, shp, &prdata);
 }
