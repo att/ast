@@ -28,14 +28,14 @@
 #include "name.h"
 #include "shell.h"
 
-#define PATH_PATH 0001
-#define PATH_FPATH 0002
-#define PATH_CDPATH 0004
-#define PATH_BFPATH 0010
-#define PATH_SKIP 0020
-#define PATH_BUILTIN_LIB 0040
-#define PATH_STD_DIR 0100  // directory is on  $(getconf PATH)
-#define PATH_BIN 0200      // path behaves like /bin for builtins
+#define PATH_PATH (1 << 0)
+#define PATH_FPATH (1 << 1)  // do not change this value; see can_execute() and path_absolute()
+#define PATH_CDPATH (1 << 2)
+#define PATH_BFPATH (1 << 3)
+#define PATH_SKIP (1 << 4)
+#define PATH_BUILTIN_LIB (1 << 5)
+#define PATH_STD_DIR (1 << 6)  // directory is on  $(getconf PATH)
+#define PATH_BIN (1 << 7)      // path behaves like /bin for builtins
 
 #define PATH_OFFSET 2  // path offset for path_join
 #define MAXDEPTH 1024  // maximum recursion depth
