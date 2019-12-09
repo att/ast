@@ -1536,26 +1536,6 @@ portion of
 .I word\^
 will be re-evaluated for each element.
 .TP
-.PD 0
-\f3${\fP\f2parameter\^\fP\f3^\fP\f2pattern\^\fP\f3}\fP
-.TP
-\f3${\fP\f2parameter\^\fP\f3^^\fP\f2pattern\^\fP\f3}\fP
-.TP
-\f3${\fP\f2parameter\^\fP\f3,\fP\f2pattern\^\fP\f3}\fP
-.TP
-\f3${\fP\f2parameter\^\fP\f3,,\fP\f2pattern\^\fP\f3}\fP
-.PD
-Case  modification.   This expansion modifies the case of alphabetic
-characters in parameter.  The \f2pattern\fP is expanded to  produce a  pattern
-just as in pathname expansion.  The \f3^\fP operator converts lowercase
-characters matching \f2pattern\fP to uppercase.  The  \f3,\fP operator
-converts matching uppercase characters to lowercase.  The \f3^^\fP and
-\f3,,\fP expansions  convert  all  matched  character  in  the
-expanded  value.  The  \f3^\fP and \f3,\fP expansions match and convert only
-the first character in the expanded value.  If pattern is  omitted
-it is treated like a \f2?\fP, which matches every character.
-If \f2parameter\fP is \f3@\fP or \f3*\fP, or an array subscripted by \f3@\fP
-or \f3*\fP, the case modification operation is  applied to each element.
 
 .PP
 The following
