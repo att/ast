@@ -4,6 +4,8 @@
 
 ## Notable non-backward compatible changes
 
+- You can no longer use arbitrary expressions in imported numeric env vars;
+  only integer literals are allowed.
 - The `login` and `newgrp` special builtins have been removed. Use
   `exec login` and `exec newgrp` instead (#1348).
 

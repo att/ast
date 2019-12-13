@@ -856,3 +856,26 @@ for exp in 65535 65536
 do    got=$($SHELL -c 'x=$(printf "%.*c" '$exp' x); print ${#x}' 2>&1)
     [[ $got == $exp ]] || log_error "large command substitution failed" "$exp" "$got"
 done
+
+# ==========
+# Verify that importing untrusted env vars does not allow evaluating arbitrary expressions but does
+# recognize all integer literals recognized by ksh.
+expect=8
+actual=$(env SHLVL='7' $SHELL -c 'echo $SHLVL')
+[[ $actual == $expect ]] || log_error "decimal int literal not recognized" "$expect" "$actual"
+
+expect=14
+actual=$(env SHLVL='013' $SHELL -c 'echo $SHLVL')
+[[ $actual == $expect ]] || log_error "leading zeros int literal not recognized" "$expect" "$actual"
+
+expect=4
+actual=$(env SHLVL='2#11' $SHELL -c 'echo $SHLVL')
+[[ $actual == $expect ]] || log_error "base#value int literal not recognized" "$expect" "$actual"
+
+expect=12
+actual=$(env SHLVL='16#B' $SHELL -c 'echo $SHLVL')
+[[ $actual == $expect ]] || log_error "base#value int literal not recognized" "$expect" "$actual"
+
+expect=1
+actual=$(env SHLVL="2#11+x[\$($bin_echo DANGER WILL ROBINSON >&2)0]" $SHELL -c 'echo $SHLVL')
+[[ $actual == $expect ]] || log_error "expression allowed on env var import" "$expect" "$actual"
