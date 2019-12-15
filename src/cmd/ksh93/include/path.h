@@ -34,7 +34,7 @@
 #define PATH_BFPATH (1 << 3)
 #define PATH_SKIP (1 << 4)
 #define PATH_BUILTIN_LIB (1 << 5)
-#define PATH_STD_DIR (1 << 6)  // directory is on  $(getconf PATH)
+#define PATH_STD_DIR (1 << 6)  // directory is on $(getconf PATH)
 #define PATH_BIN (1 << 7)      // path behaves like /bin for builtins
 
 #define PATH_OFFSET 2  // path offset for path_join
