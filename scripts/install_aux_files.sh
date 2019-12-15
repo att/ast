@@ -3,6 +3,8 @@
 # Do installation steps that are hard to do via standard Meson functions such
 # as `install_subdir()`.
 #
+export KSH_VERSION=$($MESON_BUILD_ROOT/src/cmd/ksh93/ksh -c 'echo ${.sh.version}')
+
 ksh_aux_dir="${MESON_INSTALL_DESTDIR_PREFIX}/share/ksh"
 ksh_man_dir="$ksh_aux_dir/man"
 ksh_man_src="$MESON_SOURCE_ROOT/src/cmd/ksh93/docs"

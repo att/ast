@@ -1,3 +1,5 @@
+import os
+
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -14,16 +16,17 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-
 # -- Project information -----------------------------------------------------
 
-project = 'Korn Shell'
+# We want the current project version rather than today's date in the
+# documentation where a date would normally appear; e.g., the last line
+# of a man page.
+ksh_version = os.getenv('KSH_VERSION', default='1111.22.33')
+today = ksh_version
+
+project = 'Korn Shell v' + ksh_version
 copyright = '2019, David J. Korn, et.al.'
 author = 'David J. Korn, et.al.'
-
-# The full version, including alpha/beta/rc tags
-release = '2020.0.0'
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -40,7 +43,6 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
 
 # -- Options for HTML output -------------------------------------------------
 
