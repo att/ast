@@ -31,12 +31,14 @@ for i in \
 do	case $i in
 	-*)	op=$i; continue ;;
 	esac
-	if	test $op $i
+	if	test "$op" "$i"
 	then	ok=1
 		break
 	fi
-	set x $i.[0-9]*
-	if	test $op $2
+	# shellcheck disable=SC2121
+	# We're deliberately setting the "argv" strings.
+	set x "$i".[0-9]*
+	if	test "$op" "$2"
 	then	ok=1
 		break
 	fi

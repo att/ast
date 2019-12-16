@@ -12,6 +12,7 @@ function man {
         [[ -n $manpath_cmd ]] && manpath="$($manpath_cmd)"
     fi
     local -x MANPATH="$manpath"
+    # shellcheck disable=SC2154
     local ksh_manpath="${.sh.install_prefix}/share/ksh/man"
     if [[ -d "$ksh_manpath" && -n "$MANPATH" ]]
     then

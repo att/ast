@@ -7,6 +7,7 @@
 #
 function _ksh_print_help {
     local cmd=$1
+    # shellcheck disable=SC2154
     local man_dir="${.sh.install_prefix}/share/ksh/man"
     local fname="$man_dir/man1/${cmd}.1"
 

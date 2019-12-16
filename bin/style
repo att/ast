@@ -33,7 +33,7 @@ typeset -a c_files=()
 typeset -a files=()
 
 function semver {
-    echo $1 | awk '{ split($1, v, "."); printf "%d%03d%03d\n", v[1], v[2], v[3] }'
+    print -- "$1" | awk '{ split($1, v, "."); printf "%d%03d%03d\n", v[1], v[2], v[3] }'
 }
 
 # Deal with any CLI flags.
@@ -60,14 +60,14 @@ fi
 if command -v clang-format > /dev/null
 then
     cformat_ver=$(clang-format --version | awk '{ print $3 }')
-    if [[ $(semver $cformat_ver) -lt $(semver $MIN_CFORMAT_VER) ]]
+    if [[ $(semver "$cformat_ver") -lt $(semver "$MIN_CFORMAT_VER") ]]
     then
         echo
         echo "ERROR: clang-format version $cformat_ver less than min required $MIN_CFORMAT_VER"
         echo
         exit 1
     fi
-    if [[ $(semver $cformat_ver) -gt $(semver $MAX_CFORMAT_VER) ]]
+    if [[ $(semver "$cformat_ver") -gt $(semver "$MAX_CFORMAT_VER") ]]
     then
         echo
         echo "ERROR: clang-format version $cformat_ver greater than max allowed $MAX_CFORMAT_VER"
@@ -88,7 +88,7 @@ then
         echo >&2
         echo 'You have uncommitted changes. Cowardly refusing to restyle the entire code base.' >&2
         echo 'We do not want to include style cleanups unrelated to your work in progress.' >&2
-        echo 'It should be sufficient to simply run `bin/style` to fix issues with your wip.' >&2
+        echo 'It should be sufficient to simply run bin/style to fix issues with your wip.' >&2
         echo >&2
         exit
     fi

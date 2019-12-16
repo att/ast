@@ -1,4 +1,7 @@
 #!/usr/bin/env ksh
+# shellcheck disable=SC2034
+# This module defines a bunch of vars that are not used by this module but are, potentially, used
+# when this module is combined with specific unit tests.
 #
 # Setup the environment for the unit test.
 #
@@ -26,7 +29,8 @@ bin_true=$(whence -p true)
 bin_uname=$(whence -p uname)
 
 # We have tests that should only run if the `nc` (netcat) command is available.
-whence -q nc && readonly nc_available=yes || readonly nc_available=no
+whence -q nc && nc_available=yes || nc_available=no
+readonly nc_available
 
 # There are at least two tests that are broken if all builtins are enabled by munging PATH.
 # So make it easy for a unit test to not enable all builtins by default. See issue #960.
@@ -54,19 +58,19 @@ integer error_count=0
 integer start_of_test_lineno=0  # redefined later to be read-only
 
 function log_info {
-    typeset lineno=$(( $1 < 0 ? $1 : $1 - $start_of_test_lineno ))
-    print -r "<I> ${test_name}[$lineno]: ${@:2}"
+    typeset lineno=$(( $1 < 0 ? $1 : $1 - start_of_test_lineno ))
+    print -r "<I> ${test_name}[$lineno]: ${*:2}"
 }
 alias log_info='log_info $LINENO'
 
 function log_warning {
-    typeset lineno=$(( $1 < 0 ? $1 : $1 - $start_of_test_lineno ))
-    print -u2 -r "<W> ${test_name}[$lineno]: ${@:2}"
+    typeset lineno=$(( $1 < 0 ? $1 : $1 - start_of_test_lineno ))
+    print -u2 -r "<W> ${test_name}[$lineno]: ${*:2}"
 }
 alias log_warning='log_warning $LINENO'
 
 function log_error {
-    typeset lineno=$(( $1 < 0 ? $1 : $1 - $start_of_test_lineno ))
+    typeset lineno=$(( $1 < 0 ? $1 : $1 - start_of_test_lineno ))
     typeset msg="$2"
     print -u2 -r "<E> ${test_name}[$lineno]: $msg"
     if (( $# > 2 ))
@@ -97,17 +101,17 @@ function empty_fifos {
     typeset _x
 
     print -u8 fifo8
-    while read -u8 _x  # try to empty the fifo
+    while read -r -u8 _x  # try to empty the fifo
     do
         [[ $_x == fifo8 ]] && break
-        'log_error' $_line_num "fifo8 unexpectedly had data" "" "$_x"
+        'log_error' "$_line_num" "fifo8 unexpectedly had data" "" "$_x"
     done
 
     print -u9 fifo9
-    while read -u9 _x  # try to empty the fifo
+    while read -r -u9 _x  # try to empty the fifo
     do
         [[ $_x == fifo9 ]] && break
-        'log_error' $_line_num "fifo9 unexpectedly had data" "" "$_x"
+        'log_error' "$_line_num" "fifo9 unexpectedly had data" "" "$_x"
     done
 }
 alias empty_fifos='empty_fifos $LINENO'

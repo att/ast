@@ -1,11 +1,13 @@
 #!/bin/sh -x
-# Run shellcheck on scripts under bin and scripts directories
-# shellcheck disable=SC2046,SC2038
-typeset -a dirs=(.copr bin scripts \
-                 src/cmd/ksh93/functions \
-                 src/cmd/ksh93/tests/util \
-                 src/lib/libast/tests)
-shellcheck -s ksh $(find "${dirs[@]}" -type f |
-                    xargs file |
+#
+# Run shellcheck on all scripts that are not unit test scripts. The latter
+# should not have a `#!/bin/sh` like shebang line. That will cause the `file`
+# command to not classify them as shell scripts. All other scripts, even those
+# meant to be `source`d or equivalent should have a shebang line that
+# identifies them as a shell script.
+#
+# shellcheck disable=SC2046
+shellcheck -s ksh $(find ./* -type f -print0 |
+                    xargs -0 file |
                     grep -E '(shell|ksh) script' |
                     cut -d':' -f1)

@@ -56,19 +56,19 @@ export MESON_TEST_TIMEOUT=99
 
 function log_info {
     typeset lineno=$1
-    print -r "<I> run_test[$lineno]: ${@:2}"
+    print -r "<I> run_test[$lineno]: ${*:2}"
 }
 alias log_info='log_info $LINENO'
 
 function log_warning {
     typeset lineno=$1
-    print -u2 -r "<W> run_test[$lineno]: ${@:2}"
+    print -u2 -r "<W> run_test[$lineno]: ${*:2}"
 }
 alias log_warning='log_warning $LINENO'
 
 function log_error {
     typeset lineno=$1
-    print -u2 -r "<E> run_test[$lineno]: ${@:2}"
+    print -u2 -r "<E> run_test[$lineno]: ${*:2}"
 }
 alias log_error='log_error $LINENO'
 
@@ -104,20 +104,20 @@ fi
 
 if [[ $# -ne 1 ]]
 then
-    log_error "Expected one arg (the test name) possibly preceded by 'shcomp' or 'api', got $#: $@"
+    log_error "Expected one arg (the test name) possibly preceded by 'shcomp' or 'api', got $#: $*"
     exit 99
 fi
 
 # If the test should be skipped do so.
 readonly test_name=$1
-[[ $shcomp == skip && test_name == *.exp ]] && exit $MESON_SKIPPED_TEST
+[[ $shcomp == skip && $test_name == *.exp ]] && exit $MESON_SKIPPED_TEST
 for test in "${tests_to_skip[@]}"
 do
     system=${test% *}
     test_to_skip=${test#* }
-    [[ $shcomp == true && $system == shcomp && $test_to_skip == $test_name ]] && \
+    [[ $shcomp == true && $system == shcomp && $test_to_skip == "$test_name" ]] && \
         exit $MESON_SKIPPED_TEST
-    [[ $system == $MESON_SYSTEM && $test_to_skip == $test_name ]] && \
+    [[ $system == "$MESON_SYSTEM" && $test_to_skip == "$test_name" ]] && \
         exit $MESON_SKIPPED_TEST
 done
 
@@ -132,7 +132,8 @@ fi
 #
 # A test may need to alter its behavior based on the OS we're running on.
 #
-export OS_NAME=$(uname -s | tr '[A-Z]' '[a-z]')
+OS_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
+export OS_NAME
 
 #
 # Make sure $USER is set. A CI/CB environment might not set it.
@@ -140,7 +141,8 @@ export OS_NAME=$(uname -s | tr '[A-Z]' '[a-z]')
 #
 if [[ -z $USER ]]
 then
-    export USER=$(id -un)
+    USER=$(id -un)
+    export USER
 fi
 
 # Scale the meson test timeout if a multiplier value is in the environment. Note that this requires
@@ -185,9 +187,9 @@ fi
 # our purposes that doesn't matter. It simply means the temp file name will contain the X's on a BSD
 # system.
 #
-export TEST_DIR=$(mktemp -dt ksh.${test_name}.XXXXXX) ||
-    { log_error "mktemp -dt failed"; exit 99; }
-cd $TEST_DIR || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 99; }
+TEST_DIR=$(mktemp -dt "ksh.${test_name}.XXXXXX") || { log_error "mktemp -dt failed"; exit 99; }
+export TEST_DIR
+cd "$TEST_DIR" || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 99; }
 log_info "TEST_DIR=$TEST_DIR"
 
 #
@@ -234,7 +236,7 @@ log_info ITERS_PER_10MS=$ITERS_PER_10MS
 #
 # We don't want the tests to modify the command history and the like of the user running the tests.
 #
-mkdir $TEST_DIR/home
+mkdir "$TEST_DIR/home"
 mkdir "$TEST_DIR/home/space dir"
 export HOME=$TEST_DIR/home
 export HISTFILE=$TEST_DIR/sh_history
@@ -245,36 +247,36 @@ typeset -a failure_lines
 
 # Run a ksh API test. Modeled loosely on the older run_interactive function.
 function run_api {
-    $test_path > $test_name.out 2> $test_name.err
+    $test_path > "$test_name.out" 2> "$test_name.err"
     exit_status=$?
 
     if [[ -e $TEST_ROOT/$test_name.out ]]
     then
-        if ! diff -q $TEST_ROOT/$test_name.out $test_name.out > /dev/null
+        if ! diff -q "$TEST_ROOT/$test_name.out" "$test_name.out" > /dev/null
         then
             log_error "Stdout for $test_name had unexpected differences:"
-            diff -U3 $TEST_ROOT/$test_name.out $test_name.out >&2
+            diff -U3 "$TEST_ROOT/$test_name.out" "$test_name.out" >&2
             exit_status=1
         fi
     elif [[ -s $test_name.out ]]
     then
             log_error "Stdout for $test_name should have been empty:"
-            cat $test_name.out >&2
+            cat "$test_name.out" >&2
             exit_status=1
     fi
 
     if [[ -e $TEST_ROOT/$test_name.err ]]
     then
-        if ! diff -q $TEST_ROOT/$test_name.err $test_name.err > /dev/null
+        if ! diff -q "$TEST_ROOT/$test_name.err" "$test_name.err" > /dev/null
         then
             log_error "Stderr for $test_name had unexpected differences:"
-            diff -U3 $TEST_ROOT/$test_name.err $test_name.err >&2
+            diff -U3 "$TEST_ROOT/$test_name.err" "$test_name.err" >&2
             exit_status=1
         fi
     elif [[ -s $test_name.err ]]
     then
             log_error "Stderr for $test_name should have been empty:"
-            cat $test_name.err >&2
+            cat "$test_name.err" >&2
             exit_status=1
     fi
 
@@ -282,8 +284,8 @@ function run_api {
     then
         # We only remove the temp test dir if the test is successful. Otherwise we leave it since
         # it may contain useful clues about why the test failed.
-        cd /tmp
-        rm -rf $TEST_DIR
+        cd /tmp || exit 99
+        rm -rf "$TEST_DIR"
     fi
 
     return $exit_status
@@ -295,63 +297,63 @@ function run_interactive {
     # This is a no-op on the first invocation. It is needed so retries have a clean slate.
     if [[ -f $HOME/.kshrc ]]
     then
-        rm -rf *
-        mkdir $HOME
+        rm -rf -- *
+        mkdir "$HOME"
     fi
 
-    cp $TEST_ROOT/util/interactive.kshrc $HOME/.kshrc
+    cp "$TEST_ROOT/util/interactive.kshrc" "$HOME/.kshrc"
 
     # Use pre-populated history file for `hist` command unit test.
     if [[ $test_name == "b_hist.exp" ]]; then
-        cp $TEST_ROOT/data/sh_history $HISTFILE
+        cp "$TEST_ROOT/data/sh_history" "$HISTFILE"
     fi
 
     exec 9<>fifo9
     rm -f interactive.tmp.log
-    expect -n -c "source $TEST_ROOT/util/interactive.expect.rc" -f $test_path \
-        > $test_name.out 2> $test_name.err &
+    expect -n -c "source $TEST_ROOT/util/interactive.expect.rc" -f "$test_path" \
+        > "$test_name.out" 2> "$test_name.err" &
     expect_pid=$!
     # Spawn a background task to kill the `expect` if it gets too close to the meson timeout.
     (
-        read -t $(( TIMEOUT - SECONDS - 1 )) -u9 _x
-        [[ $_x == done ]] && exit 0
+        read -r -t $(( TIMEOUT - SECONDS - 1 )) -u9 _x
+        [[ $_x == 'done' ]] && exit 0
         kill -USR1 $expect_pid
         sleep 0.1
         kill -0 $expect_pid && kill -KILL $expect_pid
     ) &
     wait $expect_pid
     exit_status=$?
-    print -u9 done
+    print -u9 'done'
     (( exit_status == 265 )) && exit_status=$MESON_TEST_TIMEOUT
     (( exit_status == MESON_TEST_TIMEOUT )) && final_iteration=1
 
     if [[ -e $TEST_ROOT/$test_name.out ]]
     then
-        if ! diff -q $TEST_ROOT/$test_name.out $test_name.out > /dev/null
+        if ! diff -q "$TEST_ROOT/$test_name.out" "$test_name.out" > /dev/null
         then
             log_error "Stdout for $test_name had unexpected differences:"
-            diff -U3 $TEST_ROOT/$test_name.out $test_name.out >&2
+            diff -U3 "$TEST_ROOT/$test_name.out" "$test_name.out" >&2
             (( exit_status == 0 )) && exit_status=1
         fi
     elif [[ -s $test_name.out ]]
     then
             log_error "Stdout for $test_name should have been empty:"
-            cat $test_name.out >&2
+            cat "$test_name.out" >&2
             (( exit_status == 0 )) && exit_status=1
     fi
 
     if [[ -e $TEST_ROOT/$test_name.err ]]
     then
-        if ! diff -q $TEST_ROOT/$test_name.err $test_name.err > /dev/null
+        if ! diff -q "$TEST_ROOT/$test_name.err" "$test_name.err" > /dev/null
         then
             log_error "Stderr for $test_name had unexpected differences:"
-            diff -U3 $TEST_ROOT/$test_name.err $test_name.err >&2
+            diff -U3 "$TEST_ROOT/$test_name.err" "$test_name.err" >&2
             (( exit_status == 0 )) && exit_status=1
         fi
     elif [[ -s $test_name.err ]]
     then
             log_error "Stderr for $test_name should have been empty:"
-            cat $test_name.err >&2
+            cat "$test_name.err" >&2
             (( exit_status == 0 )) && exit_status=1
     fi
 
@@ -359,12 +361,12 @@ function run_interactive {
     then
         # We only remove the temp test dir if the test is successful. Otherwise we leave it since
         # it may contain useful clues about why the test failed.
-        cd /tmp
-        rm -rf $TEST_DIR
+        cd /tmp || exit 99
+        rm -rf "$TEST_DIR"
     else
         # The final `.*` is because there may be a [ctrl-M] present (@#%! windows line endings).
         typeset line=$(sed -ne 's/^.*(file .*\.exp" line \([0-9]*\)).*$/\1/p' interactive.tmp.log)
-        failure_lines+=(${line:-0})
+        failure_lines+=("${line:-0}")
 
         if [[ $final_iteration -eq 0 ]]
         then
@@ -468,25 +470,30 @@ else
     # Create the actual unit test script by concatenating the stock preamble and postscript to the
     # unit test. Then run the composed script.
     readonly test_script=$test_name
-    echo "#!$SHELL"                    > $test_script
-    cat $TEST_ROOT/util/preamble.sh   >> $test_script
-    cat $test_path                    >> $test_script
-    cat $TEST_ROOT/util/postscript.sh >> $test_script
-    chmod 755 $test_script
+    {
+        print "#!$SHELL"
+        cat "$TEST_ROOT/util/preamble.sh"
+        cat "$test_path"
+        cat "$TEST_ROOT/util/postscript.sh"
+    } > "$test_script"
+    chmod 755 "$test_script"
     if [[ $shcomp == false ]]
     then
-        $SHELL -p $TEST_DIR/$test_script $test_name < /dev/null
+        $SHELL -p "$TEST_DIR/$test_script" "$test_name" < /dev/null
         exit_status=$?
     else
-        $SHCOMP $test_script > $test_script.shcomp || exit
-        $SHELL -p $TEST_DIR/$test_script.shcomp $test_name < /dev/null
+        # shellcheck disable=SC2153
+        # SHCOMP should be exported by the test framework.
+        [[ -n $SHCOMP ]] || exit 99
+        "$SHCOMP" "$test_script" > "$test_script.shcomp" || exit
+        "$SHELL" -p "$TEST_DIR/$test_script.shcomp" "$test_name" < /dev/null
         exit_status=$?
     fi
 
-    if (( $exit_status == 0 || $exit_status == $MESON_SKIPPED_TEST ))
+    if (( exit_status == 0 || exit_status == MESON_SKIPPED_TEST ))
     then
-        cd /tmp
-        rm -rf $TEST_DIR
+        cd /tmp || exit 99
+        rm -rf "$TEST_DIR"
     fi
     exit $exit_status
 fi
