@@ -1,3 +1,5 @@
+#!/usr/bin/env ksh
+#
 # This is invoked by Meson to run each ksh unit test; including the `expect` based interactive
 # tests. This script is responsible for setting up the test environment and managing the execution
 # of each test. Including skipping tests that aren't compatible with the platform. It is expected to

@@ -1,3 +1,4 @@
+#!/usr/bin/env ksh
 #
 # Verify that the fifos are empty and exit with a zero status if no errors else an error count that
 # doesn't overflow what can safely be represented in the exit status.

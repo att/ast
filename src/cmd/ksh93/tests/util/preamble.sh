@@ -1,3 +1,4 @@
+#!/usr/bin/env ksh
 #
 # Setup the environment for the unit test.
 #

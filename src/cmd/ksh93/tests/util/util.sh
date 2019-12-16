@@ -1,3 +1,4 @@
+#!/usr/bin/env ksh
 #
 # These mimic the functions of the same name in preamble.sh. This module is intended to be prefixed
 # to subshell scripts run by unit tests.
