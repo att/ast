@@ -1,3 +1,4 @@
+#!/usr/bin/env ksh
 # Format and display manual pages. The primary purpose of this function is to prepend the directory
 # containing the ksh man pages to MANPATH so that they are given priority when searching for a
 # matching man page.

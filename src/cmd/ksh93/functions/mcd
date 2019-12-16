@@ -1,3 +1,4 @@
+#!/usr/bin/env ksh
 # Menu driven change directory command.
 function mcd {
     typeset dir="${PWD#$HOME/}"

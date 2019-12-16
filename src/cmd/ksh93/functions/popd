@@ -1,3 +1,4 @@
+#!/usr/bin/env ksh
 # Pops the top directory
 function popd {
     typeset dir

@@ -1,3 +1,4 @@
+#!/usr/bin/env ksh
 # Change directory and put directory on front of stack
 function pushd {
     typeset dir=''

@@ -1,3 +1,4 @@
+#!/usr/bin/env ksh
 # Display directory stack -- $HOME displayed as ~.
 function dirs {
     typeset dir="${PWD#$HOME/}"

@@ -12,28 +12,29 @@ function _ksh_print_help {
 
     if [[ ! -f $fname ]]
     then
-        print -u2 Unable to find man page for $cmd command
+        print -u2 "Unable to find man page for $cmd command"
         return 1  # can't find the man page; give up
     fi
 
     # Find the `ul` command to translate x\cHx sequences, etc., into bold chars and such. Pagers
     # like `less` do this but better to not rely on them. If `ul` is not available just pipe the
     # nroff output unmodified.
-    local ul=$(whence ul)
-    [[ -z $ul ]] && ul=cat
+    local ul
+    ul=$(whence ul || print cat)
 
     # Try to determine an optimal line length for the output.
     local cols=80
     if [[ -t 0 && -t 1 ]]
     then
-        stty size | read _ cols
+        stty size | read -r _ cols
     fi
     cols=$(( cols - 4 ))  # leave a little space on the right side of the screen
 
     # Convert the nroff source for the command into something that looks good on the terminal.
     # Specifically, by elimating all the text outside of the SYNOPSIS and FLAGS sections while
     # attempting to preserve some of the highlighting understood by the terminal.
-    local nroff_cmd=$(whence -p nroff)
+    local nroff_cmd
+    nroff_cmd=$(whence -p nroff)
     if [[ -n $nroff_cmd ]]
     then
         nroff -c -man -rLL=${cols}n "$fname"

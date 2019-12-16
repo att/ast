@@ -1,3 +1,4 @@
+#!/usr/bin/env ksh
 # Change directory and push the directory on the dir stack. This also recognizes some extensions su
 # has `cd -2` to cd to the second most recently visited directory.
 function _cd {
