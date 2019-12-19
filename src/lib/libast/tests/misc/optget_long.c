@@ -464,7 +464,15 @@ static void test_options_with_values() {
 }
 
 // Old GNU `getopt_long_only()` implementations, such as found in Fedora 28, have a bug which makes
-// them unsuitable for verifying the correctness of our tests.
+// them unsuitable for verifying the correctness of our tests. On some platforms it may not exist.
+#if defined(__NetBSD__)
+
+void check_for_getopt_long_only_bug() {
+    getopt_long_only_works = false;  // it doesn't exist which is why it doesn't work
+}
+
+#else  // defined(__NetBSD__)
+
 void check_for_getopt_long_only_bug() {
     char *const argv[] = {"cmd", "-vHUP", "arg1", NULL};
     int argc = argv_len(argv);
@@ -484,6 +492,8 @@ broken:
     tinfo("getopt_long_only() is broken -- skipping those tests");
     getopt_long_only_works = false;
 }
+
+#endif  // defined(__NetBSD__)
 
 tmain() {
     UNUSED(argc);
