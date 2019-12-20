@@ -31,9 +31,12 @@ fi
 
 # ==========
 # SECONDS tracks time correctly.
+#
+# The wide range of acceptable values is because when running on VMs like Travis CI (especially its
+# macOS VMs) the sleep time can be considerably longer than we asked for.
 SECONDS=0
 sleep 0.1
-(( SECONDS > 0.05 && SECONDS < 0.2 )) || log_error "SECONDS variable not working" "0.100" "$SECONDS"
+(( SECONDS > 0.05 && SECONDS < 0.3 )) || log_error "SECONDS variable not working" "0.100" "$SECONDS"
 
 # ==========
 # _
