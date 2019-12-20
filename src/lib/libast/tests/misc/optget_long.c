@@ -24,6 +24,11 @@ struct optget_test {
 
 // Old GNU `getopt_long_only()` implementations have a bug. See `check_for_getopt_long_only_bug()`.
 static bool getopt_long_only_works = true;
+#if !_lib_getopt_long_only
+// This won't actually be used. It's just the simplest way to silence build errors if the symbol
+// doesn't exist.
+#define getopt_long_only getopt_long
+#endif  // !_lib_getopt_long_only
 
 #define TERROR(line, ...)                        \
     do {                                         \
@@ -465,13 +470,7 @@ static void test_options_with_values() {
 
 // Old GNU `getopt_long_only()` implementations, such as found in Fedora 28, have a bug which makes
 // them unsuitable for verifying the correctness of our tests. On some platforms it may not exist.
-#if defined(__NetBSD__)
-
-void check_for_getopt_long_only_bug() {
-    getopt_long_only_works = false;  // it doesn't exist which is why it doesn't work
-}
-
-#else  // defined(__NetBSD__)
+#if _lib_getopt_long_only
 
 void check_for_getopt_long_only_bug() {
     char *const argv[] = {"cmd", "-vHUP", "arg1", NULL};
@@ -493,7 +492,13 @@ broken:
     getopt_long_only_works = false;
 }
 
-#endif  // defined(__NetBSD__)
+#else  // _lib_getopt_long_only
+
+void check_for_getopt_long_only_bug() {
+    getopt_long_only_works = false;  // it doesn't exist which is why it doesn't work
+}
+
+#endif  // _lib_getopt_long_only
 
 tmain() {
     UNUSED(argc);

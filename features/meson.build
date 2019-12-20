@@ -87,6 +87,9 @@ if feature_data.get('_lib_lchmod', 0) == 0
     endif
 endif
 
+feature_data.set10('_lib_getopt_long_only',
+    cc.has_function('getopt_long_only', prefix: '#include <getopt.h>',
+                    args: feature_test_args))
 feature_data.set10('_lib_getrusage',
     cc.has_function('getrusage',
         prefix: '\n'.join(['#include <sys/resource.h>', '#include <sys/time.h>']),
