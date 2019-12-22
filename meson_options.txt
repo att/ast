@@ -15,7 +15,7 @@ option('unittest', type : 'boolean', value : false)
 # TODO: Use the following definition when we can count on Meson 0.45 being
 # available on the platforms we care about. For the moment we're stuck with
 # Meson 0.44.
-# option('read-timeout', type : 'integer', min : 0, value : 0)
+#   option('read-timeout', type : 'integer', min : 0, value : 0)
 #
 option('read-timeout', type : 'string', value : '0')
 
@@ -25,13 +25,17 @@ option('read-timeout', type : 'string', value : '0')
 #
 option('audit-file', type : 'string', value : '/etc/ksh_audit')
 
-# To disable building api tests, set build-api-tests option to false:
-#   meson -Dbuild-api-tests=false
-option('build-api-tests', type : 'boolean', value : true)
-
 # To build api tests only, set build-api-tests-only option to true:
 #   meson -Dbuild-api-tests-only=true
 option('build-api-tests-only', type : 'boolean', value : false)
+
+# To disable running API tests, set build-api-tests option to false:
+#   meson -Dbuild-api-tests=false
+option('build-api-tests', type : 'boolean', value : true)
+
+# To disable running */shcomp tests, set build-shcomp-tests option to false:
+#   meson -Dbuild-shcomp-tests=false
+option('build-shcomp-tests', type : 'boolean', value : true)
 
 # This number is used when git is not available
 #   meson -Dfallback-version-number='x.y.z'

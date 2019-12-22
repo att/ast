@@ -284,12 +284,42 @@ The `--setup=malloc` will enable malloc integrity features provided by your
 system's malloc implementation if it supports such things via environment
 variables. That flag can be omitted but its use is recommended.
 
+### Disabling some tests.
+
+You can minimize total test time by changing some build time defaults. This
+can be useful to minimize test run time on your local system(s) since:
+
+a) We expect API tests to never fail since the core APIs (e.g., SFIO) rarely
+  change and thus should never fail their unit tests.
+
+b) We expect shcomp and non-shcomp variants to pass/fail in lock step. So
+  normally there is no reason to run the `*/shcomp` variants.
+
+That is done by configuring the build thusly:
+
+```
+  meson -Dbuild-api-tests=false -Dbuild-shcomp-tests=false
+```
+
+Obviously, all CI environments should enable both sets of tests, at least
+some, if not all, of the time, and it would be a good idea for everyone
+else to occassionally enable both sets of tests. Which is why the default
+is for both sets to be enabled. You have to deliberately disable those
+sets of tests if you care about the overhead they add.
+
+You can also enable just the API tests, thus skipping all the ksh script
+tests, by doing
+
+```
+  meson -Dbuild-api-tests-only=true
+```
+
 ### Testing with ASAN -- AddressSanitizer
 
 At the moment this only works on Linux using gcc.
 
-Configure with `meson -DASAN=true -Dbuild-api-tests=false`. Then build with
-`ninja` as usual. Run the tests with `meson test --setup=asan`.
+Configure with `meson -DASAN=true`. Then build with `ninja` as usual. Run
+the tests with `meson test --setup=asan`.
 
 You will need to install the `llvm-symbolizer` tool if the gcc version is less
 than 4.9.3. For example, on OpenSuse 42.3 you'll need to run `sudo zypper

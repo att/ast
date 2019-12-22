@@ -61,8 +61,12 @@ ld_library_path = 'LD_LIBRARY_PATH=' + ':'.join(
 # Sample loadable builtin will be loaded from this path in builtins test cases
 libsample_path = 'LIBSAMPLE_PATH=' + libsample.full_path()
 
-subdir('tests/api')
-# Check if only api tests should be built
+# Check if API tests should be built.
+if get_option('build-api-tests') == true
+    subdir('tests/api')
+endif
+
+# Check if only API tests should be built.
 if get_option('build-api-tests-only') == false
     subdir('tests')
 endif

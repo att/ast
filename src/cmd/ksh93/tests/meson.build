@@ -139,7 +139,7 @@ foreach testspec : all_tests
               system_var, timeout_var])
 
     # The shcomp variants are only applicable to the non-interactive tests.
-    if not test_name.endswith('.exp')
+    if get_option('build-shcomp-tests') == true and not test_name.endswith('.exp')
         # Run the test after compiling the script with `shcomp`.
         test(test_name + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
             args: ['-p', test_driver, 'shcomp', test_name],

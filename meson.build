@@ -297,7 +297,7 @@ run_command('scripts/libast_prereq.sh')
 subdir('src/lib/libast')
 subdir('src/lib/libdll')
 
-# Check if api tests should be built
+# Check if API tests should be built.
 if get_option('build-api-tests') == true
     subdir('src/lib/libast/tests/')
 endif
