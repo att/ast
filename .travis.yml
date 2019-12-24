@@ -1,98 +1,32 @@
+# Test compatibility with applications written in ksh
 sudo: required
-language: c
-
-# Get full repo to correctly determine tags from commits
-git:
-    depth: false
-
-# Use docker to test builds on different Linux distros.
-# Latest stable image of each distro is pulled to test builds.
-matrix:
-    include:
-        # https://hub.docker.com/_/fedora/
-        - os: linux
-          compiler: gcc
-          env:
-            - DISTRO_TYPE=fedora
-              INSTALL_REQUIREMENTS="dnf repolist; dnf --allowerasing install -y gcc python3 meson sudo langpacks-zh_CN ed ncurses vi findutils which nmap-ncat expect git glibc-all-langpacks procps diffutils"
-          before_install:
-              - docker pull ${DISTRO_TYPE}
-
-        # https://hub.docker.com/_/opensuse/
-        # Note: Meson 0.44.0 is the newest version that works with Python
-        # 3.4 available on OpenSuse Leap. See issue #430.
-        - os: linux
-          compiler: gcc
-          env:
-            - DISTRO_TYPE=opensuse/tumbleweed
-              INSTALL_REQUIREMENTS="zypper refresh; zypper in -y gcc python3 python3-pip ninja sudo glibc-locale glibc-devel ed ncurses-utils vim findutils which netcat expect git man groff; pip3 install meson==0.44.0"
-          before_install:
-              - docker pull ${DISTRO_TYPE}
-
-        # https://hub.docker.com/_/ubuntu/
-        # Ubuntu requires explicitly generating en_US.UTF-8 locale
-        - os: linux
-          compiler: gcc
-          env:
-            - DISTRO_TYPE=ubuntu
-              INSTALL_REQUIREMENTS="apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -yq gcc python3 sudo locales ed vim python3-pip ninja-build findutils debianutils netcat-openbsd expect git procps man groff; pip3 install meson==0.44.0; locale-gen en_US.UTF-8"
-          before_install:
-              - docker pull ${DISTRO_TYPE}
-
-        # https://hub.docker.com/_/debian/
-        # Debian requires explicitly generating en_US.UTF-8 locale too
-        - os: linux
-          compiler: gcc
-          env:
-            - DISTRO_TYPE=debian
-              INSTALL_REQUIREMENTS="apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -yq gcc python3 python3-pip ninja-build sudo locales ed vim procps findutils debianutils netcat-openbsd expect git man groff; pip3 install meson==0.44.0; sed -i '/# en_US.UTF-8 UTF-8/s/..//' /etc/locale.gen && locale-gen"
-          before_install:
-              - docker pull ${DISTRO_TYPE}
-
-        # https://hub.docker.com/r/i386/ubuntu/
-        # 32-bit environment
-        # i686 images are built officially by docker but not supported
-        # https://github.com/docker-library/official-images#architectures-other-than-amd64
-        - os: linux
-          compiler: gcc
-          env:
-            - DISTRO_TYPE=i386/ubuntu
-              INSTALL_REQUIREMENTS="apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -yq gcc python3 sudo locales ed vim python3-pip ninja-build findutils debianutils netcat-openbsd expect git man groff; pip3 install meson==0.44.0; locale-gen en_US.UTF-8"
-          before_install:
-              - docker pull ${DISTRO_TYPE}
-
-        - os: osx
-          compiler: clang
-          before_install:
-              # Note that scripts/build-on-macos.sh will install the
-              # prerequisites such as Meson and Sphinx using HomeBrew. This is
-              # obviously different compared to the Linux platforms.
-              - brew update
-          env:
-              # This variable is not required by macOS builds, but setting it for Travis dashboard.
-              - DISTRO_TYPE=macOS
-
-        - os: linux
-          env:
-            - SCAN_TYPE="shellcheck"
-          before_install:
-              - sudo apt-get update
-              - sudo apt-get install shellcheck findutils file
 
 services:
     - docker
 
+matrix:
+    include:
+        - os: linux
+          env:
+            - PROJECT_NAME=kshdb
+              GIT_URL="https://github.com/rocky/kshdb.git"
+              COMMANDS="git checkout att-ksh93v-testing; ksh ./autogen.sh; make test"
+
+        # These tests are run from yash fork that contains list of tests and a test runner script
+        - os: linux
+          env:
+            - PROJECT_NAME="posix-shell-tests"
+              GIT_URL="https://github.com/siteshwar/posix-shell-tests.git"
+              COMMANDS="git checkout ksh-tests; cd src; LANG=C ./run-ksh-tests.sh"
+
 script:
-    # Fetch tags to set version number
-    - git fetch --tags
+    - docker pull fedora
 
-    - if [[ $SCAN_TYPE == "shellcheck" ]]; then exec bin/shellcheck; fi
-
-    - if [[ $TRAVIS_OS_NAME == "osx" ]]; then exec scripts/build-on-macos.sh; fi
-
-    - docker run -v $TRAVIS_BUILD_DIR:/source ${DISTRO_TYPE} bash -c "set -e;
-        ${INSTALL_REQUIREMENTS};
-        useradd --create-home test;
-        echo \"/tmp/ksh_auditfile;\$(id -u test)\" > /etc/ksh_audit;
-        chown -R test /source;
-        sudo -u test /source/scripts/build-on-docker.sh '${DISTRO_TYPE}'"
+      # Test builds from https://copr.fedorainfracloud.org/coprs/g/ksh/latest/
+    - docker run fedora bash -c "
+      dnf install -y 'dnf-command(copr)';
+      dnf copr enable -y @ksh/latest;
+      dnf install -y ksh git autoconf automake make findutils diffutils yash;
+      git clone $GIT_URL;
+      cd $PROJECT_NAME;
+      $COMMANDS"
