@@ -1,3 +1,4 @@
+#!/usr/bin/env ksh
 #
 # This script is sourced first when the shell starts. It's purpose is to perform basic setup of the
 # shell state. For example, where to find autoloaded functions that ship with the shell and arrange
@@ -10,6 +11,7 @@
 # already set isn't technically necessary since empty path components are guaranteed not to be
 # equivalent to `.` (the CWD). But I prefer to be paranoid since doing so is cheap.
 #
+# shellcheck disable=SC2154  # this var is builtin to ksh
 __fpath="${.sh.install_prefix}/share/ksh/functions"
 if [[ -z ${FPATH:-''} ]]
 then
@@ -18,15 +20,17 @@ else
     FPATH="$__fpath:$FPATH"
 fi
 
-# Arrange for these function names to be autoloaded by declaring them to be undefined.
+# Arrange for these functions to be autoloaded by declaring them to be undefined if the
+# corresponding file is found in FPATH.
 for f in "$__fpath"/*
 do
-    typeset -fu $(basename $f)
+    typeset -fu "${f##*/}"  # this is `basename` but faster
 done
 
 # Global vars for the `_cd`, `mcd`, `pushd`, `popd`, `dirs` functions.
-integer _push_max=${CDSTACK:-32}
-integer _push_top=${CDSTACK:-32}
+integer _push_max="${CDSTACK:-32}"
+integer _push_top="${CDSTACK:-32}"
+# shellcheck disable=SC2034  # this var is used by autoloaded functions
 typeset -a _push_stack
 
 # Prefer the `cd` function to the `cd` builtin as the function is needed for functions like

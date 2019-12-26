@@ -72,6 +72,15 @@ function log_error {
 }
 alias log_error='log_error $LINENO'
 
+# See https://github.com/att/ast/issues/1453. Make sure we have a minimal $PATH.
+if [[ -z "$PATH" ]]
+then
+    log_warning "PATH is empty/unset -- using \$(getconf PATH)"
+    PATH=/bin:/usr/bin:/usr/local/bin  # getconf should be in /usr/bin but also check other dirs
+    PATH=$(getconf PATH)
+    log_warning "PATH is now $PATH"
+fi
+
 api_test=false
 api_binary=false
 shcomp=false
