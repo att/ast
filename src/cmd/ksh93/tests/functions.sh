@@ -249,7 +249,7 @@ function foobar
 }
 !
 chmod +x $TEST_DIR/foobar
-FPATH=$TEST_DIR
+FPATH="$TEST_DIR:$FPATH"
 print 'function zzz { return 7; }' > zzz
 PATH="$SAFE_PATH"
 zzz
@@ -457,6 +457,7 @@ function closure
     return $r
 }
 closure 0 || log_error -u2 'for loop function optimization bug2'
+
 dir=$TEST_DIR/dir
 mkdir $dir
 cd $dir || { log_error "cd $dir failed"; exit 1; }
@@ -495,7 +496,7 @@ then
 fi
 cd $TEST_DIR
 
-FPATH=$TEST_DIR
+FPATH="$TEST_DIR:$FPATH"
 print ': This does nothing' > foobar
 chmod +x foobar
 unset -f foobar
@@ -1146,8 +1147,8 @@ log_info 'TODO: Enable shcomp tests'
 #    rm -f "$TEST_DIR/functions"
 #    chmod +x $TEST_DIR/foobar
 #    rm $TEST_DIR/!(dir|foobar)
-#    FPATH=$TEST_DIR
-#    PATH=$FPATH:$PATH
+#    FPATH="$TEST_DIR:$FPATH"
+#    PATH=$TEST_DIR:$PATH
 #    foobar
 #++++
 #) == foo ]] > /dev/null  || log_error 'functions compiled with shcomp not working'
@@ -1159,8 +1160,8 @@ log_info 'TODO: Enable shcomp tests'
 ## test for functions in shell having side effects.
 unset -f foo foobar bar
 cd "$TEST_DIR"
-FPATH=$PWD
-PATH=$FPATH:$PATH
+FPATH="$PWD:$FPATH"
+PATH="$PWD:$PATH"
 cat > foo <<- \EOF
 	function bar
 	{
