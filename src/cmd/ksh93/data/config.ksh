@@ -6,6 +6,21 @@
 # process. In particular it should be as fast as possible.
 #
 
+# See https://github.com/att/ast/issues/1453. Make sure we have a minimal $PATH.
+if [[ -z "$PATH" ]]
+then
+    # Getconf should be in /usr/bin but also check other dirs; especially
+    # since, if we can't find it or it produces no output, we want a
+    # reasonable set of directories to search for external commands.
+    PATH=/usr/bin:/bin:/usr/local/bin
+    if whence -p getconf >/dev/null
+    then
+        __path="$(getconf PATH 2>/dev/null)"
+        [[ -n "$__path" ]] && PATH="$__path"
+        unset __path
+    fi
+fi
+
 #
 # Arrange for standard autoloaded functions to be available. The test for whether or not FPATH is
 # already set isn't technically necessary since empty path components are guaranteed not to be
