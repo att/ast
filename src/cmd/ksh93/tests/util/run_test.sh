@@ -17,8 +17,8 @@
 #
 # TODO: Eliminate as many of these exceptions as possible. Some of them, especially the Cygwin
 # exceptions, will probably never be removed because they involve obscure features that will never
-# be made to work on a particular platform. But others should be fixed so they tests do pass and
-# the exclusion entry in the table below removed.
+# be made to work on a particular platform. But others should be fixed so the tests do pass and the
+# exclusion entry in the table below removed.
 tests_to_skip=(
     'cygwin b_jobs.exp'
     'cygwin b_time.exp'
@@ -88,18 +88,7 @@ shcomp=false
 if [[ $1 == shcomp ]]
 then
     # Run a ksh script test after compiling it.
-    #
-    # The presence of a NO_SHCOMP env var causes the shcomp variant to be skipped. This is useful,
-    # for example, when running tests under ASAN or Valgrind where we want to minimize the total
-    # test run time. Not to mention that the shcomp variants should be, and always are as I write
-    # this, redundant. That is, they always pass or fail for the same reasons as the non-shcomp
-    # variant.
-    if [[ -z "$NO_SHCOMP" || "$NO_SHCOMP" == 0 ]]
-    then
-        shcomp=true
-    else
-        shcomp=skip
-    fi
+    shcomp=true
     shift 1
 elif [[ $1 == api ]]
 then
@@ -115,17 +104,16 @@ fi
 if [[ $# -ne 1 ]]
 then
     log_error "Expected one arg (the test name) possibly preceded by 'shcomp' or 'api', got $#: $*"
-    exit 99
+    exit 1
 fi
 
 # If the test should be skipped do so.
 readonly test_name=$1
-[[ $shcomp == skip && $test_name == *.exp ]] && exit $MESON_SKIPPED_TEST
 for test in "${tests_to_skip[@]}"
 do
     system=${test% *}
     test_to_skip=${test#* }
-    [[ $shcomp == true && $system == shcomp && $test_to_skip == "$test_name" ]] && \
+    [[ $system == shcomp && $test_to_skip == "$test_name" ]] && \
         exit $MESON_SKIPPED_TEST
     [[ $system == "$MESON_SYSTEM" && $test_to_skip == "$test_name" ]] && \
         exit $MESON_SKIPPED_TEST
@@ -197,9 +185,9 @@ fi
 # our purposes that doesn't matter. It simply means the temp file name will contain the X's on a BSD
 # system.
 #
-TEST_DIR=$(mktemp -dt "ksh.${test_name}.XXXXXX") || { log_error "mktemp -dt failed"; exit 99; }
+TEST_DIR=$(mktemp -dt "ksh.${test_name}.XXXXXX") || { log_error "mktemp -dt failed"; exit 1; }
 export TEST_DIR
-cd "$TEST_DIR" || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 99; }
+cd "$TEST_DIR" || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 1; }
 log_info "TEST_DIR=$TEST_DIR"
 
 #
@@ -294,7 +282,7 @@ function run_api {
     then
         # We only remove the temp test dir if the test is successful. Otherwise we leave it since
         # it may contain useful clues about why the test failed.
-        cd /tmp || exit 99
+        cd /tmp || exit 1
         rm -rf "$TEST_DIR"
     fi
 
@@ -371,7 +359,7 @@ function run_interactive {
     then
         # We only remove the temp test dir if the test is successful. Otherwise we leave it since
         # it may contain useful clues about why the test failed.
-        cd /tmp || exit 99
+        cd /tmp || exit 1
         rm -rf "$TEST_DIR"
     else
         # The final `.*` is because there may be a [ctrl-M] present (@#%! windows line endings).
@@ -436,12 +424,6 @@ then
         exit $MESON_SKIPPED_TEST
     fi
 
-    if [[ $shcomp == true ]]
-    then
-        log_error "Interactive tests cannot be run via shcomp"
-        exit $MESON_SKIPPED_TEST
-    fi
-
     # Interactive tests are flakey. Especially on CI test environments like Travis. So make several
     # attempts before giving up and reporting failure.
     set +o errexit
@@ -496,9 +478,9 @@ else
         $SHELL -p "$TEST_DIR/$test_script" "$test_name" < /dev/null
         exit_status=$?
     else
+        # The SHCOMP env var must be exported by Meson. If it isn't something is seriously wrong.
         # shellcheck disable=SC2153
-        # SHCOMP should be exported by the test framework.
-        [[ -n $SHCOMP ]] || exit 99
+        [[ -n "$SHCOMP" ]] || exit 1
         "$SHCOMP" "$test_script" > "$test_script.shcomp" || exit
         "$SHELL" -p "$TEST_DIR/$test_script.shcomp" "$test_name" < /dev/null
         exit_status=$?
@@ -506,7 +488,7 @@ else
 
     if (( exit_status == 0 || exit_status == MESON_SKIPPED_TEST ))
     then
-        cd /tmp || exit 99
+        cd /tmp || exit 1
         rm -rf "$TEST_DIR"
     fi
     exit $exit_status

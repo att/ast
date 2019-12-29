@@ -3,10 +3,9 @@ set -e
 
 echo ==== Installing prereqs
 brew list
-# Note that python3 is already installed. As it python2. We need to unlink
-# python2 and force python3 links in /usr/local to be created.
+# Note that python3 is already installed. As is python2. We need to unlink
+# python2 to avoid conflicts when meson is installed.
 brew unlink python@2
-brew link --overwrite python
 brew install meson
 brew install sphinx
 
