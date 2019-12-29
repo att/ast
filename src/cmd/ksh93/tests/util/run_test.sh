@@ -41,6 +41,16 @@ tests_to_skip=(
     'shcomp treemove.sh'
 )
 
+
+# I'm not a fan of the errexit mechanism; not least because it means you can't do
+#
+#   some_command
+#   status=$?
+#
+# However, https://github.com/att/ast/issues/1453 showed that a bogus $PATH can cause this to fail
+# while exiting with a zero, success, status if commands like `cat` cannot be found.
+set -o errexit
+
 # The use of the "dumb" terminal type is to minimize, and hopefully eliminate completely,
 # terminal control/escape sequences that affect the terminal's behavior. This makes writing
 # robust unit tests, especially Expect based tests, easier.
@@ -434,6 +444,7 @@ then
 
     # Interactive tests are flakey. Especially on CI test environments like Travis. So make several
     # attempts before giving up and reporting failure.
+    set +o errexit
     status=0
     for i in 1 2 3
     do
@@ -461,6 +472,7 @@ then
     exit $status
 elif [[ $api_test == true ]]
 then
+    set +o errexit
     run_api
     status=$?
     exit $status
@@ -477,6 +489,8 @@ else
         cat "$TEST_ROOT/util/postscript.sh"
     } > "$test_script"
     chmod 755 "$test_script"
+
+    set +o errexit
     if [[ $shcomp == false ]]
     then
         $SHELL -p "$TEST_DIR/$test_script" "$test_name" < /dev/null
