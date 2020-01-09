@@ -48,6 +48,7 @@ all_tests = [
     ['arrays'],
     ['arrays2'],
     ['attributes'],
+    ['autoload'],
     ['basic', 90],
     ['bracket'],
     ['builtins'],
