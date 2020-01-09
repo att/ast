@@ -1,0 +1,15 @@
+# See https://github.com/att/ast/issues/1454
+
+mkdir -p "$TEST_DIR/usr/bin"
+print '#!/bin/sh' >"$TEST_DIR/usr/bin/cd"
+print 'builtin cd "$@"' >>"$TEST_DIR/usr/bin/cd"
+prefix="$TEST_DIR/ksh.$$"
+
+FPATH="$prefix/bad:$prefix/functions"
+mkdir -p "$prefix/functions"
+print 'function cd { echo "Func cd called with |$*|"; command cd "$@"; }' >"$prefix/functions/cd"
+typeset -fu cd
+
+PATH="/arglebargle:$PATH:$TEST_DIR/usr/bin:$TEST_DIR/bin"
+cd "$TEST_DIR/usr"
+pwd

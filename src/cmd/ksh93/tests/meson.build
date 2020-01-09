@@ -53,6 +53,7 @@ all_tests = [
     ['arrays.sh'],
     ['arrays2.sh'],
     ['attributes.sh'],
+    ['autoload.sh'],
     ['basic.sh', 90],
     ['bracket.sh'],
     ['builtins.sh'],

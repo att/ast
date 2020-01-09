@@ -479,28 +479,30 @@ Pathcomp_t *path_get(Shell_t *shp, const char *name) {
 //
 static_fn int path_opentype(Shell_t *shp, const char *name, Pathcomp_t *pp, int fun) {
     int fd = -1;
-    struct stat statb;
-    Pathcomp_t *oldpp;
 
     if (!pp && !shp->pathlist) path_init(shp);
     if (!fun && strchr(name, '/') && sh_isoption(shp, SH_RESTRICTED)) {
         errormsg(SH_DICT, ERROR_exit(1), e_restricted, name);
         __builtin_unreachable();
     }
+
+    // The structure of this loop is slightly odd. It's a consequence of how path_nextcomp() works.
+    Pathcomp_t *next_pp = pp;
     do {
-        pp = path_nextcomp(shp, oldpp = pp, name, 0);
-        while (oldpp && (oldpp->flags & PATH_SKIP)) oldpp = oldpp->next;
-        if (fun && (!oldpp || !(oldpp->flags & PATH_FPATH))) continue;
+        pp = next_pp;
+        next_pp = path_nextcomp(shp, pp, name, NULL);
+        if (pp && (pp->flags & PATH_SKIP)) continue;
+        if (fun && (!pp || !(pp->flags & PATH_FPATH))) continue;
         fd = sh_open(path_relative(shp, stkptr(shp->stk, PATH_OFFSET)), O_RDONLY | O_CLOEXEC, 0);
+        struct stat statb;
         if (fd >= 0 && (fstat(fd, &statb) < 0 || S_ISDIR(statb.st_mode))) {
             errno = EISDIR;
             sh_close(fd);
             fd = -1;
         }
-    } while (fd < 0 && pp);
+    } while (fd < 0 && next_pp);
 
     assert(fd < 0 || sh_iovalidfd(shp, fd));
-
     if (fd >= 0 && (fd = sh_iomovefd(shp, fd)) > 0) {
         (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
         shp->fdstatus[fd] |= IOCLEX;
