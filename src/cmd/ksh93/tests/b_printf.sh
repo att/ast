@@ -2,31 +2,31 @@
 # %b    A %b format can be used instead of %s to cause escape sequences in the corresponding arg to
 #       be expanded as described in print.
 # \a    Alert character.
-printf "%b" "\a" | od | head -n1 | grep -q "007 *$" || log_error "%b does not recognize \\a"
+printf "%b" "\a" | od -b | grep -q "^00*  *007 *$" || log_error "%b does not recognize \\a"
 
 # \b    Backspace character.
-printf "%b" "\b" | od | head -n1 | grep -q "010 *$" || log_error "%b does not recognize \\b"
+printf "%b" "\b" | od -b | grep -q "^00*  *010 *$" || log_error "%b does not recognize \\b"
 
 # \c    Terminate output without appending newline. The remaining string operands are ignored.
-printf "%b" "a\cb" | od | head -n1 | grep -q "141 *$" || log_error "%b does not recognize \\c"
+printf "%b" "a\cb" | od -b | grep -q "^00*  *141 *$" || log_error "%b does not recognize \\c"
 
 # \f    Formfeed character.
-printf "%b" "\f" | od | head -n1 | grep -q "014 *$" || log_error "%b does not recognize \\f"
+printf "%b" "\f" | od -b | grep -q "^00*  *014 *$" || log_error "%b does not recognize \\f"
 
 # \n    Newline character.
-printf "%b" "\n" | od | head -n1 | grep -q "012 *$" || log_error "%b does not recognize \\n"
+printf "%b" "\n" | od -b | grep -q "^00*  *012 *$" || log_error "%b does not recognize \\n"
 
 # \t    Tab character.
-printf "%b" "\t" | od | head -n1 | grep -q "011 *$" || log_error "%b does not recognize \\t"
+printf "%b" "\t" | od -b | grep -q "^00*  *011 *$" || log_error "%b does not recognize \\t"
 
 # \v    Vertical tab character.
-printf "%b" "\v" | od | head -n1 | grep -q "013 *$" || log_error "%b does not recognize \\v"
+printf "%b" "\v" | od -b | grep -q "^00*  *013 *$" || log_error "%b does not recognize \\v"
 
 # \\    Backslash character.
-printf "%b" "\\" | od | head -n1 | grep -q "134 *$" || log_error "%b does not recognize \\"
+printf "%b" "\\" | od -b | grep -q "^00*  *134 *$" || log_error "%b does not recognize \\"
 
 # \E    Escape character (ASCII octal 033).
-printf "%b" "\E" | od | head -n1 | grep -q "033 *$" || log_error "%b does not recognize \\E"
+printf "%b" "\E" | od -b | grep -q "^00*  *033 *$" || log_error "%b does not recognize \\E"
 
 # \0x   The 8-bit character whose ASCII code is the 1-, 2-, or
 #       3-digit octal number x.
@@ -85,7 +85,7 @@ done
 [[ "$actual" == "$expect" ]] || log_error 'printf "%T" now wrong output' "$expect" "$actual"
 
 # %Z     A %Z format will output a byte whose value is 0.
-printf "%Z" | od | head -n1 | grep -q "000000 *$" || log_error "printf %Z does not output null byte"
+printf "%Z" | od -b | grep -q "^00*  *000 *$" || log_error "printf %Z does not output null byte"
 
 # %d     The precision field of the %d format can be followed by a .  and the output base.  In this
 #        case, the # flag character causes base# to be prepended.
