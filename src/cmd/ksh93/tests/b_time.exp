@@ -36,9 +36,13 @@ expect_prompt
 
 # ==========
 # Timing a more complex pipeline works.
+#
+# That the regex allows elapsed-time values as large as 0.199 is because the Travis CI macOS
+# environment tends to be horribly overloaded, and thus slow. Which means this test often takes a
+# bit more than 0.1 seconds which causes the test to fail if a more restrictive regex is used.
 log_test_entry
 send "time { sleep 0.05 | sleep 0.05; }\r"
-expect -re "\r\nreal\[\t \]*0m0\.0\[0-9\]\[0-9\]s\r\ncpu$zero_sec_re\r\n" {
+expect -re "\r\nreal\[\t \]*0m0\.\[01\]\[0-9\]\[0-9\]s\r\ncpu$zero_sec_re\r\n" {
     puts "time sleep 0.05 pipeline produces expected output"
 }
 expect_prompt
