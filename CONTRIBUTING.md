@@ -264,9 +264,9 @@ make sure the behavior remains consistent and regressions are not
 introduced. Even if you don't run the tests they will be run via the
 [Travis CI](https://travis-ci.org/att/ast) service.
 
-You are strongly encouraged to add tests when changing the functionality
-of ksh. Especially if you are fixing a bug to help ensure there are no
-regressions in the future (i.e., we don't reintroduce the bug).
+You are strongly encouraged to add tests when changing the functionality of
+ksh or fixing bugs. Especially if you are fixing a bug to help ensure there
+are no regressions in the future; i.e., we don't reintroduce the bug.
 
 ### Local testing
 
@@ -274,7 +274,10 @@ The tests can be run on your local computer on all operating systems supported
 by the project. To run the tests:
 
 ```
+mkdir build
 cd build
+meson --prefix=/tmp/ksh
+ninja install
 meson test --setup=malloc
 ```
 
@@ -315,8 +318,6 @@ tests, by doing
 ```
 
 ### Testing with ASAN -- AddressSanitizer
-
-At the moment this only works on Linux using gcc.
 
 Configure with `meson -DASAN=true`. Then build with `ninja` as usual. Run
 the tests with `meson test --setup=asan`.
