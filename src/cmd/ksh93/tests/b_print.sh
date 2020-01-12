@@ -52,7 +52,8 @@ fi
 
 # ======
 # -e Unless -f is specified, process \ sequences in each string operand as described above. This is the default behavior.
-print -e "\n" | od | head -n1 | grep -q "012 *$" || log_error "print -e should interpret escape sequences"
+print -ne "\n" | od -b | grep -q "^00*  *012 *$" ||
+    log_error "print -e should interpret escape sequences"
 
 # ======
 # -n Do not append a new-line character to the output.
