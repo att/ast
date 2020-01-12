@@ -869,6 +869,33 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
 #endif  // S_IEXEC
 #endif  // S_IXUSR
 
+#if __CYGWIN__
+
+// Cygwin needs to support looking for commands whose pathname ends in ".bat" or ".sh" if a file
+// named with the bare command isn't found.
+static_fn bool find_alternate(Shell_t *shp, char *path, int isfun, struct stat *statbp) {
+    char *cp;
+    if (errno == ENOENT && (!(cp = strrchr(path, '.')) || strlen(cp) > 4 || strchr(cp, '/'))) {
+        int offset = stktell(shp->stk) - 1;
+        stkseek(shp->stk, offset);
+        sfputr(shp->stk, ".bat", -1);
+        path = stkptr(shp->stk, PATH_OFFSET);
+        if (stat(path, statbp) < 0) {
+            if (errno != ENOENT) return false;
+            memcpy(stkptr(shp->stk, offset), ".sh", 4);
+            if (stat(path, statbp) < 0) return false;
+        }
+    }
+    return true;
+}
+
+#else  // __CYGWIN__
+
+// Most systems don't need a way to find alternative pathname spellings corresponding to a command.
+#define find_alternate(shp, path, isfun, statbp) false
+
+#endif  // __CYGWIN__
+
 static_fn int can_execute(Shell_t *shp, char *path, int isfun) {
     struct stat statb;
     int fd = 0;  // this is deliberately set to stdin rather than -1
@@ -878,22 +905,7 @@ static_fn int can_execute(Shell_t *shp, char *path, int isfun) {
         fd = sh_open(path, O_RDONLY | O_CLOEXEC, 0);
         if (fd == -1 || fstat(fd, &statb) == -1) goto err;
     } else if (sh_stat(path, &statb) < 0) {
-#if __CYGWIN__
-        // Check for .exe or .bat suffix.
-        char *cp;
-        if (errno == ENOENT && (!(cp = strrchr(path, '.')) || strlen(cp) > 4 || strchr(cp, '/'))) {
-            int offset = stktell(shp->stk) - 1;
-            stkseek(shp->stk, offset);
-            sfputr(shp->stk, ".bat", -1);
-            path = stkptr(shp->stk, PATH_OFFSET);
-            if (stat(path, &statb) < 0) {
-                if (errno != ENOENT) goto err;
-                memcpy(stkptr(shp->stk, offset), ".sh", 4);
-                if (stat(path, &statb) < 0) goto err;
-            }
-        } else
-#endif  // __CYGWIN__
-            goto err;
+        if (!find_alternate(shp, path, isfun, &statb)) goto err;
     }
     errno = EPERM;
     if (S_ISDIR(statb.st_mode)) {
@@ -901,9 +913,9 @@ static_fn int can_execute(Shell_t *shp, char *path, int isfun) {
     } else if (isfun == 1 || (statb.st_mode & S_IXALL) == S_IXALL || sh_access(path, X_OK) >= 0) {
         return fd;
     }
-    if (isfun && fd >= 0) sh_close(fd);
 
 err:
+    if (isfun && fd >= 0) sh_close(fd);
     return -1;
 }
 
