@@ -693,42 +693,32 @@ do
 done
 PATH=$path
 
-# $x must be an unknown locale.
-case "$(uname)" in
-    OpenBSD)
-        # "x" acts as a known alias of "C", but "x.x" is unknown (see
-        # https://man.openbsd.org/setlocale). For worse, `locale -a` doesn't
-        # list "x", so `locale -a | grep -q '^x$'` doesn't work.
-        x=x.x
-        ;;
-    *)
-        # Most systems agree that "x" is an unknown locale.
-        if locale -a | grep -q '^x$'; then
-            # Someone added "x" using localedef(1)?
-            log_warning "skipping test: 'x' is a known locale"
-            unset x
-        else
-            x=x
-        fi
-        ;;
-esac
-
-if [[ -n $x ]]; then
-    for v in LC_ALL LC_CTYPE LC_MESSAGES LC_COLLATE LC_NUMERIC; do
+# Test what happens if the locale is invalid.
+locale -a | grep -E '^xyz(\..*)?$'
+if locale -a | grep -Eq '^xyz(\..*)?$'
+then
+    # Most systems agree that "xyz" (with or without an encoding) is an unknown locale.
+    log_warning "skipping invalid locale test since 'xyz' is a known locale" \
+        "" "$(locale -a | grep -E '^xyz(\..*)?$')"
+else
+    # We expect `xyz.UTF-8` to be an invalid locale that produces various diagnostics. This is
+    # slightly convoluted because we are using nameref's to test that changing a locale env var
+    # indirectly is handled correctly.
+    for v in LC_ALL LC_CTYPE LC_MESSAGES LC_COLLATE LC_NUMERIC
+    do
         nameref r=$v
         unset $v
-        [[ $r ]] && log_error "unset $v failed -- expected '', got '$r'"
-        d=$($SHELL -c "$v=$x" 2>&1)
-        [[ $d ]] || log_error "$v=$x failed -- expected locale diagnostic"
-        { g=$( r=$x; print -- $r ); }
-        [[ $g == '' ]] || log_error "$v=$x failed -- expected '', got '$g'"
-        { g=$( r=C; r=$x; print -- $r ); }
-        [[ $g == 'C' ]] || log_error "$v=C; $v=$x failed -- expected 'C', got '$g'"
+        [[ -n $r ]] && log_error "unset $v failed" "" "$r"
+        d=$($SHELL -c "$v=xyz.UTF-8" 2>&1)
+        [[ -n $d ]] || log_error "$v=xyz.UTF-8 failed -- expected locale diagnostic" "" "$d"
+        { g=$( r=xyz.UTF-8; print -- $r ); }
+        [[ $g == '' ]] || log_error "$v=xyz.UTF-8 failed" "" "$g"
+        { g=$( r=C; r=xyz.UTF-8; print -- $r ); }
+        [[ $g == 'C' ]] || log_error "$v=C; $v=xyz.UTF-8 failed" "C" "$g"
     done
 fi
 
 cd $TEST_DIR
-
 print print -n zzz > zzz
 chmod +x zzz
 exp='aaazzz'
