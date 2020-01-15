@@ -98,6 +98,11 @@
 
 #define SEP(c) ((c) == '-' || (c) == '_')
 
+// This is a hack for issue https://github.com/att/ast/issues/1456 that will be eliminated when
+// this module is eliminated.
+extern const char *e_version;
+__attribute__((weak)) const char *e_version = "";
+
 typedef struct Attr_s {
     const char *name;
     int flag;
@@ -2522,6 +2527,15 @@ again:
                             s = p + 1;
                         }
                         w = (char *)what;
+                        // This block is a hack for issue https://github.com/att/ast/issues/1456.
+                        // It will become moot once the remaining uses of optget() are eliminated
+                        // and the ksh arg parsing loop itself handles "--version" rather than
+                        // delegating to here.
+                        if (!strcmp(w, "--version")) {
+                            sfputr(sfstdout, e_version, -1);
+                            matched = -1;
+                            continue;
+                        }
                         if (*s != '-' || *(w + 1) == '-') {
                             if (*s == '-') s++;
                             if (*(w + 1) == '-') w++;

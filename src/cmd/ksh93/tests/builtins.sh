@@ -187,17 +187,6 @@ then
     log_error 'whence -v test after builtin -d incorrect'
 fi
 
-if [[ $(trap --version 2> /dev/null;print done) != done ]]
-then
-    log_error 'trap builtin terminating after --version'
-fi
-
-if [[ $(set --version 2> /dev/null;print done) != done ]]
-then
-    log_error 'set builtin terminating after --veresion'
-fi
-
-
 set -f
 set -- *
 if   [[ $1 != '*' ]]

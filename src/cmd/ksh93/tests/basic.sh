@@ -25,8 +25,8 @@
 #
 # TODO: Remove the stderr redirection when issue #837 is fixed.
 actual=$($SHELL --version 2>&1)
-expect='version'
-[[ "$actual" == *${expect}* ]] || log_error "failed to get version string" "*${expect}*" "$actual"
+expect='Version A 2'
+[[ "$actual" == ${expect}* ]] || log_error "failed to get version string" "*${expect}*" "$actual"
 
 # ==========
 # Is an invalid flag handled correctly?
