@@ -693,31 +693,6 @@ do
 done
 PATH=$path
 
-# Test what happens if the locale is invalid.
-locale -a | grep -E '^xyz(\..*)?$'
-if locale -a | grep -Eq '^xyz(\..*)?$'
-then
-    # Most systems agree that "xyz" (with or without an encoding) is an unknown locale.
-    log_warning "skipping invalid locale test since 'xyz' is a known locale" \
-        "" "$(locale -a | grep -E '^xyz(\..*)?$')"
-else
-    # We expect `xyz.UTF-8` to be an invalid locale that produces various diagnostics. This is
-    # slightly convoluted because we are using nameref's to test that changing a locale env var
-    # indirectly is handled correctly.
-    for v in LC_ALL LC_CTYPE LC_MESSAGES LC_COLLATE LC_NUMERIC
-    do
-        nameref r=$v
-        unset $v
-        [[ -n $r ]] && log_error "unset $v failed" "" "$r"
-        d=$($SHELL -c "$v=xyz.UTF-8" 2>&1)
-        [[ -n $d ]] || log_error "$v=xyz.UTF-8 failed -- expected locale diagnostic" "" "$d"
-        { g=$( r=xyz.UTF-8; print -- $r ); }
-        [[ $g == '' ]] || log_error "$v=xyz.UTF-8 failed" "" "$g"
-        { g=$( r=C; r=xyz.UTF-8; print -- $r ); }
-        [[ $g == 'C' ]] || log_error "$v=C; $v=xyz.UTF-8 failed" "C" "$g"
-    done
-fi
-
 cd $TEST_DIR
 print print -n zzz > zzz
 chmod +x zzz
