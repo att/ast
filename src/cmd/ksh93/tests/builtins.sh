@@ -194,19 +194,9 @@ then
     log_error 'set -f not working'
 fi
 
-env=
-v=$(getconf LIBPATH 2> /dev/null)
-for v in ${v//,/ }
-do
-    v=${v#*:}
-    v=${v%%:*}
-    eval [[ \$$v ]] && env="$env $v=\"\$$v\""
-done
-
-if [[ $(foo=bar; eval foo=\$foo $env exec -c \$SHELL -c \'print \$foo\') != bar ]]
-then
-    log_error '"name=value exec -c ..." not working'
-fi
+expect=bar
+actual=$(foo=bar; eval foo=\$foo exec -c \$SHELL -c \'print \$foo\')
+[[ "$actual" == "$expect" ]] || log_error '"name=value exec -c ..." broken' "$expect" "$actual"
 
 #(print -n a;sleep 1; print -n bcde) | { read -N3 a; read -N1 b;}
 #[[ $a == $exp ]] || log_error "read -N3 from pipe failed -- expected '$exp', got '$a'"
