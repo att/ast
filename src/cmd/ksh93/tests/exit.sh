@@ -52,5 +52,3 @@ then
 fi
 
 cd ~- || log_error "cd back failed"
-
-$SHELL -c 'builtin -f cmd getconf; getconf --"?-version"; exit 0' >/dev/null 2>&1 || log_error 'ksh plugin exit failed -- was ksh built with CCFLAGS+=$(CC.EXPORT.DYNAMIC)?'
