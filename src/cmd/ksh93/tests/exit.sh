@@ -20,10 +20,6 @@
 
 # Test for proper exit of shell
 
-# This would be gratuitous since our CWD should be $TEST_DIR but the `cd ~-` below requires we do
-# this for it to succeed.
-cd $TEST_DIR || { err_exit "cd $TEST_DIR failed"; exit 1; }
-
 print exit 0 >.profile
 ${SHELL}  <<!
 HOME='$PWD' exec -c -a -ksh ${SHELL} -c "exit 1"
@@ -51,4 +47,10 @@ then
     log_error 'subshell trap on exit overwrites parent trap'
 fi
 
-cd ~- || log_error "cd back failed"
+# ========
+# If haven't already done a `cd`, or `OLDPWD` wasn't imported from the environment then we need to
+# ensure it is defined for `cd ~-` to work.
+cd $TEST_DIR || { err_exit "cd $TEST_DIR failed"; exit 1; }
+cd /
+cd ~- || log_error 'cd ~- (i.e., cd $OLDPWD) failed'
+log_warning "$(pwd)" "$OLDPWD" ''
