@@ -18,38 +18,15 @@
 #                                                                      #
 ########################################################################
 
-function abspath
-{
-    base=$(basename $SHELL)
-    cd ${SHELL%/$base}
-    newdir=$(pwd)
-    cd ~-
-    print $newdir/$base
-}
-
 # Test for proper exit of shell
 
 # This would be gratuitous since our CWD should be $TEST_DIR but the `cd ~-` below requires we do
 # this for it to succeed.
 cd $TEST_DIR || { err_exit "cd $TEST_DIR failed"; exit 1; }
 
-builtin getconf
-ABSHELL=$(abspath)
 print exit 0 >.profile
-${ABSHELL}  <<!
-HOME='$PWD' \
-PATH='$PATH' \
-SHELL='$ABSSHELL' \
-ASAN_OPTIONS='$ASAN_OPTIONS' \
-$(
-    v=$(getconf LIBPATH)
-    for v in ${v//,/ }
-    do    v=${v#*:}
-        v=${v%%:*}
-        eval [[ \$$v ]] && eval print -n \" \"\$v=\"\$$v\"
-    done
-) \
-exec -c -a -ksh ${ABSHELL} -c "exit 1"
+${SHELL}  <<!
+HOME='$PWD' exec -c -a -ksh ${SHELL} -c "exit 1"
 !
 status=$(echo $?)
 if [[ -o noprivileged && $status != 0 ]]
