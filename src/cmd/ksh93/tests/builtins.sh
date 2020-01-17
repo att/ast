@@ -20,9 +20,9 @@
 
 # ==========
 # Test that each builtin correctly handles an unrecognized flag. The grep is to eliminate builtins
-# that don't accept any flags; i.e., don't do use the usual getopt_long() loop.
+# that don't accept any flags; i.e., don't use the typical optget() loop.
 for name in $(builtin -l |
-    grep -Ev '(local|declare|echo|test|true|false|uname|getconf|\[|:)')
+    grep -Ev '(local|declare|echo|test|true|false|uname|\[|:)')
 do
     # Extract builtin name from /opt path
     if [[ "$name" =~ "/opt" ]];
