@@ -2336,6 +2336,11 @@ void nv_optimize(Namval_t *np) {
         }
         if ((xp = (struct optimize *)fp) && xp->ptr == shp->argaddr) return;
         op = opt_free;
+        if (xp && xp->next) {
+            for (struct optimize *xpn = xp->next; xpn; xpn = xpn->next) {
+                if (xpn->ptr == shp->argaddr && xpn->np == np) return;
+            }
+        }
         if (op) {
             opt_free = op->next;
         } else {
