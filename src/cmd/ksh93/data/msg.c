@@ -177,7 +177,6 @@ const char e_bash_login[] = "$HOME/.bash_login";
 const char e_bash_logout[] = "$HOME/.bash_logout";
 const char e_bash_profile[] = "$HOME/.bash_profile";
 #endif  // SHOPT_BASH
-const char e_crondir[] = "/usr/spool/cron/atjobs";
 const char e_prohibited[] = "login setuid/setgid shells prohibited";
 const char hist_fname[] = "/.sh_history";
 const char e_dot[] = ".";
