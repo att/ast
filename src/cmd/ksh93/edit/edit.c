@@ -1176,7 +1176,7 @@ int ed_histgen(Edit_t *ep, const char *pattern) {
         mplast->next = NULL;
     }
     ep->hlist = (Histmatch_t **)argv;
-    ep->hfirst = ep->hlist ? ep->hlist[0] : 0;
+    ep->hfirst = ep->hlist ? ep->hlist[0] : NULL;
     return ep->hmax = ac;
 }
 
