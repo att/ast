@@ -85,6 +85,7 @@ all_tests = [
     ['quoting2.sh'],
     ['readcsv.sh'],
     ['recttype.sh'],
+    ['restricted.exp'],
     ['restricted.sh'],
     ['rksh.sh'],
     ['select.sh'],
@@ -126,8 +127,8 @@ foreach testspec : all_tests
     timeout_var = 'TIMEOUT=' + timeout.to_string()
 
     if test_name.endswith('.exp')
-        # The interactive `expect` based tests are highly sensitive to timing variations.
-        # Never run them in parallel with any other test.
+        # Interactive `expect` based tests are highly sensitive to timing variations. Never run them
+        # in parallel with any other test.
         parallel = false
     endif
 
@@ -137,7 +138,7 @@ foreach testspec : all_tests
     test(test_name, ksh93_exe, timeout: timeout, is_parallel: parallel,
         args: ['-p', test_driver, test_name],
         env: [shell_var, lang_var, src_root, test_root, ld_library_path, libsample_path,
-              system_var, timeout_var])
+              rshell_var, system_var, timeout_var])
 
     # The shcomp variants are only applicable to the non-interactive tests.
     if get_option('build-shcomp-tests') == true and not test_name.endswith('.exp')
@@ -145,6 +146,6 @@ foreach testspec : all_tests
         test(test_name + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
             args: ['-p', test_driver, 'shcomp', test_name],
             env: [shell_var, lang_var, src_root, test_root, shcomp_var, ld_library_path,
-                  libsample_path, system_var, timeout_var])
+                  rshell_var, libsample_path, system_var, timeout_var])
     endif
 endforeach

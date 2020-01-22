@@ -1,0 +1,8 @@
+#!/bin/sh
+# This is used by a Meson custom_target() to create a "rksh" symlink to the
+# "ksh" binary. This is slightly convoluted to support platforms, such as
+# Cygwin, where the ksh binary might have an extension such as ".exe".
+cmd=$(basename "$1")
+cd "$(dirname "$1")" || exit 1
+rm -f "r$cmd"
+ln -s "$cmd" "r$cmd"

@@ -6,6 +6,7 @@ log_user 0
 log_file -noappend interactive.tmp.log
 
 set ksh $env(SHELL)
+set rksh $env(RSHELL)
 set timeout 2
 set send_human {.05 .1 5 .02 .2}
 

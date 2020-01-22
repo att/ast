@@ -41,7 +41,6 @@ tests_to_skip=(
     'shcomp treemove.sh'
 )
 
-
 # I'm not a fan of the errexit mechanism; not least because it means you can't do
 #
 #   some_command

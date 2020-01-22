@@ -1,0 +1,29 @@
+# vim: set filetype=expect:
+#
+# Interactive tests of restricted shell behavior. This is primarily to avoid regressions of
+# https://github.com/att/ast/issues/1459. It doesn't need to be a comprehensive test of restricted
+# shell behavior. That is already done in unit test restricted.sh.
+set pid [spawn $rksh]
+expect_prompt
+# Terminal rows and columns may default to zero so ensure sane values.
+send "stty rows 24 cols 80\r"
+expect_prompt
+
+# ==========
+# Changing a restricted env var should be an error.
+log_test_entry
+send "PATH=/bin\r"
+expect -re ": PATH: restricted\r\n" {
+    puts "modifying PATH is restricted"
+}
+expect_prompt
+
+# ==========
+# Exit the shell.
+log_test_entry
+send "\r"
+expect_prompt
+send [ctrl D]
+catch {expect default exp_continue} output
+log_debug "EOF output: $output"
+wait
