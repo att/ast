@@ -451,9 +451,11 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
         if (!ep->e_term) ep->e_term = nv_search("TERM", shp->var_tree, 0);
         if (ep->e_term && (term = nv_getval(ep->e_term)) && strlen(term) < sizeof(ep->e_termname) &&
             strcmp(term, ep->e_termname)) {
+            // Avoid an error from the 2>/dev/null redirection in a restricted shell.
             bool r = sh_isoption(shp, SH_RESTRICTED);
             if (r) sh_offoption(shp, SH_RESTRICTED);
             sh_trap(shp, ".sh.subscript=$(tput cuu1 2>/dev/null)", 0);
+            if (r) sh_onoption(shp, SH_RESTRICTED);
             pp = nv_getval(SH_SUBSCRNOD);
             if (pp) {
                 // It should be impossible for the cursor up string to be truncated.

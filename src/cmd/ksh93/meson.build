@@ -32,6 +32,11 @@ ksh93_exe = executable('ksh', ['sh/pmain.c'], c_args: shared_c_args,
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
     install: true)
 
+# Create a symlink for a restricted version of the ksh shell.
+create_rksh_symlink = find_program(source_dir + '/scripts/create_rksh_symlink')
+rksh93_exe = custom_target('rksh', input: ksh93_exe, output: 'rksh', build_by_default: true,
+    command: [create_rksh_symlink, '@INPUT@'])
+
 shcomp_exe = executable('shcomp', ['sh/shcomp.c'], c_args: shared_c_args,
     include_directories: [configuration_incdir, ksh93_incdir],
     link_with: [libksh, libast, libcmd, libdll],
@@ -47,6 +52,7 @@ test_driver = join_paths(test_dir, 'util', 'run_test.sh')
 src_root = 'SRC_ROOT=' + source_dir
 test_root = 'TEST_ROOT=' + test_dir
 shell_var = 'SHELL=' + ksh93_exe.full_path()
+rshell_var = 'RSHELL=' + rksh93_exe.full_path()
 shcomp_var = 'SHCOMP=' + shcomp_exe.full_path()
 
 libast_build_dir = join_paths(build_dir, 'src', 'lib', 'libast')
