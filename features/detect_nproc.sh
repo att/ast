@@ -3,7 +3,7 @@
 # Exit with a status reflecting the CPU count if we can determine it. If not
 # assume two CPUs since at least one test, API/trehash.c, deadlocks if the CPU
 # count is one.
-nproc=2
+nproc=''
 if getconf _NPROCESSORS_ONLN >/dev/null 2>&1
 then
 	# Some systems have a getconf that supports this var. Use it in preference

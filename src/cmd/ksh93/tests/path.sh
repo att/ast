@@ -73,7 +73,8 @@ cat > bug1 <<- EOF
 	PATH=\$path
 }
 EOF
-[[ $($SHELL ./bug1 2>/dev/null) == ok ]]  || log_error "PATH in function not working"
+[[ $($SHELL ./bug1 2>/dev/null) == ok ]] || log_error "PATH in function not working"
+
 cat > bug1 <<- \EOF
 	function lock_unlock
 	{
@@ -81,11 +82,10 @@ cat > bug1 <<- \EOF
 		typeset -x PATH=''
 	}
 	PATH=/usr/bin
-	: $(PATH=/usr/bin getconf PATH)
 	typeset -ft lock_unlock
 	lock_unlock
 EOF
-($SHELL ./bug1)  2> /dev/null || log_error "path_delete bug"
+($SHELL ./bug1) || log_error "path_delete bug"
 mkdir tdir
 if $SHELL tdir > /dev/null 2>&1
 then
