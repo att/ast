@@ -1,37 +1,39 @@
 #!/usr/bin/env ksh
 # Pops the top directory
+# shellcheck disable=SC2211  # .sh.var assignments are not "glob used as a command name"
+
 function popd {
     typeset dir
     # shellcheck disable=SC2154
-    if ((_push_top >= _push_max))
+    if ((.sh._push_top >= .sh._push_max))
     then  print popd: Nothing to pop.
         return 1
     fi
     case $1 in
     "")
-        dir=${_push_stack[_push_top]}
+        dir="${.sh._push_stack[.sh._push_top]}"
         case $dir in
-        \~*) dir=$HOME${dir#\~}
+        \~*) dir="$HOME${dir#\~}"
         esac
         cd "$dir" || return 1
         ;;
     +[1-9]|+[1-9][0-9])
-        integer i=$((_push_top - $1))
-        if ((i >= _push_max))
+        integer i=$((.sh._push_top - $1))
+        if ((i >= .sh._push_max))
         then
             print pushd: Directory stack not that deep.
             return 1
         fi
-        while ((i > _push_top))
+        while ((i > .sh._push_top))
         do
-            _push_stack[i]=${_push_stack[i-1]}
-            i=$((i - 1))
+            .sh._push_stack[i]="${.sh._push_stack[i-1]}"
+            (( i = i - 1 ))
         done
         ;;
     *)  print pushd: Bad directory.
         return 1
     esac
-    unset '_push_stack[_push_top]'
-    _push_top=$((_push_top + 1))
+    unset '.sh._push_stack[.sh._push_top]'
+    (( .sh._push_top = .sh._push_top + 1 ))
     dirs
 }

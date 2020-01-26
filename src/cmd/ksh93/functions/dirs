@@ -14,7 +14,7 @@ function dirs {
     esac
 
     # shellcheck disable=SC2154
-    select _ in "$dir" "${_push_stack[@]}"
+    select _ in "$dir" "${.sh._push_stack[@]}"
     do
         :
     done < /dev/null

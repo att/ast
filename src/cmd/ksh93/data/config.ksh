@@ -43,9 +43,9 @@ do
 done
 
 # Global vars for the `cd`, `dirs`, `mcd`, `pushd`, `popd`, `prevd`, `nextd` functions.
-integer _push_max="${CDSTACK:-32}"
-integer _push_top="${CDSTACK:-32}"
+integer .sh._push_max="${CDSTACK:-20}"
+integer .sh._push_top="${CDSTACK:-20}"
 # shellcheck disable=SC2034  # this var is used by autoloaded functions
-typeset -a _push_stack
+typeset -a .sh._push_stack
 
 unset __fpath

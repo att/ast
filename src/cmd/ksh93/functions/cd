@@ -3,6 +3,9 @@
 # Change directory and push the directory on the stack. This also recognizes some extensions such as
 # `cd -2` to cd to the second most recently visited directory.
 #
+# shellcheck disable=SC2102  # .sh.var refs are legal as an array index
+# shellcheck disable=SC2211  # .sh.var assignments are not "glob used as a command name"
+
 function cd {
     typeset dir=''
     integer n=0
@@ -10,11 +13,11 @@ function cd {
 
     case $1 in
     -|-1|2)  # cd -
-        n=_push_top
+        n=.sh._push_top
         type=1
         ;;
     -[1-9]*([0-9]))  # cd -n
-        n=_push_top+${1#-}-1
+        n=.sh._push_top+${1#-}-1
         type=2
         ;;
     1)  # keep present directory
@@ -22,13 +25,13 @@ function cd {
         return 0
         ;;
     [1-9]*([0-9]))  # cd n
-        n=_push_top+${1}-2
+        n=.sh._push_top+${1}-2
         type=2
         ;;
     *)
-        if (( _push_top <= 0 ))
+        if (( .sh._push_top <= 0 ))
         then
-            n=_push_max
+            n=.sh._push_max
             type=3
         fi
         ;;
@@ -40,12 +43,12 @@ function cd {
     elif (( type == 2 ))  # cd -n or cd n
     then
         # shellcheck disable=SC2154
-        if (( n >= _push_max + 1 ))
+        if (( n >= .sh._push_max + 1 ))
         then
             print -u2 cd: Directory stack not that deep.
             return 1
         else
-            dir="${_push_stack[n]}"
+            dir="${.sh._push_stack[n]}"
         fi
     fi
 
@@ -77,20 +80,21 @@ function cd {
 
     case "$type" in
     1)  # swap first two elements
-        _push_stack[_push_top]="$dir"
+        .sh._push_stack[.sh._push_top]="$dir"
         print -r - "$PWD"
         ;;
     2|3)  # put $dir on top and shift down by one until top
-        integer i=_push_top
-        for dir in "$dir" "${_push_stack[@]}"
+        integer i=.sh._push_top
+        for dir in "$dir" "${.sh._push_stack[@]}"
         do (( i > n )) && break
-            _push_stack[i]="$dir"
+            .sh._push_stack[i]="$dir"
             (( i = i + 1 ))
         done
         [[ $- == *i* && -t 1 ]] && print -r - "$PWD"
         ;;
     4)  # push name
-        _push_stack[_push_top=_push_top - 1]="$dir"
+        (( .sh._push_top = .sh._push_top - 1 ))
+        .sh._push_stack[.sh._push_top]="$dir"
         [[ $- == *i* && -t 1 ]] && print -r - "$PWD"
         ;;
     esac

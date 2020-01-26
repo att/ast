@@ -12,8 +12,8 @@ function mcd {
 
     PS3='Select by number or enter a name: '
     # shellcheck disable=SC2154
-    select dir in "$dir" "${_push_stack[@]}"
+    select dir in "$dir" "${.sh._push_stack[@]}"
     do
-        _cd "$REPLY" && return
+        cd "$REPLY" && return
     done
 }

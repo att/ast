@@ -1,5 +1,8 @@
 #!/usr/bin/env ksh
 # Change directory and put directory on front of stack
+# shellcheck disable=SC2102  # .sh.var refs are legal as an array index
+# shellcheck disable=SC2211  # .sh.var assignments are not "glob used as a command name"
+
 function pushd {
     typeset dir=''
     typeset type=0
@@ -7,35 +10,35 @@ function pushd {
     case $1 in
     "") # pushd
         # shellcheck disable=SC2154
-        if ((_push_top >= _push_max))
+        if ((.sh._push_top >= .sh._push_max))
         then
             print pushd: No other directory.
             return 1
         fi
         type=1
-        dir=${_push_stack[_push_top]}
+        dir="${.sh._push_stack[.sh._push_top]}"
         ;;
     +[1-9]|+[1-9][0-9]) # pushd +n
-        integer i=$((_push_top - $1))
-        if ((i >= _push_max))
+        integer i=$((.sh._push_top - $1))
+        if ((i >= .sh._push_max))
         then
             print pushd: Directory stack not that deep.
             return 1
         fi
         type=2
-        dir=${_push_stack[i]}
+        dir="${.sh._push_stack[i]}"
         ;;
-    *)  if ((_push_top <= 0))
+    *)  if ((.sh._push_top <= 0))
         then
             print pushd: Directory stack overflow.
             return 1
         fi
     esac
     case $dir in
-    \~*)   dir=$HOME${dir#\~}
+    \~*)   dir="$HOME${dir#\~}"
     esac
     cd "${dir:-$1}" > /dev/null || return 1
-    dir=${OLDPWD#$HOME/}
+    dir="${OLDPWD#$HOME/}"
     case $dir in
     $HOME)
         dir=\~
@@ -45,21 +48,21 @@ function pushd {
     esac
     case $type in
     0)  # pushd name
-        _push_top=$((_push_top - 1))
-        _push_stack[_push_top]=$dir
+        .sh._push_top=$((.sh._push_top - 1))
+        .sh._push_stack[.sh._push_top]="$dir"
         ;;
     1)  # pushd
-        _push_stack[_push_top]=$dir
+        .sh._push_stack[.sh._push_top]="$dir"
         ;;
     2)  # push +n
         type=${1#+}
-        set -- "${_push_stack[@]}" "$dir" "${_push_stack[@]}"
+        set -- "${.sh._push_stack[@]}" "$dir" "${.sh._push_stack[@]}"
         shift "$type"
-        integer i=$(( _push_top - 1 ))
+        integer i=$(( .sh._push_top - 1 ))
         for dir
         do
-            (( (i = i + 1) < _push_max )) || break
-            _push_stack[i]=$dir
+            (( (i = i + 1) < .sh._push_max )) || break
+            .sh._push_stack[i]="$dir"
         done
     esac
     dirs
