@@ -1,5 +1,6 @@
 #!/usr/bin/env ksh
 # Pops the top directory
+# shellcheck disable=SC2154  # .sh._push_stack[@] is referenced but not assigned
 # shellcheck disable=SC2211  # .sh.var assignments are not "glob used as a command name"
 
 function popd {

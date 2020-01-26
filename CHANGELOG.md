@@ -19,6 +19,10 @@
 - A .sh.install_prefix var has been introduced to reflect the `meson -prefix=`
   value. This will be used to establish the location of supporting files such
   as man pages and autoloaded functions.
+- Cd related functions (e.g., cd, pushd, popd, nextd, prevd, mcd, dirs) are
+  automatically enabled. The code is based on the functions that used to be
+  found in src/cmd/ksh93/fun. In practice they were never used because most
+  distros never installed those files, and if installed no one knew about them.
 
 ## Other significant changes
 

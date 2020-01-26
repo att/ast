@@ -4,6 +4,7 @@
 # `cd -2` to cd to the second most recently visited directory.
 #
 # shellcheck disable=SC2102  # .sh.var refs are legal as an array index
+# shellcheck disable=SC2154  # .sh._push_stack[@] is referenced but not assigned
 # shellcheck disable=SC2211  # .sh.var assignments are not "glob used as a command name"
 
 function cd {
