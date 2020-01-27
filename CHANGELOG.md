@@ -2,6 +2,9 @@
 
 ## Notable fixes and improvements
 
+- The default build type is now "minsize" since that dramatically improves the
+  performance of ksh. You can still request a debug build via `meson
+  --buildtype=debug` (issue #1449).
 - Fix `history` command behavior when the *~/.sh_history* file has
   specific content (issue #1432).
 

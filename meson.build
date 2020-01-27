@@ -1,4 +1,13 @@
-project('ksh93', 'c', default_options: ['b_lundef=false', 'default_library=static'])
+project('ksh9', 'c', default_options: [
+    # This is the optimal production build type for this project. If you need
+    # a debug build you must explicitly run `meson --buildtype=debug`. This
+    # helps ensure that each distro (or user) gets a performance optimized build
+    # even if they don't know to add the `--buildtype=minsize` option.
+    'buildtype=minsize',
+    'b_lundef=false',
+    'default_library=static',
+    'c_std=c99', # we require the C99 (aka ISO9899:1999) language standard
+])
 
 source_dir = meson.current_source_dir()
 cc = meson.get_compiler('c')

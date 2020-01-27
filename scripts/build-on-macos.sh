@@ -15,7 +15,7 @@ mkdir build
 cd build
 
 echo ==== Configuring the build
-if ! meson -Dwarnings-are-errors=true
+if ! meson -Dwarnings-are-errors=true --buildtype=debug
 then
     cat meson-logs/meson-log.txt
     exit 1
