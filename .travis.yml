@@ -1,98 +1,41 @@
 sudo: required
 language: c
+env:
+    global:
+        # COVERITY_SCAN_TOKEN
+        - secure: "BsKgvr97ykXKfTwCHQshe4pUMsPySrbqDr1LC+8ixKap3GOHO9wz8sMlPHtIuYjMeJ7sRHiNpDcZ+GC3j3uwj3Wn+2mIIcPF/lefw6KZbxSmuPwELfXdI3MCZwOgZr2KfnsAPMbv7fWFTHwLYUCler8WI+ko9Yvc/ZC1w7hEiP8="
 
-# Get full repo to correctly determine tags from commits
-git:
-    depth: false
-
-# Use docker to test builds on different Linux distros.
-# Latest stable image of each distro is pulled to test builds.
-matrix:
-    include:
-        # https://hub.docker.com/_/fedora/
-        - os: linux
-          compiler: gcc
-          env:
-            - DISTRO_TYPE=fedora
-              INSTALL_REQUIREMENTS="dnf repolist; dnf --allowerasing install -y gcc python3 meson sudo langpacks-zh_CN ed ncurses vi findutils which nmap-ncat expect git glibc-all-langpacks procps diffutils"
-          before_install:
-              - docker pull ${DISTRO_TYPE}
-
-        # https://hub.docker.com/_/opensuse/
-        # Note: Meson 0.44.0 is the newest version that works with Python
-        # 3.4 available on OpenSuse Leap. See issue #430.
-        - os: linux
-          compiler: gcc
-          env:
-            - DISTRO_TYPE=opensuse/tumbleweed
-              INSTALL_REQUIREMENTS="zypper refresh; zypper in -y gcc python3 python3-pip ninja sudo glibc-locale glibc-devel ed ncurses-utils vim findutils which netcat expect git man groff; pip3 install meson==0.44.0"
-          before_install:
-              - docker pull ${DISTRO_TYPE}
-
-        # https://hub.docker.com/_/ubuntu/
-        # Ubuntu requires explicitly generating en_US.UTF-8 locale
-        - os: linux
-          compiler: gcc
-          env:
-            - DISTRO_TYPE=ubuntu
-              INSTALL_REQUIREMENTS="apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -yq gcc python3 sudo locales ed vim python3-pip ninja-build findutils debianutils netcat-openbsd expect git procps man groff; pip3 install meson==0.44.0; locale-gen en_US.UTF-8"
-          before_install:
-              - docker pull ${DISTRO_TYPE}
-
-        # https://hub.docker.com/_/debian/
-        # Debian requires explicitly generating en_US.UTF-8 locale too
-        - os: linux
-          compiler: gcc
-          env:
-            - DISTRO_TYPE=debian
-              INSTALL_REQUIREMENTS="apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -yq gcc python3 python3-pip ninja-build sudo locales ed vim procps findutils debianutils netcat-openbsd expect git man groff; pip3 install meson==0.44.0; sed -i '/# en_US.UTF-8 UTF-8/s/..//' /etc/locale.gen && locale-gen"
-          before_install:
-              - docker pull ${DISTRO_TYPE}
-
-        # https://hub.docker.com/r/i386/ubuntu/
-        # 32-bit environment
-        # i686 images are built officially by docker but not supported
-        # https://github.com/docker-library/official-images#architectures-other-than-amd64
-        - os: linux
-          compiler: gcc
-          env:
-            - DISTRO_TYPE=i386/ubuntu
-              INSTALL_REQUIREMENTS="apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -yq gcc python3 sudo locales ed vim python3-pip ninja-build findutils debianutils netcat-openbsd expect git man groff; pip3 install meson==0.44.0; locale-gen en_US.UTF-8"
-          before_install:
-              - docker pull ${DISTRO_TYPE}
-
-        - os: osx
-          compiler: clang
-          before_install:
-              # Note that scripts/build-on-macos.sh will install the
-              # prerequisites such as Meson and Sphinx using HomeBrew. This is
-              # obviously different compared to the Linux platforms.
-              - brew update
-          env:
-              # This variable is not required by macOS builds, but setting it for Travis dashboard.
-              - DISTRO_TYPE=macOS
-
-        - os: linux
-          env:
-            - SCAN_TYPE="shellcheck"
-          before_install:
-              - sudo apt-get update
-              - sudo apt-get install shellcheck findutils file
-
-services:
-    - docker
+before_install:
+    - sudo apt-get update
+    - sudo apt-get install python3-pip
+    - sudo apt-get install python3-setuptools
+    - sudo pip3 install meson==0.44.0
+    # Ubuntu repositories have older version of ninja
+    - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
+    - unzip ninja-linux.zip
+    - mv ninja ~/bin
 
 script:
-    # Fetch tags to set version number
-    - git fetch --tags
+    - exit 0
 
-    - if [[ $SCAN_TYPE == "shellcheck" ]]; then exec bin/shellcheck; fi
+addons:
+    coverity_scan:
+        # GitHub project metadata
+        project:
+            name: ksh
 
-    - if [[ $TRAVIS_OS_NAME == "osx" ]]; then exec scripts/build-on-macos.sh; fi
+        # Where email notification of build analysis results will be sent
+        notification_email: svashisht@redhat.com
 
-    - docker run -v $TRAVIS_BUILD_DIR:/source ${DISTRO_TYPE} bash -c "set -e;
-        ${INSTALL_REQUIREMENTS};
-        useradd --create-home test;
-        echo \"/tmp/ksh_auditfile;\$(id -u test)\" > /etc/ksh_audit;
-        chown -R test /source;
-        sudo -u test /source/scripts/build-on-docker.sh '${DISTRO_TYPE}'"
+        # Commands to prepare for build_command
+        build_command_prepend: meson -Dbuild-api-tests=false build
+
+        # The command that will be added as an argument to "cov-build" to
+        # compile your project for analysis,
+        build_command: ninja -C build
+
+        # Pattern to match selecting branches that will run analysis. We
+        # recommend leaving this set to 'coverity_scan'. Take care in resource
+        # usage, and consider the build frequency allowances per
+        #   https://scan.coverity.com/faq#frequency
+        branch_pattern: coverity_scan
