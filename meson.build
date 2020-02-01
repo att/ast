@@ -1,4 +1,4 @@
-project('ksh9', 'c', default_options: [
+project('ksh93', 'c', default_options: [
     # This is the optimal production build type for this project. If you need
     # a debug build you must explicitly run `meson --buildtype=debug`. This
     # helps ensure that each distro (or user) gets a performance optimized build
