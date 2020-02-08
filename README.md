@@ -1,3 +1,19 @@
+# This branch is not supported
+
+This branch contains the **ksh2020** version of the AST tools, from January
+2020, which primarily written and maintained by @krader1961 and @siteshwar.
+
+This branch is not supported or maintained by AT&amp;T; the repo at
+https://github.com/att/ast only officially hosts ksh93u+ and the experimental
+ksh93v- branch.
+
+See [#1464](https://github.com/att/ast/issues/1464) and
+[#1466](https://github.com/att/ast/issues/1466) for discussion and history of
+this decision.
+
+Please search for forks of this repo if you are looking for ksh2020.
+
+
 # KSH93
 
 This repository contains the AT&amp;T Software Technology (AST) toolkit
