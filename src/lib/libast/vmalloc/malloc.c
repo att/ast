@@ -823,7 +823,7 @@ static void vm_initialize_hook(void)
 	__realloc_hook = vm_realloc_hook;
 }
 
-void	(*__malloc_initialize_hook)(void) = vm_initialize_hook;
+typeof (__malloc_initialize_hook) __malloc_initialize_hook = vm_initialize_hook;
 
 #if 0 /* 2012-02-29 this may be needed to cover shared libs */
 

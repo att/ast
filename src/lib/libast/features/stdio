@@ -6,8 +6,6 @@ cat{
 	#define _FILE_DEFINED	1
 	#define _FILE_defined	1
 	#define _FILEDEFED	1
-	#define __FILE_defined  1
-	#define ____FILE_defined    1
 
 	#ifndef __FILE_TAG
 	#define __FILE_TAG	_sfio_s

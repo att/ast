@@ -44,5 +44,10 @@ extern int		resolvepath(const char*, char*, size_t);
 extern char*
 realpath(const char* file, char* path)
 {
+	// @lkoutsofios path may be NULL
+	if (!path) {
+	    	if (!(path = malloc (PATH_MAX)))
+        		return NULL;
+	}
 	return resolvepath(file, path, PATH_MAX) > 0 ? path : (char*)0;
 }

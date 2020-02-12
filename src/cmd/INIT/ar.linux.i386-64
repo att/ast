@@ -1,0 +1,6 @@
+: stupid stupid stupid to require a non-standard option for ar to work : 2009-10-06 :
+
+case $1 in
+*x*) /usr/bin/ar "$@" ;;
+*)   /usr/bin/ar U"$@" ;;
+esac

@@ -1,3 +1,4 @@
+if CC.HOSTTYPE == "no_build"
 /*
  * 3d fs library
  *
@@ -101,3 +102,9 @@ terminal FEATURE/eaccess FEATURE/hack
 	$(BINDIR)/3d $(SHELL) $(REGRESS) $(REGRESSFLAGS) $(*)
 
 :: sys.tab
+
+else
+
+:NOTHING:
+
+end

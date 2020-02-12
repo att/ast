@@ -58,20 +58,8 @@ struct _sfio_s;
 #ifndef	__FILE_typedef
 #define __FILE_typedef	1
 #endif
-#ifndef	_FILE_DEFINED
-#define _FILE_DEFINED   1
-#endif
-#ifndef	_FILE_defined
-#define _FILE_defined   1
-#endif
 #ifndef _FILEDEFED
 #define _FILEDEFED	1
-#endif
-#ifndef __FILE_defined
-#define __FILE_defined  1
-#endif
-#ifndef ____FILE_defined
-#define ____FILE_defined  1
 #endif
 #endif
 

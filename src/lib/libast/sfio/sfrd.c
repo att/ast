@@ -201,7 +201,7 @@ Sfdisc_t*	disc;
 				if(buf)
 				{	if(n > (size_t)(r-a))
 						n = (ssize_t)(r-a);
-					memcpy(buf,f->next,n);
+					memmove(buf,f->next,n);
 					f->next += n;
 				}
 				else	n = f->endb - f->next;

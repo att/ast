@@ -49,6 +49,10 @@
 #include <exparse.h>
 #if defined(YYSTYPE) || defined(yystype)
 #define EXSTYPE		YYSTYPE
+#else
+#if defined(YYSTYPE) || defined(YYSTYPE_IS_DECLARED)
+#define EXSTYPE		YYSTYPE
+#endif
 #endif
 #endif
 

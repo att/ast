@@ -5601,6 +5601,18 @@ make|view)
 			;;
 		esac
 	done
+	c=ar
+	b=$INSTALLROOT/bin/$c
+	for t in $h
+	do	s=$INITROOT/$c.$t
+		test -x "$s" || continue
+		case `ls -t "$b" "$s" 2>/dev/null` in
+		$b*)	;;
+		$s*)	$exec cp "$s" "$b"
+			note update $b
+			;;
+		esac
+	done
 # following code stubbed out just in case ar.ibm.risc is needed
 #	c=ar
 #	b=$INSTALLROOT/bin/$c

@@ -92,7 +92,7 @@ size_t		n;	/* number of bytes to be read. 	*/
 		{	if(r > (ssize_t)n)
 				r = (ssize_t)n;
 			if(s != f->next)
-				memcpy(s, f->next, r);
+				memmove(s, f->next, r);
 			f->next += r;
 			s += r;
 			n -= r;
