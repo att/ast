@@ -96,7 +96,7 @@ int	c;	/* if c>=0, c is also written out */
 		isall = SFISALL(f,isall);
 		if((w = SFWR(f,data,n,f->disc)) > 0)
 		{	if((n -= w) > 0) /* save unwritten data, then resume */
-				memcpy((char*)f->data,(char*)data+w,n);
+				memmove((char*)f->data,(char*)data+w,n);
 			written += w;
 			f->next = f->data+n;
 			if(c < 0 && (!isall || n == 0))

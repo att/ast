@@ -247,7 +247,7 @@ Void_t*		mbs;	/* multibyte parsing state	*/
 	/* shift left data so that there will be more room to back up on error.
 	   this won't help streams with small buffers - c'est la vie! */
 	if(sc->d > sc->f->data && (n = sc->endd - sc->d) > 0 && n < SFMBMAX)
-	{	memcpy(sc->f->data, sc->d, n);
+	{	memmove(sc->f->data, sc->d, n);
 		if(sc->f->endr == sc->f->endb)
 			sc->f->endr = sc->f->data+n;
 		if(sc->f->endw == sc->f->endb)

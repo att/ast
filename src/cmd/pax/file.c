@@ -1183,14 +1183,19 @@ setfile(register Archive_t* ap, register File_t* f)
 			int		m;
 			struct stat	st;
 
-			if (lchmod(f->name, f->perm & state.modemask))
-				error(1, "%s: cannot chmod to %s", f->name, fmtmode(f->perm & state.modemask, 0) + 1);
-			else if (m = f->perm & (S_ISUID|S_ISGID|S_ISVTX))
+			if (lstat(f->name, &st))
+				error(1, "%s: not found", f->name);
+			else if ((f->perm ^ st.st_mode) & state.modemask & (S_ISUID|S_ISGID|S_ISVTX|S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IWOTH|S_IXOTH))
 			{
-				if (lstat(f->name, &st))
-					error(1, "%s: not found", f->name);
-				else if (m ^= (st.st_mode & (S_ISUID|S_ISGID|S_ISVTX)))
-					error(1, "%s: mode %s not set", f->name, fmtmode(m, 0) + 1);
+				if (lchmod(f->name, f->perm & state.modemask))
+					error(1, "%s: cannot chmod to %s", f->name, fmtmode(f->perm & state.modemask, 0) + 1);
+				else if (m = f->perm & (S_ISUID|S_ISGID|S_ISVTX))
+				{
+					if (lstat(f->name, &st))
+						error(1, "%s: not found", f->name);
+					else if (m ^= (st.st_mode & (S_ISUID|S_ISGID|S_ISVTX)))
+						error(1, "%s: mode %s not set", f->name, fmtmode(m, 0) + 1);
+				}
 			}
 		}
 #endif

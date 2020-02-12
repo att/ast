@@ -138,7 +138,7 @@ int		n;	/* current position in pool	*/
 			else	/* write failed, recover buffer then quit */
 			{	if(w > 0)
 				{	v -= w;
-					memcpy(head->data,(head->data+w),v);
+					memmove(head->data,(head->data+w),v);
 				}
 				head->next = head->data+v;
 				goto done;
@@ -147,7 +147,7 @@ int		n;	/* current position in pool	*/
 
 		/* move data from head to f */
 		if((head->data+k) != f->data )
-			memcpy(f->data,(head->data+k),v);
+			memmove(f->data,(head->data+k),v);
 		f->next = f->data+v;
 	}
 

@@ -190,7 +190,7 @@ reg int		rc;	/* record separator */
 		{	/* move left-over to read stream */
 			if(w > fr->size)
 				w = fr->size;
-			memcpy((Void_t*)fr->data,(Void_t*)cp,w);
+			memmove((Void_t*)fr->data,(Void_t*)cp,w);
 			fr->endb = fr->data+w;
 			if((w = endb - (cp+w)) > 0)
 				(void)SFSK(fr,(Sfoff_t)(-w),SEEK_CUR,fr->disc);
@@ -200,7 +200,7 @@ reg int		rc;	/* record separator */
 		{	if(direct == SF_WRITE)
 				fw->next += r;
 			else if(r <= (fw->endb-fw->next) )
-			{	memcpy((Void_t*)fw->next,(Void_t*)next,r);
+			{	memmove((Void_t*)fw->next,(Void_t*)next,r);
 				fw->next += r;
 			}
 			else if((w = SFWRITE(fw,(Void_t*)next,r)) != r)

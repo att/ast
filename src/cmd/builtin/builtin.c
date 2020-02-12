@@ -25,3 +25,8 @@
  */
 
 #include <cmd.h>
+
+// @lkoutsofios added to prevent this file from being optimized out
+int _do_not_opt_out (void) {
+    sfprintf (sfstderr, "unreachable");
+}

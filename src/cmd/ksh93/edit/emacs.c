@@ -1007,7 +1007,7 @@ static int escape(register Emacs_t* ep,register genchar *out,int count)
 			else if(i=='=' || (i=='\\' && out[cur-1]=='/'))
 			{
 				draw(ep,REFRESH);
-				if(count>0)
+				if(count>0 || i=='\\')
 					ep->ed->e_tabcount=0;
 				else
 				{
