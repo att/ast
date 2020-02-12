@@ -1,4 +1,23 @@
-USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1994-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1994-2020 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+########################################################################
+#                                                                      #
+#               This software is part of the ast package               #
+#          Copyright (c) 1994-2012 AT&T Intellectual Property          #
+#                      and is licensed under the                       #
+#                 Eclipse Public License, Version 1.0                  #
+#                    by AT&T Intellectual Property                     #
+#                                                                      #
+#                A copy of the License is available at                 #
+#          http://www.eclipse.org/org/documents/epl-v10.html           #
+#         (with md5 checksum b35adb5213ca9657e911e9befb180842)         #
+#                                                                      #
+#              Information and Software Systems Research               #
+#                            AT&T Research                             #
+#                           Florham Park NJ                            #
+#                                                                      #
+#                 Glenn Fowler <gsf@research.att.com>                  #
+#                                                                      #
+########################################################################
 ### this script contains archaic constructs that work with all sh variants ###
 # package - source and binary package control
 # Glenn Fowler <gsf@research.att.com>
@@ -5576,6 +5595,18 @@ make|view)
 	do	s=$INITROOT/$c.$t
 		test -x "$s" || continue
 		onpath $c ||
+		case `ls -t "$b" "$s" 2>/dev/null` in
+		$b*)	;;
+		$s*)	$exec cp "$s" "$b"
+			note update $b
+			;;
+		esac
+	done
+	c=ar
+	b=$INSTALLROOT/bin/$c
+	for t in $h
+	do	s=$INITROOT/$c.$t
+		test -x "$s" || continue
 		case `ls -t "$b" "$s" 2>/dev/null` in
 		$b*)	;;
 		$s*)	$exec cp "$s" "$b"

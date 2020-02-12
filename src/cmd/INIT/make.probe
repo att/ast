@@ -40,6 +40,12 @@ probe_no_protect="'-fno-stack-protector -fno-stack-protector-all' -GS-"
 probe_readonly="-R -Krodata -xMerge -Wa,-r"
 probe_shared="'' -G -b -c -shared -Wl,dll"
 probe_shared_name="-Wl,-soname= -h"
+probe_shared_nostart="-nostartfiles"
+case `gcc -v 2>&1 | egrep gcc.version` in
+*version' '7*) probe_shared_nostart= ;;
+*version' '8*) probe_shared_nostart= ;;
+*version' '9*) probe_shared_nostart= ;;
+esac
 probe_shared_registry='"-update_registry $probe_shared_registry_file"'
 probe_shared_registry_file='registry.ld'
 probe_shared_registry_path="\$(LIBDIR)/$probe_shared_registry_file"
@@ -708,6 +714,37 @@ case $cc_dll:$cc_pic:$so:$dynamic:$static in
 		esac
 		dld=$xx
 		shared=$1
+		# does -nostartfiles make sense for C?
+		case $plusplus in
+		'')	z=`wc -c < xxx$dll`
+			eval set x $probe_shared_nostart
+			while	:
+			do	shift
+				case $# in
+				0)	break ;;
+				esac
+				rm -f xxx$dll
+				if	$dld $shared $1 -o xxx$dll shared.$obj 2>e && test -r xxx$dll
+				then	case `wc -c < xxx$dll` in
+					$z)	;;
+					*)	if	test -s e
+						then	case `cat e` in
+							*[Ee][Rr][Rr][Oo][Rr]*|*[Ww][Aa][Rr][Nn][Ii][Nn][Gg]*|*[Oo][Pp][Tt][Ii][Oo][Nn]*)
+								continue
+								;;
+							esac
+						fi
+						case $shared in
+						'')	shared=$1 ;;
+						*)	shared="$shared $1" ;;
+						esac
+						break
+						;;
+					esac
+				fi
+			done
+			;;
+		esac
 		case $cc_dll in
 		"")	cc_dll=$cc_dll_def ;;
 		esac

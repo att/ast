@@ -1,3 +1,4 @@
+USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2002-2020 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
