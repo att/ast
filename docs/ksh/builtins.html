@@ -1,0 +1,710 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META name="generator" content="mm2html (AT&amp;T Research) 2012-01-11">
+<TITLE> www/ksh/builtins.mm mm document </TITLE>
+<META name="author" content="gsf+dgk+kpv">
+<STYLE type="text/css">
+div.FI	{ padding-left:2em; text-indent:0em; }
+div.HI	{ padding-left:4em; text-indent:-2em; }
+dt	{ float:left; clear:both; }
+dd	{ margin-left:3em; }
+</STYLE>
+</HEAD>
+<BODY bgcolor=white link=slateblue vlink=teal >
+<TABLE border=0 align=center width=96%>
+<TBODY><TR><TD valign=top align=left>
+<!--INDEX--><!--/INDEX-->
+<P>
+<CENTER>
+<H3><CENTER><FONT color=red><FONT face=courier>Guidelines for writing <TT>ksh-93</TT> built-in commands</FONT></FONT></CENTER></H3>
+<BR>David G. Korn
+<P><I></I>
+</CENTER>
+<P>
+<CENTER><FONT color=red><FONT face=courier><H3 align=center><A name="Abstract">Abstract</A></H3></FONT></FONT></CENTER>
+One of the features of <TT>ksh93</TT>, the latest version of <TT>ksh</TT>,
+is the ability to add built-in commands at run time.
+This feature only works on operating systems that have the ability
+to load and link code into the current process at run time.
+Some examples of the systems that have this feature
+are Linux, System V Release 4, Solaris, Sun OS, HP-UX Release 8 and above,
+AIX 3.2 and above, and Microsoft Windows systems. 
+<P>
+This memo describes how to write and compile programs
+that can be loaded into <TT>ksh</TT> at run  time as built-in
+commands.
+<P>
+<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="INTRODUCTION">INTRODUCTION</A></H3></FONT></FONT></CENTER>
+A built-in command is executed without creating a separate process.
+Instead, the command is invoked as a C function by <TT>ksh</TT>. 
+If this function has no side effects in the shell process,
+then the behavior of this built-in is identical to that of
+the equivalent stand-alone command.  The primary difference
+in this case is performance.  The overhead of process creation
+is eliminated.  For commands of short duration, the effect
+can be dramatic.  For example, on SUN OS 4.1, the time to
+run <TT>wc</TT> on a small file of about 1000 bytes, runs
+about 50 times faster as a built-in command.
+<P>
+In addition, built-in commands may have side effects on the
+shell environment.
+This is usually done to extend the application domain for
+shell programming.  For example, there is a group of X-windows extension
+built-ins that make heavy use of the shell variable namespace.
+These built-ins are added at run time and
+result in a windowing shell that can be used to write
+X-windows applications.
+<P>
+While there are definite advantages to adding built-in
+commands, there are some disadvantages as well.
+Since the built-in command and <TT>ksh</TT> share the same
+address space, a coding error in the built-in program
+may affect the behavior of <TT>ksh</TT>; perhaps causing
+it to core dump or hang.
+Debugging is also more complex since your code is now
+a part of a larger entity.
+The isolation provided by a separate process
+guarantees that all resources used by the command
+will be freed when the command completes.
+Resources used by a built-in must be meticulously maintained and freed.
+Also, since the address space of <TT>ksh</TT> will be larger when built-in are loaded,
+it may increase the time it takes <TT>ksh</TT> to fork() and
+exec() non-built-in commands.
+It makes no sense to add a built-in command that takes
+a long time to run or that is run only once, since the performance
+benefits will be negligible.
+Built-ins that have side effects in the current shell
+environment have the disadvantage of increasing the
+coupling between the built-in and <TT>ksh</TT>, making
+the overall system less modular and more monolithic.
+<P>
+Despite these drawbacks, in many cases extending
+<TT>ksh</TT> by adding built-in
+commands makes sense and allows reuse of the shell
+scripting ability in an application specific domain.
+This memo describes how to write <TT>ksh</TT> extensions. 
+<P>
+<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="WRITING BUILT-IN COMMANDS">WRITING BUILT-IN COMMANDS</A></H3></FONT></FONT></CENTER>
+There is a development kit available for writing <TT>ksh</TT>
+built-ins as part of the AST (AT&amp;T Software Technology) Toolkit.
+The development kit has three directories,
+<TT>include</TT>, <TT>lib</TT>, and <TT>bin</TT>.
+It is best to set the value of the environment variable
+<TT>PACKAGE_ast</TT> to the pathname of the directory
+containing the development kit.
+The <TT>include</TT> directory contains a sub-directory
+named <TT>ast</TT> that contains interface prototypes
+for functions that you can call from built-ins.  The <TT>lib</TT>
+directory contains the <TT>ast</TT> library
+and a library named <TT>cmd</TT> that contains a version
+of several of the standard POSIX<FONT SIZE=-6>[1]</FONT>
+utilities that can be made run time built-ins.
+The <TT>lib/ksh</TT> directory contains shared libraries
+that implement other <TT>ksh</TT> built-ins.
+The <TT>bin</TT> directory contains build tools such as <TT>nmake</TT><FONT SIZE=-6>[2]</FONT>.
+To add built-ins at runtime, it is necessary to build a shared library
+containing one or more built-ins that you wish to add.
+The built-ins are then added by running <TT>builtin &#45;f</TT> <EM>shared_lib</EM>.
+Since the procedure for building share libraries is system dependent,
+it is best to use
+<TT>nmake</TT>
+using the sample nmake makefile below as a prototype.
+The AST Toolkit also contains some examples of built-in libraries under
+the <TT>src/cmd/kshlib</TT> directory.
+<P>
+There are two ways to code adding built-ins.  One method is to replace
+the function <TT>main</TT> with a function
+<TT>b_</TT><EM>name</EM>, where <EM>name</EM> is the name
+of the built-in you wish to define.
+A built-in command has a calling convention similar to
+the <TT>main</TT> function of a program,
+<TT>int main(int argc, char *argv&#0091;&#0093;)</TT>.
+except that it takes a third argument of type <TT>Shbltin_t*</TT> which can
+be passed as <TT><FONT SIZE=-1>NULL</FONT></TT> if it is not used.  The definition for
+<TT>Shbltin_t*</TT> is in <TT>&lt;ast/shcmd.h&gt;</TT>.
+Instead of <TT>exit</TT>, you need to use <TT>return</TT>
+to terminate your command.
+The return value will become the exit status of the command.
+The <TT>open</TT> built-in, installed in <TT>lib/ksh</TT> in the AST Toolkit, uses this method.
+The <TT>Shbltin_t</TT> structure contains a field named <TT>shp</TT> which is
+a pointer the the shell data that is needed for <TT>shell</TT> library callbacks.
+It also contains the fields, <TT>shrun</TT>, <TT>shtrap</TT>, <TT>shexit</TT>,
+and <TT>shbltin</TT>
+that are function pointers to the <TT>shell</TT> library functions <TT>sh_run</TT>, <TT>sh_trap</TT>
+<TT>sh_exit</TT>, and <TT>sh_addbuiltin</TT>, respectively. These functions
+can be invoked without the need for runtime symbol lookup when the
+shell is statically linked with <TT>libshell</TT>.
+<P>
+The alternative method is to create a function <TT>lib_init</TT> and
+use the <TT>Shbltin_t.shbltin()</TT> function to add one or more built-ins.
+The <TT>lib_init</TT> function will be called with two arguments.  The
+first argument will be 0 when the library is loaded and the second
+argument will be of type <TT>Shbltin_t*</TT>.
+The <TT>dbm_t</TT> and <TT>dss</TT> shell built-ins use this method.
+<P>
+No matter which way you add built-ins you should add the line
+<TT>SHLIB(</TT><EM>identifier</EM><TT>)</TT> as the last line of one
+of the built-in source file, where <EM>identifier</EM> is any C identifier.
+This line provides version information to the shell <TT>builtin</TT> command
+that it uses to verify compatibility between the built-in and <TT>ksh</TT>
+implementation versions. <TT>builtin</TT> fails with a diagnostic on version 
+mismatch. The diagnostic helps determine whether <TT>ksh</TT> is out of
+date and requires an upgrade or the built-in is out of date and requires
+recompilation.
+<P>
+The steps necessary to create and add a run time built-in are
+illustrated in the following simple example.
+Suppose you wish to add a built-in command named <TT>hello</TT>
+which requires one argument and prints the word hello followed
+by its argument.  First, write the following program in the file
+<TT>hello.c</TT>:
+<DIV class=FI>
+<PRE>
+#include     &lt;stdio.h&gt;
+int b_hello(int argc, char *argv&#0091;&#0093;, void *context)
+{
+        if(argc != 2)
+        {
+                fprintf(stderr,"Usage: hello arg&#0092;n");
+                return(2);
+        }
+        printf("hello %s&#0092;n",argv&#0091;1&#0093;);
+        return(0);
+}
+SHLIB(hello)
+</DIV>
+</PRE>
+<P>
+Next, the program needs to be compiled.
+If you are building with AT&amp;T <TT>nmake</TT> use the following <TT>Makefile</TT>:
+<DIV class=FI>
+<PRE>
+:PACKAGE: --shared ast
+hello plugin=ksh :LIBRARY: hello.c
+</DIV>
+</PRE>
+and run <TT>nmake install</TT> to compile, link, and install the built-in shared library
+in <TT>lib/ksh/</TT> under <TT>PACKAGE_ast</TT>.
+If the built-in extension uses several <TT>.c</TT> files, list all of these on
+the <TT>:LIBRARY:</TT> line.
+<P>
+Otherwise you will have to compile <TT>hello.c</TT> with an option
+to pick up the AST include directory
+(since the AST <TT>&lt;stdio.h&gt;</TT> is required for <TT>ksh</TT> compatibility)
+and options required for generating shared libraries.
+For example, on Linux use this to compile:
+<DIV class=FI>
+<PRE>
+cc -fpic -I$PACKAGE_ast/include/ast -c hello.c
+</DIV>
+</PRE>
+and use the appropriate link line.
+It really is best to use <TT>nmake</TT> because the 2 line Makefile above
+will work on all systems that have <TT>ksh</TT> installed.
+<P>
+If you have several built-ins, it is desirable
+to build a shared library that contains them all.
+<P>
+The final step is using the built-in.
+This can be done with the <TT>ksh</TT> command <TT>builtin</TT>.
+To load the shared library <TT>libhello.so</TT> from the current directory
+and add the built-in <TT>hello</TT>, invoke the command,
+<DIV class=FI>
+<PRE>
+builtin -f ./libhello.so hello
+</DIV>
+</PRE>
+The shared library prefix (<TT>lib</TT> here) and suffix (<TT>.so</TT> here) be omitted;
+the shell will add an appropriate suffix
+for the system that it is loading from.
+If you install the shared library in <TT>lib/ksh/</TT>, where <TT>../lib/ksh/</TT> is
+a directory on <STRONG>$PATH</STRONG>, the command
+<DIV class=FI>
+<PRE>
+builtin -f hello hello
+</DIV>
+</PRE>
+will automatically find, load and install the built-in on any system.
+Once this command has been invoked, you can invoke <TT>hello</TT>
+as you do any other command. 
+If you are using <TT>lib_init</TT> method to add built-ins then no arguments
+follow the <TT>&#45;f</TT> option.
+<P>
+It is often desirable to make a command <EM>built-in</EM>
+the first time that it is referenced.  The first
+time <TT>hello</TT> is invoked, <TT>ksh</TT> should load and execute it,
+whereas for subsequent invocations <TT>ksh</TT> should just execute the built-in.
+This can be done by creating a file named <TT>hello</TT>
+with the following contents:
+<DIV class=FI>
+<PRE>
+function hello
+{
+        unset -f hello
+        builtin -f hello hello
+        hello "$@"
+}
+</DIV>
+</PRE>
+This file <TT>hello</TT> needs to be placed in a directory that is
+in your <STRONG><FONT SIZE=-1>FPATH</FONT></STRONG> variable, and the built-in shared library
+should be installed in <TT>lib/ksh/</TT>, as described above.
+<P>
+<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="CODING REQUIREMENTS AND CONVENTIONS">CODING REQUIREMENTS AND CONVENTIONS</A></H3></FONT></FONT></CENTER>
+As mentioned above, the entry point for built-ins must either be of
+the form <TT>b_</TT><EM>name</EM> or else be loaded from a function named
+<TT>lib_init</TT>.
+Your built-ins can call functions from the standard C library,
+the <TT>ast</TT> library, interface functions provided by <TT>ksh</TT>,
+and your own functions.
+You should avoid using any global symbols beginning with
+<STRONG>sh_</STRONG>,
+<STRONG>nv_</STRONG>,
+and
+<STRONG>ed_</STRONG>
+since these are used by <TT>ksh</TT> itself.
+<TT>#define</TT> constants in <TT>ksh</TT> interface
+files use symbols beginning with <TT>SH_</TT> and <TT>NV_</TT>,
+so avoid using names beginning with these too.
+<P>
+<H4><A name="Header Files">Header Files</A></H4>
+The development kit provides a portable interface
+to the C library and to libast.
+The header files in the development kit are compatible with
+K&amp;R C<FONT SIZE=-6>[3]</FONT>,
+ANSI-C<FONT SIZE=-6>[4]</FONT>,
+and C++<FONT SIZE=-6>[5]</FONT>.
+<P>
+The best thing to do is to include the header file <TT>&lt;shell.h&gt;</TT>.
+This header file causes the <TT>&lt;ast.h&gt;</TT> header, the
+<TT>&lt;error.h&gt;</TT> header and the <TT>&lt;stak.h&gt;</TT>
+header to be included as well as defining prototypes
+for functions that you can call to get shell
+services for your builtins.
+The header file <TT>&lt;ast.h&gt;</TT>
+provides prototypes for many <STRONG>libast</STRONG> functions
+and all the symbol and function definitions from the
+ANSI-C headers, <TT>&lt;stddef.h&gt;</TT>,
+<TT>&lt;stdlib.h&gt;</TT>, <TT>&lt;stdarg.h&gt;</TT>, <TT>&lt;limits.h&gt;</TT>,
+and <TT>&lt;string.h&gt;</TT>.
+It also provides all the symbols and definitions for the
+POSIX<FONT SIZE=-6>[6]</FONT>
+headers <TT>&lt;sys/types.h&gt;</TT>, <TT>&lt;fcntl.h&gt;</TT>, and
+<TT>&lt;unistd.h&gt;</TT>.
+You should include <TT>&lt;ast.h&gt;</TT> instead of one or more of
+these headers.
+The <TT>&lt;error.h&gt;</TT> header provides the interface to the error
+and option parsing routines defined below.
+The <TT>&lt;stak.h&gt;</TT> header provides the interface to the memory
+allocation routines described below.
+<P>
+Programs that want to use the information in <TT>&lt;sys/stat.h&gt;</TT>
+should include the file <TT>&lt;ls.h&gt;</TT> instead.
+This provides the complete POSIX interface to <TT>stat()</TT>
+related functions even on non-POSIX systems.
+<P>
+<P>
+<H4><A name="Input/Output">Input/Output</A></H4>
+<TT>ksh</TT> uses <STRONG>sfio</STRONG>,
+the Safe/Fast I/O library<FONT SIZE=-6>[7]</FONT>,
+to perform all I/O operations.
+The <STRONG>sfio</STRONG> library, which is part of <STRONG>libast</STRONG>,
+provides a superset of the functionality provided by the standard
+I/O library defined in ANSI-C.
+If none of the additional functionality is required,
+and if you are not familiar with <STRONG>sfio</STRONG> and
+you do not want to spend the time learning it,
+then you can use <TT>sfio</TT> via the <TT>stdio</TT> library
+interface.  The development kit contains the header <TT>&lt;stdio.h&gt;</TT>
+which maps <TT>stdio</TT> calls to <TT>sfio</TT> calls.
+In most instances the mapping is done
+by macros or inline functions so that there is no overhead.
+The man page for the <TT>sfio</TT> library is in an Appendix.
+<P>
+However, there are some very nice extensions and
+performance improvements in <TT>sfio</TT>
+and if you plan any major extensions I recommend
+that you use it natively.
+<P>
+<H4><A name="Error Handling">Error Handling</A></H4>
+For error messages it is best to use the <TT>ast</TT> library
+function <TT>errormsg()</TT> rather that sending output to
+<TT>stderr</TT> or the equivalent <TT>sfstderr</TT> directly.
+Using <TT>errormsg()</TT> will make error message appear
+more uniform to the user.
+Furthermore, using <TT>errormsg()</TT> should make it easier
+to do error message translation for other locales
+in future versions of <TT>ksh</TT>.
+<P>
+The first argument to
+<TT>errormsg()</TT> specifies the dictionary in which the string
+will be searched for translation.
+The second argument to <TT>errormsg()</TT> contains that error type
+and value.  The third argument is a <EM>printf</EM> style format
+and the remaining arguments are arguments to be printed
+as part of the message.  A new-line is inserted at the
+end of each message and therefore, should not appear as
+part of the format string.
+The second argument should be one of the following:
+<DIV class=SH>
+<DL>
+<DT><TT>ERROR_exit(</TT><EM>n</EM><TT>)</TT>:<DD><BR>
+If <EM>n</EM> is not-zero, the builtin will exit value <EM>n</EM> after
+printing the message.
+<DT><TT>ERROR_system(</TT><EM>n</EM><TT>)</TT>:<DD><BR>
+Exit builtin with exit value <EM>n</EM> after printing the message.
+The message will display the message corresponding to <TT>errno</TT>
+enclosed within <TT>&#0091;&nbsp;&#0093;</TT> at the end of the message.
+<DT><TT>ERROR_usage(</TT><EM>n</EM><TT>)</TT>:<DD><BR>
+Will generate a usage message and exit.  If <EM>n</EM> is non-zero,
+the exit value will be 2.  Otherwise the exit value will be 0.
+<DT><TT>ERROR_debug(</TT><EM>n</EM><TT>)</TT>:<DD><BR>
+Will print a level <EM>n</EM> debugging message and will then continue.
+<DT><TT>ERROR_warn(</TT><EM>n</EM><TT>)</TT>:<DD><BR>
+Prints a warning message. <EM>n</EM> is ignored.
+</DL><P>
+<H4><A name="Option Parsing">Option Parsing</A></H4>
+The first thing that a built-in should do is to check
+the arguments for correctness and to print any usage
+messages on standard error.
+For consistency with the rest of <TT>ksh</TT>, it is best
+to use the <TT>libast</TT> functions <TT>optget()</TT> and
+<TT>optusage()</TT>for this
+purpose.
+The header <TT>&lt;error.h&gt;</TT> includes prototypes for
+these functions.
+The <TT>optget()</TT> function is similar to the
+System V C library function <TT>getopt()</TT>,
+but provides some additional capabilities.
+Built-ins that use <TT>optget()</TT> provide a more
+consistent user interface.
+<P>
+The <TT>optget()</TT> function is invoked as
+<DIV class=FI>
+<PRE>
+int optget(char *<EM>argv</EM>&#0091;&#0093;, const char *<EM>optstring</EM>)
+</DIV>
+</PRE>
+where <TT>argv</TT> is the argument list and <TT>optstring</TT>
+is a string that specifies the allowable arguments and
+additional information that is used to format <EM>usage</EM>
+messages.
+In fact a complete man page in <TT>troff</TT> or <TT>html</TT>
+can be generated by passing a usage string as described
+by the <TT>getopts</TT> command.
+Like <TT>getopt()</TT>,
+single letter options are represented by the letter itself,
+and options that take a string argument are followed by the <TT>:</TT>
+character.
+Option strings have the following special characters:
+<DIV class=SH>
+<DL>
+<DT><TT>:</TT><DD>
+Used after a letter option to indicate that the option
+takes an option argument.
+The variable <TT>opt_info.arg</TT> will point to this
+value after the given argument is encountered.
+<DT><TT>#</TT><DD>
+Used after a letter option to indicate that the option
+can only take a numerical value.
+The variable <TT>opt_info.num</TT> will contain this
+value after the given argument is encountered.
+<DT><TT>?</TT><DD>
+Used after a <TT>:</TT> or <TT>#</TT> (and after the optional <TT>?</TT>)
+to indicate the the
+preceding option argument is not required.
+<DT><TT>&#0091;</TT>...<TT>&#0093;</TT><DD><BR>
+After a <TT>:</TT> or <TT>#</TT>, the characters contained
+inside the brackets are used to identify the option
+argument when generating a <EM>usage</EM> message. 
+<DT><EM>space</EM><DD><BR>
+The remainder of the string will only be used when generating
+usage messages.
+</DL>
+</DIV>
+<P>
+The <TT>optget()</TT> function returns the matching option letter if
+one of the legal option is matched.
+Otherwise, <TT>optget()</TT> returns
+<DIV class=SH>
+<DL>
+<DT><TT>':'</TT><DD>
+If there is an error.  In this case the variable <TT>opt_info.arg</TT>
+contains the error string.
+<DT><TT>0</TT><DD>
+Indicates the end of options.
+The variable <TT>opt_info.index</TT> contains the number of arguments
+processed.
+<DT><TT>'?'</TT><DD>
+A usage message has been required.
+You normally call <TT>optusage()</TT> to generate and display
+the usage message.
+</DL>
+</DIV>
+<P>
+The following is an example of the option parsing portion
+of the <TT>wc</TT> utility.
+<DIV class=FI>
+<PRE>
+#include &lt;shell.h&gt;
+while(1) switch(n=optget(argv,"xf:&#0091;file&#0093;"))
+{
+	case 'f':
+		file = opt_info.arg;
+		break;
+	case ':':
+		error(ERROR_exit(0), opt_info.arg);
+		break;
+	case '?':
+		error(ERROR_usage(2), opt_info.arg);
+		break;
+}
+</DIV>
+</PRE>
+<P>
+<H4><A name="Storage Management">Storage Management</A></H4>
+It is important that any memory used by your built-in
+be returned.  Otherwise, if your built-in is called frequently,
+<TT>ksh</TT> will eventually run out of memory.
+You should avoid using <TT>malloc()</TT> for memory that must
+be freed before returning from you built-in, because by default,
+<TT>ksh</TT> will terminate you built-in in the event of an
+interrupt and the memory will not be freed.
+<P>
+The best way to to allocate variable sized storage is
+through calls to the <STRONG>stak</STRONG> library
+which is included in <STRONG>libast</STRONG>
+and which is used extensively by <TT>ksh</TT> itself.
+Objects allocated with the <TT>stakalloc()</TT>
+function are freed when you function completes
+or aborts. 
+The <STRONG>stak</STRONG> library provides a convenient way to
+build variable length strings and other objects dynamically.
+The man page for the <STRONG>stak</STRONG> library is contained
+in the Appendix.
+<P>
+Before <TT>ksh</TT> calls each built-in command, it saves
+the current stack location and restores it after
+it returns.
+It is not necessary to save and restore the stack
+location in the <TT>b_</TT> entry function, 
+but you may want to write functions that use this stack
+are restore it when leaving the function.
+The following coding convention will do this in
+an efficient manner:
+<DIV class=FI>
+<PRE>
+<EM>yourfunction</EM>()
+{
+        char	*savebase;
+        int	saveoffset;
+        if(saveoffset=staktell())
+        	savebase = stakfreeze(0);
+        ...
+        if(saveoffset)
+        	stakset(savebase,saveoffset);
+        else
+        	stakseek(0);
+}
+</DIV>
+</PRE>
+<P>
+<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="CALLING <TT>ksh</TT> SERVICES">CALLING <TT>ksh</TT> SERVICES</A></H3></FONT></FONT></CENTER>
+Some of the more interesting applications are those that extend
+the functionality of <TT>ksh</TT> in application specific directions.
+A prime example of this is the X-windows extension which adds
+builtins to create and delete widgets.
+The <STRONG>nval</STRONG> library is used to interface with the shell
+name space.
+The <STRONG>shell</STRONG> library is used to access other shell services.
+<P>
+<H4><A name="The nval library">The nval library</A></H4>
+A great deal of power is derived from the ability to use
+portions of the hierarchal variable namespace provided by <TT>ksh-93</TT>
+and turn these names into active objects.
+<P>
+The <STRONG>nval</STRONG> library is used to interface with shell
+variables.
+A man page for this file is provided in an Appendix.
+You need to include the header <TT>&lt;nval.h&gt;</TT>
+to access the functions defined in the <STRONG>nval</STRONG> library.
+All the functions provided by the <STRONG>nval</STRONG> library begin
+with the prefix <TT>nv_</TT>.
+Each shell variable is an object in an associative table
+that is referenced by name.
+The type <TT>Namval_t*</TT> is pointer to a shell variable. 
+To operate on a shell variable, you first get a handle
+to the variable with the <TT>nv_open()</TT> function
+and then supply the handle returned as the first
+argument of the function that provides an operation
+on the variable.
+You must call <TT>nv_close()</TT> when you are finished
+using this handle so that the space can be freed once
+the value is unset.
+The two most frequent operations are to get the value of
+the variable, and to assign value to the variable.
+The <TT>nv_getval()</TT> returns a pointer the the
+value of the variable.
+In some cases the pointer returned is to a region that
+will be overwritten by the next <TT>nv_getval()</TT> call
+so that if the value isn't used immediately, it should
+be copied.
+Many variables can also generate a numeric value.
+The <TT>nv_getnum()</TT> function returns a numeric
+value for the given variable pointer, calling the
+arithmetic evaluator if necessary.
+<P>
+The <TT>nv_putval()</TT> function is used to assign a new
+value to a given variable.
+The second argument to <TT>putval()</TT> is the value
+to be assigned
+and the third argument is a <EM>flag</EM> which
+is used in interpreting the second argument.
+<P>
+Each shell variable can have one or more attributes.
+The <TT>nv_isattr()</TT> is used to test for the existence
+of one or more attributes.
+See the appendix for a complete list of attributes.
+<P>
+By default, each shell variable passively stores the string you
+give with with <TT>nv_putval()</TT>, and returns the value
+with <TT>getval()</TT>.  However, it is possible to turn
+any node into an active entity by assigning functions
+to it that will be called whenever <TT>nv_putval()</TT>
+and/or <TT>nv_getval()</TT> is called.
+In fact there are up to five functions that can 
+associated with each variable to override the
+default actions.
+The type <TT>Namfun_t</TT> is used to define these functions.
+Only those that are non-<TT>NULL</TT> override the
+default actions.
+To override the default actions, you must allocate an
+instance of <TT>Namfun_t</TT>, and then assign
+the functions that you wish to override.
+The <TT>putval()</TT>
+function is called by the <TT>nv_putval()</TT> function.
+A <TT>NULL</TT> for the <EM>value</EM> argument
+indicates a request to unset the variable.
+The <EM>type</EM> argument might contain the <TT>NV_INTEGER</TT>
+bit so you should be prepared to do a conversion if
+necessary.
+The <TT>getval()</TT>
+function is called by <TT>nv_getval()</TT>
+value and must return a string.
+The <TT>getnum()</TT>
+function is called by by the arithmetic evaluator
+and must return double.
+If omitted, then it will call <TT>nv_getval()</TT> and
+convert the result to a number.
+<P>
+The functionality of a variable can further be increased
+by adding discipline functions that
+can be associated with the variable.
+A discipline function allows a script that uses your
+variable to define functions whose name is
+<EM>varname</EM><TT>.</TT><EM>discname</EM>
+where <EM>varname</EM> is the name of the variable, and <EM>discname</EM>
+is the name of the discipline.
+When the user defines such a function, the <TT>settrap()</TT>
+function will be called with the name of the discipline and
+a pointer to the parse tree corresponding to the discipline
+function.
+The application determines when these functions are actually
+executed.
+By default, <TT>ksh</TT> defines <TT>get</TT>,
+<TT>set</TT>, and <TT>unset</TT> as discipline functions.
+<P>
+In addition, it is possible to provide a data area that
+will be passed as an argument to
+each of these functions whenever any of these functions are called.
+To have private data, you need to define and allocate a structure
+that looks like
+<DIV class=FI>
+<PRE>
+struct <EM>yours</EM>
+{
+        Namfun_t	fun;
+	<EM>your_data_fields</EM>;
+};
+</DIV>
+</PRE>
+<P>
+<H4><A name="The shell library">The shell library</A></H4>
+There are several functions that are used by <TT>ksh</TT> itself
+that can also be called from built-in commands.
+The man page for these routines are in the Appendix.
+<P>
+The <TT>sh_addbuiltin()</TT> function can be used to add or delete
+builtin commands.  It takes the name of the built-in, the
+address of the function that implements the built-in, and
+a <TT>void*</TT> pointer that will be passed to this function
+as the third agument whenever it is invoked.
+If the function address is <TT>NULL</TT>, the specified built-in
+will be deleted.  However, special built-in functions cannot
+be deleted or modified.
+<P>
+The <TT>sh_fmtq()</TT> function takes a string and returns
+a string that is quoted as necessary so that it can
+be used as shell input.
+This function is used to implement the <TT>%q</TT> option
+of the shell built-in <TT>printf</TT> command.
+<P>
+The <TT>sh_parse()</TT> function returns a parse tree corresponding
+to a give file stream.  The tree can be executed by supplying
+it as the first argument to
+the <TT>sh_trap()</TT> function and giving a value of <TT>1</TT> as the
+second argument. 
+Alternatively, the <TT>sh_trap()</TT> function can parse and execute
+a string by passing the string as the first argument and giving <TT>0</TT>
+as the second argument.
+<P>
+The <TT>sh_isoption()</TT> function can be used to set to see whether one
+or more of the option settings is enabled.
+</DIV>
+<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="References">References</A></H3></FONT></FONT></CENTER>
+<P>
+<DL compact>
+
+<DT>[1]<DD>
+<EM>POSIX &#45; Part 2: Shell and Utilities,</EM>
+IEEE Std 1003.2-1992, ISO/IEC 9945-2:1993.
+<DT>[2]<DD>
+Glenn Fowler,
+<EM>A Case for make</EM>,
+Software - Practice and Experience, Vol. 20 No. S1, pp. 30-46, June 1990.
+<DT>[3]<DD>
+Brian W. Kernighan and Dennis M. Ritchie,
+<EM>The C Programming Language</EM>,
+Prentice Hall, 1978.
+<DT>[4]<DD>
+American National Standard for Information Systems &#45; Programming
+Language &#45; C, ANSI X3.159-1989.
+<DT>[5]<DD>
+Bjarne Stroustroup,
+<EM>C++</EM>,
+Addison Wesley, xxxx
+<DT>[6]<DD>
+<EM>POSIX &#45; Part 1: System Application Program Interface,</EM>
+IEEE Std 1003.1-1990, ISO/IEC 9945-1:1990.
+<DT>[7]<DD>
+David Korn and Kiem-Phong Vo,
+<EM>SFIO - A Safe/Fast Input/Output library,</EM>
+Proceedings of the Summer Usenix,
+pp. , 1991.
+</DL>
+<P>
+<HR>
+<TABLE border=0 align=center width=96%>
+<TR>
+<TD align=left></TD>
+<TD align=center></TD>
+<TD align=right>March 13, 2012</TD>
+</TR>
+</TABLE>
+<P>
+
+</TD></TR></TBODY></TABLE>
+
+</BODY>
+</HTML>

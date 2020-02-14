@@ -1,0 +1,17 @@
+#!/bin/ksh
+
+. ./cgi-lib.ksh
+
+cgi_parse
+cgi_header
+
+print "<html>"
+print "<pre>"
+print -r "Url: $(cgi_url)"
+for i in ${!Cgi.*}
+do
+	nameref val=$i
+	print -r "$i = $val"
+done
+print "</pre>"
+print "</html>"

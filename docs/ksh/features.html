@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META name="generator" content="mm2html (AT&amp;T Research) 2012-01-11">
+<TITLE> www/ksh/features.mm mm document </TITLE>
+<META name="author" content="gsf+dgk+kpv">
+<STYLE type="text/css">
+div.FI	{ padding-left:2em; text-indent:0em; }
+div.HI	{ padding-left:4em; text-indent:-2em; }
+dt	{ float:left; clear:both; }
+dd	{ margin-left:3em; }
+</STYLE>
+</HEAD>
+<BODY bgcolor=white link=slateblue vlink=teal >
+<TABLE border=0 align=center width=96%>
+<TBODY><TR><TD valign=top align=left>
+<!--INDEX--><!--/INDEX-->
+
+
+<P>
+<P><CENTER><FONT color=red><FONT face=courier><H3><A name="ksh features">ksh features</A></H3></FONT></FONT></CENTER>
+KSH-93 is the most recent version of the KornShell Language described in
+<EM>The KornShell Command and Programming Language</EM>,
+by Morris Bolsky and David Korn of AT&amp;T Research (nee Bell Laboratories).
+The KornShell is a shell programming language,
+which is upward compatible with
+<EM>sh</EM>
+(the Bourne Shell),
+and is intended to conform to the IEEE P1003.2/ISO 9945.2 Shell and
+Utilities standard.
+KSH-93 provides an enhanced programming environment in
+addition to the major command-entry features of the BSD
+shell
+<EM>csh</EM>.
+With KSH-93, medium-sized programming tasks can be
+performed at shell-level without a significant loss in performance.
+In addition,
+<EM>sh</EM>
+scripts can be run on KSH-93 without modification.
+<P>
+The code should conform to the IEEE POSIX 1003.1 standard and to the
+proposed ANSI-C standard so that it should be portable to all
+such systems.
+Like the previous version, KSH-88,
+it is designed to accept eight bit character sets
+transparently, thereby making it internationally compatible.
+It can support multi-byte characters sets with some characteristics
+of the character set given at run time.
+<P>
+KSH-93 provides the following features, many of which were also inherent
+in KSH-88:
+
+<P>
+<H4><A name="Enhanced Command Re-entry Capability">Enhanced Command Re-entry Capability</A></H4>
+The KSH-93 history
+function records commands entered at any shell level and stores
+them, up to a user-specified limit, even after you log off.
+This allows you to re-enter long commands with a few keystrokes
+- even those commands you entered yesterday.
+The history file allows for eight bit characters in
+commands and supports essentially unlimited size histories.
+
+<P>
+<H4><A name="In-line Editing">In-line Editing</A></H4>
+In
+<EM>sh</EM>
+the only way to fix mistyped
+commands is to backspace or retype the line.
+KSH-93 allows you
+to edit a command line using a choice of EMACS-TC or
+<EM>vi</EM>
+functions.
+You can use the in-line editors to complete filenames as
+you type them.
+You may also use this editing feature when entering
+command lines from your history file.
+A user can capture keystrokes and rebind keys to customize the
+editing interface.
+
+<P>
+<H4><A name="Extended I/O Capabilities">Extended I/O Capabilities</A></H4>
+KSH-93 provides several I/O
+capabilities not available in
+<EM>sh</EM>,
+including the ability to:
+<UL type=square>
+<LI>
+specify a file descriptor for input and output
+<LI>
+start up and run co-processes
+<LI>
+produce a prompt at the terminal before a read
+<LI>
+easily format and interpret responses to a menu
+<LI>
+echo lines exactly as output without escape processing
+<LI>
+format output using printf formats.
+<LI>
+read and echo lines ending in "&#0092;e".
+</UL>
+
+<P>
+<H4><A name="Improved performance">Improved performance</A></H4>
+KSH-93 executes many scripts faster
+than the System V Bourne shell.
+A major reason for this is
+that many of the standard utilities are built-in.
+To reduce the time to initiate a command, KSH-93 allows
+commands to be added as built-ins at run time
+on systems that support dynamic loading such as System V Release 4.
+
+<P>
+<H4><A name="Arithmetic">Arithmetic</A></H4>
+KSH-93 allows you to do integer arithmetic in any
+base from two to sixty-four.
+You can also do double
+precision floating point arithmetic.
+Almost the complete set of C language operators are available
+with the same syntax and precedence.
+Arithmetic expressions can be used to as an argument expansion 
+or as a separate command.
+In addition there is an arithmetic for command that works
+like the for statement in C.
+
+<P>
+<H4><A name="Arrays">Arrays</A></H4>
+KSH-93 supports both indexed and associative arrays.
+The subscript for an indexed array is an arithmetic expression,
+whereas, the subscript for an associative array is a string.
+
+<P>
+<H4><A name="Functions and Aliases">Functions and Aliases</A></H4>
+Two mechanisms - functions and
+aliases - can be used to assign a user-selected identifier to
+an existing command or shell script.
+Functions allow local variables and provide scoping
+for exception handling.
+Functions can be searched for and loaded on first reference the
+way scripts are.
+
+<P>
+<H4><A name="Substring Capabilities">Substring Capabilities</A></H4>
+KSH-93 allows you to create a
+substring of any given string either by specifying the starting
+offset and length, or by stripping off leading
+or trailing substrings during parameter substitution.
+You can also specify attributes, such as upper and lower case,
+field width, and justification to shell variables.
+
+<P>
+<H4><A name="Enhanced pattern matching capabilities">Enhanced pattern matching capabilities</A></H4>
+KSH-93 allows you to specify
+regular expressions for file and string matches.
+
+<P>
+<H4><A name="Improved debugging">Improved debugging</A></H4>
+KSH-93 can generate line numbers on execution traces.
+Also, I/O redirections are now traced.
+There is a DEBUG trap that gets evaluated after each command
+so that errors can be localized.
+
+<P>
+<H4><A name="Job Control">Job Control</A></H4>
+On systems that support job control, including
+System V Release 4, KSH-93
+provides a job-control mechanism almost identical to that of
+the BSD "csh", version 4.1.
+This feature allows you
+to stop and restart programs, and to move programs between the
+foreground and the background.
+
+<P>
+<H4><A name="Added security">Added security</A></H4>
+KSH-93 can execute scripts which do not have read permission
+and scripts which have the setuid and/or setgid set when
+invoked by name, rather than as an argument to the shell.
+It is possible to log or control the execution of setuid and/or
+setgid scripts.
+The noclobber option prevents you from accidentally erasing
+a file by redirecting to an existing file.
+
+<P>
+<H4><A name="Documentation">Documentation</A></H4>
+Documentation for KSH-93 consists of an
+<EM>Introduction to KSH-93,</EM>
+<EM>Compatibility with the Bourne Shell</EM>,
+a manual page and a
+README file.
+In addition, the
+<EM>New KornShell Command and Programming Language</EM>
+book is available from Prentice Hall.
+<P>
+<HR>
+<TABLE border=0 align=center width=96%>
+<TR>
+<TD align=left></TD>
+<TD align=center></TD>
+<TD align=right>March 13, 2012</TD>
+</TR>
+</TABLE>
+<P>
+
+</TD></TR></TBODY></TABLE>
+
+</BODY>
+</HTML>
