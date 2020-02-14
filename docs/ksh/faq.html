@@ -1,0 +1,1004 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+<META name="generator" content="mm2html (AT&amp;T Research) 2012-01-11">
+<TITLE> general shell </TITLE>
+<META name="author" content="gsf+dgk+kpv">
+<SCRIPT type="text/javascript">
+var A, P, Q;
+function FAQ_mark(mark) {
+	P = null;
+	for (var i = 0; i < A.length; i++)
+		A[i].className = mark;
+}
+function FAQ_init() {
+	Q = document.getElementsByTagName("dt");
+	A = document.getElementsByTagName("dd");
+	FAQ_mark("hide");
+	for (var i = 0; i < Q.length; i++) {
+		 Q[i].onclick=function() {
+		 	var next = this.nextSibling;
+			while (next.nodeType != 1)
+				next = next.nextSibling;
+			if (P != null && P != next)
+				P.className = "hide";
+			if (next.className == "hide") {
+				next.className = "show";
+				P = next;
+			}
+			else {
+				next.className = "hide";
+				P = null;
+			}
+		}
+	 }
+}
+window.onload = FAQ_init;
+</SCRIPT>
+<STYLE type="text/css">
+div.FI	{ padding-left:2em; text-indent:0em; }
+div.HI	{ padding-left:4em; text-indent:-2em; }
+dt	{ margin: 15px 40px 5px; cursor: pointer; }
+dt:before {
+	content: "Q";
+	font-family: Georgia, "Times New Roman", Times, serif;
+	margin-right: 7px;
+	padding: 2px 6px 5px;
+	color: #FFD87D;
+	background-color: teal;
+	font-weight: normal;
+	margin-left: -35px;
+	position: relative;
+}
+dd	{ margin: 25px 70px 0px; }
+li	{ padding: 2px 0; }
+.show	{ display: block; }
+.hide	{ display: none; }
+</STYLE>
+</HEAD>
+<BODY bgcolor=white link=slateblue vlink=teal >
+<TABLE border=0 align=center width=96%>
+<TBODY><TR><TD valign=top align=left>
+<!--INDEX--><!--/INDEX-->
+<P>
+<P><CENTER><FONT color=red><FONT face=courier><H3><A name="general">general</A></H3></FONT></FONT></CENTER>
+<DIV class=SH>
+<DL>
+
+<DT>What is KornShell?<DD>
+
+KornShell is a command and scripting language that is a superset of the System V UNIX shell,
+aka, BourneShell (or
+<EM>sh</EM>).
+
+<DT>What is ksh?<DD>
+
+ksh is the name of the program that implements the KornShell language.
+
+<DT>What is the history of ksh?<DD>
+
+ksh was written by David Korn at Bell Telephone Laboratories.
+David Korn is currently at AT&amp;T Research.
+The first version of ksh was in 1983.
+It was the first shell to have command line editing with both emacs and vi style interaction.
+The 1986 version was the first to offer multibyte support.
+The 1988 version of ksh is the version that was adopted by System V Release 4 UNIX
+and was a source document for the IEEE POSIX and ISO shell standards.
+The 1993 version is a major rewrite of the 1988 version and focuses more on scripting.
+
+<DT>Where is the official description of the KornShell language?<DD>
+
+The Bolsky and Korn book,
+<EM>The KornShell Command and Programming Language</EM>,
+published by Prentice Hall, defines the 1988 version.
+The newer Bolsky and Korn book,
+<EM>The New KornShell Command and Programming Language</EM>,
+also published by Prentice Hall, describes the 1993 version.
+There are many new features since this book was published and
+the man page for ksh93 is kept up to date.
+
+<DT>What are the major new features of KornShell 1993?<DD>
+
+The only major new interactive features are key binding and tab completion.
+Major new language features are floating point arithmetic,
+associative arrays, complete ANSI-C printf, name reference
+variables, new expansion operators, dynamic loading of
+built-in commands, active variables, and compound variables.
+Active and compound variables allow shell variables to
+behave like objects.  The ability to define types was added in 2009.
+In addition, ksh93 has been written to be
+extensible with an C language API for programming extensions.
+
+<DT>Are any further releases of ksh planned?<DD>
+
+Yes, the KornShell language and ksh implementation are in active development.
+Most of the focus will be on scripting and reusability.
+
+<DT>Why are newer release of ksh still called ksh93?<DD>
+
+We started the AST/ksh OpenSource release process in the late 90's.
+At that point ksh93 was the well-known name for ksh.
+The OpenSource release was finally granted in March 2000.
+No one has since volunteered to repeat that process for ksh<EM>XX</EM>.
+
+<DT>How can I determine the release or version of a particular ksh?<DD>
+
+The current version and release string may be accessed by
+<STRONG>${.sh.version}</STRONG>
+and
+<STRONG>$KSH_VERSION</STRONG>.
+The format is <STRONG>Version</STRONG> <EM>features</EM> 93<EM>version</EM>&#0091;-/+&#0093; <EM>release</EM>:
+<UL type=square>
+<LI>
+<EM>features</EM> --
+compile time features, typically enabled by <STRONG>SHOPT_</STRONG><EM>foo</EM> state variables in the
+ksh93 Makefile.
+A single letter represents each feature:
+<UL type=circle>
+<LI>
+<STRONG>A</STRONG>
+(<EM>SHOPT_AUDIT</EM>)
+<LI>
+<STRONG>B</STRONG>
+(<EM>SHOPT_BASH</EM>)
+bash compatibility mode.
+<LI>
+<STRONG>J</STRONG>
+(<EM>SHOPT_COSHELL</EM>)
+<STRONG>-lcoshell</STRONG> job pools.
+<LI>
+<STRONG>j</STRONG>
+(<EM>SHOPT_BGX</EM>)
+<LI>
+<STRONG>L</STRONG>
+(<EM>SHOPT_ACCT</EM>)
+<LI>
+<STRONG>M</STRONG>
+(<EM>SHOPT_MULTIBYTE</EM>)
+<LI>
+<STRONG>P</STRONG>
+(<EM>SHOPT_PFSH</EM>)
+<LI>
+<STRONG>R</STRONG>
+(<EM>SHOPT_REGRESS</EM>)
+</UL>
+<LI>
+<EM>version</EM>--
+a lower-case letter signifying major release points.
+An optional <STRONG>-</STRONG> following <EM>features</EM> signifies an alpha release.
+The first stable release has no <STRONG>-</STRONG>.
+An optional <STRONG>+</STRONG> signifies a stable release with bug patches and minor enhancements.
+<LI>
+<EM>release</EM>--
+the release date in <EM>YYYY-MM-DD</EM> form.
+This date corresponds to AST package and git repository releases.
+</UL>
+<STRONG>KSH_VERSION</STRONG>
+in a numeric context is an integer that encodes the release
+<EM>YYYYMMDD</EM>.
+
+<DT>What new features are planned for ksh?<DD>
+
+We are in the early stage of planning but the likely additions
+are namespaces, ability to read xml and json object into shell variables,
+and handling of queued signals.
+Support for multi-threading is also being considered.
+
+<DT>Is KornShell public domain?<DD>
+
+Yes, the language description is public domain and
+can be reimplemented.
+Some of the KornShell language features have been reimplemented
+in the GNU shell, bash, in zsh and mksh,  and in pdksh, a public domain
+implementation.
+
+<DT>Is ksh public domain?<DD>
+
+No, earlier versions were owned by both AT&amp;T and Novell.
+The 1993 version is owned by both Lucent and AT&amp;T.
+
+<DT>Is source code available?<DD>
+
+Starting in March 2000, the ksh93 source is available
+as part of a larger collection of software called
+the ast-open software package which can be downloaded
+from the
+<A href="https://github.com/att/ast" target=_top>github page.</A>
+
+<DT>What are the licensing terms?<DD>
+
+The exact license terms can be found on the 
+<A href="https://github.com/att/ast/blob/master/LICENSE.md" target=_top>licence page.</A>
+
+<DT>Does the license allow binaries to be freely redistributed?<DD>
+
+Yes, provided you make the license terms available to
+everyone you distribute binaries to.
+
+<DT>If I make changes to the code, do I have to make them public?<DD>
+
+No, you do not have to make them public.
+However, if you distribute the changes, you must allow us to be able
+to get these changes and distribute them along with the source.
+
+<DT>Why do some vendors still ship ksh88, not ksh93?<DD>
+
+Since ksh88 was included in System V release 4, most vendors
+have just included this version.  However most Linux systems
+and Mac OS provide ksh93 version 's' or later.  Solaris11 uses
+ksh93 as /bin/sh.
+
+<DT>Do you provide support for ksh?<DD>
+
+No, we will try to fix any bugs we hear about in future
+releases, but we do not provide any official support.
+
+<DT>Is ksh supported commercially?<DD>
+
+Software vendors that supply ksh with
+their systems typically support it for that system.
+
+<DT>What is pdksh and is it related to ksh or KornShell?<DD>
+
+pdksh is a public domain version of a UNIX shell that is
+unrelated to ksh.
+It supports most of the 1988 KornShell language features and some of the 1993 features.
+Some KornShell scripts will not run with pdksh.
+
+<DT>How is the MKS Toolkit KornShell related to KornShell?<DD>
+
+MKS Tookit KornShell is a completely independent implementation
+that supports a subset of the 1988 KornShell language.
+
+<DT>What systems does ksh run on?<DD>
+
+ksh has been written to be portable.
+It has been ported to virtually run on every known UNIX system.
+In addition it runs on non-UNIX systems such as IBM's MVS using OpenEdition, and
+Microsoft's Windows 9X, Windows NT and Windows 2000.
+ksh is part of the UWIN (Unix for Windows)</A>
+software,
+
+<DT>Does ksh conform to the IEEE POSIX and ISO shell standard?<DD>
+
+The 1993 version should conform to the 1992 standard.
+At one point it had passed the test suite created by X/OPEN.
+
+<DT>Will KornShell 88 scripts run with KornShell 93?<DD>
+
+In almost all cases, the answer is yes.
+However, the IEEE POSIX and ISO standards required a few
+changes that could cause scripts to fail.
+There is a separate document that lists all known incompatibilities.
+
+<DT>Can ksh run as /bin/sh?<DD>
+
+We have installed ksh as /bin/sh on several systems without
+encountering any problems.  It is /bin/sh on Solaris11.
+Our Linux systems use this instead of bash.
+
+</DL>
+</DIV>
+
+<P>
+<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="interactive">interactive</A></H3></FONT></FONT></CENTER>
+<DIV class=SH>
+<DL>
+
+<DT>How do I get separate history files for shell?<DD>
+
+ksh uses a shared history file for all shells that
+use the same history file name.
+This means that commands entered in one window will be seen by
+shells in other windows.
+To get separate windows, the HISTFILE variable needs to be set to different name
+before the first history command is created.
+
+<DT>How do I get the time of day in my prompt?<DD>
+
+You can use printf with supports the %T format for time and date formatting.
+For example, the format %(%H:%M:%S)T specifies time in hour, minute, second
+format and if no argument is specifed, the current time is used.  Thus setting
+PS1='$(printf "%(%H:%M:%S)T" $' will output the time of day before the
+$ prompt.
+
+<DT>Why does the screen width not function correctly when non-printing characters are in my prompt?<DD>
+
+The shell computes the screen width by subtracting the width of the prompt from the screen width.
+To account for non-printing characters, for example escape sequences that display in the title
+bar, follow these characters with a carriage return.
+The shell starts recomputing the width after each carriage return.	
+
+<DT>What is the PS4 prompt and how is it used?<DD>
+
+The PS4 prompt is evaluated and displayed before each line when
+running an execution trace.
+If unset, a + and a &lt;space&gt; will
+be output before each line in the trace.
+Putting '$LINENO' inside PS4 will cause the line number to be displayed.
+Putting '$SECONDS' in the PS4 prompt will cause the elapsed time
+to be displayed before each line.
+Note that single quotes are used to prevent the expansion from happening
+when PS4 is defined.
+
+<DT>How is keybinding done?<DD>
+
+ksh93 provides a KEYBD trap that gets executed whenever a key
+is entered from the keyboard.
+Using this trap, and the associative
+array feature of ksh93, a keybind function can easily be written
+which will map any entered key sequence to another key sequence.
+
+<DT>How do I get the arrow keys to work?<DD>
+
+Starting with the 'h' point release, on most keyboards you
+do not have to do anything to get the arrow keys to work.
+However, if they do not generate standard escape sequences,
+then you will have to use a keybinding function to get them
+to work.
+
+<DT>Does ksh support file name completion?<DD>
+
+Yes, it does.
+The default key binding is &lt;ESC&gt;&lt;ESC&gt;
+however, starting with the 'g' point release, &lt;TAB&gt; also works
+for completion.
+
+<DT>Does ksh support command completion?<DD>
+
+If you perform completion on the first word of a command,
+ksh will do completion using aliases, functions, and commands.
+
+<DT>Is completion programmable?<DD>
+
+Yes, using the key binding mechanism, you can script the behavior
+of any key and therefore cause the current contents of any
+line to be replaced by any other line.
+
+<DT>Is there any way to get the command-line editor to go to more than a single line?<DD>
+
+The multiline option (now on by default) allows lines longer than the width
+of the screen to be displayed on multiple lines on the screen.
+Also in vi-mode, if you hit 'v' while in control mode, it will bring
+up a full screen version of vi on the current command.
+The command
+will execute when you exit vi.
+
+<DT>What is predictive editing?<DD>
+In 2010, a compile option was added that cause the shell to try to predict
+what you were trying to type by looking in the history file for all lines
+that matched and presenting them as a menu.  Any line starting with # would
+use the characters you type to find matching lines from the history file.
+If you find the line you wanted, you can enter the number followed by
+&lt;TAB&gt; or newline.  However bugs in earlier version led to core dumps.
+
+
+<DT>Can I use the shell line editor on other commands?<DD>
+
+The command ie, that comes along with shell, can be used
+to run line input oriented commands with command line editing.
+
+<DT>When I do echo $?, I am getting 267. What does this mean?<DD>
+
+ksh93 reports process that terminate with a signal as 256+signo.
+Earlier versions used 128+signo but this makes it impossible
+to distinguish from a command exit with that value.
+If you run
+<DIV class=FI>
+<PRE>
+kill -l $?
+</DIV>
+</PRE>
+on this signal number, it will give the the name of the signal
+that caused this exit.
+
+<DT>When I type builtin, I notice that some of these are full pathnames. What does this mean?<DD>
+
+Builtins that are not bound to pathnames are always searched
+for before doing a path search.
+Builtins that are bound
+to pathnames are only executed when the path search would
+bind to this pathname.
+
+<DT>What is a self generating man page?<DD>
+
+A self generating man page is one that is generated by the
+option parser within that command using an extended version
+of the getopts function.
+The man page can be generated in html,
+troff, or directly for the terminal.
+Most builtin commands
+in the shell have self generating man pages so that you
+can run for example,
+<STRONG>kill &#45;&#45;man</STRONG>
+or
+<STRONG>kill &#45;&#45;html</STRONG>
+to get
+the description of kill to the screen or as an html file.
+All self-documenting output is to the standard error,
+so you must redirect 2&gt;... to capture the output.
+<P>
+This same method can also be used for shell scripts.
+Run
+<STRONG>getopts --man</STRONG>
+for more details.
+
+<DT>What is autoloading?<DD>
+
+Autoloading was a method used in ksh88, and still permitted in ksh93
+to declare that a name corresponded to a function.
+The function
+would be loaded and executed when first referenced.
+This was
+necessary since FPATH was always searched after PATH with ksh88
+and therefore if you defined a function whose name was the same
+as that of a program on your path, the program on your path
+would have been executed.
+With ksh93, when a pathname is
+encountered that is on PATH, but also is in FPATH, this directory
+is assumed to be a function directory.
+Thus, you can have
+function directories searched before program directories so
+that autoloading is no longer needed.
+
+<DT>Why does the output from 'time command 2&gt; file' come out on the screen?<DD>
+
+The time command is a compound command in ksh and time is a reserved
+word It can be followed by any pipeline.  Thus, redirections applied
+at the end are for the command, not to time itself.  You can use
+time {...;} 2&gt; file to capture the timing output to a file.  Note,
+that with ksh, time works with all commands, for example,
+time for i; do xxx;done.
+
+<DT>When I run 'mv * ../elsewhere' I so that get '-ksh: mv: cannot execute &#0091;Arg list too long&#0093;', what causes this?<DD>
+
+UNIX sytems have a limit to the space consumed by command arguments and
+environment variables when running commands that are not built into
+the shell.  The configuration parameter ARG_MAX defines this limit.
+You can run 'getconf ARG_MAX' to find the limit for your system.  Note
+that the shell expands * to the list of files in the current directory
+before running mv.  In many case the xargs or tw command can be
+used to work around this problem by splitting the line into chunks
+and invoking the command.  Another way to work around this limit
+is to make the command a builtin.  On systems in which the cmd
+library is installed, you can invoke 'builtin &#45;f cmd mv' to make
+mv a shell builtin in which case the line length limit no longer
+applies.  Another alternative is to use a for loop and invoke
+the mv command for each file, for exampe,
+'for i in *;do mv $i ../elsewhere;done'.
+Starting with ksh93o+, a new feature was added to ksh to overcome
+this limit in some cases.  If a command is preceded by
+'command &#45;x', and it fails because there are two many arguments,
+the command will be run multiple times with subsets of the arguments.
+However, the change in ksh93o+ does not work in the above case
+because the ../elsewhere is not used for each subset.  This problem
+was resolved starting in ksh93p so that
+command &#45;x mv * ../elsewhere
+should work.  Note that it is possible to do alias mv='command &#45;x mv'
+
+<DT>Is there any way to generate the list of .c files in the current directory and all the subdirectories?<DD>
+
+Starting with ksh93o+, the globstar option (set &#45;G or set &#45;o globstar)
+was added.  With globstar enabled, ** by itself matches zero or more
+directories or files, and **/ matches zero or more directories so that
+**/*.c will match all .c files under the current directory.
+
+<DT>Is there any way to prevent sending a HUP signal to a job when I log out if I didn't nohup the job?<DD>
+
+Yes, the disown command tells ksh not to forward the HUP signal
+to the specified jobs when it disconnects.
+
+</DL>
+</DIV>
+
+<P>
+<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="programming">programming</A></H3></FONT></FONT></CENTER>
+<DIV class=SH>
+<DL>
+
+<DT>What is the difference between * and @, for example, and ?<DD>
+
+When used outside of "", they are equivalent.
+However, within
+double quotes, "$@" produces one argument for each positional
+parameter, and "$* produces a single argument.
+Note that "$@"
+preserves arguments lists, whereas $* may not unless both
+word splitting and pathname expansion are disabled.
+
+<DT>Why do I need spaces around { and } but not around ( and )?<DD>
+
+The characters ( and ) are shell metacharacters and are always
+treated specially.
+For historical reasons, { and } were
+treated as reserved words and are only special as separate
+words at locations in which a command can begin.
+
+<DT>How do I get read to maintain the &#0092; characters?<DD>
+
+Use read -r instead.
+
+<DT>How can I a write a ksh script that responds directly to each character so that you user just has to enter y, not y&lt;return&gt;?<DD>
+
+There are two ways to do this.
+The easiest is to use
+<DIV class=FI>
+<PRE>
+read -n1 x
+</DIV>
+</PRE>
+Alternatively, you could do
+<DIV class=FI>
+<PRE>
+function keytrap
+{
+	.sh.edchar=${sh.edchar}$'
+}
+trap keytrap KEYBD
+</DIV>
+</PRE>
+and then
+<DIV class=FI>
+<PRE>
+read x
+</DIV>
+</PRE>
+
+<DT>What is the purpose of $'...'?<DD>
+
+The $'...' string literal syntax was added to ksh93 to solve the problem
+of entering special characters in scripts.
+It uses
+ANSI-C rules to translate the string between the '...'.
+It would have been cleaner to have all "..." strings handle
+ANSI-C escapes, but that would not be backward compatible.
+
+<DT>What is the -n option used for?<DD>
+
+You should always run ksh -n on each script you write.
+The -n
+option will check for syntax errors on paths that might not
+even be checked when you run the script.
+It also produces
+a number of warning messages.
+
+<DT>Why are both `...` and $(...) used for command substitution?<DD>
+
+The `...` method has some rather strange quoting rules
+and does not nest easily.
+$(...) was added to ksh88 to
+make command substitution easy to use.
+`...` is provided
+for backwords compatibility only.
+
+<DT>How can I tell if all the commands of a pipeline have succeeded?<DD>
+
+The pipefail option was added to the 'g' point release of ksh93.
+With pipefail set, a pipeline will fail if any element of the
+pipeline fails.
+The exit status will be that of the first
+command that has failed.
+
+<DT>What is the difference between &#0091;...&#0093; and &#0091;&#0091;...&#0093;&#0093;?<DD>
+
+The &#0091;&#0091;...&#0093;&#0093; is processed as part of the shell grammar
+whereas &#0091;...&#0093; is processed like any other command.
+Operators and operands are detected when the command is
+read, not after expansions are performed.
+The shell does not
+do word splitting or pathname generation inside  &#0091;&#0091;...&#0093;&#0093;.
+This allows patterns to be specified for string matching
+purposes.  You should use &#0091;&#0091;...&#0093;&#0093; instead of &#0091;...&#0093; and test.
+
+<DT>How come &#0091;&#0091; $foo == $bar &#0093;&#0093; is true and &#0091;&#0091; $bar == $foo &#0093;&#0093; is false?<DD>
+
+The == operator is not symmetrical.
+It takes a string on the left
+and a pattern on the right.
+However, if you double quote the right
+hand side, which removes the special meaning of pattern match
+characters, then this becomes a string comparison so that
+&#0091;&#0091; "$foo" == "bar" &#0093;&#0093; and &#0091;&#0091; "$bar" == "$foo" &#0093;&#0093; are equivalent.
+
+<DT>Why does ksh93 have print since echo already exists is is widely used?<DD>
+
+The behavior of echo varies from system to system.
+The POSIX standard does not define the behavior of echo when
+the first argument beings with a - or when any argument
+contains a &nbsp;character.
+This makes echo pretty useless for
+use in portable scripts.
+
+<DT>What is $bar after running 'echo foo | read bar'?<DD>
+
+The answer is foo.
+ksh runs the last component of a pipeline
+in the current process.
+Some shells run it as a subshell
+as if you had invoked it as  echo foo | (read bar).
+
+<DT>How can I access a substring of a variable?<DD>
+
+The syntax ${varname:offset:len} can be used to generate
+the string of length len starting at the the specified
+offset.   String offsets start at 0.  If :len is omitted,
+then the remainder of the string will be used.  Both offset
+and len can be arithmetic expressions.  A negative offset is
+subtracted from the last offset.
+
+<DT>What is the difference between ((expr)) and $((expr))?<DD>
+
+((expr)) is a command that evaluates an arithmetic expression.
+The exit status of this command is 0 if the expression
+evaluates to non-zero and is 1 if it evaluates to 0.
+0 is an string expansion that expands to a string
+representation of the value of this arithmetic expression.
+It can be used anywhere a variable substitution is permitted.
+<P>
+
+<DT>What is the difference between $((x*y)) and $(($x*$y))?<DD>
+
+In the first case the value of x and the value of y are multiplied
+together, and then their result is converted to a string.
+In the
+second case variables $x, *, and $y are concatenated to form
+an arithmetic expression which is then evaluated.
+This can
+yield different results, for example,
+<DIV class=FI>
+<PRE>
+x=2+3 y=4+5
+print $((x*y)) \$(($x*$y))
+45 19
+When x and y are numeric the first form is recommended for better
+performance.
+</DIV>
+</PRE>
+
+<DT>How do I handle filenames with spaces in them?<DD>
+
+To be POSIX conforming, ksh has to do word splitting and
+pathname expansion the results of substitutions.
+You can
+enclose variable substitutions in "..." to prevent both
+word splitting and pathname expansion.
+Alternatively,
+you can disable word splitting by setting IFS='' and
+pathname generation with set -o noglob.
+
+<DT>What are active variables?<DD>
+
+By default shell variables are passive.
+They hold values
+given to them on assignment, and return values on reference.
+Active variables allow the assignment and reference (and
+other actions) be controlled by functions specific to that
+variable.
+At the shell level, a 'get', 'set', or 'unset'
+shell function can be defined for any variable to make them
+active, so that the function  foo.set will be invoked whenever
+the variable foo is assigned a value.
+At the C interface
+level, several functions can be stacked together for an
+active variable.
+
+<DT>What is the difference between function name and name()?<DD>
+
+In ksh88 these were the same.
+However, the POSIX standard
+choose foo() for functions and defined System V Release 2
+semantics to them so that there are no local variables
+and so that traps are not scoped.
+ksh93 keeps the ksh88
+semantics for functions defined as function name, and
+has changed the name() semantics to match the POSIX
+semantics.
+Clearly,
+<STRONG>function</STRONG>
+<EM>name</EM>
+is more useful.
+
+<DT>What is the naming conventions for files in FPATH and can one file contain more than one function definition?<DD>
+
+You can have more than one function defined in each file defined
+in FPATH and all of them will be added to the list of known
+functions.  Any commands placed in this file outside of function
+definitions will be invoked first.  The name of the file must be
+that of the first function you invoke.  If you have several functions
+defined in one file, than you should create a link to each of the
+function names that can potentially be invoked first.
+
+<DT>What are name reference variables and how are they used?<DD>
+
+Reference variables are variables in which all references
+and assignments refer to the variable that they reference.
+For example,
+<DIV class=FI>
+<PRE>
+typeset -n name=$1
+name=value
+</DIV>
+</PRE>
+is equivalent to
+<DIV class=FI>
+<PRE>
+eval \$1='value'
+</DIV>
+</PRE>
+References are most useful for passing arguments such as
+arrays to functions.
+
+<DT>If i=1 and var1=some value, how do I print var$i to get its value?<DD>
+
+Either use
+<DIV class=FI>
+<PRE>
+eval print var\$i
+</DIV>
+</PRE>
+or
+<DIV class=FI>
+<PRE>
+typeset -n x=var$i
+print $x
+</DIV>
+</PRE>
+
+<DT>How can I shift the elements of an array?<DD>
+
+The shift special builtin-command only works for positional
+parameters.
+However, noting that array subscripts start at 0, you can use
+<DIV class=FI>
+<PRE>
+typeset -A name "${name&#0091;@&#0093;:1}"
+</DIV>
+</PRE>
+to shift the array.
+
+<DT>Why are the braces required with array references, e.g. ${x&#0091;1&#0093;}?<DD>
+
+It would be nice to do $x&#0091;1&#0093;, but the POSIX shell would expand $x
+and then search for the file pattern resulting by concatenating &#0091;1&#0093;.
+ksh is POSIX compatible.
+
+<DT>How do I get the list of subscript names for an associative array?<DD>
+
+The prefix operator ! in variable expansions can be used to get names.
+To get the names of subscripts for an array, associative
+or indexed, use ${!var&#0091;@&#0093;}.
+
+<DT>How do I do global substitutions on the contents of shell variables?<DD>
+
+Use // instead of / for global substitution, ${var//aa/bb} will
+expand to the value of  with each "aa" replace by "bb".
+
+<DT>How can I convert %XX values to ascii?<DD>
+
+You can convert this to a sequence of ANSI C strings and then eval that
+string, for example suppose the variable 'foo' contains %XX strings, then	
+<DIV class=FI>
+<PRE>
+eval print -r -- "\$'${foo//'%'@(??)/'\x\1"'\$'"}'"
+</DIV>
+</PRE>
+will print out the string in ascii.
+
+<DT>I want to use exec to open a file. How do I prevent the script from exiting if the exec fails?<DD>
+
+If you run
+<DIV class=FI>
+<PRE>
+command exec ... || error ...
+</DIV>
+</PRE>
+then  error will be executed if the exec fails, but the script
+will not terminate.
+The command builtin will prevent the shell
+from exiting when special built-ins fail.
+
+<DT>How do I execute a builtin inside a function of the same name?<DD>
+
+You use the command builtin for this.
+For example,
+<DIV class=FI>
+<PRE>
+function cd
+{
+	command cd "$@" &amp;&amp; title "$PWD"
+}
+</DIV>
+</PRE>
+will run the builtin command cd from within the function cd
+rather than calling the function cd recursively.
+
+<DT>How are variables scoped in ksh?<DD>
+
+The scoping of variables was not defined for ksh88 but in ksh93
+static scoping was specified.
+For example the output from
+<DIV class=FI>
+<PRE>
+function f1
+{
+	print foo=$foo
+}
+function f2
+{
+	typeset foo=local
+	f1
+}
+foo=global
+f2
+</DIV>
+</PRE>
+will be "global".
+To get f2 to cause f1 to print the local
+value of foo, f2 can run "foo=$foo f1" instead.
+
+<DT>Can you write a self reproducing program in KornShell?<DD>
+
+Yes, the following program is self reproducing.
+Any shorter ones?
+<DIV class=FI>
+<PRE>
+n="
+" q="'" x="cat &lt;&lt;-!" y=! z='n="$n" q="$q" x="$x" y=$y z=$q$z$q$n$x$n$z$n$y'
+cat &lt;&lt;-!
+n="$n" q="$q" x="$x" y=$y z=$q$z$q$n$x$n$z$n$y
+!
+</DIV>
+</PRE>
+
+</DL>
+</DIV>
+
+<P>
+<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="redirections">redirections</A></H3></FONT></FONT></CENTER>
+<DIV class=SH>
+<DL>
+
+<DT>How do I redirect both standard input and standard output to a file?<DD>
+
+Add the following redirections to the command.
+&gt; file 2&gt; &amp;1.
+This will redirect standard output (file descriptor 1) to "file" and
+standard error (file descriptor 2) to the same place as file descriptor 1.
+ksh redirection allows you to redirect any single digit file descriptor
+by putting the descriptor number in front of the redirection operator
+with no intervening space.
+
+<DT>Is there a way for the shell to pick the file number when I open a file?<DD>
+
+Yes, a redirection operator operator can be preceded by {n} without any
+intervening space where n is the name of a variable.  The file descriptor
+will be placed in variable n.
+
+<DT>How do I connect to a socket from a shell script?<DD>
+
+exec 3&lt;&gt; /dev/tcp/hostname/portnum 
+will open a tcp connection to portnum on hostname for
+reading and writing on file descriptor 3.
+You can then
+use read and print statements with file descriptor 3,
+or redirection operators &lt;&amp;3 or &gt;&amp;3 to use these connections.
+
+<DT>How do I seek to a given location in a file?<DD>
+
+The redirection operators &lt;# and &gt;# allow you to seek to a specified
+location in a file.  The operator can be followed by an arithmetic
+expression contained in ((...)).  The variables CUR and EOF can be used
+in the arithmetic expression to get relative locations or locations
+relative to the end of file respectively.
+Alternatively, &lt;# and &gt;# can be followed by a shell pattern.  In this
+case, the file will be positioned to beginning of the next line
+containing this pattern.
+
+<DT>What is the the &lt;&lt;&lt; redirection operator?<DD>
+
+It denotes a here-document in which the document is contained the
+argument that follows &lt;&lt;&lt; and therefore there is no delimiter.
+
+<DT>What is the the &gt;; redirection operator?<DD>
+
+This operator writes the output into a temporary file in the same
+directory as the file specified after &gt;;.  If the command completes
+successfully, then the the file is replaced.  Otherwise, the
+original file is unchanged and the temporary file removed.
+
+<DT>What is the the &lt;&gt;; redirection operator?<DD>
+
+The file is opened for reading and writing as with  &lt;&gt;.  However,
+when the file is closed it is truncated to the its current location.
+
+</DL>
+</DIV>
+
+<P>
+<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="extensions">extensions</A></H3></FONT></FONT></CENTER>
+<DIV class=SH>
+<DL>
+
+<DT>Is there a shell compiler?<DD>
+
+There is a separate command named shcomp that will convert
+a script into an intermediate machine independent form.
+The shell will detect this format whenever it runs a script and execute
+directly from this intermediate format.
+
+<DT>What is the advantage of making commands built-in?<DD>
+
+The startup time is reduced by a couple of orders of magnitude.
+In addition, built-in commands can access ksh internals.
+
+<DT>What is the disadvantage of making commands built-in?<DD>
+
+Errors in these built-ins can cause the shell to crash.
+
+<DT>How do I add built-in commands?<DD>
+
+There are two ways to do this.
+One is write a shared library
+with functions whose names are b_xxxx where xxxx is the name of
+the builtin.
+The function b_xxxx takes three arguments.
+The first
+two are the same as a mail program.
+The third parameter is
+a pointer argument which will point to the current shell context.
+The second way is to write a shared library with a function named
+lib_init().
+This function will be called with an argument of 0
+after the library is loaded.
+This function can add built-ins
+with the sh_addbuiltin() API function.
+In both cases, the
+library is loaded into the shell with the "builtin" utility.
+
+<DT>Can ksh93 be embedded?<DD>
+
+Yes, ksh93 can be compiled as a shared or dynamically linked
+library which can be embedded into applications.
+There is
+an API for interfacing to shell variables and to several of
+the internal shell functions.
+
+<DT>Can I write GUI applications with ksh?<DD>
+
+There are two extensions to ksh that can be used to write
+GUI applications as shell script.
+One is dtksh which
+was written by Steve Pendergrast at Novell and is
+included with the Common Desktop Environment, CDE.
+The other is
+tksh which was written by Jeff Korn.
+tksh combines the tk graphics
+package with ksh93 and reimplements the tcl language
+as an extension so that both tcl and ksh scripts
+can run in the same address space.
+The source for tksh
+is included in the ast-open package.
+
+</DL>
+</DIV>
+<TABLE cellpadding=4>
+<TR>
+<TD bgcolor=teal><A href='#' onclick='FAQ_mark("show")'><FONT color="#FFD87D">show all answers</FONT></A></TD>
+<TD bgcolor=teal><A href='#' onclick='FAQ_mark("hide")'><FONT color="#FFD87D">hide all answers</FONT></A></TD>
+</TR>
+</TABLE>
+<P>
+<HR>
+<TABLE border=0 align=center width=96%>
+<TR>
+<TD align=left></TD>
+<TD align=center></TD>
+<TD align=right>June 19, 2012</TD>
+</TR>
+</TABLE>
+<P>
+
+</TD></TR></TBODY></TABLE>
+
+</BODY>
+</HTML>

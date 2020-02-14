@@ -1,0 +1,129 @@
+typeset -A COOKIE HEADER
+typeset Cgi _CGI_c _CGI_multipart
+
+function cgi_header
+{
+	typeset h
+	for h in "${!HEADER[@]}"
+	do	printf '%s: %s\n' "$h" "${HEADER[$h]}"
+	done
+	print
+}
+
+function cgi_url 
+{
+	if [[ $SERVER_PORT != 80 ]]
+	then	print "http://$SERVER_NAME:$SERVER_PORT$SCRIPT_NAME"
+	else	print "http://$SERVER_NAME$SCRIPT_NAME"
+	fi
+}
+
+function cgi_parse
+{
+	if	[[ $REQUEST_METHOD == POST ]]
+	then	if	[[ $CONTENT_TYPE ==  multipart/form-data* ]]
+		then	_CGI_multipart=${TMPDIR-/tmp}/cgi-form-$$
+			trap 'rm -rf "$_CGI_multipart"' EXIT
+			mkdir $_CGI_multipart
+			unset -f Cgi.set
+			typeset -A Cgi.file
+			typeset i b v
+			pax --nosummary --read --edit ",.*/,," --edit ",^,$_CGI_multipart/,"
+			for i in $_CGI_multipart/*
+			do      b=${i##*/}
+				if	[[ $b == +([a-z]) ]]
+				then	 v=$(<$i)
+					eval Cgi.$b='$v'
+				else	Cgi.file[$b]=$i
+				fi
+			done
+		else	Cgi=$(<&0)		# Read from stdin
+		fi
+	else	Cgi="$QUERY_STRING"
+	fi
+	cgi_cookie "$HTTP_COOKIE"
+	HEADER["Content-type"]="text/html"
+}
+
+function cgi_cookie
+{
+	typeset cookie=$1 name val c IFS=';'
+	set -- $cookie
+	for c
+	do
+		IFS='='
+		set -- $c
+		name=${1##' '} val=${2##' '}		# trim white space
+		name=${name%%' '} val=${val%%' '}
+		COOKIE[$name]=$val
+	done
+}
+
+function cgi_setcookie # name value
+{
+	HEADER["Set-Cookie"]="$1=$2; path=$SCRIPT_NAME"
+}
+
+## Cgi variable disciplines
+
+function Cgi.set
+{
+	set -f
+	typeset i j n val IFS='&'
+	set -- ${.sh.value}
+	for i
+	do	n=${i%%=*}
+		[[ $n == [[:alpha:]_]*([[:alnum:]_]) ]] || continue
+		val=${i#$n=}
+		val=${val//+/ }
+		val=${val//@([\'\\])/'\'\1}
+		eval j=\${#${.sh.name}.${n}[@]} \
+			"${.sh.name}.${n}[j]=\$'${val//'%'@(??)/'\x'\1"'\$'"}'"
+	done
+}
+
+function cgi_C_init
+{
+	integer i
+	for ((i=1; i < 256; i++))
+	do	if	(( i!=16#22 && i!=16#27 && i!=16#5C && i!=16#5B && i!=16#5D ))
+		then	printf $'_CGI_c[$\'\\\\x%.2X\']=%%%.2X\n'  $i $i
+		fi
+	done
+	print
+}
+
+function cgi_encode
+{
+	typeset v=$1
+	var=${v//' '/+}
+	cbrace='}'
+	eval var=${var//@([!a-zA-Z0-9_+])/\${_CGI_c[\\\1]$cbrace}
+	print -r -- "$var"
+}
+
+function Cgi.get
+{
+	typeset i val name vname
+	if	[[ ! ${_CGI_c[\\]} ]]
+	then	val='"'
+		_CGI_c[""]=%00
+		_CGI_c[$var]=%22
+		_CGI_c[\']=%27
+		_CGI_c[\]]=%5B
+		_CGI_c[\[]=%5D
+		_CGI_c[\\]=%5C
+		eval $(cgi_C_init)
+		unset -f cgi_C_init
+	fi
+	vname=${.sh.name}		# .sh.name contains variable name
+	.sh.value=			# .sh.value stores value
+	for i in ${!Cgi.@}
+	do	
+		name=${i#$vname.}
+		nameref v=${i}
+		val=$(cgi_encode "$v")
+		.sh.value="${.sh.value}${.sh.value:+&}$name=$val"
+	done
+}
+
