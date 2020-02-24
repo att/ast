@@ -4,7 +4,14 @@ sys	procfs,sysctl
 
 lib	getprocs
 lib	kvm_open,kvm_getprocs kvm.h sys/time.h sys/param.h sys/proc.h sys/sysctl.h -lkvm
+typ	struct.kinfo_proc kvm.h sys/time.h sys/param.h sys/proc.h sys/sysctl.h
 lib	pstat_getproc sys/param.h sys/pstat.h
+
+cat{
+	#ifndef _typ_struct_kinfo_proc
+	#undef _lib_kvm_open
+	#endif
+}end
 
 mem	extern_proc.p_pid,extern_proc.p_starttime,extern_proc.p_wchan,extern_proc.p_usrpri,extern_proc.p_addr,eproc.e_xsize sys/time.h sys/param.h sys/proc.h sys/sysctl.h -lkvm
 mem	procsinfo64.pi_pri procinfo.h

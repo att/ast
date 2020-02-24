@@ -151,6 +151,9 @@ struct _sffmt_s
 #define SF_WCWIDTH	0100000	/* wcwidth display stream		*/
 
 #define SF_FLAGS	0177177	/* PUBLIC FLAGS PASSABLE TO SFNEW()	*/
+#ifdef _typ_struct_sf_hdtr
+#define _SF_HIDESFFLAGS 1
+#endif
 #define SF_SETS		0177163	/* flags passable to sfset()		*/
 
 #ifndef _SF_NO_OBSOLETE
@@ -454,4 +457,8 @@ __INLINE__ ssize_t sfmaxr(ssize_t n, int s)	{ return __sf_maxr(n,s); }
 
 #endif /* _SFSTR_H */
 
+#ifdef _SF_HIDESFFLAGS
+#undef SF_FLAGS
+#define SF_FLAGS	0177177	/* PUBLIC FLAGS PASSABLE TO SFNEW()	*/
+#endif
 #endif /* _SFIO_H */
