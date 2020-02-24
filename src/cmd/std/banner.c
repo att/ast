@@ -219,7 +219,7 @@ static void banner(const char *string,const char *delim,int width)
 }
 
 int
-main(int argc, char *argv[], void *extra)
+main(int argc, char *argv[])
 {
 	register int n;
 	register char *cp;
@@ -227,7 +227,6 @@ main(int argc, char *argv[], void *extra)
 	int width = 80;
 
 	NoP(argc);
-	NoP(extra);
 	error_info.id = "banner";
 	while (n = optget(argv, usage)) switch (n)
 	{
