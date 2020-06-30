@@ -105,7 +105,9 @@ int		rc;	/* record separator.	*/
 			break;
 		}
 
-#if _lib_memccpy && !__ia64 /* these guys may never get it right */
+//#if _lib_memccpy && !__ia64 /* these guys may never get it right */
+// using memccpy here causes crashes - assuming overlap between src and dst
+#if 0
 		if((ps = (uchar*)memccpy(ps,s,'\0',p)) != NIL(uchar*))
 			ps -= 1;
 		else	ps  = f->next+p;

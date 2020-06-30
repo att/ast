@@ -45,6 +45,7 @@ case `gcc -v 2>&1 | egrep gcc.version` in
 *version' '7*) probe_shared_nostart= ;;
 *version' '8*) probe_shared_nostart= ;;
 *version' '9*) probe_shared_nostart= ;;
+*version' '10*) probe_shared_nostart= ;;
 esac
 probe_shared_registry='"-update_registry $probe_shared_registry_file"'
 probe_shared_registry_file='registry.ld'
