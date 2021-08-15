@@ -206,10 +206,18 @@ done ${INSTALLROOT}/lib generated
 make ${INSTALLROOT}/lib/ssd
 prev ${INSTALLROOT}/lib
 prev ssd
-setv group -Dgroup="kmem"
-setv mode -Dmode="ug+s,+x"
 setv preserve -Dpreserve
-exec - test '' = 'ssd' || ${STDCMP} 2>/dev/null -s ssd ${INSTALLROOT}/lib/ssd || { ${STDMV} ${INSTALLROOT}/lib/ssd ${INSTALLROOT}/lib/ssd.old 2>/dev/null || true; ${STDCP} ssd ${INSTALLROOT}/lib/ssd && { chgrp kmem ${INSTALLROOT}/lib/ssd || true ;} && chmod ug+s,+x ${INSTALLROOT}/lib/ssd ;}
+exec - ignore cp ssd ${INSTALLROOT}/lib/ssd
+exec - if silent find /dev/kmem -group kmem >/dev/null 2>&1; then
+exec - if chgrp kmem ${INSTALLROOT}/lib/ssd; then
+exec - ignore chmod ug+s ${INSTALLROOT}/lib/ssd
+exec - fi
+exec - elif silent find /dev/kmem -group sys >/dev/null 2>&1; then
+exec - if chgrp sys ${INSTALLROOT}/lib/ssd; then
+exec - ignore chmod ug+s ${INSTALLROOT}/lib/ssd
+exec - fi
+exec - fi
+exec - ignore chmod +x ${INSTALLROOT}/lib/ssd
 done ${INSTALLROOT}/lib/ssd generated
 make ${INSTALLROOT}/man/man8
 exec - if silent test ! -d ${INSTALLROOT}/man/man8
